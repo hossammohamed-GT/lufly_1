@@ -50,6 +50,10 @@ class Translator
         }
 
         $entries = $this->loadFile($locale, $file);
+        if (isset($entries[$path]) && is_string($entries[$path])) {
+            return $entries[$path];
+        }
+
         $value = $entries;
         foreach (explode('.', $path) as $segment) {
             if (!is_array($value) || !array_key_exists($segment, $value)) {

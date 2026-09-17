@@ -214,3 +214,11 @@ if (!function_exists('dd')) {
         exit(1);
     }
 }
+
+if (!function_exists('feature')) {
+    function feature(string $name, bool $default = false): bool
+    {
+        return \Core\Foundation\FeatureFlag::enabled($name, $default);
+    }
+}
+

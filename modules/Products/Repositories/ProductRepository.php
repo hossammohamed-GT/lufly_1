@@ -40,7 +40,16 @@ class ProductRepository extends Repository
             $bindings[] = $filters['status'];
         }
 
+        if (!empty($filters['category_id'])) {
+            $where[] = 'p.category_id = ?';
+            $bindings[] = (int) $filters['category_id'];
+        }
+
         $searchJoin = '';
+        if (!empty($filters['category_slug'])) {
+            $searchJoin .= ' INNER JOIN categories c ON c.id = p.category_id AND c.slug = ?';
+            $bindings[] = (string) $filters['category_slug'];
+        }
         if (($filters['search'] ?? '') !== '') {
             $searchJoin = "INNER JOIN product_translations pt
                 ON pt.product_id = p.id AND pt.locale = ?";

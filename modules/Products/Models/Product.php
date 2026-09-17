@@ -11,11 +11,13 @@ class Product extends Model
     protected static string $table = 'products';
 
     protected static array $fillable = [
-        'category_id', 'sku', 'slug', 'price', 'status', 'seo',
+        'category_id', 'sku', 'slug', 'price', 'image', 'specs', 'status', 'seo',
     ];
 
     protected static array $casts = [
         'id' => 'int',
+        'price' => 'float',
+        'specs' => 'json',
         'seo' => 'json',
     ];
 

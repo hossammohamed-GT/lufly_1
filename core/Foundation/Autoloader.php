@@ -31,6 +31,18 @@ final class Autoloader
                     require $file;
                     return true;
                 }
+
+                // Linux case-sensitivity fallback (e.g. Database\Schema -> database/schema)
+                $parts = explode('\\', $relative);
+                if (count($parts) > 1) {
+                    $altParts = $parts;
+                    $altParts[0] = strtolower($altParts[0]);
+                    $altFile = $baseDir . implode(DIRECTORY_SEPARATOR, $altParts) . '.php';
+                    if (is_file($altFile)) {
+                        require $altFile;
+                        return true;
+                    }
+                }
             }
         }
         return false;

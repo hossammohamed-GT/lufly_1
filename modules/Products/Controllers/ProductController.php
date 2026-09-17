@@ -26,17 +26,33 @@ class ProductController extends Controller
     public function index(Request $request): Response
     {
         $locale = $this->translator->getLocale();
+        $categorySlug = (string) $request->query('category', '');
+        $searchQuery = (string) $request->query('q', '');
+
         $paginator = $this->products->paginate([
             'locale' => $locale,
             'status' => 'active',
-            'search' => (string) $request->query('q', ''),
+            'category_slug' => $categorySlug,
+            'search' => $searchQuery,
         ], (int) $request->query('page', '1'), 12);
+
+        $connection = \Modules\Products\Models\Product::query()->connection();
+        $categories = $connection->select(
+            "SELECT c.id, c.slug, c.image, ct.name FROM categories c
+             LEFT JOIN category_translations ct ON ct.category_id = c.id AND ct.locale = ?
+             WHERE c.deleted_at IS NULL AND c.status = 'active'
+             ORDER BY c.id ASC",
+            [$locale]
+        );
 
         $this->seo->setTitle(trans('products.title'));
 
         return $this->view('products::index', [
             'title' => trans('products.title'),
             'paginator' => $paginator,
+            'categories' => $categories,
+            'activeCategory' => $categorySlug,
+            'searchQuery' => $searchQuery,
             'locale' => $locale,
             'seo' => $this->seo,
         ]);

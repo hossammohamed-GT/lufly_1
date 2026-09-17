@@ -16,11 +16,11 @@ final class ServeCommand extends Command
     {
         $host = is_string($this->option($options, 'host', '0.0.0.0')) ? (string) $this->option($options, 'host', '0.0.0.0') : '0.0.0.0';
         $port = is_string($this->option($options, 'port', '8080')) ? (string) $this->option($options, 'port', '8080') : '8080';
-        $public = $this->app->basePath('public');
+        $router = $this->app->basePath('server.php');
 
-        $this->info("Serving on http://{$host}:{$port} (document root: public/)");
+        $this->info("Serving on http://{$host}:{$port}");
 
-        passthru(escapeshellarg(PHP_BINARY) . ' -S ' . $host . ':' . $port . ' -t ' . escapeshellarg($public), $exit);
+        passthru(escapeshellarg(PHP_BINARY) . ' -S ' . $host . ':' . $port . ' ' . escapeshellarg($router), $exit);
 
         return (int) $exit;
     }

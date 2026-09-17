@@ -11,10 +11,14 @@ class SettingSeeder extends Seeder
     public function run(): void
     {
         $settings = [
-            'company_name' => 'Lufly',
-            'contact_email' => 'hello@lufly.test',
-            'contact_phone' => '+90 000 000 00 00',
-            'default_meta_description' => 'Enterprise multilingual platform foundation built with native PHP.',
+            'company_name' => 'LUFLY İNŞAAT SANAYİ VE TİCARET LİMİTED ŞİRKETİ',
+            'brand_name' => 'LUFLY Sanitary & Ceramic Ware',
+            'contact_email' => 'info@lufly.tr',
+            'contact_phone' => '+90 850 3040 817',
+            'contact_whatsapp' => '+90 850 3040 817',
+            'contact_address' => 'Gaziantep, Turkey',
+            'factory_warranty' => '10 Years Factory Guarantee',
+            'default_meta_description' => 'LUFLY - Premium Turkish Vitreous China Sanitary Ware, Rimless Wall-Hung Toilets, Luxury Bidets & Architectural Ceramics Manufacturer and European Exporter.',
         ];
 
         foreach ($settings as $key => $value) {

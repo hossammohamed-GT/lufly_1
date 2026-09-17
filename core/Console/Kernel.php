@@ -19,6 +19,7 @@ class Kernel
         'docs:api' => Commands\DocsApiCommand::class,
         'serve' => Commands\ServeCommand::class,
         'key:generate' => Commands\KeyGenerateCommand::class,
+        'backup:db' => Commands\BackupDbCommand::class,
         'list' => Commands\ListCommand::class,
     ];
 

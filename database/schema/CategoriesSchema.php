@@ -16,6 +16,7 @@ class CategoriesSchema extends SchemaDefinition
         $table->id();
         $table->bigInteger('parent_id')->nullable()->index();
         $table->slug()->unique();
+        $table->string_255('image')->nullable();
         $table->status();
         $table->seo();
         $table->timestamps();

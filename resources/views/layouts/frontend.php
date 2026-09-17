@@ -4,9 +4,10 @@
 /** @var string $title */
 $translator = $translator ?? null;
 $locale = $translator instanceof \Core\Localization\Translator ? $translator->getLocale() : (string) config('localization.default', 'en');
+$dir = ($locale === 'ar') ? 'rtl' : 'ltr';
 ?>
 <!DOCTYPE html>
-<html lang="<?= e($locale) ?>" data-theme="light">
+<html lang="<?= e($locale) ?>" dir="<?= e($dir) ?>" data-theme="light">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">

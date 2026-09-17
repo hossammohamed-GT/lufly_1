@@ -18,6 +18,8 @@ class ProductsSchema extends SchemaDefinition
         $table->string_100('sku')->unique();
         $table->slug()->unique();
         $table->decimal('price', 12, 2)->default(0);
+        $table->string_255('image')->nullable();
+        $table->json('specs')->nullable();
         $table->status();
         $table->seo();
         $table->timestamps();

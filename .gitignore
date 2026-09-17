@@ -9,3 +9,5 @@
 !/vendor/README.md
 .DS_Store
 Thumbs.db
+/storage/backups/*
+!/storage/backups/.gitkeep
