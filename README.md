@@ -29,6 +29,20 @@ panel, CRM and future business systems.
 - **Standardized API** with success/error/pagination envelopes and
   auto-generated endpoint docs (`php cli docs:api`).
 
+## Quick start (Local Development)
+
+After cloning, run the built-in server from the project root. The router file is
+required so application routes and files under `public/` are served together:
+
+```bash
+php cli serve --host=127.0.0.1 --port=8080
+```
+
+Then open `http://127.0.0.1:8080/en/`.
+
+Do not run `php -S 127.0.0.1:8080` without `server.php`; that can load the page
+without serving the public frontend assets correctly.
+
 ## Quick start (XAMPP)
 
 ```bash

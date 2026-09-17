@@ -6,6 +6,21 @@
 - MySQL 5.7+/MariaDB
 - Apache with `mod_rewrite` (XAMPP default)
 
+## Local development with PHP built-in server
+
+From the project root, use the bundled router so both the application and
+`public/frontend/` assets are served correctly:
+
+```bash
+php cli serve --host=127.0.0.1 --port=8080
+```
+
+Open `http://127.0.0.1:8080/en/` after the server starts.
+
+Do not use `php -S 127.0.0.1:8080` by itself from the project root. Without
+`server.php`, the request routing and public asset paths can be incorrect and
+the page may appear as unstyled HTML.
+
 ## Setup
 
 1. Copy the project into `C:\xampp\htdocs\lufly` (or a Linux htdocs path).
