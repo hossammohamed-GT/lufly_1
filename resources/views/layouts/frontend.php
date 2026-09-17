@@ -20,9 +20,9 @@ $dir = 'ltr';
 <link rel="stylesheet" href="<?= e(asset('frontend/design-system/animations.css')) ?>">
 <link rel="stylesheet" href="<?= e(asset('frontend/design-system/themes.css')) ?>">
 <link rel="stylesheet" href="<?= e(asset('frontend/design-system/components.css')) ?>">
-<link rel="stylesheet" href="<?= e(asset('frontend/design-system/hero-cinematic.css')) ?>">
+<link rel="stylesheet" href="<?= e(asset('frontend/design-system/tidal-monolith.css')) ?>">
 </head>
-<body class="ds-app">
+<body class="ds-app aquatic-stage">
 <?php if ($translator !== null): ?>
 <?= $view->renderFile($view->resolvePath('components.navbar'), []) ?>
 <?php endif; ?>
@@ -35,6 +35,6 @@ $dir = 'ltr';
 <?php endif; ?>
 <script src="<?= e(asset('frontend/js/theme-switcher.js')) ?>"></script>
 <script src="<?= e(asset('frontend/js/modal.js')) ?>"></script>
-<script src="<?= e(asset('frontend/js/hero-scenes.js')) ?>"></script>
+<script src="<?= e(asset('frontend/js/tidal-monolith.js')) ?>"></script>
 </body>
 </html>

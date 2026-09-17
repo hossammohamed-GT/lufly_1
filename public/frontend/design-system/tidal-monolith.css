@@ -1,0 +1,1152 @@
+/* ==========================================================================
+   LUFLY — Direction 01 / 10: TIDAL MONOLITH (Aquatic Luxury Design System)
+   Theme: "شفاف مائى" (Translucent Aquatic Glassmorphism & European Sanitary Architecture)
+   Core Primary: #1C8B8B | Secondary: #143F43 | Light BG: #F3F7F5 | Text: #102A2A
+   ========================================================================== */
+
+:root {
+  --lufly-teal: #1C8B8B;
+  --lufly-teal-hover: #147174;
+  --lufly-teal-soft: rgba(28, 139, 139, 0.1);
+  --lufly-teal-glow: rgba(28, 139, 139, 0.25);
+  --lufly-secondary: #143F43;
+  --lufly-bg: #F3F7F5;
+  --lufly-surface: #FFFFFF;
+  --lufly-text: #102A2A;
+  --lufly-muted: #617674;
+  --lufly-border: #C8D6D1;
+  --glass-bg: rgba(255, 255, 255, 0.76);
+  --glass-bg-elevated: rgba(255, 255, 255, 0.90);
+  --glass-border: rgba(200, 214, 209, 0.75);
+  --glass-blur: blur(24px) saturate(180%);
+  --shadow-soft: 0 12px 36px rgba(16, 42, 42, 0.06), 0 2px 6px rgba(16, 42, 42, 0.03);
+  --shadow-hover: 0 20px 50px rgba(16, 42, 42, 0.12), 0 4px 12px rgba(16, 42, 42, 0.05);
+  --font-display: Arial Narrow, "Helvetica Neue", Arial, sans-serif;
+  --font-body: Inter, ui-sans-serif, system-ui, -apple-system, sans-serif;
+  --transition-smooth: all 0.35s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+[data-theme="dark"] {
+  --lufly-bg: #0A1414;
+  --lufly-surface: #101E1D;
+  --lufly-text: #EFF7F3;
+  --lufly-muted: #9CB5AE;
+  --lufly-border: #2D4843;
+  --glass-bg: rgba(16, 30, 29, 0.80);
+  --glass-bg-elevated: rgba(20, 38, 36, 0.92);
+  --glass-border: rgba(45, 72, 67, 0.75);
+  --shadow-soft: 0 16px 40px rgba(0, 0, 0, 0.4);
+  --shadow-hover: 0 24px 60px rgba(0, 0, 0, 0.6);
+}
+
+/* Base resets & typography */
+body {
+  background-color: var(--lufly-bg);
+  color: var(--lufly-text);
+  font-family: var(--font-body);
+  margin: 0;
+  padding: 0;
+  overflow-x: hidden;
+}
+
+/* Aquatic subtle background ambience */
+.aquatic-stage {
+  position: relative;
+  background: 
+    radial-gradient(ellipse 70% 50% at 85% -10%, rgba(28, 139, 139, 0.09) 0%, transparent 60%),
+    radial-gradient(ellipse 60% 40% at 10% 30%, rgba(127, 226, 208, 0.06) 0%, transparent 50%),
+    var(--lufly-bg);
+}
+
+/* Glassmorphic surfaces ("شفاف مائى") */
+.glass-panel {
+  background: var(--glass-bg);
+  backdrop-filter: var(--glass-blur);
+  -webkit-backdrop-filter: var(--glass-blur);
+  border: 1px solid var(--glass-border);
+  box-shadow: var(--shadow-soft);
+  border-radius: 4px;
+}
+
+.glass-panel-elevated {
+  background: var(--glass-bg-elevated);
+  backdrop-filter: var(--glass-blur);
+  -webkit-backdrop-filter: var(--glass-blur);
+  border: 1px solid var(--glass-border);
+  box-shadow: var(--shadow-hover);
+  border-radius: 4px;
+}
+
+/* Utility Topbar (Deante style) */
+.lufly-topbar {
+  background: var(--lufly-surface);
+  border-bottom: 1px solid var(--lufly-border);
+  font-size: 12px;
+  color: var(--lufly-muted);
+  padding: 8px 0;
+  letter-spacing: 0.02em;
+}
+.lufly-topbar-inner {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+.lufly-topbar-credentials {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+}
+.lufly-topbar-item {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+.lufly-topbar-item b {
+  color: var(--lufly-text);
+  font-weight: 600;
+}
+.lufly-topbar-contact {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+.lufly-topbar-contact a {
+  color: var(--lufly-teal);
+  font-weight: 600;
+  text-decoration: none;
+}
+
+/* Main Luxury Navigation Bar */
+.lufly-nav {
+  position: sticky;
+  top: 0;
+  z-index: 1000;
+  background: var(--glass-bg);
+  backdrop-filter: var(--glass-blur);
+  -webkit-backdrop-filter: var(--glass-blur);
+  border-bottom: 1px solid var(--glass-border);
+  transition: var(--transition-smooth);
+}
+.lufly-nav-main {
+  display: grid;
+  grid-template-columns: 200px 1fr auto;
+  align-items: center;
+  gap: 32px;
+  padding: 16px 0;
+}
+.lufly-brand {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  text-decoration: none;
+}
+.lufly-brand-logo {
+  height: 38px;
+  width: auto;
+  object-fit: contain;
+}
+.lufly-brand-text {
+  display: flex;
+  flex-direction: column;
+}
+.lufly-brand-title {
+  font-family: var(--font-display);
+  font-size: 24px;
+  font-weight: 800;
+  letter-spacing: 0.06em;
+  color: var(--lufly-text);
+  line-height: 1;
+}
+.lufly-brand-subtitle {
+  font-size: 10px;
+  text-transform: uppercase;
+  letter-spacing: 0.15em;
+  color: var(--lufly-teal);
+  font-weight: 600;
+  margin-top: 3px;
+}
+
+/* Architectural Search Bar (Deante-Inspired) */
+.lufly-search-wrapper {
+  position: relative;
+  max-width: 540px;
+  width: 100%;
+  margin: 0 auto;
+}
+.lufly-search-input {
+  width: 100%;
+  padding: 12px 20px 12px 44px;
+  background: var(--lufly-surface);
+  border: 1px solid var(--lufly-border);
+  border-radius: 40px;
+  font-size: 14px;
+  color: var(--lufly-text);
+  outline: none;
+  transition: var(--transition-smooth);
+  box-sizing: border-box;
+}
+.lufly-search-input:focus {
+  border-color: var(--lufly-teal);
+  box-shadow: 0 0 0 4px var(--lufly-teal-soft);
+}
+.lufly-search-icon {
+  position: absolute;
+  left: 16px;
+  top: 50%;
+  transform: translateY(-50%);
+  color: var(--lufly-muted);
+  pointer-events: none;
+  font-size: 15px;
+}
+.lufly-search-results {
+  position: absolute;
+  top: calc(100% + 8px);
+  left: 0;
+  right: 0;
+  background: var(--lufly-surface);
+  border: 1px solid var(--lufly-border);
+  border-radius: 8px;
+  box-shadow: var(--shadow-hover);
+  padding: 12px;
+  display: none;
+  z-index: 1050;
+  max-height: 380px;
+  overflow-y: auto;
+}
+
+/* Nav Actions */
+.lufly-nav-actions {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+.lufly-btn-export {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  background: var(--lufly-teal);
+  color: #FFFFFF !important;
+  font-size: 13px;
+  font-weight: 600;
+  padding: 10px 18px;
+  border-radius: 4px;
+  text-decoration: none;
+  transition: var(--transition-smooth);
+}
+.lufly-btn-export:hover {
+  background: var(--lufly-teal-hover);
+  transform: translateY(-1px);
+  box-shadow: 0 6px 18px var(--lufly-teal-glow);
+}
+
+/* Secondary Navigation Strip (Categories & Spec) */
+.lufly-subnav {
+  border-top: 1px solid var(--lufly-border);
+  background: var(--lufly-surface);
+  font-size: 13px;
+}
+.lufly-subnav-inner {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 10px 0;
+}
+.lufly-subnav-links {
+  display: flex;
+  align-items: center;
+  gap: 28px;
+}
+.lufly-subnav-link {
+  color: var(--lufly-text);
+  text-decoration: none;
+  font-weight: 500;
+  letter-spacing: 0.02em;
+  position: relative;
+  transition: var(--transition-smooth);
+}
+.lufly-subnav-link:hover,
+.lufly-subnav-link.active {
+  color: var(--lufly-teal);
+}
+.lufly-subnav-link::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  bottom: -4px;
+  width: 0;
+  height: 2px;
+  background: var(--lufly-teal);
+  transition: width 0.25s ease;
+}
+.lufly-subnav-link:hover::after {
+  width: 100%;
+}
+.lufly-subnav-badge {
+  font-size: 11px;
+  background: var(--lufly-teal-soft);
+  color: var(--lufly-teal);
+  padding: 4px 10px;
+  border-radius: 12px;
+  font-weight: 600;
+  text-decoration: none;
+}
+
+/* ==========================================================================
+   HERO SECTION — TIDAL MONOLITH (Luminous Aquatic Atmosphere)
+   ========================================================================== */
+.hero-monolith {
+  position: relative;
+  padding: 60px 0 80px 0;
+  overflow: hidden;
+  border-bottom: 1px solid var(--lufly-border);
+}
+.hero-grid {
+  display: grid;
+  grid-template-columns: 1.15fr 0.85fr;
+  align-items: center;
+  gap: 60px;
+}
+
+/* Architectural Direction Badge */
+.direction-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 12px;
+  padding: 6px 14px;
+  background: var(--glass-bg);
+  border: 1px solid var(--lufly-border);
+  border-radius: 20px;
+  font-size: 11px;
+  font-family: var(--font-display);
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--lufly-teal);
+  margin-bottom: 24px;
+}
+.direction-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--lufly-teal);
+  box-shadow: 0 0 8px var(--lufly-teal);
+  animation: pulse-dot 2s infinite ease-in-out;
+}
+@keyframes pulse-dot {
+  0%, 100% { opacity: 0.6; transform: scale(1); }
+  50% { opacity: 1; transform: scale(1.3); }
+}
+
+.hero-heading {
+  font-family: var(--font-display);
+  font-size: clamp(40px, 5.5vw, 68px);
+  font-weight: 800;
+  line-height: 1.04;
+  letter-spacing: -0.02em;
+  color: var(--lufly-text);
+  margin: 0 0 20px 0;
+}
+.hero-heading .accent-teal {
+  color: var(--lufly-teal);
+}
+
+.hero-subheading {
+  font-size: 18px;
+  line-height: 1.6;
+  color: var(--lufly-muted);
+  max-width: 580px;
+  margin: 0 0 36px 0;
+}
+
+.hero-cta-group {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 16px;
+  margin-bottom: 48px;
+}
+.btn-primary-teal {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  background: var(--lufly-teal);
+  color: #FFFFFF !important;
+  font-size: 15px;
+  font-weight: 600;
+  padding: 14px 28px;
+  border-radius: 4px;
+  text-decoration: none;
+  transition: var(--transition-smooth);
+}
+.btn-primary-teal:hover {
+  background: var(--lufly-teal-hover);
+  transform: translateY(-2px);
+  box-shadow: 0 10px 25px var(--lufly-teal-glow);
+}
+.btn-secondary-glass {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  background: var(--glass-bg);
+  backdrop-filter: var(--glass-blur);
+  -webkit-backdrop-filter: var(--glass-blur);
+  color: var(--lufly-text) !important;
+  border: 1px solid var(--lufly-border);
+  font-size: 15px;
+  font-weight: 600;
+  padding: 14px 28px;
+  border-radius: 4px;
+  text-decoration: none;
+  transition: var(--transition-smooth);
+}
+.btn-secondary-glass:hover {
+  background: var(--lufly-surface);
+  border-color: var(--lufly-teal);
+  transform: translateY(-2px);
+}
+
+/* Metric Tickers */
+.hero-metrics {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 24px;
+  padding-top: 32px;
+  border-top: 1px solid var(--lufly-border);
+}
+.metric-item {
+  display: flex;
+  flex-direction: column;
+}
+.metric-value {
+  font-family: var(--font-display);
+  font-size: 28px;
+  font-weight: 800;
+  color: var(--lufly-text);
+  line-height: 1.1;
+}
+.metric-label {
+  font-size: 12px;
+  color: var(--lufly-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  margin-top: 4px;
+}
+
+/* Floating Monolith Card (Right Column) */
+.hero-stage-card {
+  position: relative;
+  background: var(--glass-bg-elevated);
+  backdrop-filter: var(--glass-blur);
+  -webkit-backdrop-filter: var(--glass-blur);
+  border: 1px solid var(--glass-border);
+  border-radius: 8px;
+  padding: 28px;
+  box-shadow: var(--shadow-hover);
+  overflow: hidden;
+}
+.hero-stage-card::before {
+  content: "";
+  position: absolute;
+  top: -50%;
+  left: -50%;
+  width: 200%;
+  height: 200%;
+  background: radial-gradient(circle, rgba(28, 139, 139, 0.12) 0%, transparent 70%);
+  pointer-events: none;
+  z-index: 0;
+}
+.hero-stage-content {
+  position: relative;
+  z-index: 1;
+}
+.hero-stage-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 20px;
+}
+.hero-stage-tag {
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+  color: var(--lufly-teal);
+  background: var(--lufly-teal-soft);
+  padding: 4px 10px;
+  border-radius: 4px;
+}
+.hero-stage-cycle {
+  font-size: 12px;
+  color: var(--lufly-muted);
+}
+.hero-stage-image-wrap {
+  position: relative;
+  width: 100%;
+  height: 380px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: radial-gradient(circle, rgba(28, 139, 139, 0.06) 0%, transparent 75%);
+  border-radius: 6px;
+  margin-bottom: 20px;
+}
+.hero-stage-img {
+  max-width: 90%;
+  max-height: 90%;
+  object-fit: contain;
+  transition: transform 0.5s cubic-bezier(0.22, 1, 0.36, 1);
+  filter: drop-shadow(0 15px 30px rgba(16, 42, 42, 0.15));
+}
+.hero-stage-card:hover .hero-stage-img {
+  transform: scale(1.04) translateY(-4px);
+}
+.hero-stage-footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding-top: 16px;
+  border-top: 1px solid var(--lufly-border);
+}
+.hero-stage-meta h3 {
+  margin: 0;
+  font-size: 18px;
+  font-weight: 700;
+  color: var(--lufly-text);
+}
+.hero-stage-meta p {
+  margin: 4px 0 0 0;
+  font-size: 13px;
+  color: var(--lufly-muted);
+}
+
+/* ==========================================================================
+   ENGINEERING TRUST BAR (Deante-Inspired Badges)
+   ========================================================================== */
+.trust-bar {
+  padding: 40px 0;
+  background: var(--lufly-surface);
+  border-bottom: 1px solid var(--lufly-border);
+}
+.trust-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 24px;
+}
+.trust-card {
+  display: flex;
+  align-items: flex-start;
+  gap: 16px;
+  padding: 16px;
+  border-radius: 4px;
+  transition: var(--transition-smooth);
+}
+.trust-card:hover {
+  background: var(--lufly-bg);
+}
+.trust-icon {
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  background: var(--lufly-teal-soft);
+  color: var(--lufly-teal);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 20px;
+  flex-shrink: 0;
+}
+.trust-info h4 {
+  margin: 0 0 4px 0;
+  font-size: 15px;
+  font-weight: 700;
+  color: var(--lufly-text);
+}
+.trust-info p {
+  margin: 0;
+  font-size: 13px;
+  line-height: 1.4;
+  color: var(--lufly-muted);
+}
+
+/* ==========================================================================
+   INTERACTIVE FINISH / COLOR SELECTOR ("Choose color of fittings")
+   Deante Key Feature from user uploaded reference
+   ========================================================================== */
+.finishes-section {
+  padding: 80px 0;
+  border-bottom: 1px solid var(--lufly-border);
+}
+.section-header-center {
+  text-align: center;
+  max-width: 680px;
+  margin: 0 auto 50px auto;
+}
+.section-tag {
+  font-family: var(--font-display);
+  font-size: 12px;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  color: var(--lufly-teal);
+  font-weight: 700;
+  margin-bottom: 12px;
+  display: block;
+}
+.section-title {
+  font-family: var(--font-display);
+  font-size: clamp(32px, 4vw, 44px);
+  font-weight: 800;
+  letter-spacing: -0.02em;
+  color: var(--lufly-text);
+  margin: 0 0 16px 0;
+  line-height: 1.1;
+}
+.section-subtitle {
+  font-size: 16px;
+  color: var(--lufly-muted);
+  line-height: 1.6;
+  margin: 0;
+}
+
+/* Finish Swatches Strip */
+.finishes-swatch-row {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 20px;
+  margin-bottom: 48px;
+  flex-wrap: wrap;
+}
+.finish-swatch-btn {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  padding: 8px 12px;
+  border-radius: 8px;
+  transition: var(--transition-smooth);
+}
+.finish-swatch-btn:hover,
+.finish-swatch-btn.is-active {
+  background: var(--glass-bg-elevated);
+  box-shadow: var(--shadow-soft);
+}
+.swatch-circle {
+  width: 42px;
+  height: 42px;
+  border-radius: 50%;
+  border: 2px solid #FFFFFF;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+  transition: transform 0.25s ease, box-shadow 0.25s ease;
+  position: relative;
+}
+.finish-swatch-btn.is-active .swatch-circle {
+  transform: scale(1.15);
+  box-shadow: 0 0 0 3px var(--lufly-teal);
+}
+.swatch-label {
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--lufly-text);
+  letter-spacing: 0.02em;
+}
+
+/* Swatch Color Gradients */
+.swatch-chrome { background: linear-gradient(135deg, #e0e0e0 0%, #ffffff 50%, #9e9e9e 100%); }
+.swatch-brushed-steel { background: linear-gradient(135deg, #c0c0c0 0%, #d8d8d8 50%, #8a8a8a 100%); }
+.swatch-brushed-gold { background: linear-gradient(135deg, #dfba73 0%, #f7e2a9 50%, #b88d3b 100%); }
+.swatch-brushed-rose-gold { background: linear-gradient(135deg, #d89377 0%, #f3c2b0 50%, #a96048 100%); }
+.swatch-matte-black { background: linear-gradient(135deg, #2c2c2c 0%, #1a1a1a 50%, #0d0d0d 100%); }
+.swatch-gunmetal { background: linear-gradient(135deg, #595e63 0%, #7d848a 50%, #3e4347 100%); }
+
+/* Finish Interactive Showcase Box */
+.finish-showcase-box {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  align-items: center;
+  gap: 48px;
+  background: var(--glass-bg);
+  backdrop-filter: var(--glass-blur);
+  -webkit-backdrop-filter: var(--glass-blur);
+  border: 1px solid var(--glass-border);
+  border-radius: 8px;
+  padding: 40px;
+  box-shadow: var(--shadow-soft);
+}
+.finish-showcase-image-wrap {
+  height: 420px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: radial-gradient(circle, rgba(28, 139, 139, 0.06) 0%, transparent 75%);
+  border-radius: 6px;
+}
+.finish-showcase-img {
+  max-width: 85%;
+  max-height: 85%;
+  object-fit: contain;
+  transition: opacity 0.3s ease, transform 0.3s ease;
+  filter: drop-shadow(0 15px 30px rgba(16, 42, 42, 0.12));
+}
+.finish-showcase-details {
+  display: flex;
+  flex-direction: column;
+}
+.finish-spec-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 11px;
+  font-family: var(--font-display);
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--lufly-teal);
+  background: var(--lufly-teal-soft);
+  padding: 6px 12px;
+  border-radius: 4px;
+  align-self: flex-start;
+  margin-bottom: 16px;
+  font-weight: 700;
+}
+.finish-title {
+  font-family: var(--font-display);
+  font-size: 32px;
+  font-weight: 800;
+  color: var(--lufly-text);
+  margin: 0 0 12px 0;
+}
+.finish-desc {
+  font-size: 15px;
+  line-height: 1.6;
+  color: var(--lufly-muted);
+  margin: 0 0 24px 0;
+}
+.finish-tech-specs {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+  padding: 20px 0;
+  border-top: 1px solid var(--lufly-border);
+  border-bottom: 1px solid var(--lufly-border);
+  margin-bottom: 24px;
+}
+.tech-spec-item b {
+  display: block;
+  font-size: 14px;
+  color: var(--lufly-text);
+}
+.tech-spec-item span {
+  font-size: 12px;
+  color: var(--lufly-muted);
+}
+
+/* ==========================================================================
+   "DESIGN YOUR SPACE" — CURATED CATEGORIES (Deante Style)
+   ========================================================================== */
+.categories-section {
+  padding: 80px 0;
+  border-bottom: 1px solid var(--lufly-border);
+}
+.category-mosaic {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap: 20px;
+}
+.category-card-monolith {
+  position: relative;
+  height: 380px;
+  border-radius: 6px;
+  overflow: hidden;
+  border: 1px solid var(--lufly-border);
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  text-decoration: none;
+  transition: var(--transition-smooth);
+}
+.category-card-monolith:hover {
+  transform: translateY(-6px);
+  box-shadow: var(--shadow-hover);
+  border-color: var(--lufly-teal);
+}
+.category-card-bg {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 0.6s cubic-bezier(0.22, 1, 0.36, 1);
+}
+.category-card-monolith:hover .category-card-bg {
+  transform: scale(1.08);
+}
+.category-card-gradient {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 60%;
+  background: linear-gradient(to top, rgba(16, 42, 42, 0.92) 0%, rgba(16, 42, 42, 0.4) 60%, transparent 100%);
+}
+.category-card-info {
+  position: relative;
+  z-index: 2;
+  padding: 24px 20px;
+  color: #FFFFFF;
+}
+.category-card-info h3 {
+  margin: 0 0 6px 0;
+  font-size: 18px;
+  font-weight: 700;
+  color: #FFFFFF;
+}
+.category-card-info p {
+  margin: 0;
+  font-size: 12px;
+  color: rgba(255, 255, 255, 0.75);
+}
+
+/* ==========================================================================
+   "GET INSPIRED" — ARCHITECTURAL SPACES & ROOM CONCEPTS
+   ========================================================================== */
+.inspiration-section {
+  padding: 80px 0;
+  border-bottom: 1px solid var(--lufly-border);
+  background: var(--lufly-surface);
+}
+.inspiration-carousel {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 24px;
+}
+.inspiration-card {
+  position: relative;
+  border-radius: 8px;
+  overflow: hidden;
+  border: 1px solid var(--lufly-border);
+  background: var(--lufly-bg);
+  transition: var(--transition-smooth);
+}
+.inspiration-card:hover {
+  transform: translateY(-4px);
+  box-shadow: var(--shadow-hover);
+}
+.inspiration-img-wrap {
+  height: 260px;
+  overflow: hidden;
+}
+.inspiration-img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 0.5s ease;
+}
+.inspiration-card:hover .inspiration-img {
+  transform: scale(1.06);
+}
+.inspiration-body {
+  padding: 20px;
+}
+.inspiration-tag {
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  color: var(--lufly-teal);
+  margin-bottom: 6px;
+  display: block;
+}
+.inspiration-body h4 {
+  margin: 0 0 8px 0;
+  font-size: 16px;
+  font-weight: 700;
+  color: var(--lufly-text);
+}
+.inspiration-body p {
+  margin: 0;
+  font-size: 13px;
+  color: var(--lufly-muted);
+  line-height: 1.5;
+}
+
+/* ==========================================================================
+   WATER RITUALS & HYDRODYNAMICS (Sensory Water Flow Feature)
+   ========================================================================== */
+.rituals-section {
+  padding: 80px 0;
+  border-bottom: 1px solid var(--lufly-border);
+}
+.rituals-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 32px;
+}
+.ritual-card {
+  padding: 32px;
+  background: var(--glass-bg);
+  backdrop-filter: var(--glass-blur);
+  -webkit-backdrop-filter: var(--glass-blur);
+  border: 1px solid var(--glass-border);
+  border-radius: 8px;
+  transition: var(--transition-smooth);
+}
+.ritual-card:hover {
+  border-color: var(--lufly-teal);
+  transform: translateY(-4px);
+  box-shadow: var(--shadow-hover);
+}
+.ritual-number {
+  font-family: var(--font-display);
+  font-size: 14px;
+  color: var(--lufly-teal);
+  letter-spacing: 0.15em;
+  font-weight: 800;
+  margin-bottom: 16px;
+}
+.ritual-card h3 {
+  font-family: var(--font-display);
+  font-size: 22px;
+  font-weight: 700;
+  color: var(--lufly-text);
+  margin: 0 0 12px 0;
+}
+.ritual-card p {
+  font-size: 14px;
+  line-height: 1.6;
+  color: var(--lufly-muted);
+  margin: 0 0 20px 0;
+}
+.ritual-metric-tag {
+  display: inline-block;
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--lufly-secondary);
+  background: var(--lufly-teal-soft);
+  padding: 6px 12px;
+  border-radius: 4px;
+}
+
+/* ==========================================================================
+   FEATURED PRODUCTS (Real Database Masterpieces)
+   ========================================================================== */
+.masterpieces-section {
+  padding: 80px 0;
+  border-bottom: 1px solid var(--lufly-border);
+  background: var(--lufly-surface);
+}
+.products-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 24px;
+}
+.product-card-luxury {
+  background: var(--lufly-bg);
+  border: 1px solid var(--lufly-border);
+  border-radius: 6px;
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  transition: var(--transition-smooth);
+}
+.product-card-luxury:hover {
+  transform: translateY(-6px);
+  box-shadow: var(--shadow-hover);
+  border-color: var(--lufly-teal);
+  background: var(--lufly-surface);
+}
+.product-img-box {
+  height: 220px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 16px;
+  position: relative;
+}
+.product-img-box img {
+  max-width: 88%;
+  max-height: 88%;
+  object-fit: contain;
+  transition: transform 0.4s ease;
+}
+.product-card-luxury:hover .product-img-box img {
+  transform: scale(1.06);
+}
+.product-sku-badge {
+  font-size: 10px;
+  font-family: var(--font-display);
+  letter-spacing: 0.1em;
+  color: var(--lufly-muted);
+  text-transform: uppercase;
+  margin-bottom: 6px;
+}
+.product-title {
+  font-size: 16px;
+  font-weight: 700;
+  color: var(--lufly-text);
+  margin: 0 0 8px 0;
+  line-height: 1.3;
+}
+.product-specs {
+  font-size: 12px;
+  color: var(--lufly-muted);
+  line-height: 1.4;
+  margin-bottom: 16px;
+  flex-grow: 1;
+}
+.product-card-actions {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding-top: 14px;
+  border-top: 1px solid var(--lufly-border);
+}
+.btn-inquire-whatsapp {
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--lufly-teal);
+  text-decoration: none;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  transition: color 0.2s ease;
+}
+.btn-inquire-whatsapp:hover {
+  color: var(--lufly-teal-hover);
+}
+
+/* ==========================================================================
+   OFFICIAL CORPORATE ENTITY & GAZIANTEP DISPATCH
+   ========================================================================== */
+.corporate-section {
+  padding: 80px 0;
+  background: var(--lufly-bg);
+  border-bottom: 1px solid var(--lufly-border);
+}
+.corporate-box {
+  background: var(--lufly-surface);
+  border: 1px solid var(--lufly-border);
+  border-radius: 8px;
+  padding: 48px;
+  box-shadow: var(--shadow-soft);
+  display: grid;
+  grid-template-columns: 1.2fr 0.8fr;
+  gap: 48px;
+  align-items: center;
+}
+.corporate-info h3 {
+  font-family: var(--font-display);
+  font-size: 28px;
+  font-weight: 800;
+  color: var(--lufly-text);
+  margin: 0 0 12px 0;
+}
+.corporate-legal-badge {
+  display: inline-block;
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.05em;
+  color: var(--lufly-secondary);
+  background: var(--lufly-teal-soft);
+  padding: 6px 14px;
+  border-radius: 4px;
+  margin-bottom: 16px;
+}
+.corporate-info p {
+  font-size: 14px;
+  line-height: 1.6;
+  color: var(--lufly-muted);
+  margin: 0 0 24px 0;
+}
+.corporate-details-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  font-size: 13px;
+  color: var(--lufly-text);
+}
+.corporate-details-list li b {
+  color: var(--lufly-muted);
+  display: inline-block;
+  width: 140px;
+}
+
+/* ==========================================================================
+   MEGA FOOTER (Deante-Inspired Comprehensive Architecture)
+   ========================================================================== */
+.lufly-mega-footer {
+  background: var(--lufly-surface);
+  border-top: 1px solid var(--lufly-border);
+  padding: 60px 0 30px 0;
+  font-size: 13px;
+}
+.footer-grid {
+  display: grid;
+  grid-template-columns: 1.5fr repeat(4, 1fr);
+  gap: 40px;
+  margin-bottom: 48px;
+}
+.footer-col h5 {
+  font-family: var(--font-display);
+  font-size: 14px;
+  font-weight: 700;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  color: var(--lufly-text);
+  margin: 0 0 18px 0;
+}
+.footer-col ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+.footer-col ul a {
+  color: var(--lufly-muted);
+  text-decoration: none;
+  transition: color 0.2s ease;
+}
+.footer-col ul a:hover {
+  color: var(--lufly-teal);
+}
+.footer-bottom-bar {
+  padding-top: 24px;
+  border-top: 1px solid var(--lufly-border);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  font-size: 12px;
+  color: var(--lufly-muted);
+}
+
+/* ==========================================================================
+   RESPONSIVE QUERIES
+   ========================================================================== */
+@media (max-width: 1024px) {
+  .hero-grid { grid-template-columns: 1fr; gap: 40px; }
+  .trust-grid { grid-template-columns: repeat(2, 1fr); }
+  .category-mosaic { grid-template-columns: repeat(3, 1fr); }
+  .inspiration-carousel { grid-template-columns: repeat(2, 1fr); }
+  .rituals-grid { grid-template-columns: 1fr; }
+  .products-grid { grid-template-columns: repeat(2, 1fr); }
+  .corporate-box { grid-template-columns: 1fr; }
+  .footer-grid { grid-template-columns: repeat(2, 1fr); }
+  .lufly-nav-main { grid-template-columns: auto 1fr auto; gap: 16px; }
+  .finish-showcase-box { grid-template-columns: 1fr; }
+}
+
+@media (max-width: 640px) {
+  .trust-grid { grid-template-columns: 1fr; }
+  .category-mosaic { grid-template-columns: 1fr; }
+  .inspiration-carousel { grid-template-columns: 1fr; }
+  .products-grid { grid-template-columns: 1fr; }
+  .footer-grid { grid-template-columns: 1fr; }
+  .hero-metrics { grid-template-columns: 1fr; }
+  .lufly-subnav-links { overflow-x: auto; white-space: nowrap; }
+}

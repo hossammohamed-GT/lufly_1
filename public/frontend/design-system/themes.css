@@ -1,46 +1,54 @@
-/* Semantic tokens per theme. Components may only reference these. */
+/* Semantic tokens per theme matching LUFLY Tidal Monolith Atlas */
 :root,
 [data-theme="light"] {
-  --ds-bg: var(--color-neutral-50);
-  --ds-bg-elevated: var(--color-neutral-0);
-  --ds-surface: var(--color-neutral-0);
-  --ds-surface-alt: var(--color-neutral-100);
-  --ds-text: var(--color-neutral-900);
-  --ds-text-muted: var(--color-neutral-500);
-  --ds-border: var(--color-neutral-200);
-  --ds-primary: var(--color-brand-500);
-  --ds-primary-hover: var(--color-brand-600);
-  --ds-primary-text: var(--color-neutral-0);
-  --ds-primary-soft: var(--color-brand-50);
-  --ds-secondary: var(--color-teal-accent);
-  --ds-secondary-text: var(--color-neutral-0);
-  --ds-success: var(--color-success);
-  --ds-warning: var(--color-warning);
-  --ds-danger: var(--color-danger);
-  --ds-info: var(--color-info);
-  --shadow-color: rgba(13, 52, 50, 0.12);
+  --ds-bg: #F3F7F5;
+  --ds-bg-elevated: #FFFFFF;
+  --ds-surface: #FFFFFF;
+  --ds-surface-alt: #E9F1EE;
+  --ds-text: #102A2A;
+  --ds-text-muted: #617674;
+  --ds-border: #C8D6D1;
+  --ds-primary: #1C8B8B;
+  --ds-primary-hover: #147174;
+  --ds-primary-text: #FFFFFF;
+  --ds-primary-soft: rgba(28, 139, 139, 0.1);
+  --ds-secondary: #143F43;
+  --ds-secondary-text: #FFFFFF;
+  --ds-success: #4D9077;
+  --ds-warning: #C58A32;
+  --ds-danger: #C64B4B;
+  --ds-info: #3B7A9A;
+  --ds-glass-bg: rgba(255, 255, 255, 0.76);
+  --ds-glass-border: rgba(200, 214, 209, 0.7);
+  --ds-aquatic-tint: rgba(28, 139, 139, 0.06);
+  --ds-aquatic-glow: rgba(28, 139, 139, 0.16);
+  --shadow-color: rgba(16, 42, 42, 0.07);
   --focus-color: color-mix(in srgb, var(--ds-primary) 35%, transparent);
   color-scheme: light;
 }
 
 [data-theme="dark"] {
-  --ds-bg: var(--color-neutral-900);
-  --ds-bg-elevated: var(--color-neutral-800);
-  --ds-surface: var(--color-neutral-800);
-  --ds-surface-alt: var(--color-neutral-700);
-  --ds-text: var(--color-neutral-100);
-  --ds-text-muted: var(--color-neutral-400);
-  --ds-border: var(--color-neutral-700);
-  --ds-primary: var(--color-brand-400);
-  --ds-primary-hover: var(--color-brand-300);
-  --ds-primary-text: var(--color-neutral-900);
-  --ds-primary-soft: color-mix(in srgb, var(--color-brand-400) 18%, var(--color-neutral-900));
-  --ds-secondary: var(--color-neutral-200);
-  --ds-secondary-text: var(--color-neutral-900);
-  --ds-success: color-mix(in srgb, var(--color-success) 75%, white);
-  --ds-warning: color-mix(in srgb, var(--color-warning) 75%, white);
-  --ds-danger: color-mix(in srgb, var(--color-danger) 75%, white);
-  --ds-info: color-mix(in srgb, var(--color-info) 75%, white);
+  --ds-bg: #0A1414;
+  --ds-bg-elevated: #101E1D;
+  --ds-surface: #101E1D;
+  --ds-surface-alt: #162928;
+  --ds-text: #EFF7F3;
+  --ds-text-muted: #9CB5AE;
+  --ds-border: #2D4843;
+  --ds-primary: #1C8B8B;
+  --ds-primary-hover: #7FE2D0;
+  --ds-primary-text: #0A1414;
+  --ds-primary-soft: rgba(28, 139, 139, 0.2);
+  --ds-secondary: #7FE2D0;
+  --ds-secondary-text: #0A1414;
+  --ds-success: #78CE9C;
+  --ds-warning: #E7B658;
+  --ds-danger: #F07B7B;
+  --ds-info: #8CC9EE;
+  --ds-glass-bg: rgba(16, 30, 29, 0.78);
+  --ds-glass-border: rgba(45, 72, 67, 0.7);
+  --ds-aquatic-tint: rgba(127, 226, 208, 0.05);
+  --ds-aquatic-glow: rgba(28, 139, 139, 0.25);
   --shadow-color: rgba(0, 0, 0, 0.45);
   --focus-color: color-mix(in srgb, var(--ds-primary) 45%, transparent);
   color-scheme: dark;
@@ -49,6 +57,13 @@
 body {
   background: var(--ds-bg);
   color: var(--ds-text);
+  font-family: Inter, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+  margin: 0;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
 }
 
-a { color: var(--ds-primary); }
+a {
+  color: var(--ds-primary);
+  text-decoration: none;
+}
