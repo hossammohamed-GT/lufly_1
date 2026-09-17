@@ -8,85 +8,69 @@ $view->layout('layouts.frontend');
 ?>
 
 <!-- ==========================================================================
-     SECTION 1: HERO MONOLITH — DIRECTION 01 / 10 (Aquatic Luxury & Pure Flow)
+     SECTION 1: DEANTE-STYLE CINEMATIC HERO SLIDER
      ========================================================================== -->
-<section class="hero-monolith">
-    <div class="container">
-        <div class="hero-grid">
-            <!-- Left Column: Architectural Voice -->
-            <div>
-                <div class="direction-badge">
-                    <span class="direction-dot"></span>
-                    <span>Direction 01 / 10 &middot; Tidal Monolith &middot; 2026</span>
-                </div>
-
-                <h1 class="hero-heading">
-                    Pure flow.<br>
-                    <span class="accent-teal">Designed to be felt.</span>
-                </h1>
-
-                <p class="hero-subheading">
-                    Make water feel structural. Let every line carry the confidence of a precisely engineered fixture. Premium mixers, architectural vitreous ceramics, and smart water rituals shaped for Europe's finest specifications.
-                </p>
-
-                <div class="hero-cta-group">
-                    <a href="<?= e(route('products.index')) ?>" class="btn-primary-teal">
-                        <span>Explore 2026 Collections</span>
-                        <span>&rarr;</span>
-                    </a>
-                    <a href="https://wa.me/908503040817?text=<?= rawurlencode('Hello LUFLY, please provide the 2026 Master BIM/CAD specifications and B2B pricing.') ?>" 
-                       target="_blank" rel="noopener" class="btn-secondary-glass">
-                        <span>📥 Request Master BIM / CAD</span>
-                    </a>
-                </div>
-
-                <!-- Key Technical Metrics -->
-                <div class="hero-metrics">
-                    <div class="metric-item">
-                        <span class="metric-value">1,250°C</span>
-                        <span class="metric-label">Robotic Kiln China</span>
+<section class="deante-hero-container">
+    <div class="deante-hero-viewport" id="hero-slider-viewport">
+        <div class="deante-hero-track" id="hero-slider-track">
+            <!-- Slide 1: Smart WC (Pure Wellness) -->
+            <a href="<?= e(route('products.index', ['category_id' => 1])) ?>" class="deante-hero-slide" title="LUFLY Smart WC Pure Wellness">
+                <img src="<?= e(asset('images/lifestyle/hero-slide-smart-wc-hd.png')) ?>" 
+                     alt="LUFLY Silia Smart WC - Pure Wellness" 
+                     class="slide-bg">
+                <div class="deante-hero-overlay" style="opacity: 0; pointer-events: none;">
+                    <div class="deante-hero-title-group">
+                        <span class="deante-hero-script">Silia</span>
+                        <span class="deante-hero-caps">WC SMART</span>
                     </div>
-                    <div class="metric-item">
-                        <span class="metric-value">500k</span>
-                        <span class="metric-label">Tested Tap Cycles</span>
-                    </div>
-                    <div class="metric-item">
-                        <span class="metric-value">34+</span>
-                        <span class="metric-label">Export Nations</span>
-                    </div>
+                    <div class="deante-hero-subtitle">pure wellness</div>
+                    <span class="deante-hero-cta">See products &rarr;</span>
                 </div>
-            </div>
+            </a>
 
-            <!-- Right Column: Floating Monolith Fixture Card -->
-            <div>
-                <div class="hero-stage-card">
-                    <div class="hero-stage-content">
-                        <div class="hero-stage-header">
-                            <span class="hero-stage-tag">Flagship Specification</span>
-                            <span class="hero-stage-cycle">EN 817 &middot; PVD Rose Gold</span>
-                        </div>
-
-                        <div class="hero-stage-image-wrap">
-                            <img src="<?= e(asset('images/finishes/brushed-rose-gold.jpg')) ?>" 
-                                 alt="LUFLY Architectural Basin Mixer" 
-                                 class="hero-stage-img"
-                                 id="hero-banner-img">
-                        </div>
-
-                        <div class="hero-stage-footer">
-                            <div class="hero-stage-meta">
-                                <h3>DUERO High-Rise Vessel Mixer</h3>
-                                <p>Solid Brass CW617N &middot; Neoperl® Aerator</p>
-                            </div>
-                            <a href="https://wa.me/908503040817?text=<?= rawurlencode('Hello LUFLY, I would like to inquire about the DUERO High-Rise Vessel Mixer in Brushed Rose Gold.') ?>" 
-                               target="_blank" rel="noopener" class="btn-primary-teal" style="padding: 10px 18px; font-size: 13px;">
-                                Inquire &rarr;
-                            </a>
-                        </div>
+            <!-- Slide 2: Luxury Faucets & Flow -->
+            <a href="<?= e(route('products.index', ['category_id' => 4])) ?>" class="deante-hero-slide" title="LUFLY Architectural Faucets & Mixers">
+                <img src="<?= e(asset('images/lifestyle/hero-slide-faucets-hd.jpg')) ?>" 
+                     alt="LUFLY Architectural Basin Mixers" 
+                     class="slide-bg">
+                <div class="deante-hero-overlay">
+                    <div class="deante-hero-title-group">
+                        <span class="deante-hero-script">Duero</span>
+                        <span class="deante-hero-caps">HYDRO FLOW</span>
                     </div>
+                    <div class="deante-hero-subtitle">pure water</div>
+                    <span class="deante-hero-cta">See products &rarr;</span>
                 </div>
-            </div>
+            </a>
+
+            <!-- Slide 3: Executive Spa Suite -->
+            <a href="<?= e(route('products.index')) ?>" class="deante-hero-slide" title="LUFLY Architectural Sanctuaries">
+                <img src="<?= e(asset('images/lifestyle/spa-suite.jpg')) ?>" 
+                     alt="LUFLY Luxury Calacatta Suite" 
+                     class="slide-bg">
+                <div class="deante-hero-overlay" style="background: radial-gradient(circle, rgba(14,20,22,0.7) 0%, transparent 85%); padding: 60px 40px; border-radius: 20px;">
+                    <div class="deante-hero-title-group">
+                        <span class="deante-hero-script">Calacatta</span>
+                        <span class="deante-hero-caps">SUITE</span>
+                    </div>
+                    <div class="deante-hero-subtitle">pure luxury</div>
+                    <span class="deante-hero-cta">See products &rarr;</span>
+                </div>
+            </a>
         </div>
+
+        <!-- Inside Bottom-Right Pagination Dots -->
+        <div class="deante-hero-dots" id="hero-slider-dots">
+            <span class="deante-hero-dot is-active" data-slide="0"></span>
+            <span class="deante-hero-dot" data-slide="1"></span>
+            <span class="deante-hero-dot" data-slide="2"></span>
+        </div>
+    </div>
+
+    <!-- Outside Bottom-Right Arrow Buttons -->
+    <div class="deante-hero-controls">
+        <button type="button" class="deante-hero-arrow" id="hero-prev-btn" aria-label="Previous Slide">&lt;</button>
+        <button type="button" class="deante-hero-arrow" id="hero-next-btn" aria-label="Next Slide">&gt;</button>
     </div>
 </section>
 

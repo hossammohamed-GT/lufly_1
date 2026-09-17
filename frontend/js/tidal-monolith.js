@@ -214,3 +214,87 @@ function initStickyNav() {
     }
   }, { passive: true });
 }
+
+/* ==========================================================================
+   4. Deante-Style Cinematic Hero Slider Controller
+   ========================================================================== */
+function initDeanteHeroSlider() {
+  const track = document.getElementById('hero-slider-track');
+  const slides = document.querySelectorAll('.deante-hero-slide');
+  const dots = document.querySelectorAll('.deante-hero-dot');
+  const prevBtn = document.getElementById('hero-prev-btn');
+  const nextBtn = document.getElementById('hero-next-btn');
+
+  if (!track || slides.length === 0) return;
+
+  let currentIndex = 0;
+  const total = slides.length;
+  let autoTimer = null;
+
+  function goToSlide(index) {
+    if (index < 0) index = total - 1;
+    if (index >= total) index = 0;
+    currentIndex = index;
+
+    track.style.transform = `translateX(-${currentIndex * 100}%)`;
+
+    dots.forEach((d, i) => {
+      if (i === currentIndex) {
+        d.classList.add('is-active');
+      } else {
+        d.classList.remove('is-active');
+      }
+    });
+  }
+
+  function startAuto() {
+    stopAuto();
+    autoTimer = setInterval(() => {
+      goToSlide(currentIndex + 1);
+    }, 6000);
+  }
+
+  function stopAuto() {
+    if (autoTimer) {
+      clearInterval(autoTimer);
+      autoTimer = null;
+    }
+  }
+
+  if (nextBtn) {
+    nextBtn.addEventListener('click', () => {
+      goToSlide(currentIndex + 1);
+      startAuto();
+    });
+  }
+
+  if (prevBtn) {
+    prevBtn.addEventListener('click', () => {
+      goToSlide(currentIndex - 1);
+      startAuto();
+    });
+  }
+
+  dots.forEach(dot => {
+    dot.addEventListener('click', () => {
+      const idx = parseInt(dot.dataset.slide, 10);
+      goToSlide(idx);
+      startAuto();
+    });
+  });
+
+  const viewport = document.getElementById('hero-slider-viewport');
+  if (viewport) {
+    viewport.addEventListener('mouseenter', stopAuto);
+    viewport.addEventListener('mouseleave', startAuto);
+  }
+
+  startAuto();
+}
+
+// Call inside DOMContentLoaded
+if (document.readyState === 'loading') {
+  document.addEventListener('DOMContentLoaded', initDeanteHeroSlider);
+} else {
+  initDeanteHeroSlider();
+}
