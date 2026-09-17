@@ -32,4 +32,17 @@ return [
     'ticker_3' => 'Pro-Eco 45% Water Saving',
     'ticker_4' => 'EN 997 / EN 817 Certified',
     'ticker_5' => '500,000 Cycle Ceramic Discs',
-    ];
+        /* HERO CINEMA */
+    'cinema1_kicker' => 'Premium Sanitary Ware',
+    'cinema1_tag' => 'Bathroom Culture · Enjoyed and Shared',
+    'cinema1_desc' => 'High-end faucets, shower systems and smart water fixtures — where modern aesthetics meet advanced engineering.',
+    'cinema2_kicker' => 'Engineering Excellence', 'cinema2_title_a' => 'Precision You Can', 'cinema2_title_b' => 'Feel in Every Drop',
+    'cinema2_desc' => 'Gravity casting · CNC precision machining · ceramic cartridge — rated for 500,000 cycles of effortless control.',
+    'cinema3_kicker' => 'Premium Finishes', 'cinema3_title_a' => 'Surfaces That', 'cinema3_title_b' => 'Stay Forever New',
+    'cinema3_desc' => 'Chrome · Gold · Rose Gold · Matte Black · Gun Grey — nano-plated layers built for a lasting shine.',
+    'cinema4_kicker' => 'Smart Innovation', 'cinema4_title_a' => 'Water,', 'cinema4_title_b' => 'Intelligently',
+    'cinema4_desc' => 'Digital temperature display · sensor activation · water-saving air-injection technology.',
+    'cinema5_kicker' => 'Designed for Luxury Living', 'cinema5_title_a' => 'Made for Villas,', 'cinema5_title_b' => 'Hotels & Icons',
+    'cinema5_desc' => 'Trusted by architects and interior designers for high-end residential and hospitality projects.',
+    'cinema_primary' => 'Explore Products',
+];
