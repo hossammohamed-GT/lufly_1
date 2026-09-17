@@ -46,7 +46,7 @@ class HomeController extends Controller
             return $p->translate($locale);
         }, $rawFeatured);
 
-        return $this->view('home', [
+        return $this->view('home.index', [
             'title' => 'LUFLY | Architectural Sanitary Ware Manufacturer & European Export',
             'locale' => $locale,
             'categories' => $categories,

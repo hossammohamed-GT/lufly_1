@@ -1,6 +1,7 @@
 <?php
 /** @var Core\View\View $view */
 $view->layout('layouts.frontend');
+$view->pushStyle('frontend/errors/errors.css');
 ?>
 <section class="container error-page">
     <p class="error-code">401</p>

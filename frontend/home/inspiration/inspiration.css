@@ -1,0 +1,75 @@
+/* Home component: inspiration carousel. */
+
+.inspiration-section {
+  padding: var(--space-20) 0;
+  border-bottom: 1px solid var(--ds-border);
+  background: var(--ds-surface);
+}
+
+.inspiration-carousel {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: var(--space-6);
+}
+
+.inspiration-card {
+  position: relative;
+  border-radius: var(--radius-sm);
+  overflow: hidden;
+  border: 1px solid var(--ds-border);
+  background: var(--ds-bg);
+  transition: var(--transition-smooth);
+}
+
+.inspiration-card:hover {
+  transform: translateY(-4px);
+  box-shadow: var(--shadow-hover);
+}
+
+.inspiration-img-wrap {
+  height: 260px;
+  overflow: hidden;
+}
+
+.inspiration-img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 0.5s ease;
+}
+
+.inspiration-card:hover .inspiration-img {transform: scale(1.06);}
+
+.inspiration-body {padding: var(--space-5);}
+
+.inspiration-tag {
+  font-size: var(--text-caption);
+  font-weight: var(--weight-bold);
+  text-transform: uppercase;
+  letter-spacing: var(--tracking-wide);
+  color: var(--ds-primary);
+  margin-bottom: var(--space-1);
+  display: block;
+}
+
+.inspiration-body h4 {
+  margin: 0 0 var(--space-2) 0;
+  font-size: var(--text-base);
+  font-weight: var(--weight-bold);
+  color: var(--ds-text);
+}
+
+.inspiration-body p {
+  margin: 0;
+  font-size: var(--text-xs);
+  color: var(--ds-text-muted);
+  line-height: var(--leading-normal);
+}
+
+@media (max-width: 1024px) {
+  .inspiration-carousel {grid-template-columns: repeat(2, 1fr);}
+}
+
+@media (max-width: 640px) {
+  .inspiration-carousel {grid-template-columns: 1fr;}
+}

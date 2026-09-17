@@ -3,14 +3,14 @@
         <div class="footer-grid">
             <!-- Brand Column -->
             <div class="footer-col">
-                <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 16px;">
-                    <img src="<?= e(asset('frontend/design-system/logo.png')) ?>" alt="LUFLY" style="height: 32px; width: auto;">
-                    <span style="font-family: var(--font-display); font-size: 22px; font-weight: 800; color: var(--lufly-text); letter-spacing: 0.05em;">LUFLY</span>
+                <div class="footer-brand">
+                    <img class="footer-brand-logo" src="<?= e(asset('frontend/design-system/logo.png')) ?>" alt="LUFLY">
+                    <span class="footer-brand-name">LUFLY</span>
                 </div>
-                <p style="color: var(--lufly-muted); line-height: 1.6; font-size: 13px; margin: 0 0 20px 0;">
+                <p class="footer-brand-text">
                     Bathroom culture enjoyed and shared. Precision engineering behind a refined surface. Manufactured for architects, interior specifiers, luxury hotels, and modern homes worldwide.
                 </p>
-                <div style="font-size: 12px; color: var(--lufly-teal); font-weight: 600;">
+                <div class="footer-brand-note">
                     TIDAL MONOLITH SYSTEM · 2026 ARCHITECTURAL SPECIFICATION
                 </div>
             </div>
@@ -54,18 +54,16 @@
             <!-- Legal Entity -->
             <div class="footer-col">
                 <h5>Factory & Dispatch</h5>
-                <p style="font-size: 13px; color: var(--lufly-text); font-weight: 600; margin: 0 0 6px 0;">
+                <p class="footer-legal-name">
                     LUFLY İNŞAAT SANAYİ VE TİCARET LİMİTED ŞİRKETİ
                 </p>
-                <p style="font-size: 12px; color: var(--lufly-muted); line-height: 1.5; margin: 0 0 12px 0;">
+                <p class="footer-legal-text">
                     Gaziantep Manufacturing & Export Hub, Turkey.<br>
                     Direct European Logistics Dispatch.
                 </p>
-                <p style="font-size: 13px; margin: 0;">
-                    <a href="https://wa.me/908503040817" target="_blank" rel="noopener" style="color: var(--lufly-teal); font-weight: 600;">
-                        WhatsApp: +90 850 3040 817
-                    </a><br>
-                    <a href="mailto:info@lufly.tr" style="color: var(--lufly-muted);">
+                <p class="footer-contact">
+                    <a class="footer-link-strong" href="https://wa.me/908503040817" target="_blank" rel="noopener">WhatsApp: +90 850 3040 817</a><br>
+                    <a class="footer-link-muted" href="mailto:info@lufly.tr">
                         Email: info@lufly.tr
                     </a>
                 </p>

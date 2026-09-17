@@ -1,6 +1,7 @@
 <?php
 /** @var Core\View\View $view */
 $view->layout('layouts.frontend');
+$view->pushStyle('frontend/auth/login/login.css');
 ?>
 <section class="container auth-wrap">
     <div class="auth-card">

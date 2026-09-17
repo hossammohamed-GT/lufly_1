@@ -32,7 +32,7 @@ This platform is engineered to run on standard **Shared Hosting / cPanel** (Apac
 
 ### Method A: Upload directly into `public_html` (Standard cPanel)
 Upload all project files to `public_html/`. The included root `.htaccess` handles routing automatically:
-- Static assets (`frontend/`, `public/images/`) are served directly.
+- Static assets (`frontend/`, `public/images/`, `public/videos/`) are served directly.
 - All requests are routed through `public/index.php`.
 
 ### Method B: Document Root set to `public_html/public` (Recommended for maximum security)

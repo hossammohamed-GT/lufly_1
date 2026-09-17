@@ -19,9 +19,11 @@ panel, CRM and future business systems.
 - **Localization without limits**: static translations (`resources/lang`), dynamic
   `*_translations` tables and translated routes (`/en/products`, `/tr/urunler`,
   `/cs/produkty`). English, Turkish and Czech included.
-- **Design system** (`frontend/design-system/`): token-based CSS with light/dark
-  themes, component library (Button, Input, Card, Modal, Navbar, Footer,
-  ThemeSwitcher, LanguageSwitcher).
+- **Design system** (`frontend/design-system/style.css`): one file holding the full
+  Tidal Monolith identity — palette, semantic tokens, light/dark themes, typography,
+  spacing, motion and the core components.
+- **Component-based frontend** (`frontend/<area>/<name>/`): every home section, page
+  and panel block owns its CSS/JS, and its PHP partial declares the assets it needs.
 - **Security**: sessions, bcrypt, CSRF, RBAC (roles/permissions), lockouts, security
   headers, upload whitelist, audit trail, translated error pages.
 - **Logging**: file channels (`app`, `error`, `database`, `api`, `security`, `mail`)
@@ -41,7 +43,7 @@ php cli serve --host=127.0.0.1 --port=8080
 Then open `http://127.0.0.1:8080/en/`.
 
 Do not run `php -S 127.0.0.1:8080` without `server.php`; that can load the page
-without serving the public frontend assets correctly.
+without serving the frontend assets correctly.
 
 ## Quick start (XAMPP)
 
@@ -88,7 +90,7 @@ modules/    feature modules (Products, Users, Languages, Media, Settings, SEO, .
 config/     app, database, logging, localization, security, uploads, mail, cache, seo
 database/   migrations/ seeders/ schema/ erd/
 resources/  lang/{en,tr,cs}/ + views/ (layouts, components, errors)
-frontend/   design system tokens + components + JS
+frontend/   design system + component CSS/JS (see docs/Frontend-Structure.md)
 admin/      admin panel assets
 routes/     web.php, admin.php, api.php
 storage/    logs/ cache/ uploads/
@@ -103,14 +105,15 @@ docs/       architecture docs + ADRs
 | [`docs/Database.md`](docs/Database.md) | migrations, schema system, types, soft delete |
 | [`docs/Localization.md`](docs/Localization.md) | static + dynamic translations, localized routing |
 | [`docs/Design-System.md`](docs/Design-System.md) | tokens, themes, components |
+| [`docs/Frontend-Structure.md`](docs/Frontend-Structure.md) | asset roots, component folders, asset loading |
 | [`docs/Logging.md`](docs/Logging.md) | channels, activity, audit, security logs |
 | [`docs/Services.md`](docs/Services.md) | service layer catalogue |
 | [`docs/API.md`](docs/API.md) | envelopes, endpoints, error codes |
 | [`docs/Security.md`](docs/Security.md) | auth, RBAC, CSRF, uploads, audit |
 | [`docs/Deployment.md`](docs/Deployment.md) | XAMPP setup + production checklist |
+| [`docs/Admin-Panel.md`](docs/Admin-Panel.md) | admin routes, permissions, assets |
 | [`docs/adr/`](docs/adr/) | architecture decision records |
 
-The legacy visual atlas of this repository is preserved at
-[`frontend/design-system/atlas.html`](frontend/design-system/atlas.html).
+Frontend conventions and the component map: [`docs/Frontend-Structure.md`](docs/Frontend-Structure.md).
 
 .

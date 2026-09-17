@@ -86,7 +86,7 @@ class Translator
         }
 
         $path = $this->app->resourcePath("lang/{$locale}/{$file}.php");
-        $entries = is_file($path) ? (array) require $path : [];
+        $entries = is_file($path) ? (array) (require $path) : [];
 
         return $this->loaded[$cacheKey] = $entries;
     }

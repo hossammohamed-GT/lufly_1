@@ -1,6 +1,7 @@
 <?php
 /** @var Core\View\View $view */
 $view->layout('layouts.frontend');
+$view->pushStyle('frontend/products/catalog/catalog.css');
 /** @var Core\Database\Paginator $paginator */
 /** @var array $categories */
 /** @var string $activeCategory */
@@ -50,7 +51,7 @@ $searchQuery = $searchQuery ?? '';
 
     <?php if ($paginator->items() === []): ?>
         <div class="empty-state card">
-            <div class="card-body" style="text-align: center; padding: var(--space-10);">
+            <div class="card-body catalog-empty">
                 <h3><?= e(trans('common.no_results')) ?></h3>
                 <p><?= e(trans('products.empty')) ?></p>
                 <a href="<?= e(route('products.index')) ?>" class="btn btn-primary"><?= e(trans('common.all_categories')) ?></a>
@@ -70,7 +71,7 @@ $searchQuery = $searchQuery ?? '';
                                  alt="<?= e($item['name'] ?? '') ?>" 
                                  loading="lazy" 
                                  class="product-image"
-                                 onerror="this.onerror=null; this.src='<?= e(asset('public/images/products/prod_146_1620-111-a.jpg')) ?>';">
+                                 onerror="this.onerror=null; this.src='<?= e(asset('images/products/prod_146_1620-111-a.jpg')) ?>';">
                         </a>
                         <span class="product-sku-badge"><?= e($product->sku) ?></span>
                     </div>

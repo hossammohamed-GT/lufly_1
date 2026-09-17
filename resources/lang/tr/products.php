@@ -9,4 +9,6 @@ return [
     'view_details' => 'Detayları gör',
     'name' => 'Ürün adı',
     'description' => 'Açıklama',
+    'specs_title' => 'Teknik Özellikler',
+    'inquire_whatsapp' => 'WhatsApp ile Teklif Alın',
 ];
