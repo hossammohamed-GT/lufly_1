@@ -669,13 +669,44 @@ body {
    Deante Key Feature from user uploaded reference
    ========================================================================== */
 .finishes-section {
-  padding: 80px 0;
-  border-bottom: 1px solid var(--lufly-border);
+  position: relative;
+  overflow: hidden;
+  padding: 78px 0 0;
+  color: #f2f5f3;
+  background: #071211;
+  border-bottom: 1px solid rgba(157, 205, 198, 0.14);
 }
-.section-header-center {
-  text-align: center;
-  max-width: 680px;
-  margin: 0 auto 50px auto;
+.finishes-backdrop {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(90deg, rgba(3, 12, 12, 0.96), rgba(3, 18, 17, 0.78) 48%, rgba(3, 12, 12, 0.96)), url('/images/lifestyle/luxury-hero.jpg') center / cover;
+  opacity: 0.68;
+}
+.finishes-container { position: relative; z-index: 1; }
+.finishes-heading-row {
+  display: flex;
+  justify-content: space-between;
+  gap: 48px;
+  margin-bottom: 44px;
+}
+.section-header-left { max-width: 620px; }
+.section-header-center { text-align: center; max-width: 680px; margin: 0 auto 50px auto; }
+.section-header-left .section-tag { color: rgba(215, 228, 224, 0.7); }
+.section-header-left .section-title { color: #f7f8f6; margin-bottom: 14px; }
+.section-header-left .section-title em { font-family: 'Playfair Display', Georgia, serif; font-weight: 400; }
+.finishes-heading-note {
+  align-self: flex-start;
+  padding-top: 4px;
+  color: rgba(215, 228, 224, 0.64);
+  font-family: var(--font-display);
+  font-size: 10px;
+  letter-spacing: 0.36em;
+  line-height: 1.7;
+  text-transform: uppercase;
+}
+.finishes-heading-note span { display: block; width: 70px; height: 1px; margin-top: 18px; background: rgba(174, 211, 204, 0.45); }
+.section-header-left .section-subtitle { color: rgba(215, 228, 224, 0.66); max-width: 650px; }
+.section-tag {
 }
 .section-tag {
   font-family: var(--font-display);
@@ -706,48 +737,35 @@ body {
 /* Finish Swatches Strip */
 .finishes-swatch-row {
   display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 20px;
-  margin-bottom: 48px;
-  flex-wrap: wrap;
+  gap: 16px;
+  margin-bottom: 18px;
+  overflow-x: auto;
+  padding-bottom: 0;
 }
 .finish-swatch-btn {
   display: flex;
   flex-direction: column;
-  align-items: center;
-  gap: 10px;
-  background: transparent;
-  border: none;
+  align-items: flex-start;
+  flex: 1 1 0;
+  min-width: 150px;
+  padding: 0 0 14px;
+  color: #f3f6f4;
+  background: rgba(3, 14, 14, 0.66);
+  border: 1px solid rgba(145, 192, 185, 0.14);
+  border-radius: 3px;
   cursor: pointer;
-  padding: 8px 12px;
-  border-radius: 8px;
-  transition: var(--transition-smooth);
+  overflow: hidden;
+  text-align: left;
+  transition: border-color 0.25s ease, background 0.25s ease;
 }
 .finish-swatch-btn:hover,
 .finish-swatch-btn.is-active {
-  background: var(--glass-bg-elevated);
-  box-shadow: var(--shadow-soft);
+  background: rgba(13, 35, 33, 0.8);
+  border-color: rgba(207, 164, 127, 0.85);
 }
-.swatch-circle {
-  width: 42px;
-  height: 42px;
-  border-radius: 50%;
-  border: 2px solid #FFFFFF;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
-  transition: transform 0.25s ease, box-shadow 0.25s ease;
-  position: relative;
-}
-.finish-swatch-btn.is-active .swatch-circle {
-  transform: scale(1.15);
-  box-shadow: 0 0 0 3px var(--lufly-teal);
-}
-.swatch-label {
-  font-size: 12px;
-  font-weight: 600;
-  color: var(--lufly-text);
-  letter-spacing: 0.02em;
-}
+.finish-swatch-btn img { display: block; width: 100%; height: 72px; object-fit: cover; }
+.swatch-label { margin: 9px 12px 0; font-size: 13px; font-weight: 500; letter-spacing: 0.01em; }
+.finish-swatch-btn small { margin: 3px 12px 0; color: rgba(215, 228, 224, 0.5); font-size: 9px; letter-spacing: 0.2em; }
 
 /* Swatch Color Gradients */
 .swatch-chrome { background: linear-gradient(135deg, #e0e0e0 0%, #ffffff 50%, #9e9e9e 100%); }
@@ -761,35 +779,37 @@ body {
 .finish-showcase-box {
   display: grid;
   grid-template-columns: 1fr 1fr;
-  align-items: center;
-  gap: 48px;
-  background: var(--glass-bg);
-  backdrop-filter: var(--glass-blur);
-  -webkit-backdrop-filter: var(--glass-blur);
-  border: 1px solid var(--glass-border);
-  border-radius: 8px;
-  padding: 40px;
-  box-shadow: var(--shadow-soft);
+  align-items: stretch;
+  gap: 0;
+  margin: 0 -24px;
+  border-top: 1px solid rgba(145, 192, 185, 0.14);
 }
 .finish-showcase-image-wrap {
-  height: 420px;
+  position: relative;
+  min-height: 430px;
   display: flex;
   align-items: center;
   justify-content: center;
-  background: radial-gradient(circle, rgba(28, 139, 139, 0.06) 0%, transparent 75%);
-  border-radius: 6px;
+  background: #151b1b;
+  overflow: hidden;
 }
 .finish-showcase-img {
-  max-width: 85%;
-  max-height: 85%;
-  object-fit: contain;
+  width: 100%;
+  height: 100%;
+  min-height: 430px;
+  object-fit: cover;
   transition: opacity 0.3s ease, transform 0.3s ease;
   filter: drop-shadow(0 15px 30px rgba(16, 42, 42, 0.12));
 }
 .finish-showcase-details {
   display: flex;
   flex-direction: column;
+  justify-content: center;
+  padding: 52px 70px;
+  border-left: 1px solid rgba(145, 192, 185, 0.14);
+  background: rgba(3, 18, 17, 0.64);
 }
+.finish-detail-meta { display: flex; justify-content: space-between; gap: 20px; color: rgba(215, 228, 224, 0.55); font-size: 10px; letter-spacing: 0.2em; text-transform: uppercase; }
 .finish-spec-pill {
   display: inline-flex;
   align-items: center;
@@ -798,25 +818,24 @@ body {
   font-family: var(--font-display);
   letter-spacing: 0.12em;
   text-transform: uppercase;
-  color: var(--lufly-teal);
-  background: var(--lufly-teal-soft);
-  padding: 6px 12px;
-  border-radius: 4px;
-  align-self: flex-start;
-  margin-bottom: 16px;
-  font-weight: 700;
+  color: rgba(215, 228, 224, 0.58);
+  background: transparent;
+  padding: 0;
+  border-radius: 0;
+  margin-bottom: 0;
+  font-weight: 500;
 }
 .finish-title {
-  font-family: var(--font-display);
-  font-size: 32px;
-  font-weight: 800;
-  color: var(--lufly-text);
-  margin: 0 0 12px 0;
+  margin: 24px 0 14px;
+  color: #f7f8f6;
+  font-family: 'Playfair Display', Georgia, serif;
+  font-size: clamp(32px, 3vw, 44px);
+  font-weight: 400;
 }
 .finish-desc {
   font-size: 15px;
   line-height: 1.6;
-  color: var(--lufly-muted);
+  color: rgba(215, 228, 224, 0.64);
   margin: 0 0 24px 0;
 }
 .finish-tech-specs {
@@ -824,19 +843,22 @@ body {
   grid-template-columns: 1fr 1fr;
   gap: 16px;
   padding: 20px 0;
-  border-top: 1px solid var(--lufly-border);
-  border-bottom: 1px solid var(--lufly-border);
+  border-top: 1px solid rgba(145, 192, 185, 0.18);
+  border-bottom: 1px solid rgba(145, 192, 185, 0.18);
   margin-bottom: 24px;
 }
 .tech-spec-item b {
   display: block;
   font-size: 14px;
-  color: var(--lufly-text);
+  color: #f1f5f3;
 }
 .tech-spec-item span {
   font-size: 12px;
-  color: var(--lufly-muted);
+  color: rgba(215, 228, 224, 0.48);
 }
+.finish-image-caption { position: absolute; left: 68px; bottom: 42px; color: rgba(245, 247, 245, 0.72); font-family: var(--font-display); font-size: 10px; letter-spacing: 0.35em; line-height: 1.8; text-transform: uppercase; }
+.finish-actions { display: flex; gap: 16px; align-items: center; flex-wrap: wrap; }
+.finishes-section .btn-primary-teal { background: #53736d; border-color: #53736d; }
 
 /* ==========================================================================
    "DESIGN YOUR SPACE" — CURATED CATEGORIES (Deante Style)

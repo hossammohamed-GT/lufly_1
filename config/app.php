@@ -24,7 +24,7 @@ return [
 
     'middleware_groups' => [
         'web' => ['locale', 'csrf', 'security'],
-        'api' => ['api.log'],
+        'api' => ['locale', 'api.log'],
     ],
 
     'middleware_aliases' => [

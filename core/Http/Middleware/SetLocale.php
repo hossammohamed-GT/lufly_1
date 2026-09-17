@@ -22,7 +22,7 @@ final class SetLocale implements MiddlewareInterface
     {
         $locale = $request->locale();
 
-        $requested = $request->query('lang');
+        $requested = $request->query('locale') ?? $request->query('lang');
         if (is_string($requested) && $this->translator->isSupported($requested)) {
             $locale = $requested;
         } elseif ($locale === (string) config('localization.default', 'en')) {

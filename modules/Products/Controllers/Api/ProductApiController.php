@@ -50,12 +50,13 @@ class ProductApiController extends Controller
         return ApiResponse::success($items);
     }
 
-    public function show(int $id): JsonResponse
+    public function show(Request $request, int $id): JsonResponse
     {
         $product = $this->products->find($id);
+        $locale = (string) $request->query('locale', $this->translator->getLocale());
 
         return ApiResponse::success([
-            'product' => $product->translate($this->translator->getLocale()),
+            'product' => $product->translate($locale),
             'translations' => $product->translations(),
         ]);
     }

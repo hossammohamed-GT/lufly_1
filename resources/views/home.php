@@ -203,59 +203,53 @@ $view->layout('layouts.frontend');
     </div>
 </section>
 
-<!-- ==========================================================================
-     SECTION 3: INTERACTIVE FINISH / COLOR SELECTOR ("Choose color of fittings")
-     Exact requested feature from user's Deante brand reference
+<!-- ========================================================================
+     SECTION 3: INTERACTIVE FINISH / COLOR SELECTOR
      ========================================================================== -->
 <section class="finishes-section" id="finishes">
-    <div class="container">
-        <div class="section-header-center">
-            <span class="section-tag">Surface Metallurgy & Finishes</span>
-            <h2 class="section-title">Choose Color of Fittings</h2>
-            <p class="section-subtitle">
-                Six architectural finishes engineered with physical vapor deposition (PVD) titanium plasma and multi-layer electroplating for lifelong scratch and chemical resistance.
-            </p>
+    <div class="finishes-backdrop" aria-hidden="true"></div>
+    <div class="container finishes-container">
+        <div class="finishes-heading-row">
+            <div class="section-header-left">
+                <span class="section-tag">Surface Metallurgy & Finishes</span>
+                <h2 class="section-title">Choose the<br><em>Finish</em> of Your Space</h2>
+                <p class="section-subtitle">Six architectural finishes engineered with Physical Vapor Deposition (PVD) technology for exceptional durability, refined aesthetics, and long-lasting resistance to scratches, corrosion, and harsh environments.</p>
+            </div>
+            <div class="finishes-heading-note">Finishes<br>that endure<br>beauty<br>that lasts<span></span></div>
         </div>
 
-        <!-- 6 Interactive Swatches -->
         <div class="finishes-swatch-row">
             <button type="button" class="finish-swatch-btn is-active" data-finish="brushed-rose-gold" aria-label="Brushed Rose Gold">
-                <span class="swatch-circle swatch-brushed-rose-gold"></span>
-                <span class="swatch-label">Rose Gold</span>
+                <img src="<?= e(asset('images/finishes/brushed-rose-gold.jpg')) ?>" alt="Rose Gold finish"><span class="swatch-label">Rose Gold</span><small>PVD</small>
             </button>
             <button type="button" class="finish-swatch-btn" data-finish="chrome" aria-label="Mirror Chrome">
-                <span class="swatch-circle swatch-chrome"></span>
-                <span class="swatch-label">Chrome</span>
+                <img src="<?= e(asset('images/finishes/chrome.jpg')) ?>" alt="Chrome finish"><span class="swatch-label">Chrome</span><small>PVD</small>
             </button>
             <button type="button" class="finish-swatch-btn" data-finish="brushed-gold" aria-label="Brushed Gold">
-                <span class="swatch-circle swatch-brushed-gold"></span>
-                <span class="swatch-label">Brushed Gold</span>
+                <img src="<?= e(asset('images/finishes/brushed-gold.jpg')) ?>" alt="Brushed Gold finish"><span class="swatch-label">Brushed Gold</span><small>PVD</small>
             </button>
             <button type="button" class="finish-swatch-btn" data-finish="matte-black" aria-label="Matte Black">
-                <span class="swatch-circle swatch-matte-black"></span>
-                <span class="swatch-label">Matte Black</span>
+                <img src="<?= e(asset('images/finishes/matte-black.jpg')) ?>" alt="Matte Black finish"><span class="swatch-label">Matte Black</span><small>PVD</small>
             </button>
             <button type="button" class="finish-swatch-btn" data-finish="brushed-steel" aria-label="Brushed Steel">
-                <span class="swatch-circle swatch-brushed-steel"></span>
-                <span class="swatch-label">Brushed Steel</span>
+                <img src="<?= e(asset('images/finishes/brushed-steel.jpg')) ?>" alt="Brushed Steel finish"><span class="swatch-label">Brushed Steel</span><small>PVD</small>
             </button>
             <button type="button" class="finish-swatch-btn" data-finish="gunmetal" aria-label="Gunmetal Grey">
-                <span class="swatch-circle swatch-gunmetal"></span>
-                <span class="swatch-label">Gunmetal</span>
+                <img src="<?= e(asset('images/finishes/gunmetal.jpg')) ?>" alt="Gunmetal finish"><span class="swatch-label">Gunmetal</span><small>PVD</small>
             </button>
         </div>
 
-        <!-- Interactive Split Showcase -->
         <div class="finish-showcase-box">
             <div class="finish-showcase-image-wrap">
                 <img src="<?= e(asset('images/finishes/brushed-rose-gold.jpg')) ?>" 
-                     alt="LUFLY Finish Showcase" 
+                     alt="LUFLY Brushed Rose Gold finish"
                      id="finish-showcase-img" 
                      class="finish-showcase-img">
+                <span class="finish-image-caption">A finish<br>for a higher<br>standard</span>
             </div>
 
             <div class="finish-showcase-details">
-                <span class="finish-spec-pill" id="finish-tag">PVD TITANIUM VAPOR DEPOSITION &middot; 10-YEAR COLOR STABILITY</span>
+                <div class="finish-detail-meta"><span class="finish-spec-pill" id="finish-tag">PVD TITANIUM VAPOR DEPOSITION</span><span>01 / 06</span></div>
                 <h3 class="finish-title" id="finish-title">Brushed Rose Gold (PVD)</h3>
                 <p class="finish-desc" id="finish-desc">
                     An opulent, warm metallic hue crafted via vacuum plasma PVD. Ultra-resistant to micro-scratches, finger marks, and corrosion in coastal and humid spa environments.
@@ -280,7 +274,7 @@ $view->layout('layouts.frontend');
                     </div>
                 </div>
 
-                <div style="display: flex; gap: 16px; align-items: center;">
+                <div class="finish-actions">
                     <a href="https://wa.me/908503040817?text=<?= rawurlencode('Hello LUFLY, I am specifying the Brushed Rose Gold finish for an architectural project. Please share high-res renders and export pricing.') ?>" 
                        id="finish-wa-btn" 
                        target="_blank" 

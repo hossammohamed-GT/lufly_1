@@ -96,17 +96,22 @@ class ProductRepository extends Repository
         $rows = $connection->select(
             "SELECT DISTINCT p.*
              FROM products p
-             LEFT JOIN product_translations pt ON pt.product_id = p.id AND pt.locale = ?
              WHERE p.deleted_at IS NULL
                AND p.status = ?
                AND (
                    LOWER(p.sku) LIKE LOWER(?)
-                   OR LOWER(pt.name) LIKE LOWER(?)
-                   OR LOWER(pt.description) LIKE LOWER(?)
+                   OR EXISTS (
+                       SELECT 1 FROM product_translations pt
+                       WHERE pt.product_id = p.id
+                         AND (
+                             LOWER(pt.name) LIKE LOWER(?)
+                             OR LOWER(pt.description) LIKE LOWER(?)
+                         )
+                   )
                )
              ORDER BY p.id DESC
              LIMIT ?",
-            [$locale, $status, $like, $like, $like, (int) $limit],
+              [$status, $like, $like, $like, (int) $limit],
         );
 
         return array_map(static fn (array $row): Product => Product::fromRow($row), $rows);

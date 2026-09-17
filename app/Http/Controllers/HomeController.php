@@ -24,12 +24,17 @@ class HomeController extends Controller
         $locale = $this->translator->getLocale();
         $connection = \Modules\Products\Models\Product::query()->connection();
 
+        $fallback = (string) config('localization.fallback', 'en');
         $categories = $connection->select(
-            "SELECT c.id, c.slug, c.image, ct.name, ct.description FROM categories c
+            "SELECT c.id, c.slug, c.image,
+                    COALESCE(ct.name, ctf.name) AS name,
+                    COALESCE(ct.description, ctf.description) AS description
+             FROM categories c
              LEFT JOIN category_translations ct ON ct.category_id = c.id AND ct.locale = ?
+             LEFT JOIN category_translations ctf ON ctf.category_id = c.id AND ctf.locale = ?
              WHERE c.deleted_at IS NULL AND c.status = 'active'
              ORDER BY c.id ASC",
-            [$locale]
+            [$locale, $fallback]
         );
 
         $rawFeatured = \Modules\Products\Models\Product::query()

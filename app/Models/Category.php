@@ -33,6 +33,9 @@ class Category extends Model
 
     public function translate(string $locale): ?array
     {
-        return $this->translations()[$locale] ?? null;
+        $translations = $this->translations();
+        $fallback = (string) config('localization.fallback', 'en');
+
+        return $translations[$locale] ?? $translations[$fallback] ?? null;
     }
 }

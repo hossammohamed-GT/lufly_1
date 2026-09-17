@@ -41,7 +41,8 @@ class Product extends Model
     public function translate(string $locale): array
     {
         $translations = $this->translations();
-        $translation = $translations[$locale] ?? $translations['en'] ?? [];
+        $fallback = (string) config('localization.fallback', 'en');
+        $translation = $translations[$locale] ?? $translations[$fallback] ?? [];
 
         return array_merge($this->attributes(), [
             'name' => $translation['name'] ?? '',
