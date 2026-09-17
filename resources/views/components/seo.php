@@ -4,7 +4,7 @@ $meta = $seo !== null ? $seo->toArray() : (array) config('seo.defaults', []);
 $keywords = is_array($meta['keywords'] ?? null) ? implode(', ', $meta['keywords']) : (string) ($meta['keywords'] ?? '');
 $canonical = $meta['canonical'] ?? request()->url();
 ?>
-<title><?= e($meta['title'] ?? $appName) ?></title>
+<title>Lufly</title>
 <meta name="description" content="<?= e($meta['description'] ?? '') ?>">
 <?php if ($keywords !== ''): ?><meta name="keywords" content="<?= e($keywords) ?>"><?php endif; ?>
 <link rel="canonical" href="<?= e($canonical) ?>">

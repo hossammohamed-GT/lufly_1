@@ -12,7 +12,8 @@ $direction = in_array($locale, ['ar', 'he', 'fa', 'ur'], true) ? 'rtl' : 'ltr';
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title><?= e(($title ?? 'Admin') . ' — ' . $appName) ?></title>
+<title>Lufly</title>
+<link rel="icon" type="image/png" href="<?= e(asset('images/logo.png')) ?>">
 <script>
 /* theme before first paint */
 try {
