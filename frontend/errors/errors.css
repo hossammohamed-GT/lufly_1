@@ -1,0 +1,15 @@
+/* Error pages: 401, 403, 404, 422, 500. */
+
+.error-page {
+  display: grid;
+  gap: var(--space-4);
+  justify-items: center;
+  padding-block: var(--space-16);
+  text-align: center;
+}
+
+.error-code { margin: 0; color: var(--ds-primary); font-family: var(--font-display); font-size: var(--text-5xl); font-weight: var(--weight-black); }
+.error-title { margin: 0; }
+.error-message { margin: 0; color: var(--ds-text-muted); }
+.error-list { color: var(--ds-danger); text-align: start; }
+.error-debug { max-width: 70ch; text-align: start; font-size: var(--text-sm); }

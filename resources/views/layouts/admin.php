@@ -4,22 +4,28 @@
 /** @var string $title */
 $translator = $translator ?? null;
 $locale = $translator instanceof \Core\Localization\Translator ? $translator->getLocale() : (string) config('localization.default', 'en');
+$basePath = rtrim((string) parse_url(url('/'), PHP_URL_PATH), '/');
+$direction = in_array($locale, ['ar', 'he', 'fa', 'ur'], true) ? 'rtl' : 'ltr';
 ?>
 <!DOCTYPE html>
-<html lang="<?= e($locale) ?>" data-theme="light">
+<html lang="<?= e($locale) ?>" dir="<?= e($direction) ?>" data-theme="light" data-base="<?= e($basePath) ?>">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title><?= e(($title ?? 'Admin') . ' — ' . $appName) ?></title>
-<link rel="stylesheet" href="<?= e(asset('frontend/design-system/colors.css')) ?>">
-<link rel="stylesheet" href="<?= e(asset('frontend/design-system/spacing.css')) ?>">
-<link rel="stylesheet" href="<?= e(asset('frontend/design-system/typography.css')) ?>">
-<link rel="stylesheet" href="<?= e(asset('frontend/design-system/radius.css')) ?>">
-<link rel="stylesheet" href="<?= e(asset('frontend/design-system/shadows.css')) ?>">
-<link rel="stylesheet" href="<?= e(asset('frontend/design-system/animations.css')) ?>">
-<link rel="stylesheet" href="<?= e(asset('frontend/design-system/themes.css')) ?>">
-<link rel="stylesheet" href="<?= e(asset('frontend/design-system/components.css')) ?>">
-<link rel="stylesheet" href="<?= e(asset('admin/assets/admin.css')) ?>">
+<script>
+/* theme before first paint */
+try {
+    var stored = localStorage.getItem('lufly-theme');
+    var dark = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
+    document.documentElement.setAttribute('data-theme', stored || (dark ? 'dark' : 'light'));
+} catch (error) { /* storage unavailable */ }
+</script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap">
+<link rel="stylesheet" href="<?= e(asset('frontend/design-system/style.css')) ?>">
+<link rel="stylesheet" href="<?= e(asset('frontend/admin/admin.css')) ?>">
 </head>
 <body class="ds-app admin-body">
 <div class="admin-shell">
@@ -54,7 +60,7 @@ $locale = $translator instanceof \Core\Localization\Translator ? $translator->ge
         </div>
     </div>
 </div>
-<script src="<?= e(asset('frontend/js/theme-switcher.js')) ?>"></script>
-<script src="<?= e(asset('frontend/js/modal.js')) ?>"></script>
+<script src="<?= e(asset('frontend/js/app.js')) ?>"></script>
+<script src="<?= e(asset('frontend/admin/admin.js')) ?>"></script>
 </body>
 </html>

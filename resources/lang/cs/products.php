@@ -9,4 +9,6 @@ return [
     'view_details' => 'Zobrazit detail',
     'name' => 'Název produktu',
     'description' => 'Popis',
+    'specs_title' => 'Technické specifikace',
+    'inquire_whatsapp' => 'Vyžádat nabídku přes WhatsApp',
 ];

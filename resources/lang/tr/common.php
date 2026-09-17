@@ -48,4 +48,8 @@ return [
     'page' => 'Sayfa',
     'of' => '/',
     'translations' => 'Çeviriler',
+    'skip_to_content' => 'İçeriğe geç',
+    'factory_direct' => 'Fabrikadan Doğrudan',
+    'all_categories' => 'Tüm Kategoriler',
+    'specifications' => 'Teknik Özellikler',
 ];

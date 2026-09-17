@@ -48,4 +48,8 @@ return [
     'page' => 'Page',
     'of' => 'of',
     'translations' => 'Translations',
+    'factory_direct' => 'Factory Direct',
+    'all_categories' => 'All Categories',
+    'specifications' => 'Specifications',
+    'skip_to_content' => 'Skip to content',
 ];

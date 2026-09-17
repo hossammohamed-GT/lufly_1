@@ -1,6 +1,7 @@
 <?php
 /** @var Core\View\View $view */
 $view->layout('layouts.frontend');
+$view->pushStyle('frontend/products/detail/detail.css');
 /** @var array<string, mixed> $product */
 /** @var string $locale */
 $img = $product['image'] ?? '/images/products/prod_146_1620-111-a.jpg';
@@ -31,7 +32,7 @@ $waMsg = rawurlencode('Hello LUFLY B2B Export Team, I would like to request form
                 <img src="<?= e(asset($img)) ?>" 
                      alt="<?= e($product['name'] ?? '') ?>" 
                      class="product-detail-image"
-                     onerror="this.onerror=null; this.src='<?= e(asset('public/images/products/prod_146_1620-111-a.jpg')) ?>';">
+                     onerror="this.onerror=null; this.src='<?= e(asset('images/products/prod_146_1620-111-a.jpg')) ?>';">
                 <span class="product-sku-badge-lg">SKU: <?= e($sku) ?></span>
             </div>
         </div>

@@ -1,0 +1,20 @@
+/* Auth component: sign-in screen. */
+
+.auth-wrap {
+  display: flex;
+  justify-content: center;
+  padding-block: var(--space-10);
+}
+
+.auth-card {
+  display: grid;
+  gap: var(--space-5);
+  width: min(420px, 100%);
+  padding: var(--space-8);
+  border: var(--border-hairline) solid var(--ds-border);
+  border-radius: var(--radius-lg);
+  background: var(--ds-surface);
+  box-shadow: var(--shadow-2);
+}
+
+.auth-title { margin: 0; font-size: var(--text-3xl); }

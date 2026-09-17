@@ -1,0 +1,65 @@
+<?php
+/** @var Core\View\View $view */
+$view->pushStyle('frontend/home/categories/categories.css');
+?>
+<section class="categories-section" id="categories">
+    <div class="container">
+        <div class="section-header-center">
+            <span class="section-tag"><?= e(trans('home.collections_tag')) ?></span>
+            <h2 class="section-title"><?= e(trans('home.design_title')) ?></h2>
+            <p class="section-subtitle"><?= e(trans('home.design_desc')) ?></p>
+        </div>
+
+        <div class="category-mosaic">
+            <!-- 1. Wall-Hung Toilets -->
+            <a href="<?= e(route('products.index', ['category_id' => 1])) ?>" class="category-card-monolith">
+                <img src="<?= e(asset('images/products/prod_146_1620-111-a.jpg')) ?>" alt="Wall-Hung Toilets" class="category-card-bg">
+                <div class="category-card-gradient"></div>
+                <div class="category-card-info">
+                    <h3><?= e(trans('home.category_toilets')) ?></h3>
+                    <p><?= e(trans('home.category_toilets_desc')) ?></p>
+                </div>
+            </a>
+
+            <!-- 2. Washbasins -->
+            <a href="<?= e(route('products.index', ['category_id' => 2])) ?>" class="category-card-monolith">
+                <img src="<?= e(asset('images/products/prod_180_1610-242-65.jpg')) ?>" alt="Washbasins" class="category-card-bg">
+                <div class="category-card-gradient"></div>
+                <div class="category-card-info">
+                    <h3><?= e(trans('home.category_basins')) ?></h3>
+                    <p><?= e(trans('home.category_basins_desc')) ?></p>
+                </div>
+            </a>
+
+            <!-- 3. Faucets & Mixers -->
+            <a href="<?= e(route('products.index', ['category_id' => 4])) ?>" class="category-card-monolith">
+                <img src="<?= e(asset('images/finishes/brushed-gold.jpg')) ?>" alt="Faucets & Mixers" class="category-card-bg">
+                <div class="category-card-gradient"></div>
+                <div class="category-card-info">
+                    <h3><?= e(trans('home.category_mixers')) ?></h3>
+                    <p><?= e(trans('home.category_mixers_desc')) ?></p>
+                </div>
+            </a>
+
+            <!-- 4. Showers & Wellness -->
+            <a href="<?= e(route('products.index')) ?>" class="category-card-monolith">
+                <img src="<?= e(asset('images/lifestyle/luxury-shower.png')) ?>" alt="Showers" class="category-card-bg">
+                <div class="category-card-gradient"></div>
+                <div class="category-card-info">
+                    <h3><?= e(trans('home.category_showers')) ?></h3>
+                    <p><?= e(trans('home.category_showers_desc')) ?></p>
+                </div>
+            </a>
+
+            <!-- 5. Commercial Sanitary -->
+            <a href="<?= e(route('products.index', ['category_id' => 3])) ?>" class="category-card-monolith">
+                <img src="<?= e(asset('images/products/prod_2050_1690-000.jpg')) ?>" alt="Urinals" class="category-card-bg">
+                <div class="category-card-gradient"></div>
+                <div class="category-card-info">
+                    <h3><?= e(trans('home.category_commercial')) ?></h3>
+                    <p><?= e(trans('home.category_commercial_desc')) ?></p>
+                </div>
+            </a>
+        </div>
+    </div>
+</section>

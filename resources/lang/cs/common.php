@@ -48,4 +48,8 @@ return [
     'page' => 'Strana',
     'of' => 'z',
     'translations' => 'Překlady',
+    'skip_to_content' => 'Přejít na obsah',
+    'factory_direct' => 'Přímo od výrobce',
+    'all_categories' => 'Všechny kategorie',
+    'specifications' => 'Specifikace',
 ];

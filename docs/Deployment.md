@@ -9,7 +9,7 @@
 ## Local development with PHP built-in server
 
 From the project root, use the bundled router so both the application and
-`public/frontend/` assets are served correctly:
+`frontend/` assets are served correctly:
 
 ```bash
 php cli serve --host=127.0.0.1 --port=8080

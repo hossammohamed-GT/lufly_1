@@ -8,18 +8,9 @@ $supported = $translator->supported();
 $route = request()->route();
 $params = request()->params();
 
-// Helper to render flag SVG
-function renderNavFlag(string $code): string {
-    return match ($code) {
-        'tr' => '<svg width="20" height="14" viewBox="0 0 1200 800" style="border-radius: 2px; display: inline-block; vertical-align: middle; box-shadow: 0 1px 3px rgba(0,0,0,0.2);"><rect width="1200" height="800" fill="#E30A17"/><circle cx="425" cy="400" r="200" fill="#ffffff"/><circle cx="475" cy="400" r="160" fill="#E30A17"/><polygon points="583.33,400 700.82,438.19 628.2,338.2 628.2,461.8 700.82,361.81" fill="#ffffff"/></svg>',
-        'cs' => '<svg width="20" height="14" viewBox="0 0 900 600" style="border-radius: 2px; display: inline-block; vertical-align: middle; box-shadow: 0 1px 3px rgba(0,0,0,0.2);"><rect width="900" height="300" fill="#ffffff"/><rect y="300" width="900" height="300" fill="#D7141A"/><polygon points="0,0 450,300 0,600" fill="#11457E"/></svg>',
-        default => '<svg width="20" height="14" viewBox="0 0 60 30" style="border-radius: 2px; display: inline-block; vertical-align: middle; box-shadow: 0 1px 3px rgba(0,0,0,0.2);"><clipPath id="uk-clip-nav"><path d="M0,0 v30 h60 v-30 z"/></clipPath><clipPath id="uk-diag-nav"><path d="M30,15 h30 v15 z v15 h-30 z h-30 v-15 z v-15 h30 z"/></clipPath><g clip-path="url(#uk-clip-nav)"><path d="M0,0 v30 h60 v-30 z" fill="#012169"/><path d="M0,0 L60,30 M60,0 L0,30" stroke="#ffffff" stroke-width="6"/><path d="M0,0 L60,30 M60,0 L0,30" clip-path="url(#uk-diag-nav)" stroke="#C8102E" stroke-width="4"/><path d="M30,0 v30 M0,15 h60" stroke="#ffffff" stroke-width="10"/><path d="M30,0 v30 M0,15 h60" stroke="#C8102E" stroke-width="6"/></g></svg>',
-    };
-}
 ?>
-<!-- Deante-Style Minimalist Luxury Header with Aquatic Glassmorphism -->
 <header class="deante-header lufly-header-monolith">
-    <!-- Top Row: Brand Logo, Wide Search Pill, WhatsApp Desk, Theme Toggle, Account, Wishlist, Language Switcher -->
+    <!-- Top row: brand, search, actions -->
     <div class="deante-header-top">
         <div class="container deante-header-inner">
             <!-- Brand Logo -->
@@ -29,9 +20,9 @@ function renderNavFlag(string $code): string {
             </a>
 
             <!-- Wide Search Pill with Magnifying Glass on the Right -->
-            <div class="deante-search-container">
+            <div class="deante-search-container" data-search>
                 <input type="search" 
-                       class="deante-search-pill lufly-search-input" 
+                       class="deante-search-pill"
                        placeholder="<?= e(trans('nav.search_placeholder', [], $currentLocale)) ?>" 
                        aria-label="Search LUFLY sanitary fixtures"
                        data-locale="<?= e($currentLocale) ?>"
@@ -42,12 +33,12 @@ function renderNavFlag(string $code): string {
                         <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
                     </svg>
                 </span>
-                <div class="lufly-search-results"></div>
+                <div class="deante-search-results"></div>
             </div>
 
             <!-- Right Utility Icons & Actions -->
             <div class="deante-actions-group">
-                <!-- B2B WhatsApp Export Desk (Compact Pill) -->
+                <!-- B2B WhatsApp desk -->
                 <a href="https://wa.me/908503040817?text=<?= rawurlencode('Hello LUFLY, I am inquiring about architectural fixtures and export catalog.') ?>" 
                    target="_blank" 
                    rel="noopener" 
@@ -66,7 +57,7 @@ function renderNavFlag(string $code): string {
                     <svg class="theme-icon-moon" width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
                         <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>
                     </svg>
-                    <svg class="theme-icon-sun" width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" style="display: none;">
+                    <svg class="theme-icon-sun" width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
                         <circle cx="12" cy="12" r="5"></circle>
                         <line x1="12" y1="1" x2="12" y2="3"></line>
                         <line x1="12" y1="21" x2="12" y2="23"></line>
@@ -108,7 +99,7 @@ function renderNavFlag(string $code): string {
                             aria-expanded="false" 
                             aria-haspopup="true"
                             title="<?= e(trans('nav.language')) ?>">
-                        <span class="deante-flag-icon"><?= renderNavFlag($currentLocale) ?></span>
+                        <span class="deante-flag-icon"><?= $view->component('flag', ['code' => $currentLocale]) ?></span>
                         <span class="deante-lang-code"><?= e(strtoupper($currentLocale)) ?></span>
                         <svg class="deante-chevron-icon" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
                             <polyline points="6 9 12 15 18 9"></polyline>
@@ -137,7 +128,7 @@ function renderNavFlag(string $code): string {
                             <a class="deante-lang-option<?= $code === $currentLocale ? ' is-current' : '' ?>" 
                                href="<?= e($target) ?>" 
                                lang="<?= e($code) ?>">
-                                <span class="deante-flag-mini"><?= renderNavFlag($code) ?></span>
+                                <span class="deante-flag-mini"><?= $view->component('flag', ['code' => $code]) ?></span>
                                 <span class="deante-lang-name"><?= e($name) ?></span>
                                 <span class="deante-lang-badge"><?= e(strtoupper($code)) ?></span>
                                 <?php if ($code === $currentLocale): ?>
@@ -151,7 +142,7 @@ function renderNavFlag(string $code): string {
         </div>
     </div>
 
-    <!-- Bottom Row: Category Nav Links, Hydrodynamics, Finishes & BIM / Outlet -->
+    <!-- Bottom row: category navigation -->
     <div class="deante-subnav-strip">
         <div class="container deante-subnav-inner">
             <nav class="deante-nav-list" aria-label="Main Navigation">

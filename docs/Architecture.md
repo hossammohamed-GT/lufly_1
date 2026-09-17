@@ -37,7 +37,7 @@ MySQL (PDO)              core/Database connection + query log → database.log
 | `config/` | Configuration files, consumed through `config('file.key')` |
 | `database/` | `migrations/`, `seeders/`, `schema/` (declarative table definitions), `erd/` |
 | `resources/` | `lang/{en,tr,cs}` static translations, `views/` shared layouts, components, error pages |
-| `frontend/` | Design system tokens + components CSS/JS |
+| `frontend/` | Design system (`design-system/style.css`) + per-component CSS/JS |
 | `admin/` | Admin panel assets + docs |
 | `routes/` | `web.php`, `admin.php`, `api.php` |
 | `storage/` | `logs/`, `cache/`, `uploads/` (git-ignored) |
