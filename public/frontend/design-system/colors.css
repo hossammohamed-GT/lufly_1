@@ -1,0 +1,31 @@
+/* Design tokens: raw palette. Semantic mapping lives in themes.css. */
+:root {
+  --color-brand-50: #e6f4f4;
+  --color-brand-100: #c9e8e8;
+  --color-brand-200: #9ad6d6;
+  --color-brand-300: #63bebe;
+  --color-brand-400: #35a3a3;
+  --color-brand-500: #1c8b8b;
+  --color-brand-600: #147174;
+  --color-brand-700: #10585c;
+  --color-brand-800: #0c4347;
+  --color-brand-900: #082e32;
+
+  --color-neutral-0: #ffffff;
+  --color-neutral-50: #f4f7f6;
+  --color-neutral-100: #e7edeb;
+  --color-neutral-200: #d3deda;
+  --color-neutral-300: #b3c4bf;
+  --color-neutral-400: #8aa09a;
+  --color-neutral-500: #6b817d;
+  --color-neutral-600: #4f6360;
+  --color-neutral-700: #3a4a48;
+  --color-neutral-800: #24312f;
+  --color-neutral-900: #12201f;
+
+  --color-teal-accent: #163f43;
+  --color-success: #4d9077;
+  --color-warning: #c58a32;
+  --color-danger: #c64b4b;
+  --color-info: #3b7a9a;
+}

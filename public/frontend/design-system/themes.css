@@ -1,0 +1,54 @@
+/* Semantic tokens per theme. Components may only reference these. */
+:root,
+[data-theme="light"] {
+  --ds-bg: var(--color-neutral-50);
+  --ds-bg-elevated: var(--color-neutral-0);
+  --ds-surface: var(--color-neutral-0);
+  --ds-surface-alt: var(--color-neutral-100);
+  --ds-text: var(--color-neutral-900);
+  --ds-text-muted: var(--color-neutral-500);
+  --ds-border: var(--color-neutral-200);
+  --ds-primary: var(--color-brand-500);
+  --ds-primary-hover: var(--color-brand-600);
+  --ds-primary-text: var(--color-neutral-0);
+  --ds-primary-soft: var(--color-brand-50);
+  --ds-secondary: var(--color-teal-accent);
+  --ds-secondary-text: var(--color-neutral-0);
+  --ds-success: var(--color-success);
+  --ds-warning: var(--color-warning);
+  --ds-danger: var(--color-danger);
+  --ds-info: var(--color-info);
+  --shadow-color: rgba(13, 52, 50, 0.12);
+  --focus-color: color-mix(in srgb, var(--ds-primary) 35%, transparent);
+  color-scheme: light;
+}
+
+[data-theme="dark"] {
+  --ds-bg: var(--color-neutral-900);
+  --ds-bg-elevated: var(--color-neutral-800);
+  --ds-surface: var(--color-neutral-800);
+  --ds-surface-alt: var(--color-neutral-700);
+  --ds-text: var(--color-neutral-100);
+  --ds-text-muted: var(--color-neutral-400);
+  --ds-border: var(--color-neutral-700);
+  --ds-primary: var(--color-brand-400);
+  --ds-primary-hover: var(--color-brand-300);
+  --ds-primary-text: var(--color-neutral-900);
+  --ds-primary-soft: color-mix(in srgb, var(--color-brand-400) 18%, var(--color-neutral-900));
+  --ds-secondary: var(--color-neutral-200);
+  --ds-secondary-text: var(--color-neutral-900);
+  --ds-success: color-mix(in srgb, var(--color-success) 75%, white);
+  --ds-warning: color-mix(in srgb, var(--color-warning) 75%, white);
+  --ds-danger: color-mix(in srgb, var(--color-danger) 75%, white);
+  --ds-info: color-mix(in srgb, var(--color-info) 75%, white);
+  --shadow-color: rgba(0, 0, 0, 0.45);
+  --focus-color: color-mix(in srgb, var(--ds-primary) 45%, transparent);
+  color-scheme: dark;
+}
+
+body {
+  background: var(--ds-bg);
+  color: var(--ds-text);
+}
+
+a { color: var(--ds-primary); }

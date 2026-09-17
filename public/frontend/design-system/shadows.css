@@ -1,0 +1,7 @@
+/* Elevation tokens. Shadow color comes from the active theme. */
+:root {
+  --shadow-1: 0 2px 8px var(--shadow-color);
+  --shadow-2: 0 8px 24px var(--shadow-color);
+  --shadow-3: 0 20px 60px var(--shadow-color);
+  --focus-ring: 0 0 0 3px var(--focus-color);
+}
