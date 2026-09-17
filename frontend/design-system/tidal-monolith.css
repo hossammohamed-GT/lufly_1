@@ -1363,11 +1363,11 @@ body {
    ========================================================================== */
 .deante-hero-container {
   width: 100%;
-  max-width: 2048px;
+  max-width: calc(var(--container-max) + (2 * var(--container-gutter)));
   min-width: 0;
   box-sizing: border-box;
   margin: 0 auto 30px;
-  padding: 0;
+  padding: 0 var(--container-gutter);
 }
 
 .deante-hero-viewport {
@@ -2181,8 +2181,8 @@ body {
 /* Mobile & Narrow Screen Responsiveness (<= 680px) */
 @media (max-width: 680px) {
   .deante-hero-container {
-    padding: 0 12px;
-    margin: 12px auto 20px auto;
+    padding: 0 var(--container-gutter);
+    margin: 0 auto 20px;
   }
 
   .deante-hero-overlay-luxury {
