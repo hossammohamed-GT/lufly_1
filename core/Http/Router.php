@@ -326,10 +326,12 @@ class Router
         $configuredHost = parse_url($base, PHP_URL_HOST);
         $requestHost = (string) ($_SERVER['HTTP_HOST'] ?? '');
 
-        // Keep local asset and route URLs on the same origin as the browser.
+        // Keep local URLs on the current origin without dropping a subdirectory
+        // such as /lufly when the application is served from a project folder.
         if ($requestHost !== '' && in_array($configuredHost, ['localhost', '127.0.0.1'], true)) {
             $scheme = (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off') ? 'https' : 'http';
-            $base = $scheme . '://' . $requestHost;
+            $basePath = (string) (parse_url($base, PHP_URL_PATH) ?? '');
+            $base = $scheme . '://' . $requestHost . rtrim('/' . trim($basePath, '/'), '/');
         }
 
         if ($path === '') {
