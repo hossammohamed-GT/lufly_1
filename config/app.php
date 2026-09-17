@@ -13,7 +13,7 @@ return [
     'name' => env('APP_NAME', 'Lufly Platform'),
     'env' => env('APP_ENV', 'production'),
     'debug' => env('APP_DEBUG', false),
-    'url' => env('APP_URL', 'http://localhost/lufly'),
+    'url' => env('APP_URL', ''),
     'timezone' => env('APP_TIMEZONE', 'UTC'),
     'version' => '1.0.0',
 

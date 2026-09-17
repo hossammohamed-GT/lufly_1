@@ -1,0 +1,6 @@
+.git
+.github
+storage/backups
+tests
+*.md
+.phpunit.cache

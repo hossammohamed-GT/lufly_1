@@ -11,3 +11,5 @@
 Thumbs.db
 /storage/backups/*
 !/storage/backups/.gitkeep
+.vercel
+.env*
