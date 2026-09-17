@@ -8,62 +8,133 @@ $view->layout('layouts.frontend');
 ?>
 
 <!-- ==========================================================================
-     SECTION 1: DEANTE-STYLE CINEMATIC HERO SLIDER
+     SECTION 1: DEANTE-STYLE CINEMATIC HERO SLIDER (4 BESPOKE LUXURY SLIDES)
+     "Pure flow. Designed to be felt." & Aquatic Glassmorphism
      ========================================================================== -->
 <section class="deante-hero-container">
     <div class="deante-hero-viewport" id="hero-slider-viewport">
         <div class="deante-hero-track" id="hero-slider-track">
-            <!-- Slide 1: Smart WC (Pure Wellness) -->
-            <a href="<?= e(route('products.index', ['category_id' => 1])) ?>" class="deante-hero-slide" title="LUFLY Smart WC Pure Wellness">
-                <img src="<?= e(asset('images/lifestyle/hero-slide-smart-wc-hd.png')) ?>" 
+            <!-- Slide 1: Smart WC (Silia WC SMART — Pure Wellness) -->
+            <div class="deante-hero-slide" title="LUFLY Silia Smart WC Architecture">
+                <img src="<?= e(asset('images/lifestyle/hero-slide-smart-wc.jpg')) ?>" 
                      alt="LUFLY Silia Smart WC - Pure Wellness" 
                      class="slide-bg">
-                <div class="deante-hero-overlay" style="opacity: 0; pointer-events: none;">
-                    <div class="deante-hero-title-group">
-                        <span class="deante-hero-script">Silia</span>
-                        <span class="deante-hero-caps">WC SMART</span>
+                <div class="deante-hero-overlay-luxury">
+                    <div class="deante-hero-eyebrow">
+                        <span class="deante-hero-eyebrow-dot"></span>
+                        <span>LUFLY · TIDAL MONOLITH SYSTEM</span>
                     </div>
-                    <div class="deante-hero-subtitle">pure wellness</div>
-                    <span class="deante-hero-cta">See products &rarr;</span>
+                    <div class="deante-hero-heading-luxury">
+                        <span class="deante-hero-script-luxury">Silia</span>
+                        <span class="deante-hero-caps-luxury">WC SMART</span>
+                    </div>
+                    <p class="deante-hero-desc-luxury">
+                        Pure flow. Designed to be felt. Wall-hung rimless ceramic architecture with integrated hydro-wellness, thermal bidet comfort, and soft ambient cyan lighting.
+                    </p>
+                    <div class="deante-hero-actions-luxury">
+                        <a href="<?= e(route('products.index', ['category_id' => 1])) ?>" class="deante-hero-cta-primary">
+                            <span>See Smart Toilets &rarr;</span>
+                        </a>
+                        <a href="https://wa.me/908503040817?text=<?= rawurlencode('Hello LUFLY, I would like to inquire about the Silia Smart WC specification and project pricing.') ?>" 
+                           target="_blank" rel="noopener" class="deante-hero-cta-secondary">
+                            <span>💬 WhatsApp Specifier</span>
+                        </a>
+                    </div>
                 </div>
-            </a>
+            </div>
 
-            <!-- Slide 2: Luxury Faucets & Flow -->
-            <a href="<?= e(route('products.index', ['category_id' => 4])) ?>" class="deante-hero-slide" title="LUFLY Architectural Faucets & Mixers">
-                <img src="<?= e(asset('images/lifestyle/hero-slide-faucets-hd.jpg')) ?>" 
+            <!-- Slide 2: Luxury Faucets & Flow (Duero Hydro Flow) -->
+            <div class="deante-hero-slide" title="LUFLY Architectural Faucets & Mixers">
+                <img src="<?= e(asset('images/lifestyle/hero-slide-basin-mixer.jpg')) ?>" 
                      alt="LUFLY Architectural Basin Mixers" 
                      class="slide-bg">
-                <div class="deante-hero-overlay">
-                    <div class="deante-hero-title-group">
-                        <span class="deante-hero-script">Duero</span>
-                        <span class="deante-hero-caps">HYDRO FLOW</span>
+                <div class="deante-hero-overlay-luxury">
+                    <div class="deante-hero-eyebrow">
+                        <span class="deante-hero-eyebrow-dot"></span>
+                        <span>LUFLY · HYDRODYNAMIC FLOW</span>
                     </div>
-                    <div class="deante-hero-subtitle">pure water</div>
-                    <span class="deante-hero-cta">See products &rarr;</span>
+                    <div class="deante-hero-heading-luxury">
+                        <span class="deante-hero-script-luxury">Duero</span>
+                        <span class="deante-hero-caps-luxury">PVD TAPWARE</span>
+                    </div>
+                    <p class="deante-hero-desc-luxury">
+                        Architectural brassware crafted with titanium vapor deposition. Air-infused laminar streams powered by Swiss Neoperl® precision aerators.
+                    </p>
+                    <div class="deante-hero-actions-luxury">
+                        <a href="<?= e(route('products.index', ['category_id' => 4])) ?>" class="deante-hero-cta-primary">
+                            <span>View All Mixers &rarr;</span>
+                        </a>
+                        <a href="#finishes" class="deante-hero-cta-secondary">
+                            <span>Explore 6 PVD Finishes</span>
+                        </a>
+                    </div>
                 </div>
-            </a>
+            </div>
 
-            <!-- Slide 3: Executive Spa Suite -->
-            <a href="<?= e(route('products.index')) ?>" class="deante-hero-slide" title="LUFLY Architectural Sanctuaries">
-                <img src="<?= e(asset('images/lifestyle/spa-suite.jpg')) ?>" 
+            <!-- Slide 3: Executive Spa Suite (Calacatta Monolithic Sanctuary) -->
+            <div class="deante-hero-slide" title="LUFLY Architectural Sanctuaries">
+                <img src="<?= e(asset('images/lifestyle/hero-slide-freestanding-tub.jpg')) ?>" 
                      alt="LUFLY Luxury Calacatta Suite" 
                      class="slide-bg">
-                <div class="deante-hero-overlay" style="background: radial-gradient(circle, rgba(14,20,22,0.7) 0%, transparent 85%); padding: 60px 40px; border-radius: 20px;">
-                    <div class="deante-hero-title-group">
-                        <span class="deante-hero-script">Calacatta</span>
-                        <span class="deante-hero-caps">SUITE</span>
+                <div class="deante-hero-overlay-luxury">
+                    <div class="deante-hero-eyebrow">
+                        <span class="deante-hero-eyebrow-dot"></span>
+                        <span>LUFLY · SPATIAL ARCHITECTURE</span>
                     </div>
-                    <div class="deante-hero-subtitle">pure luxury</div>
-                    <span class="deante-hero-cta">See products &rarr;</span>
+                    <div class="deante-hero-heading-luxury">
+                        <span class="deante-hero-script-luxury">Calacatta</span>
+                        <span class="deante-hero-caps-luxury">MONOLITH SUITE</span>
+                    </div>
+                    <p class="deante-hero-desc-luxury">
+                        Museum-grade composite stone soaking sanctuaries engineered for ultra-luxury residential projects and boutique hotel suites worldwide.
+                    </p>
+                    <div class="deante-hero-actions-luxury">
+                        <a href="<?= e(route('products.index')) ?>" class="deante-hero-cta-primary">
+                            <span>Explore Sanctuaries &rarr;</span>
+                        </a>
+                        <a href="https://wa.me/908503040817?text=<?= rawurlencode('Hello LUFLY, please share 3D CAD/BIM models for freestanding tubs.') ?>" 
+                           target="_blank" rel="noopener" class="deante-hero-cta-secondary">
+                            <span>Request BIM Models</span>
+                        </a>
+                    </div>
                 </div>
-            </a>
+            </div>
+
+            <!-- Slide 4: Concealed Hydrotherapy Shower (Kallisto Thermostatic Sanctuary) -->
+            <div class="deante-hero-slide" title="LUFLY Concealed Thermostatic Shower Systems">
+                <img src="<?= e(asset('images/lifestyle/hero-slide-rain-shower.jpg')) ?>" 
+                     alt="LUFLY Kallisto Concealed Thermostatic Shower" 
+                     class="slide-bg">
+                <div class="deante-hero-overlay-luxury">
+                    <div class="deante-hero-eyebrow">
+                        <span class="deante-hero-eyebrow-dot"></span>
+                        <span>LUFLY · HYDROTHERAPY WELLNESS</span>
+                    </div>
+                    <div class="deante-hero-heading-luxury">
+                        <span class="deante-hero-script-luxury">Kallisto</span>
+                        <span class="deante-hero-caps-luxury">RAIN SHOWER</span>
+                    </div>
+                    <p class="deante-hero-desc-luxury">
+                        Concealed 38°C anti-scald hydrotherapy rain showers with illuminated micro-droplet mist and aerospace gunmetal titanium controls.
+                    </p>
+                    <div class="deante-hero-actions-luxury">
+                        <a href="<?= e(route('products.index')) ?>" class="deante-hero-cta-primary">
+                            <span>Discover Showers &rarr;</span>
+                        </a>
+                        <a href="#rituals" class="deante-hero-cta-secondary">
+                            <span>Hydrodynamic Rituals</span>
+                        </a>
+                    </div>
+                </div>
+            </div>
         </div>
 
-        <!-- Inside Bottom-Right Pagination Dots -->
+        <!-- Inside Bottom-Right Pagination Dots (4 Slides) -->
         <div class="deante-hero-dots" id="hero-slider-dots">
-            <span class="deante-hero-dot is-active" data-slide="0"></span>
-            <span class="deante-hero-dot" data-slide="1"></span>
-            <span class="deante-hero-dot" data-slide="2"></span>
+            <span class="deante-hero-dot is-active" data-slide="0" aria-label="Slide 1"></span>
+            <span class="deante-hero-dot" data-slide="1" aria-label="Slide 2"></span>
+            <span class="deante-hero-dot" data-slide="2" aria-label="Slide 3"></span>
+            <span class="deante-hero-dot" data-slide="3" aria-label="Slide 4"></span>
         </div>
     </div>
 
@@ -402,12 +473,8 @@ $view->layout('layouts.frontend');
         </div>
 
         <div class="products-grid">
-            <?php
-/** @var Core\View\View $view */
-$view->layout('layouts.frontend'); foreach (array_slice($featuredProducts, 0, 4) as $product): ?>
+            <?php foreach (array_slice($featuredProducts, 0, 4) as $product): ?>
                 <?php
-/** @var Core\View\View $view */
-$view->layout('layouts.frontend');
                 $img = $product['image'] ?? '/images/logo.png';
                 $name = $product['name'] ?? ('LUFLY ' . ($product['sku'] ?? 'Sanitary Fixture'));
                 $sku = $product['sku'] ?? 'SKU-PENDING';
@@ -430,9 +497,7 @@ $view->layout('layouts.frontend');
                         </a>
                     </div>
                 </div>
-            <?php
-/** @var Core\View\View $view */
-$view->layout('layouts.frontend'); endforeach; ?>
+            <?php endforeach; ?>
         </div>
     </div>
 </section>

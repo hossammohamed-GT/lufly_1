@@ -1,11 +1,14 @@
 /**
  * LUFLY — Direction 01 / 10: TIDAL MONOLITH
- * Interactive Client Controller (Finish Switcher, Instant Search, & Room Sliders)
+ * Interactive Client Controller (Finish Switcher, Instant Search, Hero Slider, Language Dropdown & Theme Switcher)
  */
 document.addEventListener('DOMContentLoaded', () => {
   initFinishSelector();
   initQuickSearch();
   initStickyNav();
+  initLanguageDropdown();
+  initThemeSwitcher();
+  initDeanteHeroSlider();
 });
 
 /* ==========================================================================
@@ -130,6 +133,7 @@ function initQuickSearch() {
   const dropdown = document.querySelector('.lufly-search-results');
   if (!input || !dropdown) return;
 
+  const currentLocale = input.dataset.locale || 'en';
   let debounceTimer;
   let cachedProducts = null;
 
@@ -166,19 +170,19 @@ function initQuickSearch() {
       }).slice(0, 6);
 
       if (matches.length === 0) {
-        dropdown.innerHTML = `<div style="padding: 12px; color: var(--lufly-muted); font-size: 13px; text-align: center;">No fixtures found matching "${escapeHtml(query)}"</div>`;
+        dropdown.innerHTML = `<div style="padding: 14px; color: var(--lufly-muted); font-size: 13px; text-align: center;">No fixtures found matching "${escapeHtml(query)}"</div>`;
       } else {
         dropdown.innerHTML = matches.map(p => {
           const img = p.main_image_url || p.image_url || '/images/logo.png';
           const name = escapeHtml(p.name || p.sku || 'Sanitary Fixture');
           const sku = escapeHtml(p.sku || '');
-          const link = `/en/products/${p.id || ''}`;
+          const link = `/${currentLocale}/products/${p.slug || p.id || ''}`;
           return `
-            <a href="${link}" style="display: flex; align-items: center; gap: 12px; padding: 8px; border-radius: 4px; text-decoration: none; border-bottom: 1px solid var(--lufly-border);">
-              <img src="${img}" style="width: 44px; height: 44px; object-fit: contain; background: #fff; border-radius: 4px;" alt="${name}">
+            <a href="${link}" style="display: flex; align-items: center; gap: 12px; padding: 10px 12px; border-radius: 8px; text-decoration: none; border-bottom: 1px solid var(--lufly-border); transition: background 0.2s ease;">
+              <img src="${img}" style="width: 44px; height: 44px; object-fit: contain; background: #fff; border-radius: 6px; padding: 2px; border: 1px solid var(--lufly-border);" alt="${name}">
               <div>
                 <div style="font-size: 13px; font-weight: 600; color: var(--lufly-text);">${name}</div>
-                <div style="font-size: 11px; color: var(--lufly-teal);">${sku}</div>
+                <div style="font-size: 11px; color: var(--lufly-teal); font-weight: 600;">SKU: ${sku}</div>
               </div>
             </a>
           `;
@@ -203,20 +207,74 @@ function escapeHtml(str) {
    3. Sticky Nav Backdrop Enhancement
    ========================================================================== */
 function initStickyNav() {
-  const nav = document.querySelector('.lufly-nav');
-  if (!nav) return;
+  const header = document.querySelector('.deante-header');
+  if (!header) return;
 
   window.addEventListener('scroll', () => {
-    if (window.scrollY > 30) {
-      nav.style.boxShadow = '0 8px 30px rgba(16, 42, 42, 0.08)';
+    if (window.scrollY > 20) {
+      header.style.boxShadow = '0 10px 30px rgba(16, 42, 42, 0.08)';
     } else {
-      nav.style.boxShadow = 'none';
+      header.style.boxShadow = 'none';
     }
   }, { passive: true });
 }
 
 /* ==========================================================================
-   4. Deante-Style Cinematic Hero Slider Controller
+   4. Multilingual Dropdown Controller
+   ========================================================================== */
+function initLanguageDropdown() {
+  const menu = document.getElementById('lufly-lang-menu');
+  const toggle = document.getElementById('lufly-lang-toggle');
+  if (!menu || !toggle) return;
+
+  toggle.addEventListener('click', (e) => {
+    e.stopPropagation();
+    const isOpen = menu.classList.toggle('is-open');
+    toggle.setAttribute('aria-expanded', isOpen ? 'true' : 'false');
+  });
+
+  document.addEventListener('click', (e) => {
+    if (!menu.contains(e.target)) {
+      menu.classList.remove('is-open');
+      toggle.setAttribute('aria-expanded', 'false');
+    }
+  });
+}
+
+/* ==========================================================================
+   5. Dark / Light Theme Switcher Controller
+   ========================================================================== */
+function initThemeSwitcher() {
+  const btn = document.getElementById('lufly-theme-toggle-btn');
+  if (!btn) return;
+  const sunIcon = btn.querySelector('.theme-icon-sun');
+  const moonIcon = btn.querySelector('.theme-icon-moon');
+
+  function updateIcons(theme) {
+    if (theme === 'dark') {
+      if (sunIcon) sunIcon.style.display = 'block';
+      if (moonIcon) moonIcon.style.display = 'none';
+    } else {
+      if (sunIcon) sunIcon.style.display = 'none';
+      if (moonIcon) moonIcon.style.display = 'block';
+    }
+  }
+
+  const savedTheme = localStorage.getItem('lufly-theme') || document.documentElement.getAttribute('data-theme') || 'light';
+  document.documentElement.setAttribute('data-theme', savedTheme);
+  updateIcons(savedTheme);
+
+  btn.addEventListener('click', () => {
+    const currentTheme = document.documentElement.getAttribute('data-theme');
+    const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
+    document.documentElement.setAttribute('data-theme', newTheme);
+    localStorage.setItem('lufly-theme', newTheme);
+    updateIcons(newTheme);
+  });
+}
+
+/* ==========================================================================
+   6. Deante-Style Cinematic Hero Slider Controller (4 Bespoke Slides + RTL)
    ========================================================================== */
 function initDeanteHeroSlider() {
   const track = document.getElementById('hero-slider-track');
@@ -231,12 +289,17 @@ function initDeanteHeroSlider() {
   const total = slides.length;
   let autoTimer = null;
 
+  function isRTL() {
+    return document.documentElement.getAttribute('dir') === 'rtl';
+  }
+
   function goToSlide(index) {
     if (index < 0) index = total - 1;
     if (index >= total) index = 0;
     currentIndex = index;
 
-    track.style.transform = `translateX(-${currentIndex * 100}%)`;
+    const multiplier = isRTL() ? 100 : -100;
+    track.style.transform = `translateX(${currentIndex * multiplier}%)`;
 
     dots.forEach((d, i) => {
       if (i === currentIndex) {
@@ -289,12 +352,6 @@ function initDeanteHeroSlider() {
     viewport.addEventListener('mouseleave', startAuto);
   }
 
+  goToSlide(0);
   startAuto();
-}
-
-// Call inside DOMContentLoaded
-if (document.readyState === 'loading') {
-  document.addEventListener('DOMContentLoaded', initDeanteHeroSlider);
-} else {
-  initDeanteHeroSlider();
 }
