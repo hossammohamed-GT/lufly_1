@@ -1150,3 +1150,77 @@ body {
   .hero-metrics { grid-template-columns: 1fr; }
   .lufly-subnav-links { overflow-x: auto; white-space: nowrap; }
 }
+
+/* ==========================================================================
+   CATALOG & PRODUCT DETAIL POLISH (Tidal Monolith Consistency)
+   ========================================================================== */
+.catalog-page,
+.product-detail-page {
+  padding-top: 40px;
+  padding-bottom: 80px;
+}
+.catalog-header {
+  margin-bottom: 32px;
+}
+.category-tabs-nav {
+  display: flex;
+  gap: 12px;
+  flex-wrap: wrap;
+  margin-bottom: 40px;
+}
+.category-pill {
+  display: inline-flex;
+  align-items: center;
+  padding: 8px 18px;
+  background: var(--glass-bg);
+  backdrop-filter: var(--glass-blur);
+  -webkit-backdrop-filter: var(--glass-blur);
+  border: 1px solid var(--lufly-border);
+  border-radius: 30px;
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--lufly-text);
+  text-decoration: none;
+  transition: var(--transition-smooth);
+}
+.category-pill:hover,
+.category-pill.is-active {
+  background: var(--lufly-teal);
+  border-color: var(--lufly-teal);
+  color: #FFFFFF;
+  box-shadow: 0 4px 14px var(--lufly-teal-glow);
+}
+.product-detail-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 48px;
+  align-items: flex-start;
+}
+.product-gallery-card {
+  background: var(--glass-bg-elevated);
+  backdrop-filter: var(--glass-blur);
+  border: 1px solid var(--glass-border);
+  border-radius: 8px;
+  padding: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+}
+.product-detail-image {
+  max-width: 90%;
+  max-height: 440px;
+  object-fit: contain;
+  filter: drop-shadow(0 15px 30px rgba(16, 42, 42, 0.1));
+}
+.product-guarantee-banner {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  background: var(--glass-bg);
+  backdrop-filter: var(--glass-blur);
+  border: 1px solid var(--lufly-border);
+  border-radius: 6px;
+  padding: 16px;
+  margin: 24px 0;
+}
