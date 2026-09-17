@@ -7,7 +7,6 @@ return [
     'supported' => [
         'en' => 'English',
         'tr' => 'Türkçe',
-        'ar' => 'العربية',
         'cs' => 'Čeština',
     ],
 

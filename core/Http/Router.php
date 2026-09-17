@@ -70,7 +70,11 @@ class Router
      */
     public function localized(array|string $methods, string $key, mixed $handler, ?string $name = null): Route
     {
-        $route = $this->addRoute((array) $methods, '{locale}/' . $key, $handler);
+        $methods = (array) $methods;
+        if (in_array('GET', $methods, true) && !in_array('HEAD', $methods, true)) {
+            $methods[] = 'HEAD';
+        }
+        $route = $this->addRoute($methods, '{locale}/' . $key, $handler);
         $route->localized = true;
         $route->localizedKey = $key;
         $route->namePrefix = '';

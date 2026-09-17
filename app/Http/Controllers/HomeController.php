@@ -32,13 +32,17 @@ class HomeController extends Controller
             [$locale]
         );
 
-        $featuredProducts = \Modules\Products\Models\Product::query()
+        $rawFeatured = \Modules\Products\Models\Product::query()
             ->where('status', 'active')
             ->limit(6)
             ->get();
 
+        $featuredProducts = array_map(function ($p) use ($locale) {
+            return $p->translate($locale);
+        }, $rawFeatured);
+
         return $this->view('home', [
-            'title' => trans('home.hero_title'),
+            'title' => 'LUFLY | Architectural Sanitary Ware Manufacturer & European Export',
             'locale' => $locale,
             'categories' => $categories,
             'featuredProducts' => $featuredProducts,
