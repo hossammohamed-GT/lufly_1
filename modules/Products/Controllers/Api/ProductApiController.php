@@ -35,6 +35,21 @@ class ProductApiController extends Controller
         return ApiResponse::paginated($items, $paginator);
     }
 
+    public function search(Request $request): JsonResponse
+    {
+        $locale = (string) $request->query('locale', $this->translator->getLocale());
+        $query = trim((string) $request->query('q', ''));
+        $limit = max(1, (int) $request->query('limit', '8'));
+
+        if ($query === '') {
+            return ApiResponse::success([]);
+        }
+
+        $items = $this->products->quickSearch($query, $locale, $limit);
+
+        return ApiResponse::success($items);
+    }
+
     public function show(int $id): JsonResponse
     {
         $product = $this->products->find($id);

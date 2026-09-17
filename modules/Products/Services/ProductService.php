@@ -28,6 +28,26 @@ class ProductService
         return $this->products->search($filters, $page, $perPage);
     }
 
+    /** @return array<int, array<string, mixed>> */
+    public function quickSearch(string $query, string $locale = 'en', int $limit = 8): array
+    {
+        $term = trim($query);
+        if ($term === '') {
+            return [];
+        }
+
+        $items = $this->products->quickSearch([
+            'locale' => $locale,
+            'status' => 'active',
+            'search' => $term,
+        ], $limit);
+
+        return array_map(
+            fn (Product $product): array => $product->translate($locale),
+            $items,
+        );
+    }
+
     /** @return array<string, mixed> */
     public function findTranslatedBySlug(string $slug, string $locale): array
     {

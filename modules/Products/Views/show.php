@@ -42,7 +42,7 @@ $waMsg = rawurlencode('Hello LUFLY B2B Export Team, I would like to request form
             <p class="product-detail-sku"><strong><?= e(trans('common.sku')) ?>:</strong> <?= e($sku) ?></p>
 
             <div class="product-guarantee-banner">
-                <span class="badge-shield">🛡️</span>
+                <span class="badge-shield" aria-hidden="true">10Y</span>
                 <div>
                     <strong>10 Years Factory Guarantee • CE & EN-997 Standard</strong>
                     <p>Direct export from LUFLY İNŞAAT SANAYİ VE TİCARET LİMİTED ŞİRKETİ, Gaziantep, Turkey.</p>
@@ -85,7 +85,7 @@ $waMsg = rawurlencode('Hello LUFLY B2B Export Team, I would like to request form
 
             <div class="product-actions-bar">
                 <a href="https://wa.me/908503040817?text=<?= $waMsg ?>" target="_blank" rel="noopener" class="btn btn-primary btn-lg btn-whatsapp-lg">
-                    <span>💬 <?= e(trans('products.inquire_whatsapp')) ?> (+90 850 3040 817)</span>
+                    <span><?= e(trans('products.inquire_whatsapp')) ?> (+90 850 3040 817)</span>
                 </a>
                 <a href="<?= e(route('products.index')) ?>" class="btn btn-ghost btn-lg">
                     &larr; <?= e(trans('common.back')) ?>

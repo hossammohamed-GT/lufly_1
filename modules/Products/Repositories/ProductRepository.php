@@ -74,4 +74,41 @@ class ProductRepository extends Repository
 
         return new Paginator($items, $total, $page, $perPage);
     }
+
+    /**
+     * @param array{locale?: string, search?: string, status?: string} $filters
+     * @return Product[]
+     */
+    public function quickSearch(array $filters, int $limit = 8): array
+    {
+        $locale = $filters['locale'] ?? 'en';
+        $queryTerm = (string) ($filters['search'] ?? '');
+        $status = (string) ($filters['status'] ?? 'active');
+        $searchValue = trim($queryTerm);
+
+        if ($searchValue === '') {
+            return [];
+        }
+
+        $connection = Product::query()->connection();
+        $like = '%' . $searchValue . '%';
+
+        $rows = $connection->select(
+            "SELECT DISTINCT p.*
+             FROM products p
+             LEFT JOIN product_translations pt ON pt.product_id = p.id AND pt.locale = ?
+             WHERE p.deleted_at IS NULL
+               AND p.status = ?
+               AND (
+                   LOWER(p.sku) LIKE LOWER(?)
+                   OR LOWER(pt.name) LIKE LOWER(?)
+                   OR LOWER(pt.description) LIKE LOWER(?)
+               )
+             ORDER BY p.id DESC
+             LIMIT ?",
+            [$locale, $status, $like, $like, $like, (int) $limit],
+        );
+
+        return array_map(static fn (array $row): Product => Product::fromRow($row), $rows);
+    }
 }

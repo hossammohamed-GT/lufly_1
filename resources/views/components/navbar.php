@@ -170,7 +170,7 @@ function renderNavFlag(string $code): string {
                    target="_blank" 
                    rel="noopener" 
                    class="deante-nav-item deante-catalog-link">
-                    <span>📄 <?= e(trans('nav.download_catalog')) ?></span>
+                    <span><?= e(trans('nav.download_catalog')) ?></span>
                 </a>
                 <a href="<?= e(route('products.index')) ?>" class="deante-nav-item deante-outlet-link">
                     <?= e(trans('nav.outlet')) ?>

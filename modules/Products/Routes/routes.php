@@ -61,6 +61,13 @@ return function (Router $router): void {
                 'meta' => ['page' => 1, 'per_page' => 10, 'total' => 1, 'last_page' => 1],
             ]);
 
+        $router->get('/search', [ProductApiController::class, 'search'])
+            ->name('api.products.search')
+            ->doc('Instant product search by SKU or translated product name.', [], [
+                'success' => true,
+                'data' => [['id' => 1, 'sku' => 'SKU-1', 'name' => 'Silia Smart WC']],
+            ]);
+
         $router->get('/{id}', [ProductApiController::class, 'show'])
             ->where('id', '\d+')
             ->name('api.products.show')

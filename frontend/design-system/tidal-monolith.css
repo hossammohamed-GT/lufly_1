@@ -1241,7 +1241,24 @@ body {
   overflow: hidden;
   box-shadow: 0 16px 45px rgba(0, 0, 0, 0.12);
   background: #0d1416;
-  min-height: 420px;
+  min-height: 520px;
+  height: clamp(420px, 45vw, 540px);
+  aspect-ratio: 16 / 9;
+}
+
+@media (max-width: 992px) {
+  .deante-hero-viewport {
+    min-height: 420px;
+    height: clamp(360px, 55vw, 500px);
+  }
+}
+
+@media (max-width: 600px) {
+  .deante-hero-viewport {
+    min-height: 320px;
+    height: clamp(300px, 68vw, 420px);
+    border-radius: 20px;
+  }
 }
 
 .deante-hero-track {
@@ -1254,8 +1271,9 @@ body {
 .deante-hero-slide {
   position: relative;
   min-width: 100%;
+  width: 100%;
   height: 100%;
-  min-height: 420px;
+  min-height: 100%;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -1271,7 +1289,11 @@ body {
   width: 100%;
   height: 100%;
   object-fit: cover;
-  transition: transform 0.8s ease;
+  object-position: center center;
+  display: block;
+  transform: scale(1.02);
+  transition: transform 0.8s ease, filter 0.8s ease;
+  filter: saturate(1.05) contrast(1.04);
 }
 
 .deante-hero-slide:hover img.slide-bg {
@@ -1880,26 +1902,22 @@ body {
 /* Enhanced Aquatic Hero Overlay Typography */
 .deante-hero-overlay-luxury {
   position: absolute;
-  bottom: 40px;
-  left: 50px;
+  bottom: 36px;
+  left: 40px;
   z-index: 5;
   text-align: left;
-  max-width: 620px;
-  background: rgba(10, 20, 20, 0.65);
+  max-width: min(580px, calc(100% - 80px));
+  width: max-content;
+  box-sizing: border-box;
+  background: rgba(10, 20, 20, 0.72);
   backdrop-filter: blur(20px) saturate(180%);
   -webkit-backdrop-filter: blur(20px) saturate(180%);
   border: 1px solid rgba(200, 214, 209, 0.25);
   border-radius: 20px;
-  padding: 36px 42px;
+  padding: 30px 36px;
   color: #ffffff;
   box-shadow: 0 24px 60px rgba(0, 0, 0, 0.45);
-  transition: transform 0.4s ease;
-}
-
-[dir="rtl"] .deante-hero-overlay-luxury {
-  left: auto;
-  right: 50px;
-  text-align: right;
+  transition: all 0.35s ease;
 }
 
 .deante-hero-eyebrow {
@@ -1911,7 +1929,7 @@ body {
   letter-spacing: 0.16em;
   text-transform: uppercase;
   color: #7FE2D0;
-  margin-bottom: 12px;
+  margin-bottom: 10px;
 }
 
 .deante-hero-eyebrow-dot {
@@ -1923,47 +1941,44 @@ body {
 
 .deante-hero-heading-luxury {
   margin: 0 0 10px 0;
-  line-height: 1.1;
+  line-height: 1.15;
+  display: flex;
+  align-items: baseline;
+  flex-wrap: wrap;
+  gap: 10px;
 }
 
 .deante-hero-script-luxury {
   font-family: 'Playfair Display', Georgia, serif;
   font-style: italic;
-  font-size: clamp(34px, 4.2vw, 54px);
+  font-size: clamp(28px, 3.8vw, 48px);
   font-weight: 500;
   color: #ffffff;
   letter-spacing: -0.01em;
-  margin-right: 12px;
-}
-
-[dir="rtl"] .deante-hero-script-luxury {
-  margin-right: 0;
-  margin-left: 12px;
-  font-family: inherit;
-  font-style: normal;
 }
 
 .deante-hero-caps-luxury {
   font-family: var(--font-display);
-  font-size: clamp(24px, 3vw, 40px);
+  font-size: clamp(20px, 2.6vw, 36px);
   font-weight: 800;
   letter-spacing: 0.08em;
   color: #ffffff;
   text-transform: uppercase;
+  word-break: normal;
 }
 
 .deante-hero-desc-luxury {
-  font-size: 15px;
+  font-size: 14px;
   line-height: 1.55;
-  color: rgba(239, 247, 243, 0.85);
-  margin: 0 0 24px 0;
+  color: rgba(239, 247, 243, 0.88);
+  margin: 0 0 20px 0;
   font-weight: 300;
 }
 
 .deante-hero-actions-luxury {
   display: flex;
   align-items: center;
-  gap: 14px;
+  gap: 12px;
   flex-wrap: wrap;
 }
 
@@ -1975,7 +1990,7 @@ body {
   color: #ffffff !important;
   font-size: 13px;
   font-weight: 600;
-  padding: 12px 28px;
+  padding: 11px 26px;
   border-radius: 9999px;
   border: 1px solid rgba(255, 255, 255, 0.25);
   text-decoration: none;
@@ -1998,7 +2013,7 @@ body {
   color: #EFF7F3 !important;
   font-size: 13px;
   font-weight: 500;
-  padding: 12px 24px;
+  padding: 11px 22px;
   border-radius: 9999px;
   border: 1px solid rgba(255, 255, 255, 0.2);
   text-decoration: none;
@@ -2011,12 +2026,131 @@ body {
   border-color: rgba(255, 255, 255, 0.4);
 }
 
-@media (max-width: 768px) {
+/* Tablet Responsiveness (768px - 992px) */
+@media (max-width: 992px) {
   .deante-hero-overlay-luxury {
-    left: 20px;
-    right: 20px;
-    bottom: 20px;
-    padding: 24px;
+    left: 28px;
+    bottom: 28px;
+    width: calc(100% - 56px);
+    max-width: 520px;
+    padding: 24px 28px;
+  }
+}
+
+/* Mobile & Narrow Screen Responsiveness (<= 680px) */
+@media (max-width: 680px) {
+  .deante-hero-container {
+    padding: 0 12px;
+    margin: 12px auto 20px auto;
+  }
+
+  .deante-hero-overlay-luxury {
+    left: 10px !important;
+    right: 10px !important;
+    bottom: 10px !important;
+    width: auto !important;
+    max-width: none !important;
+    border-radius: 18px;
+    background: rgba(10, 20, 20, 0.72);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    padding: 24px 16px 18px 16px;
+    text-align: center;
+    box-shadow: none;
+  }
+
+  .deante-hero-eyebrow {
+    justify-content: center;
+    font-size: 10px;
+    margin-bottom: 6px;
+  }
+
+  .deante-hero-heading-luxury {
+    justify-content: center;
+    flex-wrap: wrap;
+    gap: 6px;
+    margin-bottom: 6px;
+  }
+
+  .deante-hero-script-luxury {
+    font-size: 24px;
+    margin-right: 0;
+  }
+
+  .deante-hero-caps-luxury {
+    font-size: 18px;
+    letter-spacing: 0.06em;
+    word-break: keep-all;
+    white-space: normal;
+  }
+
+  .deante-hero-desc-luxury {
+    font-size: 12px;
+    line-height: 1.45;
+    margin: 0 auto 14px auto;
+    max-width: 320px;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+  }
+
+  .deante-hero-actions-luxury {
+    justify-content: center;
+    gap: 8px;
+  }
+
+  .deante-hero-cta-primary {
+    padding: 9px 20px;
+    font-size: 12px;
+  }
+
+  .deante-hero-cta-secondary {
+    display: none;
+  }
+
+  /* Dots on mobile move to top-right to keep bottom clean */
+  .deante-hero-dots {
+    top: 16px;
+    right: 16px;
+    bottom: auto;
+    background: rgba(0, 0, 0, 0.45);
+    padding: 5px 9px;
+    border-radius: 9999px;
+    backdrop-filter: blur(8px);
+  }
+
+  .deante-hero-controls {
+    justify-content: center;
+  }
+
+  /* Header mobile responsiveness */
+  .deante-header-inner {
+    gap: 12px;
+    flex-wrap: wrap;
+  }
+
+  .deante-search-container {
+    order: 3;
+    width: 100%;
+    max-width: 100%;
+    margin-top: 4px;
+  }
+
+  .deante-subnav-strip {
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: none;
+  }
+
+  .deante-subnav-strip::-webkit-scrollbar {
+    display: none;
+  }
+
+  .deante-nav-list {
+    flex-wrap: nowrap;
+    white-space: nowrap;
+    gap: 16px;
   }
 }
 

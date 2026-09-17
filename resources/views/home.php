@@ -37,7 +37,7 @@ $view->layout('layouts.frontend');
                         </a>
                         <a href="https://wa.me/908503040817?text=<?= rawurlencode('Hello LUFLY, I would like to inquire about the Silia Smart WC specification and project pricing.') ?>" 
                            target="_blank" rel="noopener" class="deante-hero-cta-secondary">
-                            <span>💬 WhatsApp Specifier</span>
+                            <span>WhatsApp Specifier</span>
                         </a>
                     </div>
                 </div>
@@ -152,7 +152,7 @@ $view->layout('layouts.frontend');
     <div class="container">
         <div class="trust-grid">
             <div class="trust-card">
-                <div class="trust-icon">🛡️</div>
+                <div class="trust-icon" aria-hidden="true">10Y</div>
                 <div class="trust-info">
                     <h4>10-Year Factory Guarantee</h4>
                     <p>Rigorous European EN 997 & EN 817 quality certification with 400 kg load tolerance.</p>
@@ -160,7 +160,7 @@ $view->layout('layouts.frontend');
             </div>
 
             <div class="trust-card">
-                <div class="trust-icon">💧</div>
+                <div class="trust-icon" aria-hidden="true">45%</div>
                 <div class="trust-info">
                     <h4>PRO-ECO Hydrodynamics</h4>
                     <p>Swiss Neoperl® precision aerators saving up to 45% water without compromising volume.</p>
@@ -168,7 +168,7 @@ $view->layout('layouts.frontend');
             </div>
 
             <div class="trust-card">
-                <div class="trust-icon">🔥</div>
+                <div class="trust-icon" aria-hidden="true">1250C</div>
                 <div class="trust-info">
                     <h4>1,250°C Vitreous Ceramic</h4>
                     <p>Sub-0.35% water absorption rate with poreless nano-antibacterial hygienic glazing.</p>
@@ -176,7 +176,7 @@ $view->layout('layouts.frontend');
             </div>
 
             <div class="trust-card">
-                <div class="trust-icon">🚚</div>
+                <div class="trust-icon" aria-hidden="true">34+</div>
                 <div class="trust-info">
                     <h4>Direct European Logistics</h4>
                     <p>Strategic export dispatch from Gaziantep manufacturing facilities to 34+ global markets.</p>
@@ -269,7 +269,7 @@ $view->layout('layouts.frontend');
                        target="_blank" 
                        rel="noopener" 
                        class="btn-primary-teal">
-                        <span>💬 Inquire This Finish via WhatsApp</span>
+                        <span>Inquire This Finish via WhatsApp</span>
                     </a>
                     <a href="<?= e(route('products.index', ['category_id' => 4])) ?>" class="btn-secondary-glass">
                         <span>View All Mixers</span>
@@ -490,7 +490,7 @@ $view->layout('layouts.frontend');
                     <p class="product-specs"><?= e($desc) ?></p>
                     <div class="product-card-actions">
                         <a href="https://wa.me/908503040817?text=<?= $inquireMsg ?>" target="_blank" rel="noopener" class="btn-inquire-whatsapp">
-                            <span>💬 Inquire B2B</span>
+                            <span>Inquire B2B</span>
                         </a>
                         <a href="<?= e(route('products.show', ['slug' => $product['slug'] ?? $product['id']])) ?>" style="font-size: 12px; color: var(--lufly-text); font-weight: 600;">
                             Tech Sheet &rarr;
@@ -525,7 +525,7 @@ $view->layout('layouts.frontend');
 
             <div style="display: flex; flex-direction: column; gap: 16px;">
                 <div class="glass-panel" style="padding: 24px; text-align: center;">
-                    <div style="font-size: 32px; margin-bottom: 8px;">📐</div>
+                    <div style="font-size: 18px; font-weight: 700; letter-spacing: 0.08em; margin-bottom: 12px; color: var(--lufly-teal);" aria-hidden="true">CAD / BIM</div>
                     <h4 style="margin: 0 0 8px 0; font-size: 16px; color: var(--lufly-text);">Architectural Specification Desk</h4>
                     <p style="font-size: 13px; color: var(--lufly-muted); margin: 0 0 16px 0;">
                         Download complete CAD blocks, BIM Revit families, and master price books for project tenders.

@@ -135,59 +135,72 @@ function initQuickSearch() {
 
   const currentLocale = input.dataset.locale || 'en';
   let debounceTimer;
-  let cachedProducts = null;
 
-  async function fetchProducts() {
-    if (cachedProducts) return cachedProducts;
-    try {
-      const res = await fetch('/api/products');
-      if (res.ok) {
-        const json = await res.json();
-        cachedProducts = json.data || json;
-        return cachedProducts;
-      }
-    } catch (e) {
-      console.warn('API lookup failed, fallback to local', e);
+  async function fetchProducts(searchTerm) {
+    const q = (searchTerm || '').trim();
+    if (!q) {
+      dropdown.style.display = 'none';
+      return [];
     }
-    return [];
+
+    try {
+      const url = `/api/products/search?q=${encodeURIComponent(q)}&limit=8&locale=${encodeURIComponent(currentLocale)}`;
+      const res = await fetch(url);
+      if (!res.ok) {
+        return [];
+      }
+
+      const json = await res.json();
+      return Array.isArray(json.data) ? json.data : [];
+    } catch (e) {
+      console.warn('Instant search failed:', e);
+      return [];
+    }
   }
 
   input.addEventListener('input', () => {
     clearTimeout(debounceTimer);
-    const query = input.value.trim().toLowerCase();
+    const query = input.value.trim();
 
     if (query.length < 2) {
       dropdown.style.display = 'none';
+      dropdown.innerHTML = '';
       return;
     }
 
     debounceTimer = setTimeout(async () => {
-      const products = await fetchProducts();
-      const matches = products.filter(p => {
-        const name = (p.name || p.sku || '').toLowerCase();
-        const sku = (p.sku || '').toLowerCase();
-        return name.includes(query) || sku.includes(query);
-      }).slice(0, 6);
+      const matches = await fetchProducts(query);
 
-      if (matches.length === 0) {
+      if (!matches.length) {
         dropdown.innerHTML = `<div style="padding: 14px; color: var(--lufly-muted); font-size: 13px; text-align: center;">No fixtures found matching "${escapeHtml(query)}"</div>`;
-      } else {
-        dropdown.innerHTML = matches.map(p => {
-          const img = p.main_image_url || p.image_url || '/images/logo.png';
-          const name = escapeHtml(p.name || p.sku || 'Sanitary Fixture');
-          const sku = escapeHtml(p.sku || '');
-          const link = `/${currentLocale}/products/${p.slug || p.id || ''}`;
-          return `
-            <a href="${link}" style="display: flex; align-items: center; gap: 12px; padding: 10px 12px; border-radius: 8px; text-decoration: none; border-bottom: 1px solid var(--lufly-border); transition: background 0.2s ease;">
-              <img src="${img}" style="width: 44px; height: 44px; object-fit: contain; background: #fff; border-radius: 6px; padding: 2px; border: 1px solid var(--lufly-border);" alt="${name}">
-              <div>
-                <div style="font-size: 13px; font-weight: 600; color: var(--lufly-text);">${name}</div>
-                <div style="font-size: 11px; color: var(--lufly-teal); font-weight: 600;">SKU: ${sku}</div>
-              </div>
-            </a>
-          `;
-        }).join('');
+        dropdown.style.display = 'block';
+        return;
       }
+
+      dropdown.innerHTML = matches.map((p) => {
+        const productName = escapeHtml(p.name || p.sku || 'Sanitary Fixture');
+        const sku = escapeHtml(p.sku || '');
+        const image = (() => {
+          const raw = p.image || p.main_image_url || p.image_url || '';
+          if (!raw) return '/images/logo.png';
+          if (raw.startsWith('http://') || raw.startsWith('https://')) return raw;
+          if (raw.startsWith('/')) return raw;
+          return '/' + raw.replace(/^\/+/, '');
+        })();
+        const slug = p.slug || p.id || '';
+        const link = `/${currentLocale}/products/${slug}`;
+
+        return `
+          <a href="${link}" style="display: flex; align-items: center; gap: 12px; padding: 10px 12px; border-radius: 8px; text-decoration: none; border-bottom: 1px solid var(--lufly-border); transition: background 0.2s ease;">
+            <img src="${image}" style="width: 52px; height: 52px; object-fit: contain; background: #fff; border-radius: 8px; padding: 4px; border: 1px solid var(--lufly-border); flex-shrink: 0;" alt="${productName}">
+            <div style="min-width: 0; flex: 1;">
+              <div style="font-size: 13px; font-weight: 600; color: var(--lufly-text); white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">${productName}</div>
+              <div style="font-size: 11px; color: var(--lufly-teal); font-weight: 600; margin-top: 2px;">SKU: ${sku}</div>
+            </div>
+          </a>
+        `;
+      }).join('');
+
       dropdown.style.display = 'block';
     }, 200);
   });
