@@ -28,6 +28,7 @@ try {
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap">
 <link rel="stylesheet" href="<?= e(asset('frontend/design-system/style.css')) ?>">
+<link rel="stylesheet" href="<?= e(asset('frontend/design-system/tidal-monolith.css')) ?>">
 <link rel="stylesheet" href="<?= e(asset('frontend/css/app.css')) ?>">
 <?php foreach ($styles as $style): ?>
 <link rel="stylesheet" href="<?= e(asset($style)) ?>">
