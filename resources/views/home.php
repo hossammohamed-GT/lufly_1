@@ -1,5 +1,7 @@
 <?php
 /** @var Core\View\View $view */
+$view->layout('layouts.frontend');
+/** @var Core\View\View $view */
 /** @var array $categories */
 /** @var array $featuredProducts */
 /** @var string $locale */
@@ -416,8 +418,12 @@
         </div>
 
         <div class="products-grid">
-            <?php foreach (array_slice($featuredProducts, 0, 4) as $product): ?>
+            <?php
+/** @var Core\View\View $view */
+$view->layout('layouts.frontend'); foreach (array_slice($featuredProducts, 0, 4) as $product): ?>
                 <?php
+/** @var Core\View\View $view */
+$view->layout('layouts.frontend');
                 $img = $product['image'] ?? '/images/logo.png';
                 $name = $product['name'] ?? ('LUFLY ' . ($product['sku'] ?? 'Sanitary Fixture'));
                 $sku = $product['sku'] ?? 'SKU-PENDING';
@@ -440,7 +446,9 @@
                         </a>
                     </div>
                 </div>
-            <?php endforeach; ?>
+            <?php
+/** @var Core\View\View $view */
+$view->layout('layouts.frontend'); endforeach; ?>
         </div>
     </div>
 </section>
