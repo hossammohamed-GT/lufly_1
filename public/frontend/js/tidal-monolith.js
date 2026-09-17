@@ -105,9 +105,9 @@ function initFinishSelector() {
 
       setTimeout(() => {
         imgEl.src = data.image;
-        if (titleEl) titleEl.textContent = data.title;
+        if (titleEl) titleEl.textContent = btn.dataset.title || data.title;
         if (tagEl) tagEl.textContent = data.tag;
-        if (descEl) descEl.textContent = data.desc;
+        if (descEl) descEl.textContent = btn.dataset.desc || data.desc;
         if (baseEl) baseEl.textContent = data.base;
         if (coatingEl) coatingEl.textContent = data.coating || data.surface || data.finish;
         if (cartEl) cartEl.textContent = data.cartridge;

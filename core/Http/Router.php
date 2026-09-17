@@ -323,6 +323,15 @@ class Router
     public function baseUrl(string $path = ''): string
     {
         $base = rtrim((string) config('app.url', ''), '/');
+        $configuredHost = parse_url($base, PHP_URL_HOST);
+        $requestHost = (string) ($_SERVER['HTTP_HOST'] ?? '');
+
+        // Keep local asset and route URLs on the same origin as the browser.
+        if ($requestHost !== '' && in_array($configuredHost, ['localhost', '127.0.0.1'], true)) {
+            $scheme = (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off') ? 'https' : 'http';
+            $base = $scheme . '://' . $requestHost;
+        }
+
         if ($path === '') {
             return $base;
         }

@@ -22,22 +22,20 @@ $view->layout('layouts.frontend');
                 <div class="deante-hero-overlay-luxury">
                     <div class="deante-hero-eyebrow">
                         <span class="deante-hero-eyebrow-dot"></span>
-                        <span>LUFLY · TIDAL MONOLITH SYSTEM</span>
+                        <span><?= e(trans('home.hero1_eyebrow')) ?></span>
                     </div>
                     <div class="deante-hero-heading-luxury">
                         <span class="deante-hero-script-luxury">Silia</span>
                         <span class="deante-hero-caps-luxury">WC SMART</span>
                     </div>
-                    <p class="deante-hero-desc-luxury">
-                        Pure flow. Designed to be felt. Wall-hung rimless ceramic architecture with integrated hydro-wellness, thermal bidet comfort, and soft ambient cyan lighting.
-                    </p>
+                    <p class="deante-hero-desc-luxury"><?= e(trans('home.hero1_desc')) ?></p>
                     <div class="deante-hero-actions-luxury">
                         <a href="<?= e(route('products.index', ['category_id' => 1])) ?>" class="deante-hero-cta-primary">
-                            <span>See Smart Toilets &rarr;</span>
+                            <span><?= e(trans('home.hero1_primary')) ?> &rarr;</span>
                         </a>
                         <a href="https://wa.me/908503040817?text=<?= rawurlencode('Hello LUFLY, I would like to inquire about the Silia Smart WC specification and project pricing.') ?>" 
                            target="_blank" rel="noopener" class="deante-hero-cta-secondary">
-                            <span>WhatsApp Specifier</span>
+                            <span><?= e(trans('home.whatsapp_specifier')) ?></span>
                         </a>
                     </div>
                 </div>
@@ -51,21 +49,19 @@ $view->layout('layouts.frontend');
                 <div class="deante-hero-overlay-luxury">
                     <div class="deante-hero-eyebrow">
                         <span class="deante-hero-eyebrow-dot"></span>
-                        <span>LUFLY · HYDRODYNAMIC FLOW</span>
+                        <span><?= e(trans('home.hero2_eyebrow')) ?></span>
                     </div>
                     <div class="deante-hero-heading-luxury">
                         <span class="deante-hero-script-luxury">Duero</span>
                         <span class="deante-hero-caps-luxury">PVD TAPWARE</span>
                     </div>
-                    <p class="deante-hero-desc-luxury">
-                        Architectural brassware crafted with titanium vapor deposition. Air-infused laminar streams powered by Swiss Neoperl® precision aerators.
-                    </p>
+                    <p class="deante-hero-desc-luxury"><?= e(trans('home.hero2_desc')) ?></p>
                     <div class="deante-hero-actions-luxury">
                         <a href="<?= e(route('products.index', ['category_id' => 4])) ?>" class="deante-hero-cta-primary">
-                            <span>View All Mixers &rarr;</span>
+                            <span><?= e(trans('home.hero2_primary')) ?> &rarr;</span>
                         </a>
                         <a href="#finishes" class="deante-hero-cta-secondary">
-                            <span>Explore 6 PVD Finishes</span>
+                            <span><?= e(trans('home.hero2_secondary')) ?></span>
                         </a>
                     </div>
                 </div>
@@ -79,22 +75,20 @@ $view->layout('layouts.frontend');
                 <div class="deante-hero-overlay-luxury">
                     <div class="deante-hero-eyebrow">
                         <span class="deante-hero-eyebrow-dot"></span>
-                        <span>LUFLY · SPATIAL ARCHITECTURE</span>
+                        <span><?= e(trans('home.hero3_eyebrow')) ?></span>
                     </div>
                     <div class="deante-hero-heading-luxury">
                         <span class="deante-hero-script-luxury">Calacatta</span>
                         <span class="deante-hero-caps-luxury">MONOLITH SUITE</span>
                     </div>
-                    <p class="deante-hero-desc-luxury">
-                        Museum-grade composite stone soaking sanctuaries engineered for ultra-luxury residential projects and boutique hotel suites worldwide.
-                    </p>
+                    <p class="deante-hero-desc-luxury"><?= e(trans('home.hero3_desc')) ?></p>
                     <div class="deante-hero-actions-luxury">
                         <a href="<?= e(route('products.index')) ?>" class="deante-hero-cta-primary">
-                            <span>Explore Sanctuaries &rarr;</span>
+                            <span><?= e(trans('home.hero3_primary')) ?> &rarr;</span>
                         </a>
                         <a href="https://wa.me/908503040817?text=<?= rawurlencode('Hello LUFLY, please share 3D CAD/BIM models for freestanding tubs.') ?>" 
                            target="_blank" rel="noopener" class="deante-hero-cta-secondary">
-                            <span>Request BIM Models</span>
+                            <span><?= e(trans('home.hero3_secondary')) ?></span>
                         </a>
                     </div>
                 </div>
@@ -108,21 +102,19 @@ $view->layout('layouts.frontend');
                 <div class="deante-hero-overlay-luxury">
                     <div class="deante-hero-eyebrow">
                         <span class="deante-hero-eyebrow-dot"></span>
-                        <span>LUFLY · HYDROTHERAPY WELLNESS</span>
+                        <span><?= e(trans('home.hero4_eyebrow')) ?></span>
                     </div>
                     <div class="deante-hero-heading-luxury">
                         <span class="deante-hero-script-luxury">Kallisto</span>
                         <span class="deante-hero-caps-luxury">RAIN SHOWER</span>
                     </div>
-                    <p class="deante-hero-desc-luxury">
-                        Concealed 38°C anti-scald hydrotherapy rain showers with illuminated micro-droplet mist and aerospace gunmetal titanium controls.
-                    </p>
+                    <p class="deante-hero-desc-luxury"><?= e(trans('home.hero4_desc')) ?></p>
                     <div class="deante-hero-actions-luxury">
                         <a href="<?= e(route('products.index')) ?>" class="deante-hero-cta-primary">
-                            <span>Discover Showers &rarr;</span>
+                            <span><?= e(trans('home.hero4_primary')) ?> &rarr;</span>
                         </a>
                         <a href="#rituals" class="deante-hero-cta-secondary">
-                            <span>Hydrodynamic Rituals</span>
+                            <span><?= e(trans('home.hero4_secondary')) ?></span>
                         </a>
                     </div>
                 </div>
@@ -151,10 +143,10 @@ $view->layout('layouts.frontend');
 <section class="trust-bar" aria-labelledby="trust-title">
     <div class="trust-inner">
         <div class="trust-heading">
-            <span class="trust-kicker">Our advantage</span>
-            <h2 id="trust-title">Built for a <em>Better</em> Tomorrow</h2>
+            <span class="trust-kicker"><?= e(trans('home.trust_kicker')) ?></span>
+            <h2 id="trust-title"><?= e(trans('home.trust_title_before')) ?> <em><?= e(trans('home.trust_title_emphasis')) ?></em> <?= e(trans('home.trust_title_after')) ?></h2>
             <div class="trust-heading-rule" aria-hidden="true"></div>
-            <p>European quality. Sustainable innovation. Global reach.</p>
+            <p><?= e(trans('home.trust_subtitle')) ?></p>
         </div>
 
         <div class="trust-grid">
@@ -162,10 +154,10 @@ $view->layout('layouts.frontend');
                 <div class="trust-icon" aria-hidden="true">
                     <svg viewBox="0 0 48 48" role="img"><path d="M24 5 38 11v10c0 10-5.7 17.4-14 22-8.3-4.6-14-12-14-22V11l14-6Z"/><path d="m17 24 5 5 10-11"/></svg>
                 </div>
-                <div class="trust-stat"><strong>10</strong><span>YEAR</span></div>
+                <div class="trust-stat"><strong>10</strong><span><?= e(trans('home.year')) ?></span></div>
                 <span class="trust-accent" aria-hidden="true"></span>
-                <h3>Factory Guarantee</h3>
-                <p>Rigorous European EN 997 & EN 817 quality certification with 400 kg load tolerance.</p>
+                <h3><?= e(trans('home.trust_guarantee_title')) ?></h3>
+                <p><?= e(trans('home.trust_guarantee_desc')) ?></p>
             </article>
 
             <article class="trust-card">
@@ -174,8 +166,8 @@ $view->layout('layouts.frontend');
                 </div>
                 <div class="trust-stat"><strong>45</strong><span>%</span></div>
                 <span class="trust-accent" aria-hidden="true"></span>
-                <h3>PRO-ECO Hydrodynamics</h3>
-                <p>Swiss Neoperl® precision aerators saving up to 45% water without compromising volume.</p>
+                <h3><?= e(trans('home.trust_water_title')) ?></h3>
+                <p><?= e(trans('home.trust_water_desc')) ?></p>
             </article>
 
             <article class="trust-card">
@@ -184,8 +176,8 @@ $view->layout('layouts.frontend');
                 </div>
                 <div class="trust-stat"><strong>1,250</strong><span>°C</span></div>
                 <span class="trust-accent" aria-hidden="true"></span>
-                <h3>Vitreous Ceramic</h3>
-                <p>Sub-0.35% water absorption rate with poreless nano-antibacterial hygienic glazing.</p>
+                <h3><?= e(trans('home.trust_ceramic_title')) ?></h3>
+                <p><?= e(trans('home.trust_ceramic_desc')) ?></p>
             </article>
 
             <article class="trust-card">
@@ -194,12 +186,12 @@ $view->layout('layouts.frontend');
                 </div>
                 <div class="trust-stat"><strong>34</strong><span>+</span></div>
                 <span class="trust-accent" aria-hidden="true"></span>
-                <h3>Global Markets</h3>
-                <p>Strategic export dispatch from Gaziantep manufacturing facilities to 34+ global markets.</p>
+                <h3><?= e(trans('home.trust_global_title')) ?></h3>
+                <p><?= e(trans('home.trust_global_desc')) ?></p>
             </article>
         </div>
 
-        <div class="trust-footer-line" aria-hidden="true"><span></span><small>Quality today. A cleaner tomorrow.</small><span></span></div>
+        <div class="trust-footer-line" aria-hidden="true"><span></span><small><?= e(trans('home.trust_footer')) ?></small><span></span></div>
     </div>
 </section>
 
@@ -211,30 +203,30 @@ $view->layout('layouts.frontend');
     <div class="container finishes-container">
         <div class="finishes-heading-row">
             <div class="section-header-left">
-                <span class="section-tag">Surface Metallurgy & Finishes</span>
-                <h2 class="section-title">Choose the<br><em>Finish</em> of Your Space</h2>
-                <p class="section-subtitle">Six architectural finishes engineered with Physical Vapor Deposition (PVD) technology for exceptional durability, refined aesthetics, and long-lasting resistance to scratches, corrosion, and harsh environments.</p>
+                <span class="section-tag"><?= e(trans('home.finishes_tag')) ?></span>
+                <h2 class="section-title"><?= e(trans('home.finishes_title_before')) ?><br><em><?= e(trans('home.finishes_title_emphasis')) ?></em> <?= e(trans('home.finishes_title_after')) ?></h2>
+                <p class="section-subtitle"><?= e(trans('home.finishes_desc')) ?></p>
             </div>
-            <div class="finishes-heading-note">Finishes<br>that endure<br>beauty<br>that lasts<span></span></div>
+            <div class="finishes-heading-note"><?= e(trans('home.finishes_note_1')) ?><br><?= e(trans('home.finishes_note_2')) ?><br><?= e(trans('home.finishes_note_3')) ?><br><?= e(trans('home.finishes_note_4')) ?><span></span></div>
         </div>
 
         <div class="finishes-swatch-row">
-            <button type="button" class="finish-swatch-btn is-active" data-finish="brushed-rose-gold" aria-label="Brushed Rose Gold">
+            <button type="button" class="finish-swatch-btn is-active" data-finish="brushed-rose-gold" data-title="<?= e(trans('home.finish_rose_title')) ?>" data-desc="<?= e(trans('home.finish_rose_desc')) ?>" aria-label="Brushed Rose Gold">
                 <img src="<?= e(asset('images/finishes/brushed-rose-gold.jpg')) ?>" alt="Rose Gold finish"><span class="swatch-label">Rose Gold</span><small>PVD</small>
             </button>
-            <button type="button" class="finish-swatch-btn" data-finish="chrome" aria-label="Mirror Chrome">
+            <button type="button" class="finish-swatch-btn" data-finish="chrome" data-title="<?= e(trans('home.finish_chrome_title')) ?>" data-desc="<?= e(trans('home.finish_chrome_desc')) ?>" aria-label="Mirror Chrome">
                 <img src="<?= e(asset('images/finishes/chrome.jpg')) ?>" alt="Chrome finish"><span class="swatch-label">Chrome</span><small>PVD</small>
             </button>
-            <button type="button" class="finish-swatch-btn" data-finish="brushed-gold" aria-label="Brushed Gold">
+            <button type="button" class="finish-swatch-btn" data-finish="brushed-gold" data-title="<?= e(trans('home.finish_gold_title')) ?>" data-desc="<?= e(trans('home.finish_gold_desc')) ?>" aria-label="Brushed Gold">
                 <img src="<?= e(asset('images/finishes/brushed-gold.jpg')) ?>" alt="Brushed Gold finish"><span class="swatch-label">Brushed Gold</span><small>PVD</small>
             </button>
-            <button type="button" class="finish-swatch-btn" data-finish="matte-black" aria-label="Matte Black">
+            <button type="button" class="finish-swatch-btn" data-finish="matte-black" data-title="<?= e(trans('home.finish_black_title')) ?>" data-desc="<?= e(trans('home.finish_black_desc')) ?>" aria-label="Matte Black">
                 <img src="<?= e(asset('images/finishes/matte-black.jpg')) ?>" alt="Matte Black finish"><span class="swatch-label">Matte Black</span><small>PVD</small>
             </button>
-            <button type="button" class="finish-swatch-btn" data-finish="brushed-steel" aria-label="Brushed Steel">
+            <button type="button" class="finish-swatch-btn" data-finish="brushed-steel" data-title="<?= e(trans('home.finish_steel_title')) ?>" data-desc="<?= e(trans('home.finish_steel_desc')) ?>" aria-label="Brushed Steel">
                 <img src="<?= e(asset('images/finishes/brushed-steel.jpg')) ?>" alt="Brushed Steel finish"><span class="swatch-label">Brushed Steel</span><small>PVD</small>
             </button>
-            <button type="button" class="finish-swatch-btn" data-finish="gunmetal" aria-label="Gunmetal Grey">
+            <button type="button" class="finish-swatch-btn" data-finish="gunmetal" data-title="<?= e(trans('home.finish_gunmetal_title')) ?>" data-desc="<?= e(trans('home.finish_gunmetal_desc')) ?>" aria-label="Gunmetal Grey">
                 <img src="<?= e(asset('images/finishes/gunmetal.jpg')) ?>" alt="Gunmetal finish"><span class="swatch-label">Gunmetal</span><small>PVD</small>
             </button>
         </div>
@@ -250,26 +242,24 @@ $view->layout('layouts.frontend');
 
             <div class="finish-showcase-details">
                 <div class="finish-detail-meta"><span class="finish-spec-pill" id="finish-tag">PVD TITANIUM VAPOR DEPOSITION</span><span>01 / 06</span></div>
-                <h3 class="finish-title" id="finish-title">Brushed Rose Gold (PVD)</h3>
-                <p class="finish-desc" id="finish-desc">
-                    An opulent, warm metallic hue crafted via vacuum plasma PVD. Ultra-resistant to micro-scratches, finger marks, and corrosion in coastal and humid spa environments.
-                </p>
+                <h3 class="finish-title" id="finish-title"><?= e(trans('home.finish_default_title')) ?></h3>
+                <p class="finish-desc" id="finish-desc"><?= e(trans('home.finish_default_desc')) ?></p>
 
                 <div class="finish-tech-specs">
                     <div class="tech-spec-item">
-                        <span id="finish-base-label">Base Alloy</span>
+                        <span id="finish-base-label"><?= e(trans('home.finish_base_label')) ?></span>
                         <b id="finish-base">Solid Brass CW617N</b>
                     </div>
                     <div class="tech-spec-item">
-                        <span id="finish-coating-label">Coating Spec</span>
+                        <span id="finish-coating-label"><?= e(trans('home.finish_coating_label')) ?></span>
                         <b id="finish-coating">PVD Titanium 0.4µm</b>
                     </div>
                     <div class="tech-spec-item">
-                        <span id="finish-cartridge-label">Internal Cartridge</span>
+                        <span id="finish-cartridge-label"><?= e(trans('home.finish_cartridge_label')) ?></span>
                         <b id="finish-cartridge">Kerox® Hungary 35mm Ceramic</b>
                     </div>
                     <div class="tech-spec-item">
-                        <span id="finish-aerator-label">Aerator Standard</span>
+                        <span id="finish-aerator-label"><?= e(trans('home.finish_aerator_label')) ?></span>
                         <b id="finish-aerator">Neoperl® Coin-Slot Pro-Eco 5.7 L/min</b>
                     </div>
                 </div>
@@ -280,10 +270,10 @@ $view->layout('layouts.frontend');
                        target="_blank" 
                        rel="noopener" 
                        class="btn-primary-teal">
-                        <span>Inquire This Finish via WhatsApp</span>
+                        <span><?= e(trans('home.finish_inquire')) ?></span>
                     </a>
                     <a href="<?= e(route('products.index', ['category_id' => 4])) ?>" class="btn-secondary-glass">
-                        <span>View All Mixers</span>
+                        <span><?= e(trans('home.view_mixers')) ?></span>
                     </a>
                 </div>
             </div>
@@ -297,11 +287,9 @@ $view->layout('layouts.frontend');
 <section class="categories-section" id="categories">
     <div class="container">
         <div class="section-header-center">
-            <span class="section-tag">Curated Collections</span>
-            <h2 class="section-title">Design Your Space</h2>
-            <p class="section-subtitle">
-                Engineered ceramic suites, tapware, and wellness fixtures designed for monolithic architectural harmony.
-            </p>
+            <span class="section-tag"><?= e(trans('home.collections_tag')) ?></span>
+            <h2 class="section-title"><?= e(trans('home.design_title')) ?></h2>
+            <p class="section-subtitle"><?= e(trans('home.design_desc')) ?></p>
         </div>
 
         <div class="category-mosaic">
@@ -310,8 +298,8 @@ $view->layout('layouts.frontend');
                 <img src="<?= e(asset('images/products/prod_146_1620-111-a.jpg')) ?>" alt="Wall-Hung Toilets" class="category-card-bg">
                 <div class="category-card-gradient"></div>
                 <div class="category-card-info">
-                    <h3>Toilets & Bidets</h3>
-                    <p>Rimless EN 997 China &middot; Soft-Close</p>
+                    <h3><?= e(trans('home.category_toilets')) ?></h3>
+                    <p><?= e(trans('home.category_toilets_desc')) ?></p>
                 </div>
             </a>
 
@@ -320,8 +308,8 @@ $view->layout('layouts.frontend');
                 <img src="<?= e(asset('images/products/prod_180_1610-242-65.jpg')) ?>" alt="Washbasins" class="category-card-bg">
                 <div class="category-card-gradient"></div>
                 <div class="category-card-info">
-                    <h3>Washbasins</h3>
-                    <p>Countertop & Monolithic Sinks</p>
+                    <h3><?= e(trans('home.category_basins')) ?></h3>
+                    <p><?= e(trans('home.category_basins_desc')) ?></p>
                 </div>
             </a>
 
@@ -330,8 +318,8 @@ $view->layout('layouts.frontend');
                 <img src="<?= e(asset('images/finishes/brushed-gold.jpg')) ?>" alt="Faucets & Mixers" class="category-card-bg">
                 <div class="category-card-gradient"></div>
                 <div class="category-card-info">
-                    <h3>Faucets & Mixers</h3>
-                    <p>Solid Brass &middot; PVD Finishes</p>
+                    <h3><?= e(trans('home.category_mixers')) ?></h3>
+                    <p><?= e(trans('home.category_mixers_desc')) ?></p>
                 </div>
             </a>
 
@@ -340,8 +328,8 @@ $view->layout('layouts.frontend');
                 <img src="<?= e(asset('images/lifestyle/luxury-shower.png')) ?>" alt="Showers" class="category-card-bg">
                 <div class="category-card-gradient"></div>
                 <div class="category-card-info">
-                    <h3>Concealed Showers</h3>
-                    <p>Thermostatic 38°C Safety Core</p>
+                    <h3><?= e(trans('home.category_showers')) ?></h3>
+                    <p><?= e(trans('home.category_showers_desc')) ?></p>
                 </div>
             </a>
 
@@ -350,8 +338,8 @@ $view->layout('layouts.frontend');
                 <img src="<?= e(asset('images/products/prod_2050_1690-000.jpg')) ?>" alt="Urinals" class="category-card-bg">
                 <div class="category-card-gradient"></div>
                 <div class="category-card-info">
-                    <h3>Commercial Sanitary</h3>
-                    <p>Radar Sensor Urinals & Fittings</p>
+                    <h3><?= e(trans('home.category_commercial')) ?></h3>
+                    <p><?= e(trans('home.category_commercial_desc')) ?></p>
                 </div>
             </a>
         </div>
@@ -364,11 +352,9 @@ $view->layout('layouts.frontend');
 <section class="inspiration-section" id="inspiration">
     <div class="container">
         <div class="section-header-center">
-            <span class="section-tag">Spatial Showcase</span>
-            <h2 class="section-title">Get Inspired</h2>
-            <p class="section-subtitle">
-                Explore real architectural installations featuring LUFLY fixtures in luxury residential and hospitality environments.
-            </p>
+            <span class="section-tag"><?= e(trans('home.inspiration_tag')) ?></span>
+            <h2 class="section-title"><?= e(trans('home.inspiration_title')) ?></h2>
+            <p class="section-subtitle"><?= e(trans('home.inspiration_desc')) ?></p>
         </div>
 
         <div class="inspiration-carousel">
@@ -378,9 +364,9 @@ $view->layout('layouts.frontend');
                     <img src="<?= e(asset('images/lifestyle/spa-suite.jpg')) ?>" alt="The Nordic Spa Suite" class="inspiration-img">
                 </div>
                 <div class="inspiration-body">
-                    <span class="inspiration-tag">Spa & Wellness</span>
-                    <h4>The Calacatta Executive Suite</h4>
-                    <p>Freestanding soaking tub paired with brushed gold floor-mounted mixer and monolithic vitreous sanitary ware.</p>
+                    <span class="inspiration-tag"><?= e(trans('home.inspiration_1_tag')) ?></span>
+                    <h4><?= e(trans('home.inspiration_1_title')) ?></h4>
+                    <p><?= e(trans('home.inspiration_1_desc')) ?></p>
                 </div>
             </div>
 
@@ -390,9 +376,9 @@ $view->layout('layouts.frontend');
                     <img src="<?= e(asset('images/lifestyle/modern-bathroom.png')) ?>" alt="Modern Bathroom" class="inspiration-img">
                 </div>
                 <div class="inspiration-body">
-                    <span class="inspiration-tag">Minimalist Living</span>
-                    <h4>The Minimalist Oak En-Suite</h4>
-                    <p>Matte black concealed tapware creating a tactile contrast against natural micro-cement and warm timber.</p>
+                    <span class="inspiration-tag"><?= e(trans('home.inspiration_2_tag')) ?></span>
+                    <h4><?= e(trans('home.inspiration_2_title')) ?></h4>
+                    <p><?= e(trans('home.inspiration_2_desc')) ?></p>
                 </div>
             </div>
 
@@ -402,9 +388,9 @@ $view->layout('layouts.frontend');
                     <img src="<?= e(asset('images/lifestyle/minimal-basin.png')) ?>" alt="Powder Room" class="inspiration-img">
                 </div>
                 <div class="inspiration-body">
-                    <span class="inspiration-tag">Architectural Powder Room</span>
-                    <h4>The Serene Japandi Retreat</h4>
-                    <p>Pristine white ceramic vessel basin with high-rise rose gold faucet and atmospheric indirect lighting.</p>
+                    <span class="inspiration-tag"><?= e(trans('home.inspiration_3_tag')) ?></span>
+                    <h4><?= e(trans('home.inspiration_3_title')) ?></h4>
+                    <p><?= e(trans('home.inspiration_3_desc')) ?></p>
                 </div>
             </div>
 
@@ -414,9 +400,9 @@ $view->layout('layouts.frontend');
                     <img src="<?= e(asset('images/lifestyle/kitchen-suite.png')) ?>" alt="Kitchen Suite" class="inspiration-img">
                 </div>
                 <div class="inspiration-body">
-                    <span class="inspiration-tag">Gourmet Architecture</span>
-                    <h4>The Contemporary Culinary Suite</h4>
-                    <p>Architectural pull-out dual-spray chef mixer in brushed steel over an undermount composite quartz sink.</p>
+                    <span class="inspiration-tag"><?= e(trans('home.inspiration_4_tag')) ?></span>
+                    <h4><?= e(trans('home.inspiration_4_title')) ?></h4>
+                    <p><?= e(trans('home.inspiration_4_desc')) ?></p>
                 </div>
             </div>
         </div>
@@ -429,39 +415,31 @@ $view->layout('layouts.frontend');
 <section class="rituals-section" id="rituals">
     <div class="container">
         <div class="section-header-center">
-            <span class="section-tag">Hydrodynamic Engineering</span>
-            <h2 class="section-title">Water Rituals Shaped by Precision</h2>
-            <p class="section-subtitle">
-                Every drop is choreographed to deliver sensory comfort, silent operation, and responsible conservation.
-            </p>
+            <span class="section-tag"><?= e(trans('home.rituals_tag')) ?></span>
+            <h2 class="section-title"><?= e(trans('home.rituals_title')) ?></h2>
+            <p class="section-subtitle"><?= e(trans('home.rituals_desc')) ?></p>
         </div>
 
         <div class="rituals-grid">
             <div class="ritual-card">
-                <div class="ritual-number">01 / HYDRODYNAMIC FLOW</div>
-                <h3>Air-Infused Crystal Stream</h3>
-                <p>
-                    Precision aeration enriches the water stream with micro-bubbles of air, creating a velvety, dense flow that eliminates splashing and cuts water consumption by up to 45%.
-                </p>
-                <span class="ritual-metric-tag">Pro-Eco 5.7 L/min Standard</span>
+                <div class="ritual-number">01 / <?= e(trans('home.ritual_1_label')) ?></div>
+                <h3><?= e(trans('home.ritual_1_title')) ?></h3>
+                <p><?= e(trans('home.ritual_1_desc')) ?></p>
+                <span class="ritual-metric-tag"><?= e(trans('home.ritual_1_metric')) ?></span>
             </div>
 
             <div class="ritual-card">
-                <div class="ritual-number">02 / CERAMIC DISCS</div>
-                <h3>500,000 Cycle Durability</h3>
-                <p>
-                    Diamond-hard ceramic discs from Kerox® Hungary guarantee leak-free operation, buttery lever movement, and complete resistance to aggressive limescale and mineral deposits.
-                </p>
-                <span class="ritual-metric-tag">Zero Drift &middot; Class 1 Acoustic</span>
+                <div class="ritual-number">02 / <?= e(trans('home.ritual_2_label')) ?></div>
+                <h3><?= e(trans('home.ritual_2_title')) ?></h3>
+                <p><?= e(trans('home.ritual_2_desc')) ?></p>
+                <span class="ritual-metric-tag"><?= e(trans('home.ritual_2_metric')) ?></span>
             </div>
 
             <div class="ritual-card">
-                <div class="ritual-number">03 / THERMOSTAT SAFETY</div>
-                <h3>Instant 0.2s Temperature Balance</h3>
-                <p>
-                    Concealed thermostatic cartridges respond to pressure shifts in 0.2 seconds, holding water precisely at 38°C to eliminate cold shocks and scalding risks for hotel guests and families.
-                </p>
-                <span class="ritual-metric-tag">38°C Safety Lock Standard</span>
+                <div class="ritual-number">03 / <?= e(trans('home.ritual_3_label')) ?></div>
+                <h3><?= e(trans('home.ritual_3_title')) ?></h3>
+                <p><?= e(trans('home.ritual_3_desc')) ?></p>
+                <span class="ritual-metric-tag"><?= e(trans('home.ritual_3_metric')) ?></span>
             </div>
         </div>
     </div>
@@ -474,11 +452,11 @@ $view->layout('layouts.frontend');
     <div class="container">
         <div style="display: flex; align-items: flex-end; justify-content: space-between; margin-bottom: 40px;">
             <div>
-                <span class="section-tag">Masterpiece Registry</span>
-                <h2 class="section-title" style="margin-bottom: 0;">Featured Architectural Fixtures</h2>
+                <span class="section-tag"><?= e(trans('home.featured_tag')) ?></span>
+                <h2 class="section-title" style="margin-bottom: 0;"><?= e(trans('home.featured_title')) ?></h2>
             </div>
             <a href="<?= e(route('products.index')) ?>" class="btn-secondary-glass">
-                <span>View Full Catalog (280+ Fixtures)</span>
+                <span><?= e(trans('home.full_catalog')) ?></span>
                 <span>&rarr;</span>
             </a>
         </div>
@@ -501,7 +479,7 @@ $view->layout('layouts.frontend');
                     <p class="product-specs"><?= e($desc) ?></p>
                     <div class="product-card-actions">
                         <a href="https://wa.me/908503040817?text=<?= $inquireMsg ?>" target="_blank" rel="noopener" class="btn-inquire-whatsapp">
-                            <span>Inquire B2B</span>
+                            <span><?= e(trans('home.inquire_b2b')) ?></span>
                         </a>
                         <a href="<?= e(route('products.show', ['slug' => $product['slug'] ?? $product['id']])) ?>" style="font-size: 12px; color: var(--lufly-text); font-weight: 600;">
                             Tech Sheet &rarr;
@@ -520,30 +498,28 @@ $view->layout('layouts.frontend');
     <div class="container">
         <div class="corporate-box">
             <div class="corporate-info">
-                <span class="corporate-legal-badge">Official Manufacturer Entity</span>
+                <span class="corporate-legal-badge"><?= e(trans('home.corporate_badge')) ?></span>
                 <h3>LUFLY İNŞAAT SANAYİ VE TİCARET LİMİTED ŞİRKETİ</h3>
-                <p>
-                    LUFLY operates modern robotic ceramic kilns and CNC brassware manufacturing facilities headquartered in Gaziantep, Turkey. We engineer sanitary architecture for prestigious hotel projects, high-end developers, and commercial specifiers across the European Union, the Middle East, and beyond.
-                </p>
+                <p><?= e(trans('home.corporate_desc')) ?></p>
 
                 <ul class="corporate-details-list">
-                    <li><b>Legal Name:</b> LUFLY İNŞAAT SANAYİ VE TİCARET LİMİTED ŞİRKETİ</li>
-                    <li><b>Headquarters:</b> Gaziantep, Turkey (Direct European Logistics Corridor)</li>
-                    <li><b>Compliance:</b> CE Mark &middot; EN 997 &middot; EN 817 &middot; ISO 9001:2015</li>
-                    <li><b>Export Office:</b> +90 850 3040 817 &middot; info@lufly.tr</li>
+                    <li><b><?= e(trans('home.legal_name')) ?>:</b> LUFLY İNŞAAT SANAYİ VE TİCARET LİMİTED ŞİRKETİ</li>
+                    <li><b><?= e(trans('home.headquarters')) ?>:</b> Gaziantep, Turkey (Direct European Logistics Corridor)</li>
+                    <li><b><?= e(trans('home.compliance')) ?>:</b> CE Mark &middot; EN 997 &middot; EN 817 &middot; ISO 9001:2015</li>
+                    <li><b><?= e(trans('home.export_office')) ?>:</b> +90 850 3040 817 &middot; info@lufly.tr</li>
                 </ul>
             </div>
 
             <div style="display: flex; flex-direction: column; gap: 16px;">
                 <div class="glass-panel" style="padding: 24px; text-align: center;">
                     <div style="font-size: 18px; font-weight: 700; letter-spacing: 0.08em; margin-bottom: 12px; color: var(--lufly-teal);" aria-hidden="true">CAD / BIM</div>
-                    <h4 style="margin: 0 0 8px 0; font-size: 16px; color: var(--lufly-text);">Architectural Specification Desk</h4>
+                    <h4 style="margin: 0 0 8px 0; font-size: 16px; color: var(--lufly-text);"><?= e(trans('home.spec_desk_title')) ?></h4>
                     <p style="font-size: 13px; color: var(--lufly-muted); margin: 0 0 16px 0;">
                         Download complete CAD blocks, BIM Revit families, and master price books for project tenders.
                     </p>
                     <a href="https://wa.me/908503040817?text=<?= rawurlencode('Hello LUFLY, please send the complete 2026 Architect Tender Package (CAD/BIM/PDF).') ?>" 
                        target="_blank" rel="noopener" class="btn-primary-teal" style="width: 100%; justify-content: center; box-sizing: border-box;">
-                        Request Architect Tender Pack
+                        <?= e(trans('home.spec_desk_cta')) ?>
                     </a>
                 </div>
             </div>
