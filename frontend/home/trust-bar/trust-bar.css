@@ -1,8 +1,8 @@
 /* ============================================================
    LUFLY - Engineering Trust & High-Converting Value Pillars
    Clean architectural tokens matching navbar & design system,
-   subtle blueprint backdrop, stationary cards with traveling
-   perimeter beam, and lightweight GPU rendering.
+   crisp blueprint backdrop with near-zero transparency in Light Mode,
+   stationary cards with traveling perimeter beam, and lightweight GPU rendering.
    ============================================================ */
 
 .trust-bar {
@@ -38,8 +38,9 @@
   height: 100%;
   object-fit: cover;
   object-position: center;
-  opacity: 0.38;
-  mix-blend-mode: multiply;
+  /* Nearly zero transparency in Light Mode as requested (crisp & vivid) */
+  opacity: 0.94;
+  mix-blend-mode: normal;
 }
 
 [data-theme="dark"] .trust-bg-photo {
@@ -50,6 +51,11 @@
 .trust-bg-scrim {
   position: absolute;
   inset: 0;
+  background: linear-gradient(180deg, rgba(246, 248, 247, 0.45) 0%, rgba(246, 248, 247, 0.12) 40%, rgba(246, 248, 247, 0.50) 100%);
+  pointer-events: none;
+}
+
+[data-theme="dark"] .trust-bg-scrim {
   background:
     radial-gradient(circle 650px at 15% 20%, var(--ds-primary-soft) 0%, transparent 70%),
     radial-gradient(circle 500px at 85% 80%, var(--ds-primary-tint) 0%, transparent 70%);
@@ -79,7 +85,7 @@
   border-radius: var(--radius-full);
   background: var(--ds-surface);
   border: 1px solid var(--ds-border);
-  box-shadow: 0 2px 8px -2px rgba(0, 0, 0, 0.04);
+  box-shadow: 0 2px 10px -2px rgba(0, 0, 0, 0.08);
   margin-bottom: var(--space-4);
 }
 
@@ -105,9 +111,15 @@
   color: var(--ds-text);
   font-family: var(--font-display);
   font-size: clamp(1.85rem, 3.2vw, 2.75rem);
-  font-weight: var(--weight-regular);
+  font-weight: var(--weight-bold);
   line-height: var(--leading-tight);
   letter-spacing: var(--tracking-tight);
+  text-shadow: 0 1px 3px rgba(255, 255, 255, 0.9);
+}
+
+[data-theme="dark"] .trust-heading h2 {
+  font-weight: var(--weight-regular);
+  text-shadow: 0 2px 10px rgba(0, 0, 0, 0.5);
 }
 
 .trust-heading h2 em {
@@ -119,9 +131,17 @@
 .trust-heading p {
   margin: 0 auto;
   max-width: 680px;
-  color: var(--ds-text-muted);
+  color: var(--ds-text);
   font-size: var(--text-base);
+  font-weight: var(--weight-medium);
   line-height: var(--leading-relaxed);
+  text-shadow: 0 1px 2px rgba(255, 255, 255, 0.85);
+}
+
+[data-theme="dark"] .trust-heading p {
+  color: var(--ds-text-muted);
+  font-weight: var(--weight-regular);
+  text-shadow: none;
 }
 
 /* ---------- Card Grid ---------- */
@@ -137,12 +157,12 @@
   position: relative;
   display: flex;
   flex-direction: column;
-  background: var(--ds-surface);
+  background: #ffffff;
   border: 1px solid var(--ds-border);
   border-radius: 18px;
   padding: clamp(24px, 2.5vw, 30px) clamp(20px, 2vw, 24px);
   text-align: start;
-  box-shadow: 0 4px 16px -4px rgba(0, 0, 0, 0.04);
+  box-shadow: 0 6px 20px -4px rgba(0, 0, 0, 0.08);
   /* Stationary card: zero translateY on hover */
   transform: none;
   transition: border-color var(--duration-base) var(--ease-out),
@@ -152,6 +172,7 @@
 }
 
 [data-theme="dark"] .trust-card {
+  background: var(--ds-surface);
   box-shadow: 0 6px 20px -6px rgba(0, 0, 0, 0.4);
 }
 
@@ -303,14 +324,15 @@
   align-items: center;
   justify-content: space-between;
   gap: var(--space-8);
-  background: var(--ds-surface);
+  background: #ffffff;
   border: 1px solid var(--ds-border);
   border-radius: 20px;
   padding: clamp(24px, 2.8vw, 36px) clamp(22px, 3.2vw, 38px);
-  box-shadow: 0 8px 24px -6px rgba(0, 0, 0, 0.06);
+  box-shadow: 0 10px 30px -8px rgba(0, 0, 0, 0.1);
 }
 
 [data-theme="dark"] .trust-action-banner {
+  background: var(--ds-surface);
   box-shadow: 0 12px 36px -10px rgba(0, 0, 0, 0.5);
 }
 
