@@ -2,56 +2,73 @@
    LUFLY - Component: announcement bar ("The Word")
    --------------------------------------------------------------------------
    The marketing strip the admin writes from the panel (one message per
-   language). Sits above the glass navbar, scrolls away with the page.
+   language). Sits above the glass navbar. Machined deep-teal surface with
+   a slow glass sheen, a fixed icon chip, a scrolling message separated by
+   mint diamonds and a solid CTA pill.
 
    House rules:
    * every colour resolves through a token from design-system/style.css
-   * only transform / opacity are animated
-   * the marquee pauses on hover and under prefers-reduced-motion
+   * only transform / opacity are animated (sheen + marquee are CSS only)
+   * the marquee moves only when the message overflows, pauses on hover,
+     and goes fully static under prefers-reduced-motion
    ========================================================================== */
 
 .lufly-announcements {
+  --luann-h: 44px;
+  --luann-ink: var(--lu-neutral-0);
+  --luann-accent: var(--lu-mint);
+  --luann-chip-bg: color-mix(in srgb, var(--lu-neutral-0) 12%, transparent);
+  --luann-chip-border: color-mix(in srgb, var(--lu-neutral-0) 22%, transparent);
+  --luann-fade: color-mix(in srgb, var(--lu-deep-teal) 82%, transparent);
+
   position: relative;
   z-index: calc(var(--z-header, 90) + 1);
   font-family: var(--font-body);
-  font-size: var(--text-sm);
-  font-weight: var(--weight-medium);
-  letter-spacing: var(--tracking-wide);
-  border-bottom: var(--border-hairline) solid var(--ds-nav-hairline);
-  background: linear-gradient(
-    90deg,
-    var(--lu-deep-teal) 0%,
-    var(--lu-teal-600) 38%,
-    var(--lu-teal-500) 62%,
-    var(--lu-deep-teal) 100%
-  );
-  color: var(--lu-neutral-0);
+  color: var(--luann-ink);
+  background:
+    linear-gradient(180deg, color-mix(in srgb, var(--lu-neutral-0) 9%, transparent) 0%, transparent 46%),
+    linear-gradient(90deg,
+      var(--lu-deep-teal) 0%,
+      var(--lu-teal-700) 28%,
+      var(--lu-teal-600) 50%,
+      var(--lu-teal-700) 72%,
+      var(--lu-deep-teal) 100%);
+  border-bottom: 1px solid color-mix(in srgb, var(--lu-mint) 26%, transparent);
+  box-shadow:
+    inset 0 -1px 0 color-mix(in srgb, var(--lu-ink-950) 26%, transparent),
+    0 8px 22px color-mix(in srgb, var(--lu-ink-950) 14%, transparent);
   -webkit-tap-highlight-color: transparent;
 }
 
-/* soft sheen so the strip feels machined, not flat */
-.lufly-announcements::before {
-  content: "";
-  position: absolute;
-  inset: 0;
-  pointer-events: none;
+/* style variants - all rooted in the brand palette */
+.luann-info {
+  --luann-accent: var(--lu-info-dark);
+  --luann-fade: color-mix(in srgb, var(--lu-ink-950) 68%, transparent);
   background:
-    linear-gradient(180deg, color-mix(in srgb, var(--lu-neutral-0) 16%, transparent) 0%, transparent 45%),
-    linear-gradient(0deg, color-mix(in srgb, var(--lu-ink-950) 22%, transparent) 0%, transparent 38%);
+    linear-gradient(180deg, color-mix(in srgb, var(--lu-neutral-0) 6%, transparent) 0%, transparent 46%),
+    linear-gradient(90deg,
+      var(--lu-ink-950) 0%,
+      var(--lu-neutral-900) 50%,
+      var(--lu-ink-950) 100%);
+  border-bottom-color: color-mix(in srgb, var(--lu-teal-500) 42%, transparent);
 }
 
-.lufly-announcements::after {
-  content: "";
-  position: absolute;
-  inset-inline-start: 0;
-  bottom: 0;
-  width: 100%;
-  height: 1px;
-  background: linear-gradient(90deg,
-    transparent 0%,
-    color-mix(in srgb, var(--lu-mint) 65%, transparent) 50%,
-    transparent 100%);
-  pointer-events: none;
+.luann-warning {
+  --luann-ink: var(--lu-ink-950);
+  --luann-accent: var(--lu-ink-950);
+  --luann-chip-bg: color-mix(in srgb, var(--lu-ink-950) 12%, transparent);
+  --luann-chip-border: color-mix(in srgb, var(--lu-ink-950) 28%, transparent);
+  --luann-fade: color-mix(in srgb, var(--lu-warning) 34%, transparent);
+  background:
+    linear-gradient(180deg, color-mix(in srgb, var(--lu-neutral-0) 15%, transparent) 0%, transparent 46%),
+    linear-gradient(90deg,
+      color-mix(in srgb, var(--lu-warning) 76%, var(--lu-ink-950)) 0%,
+      var(--lu-warning) 50%,
+      color-mix(in srgb, var(--lu-warning) 76%, var(--lu-ink-950)) 100%);
+  border-bottom-color: color-mix(in srgb, var(--lu-ink-950) 26%, transparent);
+  box-shadow:
+    inset 0 -1px 0 color-mix(in srgb, var(--lu-ink-950) 18%, transparent),
+    0 8px 22px color-mix(in srgb, var(--lu-ink-950) 12%, transparent);
 }
 
 .luann-item {
@@ -59,8 +76,8 @@
   display: flex;
   align-items: center;
   gap: var(--space-3);
-  min-height: 38px;
-  padding-inline: 44px;
+  min-height: var(--luann-h);
+  padding-inline: var(--space-3) 48px;
 }
 
 .luann-item[hidden],
@@ -68,64 +85,106 @@
   display: none;
 }
 
-/* style variants - all rooted in the brand palette */
-.luann-info {
-  background: linear-gradient(
-    90deg,
-    color-mix(in srgb, var(--lu-neutral-900) 88%, var(--lu-teal-700)) 0%,
-    color-mix(in srgb, var(--lu-neutral-900) 82%, var(--lu-teal-500)) 50%,
-    color-mix(in srgb, var(--lu-neutral-900) 88%, var(--lu-teal-700)) 100%
-  );
+/* ---------- glass sheen sweep (decorative) ---------- */
+
+.luann-shimmer {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+  pointer-events: none;
 }
 
-.luann-warning {
-  background: linear-gradient(
-    90deg,
-    color-mix(in srgb, var(--lu-warning) 92%, var(--lu-ink-950)) 0%,
-    var(--lu-warning) 50%,
-    color-mix(in srgb, var(--lu-warning) 92%, var(--lu-ink-950)) 100%
-  );
-  color: var(--lu-ink-950);
+.luann-shimmer::before {
+  content: "";
+  position: absolute;
+  top: -60%;
+  bottom: -60%;
+  width: 30%;
+  background: linear-gradient(105deg,
+    transparent 0%,
+    color-mix(in srgb, var(--lu-neutral-0) 15%, transparent) 50%,
+    transparent 100%);
+  transform: translateX(-220%) skewX(-18deg);
+  animation: luann-sheen 7.5s var(--ds-nav-ease) infinite;
+}
+
+[dir="rtl"] .luann-shimmer::before {
+  animation-name: luann-sheen-rtl;
+}
+
+@keyframes luann-sheen {
+  0%        { transform: translateX(-220%) skewX(-18deg); }
+  42%, 100% { transform: translateX(460%) skewX(-18deg); }
+}
+
+@keyframes luann-sheen-rtl {
+  0%        { transform: translateX(460%) skewX(18deg); }
+  42%, 100% { transform: translateX(-220%) skewX(18deg); }
+}
+
+/* ---------- fixed icon chip ---------- */
+
+.luann-chip {
+  position: relative;
+  z-index: 2;
+  flex: none;
+  display: grid;
+  place-items: center;
+  width: 30px;
+  height: 30px;
+  border-radius: 10px;
+  background: var(--luann-chip-bg);
+  border: 1px solid var(--luann-chip-border);
+  color: var(--luann-accent);
+  box-shadow: inset 0 1px 0 color-mix(in srgb, var(--lu-neutral-0) 16%, transparent);
+  backdrop-filter: blur(6px);
+  -webkit-backdrop-filter: blur(6px);
+}
+
+.luann-chip svg {
+  width: 14px;
+  height: 14px;
 }
 
 /* ---------- marquee ---------- */
 
 .luann-track {
+  position: relative;
+  z-index: 1;
   flex: 1 1 auto;
   min-width: 0;
   overflow: hidden;
   display: flex;
   justify-content: center;
-  position: relative;
 }
 
-/* edge fades in both directions */
+/* edge fades in both directions, tinted per variant */
 .luann-track::before,
 .luann-track::after {
   content: "";
   position: absolute;
   top: 0;
   bottom: 0;
-  width: 42px;
+  width: 46px;
   z-index: 2;
   pointer-events: none;
 }
 
 .luann-track::before {
   inset-inline-start: 0;
-  background: linear-gradient(to right, color-mix(in srgb, var(--lu-ink-950) 55%, transparent), transparent);
+  background: linear-gradient(to right, var(--luann-fade), transparent);
 }
 
 .luann-track::after {
   inset-inline-end: 0;
-  background: linear-gradient(to left, color-mix(in srgb, var(--lu-ink-950) 55%, transparent), transparent);
+  background: linear-gradient(to left, var(--luann-fade), transparent);
 }
 
 .luann-marquee {
   display: inline-flex;
   white-space: nowrap;
   will-change: transform;
-  animation: luann-scroll 18s linear infinite;
+  animation: luann-scroll 24s linear infinite;
 }
 
 .luann-item:hover .luann-marquee {
@@ -147,61 +206,93 @@
   to   { transform: translate3d(50%, 0, 0); }
 }
 
-/* short messages don't need to travel - center and drop the clone */
-.luann-item.is-static .luann-marquee {
-  animation: none;
-  justify-content: center;
-}
-
-.luann-item.is-static .luann-text[aria-hidden="true"] {
-  display: none;
-}
-
 .luann-text {
   display: inline-flex;
   align-items: center;
-  gap: var(--space-4);
-  padding-inline-end: 64px;
-  text-transform: none;
+  font-size: var(--text-sm);
+  font-weight: var(--weight-medium);
+  letter-spacing: 0.02em;
+  text-shadow: 0 1px 2px color-mix(in srgb, var(--lu-ink-950) 20%, transparent);
 }
 
+.luann-warning .luann-text {
+  text-shadow: none;
+}
+
+/* mint diamond between marquee repeats */
+.luann-text::after {
+  content: "";
+  flex: none;
+  width: 5px;
+  height: 5px;
+  margin-inline: 44px;
+  rotate: 45deg;
+  background: color-mix(in srgb, var(--luann-accent) 78%, transparent);
+}
+
+/* ---------- fixed CTA pill ---------- */
+
+.luann-cta {
+  position: relative;
+  z-index: 2;
+  flex: none;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  height: 30px;
+  padding-inline: 14px;
+  border-radius: 999px;
+  background: var(--lu-neutral-0);
+  color: var(--lu-deep-teal);
+  font-size: var(--text-xs);
+  font-weight: var(--weight-bold);
+  letter-spacing: var(--tracking-tight);
+  text-decoration: none;
+  white-space: nowrap;
+  box-shadow: 0 3px 10px color-mix(in srgb, var(--lu-ink-950) 24%, transparent);
+  transition: transform var(--ds-nav-fast) var(--ds-nav-ease),
+              box-shadow var(--ds-nav-fast) var(--ds-nav-ease),
+              background var(--ds-nav-fast) var(--ds-nav-ease);
+}
+
+.luann-cta svg {
+  width: 12px;
+  height: 12px;
+}
+
+a.luann-cta:hover {
+  transform: translateY(-1px);
+  background: var(--lu-neutral-50);
+  box-shadow: 0 6px 16px color-mix(in srgb, var(--lu-ink-950) 30%, transparent);
+}
+
+a.luann-cta:active {
+  transform: translateY(0);
+}
+
+[dir="rtl"] .luann-cta svg {
+  transform: scaleX(-1);
+}
+
+.luann-warning .luann-cta {
+  background: var(--lu-ink-950);
+  color: var(--lu-warning);
+}
+
+/* message-as-link (when the admin set a link but no button label) */
 .luann-link {
   color: inherit;
   text-decoration: none;
   border-bottom: 1px dashed color-mix(in srgb, currentColor 55%, transparent);
+  transition: border-color var(--ds-nav-fast) var(--ds-nav-ease);
 }
 
 .luann-link:hover {
   border-bottom-style: solid;
-}
-
-.luann-cta {
-  display: inline-flex;
-  align-items: center;
-  padding: 2px 12px;
-  border-radius: 999px;
-  background: color-mix(in srgb, var(--lu-neutral-0) 16%, transparent);
-  border: 1px solid color-mix(in srgb, var(--lu-neutral-0) 30%, transparent);
-  color: inherit;
-  text-decoration: none;
-  font-size: var(--text-xs);
-  font-weight: var(--weight-semibold);
-  letter-spacing: var(--tracking-wider);
-  text-transform: uppercase;
-  backdrop-filter: blur(4px);
-}
-
-a.luann-cta:hover {
-  background: color-mix(in srgb, var(--lu-neutral-0) 28%, transparent);
-}
-
-.luann-warning .luann-cta {
-  background: color-mix(in srgb, var(--lu-ink-950) 18%, transparent);
-  border-color: color-mix(in srgb, var(--lu-ink-950) 32%, transparent);
+  border-color: var(--luann-accent);
 }
 
 /* ---------- controls ---------- */
-
 
 .luann-close {
   position: absolute;
@@ -211,29 +302,43 @@ a.luann-cta:hover {
   z-index: 3;
   display: grid;
   place-items: center;
-  width: 26px;
-  height: 26px;
+  width: 28px;
+  height: 28px;
   padding: 0;
   border-radius: 999px;
-  border: 1px solid color-mix(in srgb, var(--lu-neutral-0) 26%, transparent);
-  background: color-mix(in srgb, var(--lu-neutral-0) 10%, transparent);
+  border: 1px solid color-mix(in srgb, var(--lu-neutral-0) 20%, transparent);
+  background: color-mix(in srgb, var(--lu-neutral-0) 8%, transparent);
   color: inherit;
   cursor: pointer;
-  opacity: 0.72;
+  opacity: 0.7;
   transition: opacity var(--ds-nav-fast) var(--ds-nav-ease),
-              background var(--ds-nav-fast) var(--ds-nav-ease),
-              transform var(--ds-nav-fast) var(--ds-nav-ease);
+              transform var(--ds-nav-fast) var(--ds-nav-ease),
+              background var(--ds-nav-fast) var(--ds-nav-ease);
+}
+
+.luann-close svg {
+  width: 11px;
+  height: 11px;
 }
 
 .luann-close:hover {
   opacity: 1;
-  transform: scale(1.06);
-  background: color-mix(in srgb, var(--lu-neutral-0) 22%, transparent);
+  transform: rotate(90deg) scale(1.05);
+  background: color-mix(in srgb, var(--lu-neutral-0) 20%, transparent);
+}
+
+.luann-warning .luann-close {
+  border-color: color-mix(in srgb, var(--lu-ink-950) 26%, transparent);
+  background: color-mix(in srgb, var(--lu-ink-950) 8%, transparent);
+}
+
+.luann-warning .luann-close:hover {
+  background: color-mix(in srgb, var(--lu-ink-950) 18%, transparent);
 }
 
 .luann-dots {
   position: absolute;
-  inset-inline-start: 12px;
+  inset-inline-start: 56px;
   top: 50%;
   translate: 0 -50%;
   z-index: 3;
@@ -255,17 +360,65 @@ a.luann-cta:hover {
 }
 
 .luann-dot.is-active {
-  width: 18px;
+  width: 20px;
   background: var(--lu-neutral-0);
   border-color: var(--lu-neutral-0);
+}
+
+.luann-warning .luann-dot {
+  border-color: color-mix(in srgb, var(--lu-ink-950) 40%, transparent);
+}
+
+.luann-warning .luann-dot.is-active {
+  background: var(--lu-ink-950);
+  border-color: var(--lu-ink-950);
+}
+
+/* ---------- static (short message) state ---------- */
+
+.luann-item.is-static .luann-marquee {
+  animation: none;
+  justify-content: center;
+}
+
+.luann-item.is-static .luann-text[aria-hidden="true"] {
+  display: none;
+}
+
+.luann-item.is-static .luann-text::after {
+  display: none;
 }
 
 /* ---------- responsive + motion safety ---------- */
 
 @media (max-width: 640px) {
+  .lufly-announcements {
+    --luann-h: 40px;
+  }
+
   .luann-item {
-    padding-inline: 36px;
+    gap: var(--space-2);
+    padding-inline: var(--space-2) 44px;
+  }
+
+  .luann-chip {
+    width: 26px;
+    height: 26px;
+    border-radius: 8px;
+  }
+
+  .luann-chip svg {
+    width: 12px;
+    height: 12px;
+  }
+
+  .luann-text {
     font-size: var(--text-xs);
+  }
+
+  .luann-cta {
+    height: 26px;
+    padding-inline: 11px;
   }
 
   .luann-dots {
@@ -274,6 +427,10 @@ a.luann-cta:hover {
 }
 
 @media (prefers-reduced-motion: reduce) {
+  .luann-shimmer {
+    display: none;
+  }
+
   .luann-marquee {
     animation: none;
   }
@@ -282,7 +439,14 @@ a.luann-cta:hover {
     justify-content: center;
   }
 
-  .luann-text[aria-hidden="true"] {
+  .luann-text[aria-hidden="true"],
+  .luann-text::after {
     display: none;
+  }
+
+  .luann-cta,
+  .luann-close,
+  .luann-dot {
+    transition: none;
   }
 }

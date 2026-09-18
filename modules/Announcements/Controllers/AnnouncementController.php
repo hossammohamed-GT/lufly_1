@@ -128,6 +128,11 @@ class AnnouncementController extends Controller
     {
         return $request->validate([
             'message_en' => 'required|string|max:500',
+            'message_tr' => 'nullable|string|max:500',
+            'message_cs' => 'nullable|string|max:500',
+            'cta_en' => 'nullable|string|max:150',
+            'cta_tr' => 'nullable|string|max:150',
+            'cta_cs' => 'nullable|string|max:150',
             'placement' => 'required|in:topbar,home_banner',
             'style' => 'required|in:promo,info,warning',
             'link_url' => 'nullable|string|max:255',

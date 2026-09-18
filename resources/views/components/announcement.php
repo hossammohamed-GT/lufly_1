@@ -6,6 +6,10 @@
  * one message per language). The bar renders nothing when the module is
  * disabled, the table is missing, or nothing is currently live.
  *
+ * Layout: [glass icon chip] [scrolling message with diamond separator]
+ * [solid CTA pill] [close]. The CTA and chip stay fixed while a very long
+ * message travels between them.
+ *
  * @var Core\View\View $view
  * @var Core\Localization\Translator|null $translator
  */
@@ -26,6 +30,18 @@ try {
     $items = [];
 }
 
+$icon = static function (string $style): string {
+    $svg = static fn (string $paths): string =>
+        '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" '
+        . 'stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">' . $paths . '</svg>';
+
+    return match ($style) {
+        'info' => $svg('<circle cx="12" cy="12" r="9"/><line x1="12" y1="11" x2="12" y2="16"/><line x1="12" y1="8" x2="12.01" y2="8"/>'),
+        'warning' => $svg('<path d="M18 8a6 6 0 0 0-12 0c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.7 21a2 2 0 0 1-3.4 0"/>'),
+        default => $svg('<path d="M12.6 2.6 21.4 11.4a2 2 0 0 1 0 2.8l-7.2 7.2a2 2 0 0 1-2.8 0L2.6 12.6A2 2 0 0 1 2 11.2V4a2 2 0 0 1 2-2h7.2c.5 0 1 .2 1.4.6z"/><line x1="7" y1="7" x2="7.01" y2="7"/>'),
+    };
+};
+
 $messages = [];
 
 foreach ($items as $announcement) {
@@ -36,13 +52,16 @@ foreach ($items as $announcement) {
         continue;
     }
 
+    $style = (string) ($announcement->style ?? 'promo');
+
     $messages[] = [
         'id' => (int) $announcement->id,
         'stamp' => (string) ($announcement->updated_at ?? ''),
         'message' => $message,
         'cta' => $payload['cta_label'] ?? null,
         'link' => $announcement->link_url,
-        'style' => (string) ($announcement->style ?? 'promo'),
+        'style' => $style,
+        'icon' => $icon($style),
     ];
 }
 
@@ -56,39 +75,44 @@ if ($messages === []) {
         <div class="luann-item luann-<?= e($item['style']) ?><?= $index > 0 ? ' is-hidden' : '' ?>"
              data-luann-item data-luann-dismiss-key="<?= e($dismissKey) ?>"
              <?= $index > 0 ? 'hidden' : '' ?>>
+            <span class="luann-shimmer" aria-hidden="true"></span>
+
+            <span class="luann-chip" aria-hidden="true"><?= $item['icon'] ?></span>
+
             <div class="luann-track" aria-live="polite">
                 <div class="luann-marquee" data-luann-marquee>
                     <span class="luann-text" data-luann-text>
-                        <?php if (!empty($item['link'])): ?>
+                        <?php if (!empty($item['link']) && empty($item['cta'])): ?>
                             <a href="<?= e((string) $item['link']) ?>" class="luann-link"><?= e($item['message']) ?></a>
                         <?php else: ?>
                             <?= e($item['message']) ?>
                         <?php endif; ?>
-                        <?php if (!empty($item['cta'])): ?>
-                            <?php if (!empty($item['link'])): ?>
-                                <a href="<?= e((string) $item['link']) ?>" class="luann-cta"><?= e((string) $item['cta']) ?> →</a>
-                            <?php else: ?>
-                                <span class="luann-cta"><?= e((string) $item['cta']) ?> →</span>
-                            <?php endif; ?>
-                        <?php endif; ?>
                     </span><span class="luann-text" data-luann-clone aria-hidden="true">
-                        <?php if (!empty($item['link'])): ?>
+                        <?php if (!empty($item['link']) && empty($item['cta'])): ?>
                             <a href="<?= e((string) $item['link']) ?>" tabindex="-1" class="luann-link"><?= e($item['message']) ?></a>
                         <?php else: ?>
                             <?= e($item['message']) ?>
                         <?php endif; ?>
-                        <?php if (!empty($item['cta'])): ?>
-                            <?php if (!empty($item['link'])): ?>
-                                <a href="<?= e((string) $item['link']) ?>" tabindex="-1" class="luann-cta"><?= e((string) $item['cta']) ?> →</a>
-                            <?php else: ?>
-                                <span class="luann-cta"><?= e((string) $item['cta']) ?> →</span>
-                            <?php endif; ?>
-                        <?php endif; ?>
                     </span>
                 </div>
             </div>
+
+            <?php if (!empty($item['cta'])): ?>
+                <?php if (!empty($item['link'])): ?>
+                    <a class="luann-cta" href="<?= e((string) $item['link']) ?>">
+                        <span><?= e((string) $item['cta']) ?></span>
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14"/><path d="m13 6 6 6-6 6"/></svg>
+                    </a>
+                <?php else: ?>
+                    <span class="luann-cta">
+                        <span><?= e((string) $item['cta']) ?></span>
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14"/><path d="m13 6 6 6-6 6"/></svg>
+                    </span>
+                <?php endif; ?>
+            <?php endif; ?>
+
             <button type="button" class="luann-close" data-luann-close aria-label="<?= e(trans('common.delete')) ?>">
-                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" aria-hidden="true">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" aria-hidden="true">
                     <line x1="18" y1="6" x2="6" y2="18"></line>
                     <line x1="6" y1="6" x2="18" y2="18"></line>
                 </svg>
@@ -141,6 +165,9 @@ if ($messages === []) {
         }
     }
 
+    var active = 0;
+    var timer = null;
+
     function show(index) {
         if (items.length === 0) {
             removeRootIfEmpty();
@@ -175,9 +202,6 @@ if ($messages === []) {
             timer = null;
         }
     }
-
-    var active = 0;
-    var timer = null;
 
     /* 1. drop messages the visitor already dismissed */
     items.forEach(function (item) {
