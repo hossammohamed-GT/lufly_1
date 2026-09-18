@@ -71,6 +71,9 @@ try {
 </head>
 <body class="ds-app aquatic-stage ld-loading">
 <?= $view->renderFile($view->resolvePath('components.loader'), ['translator' => $translator]) ?>
+<?php if ($translator !== null): ?>
+<?= $view->renderFile($view->resolvePath('components.announcement'), ['translator' => $translator]) ?>
+<?php endif; ?>
 <a class="skip-link" href="#main"><?= e(trans('common.skip_to_content')) ?></a>
 <?= $navbar ?>
 <main class="ds-main" id="main">

@@ -61,8 +61,9 @@ $searchQuery = $searchQuery ?? '';
         <div class="grid grid-3 product-grid">
             <?php foreach ($paginator->items() as $product): 
                 $item = $product->translate($locale);
-                $img = $product->image ?: '/images/products/prod_146_1620-111-a.jpg';
-                $waMsg = rawurlencode('Hello LUFLY, I am interested in B2B quotation for product: ' . ($item['name'] ?? '') . ' (SKU: ' . $product->sku . ')');
+                $img = (string) ($item['image'] ?? '') !== '' ? (string) $item['image'] : '/images/products/prod_146_1620-111-a.jpg';
+                $cardCode = (string) ($item['sku'] ?? $item['model_code'] ?? '');
+                $waMsg = rawurlencode('Hello LUFLY, I am interested in B2B quotation for product: ' . ($item['name'] ?? '') . ' (SKU: ' . $cardCode . ')');
             ?>
                 <article class="card product-card">
                     <div class="product-media">
@@ -73,7 +74,7 @@ $searchQuery = $searchQuery ?? '';
                                  class="product-image"
                                  onerror="this.onerror=null; this.src='<?= e(asset('images/products/prod_146_1620-111-a.jpg')) ?>';">
                         </a>
-                        <span class="product-sku-badge"><?= e($product->sku) ?></span>
+                        <span class="product-sku-badge"><?= e($cardCode) ?></span>
                     </div>
                     <div class="card-body">
                         <span class="product-badge-quality">Vitreous China • 10Y Guarantee</span>

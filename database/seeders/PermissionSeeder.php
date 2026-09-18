@@ -11,6 +11,8 @@ class PermissionSeeder extends Seeder
     private const PERMISSIONS = [
         'products.view' => 'View products',
         'products.manage' => 'Create, edit and delete products',
+        'announcements.view' => 'View announcements',
+        'announcements.manage' => 'Create, edit and delete announcements',
         'users.manage' => 'Manage users',
         'permissions.manage' => 'Manage roles and permissions',
         'languages.manage' => 'Manage languages',
@@ -22,11 +24,12 @@ class PermissionSeeder extends Seeder
     ];
 
     private const EDITOR_PERMISSIONS = [
-        'products.view', 'products.manage', 'media.view', 'media.manage', 'notifications.view',
+        'products.view', 'products.manage', 'announcements.view', 'announcements.manage',
+        'media.view', 'media.manage', 'notifications.view',
     ];
 
     private const VIEWER_PERMISSIONS = [
-        'products.view', 'media.view', 'notifications.view',
+        'products.view', 'announcements.view', 'media.view', 'notifications.view',
     ];
 
     public function run(): void

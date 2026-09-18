@@ -167,15 +167,16 @@ class ProductController extends Controller
     private function coreFields(array $data): array
     {
         return [
-            'sku' => $data['sku'],
+            'model_code' => $data['model_code'],
             'slug' => $data['slug'] ?? '',
-            'price' => $data['price'],
-            'category_id' => $data['category_id'] ?? null,
+            'price' => (float) ($data['price'] ?? 0),
+            'category_id' => ($data['category_id'] ?? '') !== '' ? (int) $data['category_id'] : null,
+            'collection_id' => ($data['collection_id'] ?? '') !== '' ? (int) $data['collection_id'] : null,
+            'brand_id' => ($data['brand_id'] ?? '') !== '' ? (int) $data['brand_id'] : null,
+            'is_featured' => (string) ($data['is_featured'] ?? '0'),
             'status' => $data['status'],
-            'seo' => [
-                'title' => $data['seo_title'] ?? '',
-                'description' => $data['seo_description'] ?? '',
-            ],
+            'meta_title' => $data['meta_title'] ?? '',
+            'meta_description' => $data['meta_description'] ?? '',
         ];
     }
 
@@ -193,7 +194,9 @@ class ProductController extends Controller
                 $translations[$locale] = [
                     'name' => $name,
                     'description' => $description,
-                    'short_description' => mb_substr((string) $description, 0, 160),
+                    'short_description' => (string) ($data['short_description_' . $locale] ?? '') !== ''
+                        ? $data['short_description_' . $locale]
+                        : mb_substr((string) $description, 0, 160),
                 ];
             }
         }

@@ -11,4 +11,9 @@ return [
     'description' => 'Popis',
     'specs_title' => 'Technické specifikace',
     'inquire_whatsapp' => 'Vyžádat nabídku přes WhatsApp',
+    'width' => 'Šířka',
+    'height' => 'Výška',
+    'depth' => 'Hloubka',
+    'weight' => 'Hmotnost',
+    'dimensions' => 'Rozměry',
 ];

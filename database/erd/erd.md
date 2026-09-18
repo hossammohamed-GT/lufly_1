@@ -14,6 +14,26 @@ erDiagram
         JSON data
         DATETIME created_at
     }
+    announcement_translations {
+        BIGINT id
+        BIGINT announcement_id
+        VARCHAR_50_ locale
+        VARCHAR_500_ message
+        VARCHAR_150_ cta_label
+    }
+    announcements {
+        BIGINT id
+        VARCHAR_50_ placement
+        VARCHAR_50_ style
+        VARCHAR_255_ link_url
+        TINYINT_1_ is_active
+        DATETIME starts_at
+        DATETIME ends_at
+        INTEGER sort_order
+        DATETIME created_at
+        DATETIME updated_at
+        DATETIME deleted_at
+    }
     api_logs {
         BIGINT id
         VARCHAR_255_ endpoint
@@ -22,6 +42,26 @@ erDiagram
         INTEGER response_time_ms
         VARCHAR_50_ ip
         DATETIME created_at
+    }
+    attribute_options {
+        BIGINT id
+        BIGINT attribute_id
+        VARCHAR_150_ value
+        VARCHAR_50_ color_hex
+        INTEGER sort_order
+        DATETIME created_at
+        DATETIME updated_at
+    }
+    attributes {
+        BIGINT id
+        VARCHAR_100_ code
+        VARCHAR_150_ name
+        VARCHAR_50_ type
+        TINYINT_1_ is_filterable
+        TINYINT_1_ is_sortable
+        DATETIME created_at
+        DATETIME updated_at
+        DATETIME deleted_at
     }
     audits {
         BIGINT id
@@ -52,11 +92,26 @@ erDiagram
         DATETIME updated_at
         DATETIME deleted_at
     }
+    brands {
+        BIGINT id
+        VARCHAR_100_ name
+        VARCHAR_255_ slug
+        VARCHAR_255_ logo
+        VARCHAR_100_ country
+        VARCHAR_255_ website
+        VARCHAR_50_ status
+        DATETIME created_at
+        DATETIME updated_at
+        DATETIME deleted_at
+    }
     categories {
         BIGINT id
         BIGINT parent_id
         VARCHAR_255_ slug
         VARCHAR_255_ image
+        VARCHAR_255_ icon
+        TINYINT_1_ is_featured
+        INTEGER sort_order
         VARCHAR_50_ status
         JSON seo
         DATETIME created_at
@@ -69,6 +124,23 @@ erDiagram
         VARCHAR_50_ locale
         VARCHAR_255_ name
         LONGTEXT description
+    }
+    collection_translations {
+        BIGINT id
+        BIGINT collection_id
+        VARCHAR_50_ locale
+        VARCHAR_255_ name
+        LONGTEXT description
+    }
+    collections {
+        BIGINT id
+        VARCHAR_255_ slug
+        VARCHAR_255_ image
+        VARCHAR_50_ status
+        INTEGER sort_order
+        DATETIME created_at
+        DATETIME updated_at
+        DATETIME deleted_at
     }
     languages {
         BIGINT id
@@ -84,6 +156,7 @@ erDiagram
     }
     media {
         BIGINT id
+        CHAR_36_ uuid
         VARCHAR_50_ collection
         VARCHAR_255_ filename
         VARCHAR_255_ original_name
@@ -91,6 +164,8 @@ erDiagram
         VARCHAR_100_ mime_type
         VARCHAR_50_ extension
         BIGINT size
+        INTEGER width
+        INTEGER height
         JSON meta
         BIGINT owner_id
         VARCHAR_50_ status
@@ -133,6 +208,80 @@ erDiagram
         DATETIME created_at
         DATETIME updated_at
     }
+    product_attribute_values {
+        BIGINT id
+        BIGINT product_id
+        BIGINT variant_id
+        BIGINT attribute_id
+        BIGINT attribute_option_id
+        VARCHAR_255_ custom_value
+    }
+    product_dimensions {
+        BIGINT id
+        BIGINT product_id
+        BIGINT variant_id
+        DECIMAL_10_2_ width_mm
+        DECIMAL_10_2_ height_mm
+        DECIMAL_10_2_ depth_mm
+        DECIMAL_10_2_ weight_kg
+        DATETIME created_at
+        DATETIME updated_at
+    }
+    product_documents {
+        BIGINT id
+        BIGINT product_id
+        BIGINT variant_id
+        BIGINT media_id
+        VARCHAR_50_ document_type
+        VARCHAR_50_ language
+        INTEGER sort_order
+        DATETIME created_at
+        DATETIME updated_at
+    }
+    product_import_logs {
+        BIGINT id
+        BIGINT product_id
+        VARCHAR_255_ source_file
+        INTEGER source_page
+        VARCHAR_100_ detected_sku
+        VARCHAR_50_ status
+        LONGTEXT raw_data
+        DATETIME created_at
+        DATETIME updated_at
+    }
+    product_media {
+        BIGINT id
+        BIGINT product_id
+        BIGINT variant_id
+        BIGINT media_id
+        VARCHAR_50_ type
+        INTEGER sort_order
+        TINYINT_1_ is_primary
+        DATETIME created_at
+        DATETIME updated_at
+    }
+    product_relations {
+        BIGINT id
+        BIGINT product_id
+        BIGINT related_product_id
+        VARCHAR_50_ relation_type
+    }
+    product_search_keywords {
+        BIGINT id
+        BIGINT product_id
+        VARCHAR_150_ keyword
+    }
+    product_specifications {
+        BIGINT id
+        BIGINT product_id
+        BIGINT variant_id
+        VARCHAR_150_ spec_key
+        VARCHAR_255_ spec_value
+        VARCHAR_50_ unit
+        INTEGER sort_order
+        DATETIME created_at
+        DATETIME updated_at
+    }
     product_translations {
         BIGINT id
         BIGINT product_id
@@ -141,16 +290,29 @@ erDiagram
         VARCHAR_255_ short_description
         LONGTEXT description
     }
+    product_variants {
+        BIGINT id
+        BIGINT product_id
+        VARCHAR_100_ sku
+        VARCHAR_150_ variant_name
+        DECIMAL_12_2_ price
+        VARCHAR_50_ stock_status
+        INTEGER sort_order
+        VARCHAR_50_ status
+        DATETIME created_at
+        DATETIME updated_at
+        DATETIME deleted_at
+    }
     products {
         BIGINT id
-        BIGINT category_id
-        VARCHAR_100_ sku
+        VARCHAR_100_ model_code
         VARCHAR_255_ slug
-        DECIMAL_12_2_ price
-        VARCHAR_255_ image
-        JSON specs
+        BIGINT category_id
+        BIGINT collection_id
+        BIGINT brand_id
         VARCHAR_50_ status
-        JSON seo
+        TINYINT_1_ is_featured
+        INTEGER sort_order
         DATETIME created_at
         DATETIME updated_at
         DATETIME deleted_at
@@ -169,6 +331,18 @@ erDiagram
         DATETIME created_at
         DATETIME updated_at
         DATETIME deleted_at
+    }
+    seo_meta {
+        BIGINT id
+        BIGINT product_id
+        VARCHAR_50_ locale
+        VARCHAR_255_ meta_title
+        VARCHAR_500_ meta_description
+        VARCHAR_255_ og_title
+        VARCHAR_500_ og_description
+        VARCHAR_255_ canonical_url
+        DATETIME created_at
+        DATETIME updated_at
     }
     settings {
         BIGINT id
@@ -196,15 +370,40 @@ erDiagram
         DATETIME updated_at
         DATETIME deleted_at
     }
+    announcements ||--o{ announcement_translations : "announcement_id"
+    attributes ||--o{ attribute_options : "attribute_id"
     blogs ||--o{ blog_translations : "blog_id"
     categories ||--o{ category_translations : "category_id"
+    collections ||--o{ collection_translations : "collection_id"
     users ||--o{ media : "owner_id"
     users ||--o{ notifications : "user_id"
     pages ||--o{ page_translations : "page_id"
+    products ||--o{ product_attribute_values : "product_id"
+    product_variants ||--o{ product_attribute_values : "variant_id"
+    attributes ||--o{ product_attribute_values : "attribute_id"
+    attribute_options ||--o{ product_attribute_values : "attribute_option_id"
+    products ||--o{ product_dimensions : "product_id"
+    product_variants ||--o{ product_dimensions : "variant_id"
+    products ||--o{ product_documents : "product_id"
+    product_variants ||--o{ product_documents : "variant_id"
+    media ||--o{ product_documents : "media_id"
+    products ||--o{ product_import_logs : "product_id"
+    products ||--o{ product_media : "product_id"
+    product_variants ||--o{ product_media : "variant_id"
+    media ||--o{ product_media : "media_id"
+    products ||--o{ product_relations : "product_id"
+    products ||--o{ product_relations : "related_product_id"
+    products ||--o{ product_search_keywords : "product_id"
+    products ||--o{ product_specifications : "product_id"
+    product_variants ||--o{ product_specifications : "variant_id"
     products ||--o{ product_translations : "product_id"
+    products ||--o{ product_variants : "product_id"
     categories ||--o{ products : "category_id"
+    collections ||--o{ products : "collection_id"
+    brands ||--o{ products : "brand_id"
     roles ||--o{ role_permissions : "role_id"
     permissions ||--o{ role_permissions : "permission_id"
+    products ||--o{ seo_meta : "product_id"
     users ||--o{ user_roles : "user_id"
     roles ||--o{ user_roles : "role_id"
 ```

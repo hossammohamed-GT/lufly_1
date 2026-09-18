@@ -32,6 +32,11 @@ final class Types
         return $table->string($column, 100);
     }
 
+    public static function string_150(Blueprint $table, string $column): ColumnDefinition
+    {
+        return $table->string($column, 150);
+    }
+
     public static function string_255(Blueprint $table, string $column): ColumnDefinition
     {
         return $table->string($column, 255);

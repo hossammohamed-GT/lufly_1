@@ -103,7 +103,10 @@ class CategorySeeder extends Seeder
             ],
         ];
 
+        $sort = 0;
+
         foreach ($categories as $cat) {
+            $sort++;
             $existing = $this->db->table('categories')->where('slug', $cat['slug'])->first();
             if ($existing) {
                 $categoryId = (int) $existing['id'];
@@ -111,6 +114,8 @@ class CategorySeeder extends Seeder
                 $categoryId = (int) $this->db->insert('categories', [
                     'slug' => $cat['slug'],
                     'image' => $cat['image'],
+                    'sort_order' => $sort,
+                    'is_featured' => $sort === 1 ? 1 : 0,
                     'status' => 'active',
                     'seo' => json_encode(['title' => $cat['translations']['en']['name']], JSON_UNESCAPED_UNICODE),
                     'created_at' => date('Y-m-d H:i:s'),

@@ -50,3 +50,15 @@
   .admin-shell { grid-template-columns: 1fr; }
   .admin-sidebar { position: static; height: auto; }
 }
+
+/* ---------- announcements admin ---------- */
+.admin-hint { margin: 0; color: var(--ds-text-muted); font-size: var(--text-sm); max-width: 560px; }
+.table .cell-message { max-width: 420px; }
+.table .cell-message a { color: var(--ds-primary); text-decoration: none; }
+.table .cell-message a:hover { text-decoration: underline; }
+.table .cell-schedule { font-size: var(--text-xs); color: var(--ds-text-muted); white-space: nowrap; }
+.table .cell-empty { text-align: center; color: var(--ds-text-muted); padding: var(--space-8) 0; }
+.badge-toggle { border: 0; cursor: pointer; font: inherit; }
+.badge-style-promo { background: color-mix(in srgb, var(--ds-primary) 14%, transparent); color: var(--ds-primary); }
+.badge-style-info { background: var(--ds-info-soft); color: var(--ds-info); }
+.badge-style-warning { background: var(--ds-warning-soft); color: var(--ds-warning); }

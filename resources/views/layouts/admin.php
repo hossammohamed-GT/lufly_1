@@ -35,6 +35,7 @@ try {
         <nav class="admin-nav">
             <a href="<?= e(route('admin.dashboard')) ?>"><?= e(trans('common.dashboard')) ?></a>
             <a href="<?= e(route('admin.products.index')) ?>"><?= e(trans('common.products')) ?></a>
+            <a href="<?= e(route('admin.announcements.index')) ?>"><?= e(trans('common.announcements')) ?></a>
             <a href="<?= e(route('admin.users.index')) ?>"><?= e(trans('common.users')) ?></a>
             <a href="<?= e(route('admin.roles.index')) ?>"><?= e(trans('common.roles_permissions')) ?></a>
             <a href="<?= e(route('admin.languages.index')) ?>"><?= e(trans('common.languages')) ?></a>

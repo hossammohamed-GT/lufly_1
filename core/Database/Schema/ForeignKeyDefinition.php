@@ -44,13 +44,17 @@ final class ForeignKeyDefinition
         return $this->referencedColumn;
     }
 
-    public function toSql(): string
+    public function toSql(string $driver = 'mysql'): string
     {
+        $quote = static fn (string $identifier): string => $driver === 'mysql'
+            ? '`' . str_replace('`', '', $identifier) . '`'
+            : $identifier;
+
         return sprintf(
             'FOREIGN KEY (%s) REFERENCES %s (%s) ON DELETE %s',
-            $this->column,
-            $this->referencedTable,
-            $this->referencedColumn,
+            $quote($this->column),
+            $quote($this->referencedTable),
+            $quote($this->referencedColumn),
             $this->onDelete,
         );
     }

@@ -36,9 +36,15 @@ public function up(): void
 Generate the full DDL or an ER diagram from the definitions:
 
 ```bash
-php cli schema:dump   # database/schema/schema.sql
-php cli erd           # database/erd/erd.md (Mermaid)
+php cli schema:dump       # database/schema/schema.sql
+php cli erd               # database/erd/erd.md (Mermaid)
+php cli db:export-mysql   # lufly-database.sql (XAMPP / phpMyAdmin import file)
 ```
+
+The catalog uses the full product architecture (products, variants, flexible
+specifications, central media library, documents, relations, SEO meta,
+search keywords, import logs) plus the announcements tables. See
+[Product-Database.md](Product-Database.md) for the complete map in Arabic.
 
 ## Reusable data types
 

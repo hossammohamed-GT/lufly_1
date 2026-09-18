@@ -54,7 +54,8 @@ class ProductRepository extends Repository
             $searchJoin = "INNER JOIN product_translations pt
                 ON pt.product_id = p.id AND pt.locale = ?";
             $bindings[] = $locale;
-            $where[] = 'pt.name LIKE ?';
+            $where[] = '(pt.name LIKE ? OR p.model_code LIKE ?)';
+            $bindings[] = '%' . $filters['search'] . '%';
             $bindings[] = '%' . $filters['search'] . '%';
         }
 
@@ -99,7 +100,13 @@ class ProductRepository extends Repository
              WHERE p.deleted_at IS NULL
                AND p.status = ?
                AND (
-                   LOWER(p.sku) LIKE LOWER(?)
+                   LOWER(p.model_code) LIKE LOWER(?)
+                   OR EXISTS (
+                       SELECT 1 FROM product_variants pv
+                       WHERE pv.product_id = p.id
+                         AND pv.deleted_at IS NULL
+                         AND LOWER(pv.sku) LIKE LOWER(?)
+                   )
                    OR EXISTS (
                        SELECT 1 FROM product_translations pt
                        WHERE pt.product_id = p.id
@@ -108,10 +115,15 @@ class ProductRepository extends Repository
                              OR LOWER(pt.description) LIKE LOWER(?)
                          )
                    )
+                   OR EXISTS (
+                       SELECT 1 FROM product_search_keywords pk
+                       WHERE pk.product_id = p.id
+                         AND LOWER(pk.keyword) LIKE LOWER(?)
+                   )
                )
              ORDER BY p.id DESC
              LIMIT ?",
-              [$status, $like, $like, $like, (int) $limit],
+              [$status, $like, $like, $like, $like, $like, (int) $limit],
         );
 
         return array_map(static fn (array $row): Product => Product::fromRow($row), $rows);

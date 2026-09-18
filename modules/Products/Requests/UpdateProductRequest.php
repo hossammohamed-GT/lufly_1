@@ -20,19 +20,25 @@ class UpdateProductRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'sku' => 'required|string|max:100|unique:products,sku,' . $this->productId,
+            'model_code' => 'required|string|max:100|unique:products,model_code,' . $this->productId,
             'slug' => 'nullable|string|max:255',
-            'price' => 'required|numeric|min:0',
+            'price' => 'nullable|numeric|min:0',
             'category_id' => 'nullable|integer',
-            'status' => 'required|in:active,inactive,draft',
+            'collection_id' => 'nullable|integer',
+            'brand_id' => 'nullable|integer',
+            'is_featured' => 'nullable|in:0,1',
+            'status' => 'required|in:draft,active,hidden,discontinued,coming_soon',
             'name_en' => 'required|string|max:255',
             'name_tr' => 'nullable|string|max:255',
             'name_cs' => 'nullable|string|max:255',
+            'short_description_en' => 'nullable|string|max:500',
+            'short_description_tr' => 'nullable|string|max:500',
+            'short_description_cs' => 'nullable|string|max:500',
             'description_en' => 'nullable|string',
             'description_tr' => 'nullable|string',
             'description_cs' => 'nullable|string',
-            'seo_title' => 'nullable|string|max:255',
-            'seo_description' => 'nullable|string|max:255',
+            'meta_title' => 'nullable|string|max:255',
+            'meta_description' => 'nullable|string|max:500',
         ];
     }
 }

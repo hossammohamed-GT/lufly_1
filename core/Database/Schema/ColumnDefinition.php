@@ -77,7 +77,8 @@ final class ColumnDefinition
             return $this->toSqlite();
         }
 
-        $sql = "{$this->name} {$this->type}";
+        $name = str_contains($this->name, '`') ? $this->name : "`{$this->name}`";
+        $sql = "{$name} {$this->type}";
         if ($this->isUnsigned && str_contains(strtoupper($this->type), 'INT')) {
             $sql .= ' UNSIGNED';
         }

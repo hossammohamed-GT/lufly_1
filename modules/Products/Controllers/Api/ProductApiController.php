@@ -64,16 +64,16 @@ class ProductApiController extends Controller
     public function store(Request $request): JsonResponse
     {
         $data = $request->validate([
-            'sku' => 'required|string|max:100|unique:products,sku',
-            'price' => 'required|numeric|min:0',
-            'status' => 'required|in:active,inactive,draft',
+            'model_code' => 'required|string|max:100|unique:products,model_code',
+            'price' => 'nullable|numeric|min:0',
+            'status' => 'required|in:draft,active,hidden,discontinued,coming_soon',
             'slug' => 'nullable|string|max:255',
             'translations' => 'required|array',
         ]);
 
         $core = [
-            'sku' => $data['sku'],
-            'price' => $data['price'],
+            'model_code' => $data['model_code'],
+            'price' => (float) ($data['price'] ?? 0),
             'status' => $data['status'],
             'slug' => $data['slug'] ?? '',
         ];
@@ -86,13 +86,13 @@ class ProductApiController extends Controller
     public function update(Request $request, int $id): JsonResponse
     {
         $data = $request->validate([
-            'sku' => 'nullable|string|max:100|unique:products,sku,' . $id,
+            'model_code' => 'nullable|string|max:100|unique:products,model_code,' . $id,
             'price' => 'nullable|numeric|min:0',
-            'status' => 'nullable|in:active,inactive,draft',
+            'status' => 'nullable|in:draft,active,hidden,discontinued,coming_soon',
             'translations' => 'nullable|array',
         ]);
 
-        $core = array_intersect_key($data, array_flip(['sku', 'price', 'status', 'slug']));
+        $core = array_intersect_key($data, array_flip(['model_code', 'price', 'status', 'slug']));
         $product = $this->products->update($id, $core, (array) ($data['translations'] ?? []));
 
         return ApiResponse::success(['product' => $product->toArray()], trans('common.saved'));

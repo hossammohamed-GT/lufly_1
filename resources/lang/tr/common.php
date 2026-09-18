@@ -59,4 +59,10 @@ return [
     'footer_factory' => 'Fabrika ve İhracat Merkezi',
     'footer_rights' => 'Tüm hakları saklıdır.',
     'footer_architecture' => 'Avrupa Sıhhi Mimari Standartları · Kurumsal Teal #1C8B8B · EN 997 ve CE Sertifikalı',
+    'announcements' => 'Duyurular',
+    'create_announcement' => 'Yeni duyuru',
+    'edit_announcement' => 'Duyuruyu düzenle',
+    'model_code' => 'Model kodu',
+    'category' => 'Kategori',
+    'featured' => 'Öne çıkan',
 ];

@@ -1064,3 +1064,76 @@ hr { border: 0; border-top: var(--border-hairline) solid var(--ds-border); }
   --ds-nav-fade: color-mix(in srgb, var(--lu-ink-900) 62%, transparent);
   --ds-nav-shadow: 0 18px 44px color-mix(in srgb, var(--lu-ink-900) 62%, transparent);
 }
+
+/* ============================================================
+   26 - Scrollbar ("Machined Teal")
+   Site-branded scrollbars in both engines. The thumb uses the
+   LUFLY teal ramp, the track stays a near-invisible tint of the
+   surface so pages keep their calm. Component-level rules that
+   deliberately hide scrollbars (e.g. the navbar rails) still win
+   because they are more specific or set width/height to 0.
+   ============================================================ */
+
+:root {
+  --ds-scrollbar-size: 12px;
+  --ds-scrollbar-thumb: color-mix(in srgb, var(--lu-teal-500) 78%, var(--lu-deep-teal));
+  --ds-scrollbar-thumb-hover: var(--lu-teal-400);
+  --ds-scrollbar-thumb-active: var(--lu-teal-600);
+  --ds-scrollbar-track: color-mix(in srgb, var(--lu-teal-500) 5%, transparent);
+  --ds-scrollbar-border: color-mix(in srgb, var(--ds-surface) 92%, transparent);
+}
+
+[data-theme="dark"] {
+  --ds-scrollbar-thumb: color-mix(in srgb, var(--lu-teal-400) 72%, var(--lu-mint));
+  --ds-scrollbar-thumb-hover: var(--lu-mint);
+  --ds-scrollbar-thumb-active: var(--lu-teal-300);
+  --ds-scrollbar-track: color-mix(in srgb, var(--lu-mint) 6%, transparent);
+  --ds-scrollbar-border: color-mix(in srgb, var(--lu-ink-800) 92%, transparent);
+}
+
+/* Firefox */
+html {
+  scrollbar-width: thin;
+  scrollbar-color: var(--ds-scrollbar-thumb) var(--ds-scrollbar-track);
+}
+
+* {
+  scrollbar-width: thin;
+  scrollbar-color: var(--ds-scrollbar-thumb) transparent;
+}
+
+/* Chromium, Edge, Safari */
+::-webkit-scrollbar {
+  width: var(--ds-scrollbar-size);
+  height: var(--ds-scrollbar-size);
+}
+
+::-webkit-scrollbar-track {
+  background: var(--ds-scrollbar-track);
+  border-radius: 10px;
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--ds-scrollbar-thumb);
+  border: 3px solid transparent;
+  border-radius: 10px;
+  background-clip: padding-box;
+  transition: background-color 160ms ease;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background-color: var(--ds-scrollbar-thumb-hover);
+}
+
+::-webkit-scrollbar-thumb:active {
+  background-color: var(--ds-scrollbar-thumb-active);
+}
+
+::-webkit-scrollbar-corner {
+  background: transparent;
+}
+
+/* Keyboard focus rings still land on the viewport, keep them teal */
+html:focus-within {
+  scroll-behavior: smooth;
+}

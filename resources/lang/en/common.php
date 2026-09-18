@@ -59,4 +59,10 @@ return [
     'footer_factory' => 'Factory & Export Hub',
     'footer_rights' => 'All rights reserved.',
     'footer_architecture' => 'European Sanitary Architecture · Fixed Brand Teal #1C8B8B · EN 997 & CE Certified',
+    'announcements' => 'Announcements',
+    'create_announcement' => 'New announcement',
+    'edit_announcement' => 'Edit announcement',
+    'model_code' => 'Model code',
+    'category' => 'Category',
+    'featured' => 'Featured',
 ];

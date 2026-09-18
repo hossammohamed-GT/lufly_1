@@ -15,6 +15,7 @@ class Kernel
         'rollback' => Commands\RollbackCommand::class,
         'seed' => Commands\SeedCommand::class,
         'schema:dump' => Commands\SchemaDumpCommand::class,
+        'db:export-mysql' => Commands\ExportMysqlCommand::class,
         'erd' => Commands\ErdCommand::class,
         'docs:api' => Commands\DocsApiCommand::class,
         'serve' => Commands\ServeCommand::class,

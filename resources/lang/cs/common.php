@@ -59,4 +59,10 @@ return [
     'footer_factory' => 'Výrobní a exportní centrum',
     'footer_rights' => 'Všechna práva vyhrazena.',
     'footer_architecture' => 'Evropská sanitární architektura · Firemní Teal #1C8B8B · Certifikace EN 997 a CE',
+    'announcements' => 'Oznámení',
+    'create_announcement' => 'Nové oznámení',
+    'edit_announcement' => 'Upravit oznámení',
+    'model_code' => 'Kód modelu',
+    'category' => 'Kategorie',
+    'featured' => 'Doporučeno',
 ];

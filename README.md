@@ -52,15 +52,17 @@ without serving the frontend assets correctly.
 cp .env.example .env          # set DB_DATABASE / DB_USERNAME / DB_PASSWORD / APP_URL
 php cli key:generate
 
-# 2. create the database
-mysql -u root -e "CREATE DATABASE lufly CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;"
+# 2. import the database (creates "lufly" + all tables + all seed data)
+#    via phpMyAdmin: Import -> lufly-database.sql
+#    or from the CLI:
+mysql -u root < lufly-database.sql
 
-# 3. build the schema + demo data
-php cli migrate
-php cli seed
-
-# 4. open http://localhost/lufly
+# 3. open http://localhost/lufly
 ```
+
+`lufly-database.sql` is regenerated with `php cli db:export-mysql` whenever the
+schema or seeders change - treat it as the deployment source of truth. The
+`php cli migrate && php cli seed` path builds the identical database.
 
 | Account | Password | Role |
 | --- | --- | --- |
@@ -75,6 +77,7 @@ php cli migrate [--fresh]     run migrations
 php cli rollback [--steps=N]  roll back the last batch(es)
 php cli seed [--class=Name]   run seeders
 php cli schema:dump           DDL dump from schema definitions
+php cli db:export-mysql       rebuild lufly-database.sql (XAMPP/phpMyAdmin import)
 php cli erd                   Mermaid ER diagram
 php cli docs:api              regenerate docs/API-Endpoints.md
 php cli serve [--port=8080]   PHP built-in dev server
@@ -111,6 +114,7 @@ docs/       architecture docs + ADRs
 | [`docs/API.md`](docs/API.md) | envelopes, endpoints, error codes |
 | [`docs/Security.md`](docs/Security.md) | auth, RBAC, CSRF, uploads, audit |
 | [`docs/Deployment.md`](docs/Deployment.md) | XAMPP setup + production checklist |
+| [`docs/Product-Database.md`](docs/Product-Database.md) | product architecture + announcements (عربي) |
 | [`docs/Admin-Panel.md`](docs/Admin-Panel.md) | admin routes, permissions, assets |
 | [`docs/adr/`](docs/adr/) | architecture decision records |
 

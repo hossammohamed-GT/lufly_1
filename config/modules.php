@@ -13,5 +13,6 @@ return [
         'Settings',
         'SEO',
         'Notifications',
+        'Announcements',
     ],
 ];

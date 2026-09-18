@@ -47,4 +47,5 @@ return [
         'code' => 'code',
         'title' => 'title',
     ],
+    'not_found' => 'The requested record could not be found.',
 ];

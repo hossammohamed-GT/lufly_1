@@ -47,4 +47,5 @@ return [
         'code' => 'kód',
         'title' => 'titulek',
     ],
+    'not_found' => 'Požadovaný záznam nebyl nalezen.',
 ];

@@ -11,4 +11,9 @@ return [
     'description' => 'Description',
     'specs_title' => 'Technical Specifications',
     'inquire_whatsapp' => 'Request a Quote via WhatsApp',
+    'width' => 'Width',
+    'height' => 'Height',
+    'depth' => 'Depth',
+    'weight' => 'Weight',
+    'dimensions' => 'Dimensions',
 ];

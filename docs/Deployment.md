@@ -34,17 +34,37 @@ the page may appear as unstyled HTML.
    `APP_URL` must match how the browser reaches the app, e.g.
    `http://localhost/lufly`.
 
-3. Create the database (utf8mb4):
+3. Import the database. Two equivalent options:
+
+   **Option A - one-file import (recommended).** Import the bundled
+   [`lufly-database.sql`](../lufly-database.sql) through phpMyAdmin
+   (*Import -> Choose file -> Go*). It creates the `lufly` database, all
+   tables (full product architecture + announcements) and all seed data -
+   the site is fully usable right after the import.
+
+   From the command line it is the same thing:
+
+   ```bash
+   mysql -u root < lufly-database.sql
+   ```
+
+   **Option B - build it yourself.** Create the database then run the
+   framework migrations and seeders (identical result):
 
    ```sql
    CREATE DATABASE lufly CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
    ```
 
-4. Run migrations and seeders:
-
    ```bash
    php cli migrate
    php cli seed
+   ```
+
+   After changing the schema or seeders, regenerate the export so it stays
+   the single source of truth for deployment:
+
+   ```bash
+   php cli db:export-mysql    # refreshes lufly-database.sql
    ```
 
 5. Ensure writability of `storage/` (logs, cache, uploads).

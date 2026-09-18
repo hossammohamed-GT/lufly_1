@@ -11,4 +11,9 @@ return [
     'description' => 'Açıklama',
     'specs_title' => 'Teknik Özellikler',
     'inquire_whatsapp' => 'WhatsApp ile Teklif Alın',
+    'width' => 'Genişlik',
+    'height' => 'Yükseklik',
+    'depth' => 'Derinlik',
+    'weight' => 'Ağırlık',
+    'dimensions' => 'Ölçüler',
 ];

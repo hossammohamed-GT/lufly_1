@@ -41,6 +41,11 @@ class Blueprint
         return Types::string_100($this, $column);
     }
 
+    public function string_150(string $column): ColumnDefinition
+    {
+        return Types::string_150($this, $column);
+    }
+
     public function string_255(string $column): ColumnDefinition
     {
         return Types::string_255($this, $column);
@@ -202,25 +207,32 @@ class Blueprint
     /** @return string[] SQL statements for the target driver */
     public function toStatements(string $driver): array
     {
+        $quote = static fn (string $identifier): string => $driver === 'mysql'
+            ? '`' . str_replace('`', '', $identifier) . '`'
+            : $identifier;
+
         $lines = [];
         foreach ($this->columns as $column) {
             $lines[] = $column->toSql($driver);
             if ($column->isIndex && $driver === 'mysql') {
-                $lines[] = "KEY {$this->table}_{$column->name}_index ({$column->name})";
+                $lines[] = 'KEY ' . $this->indexName([$column->name], false) . ' (' . $quote($column->name) . ')';
             }
         }
         foreach ($this->indexes as $index) {
             if ($index['unique'] && $driver === 'mysql') {
-                $lines[] = 'UNIQUE KEY ' . $this->indexName($index['columns'], true) . ' (' . implode(', ', $index['columns']) . ')';
+                $columns = implode(', ', array_map($quote, $index['columns']));
+                $lines[] = 'UNIQUE KEY ' . $this->indexName($index['columns'], true) . ' (' . $columns . ')';
             } elseif (!$index['unique'] && $driver === 'mysql') {
-                $lines[] = 'KEY ' . $this->indexName($index['columns'], false) . ' (' . implode(', ', $index['columns']) . ')';
+                $columns = implode(', ', array_map($quote, $index['columns']));
+                $lines[] = 'KEY ' . $this->indexName($index['columns'], false) . ' (' . $columns . ')';
             }
         }
         foreach ($this->foreignKeys as $foreign) {
-            $lines[] = $foreign->toSql();
+            $lines[] = $foreign->toSql($driver);
         }
 
-        $statements = [sprintf("CREATE TABLE %s (\n    %s\n)", $this->table, implode(",\n    ", $lines))];
+        $table = $driver === 'mysql' ? $quote($this->table) : $this->table;
+        $statements = [sprintf("CREATE TABLE %s (\n    %s\n)", $table, implode(",\n    ", $lines))];
 
         if ($driver === 'sqlite') {
             foreach ($this->indexes as $index) {

@@ -47,4 +47,5 @@ return [
         'code' => 'kod',
         'title' => 'başlık',
     ],
+    'not_found' => 'İstenen kayıt bulunamadı.',
 ];
