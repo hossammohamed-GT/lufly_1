@@ -2,9 +2,9 @@
 /** @var Core\View\View $view */
 $view->pushStyle('frontend/home/masterpieces/masterpieces.css');
 ?>
-<section class="masterpieces-section">
+<section class="masterpieces-section scroll-section">
     <div class="container">
-        <div class="row-end masterpieces-head">
+        <div class="row-end masterpieces-head scroll-reveal">
             <div>
                 <span class="section-tag"><?= e(trans('home.featured_tag')) ?></span>
                 <h2 class="section-title"><?= e(trans('home.featured_title')) ?></h2>
@@ -16,7 +16,7 @@ $view->pushStyle('frontend/home/masterpieces/masterpieces.css');
         </div>
 
         <div class="products-grid">
-            <?php foreach (array_slice($featuredProducts, 0, 4) as $product): ?>
+            <?php foreach (array_slice($featuredProducts, 0, 4) as $idx => $product): ?>
                 <?php
                 $img = $product['image'] ?? '/images/logo.png';
                 $name = $product['name'] ?? ('LUFLY ' . ($product['sku'] ?? 'Sanitary Fixture'));
@@ -24,7 +24,7 @@ $view->pushStyle('frontend/home/masterpieces/masterpieces.css');
                 $desc = $product['short_description'] ?? 'Premium European specification sanitary fixture.';
                 $inquireMsg = rawurlencode("Hello LUFLY Export Desk, I would like to inquire about {$name} (SKU: {$sku}) for an architectural project.");
                 ?>
-                <div class="product-card-luxury">
+                <div class="product-card-luxury scroll-reveal" data-delay="<?= $idx + 1 ?>">
                     <div class="product-img-box">
                         <img src="<?= e(asset($img)) ?>" alt="<?= e($name) ?>" loading="lazy" decoding="async" width="300" height="300">
                     </div>

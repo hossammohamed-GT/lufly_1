@@ -5,6 +5,7 @@
      * Accessible modal controller
      * Smart Link & Asset Prefetcher (Instant 0ms Page Navigation)
      * BFCache (Back/Forward Cache) Instant Restoration Handler
+     * Butter-Smooth Section Scroll & Reveal Engine
    ========================================================================== */
 (function () {
   'use strict';
@@ -166,4 +167,41 @@
       document.body.classList.add('ready');
     }
   });
+
+  /* ---------- 5. Butter-Smooth Section Scroll & Reveal Engine ---------- */
+
+  function initScrollReveals() {
+    var targets = document.querySelectorAll('.scroll-reveal, .scroll-section');
+    if (!targets.length) return;
+
+    var reduced = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    if (reduced || !('IntersectionObserver' in window)) {
+      targets.forEach(function (el) {
+        el.classList.add('scroll-revealed');
+      });
+      return;
+    }
+
+    var observer = new IntersectionObserver(function (entries, obs) {
+      entries.forEach(function (entry) {
+        if (entry.isIntersecting) {
+          entry.target.classList.add('scroll-revealed');
+          obs.unobserve(entry.target);
+        }
+      });
+    }, {
+      rootMargin: '0px 0px -40px 0px',
+      threshold: 0.08
+    });
+
+    targets.forEach(function (el) {
+      observer.observe(el);
+    });
+  }
+
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', initScrollReveals);
+  } else {
+    initScrollReveals();
+  }
 })();
