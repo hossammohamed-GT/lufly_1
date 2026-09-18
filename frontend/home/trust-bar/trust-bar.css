@@ -1,45 +1,59 @@
 /* ============================================================
    LUFLY - Engineering Trust & High-Converting Value Pillars
-   Architectural blueprint backdrop, glassmorphism surfaces,
-   stationary cards with traveling perimeter border beam on hover,
-   and balanced Light & Dark theme support.
+   Clean architectural tokens matching navbar & design system,
+   subtle blueprint backdrop, stationary cards with traveling
+   perimeter beam, and lightweight GPU rendering.
    ============================================================ */
 
 .trust-bar {
   position: relative;
   z-index: 5;
   overflow: hidden;
-  padding: clamp(80px, 9vw, 120px) var(--space-6) clamp(68px, 7.5vw, 100px);
-  background-color: var(--ds-bg);
-  background-image:
-    linear-gradient(180deg, rgba(246, 248, 247, 0.90) 0%, rgba(238, 243, 241, 0.94) 100%),
-    url('/images/lifestyle/blueprint-drafting.jpg');
-  background-position: center top;
-  background-size: cover;
-  background-repeat: no-repeat;
+  padding: clamp(72px, 8vw, 108px) var(--space-6) clamp(64px, 7vw, 96px);
+  background: var(--ds-bg);
   border-top: 1px solid var(--ds-border);
   border-bottom: 1px solid var(--ds-border);
-  border-radius: 36px 36px 0 0;
-  box-shadow: 0 -28px 70px -15px rgba(0, 0, 0, 0.45);
+  border-radius: 32px 32px 0 0;
+  box-shadow: 0 -20px 50px -12px rgba(0, 0, 0, 0.35);
   transition: background-color var(--duration-base) var(--ease-out), border-color var(--duration-base) var(--ease-out);
 }
 
 [data-theme="dark"] .trust-bar {
-  background-color: rgb(44, 43, 40);
-  background-image:
-    linear-gradient(180deg, rgba(30, 29, 26, 0.88) 0%, rgba(44, 43, 40, 0.94) 100%),
-    url('/images/lifestyle/blueprint-drafting.jpg');
-  box-shadow: 0 -32px 80px -15px rgba(0, 0, 0, 0.7);
+  box-shadow: 0 -24px 60px -12px rgba(0, 0, 0, 0.65);
 }
 
-.trust-bg-overlay {
+/* ---------- Architectural Backdrop ---------- */
+
+.trust-bg-backdrop {
   position: absolute;
   inset: 0;
   pointer-events: none;
+  z-index: 1;
+}
+
+.trust-bg-photo {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center;
+  opacity: 0.12;
+  mix-blend-mode: multiply;
+}
+
+[data-theme="dark"] .trust-bg-photo {
+  opacity: 0.18;
+  mix-blend-mode: luminosity;
+}
+
+.trust-bg-scrim {
+  position: absolute;
+  inset: 0;
   background:
-    radial-gradient(circle 600px at 15% 15%, var(--ds-primary-soft) 0%, transparent 70%),
-    radial-gradient(circle 500px at 85% 85%, var(--ds-primary-tint) 0%, transparent 70%);
-  opacity: 0.7;
+    radial-gradient(circle 650px at 15% 20%, var(--ds-primary-soft) 0%, transparent 70%),
+    radial-gradient(circle 500px at 85% 80%, var(--ds-primary-tint) 0%, transparent 70%);
+  opacity: 0.6;
 }
 
 .trust-inner {
@@ -54,7 +68,7 @@
 .trust-heading {
   text-align: center;
   max-width: 820px;
-  margin: 0 auto clamp(48px, 6vw, 72px);
+  margin: 0 auto clamp(44px, 5.5vw, 68px);
 }
 
 .trust-kicker-badge {
@@ -64,8 +78,8 @@
   padding: 6px 16px;
   border-radius: var(--radius-full);
   background: var(--ds-surface);
-  border: 1px solid var(--ds-primary-line);
-  box-shadow: 0 4px 12px -2px rgba(0, 0, 0, 0.05);
+  border: 1px solid var(--ds-border);
+  box-shadow: 0 2px 8px -2px rgba(0, 0, 0, 0.04);
   margin-bottom: var(--space-4);
 }
 
@@ -74,7 +88,7 @@
   height: 6px;
   border-radius: var(--radius-full);
   background: var(--ds-primary);
-  box-shadow: 0 0 8px var(--ds-primary);
+  box-shadow: 0 0 6px var(--ds-primary);
 }
 
 .trust-kicker {
@@ -90,7 +104,7 @@
   margin: 0 0 var(--space-4);
   color: var(--ds-text);
   font-family: var(--font-display);
-  font-size: clamp(1.9rem, 3.4vw, 2.85rem);
+  font-size: clamp(1.85rem, 3.2vw, 2.75rem);
   font-weight: var(--weight-regular);
   line-height: var(--leading-tight);
   letter-spacing: var(--tracking-tight);
@@ -116,40 +130,35 @@
   display: grid;
   grid-template-columns: repeat(4, 1fr);
   gap: clamp(16px, 2vw, 24px);
-  margin-bottom: clamp(40px, 5vw, 60px);
+  margin-bottom: clamp(36px, 4.5vw, 54px);
 }
 
 .trust-card {
   position: relative;
   display: flex;
   flex-direction: column;
-  background: rgba(255, 255, 255, 0.88);
-  backdrop-filter: blur(16px);
-  -webkit-backdrop-filter: blur(16px);
+  background: var(--ds-surface);
   border: 1px solid var(--ds-border);
-  border-radius: 20px;
-  padding: clamp(26px, 2.8vw, 34px) clamp(22px, 2.2vw, 28px);
+  border-radius: 18px;
+  padding: clamp(24px, 2.5vw, 30px) clamp(20px, 2vw, 24px);
   text-align: start;
-  box-shadow: 0 10px 30px -10px rgba(0, 0, 0, 0.06);
-  /* Stationary card: no translateY on hover */
+  box-shadow: 0 4px 16px -4px rgba(0, 0, 0, 0.04);
+  /* Stationary card: zero translateY on hover */
   transform: none;
-  transition: box-shadow 0.4s cubic-bezier(0.16, 1, 0.3, 1),
-              border-color 0.4s ease,
-              background-color 0.4s ease;
+  transition: border-color var(--duration-base) var(--ease-out),
+              background-color var(--duration-base) var(--ease-out),
+              box-shadow var(--duration-base) var(--ease-out);
   overflow: hidden;
 }
 
 [data-theme="dark"] .trust-card {
-  background: rgba(53, 52, 48, 0.85);
-  backdrop-filter: blur(20px);
-  -webkit-backdrop-filter: blur(20px);
-  box-shadow: 0 12px 36px -12px rgba(0, 0, 0, 0.5);
+  box-shadow: 0 6px 20px -6px rgba(0, 0, 0, 0.4);
 }
 
 .trust-card:hover {
-  /* No translateY - remains perfectly stationary */
   border-color: transparent;
-  box-shadow: 0 16px 40px -10px var(--ds-primary-soft);
+  background: var(--ds-surface-alt);
+  box-shadow: 0 12px 32px -8px var(--ds-primary-soft);
 }
 
 /* Traveling perimeter border beam (SVG line race) */
@@ -159,7 +168,7 @@
   width: 100%;
   height: 100%;
   pointer-events: none;
-  z-index: 4;
+  z-index: 3;
   overflow: visible;
 }
 
@@ -170,12 +179,12 @@
   height: calc(100% - 1px);
   fill: none;
   stroke: var(--ds-primary);
-  stroke-width: 2.2px;
+  stroke-width: 2px;
   stroke-linecap: round;
   stroke-dasharray: 100;
   stroke-dashoffset: 100;
-  transition: stroke-dashoffset 0.85s cubic-bezier(0.16, 1, 0.3, 1), stroke 0.3s ease;
-  filter: drop-shadow(0 0 6px var(--ds-primary));
+  transition: stroke-dashoffset 0.75s cubic-bezier(0.16, 1, 0.3, 1), stroke 0.25s ease;
+  filter: drop-shadow(0 0 4px var(--ds-primary));
 }
 
 .trust-card:hover .trust-card-beam rect {
@@ -187,27 +196,27 @@
   align-items: center;
   justify-content: space-between;
   gap: var(--space-2);
-  margin-bottom: var(--space-5);
+  margin-bottom: var(--space-4);
 }
 
 .trust-card-index {
   font-family: var(--font-mono, monospace);
   font-size: 11px;
   font-weight: var(--weight-bold);
-  letter-spacing: 0.1em;
+  letter-spacing: 0.08em;
   color: var(--ds-text-muted);
   text-transform: uppercase;
 }
 
 .trust-card-badge {
   display: inline-block;
-  font-size: 11px;
+  font-size: 10.5px;
   font-weight: var(--weight-semibold);
-  letter-spacing: 0.05em;
+  letter-spacing: 0.04em;
   text-transform: uppercase;
   color: var(--ds-primary);
   background: var(--ds-primary-soft);
-  padding: 3px 10px;
+  padding: 3px 9px;
   border-radius: var(--radius-full);
   border: 1px solid var(--ds-primary-line);
 }
@@ -215,33 +224,32 @@
 .trust-card-main {
   display: flex;
   align-items: center;
-  gap: var(--space-4);
-  margin-bottom: var(--space-4);
+  gap: var(--space-3);
+  margin-bottom: var(--space-3);
 }
 
 .trust-icon {
   display: flex;
   align-items: center;
   justify-content: center;
-  width: 48px;
-  height: 48px;
-  border-radius: 14px;
-  background: var(--ds-surface);
+  width: 44px;
+  height: 44px;
+  border-radius: 12px;
+  background: var(--ds-surface-alt);
   border: 1px solid var(--ds-border);
   color: var(--ds-primary);
   flex-shrink: 0;
-  transition: transform 0.35s ease, background-color 0.35s ease, box-shadow 0.35s ease;
+  transition: transform var(--duration-fast) var(--ease-out), background-color var(--duration-fast) var(--ease-out);
 }
 
 .trust-card:hover .trust-icon {
-  transform: scale(1.08);
+  transform: scale(1.06);
   background: var(--ds-primary-soft);
-  box-shadow: 0 0 16px var(--ds-primary-soft);
 }
 
 .trust-icon svg {
-  width: 26px;
-  height: 26px;
+  width: 24px;
+  height: 24px;
   fill: none;
   stroke: currentColor;
   stroke-linecap: round;
@@ -258,7 +266,7 @@
 }
 
 .trust-stat strong {
-  font-size: clamp(2.1rem, 2.6vw, 2.75rem);
+  font-size: clamp(1.95rem, 2.4vw, 2.5rem);
   font-weight: var(--weight-black);
   line-height: 1;
   letter-spacing: var(--tracking-tight);
@@ -268,7 +276,7 @@
   font-size: var(--text-sm);
   font-weight: var(--weight-bold);
   color: var(--ds-primary);
-  letter-spacing: 0.05em;
+  letter-spacing: 0.04em;
   text-transform: uppercase;
 }
 
@@ -276,7 +284,7 @@
   margin: 0 0 var(--space-2);
   color: var(--ds-text);
   font-family: var(--font-display);
-  font-size: clamp(1.08rem, 1.25vw, 1.22rem);
+  font-size: clamp(1.05rem, 1.2vw, 1.18rem);
   font-weight: var(--weight-bold);
   line-height: var(--leading-snug);
 }
@@ -297,15 +305,13 @@
   gap: var(--space-8);
   background: var(--ds-surface);
   border: 1px solid var(--ds-border);
-  border-radius: 24px;
-  padding: clamp(28px, 3.2vw, 40px) clamp(26px, 3.6vw, 44px);
-  box-shadow: 0 14px 42px -12px rgba(0, 0, 0, 0.08);
-  backdrop-filter: blur(16px);
-  -webkit-backdrop-filter: blur(16px);
+  border-radius: 20px;
+  padding: clamp(24px, 2.8vw, 36px) clamp(22px, 3.2vw, 38px);
+  box-shadow: 0 8px 24px -6px rgba(0, 0, 0, 0.06);
 }
 
 [data-theme="dark"] .trust-action-banner {
-  box-shadow: 0 18px 52px -16px rgba(0, 0, 0, 0.65);
+  box-shadow: 0 12px 36px -10px rgba(0, 0, 0, 0.5);
 }
 
 .trust-action-info {
@@ -316,7 +322,7 @@
   margin: 0 0 var(--space-2);
   color: var(--ds-text);
   font-family: var(--font-display);
-  font-size: clamp(1.22rem, 1.65vw, 1.48rem);
+  font-size: clamp(1.18rem, 1.55vw, 1.42rem);
   font-weight: var(--weight-bold);
   line-height: var(--leading-snug);
 }
@@ -332,25 +338,25 @@
 .trust-pills {
   display: flex;
   flex-wrap: wrap;
-  gap: var(--space-3);
+  gap: var(--space-2);
 }
 
 .trust-pill {
   display: inline-flex;
   align-items: center;
   gap: 6px;
-  font-size: 12px;
+  font-size: 11.5px;
   font-weight: var(--weight-medium);
   color: var(--ds-text);
   background: var(--ds-surface-alt);
   border: 1px solid var(--ds-border);
-  padding: 5px 14px;
+  padding: 4px 12px;
   border-radius: var(--radius-full);
 }
 
 .trust-pill svg {
-  width: 14px;
-  height: 14px;
+  width: 13px;
+  height: 13px;
   color: var(--ds-primary);
   flex-shrink: 0;
 }
@@ -360,7 +366,7 @@
   flex-direction: column;
   gap: var(--space-3);
   flex-shrink: 0;
-  min-width: 250px;
+  min-width: 240px;
 }
 
 .trust-btn-primary {
@@ -372,16 +378,16 @@
   color: var(--ds-primary-text);
   font-weight: var(--weight-semibold);
   font-size: var(--text-sm);
-  padding: 13px 24px;
-  border-radius: 14px;
+  padding: 12px 22px;
+  border-radius: 12px;
   text-decoration: none;
-  box-shadow: 0 6px 20px -4px var(--ds-primary-soft);
-  transition: transform 0.25s ease, box-shadow 0.25s ease, background-color 0.25s ease;
+  box-shadow: 0 4px 14px -3px var(--ds-primary-soft);
+  transition: transform var(--duration-fast) var(--ease-out), background-color var(--duration-fast) var(--ease-out);
 }
 
 .trust-btn-primary:hover {
   background: var(--ds-secondary);
-  box-shadow: 0 10px 26px -4px var(--ds-primary-soft);
+  transform: translateY(-2px);
 }
 
 .trust-btn-secondary {
@@ -394,16 +400,16 @@
   border: 1px solid var(--ds-border);
   font-weight: var(--weight-semibold);
   font-size: var(--text-sm);
-  padding: 12px 24px;
-  border-radius: 14px;
+  padding: 11px 22px;
+  border-radius: 12px;
   text-decoration: none;
-  transition: border-color 0.25s ease, color 0.25s ease, background-color 0.25s ease;
+  transition: border-color var(--duration-fast) var(--ease-out), color var(--duration-fast) var(--ease-out), transform var(--duration-fast) var(--ease-out);
 }
 
 .trust-btn-secondary:hover {
   border-color: var(--ds-primary);
   color: var(--ds-primary);
-  background: var(--ds-surface);
+  transform: translateY(-2px);
 }
 
 /* ---------- Footer Line ---------- */
@@ -413,7 +419,7 @@
   align-items: center;
   gap: var(--space-6);
   max-width: 780px;
-  margin: clamp(40px, 5vw, 60px) auto 0;
+  margin: clamp(36px, 4.5vw, 54px) auto 0;
 }
 
 .trust-footer-line span {

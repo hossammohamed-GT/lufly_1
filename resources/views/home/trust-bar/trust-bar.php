@@ -10,7 +10,12 @@ $waMessage = rawurlencode("Hello LUFLY Team, I would like to request direct fact
 $waUrl = "https://wa.me/908503040817?text={$waMessage}";
 ?>
 <section class="band trust-bar scroll-section" id="engineering-trust" aria-labelledby="trust-title">
-    <div class="trust-bg-overlay" aria-hidden="true"></div>
+    <!-- Architectural background image layer -->
+    <div class="trust-bg-backdrop" aria-hidden="true">
+        <img src="<?= e(asset('images/lifestyle/blueprint-drafting.jpg')) ?>" alt="" class="trust-bg-photo" loading="lazy" decoding="async">
+        <div class="trust-bg-scrim"></div>
+    </div>
+
     <div class="trust-inner">
         <div class="trust-heading scroll-reveal">
             <div class="trust-kicker-badge">
