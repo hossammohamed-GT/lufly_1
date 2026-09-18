@@ -11,7 +11,7 @@
 .lfc {
   --lfc-teal: var(--ds-primary);
   --lfc-teal-hi: #5fd4d4;
-  --lfc-ink: #e8f0ec;
+  --lfc-ink: #e9e6de;
   --lfc-ease: cubic-bezier(.19, 1, .22, 1);
   --lfc-dur: 6500ms;
 

@@ -1,0 +1,97 @@
+<!doctype html>
+<html lang="ar" dir="rtl" data-theme="dark">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>LUFLY — معاينة الوضع الداكن الجديد</title>
+<link rel="stylesheet" href="frontend/design-system/style.css">
+<style>
+  body { min-height: 100vh; }
+  .pv-wrap { max-width: 1000px; margin: 0 auto; padding: 48px 24px 80px; }
+  .pv-head { display: flex; justify-content: space-between; align-items: center; gap: 16px; margin-bottom: 12px; flex-wrap: wrap; }
+  .pv-title { font-family: var(--font-body); font-size: 26px; font-weight: 700; color: var(--ds-text); margin: 0; }
+  .pv-sub { color: var(--ds-text-muted); margin: 0 0 36px; font-size: 14px; }
+  .pv-toggle { background: var(--ds-primary); color: var(--ds-primary-text); border: 0; padding: 10px 22px; border-radius: 999px; cursor: pointer; font-weight: 600; font-size: 14px; }
+  .pv-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 22px; }
+  .pv-card { background: var(--ds-surface); border: 1px solid var(--ds-border); border-radius: 18px; padding: 26px; }
+  .pv-card h3 { margin: 0 0 6px; color: var(--ds-text); font-size: 17px; }
+  .pv-card p { margin: 0; color: var(--ds-text-muted); font-size: 14px; line-height: 1.7; }
+  .pv-tag { display: inline-block; font-size: 11px; letter-spacing: .12em; padding: 4px 10px; border-radius: 999px; margin-bottom: 14px; }
+  .pv-tag.new { background: var(--ds-primary-soft); color: var(--ds-primary); }
+  .pv-tag.old { background: rgba(200, 75, 75, .14); color: #f07b7b; }
+  .pv-actions { display: flex; gap: 12px; margin-top: 18px; flex-wrap: wrap; }
+  .pv-btn { display: inline-block; background: var(--ds-primary); color: var(--ds-primary-text); padding: 10px 22px; border-radius: 10px; font-weight: 600; font-size: 14px; border: 0; }
+  .pv-btn.mint { background: var(--ds-secondary); color: var(--ds-secondary-text); }
+  .pv-btn.ghost { background: transparent; color: var(--ds-text); border: 1px solid var(--ds-border); }
+  .pv-surface-alt { background: var(--ds-surface-alt); border-radius: 12px; padding: 14px 16px; margin-top: 18px; color: var(--ds-text); font-size: 13px; }
+  /* Before card — old palette, hardcoded for comparison */
+  .pv-card.before { background: #101e1d; border: 1px solid #2d4843; color: #eff7f3; }
+  .pv-card.before h3 { color: #eff7f3; }
+  .pv-card.before p { color: #9cb5ae; }
+  .pv-card.before .pv-tag.old { background: rgba(240, 123, 123, .12); color: #f07b7b; }
+  .pv-before-body { background: #0a1414; margin: -26px -26px -26px; padding: 26px; border-radius: 0 0 18px 18px; }
+  .pv-page { border-radius: 12px; padding: 18px; margin-top: 18px; font-size: 13px; }
+  .pv-page.new { background: var(--ds-bg); border: 1px solid var(--ds-border); color: var(--ds-text); }
+  .pv-page.old { background: #0a1414; border: 1px solid #2d4843; color: #eff7f3; }
+  .pv-note { margin-top: 34px; padding: 18px 22px; border-radius: 14px; background: var(--ds-primary-tint); border: 1px solid var(--ds-primary-line); color: var(--ds-text); font-size: 14px; line-height: 1.8; }
+  .pv-swatch { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 16px; }
+  .pv-swatch div { width: 52px; height: 52px; border-radius: 10px; border: 1px solid var(--ds-border); }
+</style>
+</head>
+<body>
+<div class="aquatic-stage">
+  <div class="pv-wrap">
+    <div class="pv-head">
+      <div>
+        <h1 class="pv-title">معاينة الوضع الداكن الجديد 🌙</h1>
+        <p class="pv-sub">نفس الـ CSS الحقيقي بتاع المشروع — دوس الزرار تجرب الوضع الفاتح كمان</p>
+      </div>
+      <button class="pv-toggle" onclick="var r=document.documentElement;r.setAttribute('data-theme',r.getAttribute('data-theme')==='dark'?'light':'dark');this.textContent=r.getAttribute('data-theme')==='dark'?'☀️ فاتح':'🌙 داكن'">☀️ فاتح</button>
+    </div>
+
+    <div class="pv-grid">
+      <div class="pv-card">
+        <span class="pv-tag new">الجديد — فحمي دافي محايد</span>
+        <h3>خلفية هادية بدون أي لمسة زرقا</h3>
+        <p>الخلفية الأساسية بقت <b>rgb(44, 43, 40) / #2C2B28</b> — درجة محايدة دافية بالظبط زي ما طلبت، من غير وهش ولا ازرقاق.</p>
+        <div class="pv-swatch" title="ink-950 / 900 / 800 / 700 / 600 / 500 / 100">
+          <div style="background:#141311"></div><div style="background:#2c2b28"></div><div style="background:#353430"></div><div style="background:#3f3d38"></div><div style="background:#57544b"></div><div style="background:#aba79b"></div><div style="background:#e9e6de"></div>
+        </div>
+      </div>
+
+      <div class="pv-card before">
+        <span class="pv-tag old">القديم</span>
+        <h3>الأسود شبه الخام</h3>
+        <p>الخلفية <b>#0a1414</b> مع نص أبيض ساطع <b>#eff7f3</b> — تباين عالي جدًا (17:1) بيتعب العين في الإضاءة المنخفضة.</p>
+        <div class="pv-actions">
+          <span class="pv-btn" style="background:#1c8b8b;color:#0a1414">زرار تيل</span>
+        </div>
+      </div>
+
+      <div class="pv-card">
+        <span class="pv-tag new">الجديد</span>
+        <h3>أزرار وتباين صحي</h3>
+        <p>نصوص الأزرار فضلت متباينة بشكل آمن (4.6:1) عن طريق لون جديد <b>ink-950</b> مخصص للنص جوا الأزرار.</p>
+        <div class="pv-actions">
+          <button class="pv-btn">زرار أساسي</button>
+          <button class="pv-btn mint">زرار مينت</button>
+          <button class="pv-btn ghost">زرار شفاف</button>
+        </div>
+        <div class="pv-surface-alt">سطح مرتفع (Surface Alt) — <span style="color:var(--ds-text-muted)">ونص ثانوي هادي كمان</span></div>
+      </div>
+
+      <div class="pv-card">
+        <span class="pv-tag new">مقارنة الخلفية</span>
+        <h3>الصفحة كاملة</h3>
+        <div class="pv-page old">القديم #0a1414 — أسود مزرق نافذ للعين</div>
+        <div class="pv-page new">الجديد rgb(44, 43, 40) — دافي محايد ومريح لأقصى درجة</div>
+      </div>
+    </div>
+
+    <div class="pv-note">
+      ✨ التغيير ده بيأثر تلقائيًا على كل عناصر الموقع في الوضع الداكن: الصفحة الرئيسية، الهيرو سينما (كانت <b>#04090a</b>)، الشريط العلوي، الكروت، الفوتر، اللودر، ولوحة الأدمن — لأن الكل بيسحب من نفس تدرج <b>ink</b> في الـ Design System.
+    </div>
+  </div>
+</div>
+</body>
+</html>

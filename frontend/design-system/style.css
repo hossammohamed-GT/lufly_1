@@ -22,14 +22,14 @@
   --lu-deep-teal: #143f43;
   --lu-mint: #7fe2d0;
 
-  /* Ink ramp — dark mode surfaces (soft sage-charcoal, low-glare) */
-  --lu-ink-950: #0c1211;
-  --lu-ink-900: #1e2825;
-  --lu-ink-800: #26302d;
-  --lu-ink-700: #2e3935;
-  --lu-ink-600: #45564e;
-  --lu-ink-500: #a6bbb3;
-  --lu-ink-100: #e4ede8;
+  /* Ink ramp — dark mode surfaces (warm neutral charcoal, low-glare) */
+  --lu-ink-950: #141311;
+  --lu-ink-900: #2c2b28;
+  --lu-ink-800: #353430;
+  --lu-ink-700: #3f3d38;
+  --lu-ink-600: #57544b;
+  --lu-ink-500: #aba79b;
+  --lu-ink-100: #e9e6de;
 
   /* Neutral ramp */
   --lu-neutral-0: #ffffff;
