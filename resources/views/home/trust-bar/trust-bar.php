@@ -10,7 +10,7 @@ $waMessage = rawurlencode("Hello LUFLY Team, I would like to request direct fact
 $waUrl = "https://wa.me/908503040817?text={$waMessage}";
 ?>
 <section class="band trust-bar scroll-section" id="engineering-trust" aria-labelledby="trust-title">
-    <div class="trust-mesh" aria-hidden="true"></div>
+    <div class="trust-bg-overlay" aria-hidden="true"></div>
     <div class="trust-inner">
         <div class="trust-heading scroll-reveal">
             <div class="trust-kicker-badge">
@@ -24,64 +24,80 @@ $waUrl = "https://wa.me/908503040817?text={$waMessage}";
         </div>
 
         <div class="trust-grid">
+            <!-- 01. Warranty & Structural Load -->
             <article class="trust-card scroll-reveal" data-delay="1">
+                <svg class="trust-card-beam" aria-hidden="true"><rect rx="20" ry="20" pathLength="100" /></svg>
                 <div class="trust-card-top">
+                    <span class="trust-card-index">01 / LONGEVITY</span>
                     <span class="trust-card-badge"><?= e(trans('home.trust_badge_1')) ?></span>
+                </div>
+                <div class="trust-card-main">
                     <div class="trust-icon" aria-hidden="true">
                         <svg viewBox="0 0 48 48" role="img"><path d="M24 5 38 11v10c0 10-5.7 17.4-14 22-8.3-4.6-14-12-14-22V11l14-6Z"/><path d="m17 24 5 5 10-11"/></svg>
                     </div>
-                </div>
-                <div class="trust-stat">
-                    <strong>10</strong><span><?= e(trans('home.year')) ?></span>
+                    <div class="trust-stat">
+                        <strong>10</strong><span><?= e(trans('home.year')) ?></span>
+                    </div>
                 </div>
                 <h3><?= e(trans('home.trust_guarantee_title')) ?></h3>
                 <p><?= e(trans('home.trust_guarantee_desc')) ?></p>
-                <div class="trust-card-shine" aria-hidden="true"></div>
             </article>
 
+            <!-- 02. Factory Direct & Water Economy -->
             <article class="trust-card scroll-reveal" data-delay="2">
+                <svg class="trust-card-beam" aria-hidden="true"><rect rx="20" ry="20" pathLength="100" /></svg>
                 <div class="trust-card-top">
+                    <span class="trust-card-index">02 / EFFICIENCY</span>
                     <span class="trust-card-badge"><?= e(trans('home.trust_badge_2')) ?></span>
+                </div>
+                <div class="trust-card-main">
                     <div class="trust-icon" aria-hidden="true">
                         <svg viewBox="0 0 48 48" role="img"><path d="M24 6c-2 7-10 13-10 22a10 10 0 0 0 20 0C34 19 26 13 24 6Z"/><path d="M20 32c-1-3 0-6 3-8"/></svg>
                     </div>
-                </div>
-                <div class="trust-stat">
-                    <strong>45</strong><span>%</span>
+                    <div class="trust-stat">
+                        <strong>45</strong><span>%</span>
+                    </div>
                 </div>
                 <h3><?= e(trans('home.trust_water_title')) ?></h3>
                 <p><?= e(trans('home.trust_water_desc')) ?></p>
-                <div class="trust-card-shine" aria-hidden="true"></div>
             </article>
 
+            <!-- 03. Vitreous Ceramic & Nano Glaze -->
             <article class="trust-card scroll-reveal" data-delay="3">
+                <svg class="trust-card-beam" aria-hidden="true"><rect rx="20" ry="20" pathLength="100" /></svg>
                 <div class="trust-card-top">
+                    <span class="trust-card-index">03 / HYGIENE</span>
                     <span class="trust-card-badge"><?= e(trans('home.trust_badge_3')) ?></span>
+                </div>
+                <div class="trust-card-main">
                     <div class="trust-icon" aria-hidden="true">
                         <svg viewBox="0 0 48 48" role="img"><path d="M24 7v24"/><path d="M19 12a5 5 0 1 1 10 0v18a9 9 0 1 1-10 0V12Z"/><circle cx="24" cy="36" r="3"/><path d="M32 15h4M32 21h4"/></svg>
                     </div>
-                </div>
-                <div class="trust-stat">
-                    <strong>1,250</strong><span>°C</span>
+                    <div class="trust-stat">
+                        <strong>1,250</strong><span>°C</span>
+                    </div>
                 </div>
                 <h3><?= e(trans('home.trust_ceramic_title')) ?></h3>
                 <p><?= e(trans('home.trust_ceramic_desc')) ?></p>
-                <div class="trust-card-shine" aria-hidden="true"></div>
             </article>
 
+            <!-- 04. Logistics & Global Supply -->
             <article class="trust-card scroll-reveal" data-delay="4">
+                <svg class="trust-card-beam" aria-hidden="true"><rect rx="20" ry="20" pathLength="100" /></svg>
                 <div class="trust-card-top">
+                    <span class="trust-card-index">04 / LOGISTICS</span>
                     <span class="trust-card-badge"><?= e(trans('home.trust_badge_4')) ?></span>
+                </div>
+                <div class="trust-card-main">
                     <div class="trust-icon" aria-hidden="true">
                         <svg viewBox="0 0 48 48" role="img"><circle cx="24" cy="24" r="16"/><path d="M8 24h32M24 8c5 5 7 10 7 16s-2 11-7 16M24 8c-5 5-7 10-7 16s2 11 7 16M10 16h28M10 32h28"/></svg>
                     </div>
-                </div>
-                <div class="trust-stat">
-                    <strong>34</strong><span>+</span>
+                    <div class="trust-stat">
+                        <strong>34</strong><span>+</span>
+                    </div>
                 </div>
                 <h3><?= e(trans('home.trust_global_title')) ?></h3>
                 <p><?= e(trans('home.trust_global_desc')) ?></p>
-                <div class="trust-card-shine" aria-hidden="true"></div>
             </article>
         </div>
 

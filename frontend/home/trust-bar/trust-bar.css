@@ -1,30 +1,45 @@
 /* ============================================================
    LUFLY - Engineering Trust & High-Converting Value Pillars
-   Balanced Light & Dark theme support, subtle elevation,
-   luminous metric badges, and interactive CTA banner.
+   Architectural blueprint backdrop, glassmorphism surfaces,
+   stationary cards with traveling perimeter border beam on hover,
+   and balanced Light & Dark theme support.
    ============================================================ */
 
 .trust-bar {
   position: relative;
+  z-index: 5;
   overflow: hidden;
-  padding: clamp(72px, 8vw, 108px) var(--space-6) clamp(64px, 7vw, 96px);
-  background: var(--ds-bg);
+  padding: clamp(80px, 9vw, 120px) var(--space-6) clamp(68px, 7.5vw, 100px);
+  background-color: var(--ds-bg);
+  background-image:
+    linear-gradient(180deg, rgba(246, 248, 247, 0.90) 0%, rgba(238, 243, 241, 0.94) 100%),
+    url('/images/lifestyle/blueprint-drafting.jpg');
+  background-position: center top;
+  background-size: cover;
+  background-repeat: no-repeat;
+  border-top: 1px solid var(--ds-border);
   border-bottom: 1px solid var(--ds-border);
+  border-radius: 36px 36px 0 0;
+  box-shadow: 0 -28px 70px -15px rgba(0, 0, 0, 0.45);
   transition: background-color var(--duration-base) var(--ease-out), border-color var(--duration-base) var(--ease-out);
 }
 
-.trust-mesh {
+[data-theme="dark"] .trust-bar {
+  background-color: rgb(44, 43, 40);
+  background-image:
+    linear-gradient(180deg, rgba(30, 29, 26, 0.88) 0%, rgba(44, 43, 40, 0.94) 100%),
+    url('/images/lifestyle/blueprint-drafting.jpg');
+  box-shadow: 0 -32px 80px -15px rgba(0, 0, 0, 0.7);
+}
+
+.trust-bg-overlay {
   position: absolute;
   inset: 0;
   pointer-events: none;
   background:
-    radial-gradient(circle 500px at 20% 10%, var(--ds-primary-soft) 0%, transparent 70%),
-    radial-gradient(circle 450px at 80% 90%, var(--ds-primary-tint) 0%, transparent 70%);
-  opacity: 0.65;
-}
-
-[data-theme="dark"] .trust-mesh {
-  opacity: 0.45;
+    radial-gradient(circle 600px at 15% 15%, var(--ds-primary-soft) 0%, transparent 70%),
+    radial-gradient(circle 500px at 85% 85%, var(--ds-primary-tint) 0%, transparent 70%);
+  opacity: 0.7;
 }
 
 .trust-inner {
@@ -39,7 +54,7 @@
 .trust-heading {
   text-align: center;
   max-width: 820px;
-  margin: 0 auto clamp(44px, 5.5vw, 68px);
+  margin: 0 auto clamp(48px, 6vw, 72px);
 }
 
 .trust-kicker-badge {
@@ -48,8 +63,9 @@
   gap: var(--space-2);
   padding: 6px 16px;
   border-radius: var(--radius-full);
-  background: var(--ds-primary-soft);
+  background: var(--ds-surface);
   border: 1px solid var(--ds-primary-line);
+  box-shadow: 0 4px 12px -2px rgba(0, 0, 0, 0.05);
   margin-bottom: var(--space-4);
 }
 
@@ -74,7 +90,7 @@
   margin: 0 0 var(--space-4);
   color: var(--ds-text);
   font-family: var(--font-display);
-  font-size: clamp(1.85rem, 3.2vw, 2.75rem);
+  font-size: clamp(1.9rem, 3.4vw, 2.85rem);
   font-weight: var(--weight-regular);
   line-height: var(--leading-tight);
   letter-spacing: var(--tracking-tight);
@@ -107,26 +123,63 @@
   position: relative;
   display: flex;
   flex-direction: column;
-  background: var(--ds-surface);
+  background: rgba(255, 255, 255, 0.88);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
   border: 1px solid var(--ds-border);
   border-radius: 20px;
-  padding: clamp(24px, 2.5vw, 32px) clamp(20px, 2vw, 26px);
+  padding: clamp(26px, 2.8vw, 34px) clamp(22px, 2.2vw, 28px);
   text-align: start;
-  box-shadow: 0 8px 24px -8px rgba(0, 0, 0, 0.05);
-  transition: transform 0.35s cubic-bezier(0.16, 1, 0.3, 1),
-              box-shadow 0.35s cubic-bezier(0.16, 1, 0.3, 1),
-              border-color 0.35s ease;
+  box-shadow: 0 10px 30px -10px rgba(0, 0, 0, 0.06);
+  /* Stationary card: no translateY on hover */
+  transform: none;
+  transition: box-shadow 0.4s cubic-bezier(0.16, 1, 0.3, 1),
+              border-color 0.4s ease,
+              background-color 0.4s ease;
   overflow: hidden;
 }
 
 [data-theme="dark"] .trust-card {
-  box-shadow: 0 10px 30px -10px rgba(0, 0, 0, 0.45);
+  background: rgba(53, 52, 48, 0.85);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  box-shadow: 0 12px 36px -12px rgba(0, 0, 0, 0.5);
 }
 
 .trust-card:hover {
-  transform: translateY(-6px);
-  border-color: var(--ds-primary);
-  box-shadow: 0 20px 40px -12px var(--ds-primary-soft);
+  /* No translateY - remains perfectly stationary */
+  border-color: transparent;
+  box-shadow: 0 16px 40px -10px var(--ds-primary-soft);
+}
+
+/* Traveling perimeter border beam (SVG line race) */
+.trust-card-beam {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  z-index: 4;
+  overflow: visible;
+}
+
+.trust-card-beam rect {
+  x: 0.5;
+  y: 0.5;
+  width: calc(100% - 1px);
+  height: calc(100% - 1px);
+  fill: none;
+  stroke: var(--ds-primary);
+  stroke-width: 2.2px;
+  stroke-linecap: round;
+  stroke-dasharray: 100;
+  stroke-dashoffset: 100;
+  transition: stroke-dashoffset 0.85s cubic-bezier(0.16, 1, 0.3, 1), stroke 0.3s ease;
+  filter: drop-shadow(0 0 6px var(--ds-primary));
+}
+
+.trust-card:hover .trust-card-beam rect {
+  stroke-dashoffset: 0;
 }
 
 .trust-card-top {
@@ -137,41 +190,58 @@
   margin-bottom: var(--space-5);
 }
 
+.trust-card-index {
+  font-family: var(--font-mono, monospace);
+  font-size: 11px;
+  font-weight: var(--weight-bold);
+  letter-spacing: 0.1em;
+  color: var(--ds-text-muted);
+  text-transform: uppercase;
+}
+
 .trust-card-badge {
   display: inline-block;
   font-size: 11px;
   font-weight: var(--weight-semibold);
-  letter-spacing: 0.06em;
+  letter-spacing: 0.05em;
   text-transform: uppercase;
   color: var(--ds-primary);
   background: var(--ds-primary-soft);
-  padding: 4px 10px;
+  padding: 3px 10px;
   border-radius: var(--radius-full);
   border: 1px solid var(--ds-primary-line);
+}
+
+.trust-card-main {
+  display: flex;
+  align-items: center;
+  gap: var(--space-4);
+  margin-bottom: var(--space-4);
 }
 
 .trust-icon {
   display: flex;
   align-items: center;
   justify-content: center;
-  width: 44px;
-  height: 44px;
-  border-radius: 12px;
-  background: var(--ds-surface-alt);
+  width: 48px;
+  height: 48px;
+  border-radius: 14px;
+  background: var(--ds-surface);
   border: 1px solid var(--ds-border);
   color: var(--ds-primary);
   flex-shrink: 0;
-  transition: transform 0.3s ease, background-color 0.3s ease;
+  transition: transform 0.35s ease, background-color 0.35s ease, box-shadow 0.35s ease;
 }
 
 .trust-card:hover .trust-icon {
-  transform: scale(1.08) rotate(3deg);
+  transform: scale(1.08);
   background: var(--ds-primary-soft);
+  box-shadow: 0 0 16px var(--ds-primary-soft);
 }
 
 .trust-icon svg {
-  width: 24px;
-  height: 24px;
+  width: 26px;
+  height: 26px;
   fill: none;
   stroke: currentColor;
   stroke-linecap: round;
@@ -183,13 +253,12 @@
   display: flex;
   align-items: baseline;
   gap: 4px;
-  margin-bottom: var(--space-3);
   color: var(--ds-text);
   font-family: var(--font-display);
 }
 
 .trust-stat strong {
-  font-size: clamp(2rem, 2.5vw, 2.6rem);
+  font-size: clamp(2.1rem, 2.6vw, 2.75rem);
   font-weight: var(--weight-black);
   line-height: 1;
   letter-spacing: var(--tracking-tight);
@@ -207,7 +276,7 @@
   margin: 0 0 var(--space-2);
   color: var(--ds-text);
   font-family: var(--font-display);
-  font-size: clamp(1.05rem, 1.2vw, 1.2rem);
+  font-size: clamp(1.08rem, 1.25vw, 1.22rem);
   font-weight: var(--weight-bold);
   line-height: var(--leading-snug);
 }
@@ -219,21 +288,6 @@
   line-height: var(--leading-relaxed);
 }
 
-.trust-card-shine {
-  position: absolute;
-  bottom: 0;
-  left: 0;
-  right: 0;
-  height: 3px;
-  background: linear-gradient(90deg, transparent, var(--ds-primary), transparent);
-  opacity: 0;
-  transition: opacity 0.35s ease;
-}
-
-.trust-card:hover .trust-card-shine {
-  opacity: 1;
-}
-
 /* ---------- Action & Trust Banner ---------- */
 
 .trust-action-banner {
@@ -241,16 +295,17 @@
   align-items: center;
   justify-content: space-between;
   gap: var(--space-8);
-  background: linear-gradient(135deg, var(--ds-surface) 0%, var(--ds-surface-alt) 100%);
+  background: var(--ds-surface);
   border: 1px solid var(--ds-border);
-  border-radius: 20px;
-  padding: clamp(24px, 3vw, 36px) clamp(24px, 3.5vw, 40px);
-  box-shadow: 0 12px 36px -12px rgba(0, 0, 0, 0.08);
+  border-radius: 24px;
+  padding: clamp(28px, 3.2vw, 40px) clamp(26px, 3.6vw, 44px);
+  box-shadow: 0 14px 42px -12px rgba(0, 0, 0, 0.08);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
 }
 
 [data-theme="dark"] .trust-action-banner {
-  box-shadow: 0 16px 48px -16px rgba(0, 0, 0, 0.6);
-  border-color: var(--ds-border);
+  box-shadow: 0 18px 52px -16px rgba(0, 0, 0, 0.65);
 }
 
 .trust-action-info {
@@ -261,7 +316,7 @@
   margin: 0 0 var(--space-2);
   color: var(--ds-text);
   font-family: var(--font-display);
-  font-size: clamp(1.2rem, 1.6vw, 1.45rem);
+  font-size: clamp(1.22rem, 1.65vw, 1.48rem);
   font-weight: var(--weight-bold);
   line-height: var(--leading-snug);
 }
@@ -287,9 +342,9 @@
   font-size: 12px;
   font-weight: var(--weight-medium);
   color: var(--ds-text);
-  background: var(--ds-surface);
+  background: var(--ds-surface-alt);
   border: 1px solid var(--ds-border);
-  padding: 4px 12px;
+  padding: 5px 14px;
   border-radius: var(--radius-full);
 }
 
@@ -317,17 +372,16 @@
   color: var(--ds-primary-text);
   font-weight: var(--weight-semibold);
   font-size: var(--text-sm);
-  padding: 12px 24px;
-  border-radius: 12px;
+  padding: 13px 24px;
+  border-radius: 14px;
   text-decoration: none;
-  box-shadow: 0 6px 18px -4px var(--ds-primary-soft);
+  box-shadow: 0 6px 20px -4px var(--ds-primary-soft);
   transition: transform 0.25s ease, box-shadow 0.25s ease, background-color 0.25s ease;
 }
 
 .trust-btn-primary:hover {
   background: var(--ds-secondary);
-  transform: translateY(-2px);
-  box-shadow: 0 10px 24px -4px var(--ds-primary-soft);
+  box-shadow: 0 10px 26px -4px var(--ds-primary-soft);
 }
 
 .trust-btn-secondary {
@@ -335,21 +389,21 @@
   align-items: center;
   justify-content: center;
   gap: var(--space-2);
-  background: var(--ds-surface);
+  background: var(--ds-surface-alt);
   color: var(--ds-text);
   border: 1px solid var(--ds-border);
   font-weight: var(--weight-semibold);
   font-size: var(--text-sm);
-  padding: 11px 24px;
-  border-radius: 12px;
+  padding: 12px 24px;
+  border-radius: 14px;
   text-decoration: none;
-  transition: transform 0.25s ease, border-color 0.25s ease, color 0.25s ease;
+  transition: border-color 0.25s ease, color 0.25s ease, background-color 0.25s ease;
 }
 
 .trust-btn-secondary:hover {
   border-color: var(--ds-primary);
   color: var(--ds-primary);
-  transform: translateY(-2px);
+  background: var(--ds-surface);
 }
 
 /* ---------- Footer Line ---------- */
