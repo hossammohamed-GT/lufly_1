@@ -7,6 +7,10 @@ $locale = $translator instanceof \Core\Localization\Translator ? $translator->ge
 $basePath = rtrim((string) parse_url(url('/'), PHP_URL_PATH), '/');
 $direction = in_array($locale, ['ar', 'he', 'fa', 'ur'], true) ? 'rtl' : 'ltr';
 
+/* Push loader assets before collection */
+$view->pushStyle('frontend/components/loader/loader.css');
+$view->pushScript('frontend/components/loader/loader.js');
+
 /* Chrome first: the navbar declares its own stylesheet and controller, so it has
    to render before the asset lists are collected for <head>. */
 $navbar = $translator !== null
@@ -65,7 +69,8 @@ try {
 <?php endif; ?>
 <?php endforeach; ?>
 </head>
-<body class="ds-app aquatic-stage<?= $navbar !== '' ? ' has-nav-rail' : '' ?>">
+<body class="ds-app aquatic-stage ld-loading<?= $navbar !== '' ? ' has-nav-rail' : '' ?>">
+<?= $view->renderFile($view->resolvePath('components.loader'), ['translator' => $translator]) ?>
 <a class="skip-link" href="#main"><?= e(trans('common.skip_to_content')) ?></a>
 <?= $navbar ?>
 <main class="ds-main" id="main">

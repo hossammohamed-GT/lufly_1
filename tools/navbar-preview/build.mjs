@@ -352,13 +352,47 @@ ${themeScript}
   .stage-filler { height: 140vh; margin-top: var(--space-8); border: var(--border-hairline) dashed var(--ds-border); border-radius: var(--radius-md); background: repeating-linear-gradient(180deg, var(--ds-primary-tint) 0 2px, transparent 2px 14px); }
 </style>
 </head>
-<body class="ds-app aquatic-stage has-nav-rail">
+<body class="ds-app aquatic-stage ld-loading has-nav-rail">
+<div class="ld-loader is-initial" id="ldLoader" role="status" aria-label="Loading">
+    <div class="ld-blob a"></div>
+    <div class="ld-blob b"></div>
+    <div class="ld-vignette"></div>
+    <div class="ld-kicker">Lufly · Premium Sanitary Ware</div>
+    <div class="ld-logoBox" id="ldLogoBox">
+        <svg class="ld-draw" viewBox="0 0 510 325" aria-hidden="true">
+            <path pathLength="1" d="M 30 16 L 30 298 Q 30 306 38 306 L 116 306"/>
+            <path pathLength="1" d="M 64 16 L 64 174"/>
+            <path pathLength="1" d="M 64 244 L 116 244"/>
+            <path pathLength="1" d="M 158 148 L 158 246 Q 158 292 198 292 Q 238 292 238 246 L 238 148"/>
+            <path pathLength="1" d="M 288 292 L 288 82 Q 288 42 330 42"/>
+            <path pathLength="1" d="M 256 148 L 320 148"/>
+            <path pathLength="1" d="M 378 16 L 378 292"/>
+            <path pathLength="1" d="M 416 148 L 456 238 L 496 148 L 424 306"/>
+        </svg>
+        <div class="ld-water" aria-hidden="true">
+            <div class="ld-waterBody" id="ldWaterBody">
+                <span class="wave"></span>
+                <span class="wave w2"></span>
+            </div>
+        </div>
+    </div>
+    <div class="ld-tag" id="ldTag">Bathroom Culture · Enjoyed and Shared</div>
+    <div class="ld-ui" id="ldUi">
+        <div class="ld-row">
+            <div class="ld-track"><span class="ld-fill" id="ldFill"></span></div>
+            <span class="ld-pct" id="ldPct">0%</span>
+        </div>
+        <div class="ld-msg" id="ldMsg">Casting the brass bodies</div>
+    </div>
+    <div class="ld-foot">LUFLY HQ · Gaziantep Manufacturing</div>
+</div>
 <a class="skip-link" href="#main">Skip to content</a>
 ${navbarMarkup()}
 <main class="ds-main" id="main">
 ${stage()}
 </main>
 <script src="frontend/js/app.js"></script>
+<script src="frontend/components/loader/loader.js"></script>
 <script src="frontend/components/navbar/navbar.js"></script>
 <script>
   /* report the icon-font hand-over state instead of depending on the CDN */
