@@ -12,6 +12,24 @@
   var root = document.getElementById('lfc');
   if (!root) return;
 
+  var AUTOPLAY_MS = 6500;
+  var reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  var isMobile = window.matchMedia('(max-width: 760px)').matches;
+  var finePointer = window.matchMedia('(pointer: fine)').matches;
+
+  root.style.setProperty('--lfc-dur', AUTOPLAY_MS + 'ms');
+  if (reduceMotion) root.classList.add('lfc-reduced');
+
+  var sceneLayer = root.querySelector('.lfc-scenes');
+  var stage = root.querySelector('.lfc-stage');
+  var scenes = Array.prototype.slice.call(root.querySelectorAll('.lfc-scene'));
+  var panels = Array.prototype.slice.call(root.querySelectorAll('.lfc-panel'));
+  var ticks = Array.prototype.slice.call(root.querySelectorAll('.lfc-tick'));
+  var prevBtn = document.getElementById('lfc-prev');
+  var nextBtn = document.getElementById('lfc-next');
+  var N = scenes.length;
+  if (N === 0) return;
+
   /* ---- Font Awesome hand-over ------------------------------------------
      The icon stylesheet is loaded without blocking the first paint, so the
      arrow glyphs may arrive a moment late (hero-cinema.css paints CSS chevrons

@@ -1424,8 +1424,11 @@
 }
 
 @media (min-width: 1024px) {
-  /* content clears the spine once — never during scroll */
-  .has-nav-rail { padding-inline-start: var(--mnav-rail-w); }
+  /* Keep the fixed spine at the viewport edge; only page content clears it. */
+  .has-nav-rail > .ds-main,
+  .has-nav-rail > .lufly-mega-footer {
+    padding-inline-start: var(--mnav-rail-w);
+  }
 }
 
 @media (prefers-reduced-motion: reduce) {
