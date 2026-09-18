@@ -186,6 +186,11 @@
   }
 
   if (mark && drawer) {
+    var rail = header.querySelector('.mnav-rail');
+    if (rail) {
+      rail.addEventListener('mouseenter', scheduleDrawerOpen);
+      rail.addEventListener('mouseleave', scheduleDrawerClose);
+    }
     mark.addEventListener('mouseenter', scheduleDrawerOpen);
     mark.addEventListener('mouseleave', scheduleDrawerClose);
     drawer.addEventListener('mouseenter', clearTimers);

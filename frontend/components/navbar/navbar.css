@@ -541,14 +541,19 @@
   position: fixed;
   inset-block: 0;
   inset-inline-start: 0;
-  z-index: 5;
+  z-index: 100;
   display: flex;
   inline-size: var(--mnav-rail-w);
   background: var(--ds-nav-glass);
   backdrop-filter: var(--ds-nav-blur);
   -webkit-backdrop-filter: var(--ds-nav-blur);
-  border-inline-end: var(--border-hairline) solid var(--ds-nav-hairline);
-  transition: background var(--ds-nav-base) var(--ds-nav-ease);
+  border-inline-end: 1px solid var(--ds-nav-line-soft);
+  box-shadow: var(--ds-nav-shadow);
+  transition: background var(--ds-nav-base) var(--ds-nav-ease), border-color var(--ds-nav-base) var(--ds-nav-ease);
+}
+
+.mnav-rail:hover {
+  border-inline-end-color: var(--ds-nav-line);
 }
 
 .mnav.is-scrolled .mnav-rail { background: var(--ds-nav-glass-dense); }
@@ -712,9 +717,13 @@
 
 .mnav-quick-link {
   position: relative;
-  padding: var(--space-2);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--space-2);
+  padding: var(--space-2) var(--space-1);
   border-radius: var(--radius-xs);
-  color: var(--ds-text);
+  color: var(--ds-text-muted);
   font-size: var(--text-caption);
   font-weight: var(--weight-semibold);
   letter-spacing: var(--tracking-wide);
@@ -723,7 +732,63 @@
   white-space: nowrap;
   writing-mode: vertical-rl;
   text-orientation: mixed;
-  transition: color var(--ds-nav-fast) var(--ds-nav-ease);
+  transform: rotate(-7deg) translateY(0);
+  transform-origin: center center;
+  transition: transform .35s var(--ds-nav-ease), color var(--ds-nav-fast) var(--ds-nav-ease), background var(--ds-nav-fast) var(--ds-nav-ease);
+}
+
+.mnav-rail:hover .mnav-quick-link,
+.mnav-quick-link:hover,
+.mnav.is-drawer-open .mnav-quick-link {
+  transform: rotate(0deg) translateY(0);
+  color: var(--ds-text);
+}
+
+.mnav-quick-label { display: block; }
+
+.mnav-quick-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 22px;
+  height: 22px;
+  writing-mode: horizontal-tb;
+  transform: rotate(7deg);
+  transition: transform .35s var(--ds-nav-ease), color .2s ease;
+}
+
+.mnav-rail:hover .mnav-quick-icon,
+.mnav-quick-link:hover .mnav-quick-icon,
+.mnav.is-drawer-open .mnav-quick-label { display: block; }
+
+.mnav-quick-icon {
+  transform: rotate(0deg);
+  color: var(--ds-primary);
+}
+
+.mnav-cat-icon {
+  width: 17px;
+  height: 17px;
+  stroke-width: 1.8;
+}
+
+.mnav-index-icon-wrap {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  border-radius: var(--radius-xs);
+  background: var(--ds-primary-tint);
+  color: var(--ds-primary);
+  border: 1px solid var(--ds-nav-line-soft);
+  flex-shrink: 0;
+  transition: transform .25s ease, background .25s ease;
+}
+
+.mnav-index-item:hover .mnav-index-icon-wrap {
+  transform: scale(1.1) rotate(-4deg);
+  background: var(--ds-primary-soft);
 }
 
 .mnav-quick-link::before {
@@ -856,31 +921,51 @@
   position: absolute;
   inset-block: var(--mnav-row1) 0;
   inset-inline-start: 100%;
-  z-index: 2;
-  inline-size: min(430px, calc(100vw - var(--mnav-rail-w) - var(--space-6)));
+  z-index: 99;
+  inline-size: min(450px, calc(100vw - var(--mnav-rail-w) - var(--space-6)));
   overflow-y: auto;
   overscroll-behavior: contain;
   padding: var(--space-6) var(--space-5) var(--space-5);
-  border-inline-end: var(--border-hairline) solid var(--ds-nav-hairline);
+  border-inline-end: 1px solid var(--ds-nav-line);
   background: var(--ds-nav-glass-dense);
   backdrop-filter: var(--ds-nav-blur);
   -webkit-backdrop-filter: var(--ds-nav-blur);
   box-shadow: var(--ds-nav-shadow);
   clip-path: polygon(
     0 0,
-    calc(100% - var(--ds-nav-chamfer)) 0,
-    100% var(--ds-nav-chamfer),
-    100% 100%,
+    calc(100% - 24px) 0,
+    100% 24px,
+    100% calc(100% - 24px),
+    calc(100% - 24px) 100%,
     0 100%
   );
   opacity: 0;
   visibility: hidden;
-  transform: translate3d(-14px, 0, 0);
+  transform: translate3d(-20px, 0, 0) skewY(-1deg);
   will-change: transform, opacity;
   transition:
     opacity var(--ds-nav-base) var(--ds-nav-ease),
     transform var(--ds-nav-slow) var(--ds-nav-ease),
     visibility 0s linear var(--ds-nav-slow);
+}
+
+[dir="rtl"] .mnav-drawer {
+  clip-path: polygon(
+    24px 0,
+    100% 0,
+    100% 100%,
+    24px 100%,
+    0 calc(100% - 24px),
+    0 24px
+  );
+  transform: translate3d(20px, 0, 0) skewY(1deg);
+}
+
+.mnav.is-drawer-open .mnav-drawer {
+  opacity: 1;
+  visibility: visible;
+  transform: translate3d(0, 0, 0) skewY(0deg);
+  transition-delay: 0s;
 }
 
 [dir="rtl"] .mnav-drawer {

@@ -56,6 +56,21 @@ $indexLinks = [
 
 $railLinks = array_slice($indexLinks, 0, 4);
 
+$getSectionIcon = static function (string $key): string {
+    return match ($key) {
+        'bathroom' => '<svg class="icon mnav-cat-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 6h6a2 2 0 0 1 2 2v2H7V8a2 2 0 0 1 2-2z"></path><path d="M5 10h14a2 2 0 0 1 2 2v2a6 6 0 0 1-6 6H9a6 6 0 0 1-6-6v-2a2 2 0 0 1 2-2z"></path><line x1="7" y1="20" x2="7" y2="22"></line><line x1="17" y1="20" x2="17" y2="22"></line></svg>',
+        'kitchen' => '<svg class="icon mnav-cat-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 14h18"></path><path d="M5 14V6a3 3 0 0 1 6 0v2"></path><path d="M19 14v4a3 3 0 0 1-3 3H8a3 3 0 0 1-3-3v-4"></path><circle cx="8" cy="8" r="1"></circle></svg>',
+        'latest' => '<svg class="icon mnav-cat-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon></svg>',
+        'collections' => '<svg class="icon mnav-cat-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="3" width="7" height="7"></rect><rect x="14" y="3" width="7" height="7"></rect><rect x="14" y="14" width="7" height="7"></rect><rect x="3" y="14" width="7" height="7"></rect></svg>',
+        'finishes' => '<svg class="icon mnav-cat-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"></circle><path d="M12 3a9 9 0 0 1 9 9c0 2.5-2 4.5-4.5 4.5s-2.5-2-2.5-2H10"></path></svg>',
+        'rituals' => '<svg class="icon mnav-cat-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 2.69l5.66 5.66a8 8 0 1 1-11.31 0z"></path></svg>',
+        'inspirations' => '<svg class="icon mnav-cat-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10"></circle><polygon points="16.24 7.76 14.12 14.12 7.76 16.24 9.88 9.88 16.24 7.76"></polygon></svg>',
+        'news' => '<svg class="icon mnav-cat-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 22h16a2 2 0 0 0 2-2V4a2 2 0 0 0-2-2H8a2 2 0 0 0-2 2v16a2 2 0 0 1-2 2Zm0 0a2 2 0 0 1-2-2v-9c0-1.1.9-2 2-2h2"></path><path d="M18 14h-8"></path><path d="M15 18h-5"></path><path d="M10 6h8v4h-8V6Z"></path></svg>',
+        'contact' => '<svg class="icon mnav-cat-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path></svg>',
+        default => '<svg class="icon mnav-cat-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="4"></circle></svg>'
+    };
+};
+
 $catalogUrl = 'https://wa.me/908503040817?text=' . rawurlencode('Hello LUFLY, please send the 2026 Master Technical PDF Catalog and BIM files.');
 
 /* Language targets keep the current route translated per locale. */
@@ -246,7 +261,11 @@ foreach ($supported as $code => $name) {
                     <?php foreach ($railLinks as $link): ?>
                         <a class="mnav-quick-link<?= $isActive($link['url']) ? ' is-active' : '' ?>"
                            href="<?= e($link['url']) ?>"
-                           <?= $isActive($link['url']) ? 'aria-current="page"' : '' ?>><?= e(trans('nav.' . $link['key'], [], $currentLocale)) ?></a>
+                           title="<?= e(trans('nav.' . $link['key'], [], $currentLocale)) ?>"
+                           <?= $isActive($link['url']) ? 'aria-current="page"' : '' ?>>
+                            <span class="mnav-quick-icon" aria-hidden="true"><?= $getSectionIcon($link['key']) ?></span>
+                            <span class="mnav-quick-label"><?= e(trans('nav.' . $link['key'], [], $currentLocale)) ?></span>
+                        </a>
                     <?php endforeach; ?>
                 </nav>
 
@@ -293,6 +312,7 @@ foreach ($supported as $code => $name) {
                            <?= str_starts_with($link['url'], 'http') ? 'target="_blank" rel="noopener"' : '' ?>
                            <?= $isActive($link['url']) ? 'aria-current="page"' : '' ?>>
                             <span class="mnav-index-num"><?= e(str_pad((string) ($position + 1), 2, '0', STR_PAD_LEFT)) ?></span>
+                            <span class="mnav-index-icon-wrap" aria-hidden="true"><?= $getSectionIcon($link['key']) ?></span>
                             <span class="mnav-index-label"><?= e(trans('nav.' . $link['key'], [], $currentLocale)) ?></span>
                             <svg class="icon icon-sm mnav-index-arrow" viewBox="0 0 24 24" aria-hidden="true">
                                 <line x1="5" y1="12" x2="19" y2="12"></line>

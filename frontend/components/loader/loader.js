@@ -132,26 +132,28 @@
 
   function runInitialLoad(onDone) {
     var t0 = performance.now();
-    var duration = reduced ? 800 : 2400;
+    var duration = reduced ? 600 : 2000;
+    var lastProgress = 0;
 
     function frame(now) {
       var elapsed = (now - t0) / duration;
-      if (!pageLoaded && elapsed > 0.88) {
-        elapsed = 0.88; // pause slightly until real DOM + window load completes
-      }
+      if (elapsed > 1) elapsed = 1;
 
-      var ease = function (x) {
-        return x < 0.5 ? 2 * x * x : 1 - Math.pow(-2 * x + 2, 2) / 2;
-      };
+      // Cubic ease-out for ultra smooth mechanical glide
+      var ease = 1 - Math.pow(1 - elapsed, 3);
+      var target = pageLoaded ? ease * 100 : Math.min(88, ease * 100);
 
-      var target = Math.min(100, (pageLoaded && elapsed >= 0.88 ? 1 : ease(Math.min(1, elapsed))) * 100);
-      currentP += (target - currentP) * 0.12;
-
-      if (pageLoaded && Math.abs(100 - currentP) < 0.5) {
+      // Interpolate towards target smoothly
+      currentP += (target - currentP) * 0.18;
+      if (pageLoaded && elapsed >= 0.98) {
         currentP = 100;
       }
 
-      setProgress(currentP);
+      // Only update DOM if change is meaningful for maximum performance
+      if (Math.abs(currentP - lastProgress) > 0.25 || currentP >= 100) {
+        lastProgress = currentP;
+        setProgress(currentP);
+      }
 
       if (currentP >= 99.8) {
         setProgress(100);
