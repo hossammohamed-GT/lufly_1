@@ -150,4 +150,10 @@ return [
     'cinema5_title_b' => 've İkonlar İçin',
     'cinema5_desc' => 'Üst düzey konut ve otel projelerinde mimarların ve iç mimarların tercihi.',
     'cinema_primary' => 'Ürünleri Keşfet',
+
+    'ticker_1' => 'Gaziantep Üretim Merkezi',
+    'ticker_2' => '34+ İhracat Pazarı',
+    'ticker_3' => 'Pro-Eco %45 Su Tasarrufu',
+    'ticker_4' => 'EN 997 / EN 817 Sertifikalı',
+    'ticker_5' => '500.000 Çevrimlik Seramik Kartuş',
 ];

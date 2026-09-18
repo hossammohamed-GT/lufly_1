@@ -21,10 +21,14 @@ for p in comp:
 print(f'1. raw colors outside style.css: {len(raw)} {raw[:5]}')
 
 # 2 undefined tokens
+# A component may declare its own local (non-colour) custom properties; they count
+# as defined for the file that declares them.
 undef = set()
 for p in glob.glob('frontend/**/*.css', recursive=True):
-    for m in re.finditer(r'var\((--[\w-]+)', open(p, encoding='utf-8').read()):
-        if m.group(1) not in defined_tokens:
+    src = open(p, encoding='utf-8').read()
+    local_tokens = set(re.findall(r'(--[\w-]+)\s*:', src))
+    for m in re.finditer(r'var\((--[\w-]+)', src):
+        if m.group(1) not in defined_tokens and m.group(1) not in local_tokens:
             undef.add((p, m.group(1)))
 print(f'2. undefined css variables: {len(undef)} {sorted(undef)[:5]}')
 
@@ -99,6 +103,8 @@ for root in ('resources', 'modules', 'frontend', 'docs', 'README.md'):
     paths = [root] if os.path.isfile(root) else [os.path.join(dp, f) for dp, dn, fn in os.walk(root) for f in fn]
     for path in paths:
         if path.endswith(('.php', '.css', '.js', '.md', '.htaccess')) or path == 'README.md':
+            if 'docs/adr/' in path.replace('\\', '/'):
+                continue  # decision records keep their original wording
             src = open(path, encoding='utf-8', errors='ignore').read()
             for needle in ('public/frontend', 'admin/assets', 'tidal-monolith', 'atlas.html', 'hero-cinematic', 'hero-scenes', 'theme-switcher.js'):
                 if needle in src:

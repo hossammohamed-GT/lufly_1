@@ -1008,3 +1008,58 @@ hr { border: 0; border-top: var(--border-hairline) solid var(--ds-border); }
     transition-duration: 0.01ms !important;
   }
 }
+
+/* ============================================================
+   25 — Navigation chrome tokens ("Machined Glass")
+   Glass slab + machined-metal detail for the header, the
+   blueprint rail, the index drawer and the mobile bloom sheet.
+   Every value is derived from the brand palette.
+   ============================================================ */
+
+:root {
+  /* slab glass */
+  --ds-nav-glass: color-mix(in srgb, var(--lu-neutral-0) 55%, transparent);
+  --ds-nav-glass-dense: color-mix(in srgb, var(--lu-neutral-0) 90%, transparent);
+  --ds-nav-field: color-mix(in srgb, var(--lu-neutral-100) 72%, transparent);
+  --ds-nav-sheen: color-mix(in srgb, var(--lu-neutral-0) 55%, transparent);
+  --ds-nav-edge: color-mix(in srgb, var(--lu-neutral-0) 46%, transparent);
+  /* machined detail */
+  --ds-nav-groove: color-mix(in srgb, var(--lu-neutral-900) 10%, transparent);
+  --ds-nav-hairline: color-mix(in srgb, var(--lu-neutral-900) 14%, transparent);
+  --ds-nav-knurl: color-mix(in srgb, var(--lu-neutral-900) 20%, transparent);
+  --ds-nav-etch: color-mix(in srgb, var(--lu-neutral-900) 46%, transparent);
+  /* signal / blueprint line */
+  --ds-nav-line: color-mix(in srgb, var(--lu-teal-500) 62%, transparent);
+  --ds-nav-line-soft: color-mix(in srgb, var(--lu-teal-500) 20%, transparent);
+  --ds-nav-line-glow: color-mix(in srgb, var(--lu-teal-500) 24%, transparent);
+  /* overlays */
+  --ds-nav-scrim: color-mix(in srgb, var(--lu-ink-900) 44%, transparent);
+  --ds-nav-fade: color-mix(in srgb, var(--lu-neutral-900) 13%, transparent);
+  --ds-nav-shadow: 0 16px 38px color-mix(in srgb, var(--lu-neutral-900) 13%, transparent);
+  --ds-nav-blur: blur(18px) saturate(165%);
+  /* geometry + motion */
+  --ds-nav-chamfer: 16px;
+  --ds-nav-ease: cubic-bezier(0.22, 1, 0.36, 1);
+  --ds-nav-out: cubic-bezier(0.65, 0, 0.35, 1);
+  --ds-nav-fast: 160ms;
+  --ds-nav-base: 260ms;
+  --ds-nav-slow: 480ms;
+}
+
+[data-theme="dark"] {
+  --ds-nav-glass: color-mix(in srgb, var(--lu-ink-800) 52%, transparent);
+  --ds-nav-glass-dense: color-mix(in srgb, var(--lu-ink-800) 90%, transparent);
+  --ds-nav-field: color-mix(in srgb, var(--lu-ink-700) 76%, transparent);
+  --ds-nav-sheen: color-mix(in srgb, var(--lu-ink-100) 14%, transparent);
+  --ds-nav-edge: color-mix(in srgb, var(--lu-ink-100) 8%, transparent);
+  --ds-nav-groove: color-mix(in srgb, var(--lu-ink-900) 62%, transparent);
+  --ds-nav-hairline: color-mix(in srgb, var(--lu-ink-100) 15%, transparent);
+  --ds-nav-knurl: color-mix(in srgb, var(--lu-ink-100) 22%, transparent);
+  --ds-nav-etch: color-mix(in srgb, var(--lu-ink-100) 58%, transparent);
+  --ds-nav-line: color-mix(in srgb, var(--lu-mint) 70%, transparent);
+  --ds-nav-line-soft: color-mix(in srgb, var(--lu-mint) 22%, transparent);
+  --ds-nav-line-glow: color-mix(in srgb, var(--lu-mint) 26%, transparent);
+  --ds-nav-scrim: color-mix(in srgb, var(--lu-ink-900) 58%, transparent);
+  --ds-nav-fade: color-mix(in srgb, var(--lu-ink-900) 62%, transparent);
+  --ds-nav-shadow: 0 18px 44px color-mix(in srgb, var(--lu-ink-900) 62%, transparent);
+}

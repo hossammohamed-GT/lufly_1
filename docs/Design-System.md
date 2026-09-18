@@ -39,6 +39,7 @@ supporting layer and stays as designed.
 | 20 | Switchers — theme + language |
 | 21 / 21b | Motion utilities / direction (RTL) |
 | 22 – 24 | Accessibility, responsive rules, reduced motion |
+| 25 | Navigation chrome tokens — "Machined Glass" (`--ds-nav-*`) |
 
 ## 2. Brand palette (fixed, never themed)
 
@@ -81,7 +82,8 @@ never introduce a new hue: `--ds-primary-soft`, `--ds-primary-tint`, `--ds-prima
 | Family | Purpose |
 | --- | --- |
 | `--ds-band-*` | dark architectural bands (trust pillars, finish selector, footer) that stay dark in both themes |
-| `--ds-media-*` | text and scrims over photography (hero slider, category mosaic) |
+| `--ds-media-*` | text and scrims over photography (hero cinema, category mosaic) |
+| `--ds-nav-*` | navbar chrome: slab glass, field, sheen, groove, hairline, knurl, etch, blueprint line, scrim, fade, shadow, blur, chamfer, motion |
 | `.band` | utility class that switches a section and its `.section-tag` / `.section-title` / `.section-subtitle` / `.separator` into band tokens |
 
 ## 4. Typography
@@ -122,6 +124,23 @@ feedback `.alert-*`, `.state-*`, `.empty-state` · data `.table`, `.pagination`,
 `.page-link` · overlays `.modal*`, `.dropdown*` · switchers `.theme-switcher`,
 `.lang-switcher`, `.lang-link`, `.theme-icon*` · icons `.icon*` · identity helpers
 `.product-sku-badge(-lg)` · accessibility `.visually-hidden`, `.skip-link`.
+
+## 6b. Navbar tokens ("Machined Glass")
+
+| Token | Role |
+| --- | --- |
+| `--ds-nav-glass` / `--ds-nav-glass-dense` | slab and panel tint (translucent at rest, dense once scrolled) |
+| `--ds-nav-field` | inset search field surface |
+| `--ds-nav-sheen` / `--ds-nav-edge` | specular top edge and inner corner light |
+| `--ds-nav-groove` / `--ds-nav-hairline` / `--ds-nav-knurl` / `--ds-nav-etch` | machined detail: brushed grain, separations, knurled strips, etched labels |
+| `--ds-nav-line` / `--ds-nav-line-soft` / `--ds-nav-line-glow` | the crooked blueprint line, its resting state and its signal trace |
+| `--ds-nav-scrim` / `--ds-nav-fade` / `--ds-nav-shadow` | sheet scrim, scroll fade and panel elevation |
+| `--ds-nav-chamfer`, `--ds-nav-ease`, `--ds-nav-fast|base|slow` | chamfered geometry and the motion language of the header |
+
+The header component is `frontend/components/navbar/navbar.css` (paired with
+`navbar.js` and `resources/views/components/navbar.php`). It owns its row heights as
+component-local custom properties (`--mnav-row1`, `--mnav-row2`, `--mnav-mark-w`) — geometry,
+never colour.
 
 ## 7. Rules for contributors
 

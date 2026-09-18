@@ -40,4 +40,10 @@ return [
     'cinema5_kicker' => 'Navrženo pro luxusní bydlení', 'cinema5_title_a' => 'Pro vily, hotely', 'cinema5_title_b' => 'a ikonické projekty',
     'cinema5_desc' => 'Volba architektů a interiérových designérů pro špičkové rezidenční a hotelové projekty.',
     'cinema_primary' => 'Prozkoumat produkty',
+
+    'ticker_1' => 'Výrobní centrála Gaziantep',
+    'ticker_2' => '34+ exportních trhů',
+    'ticker_3' => 'Pro-Eco 45% úspora vody',
+    'ticker_4' => 'Certifikace EN 997 / EN 817',
+    'ticker_5' => '500 000 cyklů keramických kartuší',
 ];

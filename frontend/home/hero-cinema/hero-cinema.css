@@ -9,7 +9,7 @@
    ========================================================================== */
 
 .lfc {
-  --lfc-teal: var(--lufly-teal, #1c8b8b);
+  --lfc-teal: var(--ds-primary);
   --lfc-teal-hi: #5fd4d4;
   --lfc-ink: #eef7f7;
   --lfc-ease: cubic-bezier(.19, 1, .22, 1);
@@ -179,7 +179,7 @@
   transition: transform .35s var(--lfc-ease), box-shadow .35s, background .3s, color .3s, border-color .3s;
 }
 .lfc-cta--p { background: var(--lfc-teal); color: #fff; box-shadow: 0 8px 24px rgba(28, 139, 139, .28); }
-.lfc-cta--p:hover { background: var(--lufly-teal-hover, #147174); transform: translateY(-2px); box-shadow: 0 14px 34px rgba(28, 139, 139, .42); }
+.lfc-cta--p:hover { background: var(--ds-primary-hover); transform: translateY(-2px); box-shadow: 0 14px 34px rgba(28, 139, 139, .42); }
 .lfc-cta--s { border: 1px solid rgba(238, 247, 247, .28); color: var(--lfc-ink); }
 .lfc-cta--s:hover { border-color: var(--lfc-teal-hi); color: var(--lfc-teal-hi); background: rgba(28, 139, 139, .12); transform: translateY(-2px); }
 .lfc-cta i { font-size: 13px; }

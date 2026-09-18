@@ -11,11 +11,13 @@ frontend/
 │   ├── style.css              single source of truth (tokens + core components)
 │   └── logo.png               brand mark
 ├── css/
-│   └── app.css                app shell: ambience, header, nav, search, footer
+│   └── app.css                app shell: ambient stage + mega footer
 ├── js/
-│   └── app.js                 bootstrap: theme, modal, sticky header, search, language
+│   └── app.js                 bootstrap: theme + modal plumbing
+├── components/                shared chrome, one folder per block
+│   └── navbar/                navbar.css + navbar.js ("Machined Glass" header)
 ├── home/                      one folder per home section
-│   ├── hero-slider/           hero-slider.css + hero-slider.js
+│   ├── hero-cinema/           hero-cinema.css + hero-cinema.js
 │   ├── trust-bar/             trust-bar.css
 │   ├── finishes/              finishes.css + finishes.js
 │   ├── categories/            categories.css
@@ -48,6 +50,7 @@ resources/views/
 │   ├── frontend.php           loads style.css + app.css, then pushed component styles
 │   └── admin.php              loads style.css + admin/admin.css
 ├── components/                shared partials (navbar, footer, alert, flag, modal, …)
+│   └── navbar.php             machined-glass header: rail, index drawer, bloom sheet
 ├── home/
 │   ├── index.php              composes the eight section components
 │   ├── hero-slider/hero-slider.php
@@ -72,10 +75,10 @@ Each component declares what it needs and the layout renders it — no page-wide
 ```php
 <?php
 /** @var Core\View\View $view */
-$view->pushStyle('frontend/home/finishes/finishes.css');
-$view->pushScript('frontend/home/finishes/finishes.js');
+$view->pushStyle('frontend/components/navbar/navbar.css');
+$view->pushScript('frontend/components/navbar/navbar.js');
 ?>
-<section class="band finishes-section" id="finishes"> ... </section>
+<header class="mnav" data-navbar> ... </header>
 ```
 
 `core/View/View.php` exposes `pushStyle()`, `pushScript()`, `styles()` and `scripts()`;
@@ -85,15 +88,21 @@ be included twice safely.
 
 ## 4. JavaScript conventions
 
-* `frontend/js/app.js` holds shared behaviour (theme, modal, sticky header, language
-  dropdown, instant search). Component scripts hold their own behaviour only.
+* `frontend/js/app.js` holds shared behaviour only (theme switch, modal plumbing) so the
+  admin panel keeps working. Header behaviour — scroll state, index drawer, bloom sheet,
+  search overlay, instant search and the language menu — lives in
+  `frontend/components/navbar/navbar.js` and loads with its component.
 * **Scripts never write colors.** Generated markup uses CSS classes from the component
   or `app.css` instead of inline styles.
 * All client-side URLs are built from `document.documentElement.dataset.base`, which the
   layout fills from `url('/')`, so search links and finish images work from any
   sub-directory and behind a proxy.
-* Interactive state is expressed with classes (`is-open`, `is-active`, `is-scrolled`) and
-  `data-*` hooks; the hero slider respects `prefers-reduced-motion`.
+* Interactive state is expressed with classes (`is-open`, `is-active`, `is-scrolled`,
+  `is-drawer-open`, `is-sheet-open`, `is-search-open`) and `data-*` hooks; every animated
+  component respects `prefers-reduced-motion`.
+* The navbar never reads layout while scrolling: scroll state and the progress line are
+  painted inside `requestAnimationFrame`, and the slab keeps a fixed height so scrolling
+  never triggers reflow.
 
 ## 5. Adding a new component
 
@@ -110,34 +119,47 @@ Re-runnable gate: `python3 tools/frontend-audit.py` (from the project root).
 
 | Check | Result |
 | --- | --- |
-| Raw colors (`#hex`, `rgb()`, `hsl()`, color names) outside `style.css` | 0 |
-| Undefined CSS variables in `frontend/**/*.css` | 0 |
-| Classes used in PHP/JS with no CSS rule | 2 intentional modifiers (below) |
+| Raw colors (`#hex`, `rgb()`, `hsl()`, color names) outside `style.css` | 38, all inside `home/hero-cinema/hero-cinema.css` |
+| Undefined CSS variables in `frontend/**/*.css` | 0 (component-local `--mnav-*` / `--lfc-*` properties count as declared) |
+| Classes used in PHP/JS with no CSS rule | Font Awesome classes in `home/hero-cinema/hero-cinema.php` — that stylesheet is never loaded |
 | Inline `style` attributes in views | 1 file — `components/flag.php` (national flag colors) |
-| PHP syntax (tree-sitter parse of all 273 PHP files) | clean |
-| JavaScript syntax (`node --check`) | clean (`app.js`, `hero-slider.js`, `finishes.js`, `admin.js`) |
-| Translation keys used in views missing from `en`/`tr`/`cs` | 0 |
+| JavaScript syntax (`node --check`) | clean |
+| Translation keys used in views missing from `en`/`tr`/`cs` | `home.ticker_1…5` missing in `tr` and `cs` |
 | `asset('…')` targets missing on disk | 0 |
+| Stale references to removed paths | 0 outside `docs/adr/` (decision records keep their original wording) |
 
-Sizes: `style.css` 1 010 lines, 14 component stylesheets, 2 868 CSS lines in total;
-`app.js` 223 lines, component scripts 230 lines.
+Sizes: `style.css` 1 065 lines, 15 component stylesheets, 3 883 CSS lines in total;
+`app.js` 105 lines, `components/navbar/navbar.css` 1 406 lines,
+`components/navbar/navbar.js` 555 lines.
 
 Remaining raw numeric values in component files are component geometry (widths, heights,
 grid templates, transforms, z-index, expressive transition durations) plus the fluid
 display clamps behind `--text-display-*`. They are intentional and reviewed.
 
-Two markup hooks are kept on purpose:
+## 7. Navbar rebuild (2026-09-18)
 
-* `lufly-header-monolith` — legacy alias on the header element, kept so external styles
-  and the shared branch keep working.
-* `deante-wishlist-link` — modifier that composes with the styled `.deante-icon-link`.
+The marquee header was replaced by the "Machined Glass" navbar:
 
-## 7. Migration notes
+* `resources/views/components/navbar.php` + `frontend/components/navbar/` own the whole
+  header: glass slab, instant search, utility actions, the crooked blueprint rail, the
+  index drawer that unfolds on hover and the phone bloom sheet.
+* Row heights are fixed (`--mnav-row1`, `--mnav-row2`), so scrolling only repaints tint,
+  shadow and the progress line — the page never reflows while scrolling.
+* New tokens live in section 25 of `style.css` (`--ds-nav-*`, light + dark).
+* Removed with it: the legacy monolithic stylesheet in `design-system/` (53 KB of
+  duplicated raw-color CSS that no view referenced) and the stale duplicate of it that
+  shipped under `public/`; `home/hero-cinema/hero-cinema.css` now uses `--ds-primary` instead of the retired
+  `--lufly-*` variables.
+* Design review happens without PHP: `node tools/navbar-preview/serve.mjs` renders the real
+  partial into a static page (dev-only harness).
+
+## 8. Migration notes
 
 * The design system file, the app shell and every component folder are new; the previous
-  `frontend/design-system/*.css` set, `frontend/js/tidal-monolith.js`,
-  `theme-switcher.js`, `modal.js`, `hero-scenes.js`, `admin/assets/`, `atlas.html` and the
-  duplicated `public/frontend/` tree were removed.
+  design-system CSS set, the retired JavaScript switchers, the media explorer page, the
+  old admin asset folder and the duplicated public asset tree were removed. The one
+  remaining legacy stylesheet in `design-system/` was deleted in the navbar rebuild —
+  section 7 above.
 * Asset URLs still work from the project folder (`http://localhost/lufly_1/`): the root
   `.htaccess` serves real files first and falls back to `public/`, `server.php` mirrors
   that behaviour for `php -S`, and CSS references images with relative paths.
