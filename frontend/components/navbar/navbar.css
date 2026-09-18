@@ -539,12 +539,14 @@
 
 .mnav-rail {
   position: fixed;
-  inset-block: 0;
+  top: var(--mnav-row1);
+  bottom: 0;
+  height: calc(100vh - var(--mnav-row1));
   inset-inline-start: 0;
-  z-index: 100;
+  z-index: var(--z-header);
   display: flex;
   inline-size: var(--mnav-rail-w);
-  background: var(--ds-nav-glass);
+  background: var(--ds-nav-glass-dense);
   backdrop-filter: var(--ds-nav-blur);
   -webkit-backdrop-filter: var(--ds-nav-blur);
   border-inline-end: 1px solid var(--ds-nav-line-soft);
@@ -580,7 +582,7 @@
   align-items: center;
   gap: var(--space-4);
   inline-size: 100%;
-  padding-block: var(--space-4) var(--space-5);
+  padding-block: var(--space-3) var(--space-4); height: 100%; justify-content: space-between;
   overflow-y: auto;
   overscroll-behavior: contain;
   scrollbar-width: none;
@@ -919,7 +921,9 @@
 
 .mnav-drawer {
   position: absolute;
-  inset-block: var(--mnav-row1) 0;
+  top: 0;
+  bottom: 0;
+  height: 100%;
   inset-inline-start: 100%;
   z-index: 99;
   inline-size: min(450px, calc(100vw - var(--mnav-rail-w) - var(--space-6)));
