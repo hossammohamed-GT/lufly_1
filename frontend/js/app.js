@@ -5,8 +5,8 @@
      * Accessible modal controller
      * Smart Link & Asset Prefetcher (Instant 0ms Page Navigation)
      * BFCache (Back/Forward Cache) Instant Restoration Handler
-     * Butter-Smooth Section Scroll & Reveal Engine
-     * Hero Parallax Stacking Curtain Effect
+   Sections scroll in the normal document flow - there are deliberately
+   no scroll-driven animation engines here (kept the site light).
    ========================================================================== */
 (function () {
   'use strict';
@@ -168,72 +168,4 @@
       document.body.classList.add('ready');
     }
   });
-
-  /* ---------- 5. Butter-Smooth Section Scroll & Reveal Engine ---------- */
-
-  function initScrollReveals() {
-    var targets = document.querySelectorAll('.scroll-reveal, .scroll-section');
-    if (!targets.length) return;
-
-    var reduced = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-    if (reduced || !('IntersectionObserver' in window)) {
-      targets.forEach(function (el) {
-        el.classList.add('scroll-revealed');
-      });
-      return;
-    }
-
-    var observer = new IntersectionObserver(function (entries, obs) {
-      entries.forEach(function (entry) {
-        if (entry.isIntersecting) {
-          entry.target.classList.add('scroll-revealed');
-          obs.unobserve(entry.target);
-        }
-      });
-    }, {
-      rootMargin: '0px 0px -40px 0px',
-      threshold: 0.08
-    });
-
-    targets.forEach(function (el) {
-      observer.observe(el);
-    });
-  }
-
-  /* ---------- 6. Hero Parallax Stacking Curtain Effect ---------- */
-
-  function initHeroParallax() {
-    var heroEl = document.getElementById('lfc');
-    if (!heroEl) return;
-
-    var reduced = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-    if (reduced) return;
-
-    var ticking = false;
-    window.addEventListener('scroll', function () {
-      if (!ticking) {
-        window.requestAnimationFrame(function () {
-          var sc = window.scrollY || window.pageYOffset;
-          var vh = window.innerHeight || 800;
-          if (sc <= vh + 100) {
-            var factor = Math.min(1, Math.max(0, sc / vh));
-            heroEl.style.transform = 'scale(' + (1 - factor * 0.04) + ') translateY(' + (factor * 16) + 'px)';
-            heroEl.style.opacity = (1 - factor * 0.35).toFixed(3);
-          }
-          ticking = false;
-        });
-        ticking = true;
-      }
-    }, { passive: true });
-  }
-
-  if (document.readyState === 'loading') {
-    document.addEventListener('DOMContentLoaded', function () {
-      initScrollReveals();
-      initHeroParallax();
-    });
-  } else {
-    initScrollReveals();
-    initHeroParallax();
-  }
 })();
