@@ -2,7 +2,7 @@
 
 ## Requirements
 
-- PHP **8.2+** (`pdo_mysql` enabled — XAMPP default)
+- PHP **8.2+** (`pdo_mysql` enabled - XAMPP default)
 - MySQL 5.7+/MariaDB
 - Apache with `mod_rewrite` (XAMPP default)
 
@@ -49,7 +49,7 @@ the page may appear as unstyled HTML.
 
 5. Ensure writability of `storage/` (logs, cache, uploads).
 
-6. Browse to `http://localhost/lufly` — the bundled root `.htaccess` rewrites all
+6. Browse to `http://localhost/lufly` - the bundled root `.htaccess` rewrites all
    non-file requests into `public/index.php`, while real files (frontend assets,
    docs) are served directly.
 

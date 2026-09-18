@@ -2,7 +2,7 @@
 /**
  * LUFLY: Global Preloader & Loading Experience
  * "Water-Fill" inside brand glyphs, factory craft background on initial load,
- * dynamic progress and informative messages in Arabic, English, Turkish and Czech.
+ * dynamic progress and informative messages in English, Turkish and Czech.
  *
  * @var Core\Localization\Translator|null $translator
  */
@@ -11,28 +11,24 @@ $locale = isset($translator) && $translator instanceof \Core\Localization\Transl
     : (string) config('localization.default', 'en');
 
 $kickers = [
-    'ar' => 'لوفلي للصناعات الصحية المعمارية الفاخرة',
     'en' => 'LUFLY Architectural Sanitary Ware',
     'tr' => 'LUFLY Mimari Vitrifiye ve Armatür',
     'cs' => 'LUFLY Prémiová sanitární keramika',
 ];
 
 $tags = [
-    'ar' => 'ثقافة الحمام المعاصر متعة متجددة ورفاهية مشتركة',
     'en' => 'Bathroom Culture Sculpted with Perfection',
     'tr' => 'Mükemmellikle Şekillenen Banyo Kültürü',
     'cs' => 'Koupelnová kultura tvořená k dokonalosti',
 ];
 
 $msgs = [
-    'ar' => 'سباكة أجسام النحاس المعماري عالي النقاء',
     'en' => 'Precision casting of high-purity brass',
     'tr' => 'Yüksek saflıkta pirinç gövde dökümü',
     'cs' => 'Přesné lití vysoce čisté mosazi',
 ];
 
 $foots = [
-    'ar' => 'المقر الرئيسي والمصانع في غازي عنتاب تركيا',
     'en' => 'LUFLY HQ & Manufacturing Hub Gaziantep Turkey',
     'tr' => 'LUFLY Genel Merkez ve Üretim Tesisleri Gaziantep',
     'cs' => 'LUFLY HQ a Výrobní závod Gaziantep Turecko',

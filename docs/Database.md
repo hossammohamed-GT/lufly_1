@@ -67,7 +67,7 @@ and `restore()` are available.
 ## Dynamic translation tables
 
 `product_translations`, `category_translations`, `page_translations`,
-`blog_translations` — each keyed by `(entity_id, locale)` with a unique constraint.
+`blog_translations` - each keyed by `(entity_id, locale)` with a unique constraint.
 Managed through `LocalizationService::syncTranslations()`.
 
 ## Audit trail

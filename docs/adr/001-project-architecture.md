@@ -1,4 +1,4 @@
-# ADR 001 — Project Architecture: Frameworkless Modular Monolith
+# ADR 001 - Project Architecture: Frameworkless Modular Monolith
 
 ## Context
 
@@ -22,10 +22,10 @@ composition; HTTP flows through a single front controller (`public/index.php`).
 
 ## Alternatives
 
-1. **Adopt Laravel/Symfony** — rejected: explicit requirement of native PHP/XAMPP,
+1. **Adopt Laravel/Symfony** - rejected: explicit requirement of native PHP/XAMPP,
    zero dependencies, minimal footprint.
-2. **Flat procedural PHP** — rejected: fails maintainability/SOLID requirements.
-3. **Micro-framework (Slim etc.)** — rejected: still an external dependency.
+2. **Flat procedural PHP** - rejected: fails maintainability/SOLID requirements.
+3. **Micro-framework (Slim etc.)** - rejected: still an external dependency.
 
 ## Consequences
 

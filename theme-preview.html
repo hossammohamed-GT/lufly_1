@@ -1,9 +1,9 @@
 <!doctype html>
-<html lang="ar" dir="rtl" data-theme="dark">
+<html lang="en" dir="ltr" data-theme="dark">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>LUFLY | معاينة الوضع الداكن</title>
+<title>LUFLY | Dark Theme Architectural Preview</title>
 <link rel="stylesheet" href="frontend/design-system/style.css">
 <style>
   body { min-height: 100vh; }
@@ -42,53 +42,53 @@
   <div class="pv-wrap">
     <div class="pv-head">
       <div>
-        <h1 class="pv-title">معاينة الوضع الداكن المتطور 🌙</h1>
-        <p class="pv-sub">تصميم عصري متناسق تماماً مع الوضع الفاتح والوضع الداكن</p>
+        <h1 class="pv-title">Dark Theme Preview</h1>
+        <p class="pv-sub">Live CSS tokens from the design system</p>
       </div>
-      <button class="pv-toggle" onclick="var r=document.documentElement;r.setAttribute('data-theme',r.getAttribute('data-theme')==='dark'?'light':'dark');this.textContent=r.getAttribute('data-theme')==='dark'?'☀️ فاتح':'🌙 داكن'">☀️ فاتح</button>
+      <button class="pv-toggle" onclick="var r=document.documentElement;r.setAttribute('data-theme',r.getAttribute('data-theme')==='dark'?'light':'dark');this.textContent=r.getAttribute('data-theme')==='dark'?'☀️ Light':'🌙 Dark'">☀️ Light</button>
     </div>
 
     <div class="pv-grid">
       <div class="pv-card">
-        <span class="pv-tag new">الجديد: فحمي دافئ ومريح للعين</span>
-        <h3>خلفية متناسقة بأعلى درجات الراحة</h3>
-        <p>الخلفية الأساسية <b>rgb(44, 43, 40) / #2C2B28</b> بدرجة محايدة دافئة تمنح راحة فائقة وتناسب الإضاءة الخافتة.</p>
+        <span class="pv-tag new">Tidal Monolith Ink</span>
+        <h3>Low-Glare Warm Charcoal Surface</h3>
+        <p>Base background <b>rgb(44, 43, 40) / #2C2B28</b> provides balanced contrast for high-end architectural aesthetics.</p>
         <div class="pv-swatch" title="ink-950 / 900 / 800 / 700 / 600 / 500 / 100">
           <div style="background:#141311"></div><div style="background:#2c2b28"></div><div style="background:#353430"></div><div style="background:#3f3d38"></div><div style="background:#57544b"></div><div style="background:#aba79b"></div><div style="background:#e9e6de"></div>
         </div>
       </div>
 
       <div class="pv-card before">
-        <span class="pv-tag old">السابق</span>
-        <h3>الأسود المائل للزرقة</h3>
-        <p>الخلفية القديمة بتباين حاد غير مريح مع النصوص البيضاء الساطعة في الإضاءة المنخفضة.</p>
+        <span class="pv-tag old">Legacy</span>
+        <h3>High-Glare Slate</h3>
+        <p>Legacy blue-tinted dark surface #0a1414 with harsh contrast.</p>
         <div class="pv-actions">
-          <span class="pv-btn" style="background:#1c8b8b;color:#0a1414">زر تيل</span>
+          <span class="pv-btn" style="background:#1c8b8b;color:#0a1414">Teal Action</span>
         </div>
       </div>
 
       <div class="pv-card">
-        <span class="pv-tag new">المطور</span>
-        <h3>أزرار وتباين بصري مثالي</h3>
-        <p>نصوص الأزرار واضحة ومقروءة بنسبة تباين معتمدة دولياً ومريحة للنظر.</p>
+        <span class="pv-tag new">Refined</span>
+        <h3>WCAG AAA Contrast</h3>
+        <p>Button text and surface layers maintain optimal readability standards.</p>
         <div class="pv-actions">
-          <button class="pv-btn">زر أساسي</button>
-          <button class="pv-btn mint">زر مينت</button>
-          <button class="pv-btn ghost">زر شفاف</button>
+          <button class="pv-btn">Primary Action</button>
+          <button class="pv-btn mint">Mint Accent</button>
+          <button class="pv-btn ghost">Ghost Outline</button>
         </div>
-        <div class="pv-surface-alt">سطح مرتفع (Surface Alt) <span style="color:var(--ds-text-muted)">مع نص ثانوي هادئ وأنيق</span></div>
+        <div class="pv-surface-alt">Surface Alt Layer <span style="color:var(--ds-text-muted)">with muted secondary typography</span></div>
       </div>
 
       <div class="pv-card">
-        <span class="pv-tag new">مقارنة التباين</span>
-        <h3>الصفحة بالكامل</h3>
-        <div class="pv-page old">القديم #0a1414</div>
-        <div class="pv-page new">الجديد rgb(44, 43, 40) دافئ ومريح</div>
+        <span class="pv-tag new">Comparison</span>
+        <h3>Full Page Elevation</h3>
+        <div class="pv-page old">Legacy #0a1414</div>
+        <div class="pv-page new">New rgb(44, 43, 40) warm charcoal</div>
       </div>
     </div>
 
     <div class="pv-note">
-      يتم تطبيق هذه الإعدادات تلقائياً على كافة عناصر ومكونات الموقع في الوضعين الفاتح والداكن لضمان تجربة بصرية فائقة السلاسة والانسجام.
+      These tokens automatically apply to all components across the site for both light and dark themes.
     </div>
   </div>
 </div>

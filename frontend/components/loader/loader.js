@@ -1,5 +1,5 @@
 /* ============================================================
-   LUFLY — Preloader & Global Loading Controller (Optimized Edition)
+   LUFLY - Preloader & Global Loading Controller (Optimized Edition)
    Timeline: SVG stroke draw → water fills glyphs (real progress %)
    + snappy fluid motion + craftsman stage messages → seal flash → completion.
    Global API: window.LUFLYLoader.show(msg), update(pct, msg), hide()
@@ -12,14 +12,6 @@
   var locale = (root.getAttribute('lang') || 'en').toLowerCase();
 
   var MESSAGES_BY_LOCALE = {
-    ar: [
-      [0,   'سباكة أجسام النحاس المعماري عالي النقاء'],
-      [20,  'التشكيل الرقمي بالروبوت بدقة 0.01 مم'],
-      [45,  'صقل ومعالجة طلاء PVD التيتانيوم الفاخر'],
-      [70,  'إحكام قلب السيراميك الدقيق Kerox®'],
-      [90,  'الفحص المخبري للجودة واختبار الضغط'],
-      [100, 'تم التجهيز بنجاح مرحباً بكم في لوفلي']
-    ],
     en: [
       [0,   'Precision casting of high-purity brass'],
       [20,  'Robotic CNC machining to 0.01 mm'],
@@ -283,8 +275,7 @@
     if (targetUrl.origin !== window.location.origin) return;
     if (targetUrl.pathname === window.location.pathname && targetUrl.search === window.location.search) return;
 
-    var navMsg = locale === 'ar' ? 'جاري تجهيز الصفحة' :
-                 locale === 'tr' ? 'Sayfa hazırlanıyor' :
+    var navMsg = locale === 'tr' ? 'Sayfa hazırlanıyor' :
                  locale === 'cs' ? 'Připravujeme stránku' : 'Loading page';
     showLoader(navMsg, true);
   }, { passive: true });
@@ -293,8 +284,7 @@
   document.addEventListener('submit', function (e) {
     var form = e.target;
     if (!form || form.target === '_blank' || e.defaultPrevented) return;
-    var submitMsg = locale === 'ar' ? 'جاري التحقق والارسال' :
-                    locale === 'tr' ? 'İşleminiz gerçekleştiriliyor' :
+    var submitMsg = locale === 'tr' ? 'İşleminiz gerçekleştiriliyor' :
                     locale === 'cs' ? 'Zpracováváme požadavek' : 'Processing request';
     showLoader(submitMsg, true);
   }, { passive: true });

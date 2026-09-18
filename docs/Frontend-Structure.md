@@ -1,6 +1,6 @@
 # Frontend Structure (Component-Based Organization)
 
-The frontend follows one component folder per UI block — the same naming is reused in
+The frontend follows one component folder per UI block - the same naming is reused in
 CSS, JavaScript and the PHP view, so a section can be traced end to end.
 
 ## 1. Asset roots
@@ -70,7 +70,7 @@ template name (`products::index`, `products::show`, `auth`, `errors.404`, …).
 
 ## 3. Asset loading per component
 
-Each component declares what it needs and the layout renders it — no page-wide bundles:
+Each component declares what it needs and the layout renders it - no page-wide bundles:
 
 ```php
 <?php
@@ -89,8 +89,8 @@ be included twice safely.
 ## 4. JavaScript conventions
 
 * `frontend/js/app.js` holds shared behaviour only (theme switch, modal plumbing) so the
-  admin panel keeps working. Header behaviour — scroll state, index drawer, bloom sheet,
-  search overlay, instant search and the language menu — lives in
+  admin panel keeps working. Header behaviour - scroll state, index drawer, bloom sheet,
+  search overlay, instant search and the language menu - lives in
   `frontend/components/navbar/navbar.js` and loads with its component.
 
 ### Third-party assets
@@ -143,8 +143,8 @@ Re-runnable gate: `python3 tools/frontend-audit.py` (from the project root).
 | --- | --- |
 | Raw colors (`#hex`, `rgb()`, `hsl()`, color names) outside `style.css` | 38, all inside `home/hero-cinema/hero-cinema.css` |
 | Undefined CSS variables in `frontend/**/*.css` | 0 (component-local `--mnav-*` / `--lfc-*` properties count as declared) |
-| Classes used in PHP/JS with no CSS rule | Font Awesome classes in `home/hero-cinema/hero-cinema.php` — that stylesheet is never loaded |
-| Inline `style` attributes in views | 1 file — `components/flag.php` (national flag colors) |
+| Classes used in PHP/JS with no CSS rule | Font Awesome classes in `home/hero-cinema/hero-cinema.php` - that stylesheet is never loaded |
+| Inline `style` attributes in views | 1 file - `components/flag.php` (national flag colors) |
 | JavaScript syntax (`node --check`) | clean |
 | Translation keys used in views missing from `en`/`tr`/`cs` | `home.ticker_1…5` missing in `tr` and `cs` |
 | `asset('…')` targets missing on disk | 0 |
@@ -185,7 +185,7 @@ The marquee header was replaced by the "Machined Glass" navbar:
 * The design system file, the app shell and every component folder are new; the previous
   design-system CSS set, the retired JavaScript switchers, the media explorer page, the
   old admin asset folder and the duplicated public asset tree were removed. The one
-  remaining legacy stylesheet in `design-system/` was deleted in the navbar rebuild —
+  remaining legacy stylesheet in `design-system/` was deleted in the navbar rebuild -
   section 7 above.
 * Asset URLs still work from the project folder (`http://localhost/lufly_1/`): the root
   `.htaccess` serves real files first and falls back to `public/`, `server.php` mirrors

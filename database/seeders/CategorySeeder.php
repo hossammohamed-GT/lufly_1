@@ -23,10 +23,6 @@ class CategorySeeder extends Seeder
                         'name' => 'Asma Klozetler',
                         'description' => 'Hijyenik sırlı, kanalsız modern asma klozet ve rezervuar sistemleri.',
                     ],
-                    'ar' => [
-                        'name' => 'مراحيض معلقة فاخرة',
-                        'description' => 'مراحيض معلقة بتصميم أوروبي عصري خالية من الحواف مع طلاء زجاجي مقاوم للبكتيريا.',
-                    ],
                     'cs' => [
                         'name' => 'Závěsná WC',
                         'description' => 'Prémiová bezokrajová závěsná keramická WC s hygienickou antibakteriální glazurou.',
@@ -44,10 +40,6 @@ class CategorySeeder extends Seeder
                     'tr' => [
                         'name' => 'Lüks Bidetler',
                         'description' => 'Modern mimari asma ve ayaklı bide serileri.',
-                    ],
-                    'ar' => [
-                        'name' => 'شطافات وبيديهات أوروبية',
-                        'description' => 'بيديهات وشطافات معلقة وأرضية مصممة بأعلى معايير الجودة الأوروبية.',
                     ],
                     'cs' => [
                         'name' => 'Luxusní bidety',
@@ -67,10 +59,6 @@ class CategorySeeder extends Seeder
                         'name' => 'Tasarım Lavabolar',
                         'description' => 'Tezgah üstü, çanak ve duvara monte lüks seramik lavabolar.',
                     ],
-                    'ar' => [
-                        'name' => 'أحواض مغاسل ديكورية',
-                        'description' => 'أحواض مغاسل سيراميك فوق الرخام وجدارية بتشطيبات وتصاميم عصرية راقية.',
-                    ],
                     'cs' => [
                         'name' => 'Designová umyvadla',
                         'description' => 'Umyvadla na desku a nábytková luxusní keramická umyvadla.',
@@ -89,10 +77,6 @@ class CategorySeeder extends Seeder
                         'name' => 'Banyo Dolapları',
                         'description' => 'Suya ve neme dayanıklı lüks banyo dolapları ve ayna modülleri.',
                     ],
-                    'ar' => [
-                        'name' => 'خزائن ووحدات حمام',
-                        'description' => 'وحدات وخزائن حمام فخمة مقاومة للرطوبة والمياه بتصاميم تركية متطورة.',
-                    ],
                     'cs' => [
                         'name' => 'Koupelnové skříňky',
                         'description' => 'Koupelnový nábytek a skříňky vysoce odolné proti vlhkosti.',
@@ -110,10 +94,6 @@ class CategorySeeder extends Seeder
                     'tr' => [
                         'name' => 'Mimari Seramikler',
                         'description' => 'Yüksek dayanımlı ticari ve konut mimari seramik yüzeyler ve aksesuarlar.',
-                    ],
-                    'ar' => [
-                        'name' => 'سيراميك وبورسلين معماري',
-                        'description' => 'بلاط وسيراميك وأسطح خزفية معمارية للمشاريع الكبرى والمجمعات السكنية.',
                     ],
                     'cs' => [
                         'name' => 'Architektonická keramika',

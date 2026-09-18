@@ -50,14 +50,12 @@ class HomeController extends Controller
         }, $rawFeatured);
 
         $seoTitles = [
-            'ar' => 'لوفلي | مصنع الأدوات الصحية المعمارية الفاخرة والتصدير الأوروبي',
             'en' => 'LUFLY | European Architectural Sanitary Ware Manufacturer & Global Export',
             'tr' => 'LUFLY | Mimari Vitrifiye ve Sıhhi Tesisat Üreticisi & İhracat',
             'cs' => 'LUFLY | Architektonická sanitární technika a evropský export',
         ];
 
         $seoDescriptions = [
-            'ar' => 'مصنع لوفلي للأدوات الصحية المعمارية الفاخرة، المراحيض المعلقة، الخلاطات المطلية بتقنية PVD، وأنظمة الشاور المدفونة للمشاريع السكنية والفندقية الكبرى.',
             'en' => 'LUFLY manufactures European certified architectural sanitary ware, rimless toilets, luxury PVD brassware, and hydrotherapy systems for premier residential and hospitality projects worldwide.',
             'tr' => 'LUFLY, lüks konut ve otel projeleri için Avrupa standartlarında kanalsız asma klozetler, PVD kaplama bataryalar ve hidrodinamik duş sistemleri üretir.',
             'cs' => 'LUFLY vyrábí evropsky certifikovanou sanitární keramiku, bezokrajová WC, prémiové PVD baterie a hydroterapeutické sprchové systémy pro luxusní projekty.',

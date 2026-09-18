@@ -39,22 +39,22 @@ Built with `Core\Http\ApiResponse::success() | error() | paginated()`.
 
 | Method | Endpoint | Auth | Permission |
 | --- | --- | --- | --- |
-| GET | `/api/health` | — | — |
-| GET | `/api/locales` | — | — |
-| POST | `/api/auth/login` | — | — |
-| POST | `/api/auth/logout` | session | — |
-| GET | `/api/auth/me` | session | — |
-| GET | `/api/products` | — | — |
-| GET | `/api/products/{id}` | — | — |
+| GET | `/api/health` | - | - |
+| GET | `/api/locales` | - | - |
+| POST | `/api/auth/login` | - | - |
+| POST | `/api/auth/logout` | session | - |
+| GET | `/api/auth/me` | session | - |
+| GET | `/api/products` | - | - |
+| GET | `/api/products/{id}` | - | - |
 | POST | `/api/products` | session | `products.manage` |
 | PUT | `/api/products/{id}` | session | `products.manage` |
 | DELETE | `/api/products/{id}` | session | `products.manage` |
 | GET | `/api/media` | session | `media.view` |
 | POST | `/api/media` | session | `media.manage` |
 | DELETE | `/api/media/{id}` | session | `media.manage` |
-| GET | `/api/notifications` | session | — |
-| POST | `/api/notifications/{id}/read` | session | — |
-| POST | `/api/notifications/read-all` | session | — |
+| GET | `/api/notifications` | session | - |
+| POST | `/api/notifications/{id}/read` | session | - |
+| POST | `/api/notifications/read-all` | session | - |
 
 Full per-endpoint documentation (request fields, validation rules, response
 examples) is generated from the route `->doc()` metadata:

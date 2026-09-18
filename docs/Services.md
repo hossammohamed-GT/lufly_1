@@ -23,7 +23,7 @@ Services are autowired through the container.
 
 ## Module services (`modules/*/Services/`)
 
-`ProductService`, `UserService`, `PermissionService` — orchestrate their
+`ProductService`, `UserService`, `PermissionService` - orchestrate their
 repositories + platform services, own slug generation, translation syncing,
 password hashing and activity logging.
 
@@ -32,7 +32,7 @@ password hashing and activity logging.
 1. A service receives dependencies through its constructor (DI).
 2. Services throw typed exceptions (`NotFoundException`, `UploadException`, …);
    the global handler converts them into translated responses.
-3. Services never read superglobals — `Request` data arrives as arguments.
+3. Services never read superglobals - `Request` data arrives as arguments.
 4. Cross-module access goes through the service, not another module's repository.
 
 ## Usage

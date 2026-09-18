@@ -12,62 +12,69 @@ class ProductSeeder extends Seeder
     {
         $dataFile = __DIR__ . '/data/products.json';
         if (!file_exists($dataFile)) {
-            $dataFile = '/home/vdta/Downloads/well-known/products.json';
-        }
-
-        if (!file_exists($dataFile)) {
             return;
         }
 
-        $items = json_decode((string) file_get_contents($dataFile), true);
+        $json = file_get_contents($dataFile);
+        $items = json_decode($json, true);
         if (!is_array($items)) {
             return;
         }
 
-        // Map category names to DB IDs
-        $categoryRows = $this->db->select('SELECT id, slug FROM categories');
+        $categories = $this->db->table('categories')->get();
         $catMap = [];
-        foreach ($categoryRows as $row) {
-            $catMap[$row['slug']] = (int) $row['id'];
+        foreach ($categories as $c) {
+            $catMap[$c['slug']] = $c['id'];
         }
 
-        $catSlugLookup = [
-            'Wall-Hung Toilets' => 'wall-hung-toilets',
-            'Luxury Bidets' => 'luxury-bidets',
-            'Designer Washbasins' => 'designer-washbasins',
-            'Vanity & Cabinets' => 'vanity-cabinets',
-            'Architectural Ceramics' => 'architectural-ceramics',
+        $skuToCategory = [
+            '1620' => $catMap['wall-hung-toilets'] ?? null,
+            '1650' => $catMap['luxury-bidets'] ?? null,
+            '1610' => $catMap['designer-washbasins'] ?? null,
+            '1660' => $catMap['vanity-cabinets'] ?? null,
+            '1685' => $catMap['designer-washbasins'] ?? null,
+            '1690' => $catMap['architectural-ceramics'] ?? null,
+            '1654' => $catMap['designer-washbasins'] ?? null,
+            '1623' => $catMap['wall-hung-toilets'] ?? null,
+            '1501' => $catMap['luxury-bidets'] ?? null,
+            '1502' => $catMap['luxury-bidets'] ?? null,
+            '1503' => $catMap['luxury-bidets'] ?? null,
+            '1651' => $catMap['designer-washbasins'] ?? null,
+            '1653' => $catMap['designer-washbasins'] ?? null,
+            '1659' => $catMap['designer-washbasins'] ?? null,
+            '4311' => $catMap['vanity-cabinets'] ?? null,
+            '9243' => $catMap['vanity-cabinets'] ?? null,
+            'DL-01' => $catMap['designer-washbasins'] ?? null,
+            'DL-05' => $catMap['vanity-cabinets'] ?? null,
+            'DL-08' => $catMap['designer-washbasins'] ?? null,
+            'PE-1' => $catMap['architectural-ceramics'] ?? null,
+            'PE-3' => $catMap['architectural-ceramics'] ?? null,
         ];
 
         $catI18n = [
             'Wall-Hung Toilets' => [
                 'en' => 'Wall-Hung Toilet',
                 'tr' => 'Asma Klozet',
-                'ar' => 'مرحاض معلق فاخر',
                 'cs' => 'Závěsné WC',
             ],
             'Luxury Bidets' => [
                 'en' => 'Luxury Bidet',
                 'tr' => 'Lüks Bide',
-                'ar' => 'بيديه وشطاف أوروبي',
                 'cs' => 'Luxusní bidet',
             ],
             'Designer Washbasins' => [
                 'en' => 'Designer Washbasin',
                 'tr' => 'Tasarım Lavabo',
-                'ar' => 'حوض مغسلة ديكوري',
                 'cs' => 'Designové umyvadlo',
             ],
             'Vanity & Cabinets' => [
                 'en' => 'Bathroom Vanity',
                 'tr' => 'Banyo Dolabı',
-                'ar' => 'خزانة حمام عصرية',
                 'cs' => 'Koupelnová skříňka',
             ],
             'Architectural Ceramics' => [
                 'en' => 'Architectural Ceramic',
                 'tr' => 'Mimari Seramik',
-                'ar' => 'سيراميك معماري فاخر',
                 'cs' => 'Architektonická keramika',
             ],
         ];
@@ -80,56 +87,71 @@ class ProductSeeder extends Seeder
                 $rawSku = 'LUFLY-' . ($item['id'] ?? uniqid());
             }
 
-            // Ensure SKU uniqueness
             if (isset($seenSkus[$rawSku])) {
-                $sku = $rawSku . '-' . ($item['id'] ?? uniqid());
-            } else {
-                $sku = $rawSku;
+                continue;
             }
-            $seenSkus[$sku] = true;
+            $seenSkus[$rawSku] = true;
 
-            $slug = 'lufly-' . strtolower(preg_replace('/[^a-zA-Z0-9]+/', '-', $rawSku)) . '-' . ($item['id'] ?? uniqid());
-            $catName = $item['category'] ?? 'Wall-Hung Toilets';
-            $catSlug = $catSlugLookup[$catName] ?? 'wall-hung-toilets';
-            $categoryId = $catMap[$catSlug] ?? ($catMap['wall-hung-toilets'] ?? null);
+            $image = $item['image'] ?? null;
+            if ($image) {
+                $image = '/' . ltrim((string) $image, '/');
+            }
 
-            $image = $item['image'] ?? '/images/products/prod_146_1620-111-a.jpg';
-            $specs = $item['specs'] ?? [
-                'material' => 'Vitreous China / Premium Ceramic',
-                'origin' => 'Manufactured in Turkey / European Standards',
-                'finish' => 'Glossy Hygienic Glaze',
-                'warranty' => '10 Years Factory Guarantee',
-            ];
+            $catId = null;
+            $matchedCatName = null;
+            foreach ($skuToCategory as $prefix => $targetCatId) {
+                if (str_starts_with($rawSku, $prefix)) {
+                    $catId = $targetCatId;
+                    break;
+                }
+            }
 
-            $price = (float) ($item['price'] ?? 0.0);
+            if (!$catId) {
+                $catId = $catMap['wall-hung-toilets'] ?? 1;
+            }
 
-            // Check if already seeded
-            $existing = $this->db->table('products')->where('sku', $sku)->first();
+            foreach ($categories as $c) {
+                if ($c['id'] == $catId) {
+                    $matchedCatName = $c['slug'];
+                    break;
+                }
+            }
+
+            $baseSlug = 'lufly-' . strtolower(preg_replace('/[^A-Za-z0-9-]+/', '-', $rawSku));
+            $baseSlug = trim($baseSlug, '-');
+
+            $existing = $this->db->table('products')->where('sku', $rawSku)->first();
             if ($existing) {
                 $productId = (int) $existing['id'];
             } else {
                 $productId = (int) $this->db->insert('products', [
-                    'category_id' => $categoryId,
-                    'sku' => $sku,
-                    'slug' => $slug,
-                    'price' => $price,
+                    'category_id' => $catId,
+                    'sku' => $rawSku,
+                    'slug' => $baseSlug,
                     'image' => $image,
-                    'specs' => json_encode($specs, JSON_UNESCAPED_UNICODE),
+                    'price' => 0.00,
                     'status' => 'active',
-                    'seo' => json_encode([
-                        'title' => 'LUFLY ' . ($catI18n[$catName]['en'] ?? 'Sanitary') . ' ' . $sku,
-                        'description' => 'Official European export model LUFLY ' . $sku . '. Vitreous china sanitary ware.',
+                    'specs' => json_encode([
+                        'material' => 'Vitreous China / Premium Ceramic',
+                        'warranty' => '10 Years Factory Guarantee',
+                        'standards' => 'EN 997 / CE Standard Certified',
+                        'origin' => 'Gaziantep, Turkey',
                     ], JSON_UNESCAPED_UNICODE),
                     'created_at' => date('Y-m-d H:i:s'),
                     'updated_at' => date('Y-m-d H:i:s'),
                 ]);
             }
 
-            // Build translations for en, tr, ar, cs
-            $i18n = $catI18n[$catName] ?? [
+            $catNameReadable = 'Sanitary Ware';
+            if ($matchedCatName === 'wall-hung-toilets') $catNameReadable = 'Wall-Hung Toilets';
+            elseif ($matchedCatName === 'luxury-bidets') $catNameReadable = 'Luxury Bidets';
+            elseif ($matchedCatName === 'designer-washbasins') $catNameReadable = 'Designer Washbasins';
+            elseif ($matchedCatName === 'vanity-cabinets') $catNameReadable = 'Vanity & Cabinets';
+            elseif ($matchedCatName === 'architectural-ceramics') $catNameReadable = 'Architectural Ceramics';
+
+            $i18n = $catI18n[$catNameReadable] ?? [
                 'en' => 'Sanitary Ware',
                 'tr' => 'Sıhhi Tesisat',
-                'ar' => 'خزف صحي',
                 'cs' => 'Sanitární keramika',
             ];
 
@@ -143,11 +165,6 @@ class ProductSeeder extends Seeder
                     'name' => 'LUFLY ' . $i18n['tr'] . ' ' . $rawSku,
                     'short_description' => 'Yüksek kaliteli hijyenik sırlı ' . mb_strtolower($i18n['tr']) . ' (Kod: ' . $rawSku . '). 10 yıl fabrika garantili.',
                     'description' => 'LUFLY ' . $i18n['tr'] . ' serisi (Kod: ' . $rawSku . '). Gaziantep üretim tesislerimizde Avrupa EN-997 ve CE standartlarına uygun olarak üretilmiştir.',
-                ],
-                'ar' => [
-                    'name' => 'لوفلي ' . $i18n['ar'] . ' (كود: ' . $rawSku . ')',
-                    'short_description' => 'خزف صحي تركي فاخر فائق الجودة مطابق للمواصفات القياسية الأوروبية مع ضمان مصنعي لمدة 10 سنوات.',
-                    'description' => 'مواصفات تصدير معتمدة لـ ' . $i18n['ar'] . ' من لوفلي (كود المنتج: ' . $rawSku . '). مصنع من السيراميك الزجاجي Vitreous China بأعلى معايير المتانة مع طلاء فائق النعومة ومضاد للبكتيريا.',
                 ],
                 'cs' => [
                     'name' => 'LUFLY ' . $i18n['cs'] . ' ' . $rawSku,

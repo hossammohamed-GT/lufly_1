@@ -3,7 +3,7 @@
 :root { --mnav-rail-w: 0px; }
 
 /* ==========================================================================
-   LUFLY — Component: navbar ("Machined Glass")
+   LUFLY - Component: navbar ("Machined Glass")
    --------------------------------------------------------------------------
    One glass slab plus a machined side spine:
      slab    brand · instant search · utility actions  (a single row, always
@@ -18,7 +18,7 @@
    Rules of the house:
      * every colour resolves through a token from design-system/style.css
      * only transform / opacity / clip-path / background are animated
-     * no layout thrash on scroll — the slab keeps a fixed height, the spine is
+     * no layout thrash on scroll - the slab keeps a fixed height, the spine is
        fixed to the viewport and content is offset from it once, on load
    ========================================================================== */
 
@@ -53,7 +53,7 @@
 
 .mnav.is-scrolled .mnav-slab { background: var(--ds-nav-glass-dense); }
 
-/* brushed-metal grain, drawn with gradients — zero image bytes */
+/* brushed-metal grain, drawn with gradients - zero image bytes */
 .mnav-grain {
   position: absolute;
   inset: 0;
@@ -95,7 +95,7 @@
 
 .mnav.is-scrolled .mnav-slab::after { opacity: 1; }
 
-/* ---------- 2. row 1 — brand · search · actions ---------- */
+/* ---------- 2. row 1 - brand · search · actions ---------- */
 
 .mnav-top {
   position: relative;
@@ -187,7 +187,7 @@
 
 .mnav-input::placeholder { color: var(--ds-text-muted); }
 
-/* Safari keeps a native clear affordance on search inputs — drop it */
+/* Safari keeps a native clear affordance on search inputs - drop it */
 .mnav-input::-webkit-search-decoration,
 .mnav-input::-webkit-search-cancel-button { -webkit-appearance: none; }
 
@@ -364,7 +364,7 @@
   opacity: .5;
 }
 
-/* ---------- 4. row 1 — utility actions ---------- */
+/* ---------- 4. row 1 - utility actions ---------- */
 
 .mnav-actions {
   display: flex;
@@ -402,7 +402,7 @@
 
 .mnav-search-open { display: none; }
 
-/* theme morph — sun and moon rotate through each other */
+/* theme morph - sun and moon rotate through each other */
 .mnav-theme-icons {
   position: relative;
   display: block;
@@ -424,7 +424,7 @@
 [data-theme="dark"] .mnav-sun { opacity: 1; transform: none; }
 [data-theme="dark"] .mnav-moon { opacity: 0; transform: rotate(70deg) scale(0.55); }
 
-/* language selector — machined reticle */
+/* language selector - machined reticle */
 .mnav-lang { position: relative; }
 
 .mnav-lang-btn {
@@ -647,7 +647,7 @@
 
 .mnav-rail-inner::-webkit-scrollbar { display: none; }
 
-/* crooked machined line — hover target that unfolds the index drawer */
+/* crooked machined line - hover target that unfolds the index drawer */
 .mnav-mark {
   position: relative;
   display: flex;
@@ -687,7 +687,7 @@
 .mnav-mark:hover .mnav-mark-label,
 .mnav.is-drawer-open .mnav-mark-label { color: var(--ds-primary); }
 
-/* only part of the line is visible — the rest is clipped and faded out */
+/* only part of the line is visible - the rest is clipped and faded out */
 .mnav-mark-draw {
   display: block;
   inline-size: var(--mnav-mark-thick);
@@ -951,7 +951,7 @@
   color: var(--ds-primary);
 }
 
-/* scroll progress — a single composited transform, read down the spine */
+/* scroll progress - a single composited transform, read down the spine */
 .mnav-progress {
   position: absolute;
   inset-block: 0;

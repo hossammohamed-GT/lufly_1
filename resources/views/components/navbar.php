@@ -24,7 +24,7 @@ $currentUrl = (string) request()->url();
 $currentPath = rtrim((string) parse_url($currentUrl, PHP_URL_PATH), '/');
 $currentQuery = (string) (parse_url($currentUrl, PHP_URL_QUERY) ?? '');
 
-/* A link counts as current when its path matches — and, for catalogue links that
+/* A link counts as current when its path matches - and, for catalogue links that
    differ only by query string, when the query matches too. */
 $isActive = static function (string $target) use ($currentPath, $currentQuery): bool {
     $parts = parse_url($target) ?: [];
