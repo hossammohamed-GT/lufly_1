@@ -33,41 +33,24 @@ body.ready {
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  background-color: var(--ld-bg);
-  background-image:
-    radial-gradient(90vw 70vh at 50% 38%, color-mix(in srgb, var(--lu-teal-800) 45%, transparent), transparent 70%),
-    color-mix(in srgb, var(--lu-ink-900) 85%, transparent);
-  -webkit-backdrop-filter: blur(18px) saturate(1.15);
-  backdrop-filter: blur(18px) saturate(1.15);
-  transition: transform .95s cubic-bezier(.76, 0, .24, 1), opacity .5s ease, visibility 0s linear .96s;
+  background: transparent;
+  background-color: transparent;
+  backdrop-filter: blur(6px);
+  -webkit-backdrop-filter: blur(6px);
+  transition: transform .85s cubic-bezier(.76, 0, .24, 1), opacity .45s ease, visibility 0s linear .86s;
   will-change: transform, opacity;
 }
 
-/* Initial load factory background image */
-.ld-loader.is-initial::before {
-  content: "";
-  position: absolute;
-  inset: 0;
-  background:
-    linear-gradient(180deg, color-mix(in srgb, var(--lu-ink-900) 75%, transparent) 0%, color-mix(in srgb, var(--lu-ink-900) 88%, transparent) 100%),
-    url('/images/lifestyle/factory-craft.jpg') center center / cover no-repeat;
-  opacity: .48;
-  filter: contrast(1.1) brightness(0.9);
-  pointer-events: none;
-  z-index: 1;
-  transition: opacity .8s ease;
+.ld-loader.is-initial::before,
+.ld-loader.is-nav::before,
+.ld-loader::before {
+  display: none !important;
+  content: none;
 }
 
-/* In subsequent page navigations / AJAX actions: transparent backdrop showing previous content */
 .ld-loader.is-nav {
-  background-color: color-mix(in srgb, var(--lu-ink-900) 62%, transparent);
-  background-image: radial-gradient(90vw 70vh at 50% 38%, color-mix(in srgb, var(--lu-teal-500) 22%, transparent), transparent 70%);
-  -webkit-backdrop-filter: blur(12px) saturate(1.1);
-  backdrop-filter: blur(12px) saturate(1.1);
-}
-
-.ld-loader.is-nav::before {
-  display: none;
+  background: transparent;
+  background-color: transparent;
 }
 
 .ld-loader.exit {
@@ -88,15 +71,7 @@ body.ready {
 }
 
 /* faint ambient blobs */
-.ld-blob {
-  position: absolute;
-  border-radius: var(--radius-full);
-  filter: blur(80px);
-  opacity: .14;
-  pointer-events: none;
-  mix-blend-mode: screen;
-  z-index: 2;
-}
+.ld-blob { display: none !important; }
 
 .ld-blob.a {
   width: 340px;
@@ -121,13 +96,7 @@ body.ready {
   50% { transform: translate(36px, 26px) scale(1.1); }
 }
 
-.ld-vignette {
-  position: absolute;
-  inset: 0;
-  pointer-events: none;
-  background: radial-gradient(120% 100% at 50% 45%, transparent 55%, color-mix(in srgb, var(--lu-ink-900) 75%, transparent));
-  z-index: 2;
-}
+.ld-vignette { display: none !important; }
 
 /* ---------------- brand kicker ---------------- */
 
@@ -194,8 +163,9 @@ body.ready {
 }
 
 .ld-logoBox.filling .ld-draw {
-  opacity: .28;
-  filter: drop-shadow(0 0 4px color-mix(in srgb, var(--lu-mint) 30%, transparent));
+  opacity: 0;
+  visibility: hidden;
+  display: none;
 }
 
 /* water — masked to the glyph shapes */
