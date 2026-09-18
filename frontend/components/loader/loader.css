@@ -344,8 +344,8 @@ body.ready {
   font-weight: var(--weight-semibold);
   letter-spacing: .18em;
   text-transform: uppercase;
-  color: #ffffff;
-  text-shadow: 0 2px 8px rgba(0, 0, 0, 0.75), 0 0 16px rgba(95, 212, 212, 0.4);
+  color: var(--lu-ink-100);
+  text-shadow: 0 2px 8px rgba(0, 0, 0, 0.45), 0 0 16px rgba(95, 212, 212, 0.28);
   text-align: center;
   transition: opacity .22s ease, transform .22s ease, color .25s ease;
 }

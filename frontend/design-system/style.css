@@ -22,13 +22,14 @@
   --lu-deep-teal: #143f43;
   --lu-mint: #7fe2d0;
 
-  /* Ink ramp — dark mode surfaces */
-  --lu-ink-900: #0a1414;
-  --lu-ink-800: #101e1d;
-  --lu-ink-700: #162928;
-  --lu-ink-600: #2d4843;
-  --lu-ink-500: #9cb5ae;
-  --lu-ink-100: #eff7f3;
+  /* Ink ramp — dark mode surfaces (soft sage-charcoal, low-glare) */
+  --lu-ink-950: #0c1211;
+  --lu-ink-900: #1e2825;
+  --lu-ink-800: #26302d;
+  --lu-ink-700: #2e3935;
+  --lu-ink-600: #45564e;
+  --lu-ink-500: #a6bbb3;
+  --lu-ink-100: #e4ede8;
 
   /* Neutral ramp */
   --lu-neutral-0: #ffffff;
@@ -126,14 +127,14 @@
 
   --ds-primary: var(--lu-teal-500);
   --ds-primary-hover: var(--lu-mint);
-  --ds-primary-text: var(--lu-ink-900);
+  --ds-primary-text: var(--lu-ink-950);
   --ds-primary-soft: color-mix(in srgb, var(--lu-teal-500) 20%, transparent);
   --ds-primary-tint: color-mix(in srgb, var(--lu-mint) 5%, transparent);
   --ds-primary-glow: color-mix(in srgb, var(--lu-teal-500) 32%, transparent);
   --ds-primary-line: color-mix(in srgb, var(--lu-mint) 32%, transparent);
 
   --ds-secondary: var(--lu-mint);
-  --ds-secondary-text: var(--lu-ink-900);
+  --ds-secondary-text: var(--lu-ink-950);
 
   --ds-success: var(--lu-success-dark);
   --ds-success-hover: color-mix(in srgb, var(--lu-success-dark) 82%, var(--lu-ink-900));

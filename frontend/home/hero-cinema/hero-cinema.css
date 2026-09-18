@@ -11,7 +11,7 @@
 .lfc {
   --lfc-teal: var(--ds-primary);
   --lfc-teal-hi: #5fd4d4;
-  --lfc-ink: #eef7f7;
+  --lfc-ink: #e8f0ec;
   --lfc-ease: cubic-bezier(.19, 1, .22, 1);
   --lfc-dur: 6500ms;
 
@@ -20,7 +20,7 @@
   height: 100svh;
   min-height: 480px;
   overflow: hidden;
-  background: #04090a;
+  background: var(--lu-ink-900);
   color: var(--lfc-ink);
   font-family: var(--font-body, "Segoe UI", system-ui, sans-serif);
   isolation: isolate;
