@@ -80,9 +80,9 @@ try {
 <?php if ($translator !== null): ?>
 <?= $view->renderFile($view->resolvePath('components.footer'), []) ?>
 <?php endif; ?>
-<script src="<?= e(asset('frontend/js/app.js')) ?>"></script>
+<script defer src="<?= e(asset('frontend/js/app.js')) ?>"></script>
 <?php foreach ($scripts as $script): ?>
-<script src="<?= e(asset($script)) ?>"></script>
+<script defer src="<?= e(asset($script)) ?>"></script>
 <?php endforeach; ?>
 </body>
 </html>

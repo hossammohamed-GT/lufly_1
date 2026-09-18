@@ -1,6 +1,20 @@
 /* App shell: ambient stage + mega footer. Header, navigation and search
    live in frontend/components/navbar/navbar.css. */
 
+/* ---------- Performance & Rendering Directives ---------- */
+
+.trust-bar,
+.finishes-section,
+.categories-section,
+.inspiration-section,
+.rituals-section,
+.masterpieces-section,
+.corporate-section,
+.lufly-mega-footer {
+  content-visibility: auto;
+  contain-intrinsic-size: auto 500px;
+}
+
 /* ---------- Ambient stage ---------- */
 
 .aquatic-stage {
@@ -10,8 +24,6 @@
     radial-gradient(ellipse 60% 40% at 10% 30%, var(--ds-primary-tint) 0%, transparent 50%),
     var(--ds-bg);
 }
-
-/* ---------- Header ---------- */
 
 /* ---------- Footer ---------- */
 

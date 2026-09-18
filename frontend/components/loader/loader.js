@@ -1,10 +1,8 @@
 /* ============================================================
-   LUFLY — Preloader & Global Loading Controller
+   LUFLY — Preloader & Global Loading Controller (Optimized Edition)
    Timeline: SVG stroke draw → water fills glyphs (real progress %)
-   + bubbly waves + factory stage messages → seal flash → completion
-   message (with apology / patience note) → curtain exit.
+   + snappy fluid motion + craftsman stage messages → seal flash → completion.
    Global API: window.LUFLYLoader.show(msg), update(pct, msg), hide()
-   Automatically integrates with full page load, links, forms and fetch/XHR.
    ============================================================ */
 
 (function () {
@@ -59,30 +57,26 @@
   var msg      = document.getElementById('ldMsg');
   var tag      = document.getElementById('ldTag');
 
-  if (!loader) {
-    return;
-  }
+  if (!loader) return;
 
   var reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-  var T_DRAW   = reduced ? 150 : 1200;
-  var T_HOLD   = reduced ? 250 : 650;
-  var T_SEAL   = reduced ? 0   : 480;
+  var T_DRAW   = reduced ? 80 : 350;
+  var T_HOLD   = reduced ? 100 : 200;
+  var T_SEAL   = reduced ? 0 : 180;
 
-  if (reduced) {
-    loader.classList.add('ld-reduced');
-  }
+  if (reduced) loader.classList.add('ld-reduced');
 
   /* ---- Bubbles ---- */
   if (!reduced && water && !water.querySelector('.bubble')) {
-    for (var i = 0; i < 7; i++) {
+    for (var i = 0; i < 5; i++) {
       var b = document.createElement('span');
-      var s = 3 + Math.random() * 5;
+      var s = 3 + Math.random() * 4;
       b.className = 'bubble';
       b.style.width = s + 'px';
       b.style.height = s + 'px';
-      b.style.left = (8 + Math.random() * 84) + '%';
-      b.style.animationDuration = (1.2 + Math.random() * 1.8) + 's';
-      b.style.animationDelay = (Math.random() * 2.4) + 's';
+      b.style.left = (10 + Math.random() * 80) + '%';
+      b.style.animationDuration = (1.1 + Math.random() * 1.4) + 's';
+      b.style.animationDelay = (Math.random() * 1.5) + 's';
       water.appendChild(b);
     }
   }
@@ -96,13 +90,10 @@
     msg.classList.add('swap');
     setTimeout(function () {
       msg.textContent = text;
-      if (isFinal) {
-        msg.classList.add('final');
-      } else {
-        msg.classList.remove('final');
-      }
+      if (isFinal) msg.classList.add('final');
+      else msg.classList.remove('final');
       msg.classList.remove('swap');
-    }, 200);
+    }, 120);
   }
 
   function setStage(p) {
@@ -125,37 +116,31 @@
     setStage(val);
   }
 
-  /* ---- Progress simulation tracking real window load ---- */
   var pageLoaded = false;
   var currentP = 0;
   var animFrameId = null;
 
   function runInitialLoad(onDone) {
     var t0 = performance.now();
-    var duration = reduced ? 600 : 2000;
+    var duration = reduced ? 300 : 750;
     var lastProgress = 0;
 
     function frame(now) {
       var elapsed = (now - t0) / duration;
       if (elapsed > 1) elapsed = 1;
 
-      // Cubic ease-out for ultra smooth mechanical glide
       var ease = 1 - Math.pow(1 - elapsed, 3);
-      var target = pageLoaded ? ease * 100 : Math.min(88, ease * 100);
+      var target = pageLoaded ? ease * 100 : Math.min(90, ease * 100);
 
-      // Interpolate towards target smoothly
-      currentP += (target - currentP) * 0.18;
-      if (pageLoaded && elapsed >= 0.98) {
-        currentP = 100;
-      }
+      currentP += (target - currentP) * 0.25;
+      if (pageLoaded && elapsed >= 0.95) currentP = 100;
 
-      // Only update DOM if change is meaningful for maximum performance
-      if (Math.abs(currentP - lastProgress) > 0.25 || currentP >= 100) {
+      if (Math.abs(currentP - lastProgress) > 0.4 || currentP >= 100) {
         lastProgress = currentP;
         setProgress(currentP);
       }
 
-      if (currentP >= 99.8) {
+      if (currentP >= 99.5) {
         setProgress(100);
         if (typeof onDone === 'function') onDone();
         return;
@@ -194,7 +179,7 @@
 
     setTimeout(function () {
       loader.style.display = 'none';
-    }, 1000);
+    }, 450);
   }
 
   function showLoader(customMsg, isNavigation) {
@@ -225,12 +210,12 @@
       customMessageActive = false;
     }
 
-    setProgress(15);
+    setProgress(20);
     var t0 = performance.now();
     function step(now) {
-      var progress = Math.min(92, 15 + (now - t0) * 0.05);
+      var progress = Math.min(94, 20 + (now - t0) * 0.12);
       setProgress(progress);
-      if (!isExited && progress < 92) {
+      if (!isExited && progress < 94) {
         animFrameId = requestAnimationFrame(step);
       }
     }
@@ -275,14 +260,13 @@
     startInitialSequence();
   }
 
-  /* ---- Auto-wire: link clicks that navigate to real internal pages ---- */
+  /* ---- Auto-wire: link clicks ---- */
   document.addEventListener('click', function (e) {
     var link = e.target.closest('a');
     if (!link) return;
     var href = link.getAttribute('href');
     if (!href) return;
 
-    // Ignore anchors, JS triggers, mailto, tel, whatsapp, download, external
     if (href.startsWith('#') || href.startsWith('javascript:') || href.startsWith('mailto:') ||
         href.startsWith('tel:') || href.startsWith('https://wa.me') || link.target === '_blank' ||
         link.hasAttribute('download') || e.defaultPrevented || e.metaKey || e.ctrlKey || e.shiftKey) {
@@ -296,28 +280,22 @@
       return;
     }
 
-    if (targetUrl.origin !== window.location.origin) {
-      return;
-    }
+    if (targetUrl.origin !== window.location.origin) return;
+    if (targetUrl.pathname === window.location.pathname && targetUrl.search === window.location.search) return;
 
-    if (targetUrl.pathname === window.location.pathname && targetUrl.search === window.location.search) {
-      return;
-    }
-
-    // Show transparent preloader for the next page transition
-    var navMsg = locale === 'ar' ? 'جاري تجهيز الصفحة المطلوبة' :
+    var navMsg = locale === 'ar' ? 'جاري تجهيز الصفحة' :
                  locale === 'tr' ? 'Sayfa hazırlanıyor' :
-                 locale === 'cs' ? 'Připravujeme stránku' : 'Preparing the page';
+                 locale === 'cs' ? 'Připravujeme stránku' : 'Loading page';
     showLoader(navMsg, true);
-  });
+  }, { passive: true });
 
   /* ---- Auto-wire: form submissions ---- */
   document.addEventListener('submit', function (e) {
     var form = e.target;
     if (!form || form.target === '_blank' || e.defaultPrevented) return;
-    var submitMsg = locale === 'ar' ? 'جاري معالجة طلبكم والتحقق' :
+    var submitMsg = locale === 'ar' ? 'جاري التحقق والارسال' :
                     locale === 'tr' ? 'İşleminiz gerçekleştiriliyor' :
-                    locale === 'cs' ? 'Zpracováváme váš požadavek' : 'Processing your request';
+                    locale === 'cs' ? 'Zpracováváme požadavek' : 'Processing request';
     showLoader(submitMsg, true);
-  });
+  }, { passive: true });
 })();
