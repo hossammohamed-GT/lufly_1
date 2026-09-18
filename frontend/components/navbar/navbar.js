@@ -253,7 +253,12 @@
   /* ---------- 4. bloom sheet (phones) ---------- */
 
   if (sheetTrigger) {
-    sheetTrigger.addEventListener('click', function () {
+    sheetTrigger.addEventListener('click', function (event) {
+      event.preventDefault();
+      event.stopPropagation();
+      if (typeof closeIndex === 'function') closeIndex();
+      if (typeof closeSearch === 'function') closeSearch();
+      closeLang();
       setSheet(!header.classList.contains('is-sheet-open'));
     });
   }
@@ -436,8 +441,9 @@
       event.preventDefault();
       event.stopPropagation();
       var currentlyOpen = langMenu && langMenu.classList.contains('is-open');
-      closeIndex();
-      closeSearch();
+      if (typeof closeIndex === 'function') closeIndex();
+      if (typeof closeSearch === 'function') closeSearch();
+      if (header.classList.contains('is-sheet-open')) setSheet(false);
       setLang(!currentlyOpen);
     });
   }
