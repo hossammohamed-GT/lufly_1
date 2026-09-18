@@ -15,6 +15,19 @@ $navbar = $translator !== null
 
 $styles = $view->styles();
 $scripts = $view->scripts();
+$preloads = $view->preloads();
+
+/* Third-party origins get a preconnect instead of a blocking request. */
+$externalOrigins = [];
+
+foreach ($styles as $style) {
+    $scheme = parse_url($style, PHP_URL_SCHEME);
+    $host = parse_url($style, PHP_URL_HOST);
+
+    if (is_string($scheme) && $scheme !== '' && is_string($host) && $host !== '') {
+        $externalOrigins[$scheme . '://' . $host] = true;
+    }
+}
 ?>
 <!DOCTYPE html>
 <html lang="<?= e($locale) ?>" dir="<?= e($direction) ?>" data-theme="light" data-base="<?= e($basePath) ?>">
@@ -34,13 +47,25 @@ try {
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap">
+<?php foreach (array_keys($externalOrigins) as $origin): ?>
+<link rel="preconnect" href="<?= e($origin) ?>" crossorigin>
+<?php endforeach; ?>
+<?php foreach ($preloads as $preload): ?>
+<link rel="preload" href="<?= e($preload['href']) ?>"<?php foreach ($preload['attributes'] as $name => $value): ?> <?= e($name) ?>="<?= e($value) ?>"<?php endforeach; ?>>
+<?php endforeach; ?>
 <link rel="stylesheet" href="<?= e(asset('frontend/design-system/style.css')) ?>">
 <link rel="stylesheet" href="<?= e(asset('frontend/css/app.css')) ?>">
 <?php foreach ($styles as $style): ?>
+<?php if (preg_match('#^https?://#i', $style) === 1): ?>
+<?php /* Third-party CSS never blocks the first paint; the noscript link keeps it available without JS. */ ?>
+<link rel="stylesheet" href="<?= e($style) ?>" media="print" onload="this.media='all'" crossorigin="anonymous" referrerpolicy="no-referrer">
+<noscript><link rel="stylesheet" href="<?= e($style) ?>" crossorigin="anonymous" referrerpolicy="no-referrer"></noscript>
+<?php else: ?>
 <link rel="stylesheet" href="<?= e(asset($style)) ?>">
+<?php endif; ?>
 <?php endforeach; ?>
 </head>
-<body class="ds-app aquatic-stage">
+<body class="ds-app aquatic-stage<?= $navbar !== '' ? ' has-nav-rail' : '' ?>">
 <a class="skip-link" href="#main"><?= e(trans('common.skip_to_content')) ?></a>
 <?= $navbar ?>
 <main class="ds-main" id="main">

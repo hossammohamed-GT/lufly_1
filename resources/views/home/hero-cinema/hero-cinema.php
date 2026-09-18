@@ -6,9 +6,29 @@
  * the heavy video hero (~530 KB of images vs ~12 MB of MP4s).
  * Slide 1 is the brand panel (masked logo reveal + travelling shine).
  * Trans keys: home.cinema1_* … cinema5_* (en / tr / cs).
+ *
+ * Icons come from Font Awesome, declared here so only pages with the hero pay
+ * for it; the layout loads third-party CSS without blocking the first paint and
+ * hero-cinema.css paints CSS chevrons for the arrows until the webfont lands.
  */
 $view->pushStyle('frontend/home/hero-cinema/hero-cinema.css');
 $view->pushScript('frontend/home/hero-cinema/hero-cinema.js');
+$view->pushStyle('https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css');
+
+/* The first slide is the largest paint: start both variants early and let the
+   preload media attribute drop the one the device does not need. */
+$view->pushPreload(asset('images/lifestyle/heroc-1.webp'), [
+    'as' => 'image',
+    'type' => 'image/webp',
+    'media' => '(min-width: 761px)',
+    'fetchpriority' => 'high',
+]);
+$view->pushPreload(asset('images/lifestyle/heroc-1-m.webp'), [
+    'as' => 'image',
+    'type' => 'image/webp',
+    'media' => '(max-width: 760px)',
+    'fetchpriority' => 'high',
+]);
 
 $logoUrl = asset('images/lifestyle/hero-logo.png');
 

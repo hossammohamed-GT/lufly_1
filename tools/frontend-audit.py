@@ -47,6 +47,10 @@ for root in ('resources', 'modules', 'frontend/js'):
                 for m in re.finditer(r'class="([^"<>]*)"', src):
                     for token in m.group(1).split():
                         if re.match(r'^[a-z][\w-]*$', token):
+                            # fa-* comes from the Font Awesome stylesheet that the
+                            # hero component declares (loaded async, see docs).
+                            if token.startswith('fa-'):
+                                continue
                             used.setdefault(token, set()).add(os.path.basename(path))
 print(f'3. classes without css: {sorted((c, sorted(v)) for c, v in used.items() if c not in defined)}')
 

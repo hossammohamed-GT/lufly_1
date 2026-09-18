@@ -15,7 +15,7 @@ frontend/
 ├── js/
 │   └── app.js                 bootstrap: theme + modal plumbing
 ├── components/                shared chrome, one folder per block
-│   └── navbar/                navbar.css + navbar.js ("Machined Glass" header)
+│   └── navbar/                navbar.css + navbar.js ("Machined Glass" header + side spine)
 ├── home/                      one folder per home section
 │   ├── hero-cinema/           hero-cinema.css + hero-cinema.js
 │   ├── trust-bar/             trust-bar.css
@@ -92,6 +92,28 @@ be included twice safely.
   admin panel keeps working. Header behaviour — scroll state, index drawer, bloom sheet,
   search overlay, instant search and the language menu — lives in
   `frontend/components/navbar/navbar.js` and loads with its component.
+
+### Third-party assets
+
+Component CSS is local, but a component may also push an absolute URL when a
+third-party stylesheet is genuinely needed (the hero pulls Font Awesome for its icons).
+The layout then:
+
+* emits a `<link rel="preconnect">` for the origin,
+* loads the stylesheet **without blocking the first paint**
+  (`media="print" onload="this.media='all'"`) with a `<noscript>` fallback,
+* and never routes it through `asset()`.
+
+Icons must therefore survive a slow or unreachable CDN. The hero arrow controls paint their
+glyphs as CSS chevrons and hand over to the webfont only when it is really available
+(`.fa-ready`, set by `hero-cinema.js` after checking the stylesheet *and*
+`document.fonts.check`). Decorative glyphs reserve `1em` so nothing shifts when the font
+lands.
+
+`View::pushPreload($href, $attributes)` lets a component start a critical fetch before the
+markup is parsed; the hero preloads the first slide in both breakpoint variants with
+`fetchpriority="high"` and lets the `media` attribute drop the one the device does not
+need.
 * **Scripts never write colors.** Generated markup uses CSS classes from the component
   or `app.css` instead of inline styles.
 * All client-side URLs are built from `document.documentElement.dataset.base`, which the
@@ -128,9 +150,9 @@ Re-runnable gate: `python3 tools/frontend-audit.py` (from the project root).
 | `asset('…')` targets missing on disk | 0 |
 | Stale references to removed paths | 0 outside `docs/adr/` (decision records keep their original wording) |
 
-Sizes: `style.css` 1 065 lines, 15 component stylesheets, 3 883 CSS lines in total;
-`app.js` 105 lines, `components/navbar/navbar.css` 1 406 lines,
-`components/navbar/navbar.js` 555 lines.
+Sizes: `style.css` 1 065 lines, 15 component stylesheets, ~3 900 CSS lines in total;
+`app.js` 105 lines, `components/navbar/navbar.css` ~1 410 lines,
+`components/navbar/navbar.js` ~570 lines.
 
 Remaining raw numeric values in component files are component geometry (widths, heights,
 grid templates, transforms, z-index, expressive transition durations) plus the fluid
@@ -141,10 +163,15 @@ display clamps behind `--text-display-*`. They are intentional and reviewed.
 The marquee header was replaced by the "Machined Glass" navbar:
 
 * `resources/views/components/navbar.php` + `frontend/components/navbar/` own the whole
-  header: glass slab, instant search, utility actions, the crooked blueprint rail, the
+  header: glass slab, instant search, utility actions, the machined **side spine**, the
   index drawer that unfolds on hover and the phone bloom sheet.
-* Row heights are fixed (`--mnav-row1`, `--mnav-row2`), so scrolling only repaints tint,
-  shadow and the progress line — the page never reflows while scrolling.
+* The bar is a **single fixed-height row** (`--mnav-row1`). Everything that used to be a
+  second row now lives in the spine: a vertical rail fixed to the inline-start edge with
+  the crooked machined line, the quick links read downwards, a knurled foot and the
+  scroll progress line. The drawer unfolds out of the spine, starting under the sticky
+  bar. Below 1024px the spine is replaced by the bloom button + bottom sheet.
+* The app shell offsets content by `--mnav-rail-w` (declared by the component on `:root`)
+  once, on load, so nothing reflows while scrolling.
 * New tokens live in section 25 of `style.css` (`--ds-nav-*`, light + dark).
 * Removed with it: the legacy monolithic stylesheet in `design-system/` (53 KB of
   duplicated raw-color CSS that no view referenced) and the stale duplicate of it that

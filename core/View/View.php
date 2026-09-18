@@ -19,7 +19,7 @@ class View
     private array $shared = [];
 
     /** @var array<string, list<string>> */
-    private array $assets = ['styles' => [], 'scripts' => []];
+    private array $assets = ['styles' => [], 'scripts' => [], 'preloads' => []];
 
     public function __construct(
         private readonly Application $app,
@@ -136,6 +136,30 @@ class View
     public function scripts(): array
     {
         return $this->assets['scripts'];
+    }
+
+    /**
+     * Ask the browser to fetch a critical asset before it is discovered in the
+     * markup (hero imagery, fonts). Attributes are emitted verbatim, so they
+     * stay limited to values the layout can trust.
+     *
+     * @param array<string, string> $attributes e.g. ['as' => 'image', 'type' => 'image/webp']
+     */
+    public function pushPreload(string $href, array $attributes = ['as' => 'image']): void
+    {
+        foreach ($this->assets['preloads'] as $preload) {
+            if ($preload['href'] === $href) {
+                return;
+            }
+        }
+
+        $this->assets['preloads'][] = ['href' => $href, 'attributes' => $attributes];
+    }
+
+    /** @return list<array{href: string, attributes: array<string, string>}> */
+    public function preloads(): array
+    {
+        return $this->assets['preloads'];
     }
 
     private function pushAsset(string $type, string $path): void

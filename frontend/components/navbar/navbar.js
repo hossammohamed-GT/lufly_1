@@ -2,7 +2,8 @@
    LUFLY — Component: navbar controller
    --------------------------------------------------------------------------
    One small controller for the machined-glass header:
-     * scroll state + progress line, painted inside requestAnimationFrame
+     * scroll state + the progress line that reads down the side spine,
+       painted inside requestAnimationFrame
      * index drawer with hover intent (desktop), click, Escape and focus restore
      * bloom sheet on phones: scroll lock, focus trap, swipe-down to close
      * search overlay for small screens
@@ -44,7 +45,7 @@
 
     var max = root.scrollHeight - window.innerHeight;
     var ratio = max > 0 ? Math.min(1, Math.max(0, y / max)) : 0;
-    progress.style.transform = 'scaleX(' + ratio.toFixed(4) + ')';
+    progress.style.transform = 'scaleY(' + ratio.toFixed(4) + ')';
   }
 
   function queueScrollPaint() {

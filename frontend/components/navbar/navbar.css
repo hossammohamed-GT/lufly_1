@@ -1,25 +1,31 @@
+/* The one value the app shell needs from this component: how much room the side
+   spine takes, so page content can clear it without touching component classes. */
+:root { --mnav-rail-w: 62px; }
+
 /* ==========================================================================
    LUFLY — Component: navbar ("Machined Glass")
    --------------------------------------------------------------------------
-   Two machined rows inside one glass slab:
-     row 1  brand · instant search · utility actions
-     row 2  blueprint rail — crooked machined line (hover target) on the
-            inline-start edge, quick links, knurled meta strip, scroll progress
-   Approaching the crooked line unfolds the geometric index drawer.
-   Below 1024px the rail collapses into a small bloom button that opens a
+   One glass slab plus a machined side spine:
+     slab    brand · instant search · utility actions  (a single row, always
+             64px tall, so the bar never grows)
+     spine   a fixed vertical rail on the inline-start edge: the crooked
+             machined line (hover target), the quick links read downwards, a
+             knurled foot and the scroll progress. Approaching the line
+             unfolds the geometric index drawer out of the spine.
+   Below 1024px the spine gives way to a small bloom button that opens a
    chamfered bottom sheet whose petals unfold and whose links stagger in.
 
    Rules of the house:
      * every colour resolves through a token from design-system/style.css
      * only transform / opacity / clip-path / background are animated
-     * no layout thrash on scroll — the header never changes height
+     * no layout thrash on scroll — the slab keeps a fixed height, the spine is
+       fixed to the viewport and content is offset from it once, on load
    ========================================================================== */
 
 .mnav {
   --mnav-row1: 64px;
-  --mnav-row2: 46px;
-  --mnav-mark-w: 132px;
-  --mnav-mark-h: 26px;
+  --mnav-mark-len: 168px;
+  --mnav-mark-thick: 26px;
   --mnav-ink: var(--ds-text);
 
   position: sticky;
@@ -527,47 +533,72 @@
   transform: scale(1.35) rotate(0deg);
 }
 
-/* ---------- 6. row 2 — the blueprint rail ---------- */
+/* ---------- 6. the side spine (desktop) ----------
+   Row two does not stack under row one: it becomes a vertical machined spine
+   fixed to the inline-start edge, so the bar stays one row tall. */
 
 .mnav-rail {
-  position: relative;
-  border-top: var(--border-hairline) solid var(--ds-nav-hairline);
+  position: fixed;
+  inset-block: 0;
+  inset-inline-start: 0;
+  z-index: 5;
+  display: flex;
+  inline-size: var(--mnav-rail-w);
+  background: var(--ds-nav-glass);
+  backdrop-filter: var(--ds-nav-blur);
+  -webkit-backdrop-filter: var(--ds-nav-blur);
+  border-inline-end: var(--border-hairline) solid var(--ds-nav-hairline);
+  transition: background var(--ds-nav-base) var(--ds-nav-ease);
+}
+
+.mnav.is-scrolled .mnav-rail { background: var(--ds-nav-glass-dense); }
+
+/* brushed grain runs along the spine */
+.mnav-rail::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  opacity: 0.38;
+  background-image: repeating-linear-gradient(
+    90deg,
+    var(--ds-nav-groove) 0 1px,
+    transparent 1px 3px
+  );
 }
 
 .mnav-rail-inner {
   position: relative;
+  z-index: 1;
   display: flex;
+  flex-direction: column;
   align-items: center;
-  gap: var(--space-3);
-  min-height: var(--mnav-row2);
+  gap: var(--space-4);
+  inline-size: 100%;
+  padding-block: var(--space-4) var(--space-5);
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  scrollbar-width: none;
 }
+
+.mnav-rail-inner::-webkit-scrollbar { display: none; }
 
 /* crooked machined line — hover target that unfolds the index drawer */
 .mnav-mark {
   position: relative;
-  display: inline-flex;
+  display: flex;
+  flex-direction: column;
   align-items: center;
   gap: var(--space-3);
-  height: 34px;
-  padding-inline: var(--space-2) var(--space-4);
-  border: var(--border-hairline) solid transparent;
-  border-radius: var(--radius-xs);
+  inline-size: 100%;
+  padding-block: var(--space-2);
+  border: 0;
   background: none;
   color: var(--ds-text-muted);
   cursor: pointer;
   transition:
     color var(--ds-nav-base) var(--ds-nav-ease),
-    background var(--ds-nav-base) var(--ds-nav-ease),
-    border-color var(--ds-nav-base) var(--ds-nav-ease);
-}
-
-/* the line opens when the pointer merely approaches it */
-.mnav-mark::after {
-  content: "";
-  position: absolute;
-  inset-block: -6px;
-  inset-inline-start: -8px;
-  inset-inline-end: -2px;
+    background var(--ds-nav-base) var(--ds-nav-ease);
 }
 
 .mnav-mark:hover,
@@ -575,11 +606,11 @@
 .mnav.is-drawer-open .mnav-mark {
   color: var(--ds-text);
   background: var(--ds-primary-tint);
-  border-color: var(--ds-nav-hairline);
 }
 
 .mnav-mark-label {
   flex: none;
+  writing-mode: vertical-rl;
   color: var(--ds-nav-etch);
   font-family: var(--font-mono);
   font-size: var(--text-caption);
@@ -595,23 +626,19 @@
 /* only part of the line is visible — the rest is clipped and faded out */
 .mnav-mark-draw {
   display: block;
-  width: var(--mnav-mark-w);
-  height: var(--mnav-mark-h);
+  inline-size: var(--mnav-mark-thick);
+  block-size: var(--mnav-mark-len);
   overflow: hidden;
 }
 
 .mnav-mark-svg {
   display: block;
-  width: calc(var(--mnav-mark-w) + 36px);
-  height: var(--mnav-mark-h);
-  overflow: visible;
-  transform-origin: left center;
+  inline-size: 100%;
+  block-size: 100%;
   transition: transform var(--ds-nav-slow) var(--ds-nav-ease);
 }
 
-[dir="rtl"] .mnav-mark-svg { transform-origin: right center; }
-
-.mnav.is-drawer-open .mnav-mark-svg { transform: scaleX(1.09); }
+.mnav.is-drawer-open .mnav-mark-svg { transform: scaleY(1.06); }
 
 .mnav-mark-etch,
 .mnav-mark-trace {
@@ -649,78 +676,79 @@
 }
 
 .mnav-mark-ticks {
-  display: inline-flex;
-  align-items: flex-end;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
   gap: 3px;
-  height: 14px;
+  inline-size: 18px;
   flex: none;
 }
 
 .mnav-mark-ticks i {
-  width: 1px;
-  height: 14px;
+  inline-size: 18px;
+  block-size: 1px;
   background: var(--ds-nav-hairline);
-  transform: scaleY(0.43);
-  transform-origin: bottom center;
+  transform: scaleX(0.43);
+  transform-origin: left center;
   transition:
     transform var(--ds-nav-base) var(--ds-nav-ease),
     background var(--ds-nav-base) var(--ds-nav-ease);
 }
 
 .mnav-mark-ticks i:nth-child(2),
-.mnav-mark-ticks i:nth-child(4) { transform: scaleY(0.64); }
-.mnav-mark-ticks i:nth-child(3) { transform: scaleY(1); }
+.mnav-mark-ticks i:nth-child(4) { transform: scaleX(0.64); }
+.mnav-mark-ticks i:nth-child(3) { transform: scaleX(1); }
 
 .mnav-mark:hover .mnav-mark-ticks i,
 .mnav.is-drawer-open .mnav-mark-ticks i { background: var(--ds-nav-line); }
 
-/* quick links with a dimension underline */
+/* quick links read down the spine */
 .mnav-quick {
   display: flex;
+  flex-direction: column;
   align-items: center;
   gap: var(--space-1);
-  min-width: 0;
 }
 
 .mnav-quick-link {
   position: relative;
-  padding: var(--space-2) var(--space-3);
+  padding: var(--space-2);
   border-radius: var(--radius-xs);
   color: var(--ds-text);
-  font-size: var(--text-xs);
+  font-size: var(--text-caption);
   font-weight: var(--weight-semibold);
   letter-spacing: var(--tracking-wide);
   text-decoration: none;
   text-transform: uppercase;
   white-space: nowrap;
+  writing-mode: vertical-rl;
+  text-orientation: mixed;
   transition: color var(--ds-nav-fast) var(--ds-nav-ease);
 }
 
 .mnav-quick-link::before {
   content: "";
   position: absolute;
-  inset-inline: var(--space-3);
-  bottom: 3px;
-  height: var(--border-standard);
+  inset-block: var(--space-3);
+  inset-inline-end: 2px;
+  inline-size: var(--border-standard);
   background: var(--ds-nav-line);
-  transform: scaleX(0);
-  transform-origin: left center;
+  transform: scaleY(0);
+  transform-origin: top center;
   transition: transform var(--ds-nav-base) var(--ds-nav-ease);
 }
 
 .mnav-quick-link::after {
   content: "";
   position: absolute;
-  inset-inline-end: var(--space-3);
-  bottom: 3px;
-  width: var(--border-hairline);
-  height: 7px;
+  inset-block-end: var(--space-3);
+  inset-inline-end: 2px;
+  inline-size: 7px;
+  block-size: var(--border-hairline);
   background: var(--ds-nav-line);
   opacity: 0;
   transition: opacity var(--ds-nav-base) var(--ds-nav-ease);
 }
-
-[dir="rtl"] .mnav-quick-link::before { transform-origin: right center; }
 
 .mnav-quick-link:hover,
 .mnav-quick-link:focus-visible,
@@ -728,25 +756,27 @@
 
 .mnav-quick-link:hover::before,
 .mnav-quick-link:focus-visible::before,
-.mnav-quick-link.is-active::before { transform: scaleX(1); }
+.mnav-quick-link.is-active::before { transform: scaleY(1); }
 
 .mnav-quick-link:hover::after,
 .mnav-quick-link.is-active::after { opacity: 1; }
 
-/* knurled meta strip */
+/* knurled meta strip at the foot of the spine */
 .mnav-rail-meta {
   display: flex;
+  flex-direction: column;
   align-items: center;
   gap: var(--space-4);
-  margin-inline-start: auto;
+  margin-block-start: auto;
+  padding-block-start: var(--space-4);
 }
 
 .mnav-knurl {
-  width: 30px;
-  height: 12px;
-  border-inline: var(--border-hairline) solid var(--ds-nav-hairline);
+  inline-size: 12px;
+  block-size: 30px;
+  border-block: var(--border-hairline) solid var(--ds-nav-hairline);
   background-image: repeating-linear-gradient(
-    90deg,
+    0deg,
     var(--ds-nav-knurl) 0 1px,
     transparent 1px 3px
   );
@@ -754,8 +784,8 @@
 }
 
 .mnav-rivet {
-  width: 9px;
-  height: 9px;
+  inline-size: 9px;
+  block-size: 9px;
   border-radius: var(--radius-full);
   background:
     radial-gradient(
@@ -769,9 +799,10 @@
 
 .mnav-catalog {
   display: inline-flex;
+  flex-direction: column;
   align-items: center;
   gap: var(--space-2);
-  padding: var(--space-1) var(--space-3);
+  padding: var(--space-3) var(--space-2);
   border: var(--border-hairline) solid var(--ds-nav-hairline);
   border-radius: var(--radius-xs);
   color: var(--ds-text);
@@ -787,6 +818,8 @@
     border-color var(--ds-nav-base) var(--ds-nav-ease);
 }
 
+.mnav-catalog-text { writing-mode: vertical-rl; text-orientation: mixed; }
+
 .mnav-catalog:hover,
 .mnav-catalog:focus-visible {
   border-color: var(--ds-nav-line);
@@ -794,12 +827,12 @@
   color: var(--ds-primary);
 }
 
-/* scroll progress — a single composited transform */
+/* scroll progress — a single composited transform, read down the spine */
 .mnav-progress {
   position: absolute;
-  inset-inline: 0;
-  bottom: 0;
-  height: var(--border-standard);
+  inset-block: 0;
+  inset-inline-end: 0;
+  inline-size: var(--border-standard);
   background: var(--ds-nav-line-soft);
   opacity: 0;
   transition: opacity var(--ds-nav-base) linear;
@@ -809,29 +842,26 @@
 
 .mnav-progress i {
   display: block;
-  height: 100%;
+  inline-size: 100%;
+  block-size: 100%;
   background: var(--ds-nav-line);
-  transform: scaleX(0);
-  transform-origin: left center;
+  transform: scaleY(0);
+  transform-origin: top center;
   will-change: transform;
 }
-
-[dir="rtl"] .mnav-progress i { transform-origin: right center; }
 
 /* ---------- 7. the geometric index drawer ---------- */
 
 .mnav-drawer {
   position: absolute;
-  inset-inline-start: 0;
-  top: 100%;
-  z-index: 3;
-  width: min(430px, calc(100vw - var(--space-6)));
-  max-height: calc(100vh - var(--mnav-row1) - var(--mnav-row2) - var(--space-6));
+  inset-block: var(--mnav-row1) 0;
+  inset-inline-start: 100%;
+  z-index: 2;
+  inline-size: min(430px, calc(100vw - var(--mnav-rail-w) - var(--space-6)));
   overflow-y: auto;
   overscroll-behavior: contain;
-  padding: var(--space-5) var(--space-5) var(--space-4);
-  border: var(--border-hairline) solid var(--ds-nav-hairline);
-  border-top: 0;
+  padding: var(--space-6) var(--space-5) var(--space-5);
+  border-inline-end: var(--border-hairline) solid var(--ds-nav-hairline);
   background: var(--ds-nav-glass-dense);
   backdrop-filter: var(--ds-nav-blur);
   -webkit-backdrop-filter: var(--ds-nav-blur);
@@ -845,8 +875,7 @@
   );
   opacity: 0;
   visibility: hidden;
-  transform: translate3d(0, -16px, 0) scale(0.985);
-  transform-origin: top left;
+  transform: translate3d(-14px, 0, 0);
   will-change: transform, opacity;
   transition:
     opacity var(--ds-nav-base) var(--ds-nav-ease),
@@ -855,7 +884,6 @@
 }
 
 [dir="rtl"] .mnav-drawer {
-  transform-origin: top right;
   clip-path: polygon(
     0 var(--ds-nav-chamfer),
     var(--ds-nav-chamfer) 0,
@@ -877,7 +905,7 @@
   position: absolute;
   inset-block: 0;
   inset-inline-end: 0;
-  width: 9px;
+  inline-size: 9px;
   pointer-events: none;
   opacity: 0.6;
   background-image: repeating-linear-gradient(
@@ -1034,7 +1062,7 @@
   display: flex;
   align-items: center;
   gap: var(--space-3);
-  margin-top: var(--space-4);
+  margin-top: var(--space-5);
 }
 
 .mnav-drawer-note {
@@ -1044,7 +1072,6 @@
   letter-spacing: var(--tracking-wide);
   text-transform: uppercase;
 }
-
 /* ---------- 8. mobile bloom sheet ---------- */
 
 .mnav-scrim {
@@ -1290,20 +1317,11 @@
 
 /* ---------- 10. responsive ---------- */
 
-@media (max-width: 1439px) {
-  .mnav { --mnav-mark-w: 112px; }
-  .mnav-knurl { display: none; }
-}
-
+/* the spine needs room to breathe on narrow desktops */
 @media (max-width: 1279px) {
-  .mnav { --mnav-mark-w: 96px; }
-  .mnav-mark-ticks { display: none; }
+  .mnav-knurl { display: none; }
   .mnav-kbd { display: none; }
   .mnav-search { max-width: 560px; }
-}
-
-@media (max-width: 1180px) {
-  .mnav-mark-label { display: none; }
 }
 
 @media (max-width: 1120px) {
@@ -1312,19 +1330,31 @@
   .mnav-catalog { padding: var(--space-2); }
 }
 
+/* Shorter viewports give way in this order: the catalogue caption, then the
+   line, then the ticks. The spine also scrolls as a last resort. */
+@media (max-height: 900px) {
+  .mnav { --mnav-mark-len: 124px; }
+  .mnav-catalog-text { display: none; }
+}
+
+@media (max-height: 780px) {
+  .mnav { --mnav-mark-len: 96px; }
+  .mnav-mark-ticks { display: none; }
+}
+
+@media (max-height: 660px) {
+  .mnav { --mnav-mark-len: 64px; }
+  .mnav-quick-link:nth-child(n + 4) { display: none; }
+}
+
 @media (max-width: 1023px) {
-  .mnav {
-    --mnav-row1: 58px;
-    --mnav-row2: 0px;
-  }
+  .mnav { --mnav-row1: 58px; }
 
   .mnav-grain { opacity: 0.35; }
 
   .mnav-brand-img { height: 38px; }
 
   .mnav-rail { display: none; }
-
-  .mnav-drawer { display: none; }
 
   .mnav-sheet { display: block; }
 
@@ -1393,8 +1423,9 @@
   .mnav-sheet-link { min-height: 46px; }
 }
 
-@media (min-width: 1600px) {
-  .mnav { --mnav-mark-w: 148px; }
+@media (min-width: 1024px) {
+  /* content clears the spine once — never during scroll */
+  .has-nav-rail { padding-inline-start: var(--mnav-rail-w); }
 }
 
 @media (prefers-reduced-motion: reduce) {

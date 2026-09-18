@@ -258,11 +258,31 @@
   width: 44px; height: 44px; border-radius: 50%;
   border: 1px solid rgba(238, 247, 247, .22);
   background: rgba(4, 10, 10, .35); backdrop-filter: blur(6px);
-  color: rgba(238, 247, 247, .8); font-size: 13px; cursor: pointer;
+  color: rgba(238, 247, 247, .88); font-size: 13px; cursor: pointer;
   display: grid; place-items: center;
   transition: border-color .3s, color .3s, background .3s, transform .35s var(--lfc-ease);
 }
 .lfc-arrow:hover { border-color: var(--lfc-teal-hi); color: var(--lfc-teal-hi); transform: translateY(-2px); }
+
+/* Font Awesome is fetched without blocking the paint, so the arrows would be
+   blank until its webfont lands. These CSS chevrons stand in for the glyphs and
+   are dropped the moment the icon font reports itself ready (.fa-ready is set by
+   hero-cinema.js only when the webfont is actually available). */
+.lfc-arrow i { display: block; line-height: 1; }
+
+html:not(.fa-ready) .lfc-arrow i {
+  width: 9px;
+  height: 9px;
+  line-height: 0;
+  border-left: 2px solid currentColor;
+  border-bottom: 2px solid currentColor;
+  border-radius: 1px;
+}
+html:not(.fa-ready) #lfc-prev i { transform: rotate(-45deg); }
+html:not(.fa-ready) #lfc-next i { transform: rotate(45deg); }
+
+/* decorative glyphs must not shift layout while the font is on its way */
+.lfc-cta i, .lfc-ticker-item i { display: inline-block; min-width: 1em; text-align: center; }
 
 /* ---------- 8. stats marquee ---------- */
 

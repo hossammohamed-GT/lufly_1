@@ -3,7 +3,11 @@
  *
  * The project runs on PHP + XAMPP, but this sandbox has no PHP runtime, so the
  * real navbar partial (resources/views/components/navbar.php) is rendered into
- * a static page by a very small, purpose-built evaluator. It understands only
+ * a static page by a very small, purpose-built evaluator.
+ *
+ * Font Awesome is deliberately not linked here (no network in the harness), so
+ * the page shows exactly what the hero arrows look like before/without the icon
+ * font: the CSS chevron fallback. It understands only
  * the constructs that file uses: foreach/if blocks, <?= ?> echoes and the
  * handful of helpers below. Whenever navbar.php changes, this preview follows —
  * it is a mirror for design review, never a second source of truth.
@@ -287,6 +291,24 @@ function stage() {
     </div>
   </section>
 
+  <section class="section container-narrow" id="arrows">
+    <div class="stack">
+      <span class="eyebrow">Hero controls</span>
+      <h2>Arrows before the icon font lands</h2>
+      <p class="stage-muted">Font Awesome is loaded without blocking the paint, so the
+        buttons draw CSS chevrons until its webfont is ready — never an empty glass circle.</p>
+    </div>
+    <div class="stage-arrows">
+      <button type="button" class="lfc-arrow" id="lfc-prev" aria-label="Previous slide">
+        <i class="fa-solid fa-chevron-left"></i>
+      </button>
+      <button type="button" class="lfc-arrow" id="lfc-next" aria-label="Next slide">
+        <i class="fa-solid fa-chevron-right"></i>
+      </button>
+      <span class="stage-arrows-note">fa-ready: <b id="fa-state">no</b></span>
+    </div>
+  </section>
+
   <section class="section container-narrow" id="inspiration">
     <div class="stack">
       <span class="eyebrow">Long scroll</span>
@@ -314,6 +336,7 @@ ${themeScript}
 <link rel="stylesheet" href="frontend/design-system/style.css">
 <link rel="stylesheet" href="frontend/css/app.css">
 <link rel="stylesheet" href="frontend/components/navbar/navbar.css">
+<link rel="stylesheet" href="frontend/home/hero-cinema/hero-cinema.css">
 <style>
   .stage-hero { position: relative; min-height: 74vh; display: flex; align-items: center; overflow: hidden; background: var(--ds-media-scrim-strong); }
   .stage-hero-img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; opacity: .55; }
@@ -324,10 +347,12 @@ ${themeScript}
   .stage-actions { display: flex; flex-wrap: wrap; gap: var(--space-2); margin-top: var(--space-6); }
   .stage-chip { padding: var(--space-2) var(--space-3); border: var(--border-hairline) solid var(--ds-media-border); border-radius: var(--radius-xs); color: var(--ds-media-text-soft); font-family: var(--font-mono); font-size: var(--text-caption); letter-spacing: var(--tracking-wide); text-transform: uppercase; }
   .stage-muted { color: var(--ds-text-muted); }
+  .stage-arrows { display: flex; align-items: center; gap: var(--space-3); margin-top: var(--space-6); padding: var(--space-6); border-radius: var(--radius-md); background: var(--ds-media-scrim-strong); }
+  .stage-arrows-note { margin-inline-start: var(--space-3); color: var(--ds-media-text-soft); font-family: var(--font-mono); font-size: var(--text-caption); letter-spacing: var(--tracking-wide); text-transform: uppercase; }
   .stage-filler { height: 140vh; margin-top: var(--space-8); border: var(--border-hairline) dashed var(--ds-border); border-radius: var(--radius-md); background: repeating-linear-gradient(180deg, var(--ds-primary-tint) 0 2px, transparent 2px 14px); }
 </style>
 </head>
-<body class="ds-app aquatic-stage">
+<body class="ds-app aquatic-stage has-nav-rail">
 <a class="skip-link" href="#main">Skip to content</a>
 ${navbarMarkup()}
 <main class="ds-main" id="main">
@@ -335,6 +360,13 @@ ${stage()}
 </main>
 <script src="frontend/js/app.js"></script>
 <script src="frontend/components/navbar/navbar.js"></script>
+<script>
+  /* report the icon-font hand-over state instead of depending on the CDN */
+  setTimeout(function () {
+    document.getElementById('fa-state').textContent =
+      document.documentElement.classList.contains('fa-ready') ? 'yes' : 'no (css chevrons)';
+  }, 1200);
+</script>
 </body>
 </html>`;
 }

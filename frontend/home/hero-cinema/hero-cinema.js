@@ -2,8 +2,9 @@
    LUFLY — HERO CINEMA engine
    Vanilla JS, no dependencies. Markup-driven (panels/scenes rendered by
    PHP). Handles: responsive image swap, crossfade + Ken-Burns scheduling,
-   progress-fill ticks, arrows, touch swipe, pointer parallax, and pauses
-   when off-screen / hidden / reduced-motion.
+   progress-fill ticks, arrows, touch swipe, pointer parallax, the Font Awesome
+   hand-over for the icon glyphs, and pauses when off-screen / hidden /
+   reduced-motion.
    ========================================================================== */
 (function () {
   'use strict';
@@ -11,23 +12,88 @@
   var root = document.getElementById('lfc');
   if (!root) return;
 
-  var AUTOPLAY_MS = 6500;
-  var reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-  var isMobile = window.matchMedia('(max-width: 760px)').matches;
-  var finePointer = window.matchMedia('(pointer: fine)').matches;
+  /* ---- Font Awesome hand-over ------------------------------------------
+     The icon stylesheet is loaded without blocking the first paint, so the
+     arrow glyphs may arrive a moment late (hero-cinema.css paints CSS chevrons
+     until then). .fa-ready is only flipped when the icon stylesheet has really
+     applied AND its webfont is usable, and it keeps listening, so a slow CDN
+     still ends up with the glyphs — while an unreachable one simply leaves the
+     CSS chevrons in place. The arrows are therefore never blank. */
+  (function handOverToIconFont() {
+    var probe = null;
+    var settled = false;
+    var retries = 0;
+    var waits = [250, 700, 1500, 3000, 6000];
 
-  root.style.setProperty('--lfc-dur', AUTOPLAY_MS + 'ms');
-  if (reduceMotion) root.classList.add('lfc-reduced');
+    function stylesheetApplied() {
+      if (!probe) {
+        probe = document.createElement('i');
+        probe.className = 'fa-solid fa-chevron-left';
+        probe.setAttribute('aria-hidden', 'true');
+        probe.style.cssText = 'position:absolute;left:-9999px;top:0;font-size:16px;line-height:1;';
+        document.body.appendChild(probe);
+      }
 
-  var sceneLayer = root.querySelector('.lfc-scenes');
-  var stage = root.querySelector('.lfc-stage');
-  var scenes = Array.prototype.slice.call(root.querySelectorAll('.lfc-scene'));
-  var panels = Array.prototype.slice.call(root.querySelectorAll('.lfc-panel'));
-  var ticks = Array.prototype.slice.call(root.querySelectorAll('.lfc-tick'));
-  var prevBtn = document.getElementById('lfc-prev');
-  var nextBtn = document.getElementById('lfc-next');
-  var N = scenes.length;
-  if (N === 0) return;
+      var family = window.getComputedStyle(probe, '::before').fontFamily || '';
+
+      return family.indexOf('Font Awesome') !== -1;
+    }
+
+    function fontUsable() {
+      if (!document.fonts || typeof document.fonts.check !== 'function') {
+        return true; /* no font loading API: trust the stylesheet */
+      }
+
+      return document.fonts.check('900 16px "Font Awesome 6 Free"');
+    }
+
+    function cleanup() {
+      if (probe && typeof probe.remove === 'function') {
+        probe.remove();
+      }
+
+      probe = null;
+    }
+
+    function finish() {
+      if (settled) {
+        return;
+      }
+
+      settled = true;
+      document.documentElement.classList.add('fa-ready');
+      cleanup();
+    }
+
+    function attempt() {
+      if (settled) {
+        return;
+      }
+
+      if (stylesheetApplied() && fontUsable()) {
+        finish();
+        return;
+      }
+
+      if (retries < waits.length) {
+        window.setTimeout(attempt, waits[retries]);
+        retries += 1;
+      } else {
+        cleanup();
+      }
+    }
+
+    /* late arrivals still get handed over, however slow the network is */
+    if (document.fonts && typeof document.fonts.addEventListener === 'function') {
+      document.fonts.addEventListener('loadingdone', attempt);
+
+      if (document.fonts.ready && typeof document.fonts.ready.then === 'function') {
+        document.fonts.ready.then(attempt);
+      }
+    }
+
+    attempt();
+  })();
 
   /* ---- fit exactly the first screen: viewport minus whatever sits
           above the hero (the site header is in normal flow) ---- */

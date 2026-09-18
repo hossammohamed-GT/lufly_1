@@ -138,9 +138,12 @@ feedback `.alert-*`, `.state-*`, `.empty-state` · data `.table`, `.pagination`,
 | `--ds-nav-chamfer`, `--ds-nav-ease`, `--ds-nav-fast|base|slow` | chamfered geometry and the motion language of the header |
 
 The header component is `frontend/components/navbar/navbar.css` (paired with
-`navbar.js` and `resources/views/components/navbar.php`). It owns its row heights as
-component-local custom properties (`--mnav-row1`, `--mnav-row2`, `--mnav-mark-w`) — geometry,
-never colour.
+`navbar.js` and `resources/views/components/navbar.php`). It owns its geometry as
+component-local custom properties — `--mnav-row1` (bar height), `--mnav-mark-len`
+(length of the crooked line) and `--mnav-rail-w`, the width of the fixed side spine. The
+spine is the only value the app shell needs, so it is declared on `:root` and used by
+`body.has-nav-rail` to offset page content; everything else stays inside the component.
+Geometry, never colour.
 
 ## 7. Rules for contributors
 
