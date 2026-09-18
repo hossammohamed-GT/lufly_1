@@ -26,7 +26,7 @@ $view->pushStyle('frontend/home/masterpieces/masterpieces.css');
                 ?>
                 <div class="product-card-luxury">
                     <div class="product-img-box">
-                        <img src="<?= e(asset($img)) ?>" alt="<?= e($name) ?>" loading="lazy">
+                        <img src="<?= e(asset($img)) ?>" alt="<?= e($name) ?>" loading="lazy" decoding="async" width="300" height="300">
                     </div>
                     <span class="product-sku-badge">SKU: <?= e($sku) ?></span>
                     <h3 class="product-title"><?= e($name) ?></h3>

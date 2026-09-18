@@ -14,7 +14,7 @@ $view->pushStyle('frontend/home/inspiration/inspiration.css');
             <!-- Room 1 -->
             <div class="inspiration-card">
                 <div class="inspiration-img-wrap">
-                    <img src="<?= e(asset('images/lifestyle/spa-suite.jpg')) ?>" alt="The Nordic Spa Suite" class="inspiration-img">
+                    <img src="<?= e(asset('images/lifestyle/spa-suite.jpg')) ?>" alt="<?= e(trans('home.inspiration_1_title')) ?>" loading="lazy" decoding="async" class="inspiration-img">
                 </div>
                 <div class="inspiration-body">
                     <span class="inspiration-tag"><?= e(trans('home.inspiration_1_tag')) ?></span>
@@ -26,7 +26,7 @@ $view->pushStyle('frontend/home/inspiration/inspiration.css');
             <!-- Room 2 -->
             <div class="inspiration-card">
                 <div class="inspiration-img-wrap">
-                    <img src="<?= e(asset('images/lifestyle/modern-bathroom.png')) ?>" alt="Modern Bathroom" class="inspiration-img">
+                    <img src="<?= e(asset('images/lifestyle/modern-bathroom.png')) ?>" alt="<?= e(trans('home.inspiration_2_title')) ?>" loading="lazy" decoding="async" class="inspiration-img">
                 </div>
                 <div class="inspiration-body">
                     <span class="inspiration-tag"><?= e(trans('home.inspiration_2_tag')) ?></span>
@@ -38,7 +38,7 @@ $view->pushStyle('frontend/home/inspiration/inspiration.css');
             <!-- Room 3 -->
             <div class="inspiration-card">
                 <div class="inspiration-img-wrap">
-                    <img src="<?= e(asset('images/lifestyle/minimal-basin.png')) ?>" alt="Powder Room" class="inspiration-img">
+                    <img src="<?= e(asset('images/lifestyle/minimal-basin.png')) ?>" alt="<?= e(trans('home.inspiration_3_title')) ?>" loading="lazy" decoding="async" class="inspiration-img">
                 </div>
                 <div class="inspiration-body">
                     <span class="inspiration-tag"><?= e(trans('home.inspiration_3_tag')) ?></span>
@@ -50,7 +50,7 @@ $view->pushStyle('frontend/home/inspiration/inspiration.css');
             <!-- Room 4 -->
             <div class="inspiration-card">
                 <div class="inspiration-img-wrap">
-                    <img src="<?= e(asset('images/lifestyle/kitchen-suite.png')) ?>" alt="Kitchen Suite" class="inspiration-img">
+                    <img src="<?= e(asset('images/lifestyle/kitchen-suite.png')) ?>" alt="<?= e(trans('home.inspiration_4_title')) ?>" loading="lazy" decoding="async" class="inspiration-img">
                 </div>
                 <div class="inspiration-body">
                     <span class="inspiration-tag"><?= e(trans('home.inspiration_4_tag')) ?></span>
