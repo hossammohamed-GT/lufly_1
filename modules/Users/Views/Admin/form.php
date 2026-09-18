@@ -29,7 +29,7 @@ $userRoles = $user !== null ? $user->roleNames() : [];
         <?php foreach ($roles as $role): ?>
             <label class="check-row">
                 <input type="checkbox" name="roles[]" value="<?= (int) $role->id ?>" <?= in_array($role->name, $userRoles, true) ? 'checked' : '' ?>>
-                <?= e($role->name) ?> — <?= e($role->description ?? '') ?>
+                <?= e($role->name) ?><?= !empty($role->description) ? ' (' . e($role->description) . ')' : '' ?>
             </label>
         <?php endforeach; ?>
     </fieldset>

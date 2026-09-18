@@ -15,36 +15,36 @@
 
   var MESSAGES_BY_LOCALE = {
     ar: [
-      [0,   'صب أجسام النحاس عالي النقاء'],
-      [20,  'التشكيل الرقمي بدقة 0.01 مم'],
-      [45,  'صقل ومعالجة طلاء PVD الفاخر'],
-      [70,  'إحكام قلب السيراميك الدقيق'],
-      [90,  'فحص الجودة النهائي واختبار الضغط'],
-      [100, 'جاهز للبدء · نعتذر على الانتظار وشكراً لصبركم']
+      [0,   'سباكة أجسام النحاس المعماري عالي النقاء'],
+      [20,  'التشكيل الرقمي بالروبوت بدقة 0.01 مم'],
+      [45,  'صقل ومعالجة طلاء PVD التيتانيوم الفاخر'],
+      [70,  'إحكام قلب السيراميك الدقيق Kerox®'],
+      [90,  'الفحص المخبري للجودة واختبار الضغط'],
+      [100, 'تم التجهيز بنجاح مرحباً بكم في لوفلي']
     ],
     en: [
-      [0,   'Casting the brass bodies'],
-      [20,  'CNC-machining to 0.01 mm'],
-      [45,  'Polishing the PVD finish'],
-      [70,  'Sealing ceramic cartridges'],
-      [90,  'Final quality inspection'],
-      [100, 'Ready · Thank you for your patience, sorry for the wait']
+      [0,   'Precision casting of high-purity brass'],
+      [20,  'Robotic CNC machining to 0.01 mm'],
+      [45,  'Aerospace PVD titanium surface treatment'],
+      [70,  'Calibrating Kerox® ceramic cores'],
+      [90,  'Hydrodynamic pressure testing and quality audit'],
+      [100, 'System ready Welcome to LUFLY']
     ],
     tr: [
-      [0,   'Pirinç gövdelerin dökümü'],
-      [20,  '0.01 mm hassasiyetle CNC işleme'],
-      [45,  'PVD kaplama parlatma işlemi'],
-      [70,  'Seramik kartuşların sızdırmazlığı'],
-      [90,  'Son kalite ve basınç denetimi'],
-      [100, 'Hazır · Beklettiğimiz için özür diler, sabrınız için teşekkür ederiz']
+      [0,   'Yüksek saflıkta pirinç gövde dökümü'],
+      [20,  '0.01 mm robotik CNC hassas işleme'],
+      [45,  'Havacılık sınıfı PVD titanyum kaplama'],
+      [70,  'Kerox® seramik göbek montajı'],
+      [90,  'Hidrodinamik basınç ve kalite testi'],
+      [100, 'Hazır LUFLY dünyasına hoş geldiniz']
     ],
     cs: [
-      [0,   'Odlévání mosazných těles'],
-      [20,  'CNC obrábění s přesností 0,01 mm'],
-      [45,  'Leštění povrchové úpravy PVD'],
-      [70,  'Těsnění keramických kartuší'],
-      [90,  'Závěrečná kontrola kvality'],
-      [100, 'Připraveno · Děkujeme za trpělivost a omlouváme se za čekání']
+      [0,   'Přesné lití vysoce čisté mosazi'],
+      [20,  'Robotické CNC obrábění s přesností 0,01 mm'],
+      [45,  'Aplikace titanového PVD povrchu'],
+      [70,  'Kalibrace keramických kartuší Kerox®'],
+      [90,  'Hydrodynamická tlaková zkouška a audit kvality'],
+      [100, 'Připraveno Vítejte ve světě LUFLY']
     ]
   };
 

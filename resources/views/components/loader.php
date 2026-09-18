@@ -1,6 +1,6 @@
 <?php
 /**
- * LUFLY — Global Preloader & Loading Experience
+ * LUFLY: Global Preloader & Loading Experience
  * "Water-Fill" inside brand glyphs, factory craft background on initial load,
  * dynamic progress and informative messages in Arabic, English, Turkish and Czech.
  *
@@ -11,31 +11,31 @@ $locale = isset($translator) && $translator instanceof \Core\Localization\Transl
     : (string) config('localization.default', 'en');
 
 $kickers = [
-    'ar' => 'لوفلي · أدوات صحية معمارية فاخرة',
-    'en' => 'Lufly · Premium Sanitary Ware',
-    'tr' => 'Lufly · Premium Vitrifiye ve Armatür',
-    'cs' => 'Lufly · Prémiová sanitární keramika',
+    'ar' => 'لوفلي للصناعات الصحية المعمارية الفاخرة',
+    'en' => 'LUFLY Architectural Sanitary Ware',
+    'tr' => 'LUFLY Mimari Vitrifiye ve Armatür',
+    'cs' => 'LUFLY Prémiová sanitární keramika',
 ];
 
 $tags = [
-    'ar' => 'ثقافة الحمام · استمتاع ومشاركة معمارية',
-    'en' => 'Bathroom Culture · Enjoyed and Shared',
-    'tr' => 'Banyo Kültürü · Keyifle Paylaşılan',
-    'cs' => 'Koupelnová kultura · Sdílená a užívaná',
+    'ar' => 'ثقافة الحمام المعاصر متعة متجددة ورفاهية مشتركة',
+    'en' => 'Bathroom Culture Sculpted with Perfection',
+    'tr' => 'Mükemmellikle Şekillenen Banyo Kültürü',
+    'cs' => 'Koupelnová kultura tvořená k dokonalosti',
 ];
 
 $msgs = [
-    'ar' => 'صب أجسام النحاس عالي النقاء',
-    'en' => 'Casting the brass bodies',
-    'tr' => 'Pirinç gövdelerin dökümü',
-    'cs' => 'Odlévání mosazných těles',
+    'ar' => 'سباكة أجسام النحاس المعماري عالي النقاء',
+    'en' => 'Precision casting of high-purity brass',
+    'tr' => 'Yüksek saflıkta pirinç gövde dökümü',
+    'cs' => 'Přesné lití vysoce čisté mosazi',
 ];
 
 $foots = [
-    'ar' => 'المقر الرئيسي لوفلي · مصانع غازي عنتاب',
-    'en' => 'LUFLY HQ · Gaziantep Manufacturing',
-    'tr' => 'LUFLY Genel Merkez · Gaziantep Üretim Tesisi',
-    'cs' => 'LUFLY HQ · Výrobní závod Gaziantep',
+    'ar' => 'المقر الرئيسي والمصانع في غازي عنتاب تركيا',
+    'en' => 'LUFLY HQ & Manufacturing Hub Gaziantep Turkey',
+    'tr' => 'LUFLY Genel Merkez ve Üretim Tesisleri Gaziantep',
+    'cs' => 'LUFLY HQ a Výrobní závod Gaziantep Turecko',
 ];
 
 $kicker = $kickers[$locale] ?? $kickers['en'];

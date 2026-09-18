@@ -13,7 +13,7 @@ $view->pushStyle('frontend/home/categories/categories.css');
         <div class="category-mosaic">
             <!-- 1. Wall-Hung Toilets -->
             <a href="<?= e(route('products.index', ['category_id' => 1])) ?>" class="category-card-monolith">
-                <img src="<?= e(asset('images/products/prod_146_1620-111-a.jpg')) ?>" alt="Wall-Hung Toilets" class="category-card-bg">
+                <img src="<?= e(asset('images/products/prod_146_1620-111-a.jpg')) ?>" alt="<?= e(trans('home.category_toilets')) ?>" loading="lazy" class="category-card-bg">
                 <div class="category-card-gradient"></div>
                 <div class="category-card-info">
                     <h3><?= e(trans('home.category_toilets')) ?></h3>
@@ -23,7 +23,7 @@ $view->pushStyle('frontend/home/categories/categories.css');
 
             <!-- 2. Washbasins -->
             <a href="<?= e(route('products.index', ['category_id' => 2])) ?>" class="category-card-monolith">
-                <img src="<?= e(asset('images/products/prod_180_1610-242-65.jpg')) ?>" alt="Washbasins" class="category-card-bg">
+                <img src="<?= e(asset('images/products/prod_180_1610-242-65.jpg')) ?>" alt="<?= e(trans('home.category_basins')) ?>" loading="lazy" class="category-card-bg">
                 <div class="category-card-gradient"></div>
                 <div class="category-card-info">
                     <h3><?= e(trans('home.category_basins')) ?></h3>
@@ -33,7 +33,7 @@ $view->pushStyle('frontend/home/categories/categories.css');
 
             <!-- 3. Faucets & Mixers -->
             <a href="<?= e(route('products.index', ['category_id' => 4])) ?>" class="category-card-monolith">
-                <img src="<?= e(asset('images/finishes/brushed-gold.jpg')) ?>" alt="Faucets & Mixers" class="category-card-bg">
+                <img src="<?= e(asset('images/finishes/brushed-gold.jpg')) ?>" alt="<?= e(trans('home.category_mixers')) ?>" loading="lazy" class="category-card-bg">
                 <div class="category-card-gradient"></div>
                 <div class="category-card-info">
                     <h3><?= e(trans('home.category_mixers')) ?></h3>
@@ -43,7 +43,7 @@ $view->pushStyle('frontend/home/categories/categories.css');
 
             <!-- 4. Showers & Wellness -->
             <a href="<?= e(route('products.index')) ?>" class="category-card-monolith">
-                <img src="<?= e(asset('images/lifestyle/luxury-shower.png')) ?>" alt="Showers" class="category-card-bg">
+                <img src="<?= e(asset('images/lifestyle/luxury-shower.png')) ?>" alt="<?= e(trans('home.category_showers')) ?>" loading="lazy" class="category-card-bg">
                 <div class="category-card-gradient"></div>
                 <div class="category-card-info">
                     <h3><?= e(trans('home.category_showers')) ?></h3>
@@ -53,7 +53,7 @@ $view->pushStyle('frontend/home/categories/categories.css');
 
             <!-- 5. Commercial Sanitary -->
             <a href="<?= e(route('products.index', ['category_id' => 3])) ?>" class="category-card-monolith">
-                <img src="<?= e(asset('images/products/prod_2050_1690-000.jpg')) ?>" alt="Urinals" class="category-card-bg">
+                <img src="<?= e(asset('images/products/prod_2050_1690-000.jpg')) ?>" alt="<?= e(trans('home.category_commercial')) ?>" loading="lazy" class="category-card-bg">
                 <div class="category-card-gradient"></div>
                 <div class="category-card-info">
                     <h3><?= e(trans('home.category_commercial')) ?></h3>

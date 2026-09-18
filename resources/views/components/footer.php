@@ -8,7 +8,7 @@
                     <span class="footer-brand-name">LUFLY</span>
                 </div>
                 <p class="footer-brand-text">
-                    Bathroom culture enjoyed and shared. Precision engineering behind a refined surface. Manufactured for architects, interior specifiers, luxury hotels, and modern homes worldwide.
+                    <?= e(trans('common.footer_brand_desc')) ?>
                 </p>
                 <div class="footer-brand-note">
                     TIDAL MONOLITH SYSTEM · 2026 ARCHITECTURAL SPECIFICATION
@@ -17,43 +17,43 @@
 
             <!-- Collections -->
             <div class="footer-col">
-                <h5>Sanitary Ware</h5>
+                <h5><?= e(trans('common.footer_sanitary')) ?></h5>
                 <ul>
-                    <li><a href="<?= e(route('products.index', ['category_id' => 1])) ?>">Wall-Hung Rimless WCs</a></li>
-                    <li><a href="<?= e(route('products.index', ['category_id' => 1])) ?>">Bidet & Intelligent Toilets</a></li>
-                    <li><a href="<?= e(route('products.index', ['category_id' => 2])) ?>">Countertop Vessel Basins</a></li>
-                    <li><a href="<?= e(route('products.index', ['category_id' => 2])) ?>">Monolithic Freestanding Sinks</a></li>
-                    <li><a href="<?= e(route('products.index', ['category_id' => 3])) ?>">Commercial Radar Urinals</a></li>
+                    <li><a href="<?= e(route('products.index', ['category_id' => 1])) ?>"><?= e(trans('home.category_toilets')) ?></a></li>
+                    <li><a href="<?= e(route('products.index', ['category_id' => 1])) ?>"><?= e(trans('home.hero1_primary')) ?></a></li>
+                    <li><a href="<?= e(route('products.index', ['category_id' => 2])) ?>"><?= e(trans('home.category_basins')) ?></a></li>
+                    <li><a href="<?= e(route('products.index', ['category_id' => 2])) ?>"><?= e(trans('home.hero3_primary')) ?></a></li>
+                    <li><a href="<?= e(route('products.index', ['category_id' => 3])) ?>"><?= e(trans('home.category_commercial')) ?></a></li>
                 </ul>
             </div>
 
             <!-- Brassware & Finishes -->
             <div class="footer-col">
-                <h5>PVD & Brassware</h5>
+                <h5><?= e(trans('common.footer_finishes')) ?></h5>
                 <ul>
-                    <li><a href="#finishes">Brushed Rose Gold (PVD)</a></li>
-                    <li><a href="#finishes">Brushed Royal Gold (PVD)</a></li>
-                    <li><a href="#finishes">Polished Mirror Chrome</a></li>
-                    <li><a href="#finishes">Matte Obsidian Black</a></li>
-                    <li><a href="#finishes">Gunmetal Titanium Grey</a></li>
+                    <li><a href="#finishes"><?= e(trans('home.finish_rose_title')) ?></a></li>
+                    <li><a href="#finishes"><?= e(trans('home.finish_gold_title')) ?></a></li>
+                    <li><a href="#finishes"><?= e(trans('home.finish_chrome_title')) ?></a></li>
+                    <li><a href="#finishes"><?= e(trans('home.finish_black_title')) ?></a></li>
+                    <li><a href="#finishes"><?= e(trans('home.finish_gunmetal_title')) ?></a></li>
                 </ul>
             </div>
 
             <!-- Technical & Specifiers -->
             <div class="footer-col">
-                <h5>Technical & BIM</h5>
+                <h5><?= e(trans('common.footer_technical')) ?></h5>
                 <ul>
-                    <li><a href="https://wa.me/908503040817?text=<?= rawurlencode('Hello LUFLY, please send the 2026 Master Technical PDF Catalog.') ?>" target="_blank" rel="noopener">2026 Master Catalog (PDF)</a></li>
-                    <li><a href="https://wa.me/908503040817?text=<?= rawurlencode('Hello LUFLY, I require BIM and 3D Revit files for project specification.') ?>" target="_blank" rel="noopener">Revit / CAD 3D Files</a></li>
-                    <li><a href="#corporate">EN 997 & CE Declarations</a></li>
-                    <li><a href="#rituals">PRO-ECO Hydrodynamics</a></li>
-                    <li><a href="<?= e(route('products.index')) ?>">Complete Product Registry</a></li>
+                    <li><a href="https://wa.me/908503040817?text=<?= rawurlencode('Hello LUFLY, please send the 2026 Master Technical PDF Catalog.') ?>" target="_blank" rel="noopener"><?= e(trans('nav.download_catalog')) ?></a></li>
+                    <li><a href="https://wa.me/908503040817?text=<?= rawurlencode('Hello LUFLY, I require BIM and 3D Revit files for project specification.') ?>" target="_blank" rel="noopener"><?= e(trans('nav.tender_pack')) ?></a></li>
+                    <li><a href="#corporate">EN 997 &middot; EN 817 &middot; CE</a></li>
+                    <li><a href="#rituals"><?= e(trans('home.rituals_title')) ?></a></li>
+                    <li><a href="<?= e(route('products.index')) ?>"><?= e(trans('home.full_catalog')) ?></a></li>
                 </ul>
             </div>
 
             <!-- Legal Entity -->
             <div class="footer-col">
-                <h5>Factory & Dispatch</h5>
+                <h5><?= e(trans('common.footer_factory')) ?></h5>
                 <p class="footer-legal-name">
                     LUFLY İNŞAAT SANAYİ VE TİCARET LİMİTED ŞİRKETİ
                 </p>
@@ -71,8 +71,8 @@
         </div>
 
         <div class="footer-bottom-bar">
-            <span>&copy; <?= date('Y') ?> LUFLY İNŞAAT SAN. VE TİC. LTD. ŞTİ. All rights reserved.</span>
-            <span>European Sanitary Architecture &middot; Fixed Brand Teal #1C8B8B &middot; EN 997 / CE Certified</span>
+            <span>&copy; <?= date('Y') ?> LUFLY İNŞAAT SAN. VE TİC. LTD. ŞTİ. <?= e(trans('common.footer_rights')) ?></span>
+            <span><?= e(trans('common.footer_architecture')) ?></span>
         </div>
     </div>
 </footer>

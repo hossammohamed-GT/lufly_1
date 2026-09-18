@@ -23,7 +23,7 @@ $view->pushStyle('frontend/home/corporate/corporate.css');
                     <div class="spec-desk-badge" aria-hidden="true">CAD / BIM</div>
                     <h4 class="spec-desk-title"><?= e(trans('home.spec_desk_title')) ?></h4>
                     <p class="spec-desk-text">
-                        Download complete CAD blocks, BIM Revit families, and master price books for project tenders.
+                        <?= e(trans('home.spec_desk_desc')) ?>
                     </p>
                     <a href="https://wa.me/908503040817?text=<?= rawurlencode('Hello LUFLY, please send the complete 2026 Architect Tender Package (CAD/BIM/PDF).') ?>"
                        target="_blank" rel="noopener" class="btn-primary-teal spec-desk-cta">

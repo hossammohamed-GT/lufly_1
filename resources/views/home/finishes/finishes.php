@@ -42,7 +42,7 @@ $view->pushScript('frontend/home/finishes/finishes.js');
                      alt="LUFLY Brushed Rose Gold finish"
                      id="finish-showcase-img"
                      class="finish-showcase-img">
-                <span class="finish-image-caption">A finish<br>for a higher<br>standard</span>
+                <span class="finish-image-caption"><?= nl2br(e(wordwrap(trans('home.finish_caption'), 12, "\n"))) ?></span>
             </div>
 
             <div class="finish-showcase-details">

@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>LUFLY — معاينة الوضع الداكن الجديد</title>
+<title>LUFLY | معاينة الوضع الداكن</title>
 <link rel="stylesheet" href="frontend/design-system/style.css">
 <style>
   body { min-height: 100vh; }
@@ -24,7 +24,6 @@
   .pv-btn.mint { background: var(--ds-secondary); color: var(--ds-secondary-text); }
   .pv-btn.ghost { background: transparent; color: var(--ds-text); border: 1px solid var(--ds-border); }
   .pv-surface-alt { background: var(--ds-surface-alt); border-radius: 12px; padding: 14px 16px; margin-top: 18px; color: var(--ds-text); font-size: 13px; }
-  /* Before card — old palette, hardcoded for comparison */
   .pv-card.before { background: #101e1d; border: 1px solid #2d4843; color: #eff7f3; }
   .pv-card.before h3 { color: #eff7f3; }
   .pv-card.before p { color: #9cb5ae; }
@@ -43,53 +42,53 @@
   <div class="pv-wrap">
     <div class="pv-head">
       <div>
-        <h1 class="pv-title">معاينة الوضع الداكن الجديد 🌙</h1>
-        <p class="pv-sub">نفس الـ CSS الحقيقي بتاع المشروع — دوس الزرار تجرب الوضع الفاتح كمان</p>
+        <h1 class="pv-title">معاينة الوضع الداكن المتطور 🌙</h1>
+        <p class="pv-sub">تصميم عصري متناسق تماماً مع الوضع الفاتح والوضع الداكن</p>
       </div>
       <button class="pv-toggle" onclick="var r=document.documentElement;r.setAttribute('data-theme',r.getAttribute('data-theme')==='dark'?'light':'dark');this.textContent=r.getAttribute('data-theme')==='dark'?'☀️ فاتح':'🌙 داكن'">☀️ فاتح</button>
     </div>
 
     <div class="pv-grid">
       <div class="pv-card">
-        <span class="pv-tag new">الجديد — فحمي دافي محايد</span>
-        <h3>خلفية هادية بدون أي لمسة زرقا</h3>
-        <p>الخلفية الأساسية بقت <b>rgb(44, 43, 40) / #2C2B28</b> — درجة محايدة دافية بالظبط زي ما طلبت، من غير وهش ولا ازرقاق.</p>
+        <span class="pv-tag new">الجديد: فحمي دافئ ومريح للعين</span>
+        <h3>خلفية متناسقة بأعلى درجات الراحة</h3>
+        <p>الخلفية الأساسية <b>rgb(44, 43, 40) / #2C2B28</b> بدرجة محايدة دافئة تمنح راحة فائقة وتناسب الإضاءة الخافتة.</p>
         <div class="pv-swatch" title="ink-950 / 900 / 800 / 700 / 600 / 500 / 100">
           <div style="background:#141311"></div><div style="background:#2c2b28"></div><div style="background:#353430"></div><div style="background:#3f3d38"></div><div style="background:#57544b"></div><div style="background:#aba79b"></div><div style="background:#e9e6de"></div>
         </div>
       </div>
 
       <div class="pv-card before">
-        <span class="pv-tag old">القديم</span>
-        <h3>الأسود شبه الخام</h3>
-        <p>الخلفية <b>#0a1414</b> مع نص أبيض ساطع <b>#eff7f3</b> — تباين عالي جدًا (17:1) بيتعب العين في الإضاءة المنخفضة.</p>
+        <span class="pv-tag old">السابق</span>
+        <h3>الأسود المائل للزرقة</h3>
+        <p>الخلفية القديمة بتباين حاد غير مريح مع النصوص البيضاء الساطعة في الإضاءة المنخفضة.</p>
         <div class="pv-actions">
-          <span class="pv-btn" style="background:#1c8b8b;color:#0a1414">زرار تيل</span>
+          <span class="pv-btn" style="background:#1c8b8b;color:#0a1414">زر تيل</span>
         </div>
       </div>
 
       <div class="pv-card">
-        <span class="pv-tag new">الجديد</span>
-        <h3>أزرار وتباين صحي</h3>
-        <p>نصوص الأزرار فضلت متباينة بشكل آمن (4.6:1) عن طريق لون جديد <b>ink-950</b> مخصص للنص جوا الأزرار.</p>
+        <span class="pv-tag new">المطور</span>
+        <h3>أزرار وتباين بصري مثالي</h3>
+        <p>نصوص الأزرار واضحة ومقروءة بنسبة تباين معتمدة دولياً ومريحة للنظر.</p>
         <div class="pv-actions">
-          <button class="pv-btn">زرار أساسي</button>
-          <button class="pv-btn mint">زرار مينت</button>
-          <button class="pv-btn ghost">زرار شفاف</button>
+          <button class="pv-btn">زر أساسي</button>
+          <button class="pv-btn mint">زر مينت</button>
+          <button class="pv-btn ghost">زر شفاف</button>
         </div>
-        <div class="pv-surface-alt">سطح مرتفع (Surface Alt) — <span style="color:var(--ds-text-muted)">ونص ثانوي هادي كمان</span></div>
+        <div class="pv-surface-alt">سطح مرتفع (Surface Alt) <span style="color:var(--ds-text-muted)">مع نص ثانوي هادئ وأنيق</span></div>
       </div>
 
       <div class="pv-card">
-        <span class="pv-tag new">مقارنة الخلفية</span>
-        <h3>الصفحة كاملة</h3>
-        <div class="pv-page old">القديم #0a1414 — أسود مزرق نافذ للعين</div>
-        <div class="pv-page new">الجديد rgb(44, 43, 40) — دافي محايد ومريح لأقصى درجة</div>
+        <span class="pv-tag new">مقارنة التباين</span>
+        <h3>الصفحة بالكامل</h3>
+        <div class="pv-page old">القديم #0a1414</div>
+        <div class="pv-page new">الجديد rgb(44, 43, 40) دافئ ومريح</div>
       </div>
     </div>
 
     <div class="pv-note">
-      ✨ التغيير ده بيأثر تلقائيًا على كل عناصر الموقع في الوضع الداكن: الصفحة الرئيسية، الهيرو سينما (كانت <b>#04090a</b>)، الشريط العلوي، الكروت، الفوتر، اللودر، ولوحة الأدمن — لأن الكل بيسحب من نفس تدرج <b>ink</b> في الـ Design System.
+      يتم تطبيق هذه الإعدادات تلقائياً على كافة عناصر ومكونات الموقع في الوضعين الفاتح والداكن لضمان تجربة بصرية فائقة السلاسة والانسجام.
     </div>
   </div>
 </div>

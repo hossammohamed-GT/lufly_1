@@ -1,9 +1,9 @@
 <?php
 /**
- * Navbar — "Machined Glass".
+ * Navbar: "Machined Glass".
  *
- * Row 1: brand mark · instant search · utility actions.
- * Row 2: blueprint rail — the crooked machined line on the inline-start edge,
+ * Row 1: brand mark, instant search, utility actions.
+ * Row 2: blueprint rail, the crooked machined line on the inline-start edge,
  *        quick links, knurled meta strip and a scroll progress line.
  * Getting close to the crooked line unfolds the geometric index drawer.
  * Below 1024px the rail becomes a small bloom button that opens a bottom sheet.
@@ -102,7 +102,7 @@ foreach ($supported as $code => $name) {
         <span class="mnav-grain" aria-hidden="true"></span>
         <span class="mnav-beam" aria-hidden="true"></span>
 
-        <!-- Row 1 — brand, search, utilities -->
+        <!-- Row 1: brand, search, utilities -->
         <div class="container mnav-top">
             <a class="mnav-brand" href="<?= e(route('home')) ?>" title="LUFLY Sanitary Architecture">
                 <img class="mnav-brand-img"

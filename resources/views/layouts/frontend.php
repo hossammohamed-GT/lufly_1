@@ -47,7 +47,7 @@ try {
     document.documentElement.setAttribute('data-theme', stored || (dark ? 'dark' : 'light'));
 } catch (error) { /* storage unavailable */ }
 </script>
-<?= $view->renderFile($view->resolvePath('components.seo'), ['seo' => $seo ?? null]) ?>
+<?= $view->renderFile($view->resolvePath('components.seo'), ['seo' => $seo ?? null, 'title' => $title ?? null]) ?>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap">

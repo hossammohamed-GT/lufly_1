@@ -36,7 +36,7 @@ $view->pushStyle('frontend/home/masterpieces/masterpieces.css');
                             <span><?= e(trans('home.inquire_b2b')) ?></span>
                         </a>
                         <a href="<?= e(route('products.show', ['slug' => $product['slug'] ?? $product['id']])) ?>" class="product-link">
-                            Tech Sheet &rarr;
+                            <?= e(trans('products.view_details')) ?> &rarr;
                         </a>
                     </div>
                 </div>

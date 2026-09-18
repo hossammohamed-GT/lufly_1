@@ -47,10 +47,20 @@ class ProductController extends Controller
             [$locale, $fallback]
         );
 
-        $this->seo->setTitle(trans('products.title'));
+        $pageTitle = trans('products.title');
+        $catalogDescs = [
+            'ar' => 'تصفح الكتالوج المعماري الكامل للأدوات الصحية الفاخرة والمراحيض المعلقة والخلاطات من مصانع لوفلي.',
+            'en' => 'Browse the complete architectural catalog of luxury sanitary ware, rimless toilets, and PVD brassware from LUFLY.',
+            'tr' => 'LUFLY lüks vitrifiye seramikler, asma klozetler ve mimari bataryaların eksiksiz ürün kataloğunu inceleyin.',
+            'cs' => 'Prohlédněte si kompletní architektonický katalog prémiové sanitární keramiky a baterií LUFLY.',
+        ];
+
+        $this->seo->setTitle($pageTitle);
+        $this->seo->setDescription($catalogDescs[$locale] ?? $catalogDescs['en']);
+        $this->seo->setCanonical(route('products.index'));
 
         return $this->view('products::index', [
-            'title' => trans('products.title'),
+            'title' => $pageTitle,
             'paginator' => $paginator,
             'categories' => $categories,
             'activeCategory' => $categorySlug,
@@ -65,12 +75,21 @@ class ProductController extends Controller
         $locale = $this->translator->getLocale();
         $product = $this->products->findTranslatedBySlug($slug, $locale);
 
-        $this->seo->setTitle((string) ($product['name'] ?? ''));
-        $this->seo->setDescription((string) ($product['short_description'] ?? ''));
+        $productName = (string) ($product['name'] ?? 'LUFLY Architectural Fixture');
+        $productDesc = (string) ($product['short_description'] ?? $product['description'] ?? '');
+
+        $this->seo->setTitle($productName);
+        $this->seo->setDescription($productDesc);
         $this->seo->setFromEntity($product);
+        $this->seo->setCanonical(route('products.show', ['slug' => $product['slug'] ?? $slug]));
+        $this->seo->setType('product');
+
+        if (!empty($product['image'])) {
+            $this->seo->setImage(asset($product['image']));
+        }
 
         return $this->view('products::show', [
-            'title' => $product['name'] ?? '',
+            'title' => $productName,
             'product' => $product,
             'locale' => $locale,
             'seo' => $this->seo,

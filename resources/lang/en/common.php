@@ -52,4 +52,11 @@ return [
     'all_categories' => 'All Categories',
     'specifications' => 'Specifications',
     'skip_to_content' => 'Skip to content',
+    'footer_brand_desc' => 'Bathroom culture sculpted with perfection. Precision engineering behind a refined architectural surface. Manufactured for architects, interior specifiers, luxury hotels, and modern homes worldwide.',
+    'footer_sanitary' => 'Sanitary Ware',
+    'footer_finishes' => 'PVD & Brassware',
+    'footer_technical' => 'Technical & BIM',
+    'footer_factory' => 'Factory & Export Hub',
+    'footer_rights' => 'All rights reserved.',
+    'footer_architecture' => 'European Sanitary Architecture · Fixed Brand Teal #1C8B8B · EN 997 & CE Certified',
 ];

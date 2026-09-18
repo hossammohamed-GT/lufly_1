@@ -2,10 +2,10 @@
 /**
  * @var Core\View\View $view
  *
- * HERO CINEMA "Living Monolith" — cinematic WebP showcase that replaces
+ * HERO CINEMA "Living Monolith": cinematic WebP showcase that replaces
  * the heavy video hero (~530 KB of images vs ~12 MB of MP4s).
  * Slide 1 is the brand panel (masked logo reveal + travelling shine).
- * Trans keys: home.cinema1_* … cinema5_* (en / tr / cs).
+ * Trans keys: home.cinema1_* ... cinema5_* (en / ar / tr / cs).
  *
  * Icons come from Font Awesome, declared here so only pages with the hero pay
  * for it; the layout loads third-party CSS without blocking the first paint and

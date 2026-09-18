@@ -52,4 +52,11 @@ return [
     'factory_direct' => 'Přímo od výrobce',
     'all_categories' => 'Všechny kategorie',
     'specifications' => 'Specifikace',
+    'footer_brand_desc' => 'Koupelnová kultura tvořená k dokonalosti. Precizní inženýrství za vytříbeným architektonickým povrchem. Vyráběno pro architekty, luxusní hotely a moderní domovy po celém světě.',
+    'footer_sanitary' => 'Sanitární keramika',
+    'footer_finishes' => 'PVD a baterie',
+    'footer_technical' => 'Technická data a BIM',
+    'footer_factory' => 'Výrobní a exportní centrum',
+    'footer_rights' => 'Všechna práva vyhrazena.',
+    'footer_architecture' => 'Evropská sanitární architektura · Firemní Teal #1C8B8B · Certifikace EN 997 a CE',
 ];

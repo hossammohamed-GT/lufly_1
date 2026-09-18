@@ -203,15 +203,26 @@
   }, { passive: true });
 
   /* ---- pause when hidden / scrolled away ---- */
+  var tickerTrack = root.querySelector('.lfc-ticker-track');
+
+  function setPlayback(active) {
+    running = active;
+    if (active) {
+      schedule();
+      if (tickerTrack) tickerTrack.style.animationPlayState = 'running';
+    } else {
+      clearTimeout(timer);
+      if (tickerTrack) tickerTrack.style.animationPlayState = 'paused';
+    }
+  }
+
   document.addEventListener('visibilitychange', function () {
-    running = !document.hidden;
-    if (running) schedule(); else clearTimeout(timer);
+    setPlayback(!document.hidden);
   });
   if ('IntersectionObserver' in window) {
     new IntersectionObserver(function (en) {
-      running = en[0].isIntersecting && !document.hidden;
-      if (running) schedule(); else clearTimeout(timer);
-    }, { threshold: 0.12 }).observe(root);
+      setPlayback(en[0].isIntersecting && !document.hidden);
+    }, { threshold: 0.05 }).observe(root);
   }
 
   /* ---- pointer parallax (desktop, fine pointers only) ---- */

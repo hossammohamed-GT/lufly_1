@@ -52,4 +52,11 @@ return [
     'factory_direct' => 'Fabrikadan Doğrudan',
     'all_categories' => 'Tüm Kategoriler',
     'specifications' => 'Teknik Özellikler',
+    'footer_brand_desc' => 'Mükemmellikle şekillenen banyo kültürü. Zarif mimari yüzeylerin ardındaki hassas mühendislik. Dünya genelindeki mimarlar, şartname hazırlayıcılar, lüks oteller ve modern konutlar için üretilmiştir.',
+    'footer_sanitary' => 'Vitrifiye Seramik',
+    'footer_finishes' => 'PVD ve Bataryalar',
+    'footer_technical' => 'Teknik ve BIM',
+    'footer_factory' => 'Fabrika ve İhracat Merkezi',
+    'footer_rights' => 'Tüm hakları saklıdır.',
+    'footer_architecture' => 'Avrupa Sıhhi Mimari Standartları · Kurumsal Teal #1C8B8B · EN 997 ve CE Sertifikalı',
 ];
