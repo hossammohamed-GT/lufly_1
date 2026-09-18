@@ -1763,32 +1763,39 @@
 /* ---------- Horizontal Full-Width Index Bar (Fast & Text-Only) ---------- */
 
 .mnav-dropdown-bar {
-  position: relative;
-  z-index: 5;
+  position: absolute;
+  top: 100%;
+  left: 0;
+  right: 0;
+  z-index: 999;
   width: 100%;
-  max-height: 0;
-  overflow: hidden;
+  padding-block: var(--space-2);
   opacity: 0;
   visibility: hidden;
-  background: var(--ds-surface);
-  border-bottom: 1px solid var(--ds-border);
-  box-shadow: 0 8px 24px var(--ds-nav-shadow);
-  transition: max-height .32s cubic-bezier(.16, 1, .3, 1), opacity .25s ease, visibility 0s linear .32s;
-  will-change: max-height, opacity;
+  pointer-events: none;
+  transform: translateY(-8px);
+  transition: opacity .25s var(--ease-out), transform .28s cubic-bezier(.16, 1, .3, 1), visibility 0s linear .28s;
+  will-change: transform, opacity;
 }
 
 .mnav.is-index-open .mnav-dropdown-bar {
-  max-height: 72px;
   opacity: 1;
   visibility: visible;
+  pointer-events: auto;
+  transform: translateY(0);
   transition-delay: 0s;
 }
 
+/* Floating Architectural Capsule look - distinctive from the navbar */
 .mnav-dropdown-inner {
   display: flex;
   align-items: center;
   gap: var(--space-2);
-  height: 52px;
+  padding: 8px 18px;
+  background: var(--ds-surface);
+  border: 1px solid var(--ds-primary-line);
+  border-radius: var(--radius-full);
+  box-shadow: 0 16px 36px var(--ds-nav-shadow), 0 0 0 1px var(--ds-primary-tint);
   overflow-x: auto;
   scrollbar-width: none;
   -webkit-overflow-scrolling: touch;

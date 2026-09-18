@@ -38,6 +38,11 @@
 
     var y = window.scrollY || window.pageYOffset || 0;
     header.classList.toggle('is-scrolled', y > 8);
+
+    // Close index dropdown automatically on scroll
+    if (header.classList.contains('is-index-open')) {
+      closeIndex();
+    }
     var dock = header.querySelector('.mnav-dock');
     if (dock) {
       dock.classList.toggle('is-visible', y > 120);
@@ -547,6 +552,7 @@
       setSheet(false);
     }
 
+    closeIndex();
     setDrawer(false);
     hideResults();
   });
