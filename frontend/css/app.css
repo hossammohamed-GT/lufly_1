@@ -15,6 +15,68 @@
   contain-intrinsic-size: auto 500px;
 }
 
+/* ---------- Section Scroll & Stacking Transitions ---------- */
+
+.scroll-section {
+  position: relative;
+  z-index: 1;
+  transition: transform 0.8s cubic-bezier(0.16, 1, 0.3, 1),
+              opacity 0.8s cubic-bezier(0.16, 1, 0.3, 1),
+              box-shadow 0.8s cubic-bezier(0.16, 1, 0.3, 1);
+  will-change: transform, opacity;
+}
+
+/* Elegant layer elevation shadow over previous section */
+.band.scroll-section,
+.categories-section.scroll-section,
+.inspiration-section.scroll-section,
+.rituals-section.scroll-section,
+.masterpieces-section.scroll-section,
+.corporate-section.scroll-section {
+  box-shadow: 0 -16px 40px -12px rgba(0, 0, 0, 0.05);
+}
+
+[data-theme="dark"] .band.scroll-section,
+[data-theme="dark"] .categories-section.scroll-section,
+[data-theme="dark"] .inspiration-section.scroll-section,
+[data-theme="dark"] .rituals-section.scroll-section,
+[data-theme="dark"] .masterpieces-section.scroll-section,
+[data-theme="dark"] .corporate-section.scroll-section {
+  box-shadow: 0 -20px 48px -14px rgba(0, 0, 0, 0.35);
+}
+
+/* Base state before scroll entry */
+.scroll-reveal {
+  opacity: 0;
+  transform: translateY(28px);
+  transition: opacity 0.75s cubic-bezier(0.16, 1, 0.3, 1),
+              transform 0.75s cubic-bezier(0.16, 1, 0.3, 1);
+  will-change: opacity, transform;
+}
+
+/* Stagger delays for grid items */
+.scroll-reveal[data-delay="1"] { transition-delay: 0.07s; }
+.scroll-reveal[data-delay="2"] { transition-delay: 0.14s; }
+.scroll-reveal[data-delay="3"] { transition-delay: 0.21s; }
+.scroll-reveal[data-delay="4"] { transition-delay: 0.28s; }
+.scroll-reveal[data-delay="5"] { transition-delay: 0.35s; }
+
+/* Active revealed state */
+.scroll-revealed,
+.scroll-revealed .scroll-reveal {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .scroll-section,
+  .scroll-reveal {
+    opacity: 1 !important;
+    transform: none !important;
+    transition: none !important;
+  }
+}
+
 /* ---------- Ambient stage ---------- */
 
 .aquatic-stage {

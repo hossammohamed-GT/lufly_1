@@ -3,10 +3,10 @@
 $view->pushStyle('frontend/home/finishes/finishes.css');
 $view->pushScript('frontend/home/finishes/finishes.js');
 ?>
-<section class="band finishes-section" id="finishes">
+<section class="band finishes-section scroll-section" id="finishes">
     <div class="finishes-backdrop" aria-hidden="true"></div>
     <div class="container finishes-container">
-        <div class="finishes-heading-row">
+        <div class="finishes-heading-row scroll-reveal">
             <div class="section-header-left">
                 <span class="section-tag"><?= e(trans('home.finishes_tag')) ?></span>
                 <h2 class="section-title"><?= e(trans('home.finishes_title_before')) ?><br><em><?= e(trans('home.finishes_title_emphasis')) ?></em> <?= e(trans('home.finishes_title_after')) ?></h2>
@@ -15,7 +15,7 @@ $view->pushScript('frontend/home/finishes/finishes.js');
             <div class="finishes-heading-note"><?= e(trans('home.finishes_note_1')) ?><br><?= e(trans('home.finishes_note_2')) ?><br><?= e(trans('home.finishes_note_3')) ?><br><?= e(trans('home.finishes_note_4')) ?><span></span></div>
         </div>
 
-        <div class="finishes-swatch-row">
+        <div class="finishes-swatch-row scroll-reveal" data-delay="1">
             <button type="button" class="finish-swatch-btn is-active" data-finish="brushed-rose-gold" data-title="<?= e(trans('home.finish_rose_title')) ?>" data-desc="<?= e(trans('home.finish_rose_desc')) ?>" aria-label="Brushed Rose Gold">
                 <img src="<?= e(asset('images/finishes/brushed-rose-gold.jpg')) ?>" alt="Rose Gold finish"><span class="swatch-label">Rose Gold</span><small>PVD</small>
             </button>
@@ -36,7 +36,7 @@ $view->pushScript('frontend/home/finishes/finishes.js');
             </button>
         </div>
 
-        <div class="finish-showcase-box">
+        <div class="finish-showcase-box scroll-reveal" data-delay="2">
             <div class="finish-showcase-image-wrap">
                 <img src="<?= e(asset('images/finishes/brushed-rose-gold.jpg')) ?>"
                      alt="LUFLY Brushed Rose Gold finish"

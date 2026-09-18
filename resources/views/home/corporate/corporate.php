@@ -2,9 +2,9 @@
 /** @var Core\View\View $view */
 $view->pushStyle('frontend/home/corporate/corporate.css');
 ?>
-<section class="corporate-section" id="corporate">
+<section class="corporate-section scroll-section" id="corporate">
     <div class="container">
-        <div class="corporate-box">
+        <div class="corporate-box scroll-reveal">
             <div class="corporate-info">
                 <span class="corporate-legal-badge"><?= e(trans('home.corporate_badge')) ?></span>
                 <h3>LUFLY İNŞAAT SANAYİ VE TİCARET LİMİTED ŞİRKETİ</h3>

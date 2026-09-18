@@ -2,9 +2,9 @@
 /** @var Core\View\View $view */
 $view->pushStyle('frontend/home/inspiration/inspiration.css');
 ?>
-<section class="inspiration-section" id="inspiration">
+<section class="inspiration-section scroll-section" id="inspiration">
     <div class="container">
-        <div class="section-header-center">
+        <div class="section-header-center scroll-reveal">
             <span class="section-tag"><?= e(trans('home.inspiration_tag')) ?></span>
             <h2 class="section-title"><?= e(trans('home.inspiration_title')) ?></h2>
             <p class="section-subtitle"><?= e(trans('home.inspiration_desc')) ?></p>
@@ -12,7 +12,7 @@ $view->pushStyle('frontend/home/inspiration/inspiration.css');
 
         <div class="inspiration-carousel">
             <!-- Room 1 -->
-            <div class="inspiration-card">
+            <div class="inspiration-card scroll-reveal" data-delay="1">
                 <div class="inspiration-img-wrap">
                     <img src="<?= e(asset('images/lifestyle/spa-suite.jpg')) ?>" alt="<?= e(trans('home.inspiration_1_title')) ?>" loading="lazy" decoding="async" class="inspiration-img">
                 </div>
@@ -24,7 +24,7 @@ $view->pushStyle('frontend/home/inspiration/inspiration.css');
             </div>
 
             <!-- Room 2 -->
-            <div class="inspiration-card">
+            <div class="inspiration-card scroll-reveal" data-delay="2">
                 <div class="inspiration-img-wrap">
                     <img src="<?= e(asset('images/lifestyle/modern-bathroom.png')) ?>" alt="<?= e(trans('home.inspiration_2_title')) ?>" loading="lazy" decoding="async" class="inspiration-img">
                 </div>
@@ -36,7 +36,7 @@ $view->pushStyle('frontend/home/inspiration/inspiration.css');
             </div>
 
             <!-- Room 3 -->
-            <div class="inspiration-card">
+            <div class="inspiration-card scroll-reveal" data-delay="3">
                 <div class="inspiration-img-wrap">
                     <img src="<?= e(asset('images/lifestyle/minimal-basin.png')) ?>" alt="<?= e(trans('home.inspiration_3_title')) ?>" loading="lazy" decoding="async" class="inspiration-img">
                 </div>
@@ -48,7 +48,7 @@ $view->pushStyle('frontend/home/inspiration/inspiration.css');
             </div>
 
             <!-- Room 4 -->
-            <div class="inspiration-card">
+            <div class="inspiration-card scroll-reveal" data-delay="4">
                 <div class="inspiration-img-wrap">
                     <img src="<?= e(asset('images/lifestyle/kitchen-suite.png')) ?>" alt="<?= e(trans('home.inspiration_4_title')) ?>" loading="lazy" decoding="async" class="inspiration-img">
                 </div>
