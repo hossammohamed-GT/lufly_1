@@ -6,6 +6,7 @@
      * Smart Link & Asset Prefetcher (Instant 0ms Page Navigation)
      * BFCache (Back/Forward Cache) Instant Restoration Handler
      * Butter-Smooth Section Scroll & Reveal Engine
+     * Hero Parallax Stacking Curtain Effect
    ========================================================================== */
 (function () {
   'use strict';
@@ -199,9 +200,40 @@
     });
   }
 
+  /* ---------- 6. Hero Parallax Stacking Curtain Effect ---------- */
+
+  function initHeroParallax() {
+    var heroEl = document.getElementById('lfc');
+    if (!heroEl) return;
+
+    var reduced = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    if (reduced) return;
+
+    var ticking = false;
+    window.addEventListener('scroll', function () {
+      if (!ticking) {
+        window.requestAnimationFrame(function () {
+          var sc = window.scrollY || window.pageYOffset;
+          var vh = window.innerHeight || 800;
+          if (sc <= vh + 100) {
+            var factor = Math.min(1, Math.max(0, sc / vh));
+            heroEl.style.transform = 'scale(' + (1 - factor * 0.04) + ') translateY(' + (factor * 16) + 'px)';
+            heroEl.style.opacity = (1 - factor * 0.35).toFixed(3);
+          }
+          ticking = false;
+        });
+        ticking = true;
+      }
+    }, { passive: true });
+  }
+
   if (document.readyState === 'loading') {
-    document.addEventListener('DOMContentLoaded', initScrollReveals);
+    document.addEventListener('DOMContentLoaded', function () {
+      initScrollReveals();
+      initHeroParallax();
+    });
   } else {
     initScrollReveals();
+    initHeroParallax();
   }
 })();
