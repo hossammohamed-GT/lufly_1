@@ -72,6 +72,7 @@
   var sheet = header.querySelector('[data-nav-sheet]');
   var sheetTrigger = header.querySelector('[data-nav-open]');
   var searchWrap = header.querySelector('[data-search]');
+  var indexToggle = header.querySelector('[data-index-toggle]');
   var searchToggle = header.querySelector('[data-search-toggle]');
   var searchInput = searchWrap ? searchWrap.querySelector('[data-search-input]') : null;
   var resultsBox = searchWrap ? searchWrap.querySelector('[data-search-results]') : null;
@@ -151,6 +152,29 @@
 
   function closeLang() {
     setLang(false);
+  }
+
+  
+  function setIndex(open) {
+    header.classList.toggle('is-index-open', open);
+    if (indexToggle) {
+      indexToggle.setAttribute('aria-expanded', open ? 'true' : 'false');
+    }
+    if (open) {
+      closeSearch();
+      closeLang();
+    }
+  }
+
+  function closeIndex() {
+    setIndex(false);
+  }
+
+  if (indexToggle) {
+    indexToggle.addEventListener('click', function (e) {
+      e.stopPropagation();
+      setIndex(!header.classList.contains('is-index-open'));
+    });
   }
 
   /* ---------- 3. index drawer (hover intent on desktop) ---------- */
@@ -409,8 +433,12 @@
 
   if (langToggle) {
     langToggle.addEventListener('click', function (event) {
+      event.preventDefault();
       event.stopPropagation();
-      setLang(!(langMenu && langMenu.classList.contains('is-open')));
+      var currentlyOpen = langMenu && langMenu.classList.contains('is-open');
+      closeIndex();
+      closeSearch();
+      setLang(!currentlyOpen);
     });
   }
 
@@ -419,6 +447,10 @@
   document.addEventListener('click', function (event) {
     if (langMenu && !langMenu.contains(event.target)) {
       closeLang();
+    }
+    var dropdownBar = header.querySelector('#mnav-dropdown-bar');
+    if (dropdownBar && !dropdownBar.contains(event.target) && !(indexToggle && indexToggle.contains(event.target))) {
+      closeIndex();
     }
 
     if (searchWrap && !searchWrap.contains(event.target) &&

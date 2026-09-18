@@ -141,12 +141,15 @@ foreach ($supported as $code => $name) {
             <div class="mnav-actions">
                 <button type="button"
                         class="mnav-btn-menu"
-                        data-drawer-toggle
-                        aria-controls="mnav-drawer"
+                        data-index-toggle
+                        aria-controls="mnav-dropdown-bar"
                         aria-expanded="false"
                         aria-label="<?= e(trans('nav.open_index', [], $currentLocale)) ?>">
                     <span class="mnav-btn-menu-bars" aria-hidden="true"><i></i><i></i><i></i></span>
                     <span class="mnav-btn-menu-text"><?= e(trans('nav.index', [], $currentLocale)) ?></span>
+                    <svg class="icon icon-sm mnav-btn-menu-chevron" viewBox="0 0 24 24" aria-hidden="true">
+                        <polyline points="6 9 12 15 18 9"></polyline>
+                    </svg>
                 </button>
 
                 <button type="button"
@@ -239,93 +242,21 @@ foreach ($supported as $code => $name) {
             </div>
         </div>
 
-        <!-- Floating Glass Quick-Dock (Zero layout shift, 100% full-width Hero) -->
-        <aside class="mnav-dock" id="mnav-dock" aria-label="<?= e(trans('nav.quick_links', [], $currentLocale)) ?>">
-            <div class="mnav-dock-capsule">
-                <button type="button"
-                        class="mnav-dock-btn mnav-dock-menu"
-                        data-drawer-toggle
-                        aria-controls="mnav-drawer"
-                        aria-expanded="false"
-                        title="<?= e(trans('nav.open_index', [], $currentLocale)) ?>"
-                        aria-label="<?= e(trans('nav.open_index', [], $currentLocale)) ?>">
-                    <span class="mnav-dock-icon"><?= $getSectionIcon('collections') ?></span>
-                    <span class="mnav-dock-text"><?= e(trans('nav.index', [], $currentLocale)) ?></span>
-                </button>
-
-                <div class="mnav-dock-sep" aria-hidden="true"></div>
-
-                <div class="mnav-dock-links">
-                    <?php foreach ($railLinks as $link): ?>
-                        <a class="mnav-dock-btn<?= $isActive($link['url']) ? ' is-active' : '' ?>"
-                           href="<?= e($link['url']) ?>"
-                           title="<?= e(trans('nav.' . $link['key'], [], $currentLocale)) ?>"
-                           <?= $isActive($link['url']) ? 'aria-current="page"' : '' ?>>
-                            <span class="mnav-dock-icon"><?= $getSectionIcon($link['key']) ?></span>
-                            <span class="mnav-dock-label"><?= e(trans('nav.' . $link['key'], [], $currentLocale)) ?></span>
-                        </a>
-                    <?php endforeach; ?>
-                </div>
-
-                <div class="mnav-dock-sep" aria-hidden="true"></div>
-
-                <a class="mnav-dock-btn mnav-dock-catalog"
-                   href="<?= e($catalogUrl) ?>"
-                   target="_blank"
-                   rel="noopener"
-                   title="<?= e(trans('nav.download_catalog', [], $currentLocale)) ?>">
-                    <svg class="icon icon-sm" viewBox="0 0 24 24" aria-hidden="true">
-                        <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
-                        <polyline points="7 10 12 15 17 10"></polyline>
-                        <line x1="12" y1="15" x2="12" y2="3"></line>
-                    </svg>
-                    <span class="mnav-dock-badge">PDF</span>
-                </a>
-            </div>
-        </aside>
-
-        <!-- Architectural Index Drawer -->
-        <aside class="mnav-drawer"
-               id="mnav-drawer"
-               data-drawer
-               aria-hidden="true"
-               aria-label="<?= e(trans('nav.index', [], $currentLocale)) ?>">
-            <span class="mnav-drawer-knurl" aria-hidden="true"></span>
-            <div class="mnav-drawer-head">
-                <span class="mnav-drawer-eyebrow"><?= e(trans('nav.index', [], $currentLocale)) ?></span>
-                <span class="mnav-drawer-rule" aria-hidden="true"></span>
-                <button type="button" class="mnav-drawer-close" data-drawer-close aria-label="<?= e(trans('nav.close', [], $currentLocale)) ?>">
-                    <svg class="icon icon-sm" viewBox="0 0 24 24" aria-hidden="true">
-                        <line x1="18" y1="6" x2="6" y2="18"></line>
-                        <line x1="6" y1="6" x2="18" y2="18"></line>
-                    </svg>
-                </button>
-            </div>
-
-            <nav class="mnav-index">
-                <?php foreach ($indexLinks as $position => $link): ?>
-                    <a class="mnav-index-item<?= $isActive($link['url']) ? ' is-active' : '' ?>"
+                <!-- Horizontal Full-Width Index Bar (Text Only, Ultra Fast) -->
+        <nav class="mnav-dropdown-bar" id="mnav-dropdown-bar" aria-label="<?= e(trans('nav.index', [], $currentLocale)) ?>">
+            <div class="container mnav-dropdown-inner">
+                <?php foreach ($indexLinks as $link): ?>
+                    <a class="mnav-drop-link<?= $isActive($link['url']) ? ' is-active' : '' ?>"
                        href="<?= e($link['url']) ?>"
                        <?= str_starts_with($link['url'], 'http') ? 'target="_blank" rel="noopener"' : '' ?>
-                       <?= $isActive($link['url']) ? 'aria-current="page"' : '' ?>>
-                        <span class="mnav-index-num"><?= e(str_pad((string) ($position + 1), 2, '0', STR_PAD_LEFT)) ?></span>
-                        <span class="mnav-index-icon-wrap" aria-hidden="true"><?= $getSectionIcon($link['key']) ?></span>
-                        <span class="mnav-index-label"><?= e(trans('nav.' . $link['key'], [], $currentLocale)) ?></span>
-                        <svg class="icon icon-sm mnav-index-arrow" viewBox="0 0 24 24" aria-hidden="true">
-                            <line x1="5" y1="12" x2="19" y2="12"></line>
-                            <polyline points="12 5 19 12 12 19"></polyline>
-                        </svg>
-                    </a>
+                       <?= $isActive($link['url']) ? 'aria-current="page"' : '' ?>><?= e(trans('nav.' . $link['key'], [], $currentLocale)) ?></a>
                 <?php endforeach; ?>
-            </nav>
-
-            <div class="mnav-drawer-foot">
-                <span class="mnav-drawer-note">LUFLY &middot; Sanitary Architecture</span>
+                <a class="mnav-drop-link mnav-drop-catalog"
+                   href="<?= e($catalogUrl) ?>"
+                   target="_blank"
+                   rel="noopener"><?= e(trans('nav.download_catalog', [], $currentLocale)) ?> (PDF)</a>
             </div>
-        </aside>
-
-        <!-- Scrim for desktop drawer -->
-        <div class="mnav-drawer-scrim" data-drawer-close aria-hidden="true"></div>
+        </nav>
 
         <span class="mnav-progress" aria-hidden="true"><i data-nav-progress></i></span>
     </div>

@@ -42,8 +42,8 @@
   position: relative;
   z-index: 6; /* above the sheet scrim so the bar stays live while the sheet is open */
   background: var(--ds-nav-glass);
-  backdrop-filter: var(--ds-nav-blur);
-  -webkit-backdrop-filter: var(--ds-nav-blur);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
   border-bottom: var(--border-hairline) solid var(--ds-nav-hairline);
   box-shadow:
     inset 0 var(--border-hairline) 0 var(--ds-nav-sheen),
@@ -225,8 +225,8 @@
   border: var(--border-hairline) solid var(--ds-nav-hairline);
   border-radius: var(--radius-sm);
   background: var(--ds-nav-glass-dense);
-  backdrop-filter: var(--ds-nav-blur);
-  -webkit-backdrop-filter: var(--ds-nav-blur);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
   box-shadow: var(--ds-nav-shadow);
   clip-path: polygon(
     0 0,
@@ -405,22 +405,17 @@
   position: absolute;
   inset-inline-end: 0;
   top: calc(100% + var(--space-2));
-  z-index: var(--z-dropdown);
-  min-width: 230px;
+  z-index: 9999;
+  min-width: 210px;
+  background: var(--ds-surface);
   padding: var(--space-2);
   border: var(--border-hairline) solid var(--ds-nav-hairline);
   border-radius: var(--radius-sm);
   background: var(--ds-nav-glass-dense);
-  backdrop-filter: var(--ds-nav-blur);
-  -webkit-backdrop-filter: var(--ds-nav-blur);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
   box-shadow: var(--ds-nav-shadow);
-  clip-path: polygon(
-    0 0,
-    calc(100% - var(--ds-nav-chamfer)) 0,
-    100% var(--ds-nav-chamfer),
-    100% 100%,
-    0 100%
-  );
+/* removed clip-path */
   opacity: 0;
   visibility: hidden;
   transform: translate3d(0, -6px, 0);
@@ -547,8 +542,8 @@
   display: flex;
   inline-size: var(--mnav-rail-w);
   background: var(--ds-nav-glass-dense);
-  backdrop-filter: var(--ds-nav-blur);
-  -webkit-backdrop-filter: var(--ds-nav-blur);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
   border-inline-end: 1px solid var(--ds-nav-line-soft);
   box-shadow: var(--ds-nav-shadow);
   transition: background var(--ds-nav-base) var(--ds-nav-ease), border-color var(--ds-nav-base) var(--ds-nav-ease);
@@ -932,8 +927,8 @@
   padding: var(--space-6) var(--space-5) var(--space-5);
   border-inline-end: 1px solid var(--ds-nav-line);
   background: var(--ds-nav-glass-dense);
-  backdrop-filter: var(--ds-nav-blur);
-  -webkit-backdrop-filter: var(--ds-nav-blur);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
   box-shadow: var(--ds-nav-shadow);
   clip-path: polygon(
     0 0,
@@ -1194,8 +1189,8 @@
     calc(var(--space-5) + env(safe-area-inset-bottom, 0px));
   border-top: var(--border-hairline) solid var(--ds-nav-hairline);
   background: var(--ds-nav-glass-dense);
-  backdrop-filter: var(--ds-nav-blur);
-  -webkit-backdrop-filter: var(--ds-nav-blur);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
   box-shadow: 0 -18px 44px var(--ds-nav-fade);
   clip-path: polygon(
     0 var(--ds-nav-chamfer),
@@ -1627,8 +1622,8 @@
   gap: var(--space-1);
   padding: 6px 10px;
   background: var(--ds-nav-glass-dense);
-  backdrop-filter: var(--ds-nav-blur);
-  -webkit-backdrop-filter: var(--ds-nav-blur);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
   border: 1px solid var(--ds-nav-line-soft);
   border-radius: var(--radius-full);
   box-shadow: 0 10px 30px var(--ds-nav-shadow);
@@ -1732,8 +1727,8 @@
   padding: var(--space-8) var(--space-6) var(--space-6);
   border-inline-end: 1px solid var(--ds-nav-line);
   background: var(--ds-nav-glass-dense);
-  backdrop-filter: var(--ds-nav-blur);
-  -webkit-backdrop-filter: var(--ds-nav-blur);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
   box-shadow: 18px 0 50px var(--ds-nav-shadow);
   transform: translate3d(-102%, 0, 0);
   opacity: 0;
@@ -1760,3 +1755,91 @@
 .mnav-dock-text { font-size: var(--text-caption); }
 .mnav-dock-label { font-size: var(--text-caption); }
 .mnav-dock-catalog { color: var(--ds-primary); }
+
+
+/* ---------- Horizontal Full-Width Index Bar (Fast & Text-Only) ---------- */
+
+.mnav-dropdown-bar {
+  position: relative;
+  z-index: 5;
+  width: 100%;
+  max-height: 0;
+  overflow: hidden;
+  opacity: 0;
+  visibility: hidden;
+  background: var(--ds-surface);
+  border-bottom: 1px solid var(--ds-border);
+  box-shadow: 0 8px 24px var(--ds-nav-shadow);
+  transition: max-height .32s cubic-bezier(.16, 1, .3, 1), opacity .25s ease, visibility 0s linear .32s;
+  will-change: max-height, opacity;
+}
+
+.mnav.is-index-open .mnav-dropdown-bar {
+  max-height: 72px;
+  opacity: 1;
+  visibility: visible;
+  transition-delay: 0s;
+}
+
+.mnav-dropdown-inner {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  height: 52px;
+  overflow-x: auto;
+  scrollbar-width: none;
+  -webkit-overflow-scrolling: touch;
+}
+
+.mnav-dropdown-inner::-webkit-scrollbar {
+  display: none;
+}
+
+.mnav-drop-link {
+  display: inline-flex;
+  align-items: center;
+  padding: 6px 14px;
+  border-radius: var(--radius-full);
+  color: var(--ds-text);
+  font-size: var(--text-xs);
+  font-weight: var(--weight-semibold);
+  letter-spacing: var(--tracking-wide);
+  text-transform: uppercase;
+  text-decoration: none;
+  white-space: nowrap;
+  transition: background var(--duration-fast) ease, color var(--duration-fast) ease;
+}
+
+.mnav-drop-link:hover,
+.mnav-drop-link:focus-visible,
+.mnav-drop-link.is-active {
+  background: var(--ds-primary-tint);
+  color: var(--ds-primary);
+}
+
+.mnav-drop-catalog {
+  margin-inline-start: auto;
+  border: 1px solid var(--ds-primary-line);
+  color: var(--ds-primary);
+}
+
+.mnav-drop-catalog:hover {
+  background: var(--ds-primary);
+  color: var(--lu-neutral-0);
+}
+
+.mnav-btn-menu-chevron {
+  width: 14px;
+  height: 14px;
+  transition: transform .25s ease;
+}
+
+.mnav.is-index-open .mnav-btn-menu-chevron {
+  transform: rotate(180deg);
+}
+
+.mnav.is-index-open .mnav-btn-menu {
+  background: var(--ds-primary-soft);
+  color: var(--ds-primary);
+  border-color: var(--ds-nav-line);
+}

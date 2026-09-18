@@ -159,6 +159,10 @@ function evaluate(expression, ctx) {
     return '';
   }
 
+  if (expr === '$isActive($link[\'url\']) ? \'aria-current="page"\' : \'\'') {
+    return ctx.link.key === 'kitchen' ? 'aria-current="page"' : '';
+  }
+
   if (expr.includes('aria-current')) {
     return ctx.link.key === 'kitchen' ? raw('aria-current="page"') : '';
   }
