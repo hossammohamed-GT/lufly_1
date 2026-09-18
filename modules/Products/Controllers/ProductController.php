@@ -49,7 +49,6 @@ class ProductController extends Controller
 
         $pageTitle = trans('products.title');
         $catalogDescs = [
-            'ar' => 'تصفح الكتالوج المعماري الكامل للأدوات الصحية الفاخرة والمراحيض المعلقة والخلاطات من مصانع لوفلي.',
             'en' => 'Browse the complete architectural catalog of luxury sanitary ware, rimless toilets, and PVD brassware from LUFLY.',
             'tr' => 'LUFLY lüks vitrifiye seramikler, asma klozetler ve mimari bataryaların eksiksiz ürün kataloğunu inceleyin.',
             'cs' => 'Prohlédněte si kompletní architektonický katalog prémiové sanitární keramiky a baterií LUFLY.',

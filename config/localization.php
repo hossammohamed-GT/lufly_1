@@ -6,7 +6,6 @@ return [
     // Languages can be added here (and in the languages table) without code changes.
     'supported' => [
         'en' => 'English',
-        'ar' => 'العربية',
         'tr' => 'Türkçe',
         'cs' => 'Čeština',
     ],

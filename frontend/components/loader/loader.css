@@ -1,5 +1,5 @@
 /* ============================================================
-   LUFLY — Preloader "Water Fill" & Global Loading Experience
+   LUFLY - Preloader "Water Fill" & Global Loading Experience
    Draw → water rises inside the glyphs (= real progress) →
    factory stage messages → thank you message → curtain exit.
    Tokens resolve through design-system/style.css with component fallbacks.
@@ -169,7 +169,7 @@ body.ready {
   display: none;
 }
 
-/* water — masked to the glyph shapes */
+/* water - masked to the glyph shapes */
 .ld-water {
   position: absolute;
   inset: -2px;

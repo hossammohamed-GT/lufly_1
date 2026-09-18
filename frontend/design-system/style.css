@@ -1,12 +1,12 @@
-/* LUFLY Design System — Tidal Monolith (Direction 01 / 10) */
+/* LUFLY Design System - Tidal Monolith (Direction 01 / 10) */
 /* Single source of truth for color, type, space and motion. */
 
 /* ============================================================
-   01 — Brand palette (fixed, never themed)
+   01 - Brand palette (fixed, never themed)
    ============================================================ */
 
 :root {
-  /* LUFLY Teal ramp — primary signature #1C8B8B */
+  /* LUFLY Teal ramp - primary signature #1C8B8B */
   --lu-teal-50: #e6f4f4;
   --lu-teal-100: #c9e8e8;
   --lu-teal-200: #9ad6d6;
@@ -18,11 +18,11 @@
   --lu-teal-800: #0c4347;
   --lu-teal-900: #082e32;
 
-  /* Deep teal — secondary personality */
+  /* Deep teal - secondary personality */
   --lu-deep-teal: #143f43;
   --lu-mint: #7fe2d0;
 
-  /* Ink ramp — dark mode surfaces (warm neutral charcoal, low-glare) */
+  /* Ink ramp - dark mode surfaces (warm neutral charcoal, low-glare) */
   --lu-ink-950: #141311;
   --lu-ink-900: #2c2b28;
   --lu-ink-800: #353430;
@@ -47,13 +47,13 @@
   /* Border reference */
   --lu-border-light: #c8d6d1;
 
-  /* Semantic hues — light mode values */
+  /* Semantic hues - light mode values */
   --lu-success: #4d9077;
   --lu-warning: #c58a32;
   --lu-danger: #c64b4b;
   --lu-info: #3b7a9a;
 
-  /* Semantic hues — dark mode values */
+  /* Semantic hues - dark mode values */
   --lu-success-dark: #78ce9c;
   --lu-warning-dark: #e7b658;
   --lu-danger-dark: #f07b7b;
@@ -61,7 +61,7 @@
 }
 
 /* ============================================================
-   02 — Semantic tokens: Light Mode
+   02 - Semantic tokens: Light Mode
    ============================================================ */
 
 :root,
@@ -114,7 +114,7 @@
 }
 
 /* ============================================================
-   03 — Semantic tokens: Dark Mode
+   03 - Semantic tokens: Dark Mode
    ============================================================ */
 
 [data-theme="dark"] {
@@ -165,7 +165,7 @@
 }
 
 /* ============================================================
-   04 — Band tokens (dark architectural surfaces, theme fixed)
+   04 - Band tokens (dark architectural surfaces, theme fixed)
    ============================================================ */
 
 :root {
@@ -190,7 +190,7 @@
 }
 
 /* ============================================================
-   05 — Media tokens (photo overlays and cinema chrome)
+   05 - Media tokens (photo overlays and cinema chrome)
    ============================================================ */
 
 :root {
@@ -207,7 +207,7 @@
 }
 
 /* ============================================================
-   06 — Typography roles (Arial Narrow display + Inter utility)
+   06 - Typography roles (Arial Narrow display + Inter utility)
    ============================================================ */
 
 :root {
@@ -249,7 +249,7 @@
 }
 
 /* ============================================================
-   07 — Spacing scale (4px base unit)
+   07 - Spacing scale (4px base unit)
    ============================================================ */
 
 :root {
@@ -280,7 +280,7 @@
 }
 
 /* ============================================================
-   08 — Radius and border tokens (supporting, not identity)
+   08 - Radius and border tokens (supporting, not identity)
    ============================================================ */
 
 :root {
@@ -297,7 +297,7 @@
 }
 
 /* ============================================================
-   09 — Elevation tokens
+   09 - Elevation tokens
    ============================================================ */
 
 :root {
@@ -310,7 +310,7 @@
 }
 
 /* ============================================================
-   09b — Stacking order
+   09b - Stacking order
    ============================================================ */
 
 :root {
@@ -322,7 +322,7 @@
 }
 
 /* ============================================================
-   10 — Motion tokens
+   10 - Motion tokens
    ============================================================ */
 
 :root {
@@ -380,7 +380,7 @@
 }
 
 /* ============================================================
-   11 — Base and reset
+   11 - Base and reset
    ============================================================ */
 
 *,
@@ -442,7 +442,7 @@ hr { border: 0; border-top: var(--border-hairline) solid var(--ds-border); }
 .type-caption { font-family: var(--font-body); font-size: var(--text-caption); letter-spacing: var(--tracking-wider); text-transform: uppercase; color: var(--ds-text-muted); }
 
 /* ============================================================
-   12 — Layout: container, grid, stack, section rhythm
+   12 - Layout: container, grid, stack, section rhythm
    ============================================================ */
 
 .container {
@@ -513,7 +513,7 @@ hr { border: 0; border-top: var(--border-hairline) solid var(--ds-border); }
 .separator { height: var(--border-hairline); background: var(--ds-border); border: 0; }
 
 /* ============================================================
-   13 — Icons
+   13 - Icons
    ============================================================ */
 
 .icon {
@@ -539,7 +539,7 @@ hr { border: 0; border-top: var(--border-hairline) solid var(--ds-border); }
 .icon-xl { width: var(--icon-xl); height: var(--icon-xl); }
 
 /* ============================================================
-   14 — Surfaces: glass, panels, cards
+   14 - Surfaces: glass, panels, cards
    ============================================================ */
 
 .glass-panel {
@@ -577,7 +577,7 @@ hr { border: 0; border-top: var(--border-hairline) solid var(--ds-border); }
 .empty-state { color: var(--ds-text-muted); text-align: center; }
 
 /* ============================================================
-   15 — Buttons
+   15 - Buttons
    ============================================================ */
 
 .btn,
@@ -647,7 +647,7 @@ hr { border: 0; border-top: var(--border-hairline) solid var(--ds-border); }
 .btn-secondary-glass:hover { background: var(--ds-primary); border-color: var(--ds-primary); color: var(--ds-primary-text); }
 
 /* ============================================================
-   16 — Form controls
+   16 - Form controls
    ============================================================ */
 
 .field { display: grid; gap: var(--space-1); }
@@ -733,7 +733,7 @@ hr { border: 0; border-top: var(--border-hairline) solid var(--ds-border); }
 }
 
 /* ============================================================
-   17 — Feedback: alerts, badges, states
+   17 - Feedback: alerts, badges, states
    ============================================================ */
 
 .alert {
@@ -798,7 +798,7 @@ hr { border: 0; border-top: var(--border-hairline) solid var(--ds-border); }
 .state-text { color: var(--ds-text-muted); font-size: var(--text-sm); margin: 0; }
 
 /* ============================================================
-   18 — Data: tables, specs, pagination
+   18 - Data: tables, specs, pagination
    ============================================================ */
 
 .table {
@@ -832,7 +832,7 @@ hr { border: 0; border-top: var(--border-hairline) solid var(--ds-border); }
 .page-link.is-active { background: var(--ds-primary); border-color: var(--ds-primary); color: var(--ds-primary-text); }
 
 /* ============================================================
-   19 — Overlays: modal, dropdown
+   19 - Overlays: modal, dropdown
    ============================================================ */
 
 .modal-backdrop {
@@ -893,7 +893,7 @@ hr { border: 0; border-top: var(--border-hairline) solid var(--ds-border); }
 .dropdown-item.is-current { color: var(--ds-primary); font-weight: var(--weight-bold); }
 
 /* ============================================================
-   20 — Switchers (theme + language)
+   20 - Switchers (theme + language)
    ============================================================ */
 
 .lang-switcher { display: inline-flex; border: var(--border-hairline) solid var(--ds-border); border-radius: var(--radius-full); overflow: hidden; }
@@ -924,7 +924,7 @@ hr { border: 0; border-top: var(--border-hairline) solid var(--ds-border); }
 [data-theme="dark"] .icon-sun { display: none; }
 
 /* ============================================================
-   21 — Motion utilities
+   21 - Motion utilities
    ============================================================ */
 
 .anim-fade { animation: ds-fade-in var(--duration-base) var(--ease-out) both; }
@@ -935,14 +935,14 @@ hr { border: 0; border-top: var(--border-hairline) solid var(--ds-border); }
 .anim-orbit { animation: ds-orbit var(--motion-orbit) infinite; }
 
 /* ============================================================
-   21b — Direction
+   21b - Direction
    ============================================================ */
 
 [dir="rtl"] { direction: rtl; text-align: right; }
 [dir="rtl"] .section-header-left { text-align: right; }
 
 /* ============================================================
-   22 — Accessibility
+   22 - Accessibility
    ============================================================ */
 
 :focus-visible { outline: var(--focus-ring-width) solid var(--ds-focus-color); outline-offset: 2px; }
@@ -973,7 +973,7 @@ hr { border: 0; border-top: var(--border-hairline) solid var(--ds-border); }
 .skip-link:focus { top: var(--space-4); }
 
 /* ============================================================
-   23 — Responsive rules
+   23 - Responsive rules
    ============================================================ */
 
 @media (max-width: 1024px) {
@@ -997,7 +997,7 @@ hr { border: 0; border-top: var(--border-hairline) solid var(--ds-border); }
 }
 
 /* ============================================================
-   24 — Reduced motion
+   24 - Reduced motion
    ============================================================ */
 
 @media (prefers-reduced-motion: reduce) {
@@ -1011,7 +1011,7 @@ hr { border: 0; border-top: var(--border-hairline) solid var(--ds-border); }
 }
 
 /* ============================================================
-   25 — Navigation chrome tokens ("Machined Glass")
+   25 - Navigation chrome tokens ("Machined Glass")
    Glass slab + machined-metal detail for the header, the
    blueprint rail, the index drawer and the mobile bloom sheet.
    Every value is derived from the brand palette.

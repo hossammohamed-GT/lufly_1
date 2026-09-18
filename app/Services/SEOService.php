@@ -120,7 +120,7 @@ class SEOService
         $title = (string) ($meta['title'] ?? '');
         $suffix = (string) config('seo.title_suffix', ' | LUFLY');
 
-        if ($title !== '' && !str_contains($title, 'LUFLY') && !str_contains($title, 'لوفلي')) {
+        if ($title !== '' && !str_contains($title, 'LUFLY')) {
             $meta['title'] = $title . $suffix;
         }
 

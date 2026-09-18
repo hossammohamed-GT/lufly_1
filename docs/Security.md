@@ -58,7 +58,7 @@ HTTP responses; 5xx details are hidden unless `APP_DEBUG=true`; every error land
 
 ## Audit trail
 
-`audits` table stores before/after JSON per mutation with user + timestamp —
+`audits` table stores before/after JSON per mutation with user + timestamp -
 enabled per repository (`$auditing = true`), always on for settings changes.
 
 ## Security logging

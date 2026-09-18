@@ -1,6 +1,6 @@
 # Architecture
 
-Lufly Platform is an enterprise foundation written in **native PHP 8.2+** — no Laravel,
+Lufly Platform is an enterprise foundation written in **native PHP 8.2+** - no Laravel,
 Symfony or CodeIgniter. It runs on XAMPP (Apache + PHP + MySQL) and borrows proven
 ideas from modern frameworks while staying dependency-free.
 
@@ -62,13 +62,13 @@ Modules are enabled in `config/modules.php`. Their routes are auto-loaded by
 
 ## Key principles
 
-- **SOLID** — single-purpose classes, interfaces in `core/Contracts`, DI everywhere.
-- **Dependency Injection** — `Core\Container\Container` autowires constructors;
+- **SOLID** - single-purpose classes, interfaces in `core/Contracts`, DI everywhere.
+- **Dependency Injection** - `Core\Container\Container` autowires constructors;
   bindings registered in `AppServiceProvider`.
-- **Repository pattern** — `App\Repositories\Repository` base + module repositories.
-- **Service layer** — every reusable behaviour lives in a service (`app/Services`,
+- **Repository pattern** - `App\Repositories\Repository` base + module repositories.
+- **Service layer** - every reusable behaviour lives in a service (`app/Services`,
   `modules/*/Services`).
-- **Clean direction** — modules depend on core contracts, never the other way round
+- **Clean direction** - modules depend on core contracts, never the other way round
   (Auth depends on `UserProviderInterface`, implemented by the Users module).
 
 ## Request lifecycle example
@@ -80,5 +80,5 @@ repository → view `products::index` renders with the `layouts.frontend` layout
 
 ## CLI
 
-`php cli <command>` — migrate, rollback, seed, schema:dump, erd, docs:api, serve,
+`php cli <command>` - migrate, rollback, seed, schema:dump, erd, docs:api, serve,
 key:generate, list. See `docs/Database.md` and `docs/API.md`.

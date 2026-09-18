@@ -23,11 +23,10 @@ $image = !empty($meta['image']) ? asset($meta['image']) : asset('/images/lifesty
 
 $translator = app('Core\Localization\Translator');
 $currentLocale = $translator instanceof \Core\Localization\Translator ? $translator->getLocale() : 'en';
-$supportedLocales = $translator instanceof \Core\Localization\Translator ? $translator->supported() : ['en' => 'English', 'ar' => 'العربية', 'tr' => 'Türkçe', 'cs' => 'Čeština'];
+$supportedLocales = $translator instanceof \Core\Localization\Translator ? $translator->supported() : ['en' => 'English', 'tr' => 'Türkçe', 'cs' => 'Čeština'];
 
 $localeMap = [
     'en' => 'en_US',
-    'ar' => 'ar_AE',
     'tr' => 'tr_TR',
     'cs' => 'cs_CZ',
 ];
@@ -45,7 +44,7 @@ $ogLocale = $localeMap[$currentLocale] ?? 'en_US';
 
 <!-- Multilingual SEO / Hreflang Tags -->
 <?php foreach ($supportedLocales as $code => $name): 
-    $altUrl = url('/' . $code . (parse_url($canonical, PHP_URL_PATH) ? preg_replace('#^/(?:en|ar|tr|cs)#', '', parse_url($canonical, PHP_URL_PATH)) : ''));
+    $altUrl = url('/' . $code . (parse_url($canonical, PHP_URL_PATH) ? preg_replace('#^/(?:en|tr|cs)#', '', parse_url($canonical, PHP_URL_PATH)) : ''));
 ?>
 <link rel="alternate" hreflang="<?= e($code) ?>" href="<?= e($altUrl) ?>">
 <?php endforeach; ?>
@@ -103,7 +102,7 @@ $ogLocale = $localeMap[$currentLocale] ?? 'en_US';
           "telephone": "+90-850-3040-817",
           "contactType": "customer service",
           "email": "info@lufly.tr",
-          "availableLanguage": ["English", "Arabic", "Turkish", "Czech"]
+          "availableLanguage": ["English", "Turkish", "Czech"]
         }
       ]
     },

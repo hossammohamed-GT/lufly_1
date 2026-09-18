@@ -1,5 +1,5 @@
 /* ==========================================================================
-   LUFLY — HERO CINEMA engine (High Performance Edition)
+   LUFLY - HERO CINEMA engine (High Performance Edition)
    Vanilla JS, zero dependencies, zero icon font polling.
    Handles: responsive background swap, lightweight Ken-Burns scheduling,
    progress-fill ticks, arrows, touch swipe, pointer parallax,

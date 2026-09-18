@@ -1,6 +1,6 @@
-# Lufly Platform — Enterprise Native PHP Foundation
+# Lufly Platform - Enterprise Native PHP Foundation
 
-A production-ready, enterprise-level platform written in **pure PHP 8.2+** — no
+A production-ready, enterprise-level platform written in **pure PHP 8.2+** - no
 Laravel, Symfony or CodeIgniter. Designed to run on **XAMPP** (Apache + PHP + MySQL)
 and to serve as the starting point for a large multilingual company website, admin
 panel, CRM and future business systems.
@@ -11,7 +11,7 @@ panel, CRM and future business systems.
   localized URLs), request/response, middleware pipeline, ORM-lite, schema builder,
   migration system, validator, view engine, exception handler, console.
 - **Modular architecture** (`modules/`): Authentication, Users, Permissions,
-  Languages, Products, Media, Settings, SEO, Notifications — each with Controllers /
+  Languages, Products, Media, Settings, SEO, Notifications - each with Controllers /
   Services / Repositories / Models / Routes / Views / Requests.
 - **Prisma-inspired database layer** (`database/schema` + `migrations` + `erd`),
   reusable data types (`id`, `uuid`, `string_50…255`, `email`, `phone`, `slug`,
@@ -20,7 +20,7 @@ panel, CRM and future business systems.
   `*_translations` tables and translated routes (`/en/products`, `/tr/urunler`,
   `/cs/produkty`). English, Turkish and Czech included.
 - **Design system** (`frontend/design-system/style.css`): one file holding the full
-  Tidal Monolith identity — palette, semantic tokens, light/dark themes, typography,
+  Tidal Monolith identity - palette, semantic tokens, light/dark themes, typography,
   spacing, motion and the core components.
 - **Component-based frontend** (`frontend/<area>/<name>/`): every home section, page
   and panel block owns its CSS/JS, and its PHP partial declares the assets it needs.

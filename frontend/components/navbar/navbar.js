@@ -1,5 +1,5 @@
 /* ==========================================================================
-   LUFLY — Component: navbar controller
+   LUFLY - Component: navbar controller
    --------------------------------------------------------------------------
    One small controller for the machined-glass header:
      * scroll state + the progress line that reads down the side spine,
@@ -390,11 +390,6 @@
   function getGuideText(type, query) {
     var loc = locale();
     var guides = {
-      ar: {
-        minChars: 'يرجى كتابة حرفين على الأقل لبدء البحث المعماري الدقيق...',
-        empty: 'عذراً، لم يتم العثور على أي منتج يطابق "' + escapeHtml(query) + '"',
-        hint: 'يمكنك البحث باسم المنتج، كود الـ SKU، أو الفئة المعمارية'
-      },
       en: {
         minChars: 'Please type at least 2 characters to start searching...',
         empty: 'No architectural fixtures found matching "' + escapeHtml(query) + '"',
@@ -434,8 +429,7 @@
         '<span>' + getGuideText('hint', query) + '</span>' +
         '</div>';
     } else {
-      var headerMsg = locale() === 'ar' ? 'تم العثور على ' + matches.length + ' منتج مطابقة لـ "' + escapeHtml(query) + '"' :
-                      locale() === 'tr' ? '"' + escapeHtml(query) + '" için ' + matches.length + ' ürün bulundu' :
+      var headerMsg = locale() === 'tr' ? '"' + escapeHtml(query) + '" için ' + matches.length + ' ürün bulundu' :
                       locale() === 'cs' ? 'Nalezeno ' + matches.length + ' produktů pro "' + escapeHtml(query) + '"' :
                       'Found ' + matches.length + ' fixtures matching "' + escapeHtml(query) + '"';
 
@@ -448,6 +442,8 @@
 
     resultsBox.classList.add('is-open');
   }
+
+  var searchCache = {};
 
   if (searchInput && resultsBox) {
     var debounce = null;
@@ -465,7 +461,6 @@
     });
 
     searchInput.addEventListener('blur', function (event) {
-      // Delay slightly to allow click events on result cards or buttons to fire first
       setTimeout(function () {
         var active = document.activeElement;
         if (searchWrap && !searchWrap.contains(active)) {
@@ -485,6 +480,12 @@
 
       if (query.length === 1) {
         showStatus(getGuideText('minChars', query), false);
+        return;
+      }
+
+      var cacheKey = locale() + ':' + query.toLowerCase();
+      if (searchCache[cacheKey]) {
+        renderResults(searchCache[cacheKey], query);
         return;
       }
 
@@ -508,12 +509,14 @@
             return response.ok ? response.json() : null;
           })
           .then(function (json) {
-            renderResults(json && Array.isArray(json.data) ? json.data : [], query);
+            var data = json && Array.isArray(json.data) ? json.data : [];
+            searchCache[cacheKey] = data;
+            renderResults(data, query);
           })
           .catch(function () {
             /* request aborted or offline */
           });
-      }, 160);
+      }, 120);
     });
 
     searchInput.addEventListener('keydown', function (event) {

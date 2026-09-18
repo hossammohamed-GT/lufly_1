@@ -1,4 +1,4 @@
-# ADR 005 — Logging: Channel Files + Structured Database Logs
+# ADR 005 - Logging: Channel Files + Structured Database Logs
 
 ## Context
 
@@ -12,23 +12,23 @@ the DB; a PSR-3 library is not allowed.
 
 ## Decision
 
-1. **File channels** — `app`, `error`, `database`, `api`, `security`, `mail` under
+1. **File channels** - `app`, `error`, `database`, `api`, `security`, `mail` under
    `storage/logs`, PSR-3-shaped API (`Log::info/warning/error/critical`,
    `Log::channel('security')`), RFC 5424 levels, level threshold via `.env`.
 2. **Structured DB logs** where querying matters: `activity_logs` (user actions),
    `audits` (before/after mutations), `api_logs` (endpoint, method, status, response
    time, IP).
-3. **Fail-safe writing** — log writers never throw into the request path; DB log
+3. **Fail-safe writing** - log writers never throw into the request path; DB log
    failures degrade to the file channel.
 4. `LogService` aggregates `ActivityLogger`, `AuditService`, `SecurityLogger` behind
    one injectable facade.
 
 ## Alternatives
 
-1. **error_log only** — rejected: no channels, no structure.
-2. **Monolog** — rejected (dependency constraint); the internal Logger mirrors its
+1. **error_log only** - rejected: no channels, no structure.
+2. **Monolog** - rejected (dependency constraint); the internal Logger mirrors its
    interface to keep future migration trivial.
-3. **Syslog/Journald** — rejected: not portable across XAMPP OSes.
+3. **Syslog/Journald** - rejected: not portable across XAMPP OSes.
 
 ## Consequences
 

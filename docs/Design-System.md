@@ -1,4 +1,4 @@
-# Design System — Tidal Monolith (Direction 01 / 10)
+# Design System - Tidal Monolith (Direction 01 / 10)
 
 The complete visual identity lives in **one file**:
 
@@ -8,7 +8,7 @@ frontend/design-system/style.css
 
 192 custom properties, 135 component classes, 26 numbered sections. Every color,
 typeface, spacing step, radius, shadow, motion curve and core component in the project
-resolves through this file. **No other stylesheet may declare a color value** — no hex,
+resolves through this file. **No other stylesheet may declare a color value** - no hex,
 `rgb()`, `hsl()` or named colors. Component files must use the tokens.
 
 Colour is the identity layer; geometry (radius, border, component-specific widths) is a
@@ -18,35 +18,35 @@ supporting layer and stays as designed.
 
 | Section | Content |
 | --- | --- |
-| 01 | Brand palette — fixed in every theme |
-| 02 / 03 | Semantic tokens — light mode / dark mode |
-| 04 | Band tokens — dark architectural surfaces that stay dark in both themes |
-| 05 | Media tokens — text and scrims over photography and video |
+| 01 | Brand palette - fixed in every theme |
+| 02 / 03 | Semantic tokens - light mode / dark mode |
+| 04 | Band tokens - dark architectural surfaces that stay dark in both themes |
+| 05 | Media tokens - text and scrims over photography and video |
 | 06 | Typography roles |
 | 07 | Spacing scale (4px base unit) |
 | 08 | Radius + border tokens (supporting, not identity) |
 | 09 / 09b | Elevation / stacking order |
 | 10 | Motion tokens |
 | 11 | Base and reset |
-| 12 | Layout — container, grid, stack, section rhythm |
+| 12 | Layout - container, grid, stack, section rhythm |
 | 13 | Icons |
-| 14 | Surfaces — glass, panels, cards |
+| 14 | Surfaces - glass, panels, cards |
 | 15 | Buttons |
 | 16 | Form controls |
-| 17 | Feedback — alerts, badges, states |
-| 18 | Data — tables, specifications, pagination |
-| 19 | Overlays — modal, dropdown |
-| 20 | Switchers — theme + language |
+| 17 | Feedback - alerts, badges, states |
+| 18 | Data - tables, specifications, pagination |
+| 19 | Overlays - modal, dropdown |
+| 20 | Switchers - theme + language |
 | 21 / 21b | Motion utilities / direction (RTL) |
 | 22 – 24 | Accessibility, responsive rules, reduced motion |
-| 25 | Navigation chrome tokens — "Machined Glass" (`--ds-nav-*`) |
+| 25 | Navigation chrome tokens - "Machined Glass" (`--ds-nav-*`) |
 
 ## 2. Brand palette (fixed, never themed)
 
 | Token | Value | Role |
 | --- | --- | --- |
 | `--lu-teal-50 … --lu-teal-900` | `#e6f4f4` … `#082e32` | LUFLY Teal ramp |
-| `--lu-teal-500` | `#1c8b8b` | **primary signature** — used in both themes |
+| `--lu-teal-500` | `#1c8b8b` | **primary signature** - used in both themes |
 | `--lu-teal-600` | `#147174` | primary hover |
 | `--lu-deep-teal` | `#143f43` | light-mode secondary |
 | `--lu-mint` | `#7fe2d0` | dark-mode secondary / band accent |
@@ -101,7 +101,7 @@ loaded from Google Fonts with preconnect in both layouts and system fallbacks.
 * Space: 4px base (`--space-unit`), `--space-0 … --space-24` (0/4/8/12/16/20/24/28/32/40/48/56/64/80/96px)
   plus `--section-gap`, `--container-max`, `--container-narrow`, `--container-gutter`,
   `--grid-columns`, `--grid-gutter`.
-* Radius: `--radius-xs|sm|md|lg|xl|full|pill` — supporting tokens, not identity rules.
+* Radius: `--radius-xs|sm|md|lg|xl|full|pill` - supporting tokens, not identity rules.
 * Borders: `--border-hairline`, `--border-standard`.
 * Elevation: `--shadow-1|2|3`, `--shadow-soft`, `--shadow-hover`; focus `--focus-ring`,
   `--focus-ring-width`.
@@ -139,7 +139,7 @@ feedback `.alert-*`, `.state-*`, `.empty-state` · data `.table`, `.pagination`,
 
 The header component is `frontend/components/navbar/navbar.css` (paired with
 `navbar.js` and `resources/views/components/navbar.php`). It owns its geometry as
-component-local custom properties — `--mnav-row1` (bar height), `--mnav-mark-len`
+component-local custom properties - `--mnav-row1` (bar height), `--mnav-mark-len`
 (length of the crooked line) and `--mnav-rail-w`, the width of the fixed side spine. The
 spine is the only value the app shell needs, so it is declared on `:root` and used by
 `body.has-nav-rail` to offset page content; everything else stays inside the component.
@@ -150,10 +150,10 @@ Geometry, never colour.
 1. **No raw colors** outside `style.css`. If a value is missing, add a token there.
 2. Colors, typefaces, motion and elevation always come from tokens. Component files may
    tune their own geometry (paddings, gaps, widths) when the design needs a value that is
-   not on the scale — see the audit in `docs/Frontend-Structure.md`.
+   not on the scale - see the audit in `docs/Frontend-Structure.md`.
 3. Off-brand hues are not allowed: gold accents use the warning hue
    (`--ds-band-accent`, `--ds-warning`), WhatsApp green uses `--ds-success`.
-4. Country flags in `resources/views/components/flag.php` keep their national colours —
+4. Country flags in `resources/views/components/flag.php` keep their national colours -
    they are third-party identity marks, not design tokens.
 5. Prefer semantic tokens (`--ds-*`) over palette tokens (`--lu-*`) in components.
 
