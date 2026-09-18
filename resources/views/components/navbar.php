@@ -140,6 +140,16 @@ foreach ($supported as $code => $name) {
 
             <div class="mnav-actions">
                 <button type="button"
+                        class="mnav-btn-menu"
+                        data-drawer-toggle
+                        aria-controls="mnav-drawer"
+                        aria-expanded="false"
+                        aria-label="<?= e(trans('nav.open_index', [], $currentLocale)) ?>">
+                    <span class="mnav-btn-menu-bars" aria-hidden="true"><i></i><i></i><i></i></span>
+                    <span class="mnav-btn-menu-text"><?= e(trans('nav.index', [], $currentLocale)) ?></span>
+                </button>
+
+                <button type="button"
                         class="mnav-icon-btn mnav-search-open"
                         data-search-toggle
                         aria-controls="mnav-search"
@@ -229,106 +239,95 @@ foreach ($supported as $code => $name) {
             </div>
         </div>
 
-        <!-- The side spine — the whole second row, turned vertical -->
-        <div class="mnav-rail">
-            <div class="mnav-rail-inner">
+        <!-- Floating Glass Quick-Dock (Zero layout shift, 100% full-width Hero) -->
+        <aside class="mnav-dock" id="mnav-dock" aria-label="<?= e(trans('nav.quick_links', [], $currentLocale)) ?>">
+            <div class="mnav-dock-capsule">
                 <button type="button"
-                        class="mnav-mark"
+                        class="mnav-dock-btn mnav-dock-menu"
                         data-drawer-toggle
                         aria-controls="mnav-drawer"
                         aria-expanded="false"
-                        aria-haspopup="true"
+                        title="<?= e(trans('nav.open_index', [], $currentLocale)) ?>"
                         aria-label="<?= e(trans('nav.open_index', [], $currentLocale)) ?>">
-                    <span class="mnav-mark-label"><?= e(trans('nav.index', [], $currentLocale)) ?></span>
-                    <span class="mnav-mark-draw" aria-hidden="true">
-                        <svg class="mnav-mark-svg" viewBox="0 0 26 168" preserveAspectRatio="none" focusable="false">
-                            <defs>
-                                <linearGradient id="mnavDrawFade" x1="0" y1="0" x2="0" y2="1">
-                                    <stop offset="0" stop-color="currentColor" stop-opacity="0.95"></stop>
-                                    <stop offset="0.58" stop-color="currentColor" stop-opacity="0.6"></stop>
-                                    <stop offset="1" stop-color="currentColor" stop-opacity="0"></stop>
-                                </linearGradient>
-                            </defs>
-                            <path class="mnav-mark-etch" d="M21 1 V23 L7 31 L23 41 L12 53 L12 65 L3 73 L18 85 L18 99 L10 107 V167"></path>
-                            <path class="mnav-mark-etch mnav-mark-etch--thin" d="M25 1 V29 L14 36 L25 44 L19 55 L19 67 L11 75 L22 87 L22 98 L16 105 V167"></path>
-                            <path class="mnav-mark-trace" d="M21 1 V23 L7 31 L23 41 L12 53 L12 65 L3 73 L18 85 L18 99 L10 107 V167"></path>
-                        </svg>
-                    </span>
-                    <span class="mnav-mark-ticks" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i></span>
+                    <span class="mnav-dock-icon"><?= $getSectionIcon('collections') ?></span>
+                    <span class="mnav-dock-text"><?= e(trans('nav.index', [], $currentLocale)) ?></span>
                 </button>
 
-                <nav class="mnav-quick" aria-label="<?= e(trans('nav.quick_links', [], $currentLocale)) ?>">
+                <div class="mnav-dock-sep" aria-hidden="true"></div>
+
+                <div class="mnav-dock-links">
                     <?php foreach ($railLinks as $link): ?>
-                        <a class="mnav-quick-link<?= $isActive($link['url']) ? ' is-active' : '' ?>"
+                        <a class="mnav-dock-btn<?= $isActive($link['url']) ? ' is-active' : '' ?>"
                            href="<?= e($link['url']) ?>"
                            title="<?= e(trans('nav.' . $link['key'], [], $currentLocale)) ?>"
                            <?= $isActive($link['url']) ? 'aria-current="page"' : '' ?>>
-                            <span class="mnav-quick-icon" aria-hidden="true"><?= $getSectionIcon($link['key']) ?></span>
-                            <span class="mnav-quick-label"><?= e(trans('nav.' . $link['key'], [], $currentLocale)) ?></span>
+                            <span class="mnav-dock-icon"><?= $getSectionIcon($link['key']) ?></span>
+                            <span class="mnav-dock-label"><?= e(trans('nav.' . $link['key'], [], $currentLocale)) ?></span>
                         </a>
                     <?php endforeach; ?>
-                </nav>
-
-                <div class="mnav-rail-meta">
-                    <span class="mnav-knurl" aria-hidden="true"></span>
-                    <span class="mnav-rivet" aria-hidden="true"></span>
-                    <a class="mnav-catalog"
-                       href="<?= e($catalogUrl) ?>"
-                       target="_blank"
-                       rel="noopener"
-                       title="<?= e(trans('nav.download_catalog', [], $currentLocale)) ?>">
-                        <svg class="icon icon-sm" viewBox="0 0 24 24" aria-hidden="true">
-                            <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
-                            <polyline points="7 10 12 15 17 10"></polyline>
-                            <line x1="12" y1="15" x2="12" y2="3"></line>
-                        </svg>
-                        <span class="mnav-catalog-text"><?= e(trans('nav.download_catalog', [], $currentLocale)) ?></span>
-                    </a>
                 </div>
+
+                <div class="mnav-dock-sep" aria-hidden="true"></div>
+
+                <a class="mnav-dock-btn mnav-dock-catalog"
+                   href="<?= e($catalogUrl) ?>"
+                   target="_blank"
+                   rel="noopener"
+                   title="<?= e(trans('nav.download_catalog', [], $currentLocale)) ?>">
+                    <svg class="icon icon-sm" viewBox="0 0 24 24" aria-hidden="true">
+                        <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+                        <polyline points="7 10 12 15 17 10"></polyline>
+                        <line x1="12" y1="15" x2="12" y2="3"></line>
+                    </svg>
+                    <span class="mnav-dock-badge">PDF</span>
+                </a>
+            </div>
+        </aside>
+
+        <!-- Architectural Index Drawer -->
+        <aside class="mnav-drawer"
+               id="mnav-drawer"
+               data-drawer
+               aria-hidden="true"
+               aria-label="<?= e(trans('nav.index', [], $currentLocale)) ?>">
+            <span class="mnav-drawer-knurl" aria-hidden="true"></span>
+            <div class="mnav-drawer-head">
+                <span class="mnav-drawer-eyebrow"><?= e(trans('nav.index', [], $currentLocale)) ?></span>
+                <span class="mnav-drawer-rule" aria-hidden="true"></span>
+                <button type="button" class="mnav-drawer-close" data-drawer-close aria-label="<?= e(trans('nav.close', [], $currentLocale)) ?>">
+                    <svg class="icon icon-sm" viewBox="0 0 24 24" aria-hidden="true">
+                        <line x1="18" y1="6" x2="6" y2="18"></line>
+                        <line x1="6" y1="6" x2="18" y2="18"></line>
+                    </svg>
+                </button>
             </div>
 
-            <!-- Index drawer — unfolded by the crooked line -->
-            <aside class="mnav-drawer"
-                   id="mnav-drawer"
-                   data-drawer
-                   aria-hidden="true"
-                   aria-label="<?= e(trans('nav.index', [], $currentLocale)) ?>">
-                <span class="mnav-drawer-knurl" aria-hidden="true"></span>
-                <div class="mnav-drawer-head">
-                    <span class="mnav-drawer-eyebrow"><?= e(trans('nav.index', [], $currentLocale)) ?></span>
-                    <span class="mnav-drawer-rule" aria-hidden="true"></span>
-                    <button type="button" class="mnav-drawer-close" data-drawer-close aria-label="<?= e(trans('nav.close', [], $currentLocale)) ?>">
-                        <svg class="icon icon-sm" viewBox="0 0 24 24" aria-hidden="true">
-                            <line x1="18" y1="6" x2="6" y2="18"></line>
-                            <line x1="6" y1="6" x2="18" y2="18"></line>
+            <nav class="mnav-index">
+                <?php foreach ($indexLinks as $position => $link): ?>
+                    <a class="mnav-index-item<?= $isActive($link['url']) ? ' is-active' : '' ?>"
+                       href="<?= e($link['url']) ?>"
+                       <?= str_starts_with($link['url'], 'http') ? 'target="_blank" rel="noopener"' : '' ?>
+                       <?= $isActive($link['url']) ? 'aria-current="page"' : '' ?>>
+                        <span class="mnav-index-num"><?= e(str_pad((string) ($position + 1), 2, '0', STR_PAD_LEFT)) ?></span>
+                        <span class="mnav-index-icon-wrap" aria-hidden="true"><?= $getSectionIcon($link['key']) ?></span>
+                        <span class="mnav-index-label"><?= e(trans('nav.' . $link['key'], [], $currentLocale)) ?></span>
+                        <svg class="icon icon-sm mnav-index-arrow" viewBox="0 0 24 24" aria-hidden="true">
+                            <line x1="5" y1="12" x2="19" y2="12"></line>
+                            <polyline points="12 5 19 12 12 19"></polyline>
                         </svg>
-                    </button>
-                </div>
+                    </a>
+                <?php endforeach; ?>
+            </nav>
 
-                <nav class="mnav-index">
-                    <?php foreach ($indexLinks as $position => $link): ?>
-                        <a class="mnav-index-item<?= $isActive($link['url']) ? ' is-active' : '' ?>"
-                           href="<?= e($link['url']) ?>"
-                           <?= str_starts_with($link['url'], 'http') ? 'target="_blank" rel="noopener"' : '' ?>
-                           <?= $isActive($link['url']) ? 'aria-current="page"' : '' ?>>
-                            <span class="mnav-index-num"><?= e(str_pad((string) ($position + 1), 2, '0', STR_PAD_LEFT)) ?></span>
-                            <span class="mnav-index-icon-wrap" aria-hidden="true"><?= $getSectionIcon($link['key']) ?></span>
-                            <span class="mnav-index-label"><?= e(trans('nav.' . $link['key'], [], $currentLocale)) ?></span>
-                            <svg class="icon icon-sm mnav-index-arrow" viewBox="0 0 24 24" aria-hidden="true">
-                                <line x1="5" y1="12" x2="19" y2="12"></line>
-                                <polyline points="12 5 19 12 12 19"></polyline>
-                            </svg>
-                        </a>
-                    <?php endforeach; ?>
-                </nav>
+            <div class="mnav-drawer-foot">
+                <span class="mnav-drawer-note">LUFLY &middot; Sanitary Architecture</span>
+            </div>
+        </aside>
 
-                <div class="mnav-drawer-foot">
-                    <span class="mnav-drawer-note">LUFLY &middot; Sanitary Architecture</span>
-                </div>
-            </aside>
+        <!-- Scrim for desktop drawer -->
+        <div class="mnav-drawer-scrim" data-drawer-close aria-hidden="true"></div>
 
-            <span class="mnav-progress" aria-hidden="true"><i data-nav-progress></i></span>
-        </div>
+        <span class="mnav-progress" aria-hidden="true"><i data-nav-progress></i></span>
     </div>
 
     <!-- Mobile bloom sheet -->

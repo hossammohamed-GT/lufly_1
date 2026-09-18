@@ -69,7 +69,7 @@ try {
 <?php endif; ?>
 <?php endforeach; ?>
 </head>
-<body class="ds-app aquatic-stage ld-loading<?= $navbar !== '' ? ' has-nav-rail' : '' ?>">
+<body class="ds-app aquatic-stage ld-loading">
 <?= $view->renderFile($view->resolvePath('components.loader'), ['translator' => $translator]) ?>
 <a class="skip-link" href="#main"><?= e(trans('common.skip_to_content')) ?></a>
 <?= $navbar ?>

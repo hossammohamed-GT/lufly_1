@@ -38,6 +38,10 @@
 
     var y = window.scrollY || window.pageYOffset || 0;
     header.classList.toggle('is-scrolled', y > 8);
+    var dock = header.querySelector('.mnav-dock');
+    if (dock) {
+      dock.classList.toggle('is-visible', y > 120);
+    }
 
     if (!progress) {
       return;
@@ -63,7 +67,7 @@
 
   /* ---------- 2. panels that can only be open one at a time ---------- */
 
-  var mark = header.querySelector('[data-drawer-toggle]');
+  var marks = header.querySelectorAll('[data-drawer-toggle]');
   var drawer = header.querySelector('[data-drawer]');
   var sheet = header.querySelector('[data-nav-sheet]');
   var sheetTrigger = header.querySelector('[data-nav-open]');
@@ -191,29 +195,17 @@
       rail.addEventListener('mouseenter', scheduleDrawerOpen);
       rail.addEventListener('mouseleave', scheduleDrawerClose);
     }
-    mark.addEventListener('mouseenter', scheduleDrawerOpen);
-    mark.addEventListener('mouseleave', scheduleDrawerClose);
-    drawer.addEventListener('mouseenter', clearTimers);
-    drawer.addEventListener('mouseleave', scheduleDrawerClose);
-
-    mark.addEventListener('click', function (event) {
-      clearTimers();
-
-      /* a mouse click lands on an already-open drawer: keep it open.
-         keyboard activation (detail 0) and touch still toggle. */
-      if (event.detail > 0 && hoverQuery && hoverQuery.matches) {
-        setDrawer(true);
-        return;
-      }
-
-      setDrawer(!header.classList.contains('is-drawer-open'));
+    marks.forEach(function (btn) {
+      btn.addEventListener('click', function (event) {
+        event.preventDefault();
+        clearTimers();
+        setDrawer(!header.classList.contains('is-drawer-open'));
+      });
     });
 
-    mark.addEventListener('focus', function () {
-      if (hoverQuery && hoverQuery.matches) {
-        scheduleDrawerOpen();
-      }
-    });
+    if (drawer) {
+      drawer.addEventListener('mouseenter', clearTimers);
+    }
 
     drawer.addEventListener('keydown', function (event) {
       if (event.key === 'Escape') {
@@ -223,7 +215,9 @@
     });
   }
 
-  var drawerClose = header.querySelector('[data-drawer-close]');
+  var drawerCloses = header.querySelectorAll('[data-drawer-close]');
+    drawerCloses.forEach(function (btn) { btn.addEventListener('click', function () { setDrawer(false); }); });
+    var drawerClose = null;
 
   if (drawerClose) {
     drawerClose.addEventListener('click', function () {

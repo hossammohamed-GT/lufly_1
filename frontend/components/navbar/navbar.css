@@ -1,6 +1,6 @@
 /* The one value the app shell needs from this component: how much room the side
    spine takes, so page content can clear it without touching component classes. */
-:root { --mnav-rail-w: 62px; }
+:root { --mnav-rail-w: 0px; }
 
 /* ==========================================================================
    LUFLY — Component: navbar ("Machined Glass")
@@ -1516,7 +1516,7 @@
   /* Keep the fixed spine at the viewport edge; only page content clears it. */
   .has-nav-rail > .ds-main,
   .has-nav-rail > .lufly-mega-footer {
-    padding-inline-start: var(--mnav-rail-w);
+    padding-inline-start: 0;
   }
 }
 
@@ -1528,3 +1528,235 @@
 @media print {
   .mnav { display: none; }
 }
+
+
+/* Topbar Architectural Menu Button */
+.mnav-btn-menu {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+  height: 40px;
+  padding-inline: var(--space-3) var(--space-4);
+  border: 1px solid var(--ds-nav-line-soft);
+  border-radius: var(--radius-full);
+  background: var(--ds-primary-tint);
+  color: var(--ds-text);
+  font-family: var(--font-mono);
+  font-size: var(--text-caption);
+  font-weight: var(--weight-semibold);
+  letter-spacing: var(--tracking-wide);
+  text-transform: uppercase;
+  cursor: pointer;
+  transition: all var(--ds-nav-fast) var(--ds-nav-ease);
+}
+
+.mnav-btn-menu:hover,
+.mnav.is-drawer-open .mnav-btn-menu {
+  border-color: var(--ds-nav-line);
+  background: var(--ds-primary-soft);
+  color: var(--ds-primary);
+  transform: translateY(-1px);
+}
+
+.mnav-btn-menu-bars {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  width: 14px;
+  height: 10px;
+}
+
+.mnav-btn-menu-bars i {
+  display: block;
+  width: 100%;
+  height: 2px;
+  border-radius: 1px;
+  background: currentColor;
+  transition: transform var(--ds-nav-base) var(--ds-nav-ease), opacity var(--ds-nav-fast) linear;
+}
+
+.mnav-btn-menu-bars i:nth-child(2) {
+  width: 75%;
+}
+
+.mnav-btn-menu:hover .mnav-btn-menu-bars i:nth-child(2) {
+  width: 100%;
+}
+
+.mnav.is-drawer-open .mnav-btn-menu-bars i:nth-child(1) {
+  transform: translateY(4px) rotate(45deg);
+}
+
+.mnav.is-drawer-open .mnav-btn-menu-bars i:nth-child(2) {
+  opacity: 0;
+}
+
+.mnav.is-drawer-open .mnav-btn-menu-bars i:nth-child(3) {
+  transform: translateY(-4px) rotate(-45deg);
+}
+
+
+/* ---------- 6. Floating Glass Quick-Dock ---------- */
+
+.mnav-dock {
+  position: fixed;
+  bottom: var(--space-6);
+  inset-inline-start: var(--space-6);
+  z-index: 95;
+  pointer-events: auto;
+  opacity: 0;
+  visibility: hidden;
+  transform: translateY(18px) scale(0.96);
+  will-change: transform, opacity;
+  transition: opacity .35s var(--ds-nav-ease), transform .35s var(--ds-nav-ease), visibility 0s linear .35s;
+}
+
+/* Dock appears elegantly when scrolled, or stays gently hovered */
+.mnav.is-scrolled ~ * .mnav-dock,
+.mnav.is-scrolled .mnav-dock,
+.mnav-dock.is-visible {
+  opacity: 1;
+  visibility: visible;
+  transform: translateY(0) scale(1);
+  transition-delay: 0s;
+}
+
+.mnav-dock-capsule {
+  display: flex;
+  align-items: center;
+  gap: var(--space-1);
+  padding: 6px 10px;
+  background: var(--ds-nav-glass-dense);
+  backdrop-filter: var(--ds-nav-blur);
+  -webkit-backdrop-filter: var(--ds-nav-blur);
+  border: 1px solid var(--ds-nav-line-soft);
+  border-radius: var(--radius-full);
+  box-shadow: 0 10px 30px var(--ds-nav-shadow);
+  transition: border-color var(--ds-nav-fast) var(--ds-nav-ease), transform var(--ds-nav-fast) var(--ds-nav-ease);
+}
+
+.mnav-dock-capsule:hover {
+  border-color: var(--ds-nav-line);
+  transform: translateY(-2px);
+}
+
+.mnav-dock-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+  padding: 6px 12px;
+  border: 0;
+  border-radius: var(--radius-full);
+  background: transparent;
+  color: var(--ds-text);
+  font-family: var(--font-body);
+  font-size: var(--text-caption);
+  font-weight: var(--weight-semibold);
+  letter-spacing: var(--tracking-wide);
+  text-decoration: none;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: all var(--ds-nav-fast) var(--ds-nav-ease);
+}
+
+.mnav-dock-btn:hover,
+.mnav-dock-btn.is-active {
+  background: var(--ds-primary-soft);
+  color: var(--ds-primary);
+}
+
+.mnav-dock-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 16px;
+  height: 16px;
+  color: var(--ds-primary);
+}
+
+.mnav-dock-icon .icon {
+  width: 16px;
+  height: 16px;
+}
+
+.mnav-dock-sep {
+  width: 1px;
+  height: 18px;
+  background: var(--ds-nav-line-soft);
+  margin-inline: 4px;
+}
+
+.mnav-dock-badge {
+  padding: 2px 5px;
+  border-radius: var(--radius-xs);
+  background: var(--ds-primary-tint);
+  border: 1px solid var(--ds-nav-line-soft);
+  font-family: var(--font-mono);
+  font-size: 9px;
+  font-weight: var(--weight-bold);
+  color: var(--ds-primary);
+}
+
+@media (max-width: 1023px) {
+  .mnav-dock { display: none; }
+}
+
+/* Scrim for Drawer */
+.mnav-drawer-scrim {
+  position: fixed;
+  inset: 0;
+  z-index: 98;
+  background: var(--ds-nav-scrim);
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity .35s linear, visibility 0s linear .35s;
+}
+
+.mnav.is-drawer-open .mnav-drawer-scrim {
+  opacity: 1;
+  visibility: visible;
+  transition-delay: 0s;
+}
+
+/* Update Drawer to slide in from inline-start edge */
+.mnav-drawer {
+  position: fixed !important;
+  top: 0;
+  bottom: 0;
+  inset-inline-start: 0;
+  height: 100vh;
+  z-index: 101;
+  inline-size: min(440px, 90vw);
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  padding: var(--space-8) var(--space-6) var(--space-6);
+  border-inline-end: 1px solid var(--ds-nav-line);
+  background: var(--ds-nav-glass-dense);
+  backdrop-filter: var(--ds-nav-blur);
+  -webkit-backdrop-filter: var(--ds-nav-blur);
+  box-shadow: 18px 0 50px var(--ds-nav-shadow);
+  transform: translate3d(-102%, 0, 0);
+  opacity: 0;
+  visibility: hidden;
+  will-change: transform, opacity;
+  transition: transform .45s cubic-bezier(.16, 1, .3, 1), opacity .3s ease, visibility 0s linear .45s;
+}
+
+[dir="rtl"] .mnav-drawer {
+  transform: translate3d(102%, 0, 0);
+}
+
+.mnav.is-drawer-open .mnav-drawer {
+  transform: translate3d(0, 0, 0);
+  opacity: 1;
+  visibility: visible;
+  transition-delay: 0s;
+}
+
+
+.mnav-btn-menu-text { display: inline-block; font-size: var(--text-xs); }
+.mnav-dock-links { display: flex; align-items: center; gap: var(--space-1); }
+.mnav-dock-menu { font-weight: var(--weight-bold); }
+.mnav-dock-text { font-size: var(--text-caption); }
+.mnav-dock-label { font-size: var(--text-caption); }
+.mnav-dock-catalog { color: var(--ds-primary); }

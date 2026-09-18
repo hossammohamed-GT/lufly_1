@@ -176,7 +176,8 @@ function evaluate(expression, ctx) {
   }
 
     if (expr.startsWith('$getSectionIcon(')) {
-    const key = ctx.link.key;
+    const match = expr.match(/\$getSectionIcon\(['"]([^'"]+)['"]\)/);
+    const key = match ? match[1] : (ctx.link ? ctx.link.key : 'collections');
     const icons = {
       bathroom: '<svg class="icon mnav-cat-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 6h6a2 2 0 0 1 2 2v2H7V8a2 2 0 0 1 2-2z"></path><path d="M5 10h14a2 2 0 0 1 2 2v2a6 6 0 0 1-6 6H9a6 6 0 0 1-6-6v-2a2 2 0 0 1 2-2z"></path><line x1="7" y1="20" x2="7" y2="22"></line><line x1="17" y1="20" x2="17" y2="22"></line></svg>',
       kitchen: '<svg class="icon mnav-cat-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 14h18"></path><path d="M5 14V6a3 3 0 0 1 6 0v2"></path><path d="M19 14v4a3 3 0 0 1-3 3H8a3 3 0 0 1-3-3v-4"></path><circle cx="8" cy="8" r="1"></circle></svg>',
@@ -368,7 +369,7 @@ ${themeScript}
   .stage-filler { height: 140vh; margin-top: var(--space-8); border: var(--border-hairline) dashed var(--ds-border); border-radius: var(--radius-md); background: repeating-linear-gradient(180deg, var(--ds-primary-tint) 0 2px, transparent 2px 14px); }
 </style>
 </head>
-<body class="ds-app aquatic-stage ld-loading has-nav-rail">
+<body class="ds-app aquatic-stage ld-loading">
 <div class="ld-loader is-initial" id="ldLoader" role="status" aria-label="Loading">
     <div class="ld-blob a"></div>
     <div class="ld-blob b"></div>
