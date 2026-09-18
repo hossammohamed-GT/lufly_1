@@ -43,6 +43,8 @@
     if (header.classList.contains('is-index-open')) {
       closeIndex();
     }
+    // Also close search and collapse it back on scroll
+    hideResults();
     var dock = header.querySelector('.mnav-dock');
     if (dock) {
       dock.classList.toggle('is-visible', y > 120);
