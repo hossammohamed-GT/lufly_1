@@ -177,8 +177,8 @@ The marquee header was replaced by the "Machined Glass" navbar:
   duplicated raw-color CSS that no view referenced) and the stale duplicate of it that
   shipped under `public/`; `home/hero-cinema/hero-cinema.css` now uses `--ds-primary` instead of the retired
   `--lufly-*` variables.
-* Design review happens without PHP: `node tools/navbar-preview/serve.mjs` renders the real
-  partial into a static page (dev-only harness).
+* Design review for the navbar happens against the rendered partial + `style.css` directly
+  (the old `tools/navbar-preview/` dev-only harness was removed during the cleanup).
 
 ## 8. Migration notes
 

@@ -4,7 +4,7 @@
             <!-- Brand Column -->
             <div class="footer-col">
                 <div class="footer-brand">
-                    <img class="footer-brand-logo" src="<?= e(asset('frontend/design-system/logo.png')) ?>" alt="LUFLY">
+                    <img class="footer-brand-logo" src="<?= e(asset('images/logo.png')) ?>" alt="LUFLY">
                     <span class="footer-brand-name">LUFLY</span>
                 </div>
                 <p class="footer-brand-text">

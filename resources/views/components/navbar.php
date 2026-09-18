@@ -106,8 +106,8 @@ foreach ($supported as $code => $name) {
         <div class="container mnav-top">
             <a class="mnav-brand" href="<?= e(route('home')) ?>" title="LUFLY Sanitary Architecture">
                 <img class="mnav-brand-img"
-                     src="<?= e(asset('frontend/design-system/logo.png')) ?>"
-                     alt="LUFLY"
+src="<?= e(asset('images/logo.png')) ?>"
+                    alt="LUFLY"
                      width="66"
                      height="42"
                      decoding="async"
