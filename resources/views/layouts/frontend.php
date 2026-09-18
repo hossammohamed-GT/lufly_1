@@ -17,6 +17,12 @@ $navbar = $translator !== null
     ? $view->renderFile($view->resolvePath('components.navbar'), [])
     : '';
 
+/* The announcement bar also declares its own stylesheet, so it must render
+   before the asset lists are collected - it is echoed in the body below. */
+$announcement = $translator !== null
+    ? $view->renderFile($view->resolvePath('components.announcement'), ['translator' => $translator])
+    : '';
+
 $styles = $view->styles();
 $scripts = $view->scripts();
 $preloads = $view->preloads();
@@ -71,9 +77,7 @@ try {
 </head>
 <body class="ds-app aquatic-stage ld-loading">
 <?= $view->renderFile($view->resolvePath('components.loader'), ['translator' => $translator]) ?>
-<?php if ($translator !== null): ?>
-<?= $view->renderFile($view->resolvePath('components.announcement'), ['translator' => $translator]) ?>
-<?php endif; ?>
+<?= $announcement ?>
 <a class="skip-link" href="#main"><?= e(trans('common.skip_to_content')) ?></a>
 <?= $navbar ?>
 <main class="ds-main" id="main">
