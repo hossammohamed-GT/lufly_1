@@ -1,7 +1,7 @@
 /* ============================================================
    LUFLY - Preloader & Global Loading Controller (Optimized Edition)
-   Timeline: SVG stroke draw → water fills glyphs (real progress %)
-   + snappy fluid motion + craftsman stage messages → seal flash → completion.
+   Timeline: SVG stroke draw -> water fills glyphs (real progress %)
+   + snappy fluid motion + craftsman stage messages -> seal flash -> completion.
    Global API: window.LUFLYLoader.show(msg), update(pct, msg), hide()
    ============================================================ */
 
@@ -52,9 +52,9 @@
   if (!loader) return;
 
   var reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-  var T_DRAW   = reduced ? 80 : 350;
-  var T_HOLD   = reduced ? 100 : 200;
-  var T_SEAL   = reduced ? 0 : 180;
+  var T_DRAW   = reduced ? 60 : 300;
+  var T_HOLD   = reduced ? 80 : 180;
+  var T_SEAL   = reduced ? 0 : 160;
 
   if (reduced) loader.classList.add('ld-reduced');
 
@@ -85,7 +85,7 @@
       if (isFinal) msg.classList.add('final');
       else msg.classList.remove('final');
       msg.classList.remove('swap');
-    }, 120);
+    }, 100);
   }
 
   function setStage(p) {
@@ -114,25 +114,21 @@
 
   function runInitialLoad(onDone) {
     var t0 = performance.now();
-    var duration = reduced ? 300 : 750;
-    var lastProgress = 0;
+    var duration = reduced ? 250 : 650;
 
     function frame(now) {
       var elapsed = (now - t0) / duration;
       if (elapsed > 1) elapsed = 1;
 
       var ease = 1 - Math.pow(1 - elapsed, 3);
-      var target = pageLoaded ? ease * 100 : Math.min(90, ease * 100);
+      var target = pageLoaded ? ease * 100 : Math.min(92, ease * 100);
 
-      currentP += (target - currentP) * 0.25;
+      currentP += (target - currentP) * 0.22;
       if (pageLoaded && elapsed >= 0.95) currentP = 100;
 
-      if (Math.abs(currentP - lastProgress) > 0.4 || currentP >= 100) {
-        lastProgress = currentP;
-        setProgress(currentP);
-      }
+      setProgress(currentP);
 
-      if (currentP >= 99.5) {
+      if (currentP >= 99.6) {
         setProgress(100);
         if (typeof onDone === 'function') onDone();
         return;
