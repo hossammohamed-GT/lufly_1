@@ -357,17 +357,18 @@
     return base + '/' + String(raw).replace(/^\/+/, '');
   }
 
-  function resultRow(product) {
+  function resultCard(product) {
     var name = escapeHtml(product.name || product.sku || 'LUFLY fixture');
     var sku = escapeHtml(product.sku || '');
     var slug = product.slug || product.id || '';
     var href = base + '/' + encodeURIComponent(locale()) + '/products/' + encodeURIComponent(slug);
 
-    return '<a class="search-result" href="' + href + '">' +
-      '<img class="search-result-thumb" src="' + productImage(product.image || product.main_image_url) + '" alt="" loading="lazy" decoding="async" width="52" height="52">' +
+    return '<a class="search-result-card" href="' + href + '">' +
+      '<img class="search-result-thumb" src="' + productImage(product.image || product.main_image_url) + '" alt="" loading="lazy" decoding="async" width="64" height="64">' +
       '<span class="search-result-body">' +
       '<span class="search-result-name">' + name + '</span>' +
       '<span class="search-result-sku">' + (sku ? 'SKU ' + sku : '') + '</span>' +
+      '<span class="search-result-badge">LUFLY Architecture</span>' +
       '</span></a>';
   }
 
@@ -375,15 +376,63 @@
     return (searchInput && searchInput.getAttribute('data-locale')) || 'en';
   }
 
+  function getGuideText(type, query) {
+    var loc = locale();
+    var guides = {
+      ar: {
+        minChars: 'يرجى كتابة حرفين على الأقل لبدء البحث المعماري الدقيق...',
+        empty: 'عذراً، لم يتم العثور على أي منتج يطابق "' + escapeHtml(query) + '"',
+        hint: 'يمكنك البحث باسم المنتج، كود الـ SKU، أو الفئة المعمارية'
+      },
+      en: {
+        minChars: 'Please type at least 2 characters to start searching...',
+        empty: 'No architectural fixtures found matching "' + escapeHtml(query) + '"',
+        hint: 'Search by product name, SKU code, or category'
+      },
+      tr: {
+        minChars: 'Aramaya başlamak için lütfen en az 2 karakter girin...',
+        empty: '"' + escapeHtml(query) + '" ile eşleşen ürün bulunamadı',
+        hint: 'Ürün adı, stok kodu veya kategori ile arayabilirsiniz'
+      },
+      cs: {
+        minChars: 'Pro zahájení vyhledávání zadejte alespoň 2 znaky...',
+        empty: 'Nebyly nalezeny žádné produkty odpovídající "' + escapeHtml(query) + '"',
+        hint: 'Hledejte podle názvu produktu, kódu SKU nebo kategorie'
+      }
+    };
+    var d = guides[loc] || guides.en;
+    return d[type] || '';
+  }
+
+  function showStatus(text, isError) {
+    if (!resultsBox) return;
+    resultsBox.innerHTML = '<div class="search-status-banner">' +
+      '<span class="search-status-icon"><svg class="icon icon-sm" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="8" x2="12" y2="12"></line><line x1="12" y1="16" x2="12.01" y2="16"></line></svg></span>' +
+      '<span class="search-status-text">' + text + '</span>' +
+      '</div>';
+    resultsBox.classList.add('is-open');
+  }
+
   function renderResults(matches, query) {
-    if (!resultsBox) {
-      return;
-    }
+    if (!resultsBox) return;
 
     if (!matches.length) {
-      resultsBox.innerHTML = '<div class="search-results-empty">' + escapeHtml(query) + '</div>';
+      resultsBox.innerHTML = '<div class="search-results-empty">' +
+        '<svg class="search-results-empty-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>' +
+        '<strong>' + getGuideText('empty', query) + '</strong>' +
+        '<span>' + getGuideText('hint', query) + '</span>' +
+        '</div>';
     } else {
-      resultsBox.innerHTML = matches.map(resultRow).join('');
+      var headerMsg = locale() === 'ar' ? 'تم العثور على ' + matches.length + ' منتج مطابقة لـ "' + escapeHtml(query) + '"' :
+                      locale() === 'tr' ? '"' + escapeHtml(query) + '" için ' + matches.length + ' ürün bulundu' :
+                      locale() === 'cs' ? 'Nalezeno ' + matches.length + ' produktů pro "' + escapeHtml(query) + '"' :
+                      'Found ' + matches.length + ' fixtures matching "' + escapeHtml(query) + '"';
+
+      resultsBox.innerHTML = '<div class="search-status-banner">' +
+        '<span class="search-status-icon"><svg class="icon icon-sm" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"></polyline></svg></span>' +
+        '<span class="search-status-text">' + headerMsg + '</span>' +
+        '</div>' +
+        '<div class="search-results-grid">' + matches.map(resultCard).join('') + '</div>';
     }
 
     resultsBox.classList.add('is-open');
@@ -393,13 +442,28 @@
     var debounce = null;
     var inFlight = null;
 
+    searchInput.addEventListener('focus', function () {
+      var query = searchInput.value.trim();
+      if (searchWrap) searchWrap.classList.add('is-expanded');
+
+      if (query.length === 1) {
+        showStatus(getGuideText('minChars', query), false);
+      } else if (query.length === 0) {
+        showStatus(getGuideText('hint', query), false);
+      }
+    });
+
     searchInput.addEventListener('input', function () {
       window.clearTimeout(debounce);
-
       var query = searchInput.value.trim();
 
-      if (query.length < 2) {
-        hideResults();
+      if (query.length === 0) {
+        showStatus(getGuideText('hint', query), false);
+        return;
+      }
+
+      if (query.length === 1) {
+        showStatus(getGuideText('minChars', query), false);
         return;
       }
 
@@ -428,7 +492,7 @@
           .catch(function () {
             /* request aborted or offline */
           });
-      }, 180);
+      }, 160);
     });
 
     searchInput.addEventListener('keydown', function (event) {
