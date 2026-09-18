@@ -337,6 +337,15 @@
       resultsBox.classList.remove('is-open');
       resultsBox.innerHTML = '';
     }
+    if (searchWrap) {
+      searchWrap.classList.remove('is-expanded');
+    }
+    if (header) {
+      header.classList.remove('is-search-open');
+    }
+    if (searchInput && document.activeElement === searchInput) {
+      searchInput.blur();
+    }
   }
 
   function escapeHtml(value) {
@@ -453,6 +462,16 @@
       } else if (query.length === 0) {
         showStatus(getGuideText('hint', query), false);
       }
+    });
+
+    searchInput.addEventListener('blur', function (event) {
+      // Delay slightly to allow click events on result cards or buttons to fire first
+      setTimeout(function () {
+        var active = document.activeElement;
+        if (searchWrap && !searchWrap.contains(active)) {
+          hideResults();
+        }
+      }, 180);
     });
 
     searchInput.addEventListener('input', function () {

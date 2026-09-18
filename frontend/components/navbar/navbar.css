@@ -139,7 +139,6 @@
   will-change: max-width;
 }
 
-.mnav-search:focus-within,
 .mnav-search.is-expanded {
   max-width: 820px;
 }
