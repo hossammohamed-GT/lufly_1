@@ -68,6 +68,7 @@
   /* ---------- 2. panels that can only be open one at a time ---------- */
 
   var marks = header.querySelectorAll('[data-drawer-toggle]');
+  var mark = marks.length > 0 ? marks[0] : null;
   var drawer = header.querySelector('[data-drawer]');
   var sheet = header.querySelector('[data-nav-sheet]');
   var sheetTrigger = header.querySelector('[data-nav-open]');
@@ -82,9 +83,9 @@
   function setDrawer(open) {
     header.classList.toggle('is-drawer-open', open);
 
-    if (mark) {
-      mark.setAttribute('aria-expanded', open ? 'true' : 'false');
-    }
+    marks.forEach(function (btn) {
+      btn.setAttribute('aria-expanded', open ? 'true' : 'false');
+    });
 
     if (drawer) {
       drawer.setAttribute('aria-hidden', open ? 'false' : 'true');
@@ -213,7 +214,7 @@
     return !!element && element.matches(':hover');
   }
 
-  if (mark && drawer) {
+  if (drawer) {
     var rail = header.querySelector('.mnav-rail');
     if (rail) {
       rail.addEventListener('mouseenter', scheduleDrawerOpen);
@@ -464,7 +465,11 @@
       hideResults();
     }
 
-    if (drawer && !drawer.contains(event.target) && !(mark && mark.contains(event.target)) &&
+    var isClickOnToggle = false;
+    marks.forEach(function (btn) {
+      if (btn.contains(event.target)) isClickOnToggle = true;
+    });
+    if (drawer && !drawer.contains(event.target) && !isClickOnToggle &&
       !(hoverQuery && hoverQuery.matches)) {
       setDrawer(false);
     }
