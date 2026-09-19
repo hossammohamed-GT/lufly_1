@@ -26,9 +26,9 @@
 
 [data-theme="light"] .finishes-backdrop {
   background:
-    radial-gradient(120% 90% at 80% 0%, color-mix(in srgb, var(--lu-teal-500) 10%, transparent), transparent 58%),
-    linear-gradient(180deg, color-mix(in srgb, var(--lu-neutral-50) 93%, transparent), color-mix(in srgb, var(--lu-neutral-50) 70%, transparent)),
-    url('../../../images/lifestyle/finish-workshop.jpg') center / cover;
+    radial-gradient(120% 90% at 80% 0%, color-mix(in srgb, var(--lu-teal-500) 8%, transparent), transparent 58%),
+    linear-gradient(180deg, color-mix(in srgb, var(--lu-neutral-50) 12%, transparent), color-mix(in srgb, var(--lu-neutral-50) 8%, transparent)),
+    url('../../../images/lifestyle/finish-workshop-light.jpg') center / cover;
 }
 
 /* light theme: the band text flips dark so it stays readable over the
