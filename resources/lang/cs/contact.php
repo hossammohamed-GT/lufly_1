@@ -21,6 +21,8 @@ return [
     'quick_title' => 'Rychlé žádosti',
     'quick_catalog' => 'Vyžádat katalog PDF 2026',
     'quick_bim' => 'Vyžádat soubory BIM a 3D Revit',
+    'quick_tender' => 'Vyžádat architektonický tender balíček (CAD/BIM/PDF)',
+    'quick_finish' => 'Vybrat povrchovou úpravu: rendery a exportní ceny',
     'quick_quote' => 'Vyžádat cenovou nabídku z továrny',
     'response_note' => 'Průměrná doba odpovědi: do 4 pracovních hodin.',
 ];

@@ -71,7 +71,7 @@ $getSectionIcon = static function (string $key): string {
     };
 };
 
-$catalogUrl = 'https://wa.me/908503040817?text=' . rawurlencode('Hello LUFLY, please send the 2026 Master Technical PDF Catalog and BIM files.');
+$catalogUrl = route('contact');
 
 /* Language targets keep the current route translated per locale. */
 $languageLinks = [];

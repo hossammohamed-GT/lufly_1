@@ -25,8 +25,8 @@ $view->pushStyle('frontend/home/corporate/corporate.css');
                     <p class="spec-desk-text">
                         <?= e(trans('home.spec_desk_desc')) ?>
                     </p>
-                    <a href="https://wa.me/908503040817?text=<?= rawurlencode('Hello LUFLY, please send the complete 2026 Architect Tender Package (CAD/BIM/PDF).') ?>"
-                       target="_blank" rel="noopener" class="btn-primary-teal spec-desk-cta">
+                    <a href="<?= e(route('contact')) ?>"
+                       class="btn-primary-teal spec-desk-cta">
                         <?= e(trans('home.spec_desk_cta')) ?>
                     </a>
                 </div>

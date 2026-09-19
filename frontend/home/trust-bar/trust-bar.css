@@ -1,30 +1,31 @@
 /* ==========================================================================
-   Trust bar - compact edition
-   A short strip between the hero and the catalogue. The architectural
-   blueprint photo stays FIXED while the page scrolls over it (pure CSS
-   parallax via background-attachment: fixed; iOS lets it scroll, which is
-   an acceptable graceful fallback).
+   Trust bar - flat editorial edition
+   The blueprint photo stays FIXED while the page scrolls over it (pure CSS
+   parallax via background-attachment: fixed; iOS lets it scroll, which is an
+   acceptable graceful fallback). The veil over the photo is built from
+   semantic tokens (--ds-bg / --ds-surface / --ds-text), so it flips with the
+   light/dark theme automatically. No glass, no blur: solid cards, number
+   first, words underneath.
    ========================================================================== */
 
 .trust-bar {
-  --trust-pad-block: 34px;
+  --trust-pad-block: 38px;
 
   position: relative;
   padding-block: var(--trust-pad-block);
-  background-color: var(--lu-deep-teal);
+  color: var(--ds-text);
+  font-family: var(--font-body);
+  background-color: var(--ds-bg);
   background-image:
     linear-gradient(180deg,
-      color-mix(in srgb, var(--lu-deep-teal) 78%, transparent) 0%,
-      color-mix(in srgb, var(--lu-deep-teal) 62%, transparent) 50%,
-      color-mix(in srgb, var(--lu-deep-teal) 82%, transparent) 100%),
+      color-mix(in srgb, var(--ds-bg) 88%, transparent) 0%,
+      color-mix(in srgb, var(--ds-bg) 74%, transparent) 50%,
+      color-mix(in srgb, var(--ds-bg) 92%, transparent) 100%),
     var(--trust-bg, none);
-  background-size: cover, cover;
+  background-size: auto, cover;
   background-position: center, center;
   background-attachment: scroll, fixed;
-  color: var(--lu-neutral-0);
-  font-family: var(--font-body);
-  border-block: 1px solid color-mix(in srgb, var(--lu-mint) 22%, transparent);
-  overflow: hidden;
+  border-block: 1px solid var(--ds-border);
 }
 
 .trust-inner {
@@ -32,7 +33,7 @@
   margin-inline: auto;
   padding-inline: var(--container-pad, 24px);
   display: grid;
-  gap: 22px;
+  gap: 24px;
 }
 
 /* ---------- header row: heading + small contact link ---------- */
@@ -45,7 +46,7 @@
   flex-wrap: wrap;
 }
 
-.trust-heading { display: grid; gap: 6px; }
+.trust-heading { display: grid; gap: 7px; }
 
 .trust-kicker-badge {
   display: inline-flex;
@@ -57,8 +58,8 @@
   width: 7px;
   height: 7px;
   border-radius: 50%;
-  background: var(--lu-mint);
-  box-shadow: 0 0 10px color-mix(in srgb, var(--lu-mint) 60%, transparent);
+  background: var(--ds-primary);
+  box-shadow: 0 0 10px color-mix(in srgb, var(--ds-primary) 55%, transparent);
 }
 
 .trust-kicker {
@@ -66,51 +67,52 @@
   font-weight: 700;
   letter-spacing: 0.2em;
   text-transform: uppercase;
-  color: color-mix(in srgb, var(--lu-mint) 86%, var(--lu-neutral-0));
+  color: var(--ds-primary);
 }
 
 .trust-head h2 {
   margin: 0;
   font-family: var(--font-display);
-  font-size: clamp(19px, 2.4vw, 26px);
+  font-size: clamp(20px, 2.4vw, 27px);
   font-weight: 700;
   letter-spacing: 0.01em;
   line-height: 1.15;
-  color: var(--lu-neutral-0);
+  color: var(--ds-text);
 }
 
 .trust-head h2 em {
   font-style: normal;
-  color: var(--lu-mint);
+  color: var(--ds-primary);
 }
 
 .trust-contact-link {
   display: inline-flex;
   align-items: center;
   gap: 8px;
-  padding: 9px 16px;
+  padding: 10px 18px;
   border-radius: 999px;
-  border: 1px solid color-mix(in srgb, var(--lu-mint) 42%, transparent);
-  background: color-mix(in srgb, var(--lu-neutral-0) 8%, transparent);
-  color: var(--lu-neutral-0);
+  border: 1px solid var(--ds-border);
+  background: var(--ds-surface);
+  color: var(--ds-text);
   font-size: 11.5px;
   font-weight: 700;
   letter-spacing: 0.14em;
   text-transform: uppercase;
   text-decoration: none;
   white-space: nowrap;
-  transition: background-color 160ms ease, border-color 160ms ease, transform 160ms ease;
+  box-shadow: var(--shadow-1);
+  transition: color 160ms ease, border-color 160ms ease, transform 160ms ease;
 }
 
 .trust-contact-link:hover {
-  background: color-mix(in srgb, var(--lu-mint) 18%, transparent);
-  border-color: var(--lu-mint);
+  color: var(--ds-primary);
+  border-color: color-mix(in srgb, var(--ds-primary) 45%, var(--ds-border));
   transform: translateY(-1px);
 }
 
 [dir="rtl"] .trust-contact-link svg { transform: scaleX(-1); }
 
-/* ---------- compact stat cards ---------- */
+/* ---------- flat stat cards: number first, words under ---------- */
 
 .trust-grid {
   display: grid;
@@ -119,23 +121,21 @@
 }
 
 .trust-card {
-  position: relative;
   display: grid;
   align-content: start;
-  gap: 7px;
-  padding: 14px 16px 15px;
+  gap: 6px;
+  padding: 18px 18px 20px;
   border-radius: var(--radius-md);
-  border: 1px solid color-mix(in srgb, var(--lu-neutral-0) 16%, transparent);
-  background: color-mix(in srgb, var(--lu-neutral-0) 7%, transparent);
-  backdrop-filter: blur(6px);
-  -webkit-backdrop-filter: blur(6px);
-  transition: border-color 160ms ease, background-color 160ms ease, transform 160ms ease;
+  border: 1px solid var(--ds-border);
+  background: var(--ds-surface);
+  box-shadow: var(--shadow-1);
+  transition: transform 180ms ease, border-color 180ms ease, box-shadow 180ms ease;
 }
 
 .trust-card:hover {
-  border-color: color-mix(in srgb, var(--lu-mint) 46%, transparent);
-  background: color-mix(in srgb, var(--lu-neutral-0) 11%, transparent);
-  transform: translateY(-2px);
+  transform: translateY(-3px);
+  border-color: color-mix(in srgb, var(--ds-primary) 45%, var(--ds-border));
+  box-shadow: var(--shadow-2);
 }
 
 .trust-card-top {
@@ -145,48 +145,49 @@
   gap: 10px;
 }
 
-.trust-card-index {
-  font-family: var(--font-mono);
-  font-size: 10px;
-  letter-spacing: 0.18em;
-  color: color-mix(in srgb, var(--lu-neutral-0) 55%, transparent);
-}
-
 .trust-stat {
   display: inline-flex;
   align-items: baseline;
-  gap: 4px;
-  color: var(--lu-mint);
+  gap: 6px;
 }
 
 .trust-stat strong {
   font-family: var(--font-display);
-  font-size: 22px;
+  font-size: clamp(30px, 3vw, 38px);
   font-weight: 700;
   line-height: 1;
+  letter-spacing: -0.01em;
+  color: var(--ds-primary);
 }
 
 .trust-stat span {
-  font-size: 11px;
+  font-size: 12px;
   font-weight: 600;
-  letter-spacing: 0.06em;
-  color: color-mix(in srgb, var(--lu-mint) 80%, var(--lu-neutral-0));
+  letter-spacing: 0.04em;
+  color: var(--ds-text-muted);
+}
+
+.trust-card-index {
+  font-family: var(--font-mono);
+  font-size: 10px;
+  letter-spacing: 0.18em;
+  color: var(--ds-text-muted);
 }
 
 .trust-card h3 {
-  margin: 2px 0 0;
+  margin: 4px 0 0;
   font-family: var(--font-body);
-  font-size: 13px;
+  font-size: 13.5px;
   font-weight: 700;
-  letter-spacing: 0.02em;
-  color: var(--lu-neutral-0);
+  letter-spacing: 0.01em;
+  color: var(--ds-text);
 }
 
 .trust-card p {
   margin: 0;
-  font-size: 11.5px;
-  line-height: 1.5;
-  color: color-mix(in srgb, var(--lu-neutral-0) 72%, transparent);
+  font-size: 12px;
+  line-height: 1.55;
+  color: var(--ds-text-muted);
   display: -webkit-box;
   -webkit-line-clamp: 2;
   -webkit-box-orient: vertical;
@@ -200,13 +201,13 @@
 }
 
 @media (max-width: 640px) {
-  .trust-bar { --trust-pad-block: 26px; }
+  .trust-bar { --trust-pad-block: 28px; }
   .trust-inner { gap: 16px; }
   .trust-head { align-items: flex-start; flex-direction: column; gap: 12px; }
   .trust-grid { grid-template-columns: 1fr 1fr; gap: 9px; }
-  .trust-card { padding: 12px 13px; gap: 5px; }
+  .trust-card { padding: 13px 14px 15px; gap: 4px; }
   .trust-card p { display: none; }
-  .trust-stat strong { font-size: 20px; }
+  .trust-stat strong { font-size: 26px; }
   .trust-contact-link { padding: 8px 14px; font-size: 10.5px; }
 }
 

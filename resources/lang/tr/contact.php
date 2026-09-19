@@ -21,6 +21,8 @@ return [
     'quick_title' => 'Hızlı talepler',
     'quick_catalog' => '2026 PDF kataloğunu isteyin',
     'quick_bim' => 'BIM ve 3D Revit dosyalarını isteyin',
+    'quick_tender' => 'Mimar ihale paketini isteyin (CAD/BIM/PDF)',
+    'quick_finish' => 'Kaplama seçin: render ve ihracat fiyatları',
     'quick_quote' => 'Fabrika fiyatı isteyin',
     'response_note' => 'Ortalama yanıt süresi: 4 çalışma saatinin altında.',
 ];

@@ -65,8 +65,6 @@
     }
   };
 
-  var WHATSAPP = 'https://wa.me/908503040817?text=';
-
   function init() {
     var section = document.querySelector('.finishes-section');
     var buttons = document.querySelectorAll('.finish-swatch-btn');
@@ -83,7 +81,6 @@
     var coating = document.getElementById('finish-coating');
     var cartridge = document.getElementById('finish-cartridge');
     var aerator = document.getElementById('finish-aerator');
-    var quote = document.getElementById('finish-wa-btn');
 
     function setText(node, value) {
       if (node && value) {
@@ -112,12 +109,6 @@
           setText(coating, data.coating);
           setText(cartridge, data.cartridge);
           setText(aerator, data.aerator);
-
-          if (quote) {
-            quote.href = WHATSAPP + encodeURIComponent(
-              'Hello LUFLY, I am specifying the "' + data.title + '" finish for an architectural project. Please share high-res renders and export pricing.'
-            );
-          }
 
           image.style.opacity = '1';
         }, 200);

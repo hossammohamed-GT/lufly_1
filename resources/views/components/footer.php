@@ -43,8 +43,8 @@
             <div class="footer-col">
                 <h5><?= e(trans('common.footer_technical')) ?></h5>
                 <ul>
-                    <li><a href="https://wa.me/908503040817?text=<?= rawurlencode('Hello LUFLY, please send the 2026 Master Technical PDF Catalog.') ?>" target="_blank" rel="noopener"><?= e(trans('nav.download_catalog')) ?></a></li>
-                    <li><a href="https://wa.me/908503040817?text=<?= rawurlencode('Hello LUFLY, I require BIM and 3D Revit files for project specification.') ?>" target="_blank" rel="noopener"><?= e(trans('nav.tender_pack')) ?></a></li>
+                    <li><a href="<?= e(route('contact')) ?>"><?= e(trans('nav.download_catalog')) ?></a></li>
+                    <li><a href="<?= e(route('contact')) ?>"><?= e(trans('nav.tender_pack')) ?></a></li>
                     <li><a href="#corporate">EN 997 &middot; EN 817 &middot; CE</a></li>
                     <li><a href="#rituals"><?= e(trans('home.rituals_title')) ?></a></li>
                     <li><a href="<?= e(route('products.index')) ?>"><?= e(trans('home.full_catalog')) ?></a></li>

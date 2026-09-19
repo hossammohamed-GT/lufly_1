@@ -70,10 +70,8 @@ $view->pushScript('frontend/home/finishes/finishes.js');
                 </div>
 
                 <div class="finish-actions">
-                    <a href="https://wa.me/908503040817?text=<?= rawurlencode('Hello LUFLY, I am specifying the Brushed Rose Gold finish for an architectural project. Please share high-res renders and export pricing.') ?>"
+                    <a href="<?= e(route('contact')) ?>"
                        id="finish-wa-btn"
-                       target="_blank"
-                       rel="noopener"
                        class="btn-primary-teal">
                         <span><?= e(trans('home.finish_inquire')) ?></span>
                     </a>

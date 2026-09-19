@@ -22,7 +22,6 @@ $view->pushStyle('frontend/home/masterpieces/masterpieces.css');
                 $name = $product['name'] ?? ('LUFLY ' . ($product['sku'] ?? 'Sanitary Fixture'));
                 $sku = $product['sku'] ?? 'SKU-PENDING';
                 $desc = $product['short_description'] ?? 'Premium European specification sanitary fixture.';
-                $inquireMsg = rawurlencode("Hello LUFLY Export Desk, I would like to inquire about {$name} (SKU: {$sku}) for an architectural project.");
                 ?>
                 <div class="product-card-luxury scroll-reveal" data-delay="<?= $idx + 1 ?>">
                     <div class="product-img-box">
@@ -32,7 +31,7 @@ $view->pushStyle('frontend/home/masterpieces/masterpieces.css');
                     <h3 class="product-title"><?= e($name) ?></h3>
                     <p class="product-specs"><?= e($desc) ?></p>
                     <div class="product-card-actions">
-                        <a href="https://wa.me/908503040817?text=<?= $inquireMsg ?>" target="_blank" rel="noopener" class="btn-inquire-whatsapp">
+                        <a href="<?= e(route('contact')) ?>" class="btn-inquire-whatsapp">
                             <span><?= e(trans('home.inquire_b2b')) ?></span>
                         </a>
                         <a href="<?= e(route('products.show', ['slug' => $product['slug'] ?? $product['id']])) ?>" class="product-link">

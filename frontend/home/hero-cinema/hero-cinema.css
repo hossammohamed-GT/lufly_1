@@ -298,21 +298,29 @@
   .lfc-inner { max-width: 100%; }
   .lfc-beam { display: none; }
 
-  /* keep the copy clear of the arrows and safe inside the first screen */
+  /* copy stays vertically centered; extra bottom padding clears the arrows */
   .lfc-panel {
-    padding-inline: 22px;
-    padding-top: 14px;
-    padding-bottom: 84px;
-    align-items: flex-start;
+    padding-inline: 24px;
+    padding-top: 28px;
+    padding-bottom: 92px;
   }
-  .lfc-kicker { font-size: 10px; letter-spacing: 0.24em; margin-bottom: 14px; }
+
+  /* soften: calmer contrast + gentler type rhythm */
+  .lfc-shade,
+  [dir="rtl"] .lfc-shade {
+    background: linear-gradient(180deg,
+      rgba(15, 18, 17, 0.52) 0%,
+      rgba(15, 18, 17, 0.30) 42%,
+      rgba(15, 18, 17, 0.62) 100%);
+  }
+  .lfc-kicker { font-size: 10px; letter-spacing: 0.22em; margin-bottom: 16px; }
   [dir="rtl"] .lfc-kicker { letter-spacing: 0.1em; }
-  .lfc-title { font-size: clamp(29px, 8.6vw, 42px); }
-  .lfc-rule { margin: 14px 0 12px; }
-  .lfc-sub { font-size: 13.5px; line-height: 1.62; }
-  .lfc-ctas { gap: 10px; margin-top: 20px; }
-  .lfc-cta { padding: 12px 20px; font-size: 11px; letter-spacing: 0.12em; }
-  .lfc-logoBox { width: min(280px, 70vw); margin-bottom: 18px; }
+  .lfc-title { font-size: clamp(30px, 9vw, 44px); line-height: 1.04; text-shadow: 0 2px 28px rgba(0, 0, 0, 0.38); }
+  .lfc-rule { margin: 16px 0 14px; }
+  .lfc-sub { font-size: 13.5px; line-height: 1.7; max-width: 34ch; text-shadow: 0 1px 14px rgba(0, 0, 0, 0.35); }
+  .lfc-ctas { gap: 10px; margin-top: 24px; }
+  .lfc-cta { padding: 13px 20px; font-size: 11px; letter-spacing: 0.12em; }
+  .lfc-logoBox { width: min(280px, 70vw); margin-bottom: 22px; }
   .lfc-tag { letter-spacing: 0.3em; }
   [dir="rtl"] .lfc-tag { letter-spacing: 0.08em; }
   .lfc-grain { background-size: 32px 32px; }

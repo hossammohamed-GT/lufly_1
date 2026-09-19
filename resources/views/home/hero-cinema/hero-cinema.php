@@ -42,8 +42,6 @@ $slides = [
      'kicker' => 'cinema5_kicker', 'ta' => 'cinema5_title_a', 'tb' => 'cinema5_title_b', 'desc' => 'cinema5_desc',
      'alt' => 'LUFLY freestanding bath suite in a luxury penthouse bathroom'],
 ];
-
-$waText = rawurlencode('Hello LUFLY, I would like to inquire about your collections and project pricing.');
 ?>
 <section class="lfc" id="lfc" aria-label="LUFLY hero showcase">
 
@@ -100,10 +98,11 @@ $waText = rawurlencode('Hello LUFLY, I would like to inquire about your collecti
                                 <polyline points="12 5 19 12 12 19"></polyline>
                             </svg>
                         </a>
-                        <a href="https://wa.me/908503040817?text=<?= $waText ?>"
-                           target="_blank" rel="noopener" class="lfc-cta lfc-cta--s">
-                            <svg class="lfc-btn-icon" width="16" height="16" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
-                                <path d="M12.04 2c-5.46 0-9.91 4.45-9.91 9.91 0 1.75.46 3.45 1.32 4.95L2.05 22l5.25-1.38c1.45.79 3.08 1.21 4.74 1.21 5.46 0 9.91-4.45 9.91-9.91 0-2.65-1.03-5.14-2.9-7.01A9.82 9.82 0 0 0 12.04 2zm0 18.15c-1.48 0-2.93-.4-4.2-1.15l-.3-.18-3.12.82.83-3.04-.2-.31a8.19 8.19 0 0 1-1.26-4.38c0-4.54 3.7-8.24 8.24-8.24 2.2 0 4.27.86 5.82 2.42a8.18 8.18 0 0 1 2.41 5.83c0 4.54-3.7 8.23-8.24 8.23zm4.52-6.16c-.25-.12-1.47-.72-1.7-.81-.23-.08-.39-.12-.56.12-.17.25-.64.81-.79.97-.14.17-.29.19-.54.06-.25-.12-1.05-.39-2-1.23-.74-.66-1.24-1.47-1.39-1.72-.14-.25-.02-.38.11-.5.11-.11.25-.29.37-.43.12-.14.17-.25.25-.41.08-.17.04-.31-.02-.43s-.56-1.34-.76-1.84c-.2-.48-.41-.42-.56-.43h-.48c-.17 0-.44.06-.66.31-.23.25-.88.86-.88 2.09s.9 2.42 1.03 2.59c.12.17 1.77 2.7 4.29 3.78.6.26 1.07.41 1.43.53.6.19 1.15.16 1.58.1.48-.07 1.47-.6 1.68-1.18.21-.58.21-1.07.14-1.18-.06-.1-.23-.17-.48-.29z"/>
+                        <a href="<?= e(route('contact')) ?>"
+                           class="lfc-cta lfc-cta--s">
+                            <svg class="lfc-btn-icon" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                                <line x1="5" y1="12" x2="19" y2="12"></line>
+                                <polyline points="12 5 19 12 12 19"></polyline>
                             </svg>
                             <span><?= e(trans('home.whatsapp_specifier')) ?></span>
                         </a>
