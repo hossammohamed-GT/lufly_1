@@ -13,13 +13,57 @@
   border-bottom: 1px solid var(--ds-band-hairline);
 }
 
+/* engineering-blueprint backdrop; the veil follows the theme */
 .finishes-backdrop {
   position: absolute;
   inset: 0;
   background:
     radial-gradient(120% 90% at 80% 0%, color-mix(in srgb, var(--lu-teal-500) 13%, transparent), transparent 58%),
     radial-gradient(95% 75% at 8% 100%, color-mix(in srgb, var(--lu-deep-teal) 48%, transparent), transparent 66%),
-    linear-gradient(180deg, var(--lu-ink-900) 0%, color-mix(in srgb, var(--lu-ink-900) 82%, #000) 100%);
+    linear-gradient(180deg, color-mix(in srgb, var(--lu-ink-900) 93%, transparent), color-mix(in srgb, var(--lu-ink-900) 80%, transparent)),
+    url('../../../images/lifestyle/blueprint-drafting.jpg') center / cover;
+}
+
+[data-theme="light"] .finishes-backdrop {
+  background:
+    radial-gradient(120% 90% at 80% 0%, color-mix(in srgb, var(--lu-teal-500) 10%, transparent), transparent 58%),
+    linear-gradient(180deg, color-mix(in srgb, var(--lu-neutral-50) 86%, transparent), color-mix(in srgb, var(--lu-neutral-50) 52%, transparent)),
+    url('../../../images/lifestyle/blueprint-drafting.jpg') center / cover;
+}
+
+/* light theme: the band text flips dark so it stays readable over the
+   brighter veil (band tokens are theme-fixed, so scope them here) */
+[data-theme="light"] .finishes-section {
+  --ds-band-text: var(--lu-ink-900);
+  --ds-band-text-soft: color-mix(in srgb, var(--lu-ink-900) 76%, transparent);
+  --ds-band-text-muted: color-mix(in srgb, var(--lu-ink-900) 58%, transparent);
+  --ds-band-hairline: color-mix(in srgb, var(--lu-ink-900) 16%, transparent);
+  --ds-band-line: color-mix(in srgb, var(--lu-ink-900) 36%, transparent);
+}
+
+[data-theme="light"] .finishes-section .finish-spec-pill { color: var(--lu-teal-600); }
+
+[data-theme="light"] .finishes-section .btn-secondary-glass {
+  border-color: color-mix(in srgb, var(--lu-ink-900) 32%, transparent);
+}
+
+[data-theme="light"] .finishes-section .finish-swatch-btn {
+  background: color-mix(in srgb, var(--lu-neutral-0) 58%, transparent);
+}
+
+[data-theme="light"] .finishes-section .finish-swatch-btn.is-active {
+  box-shadow:
+    inset 0 0 0 1px var(--lu-teal-600),
+    0 14px 34px color-mix(in srgb, var(--lu-teal-500) 30%, transparent);
+}
+
+[data-theme="light"] .finish-image-caption {
+  background: color-mix(in srgb, var(--lu-neutral-0) 72%, transparent);
+}
+
+[data-theme="light"] .finishes-section .finish-showcase-box {
+  background: color-mix(in srgb, var(--lu-neutral-0) 52%, transparent);
+  border-color: color-mix(in srgb, var(--lu-ink-900) 14%, transparent);
 }
 
 .finishes-container { position: relative; z-index: 1; }
@@ -119,10 +163,10 @@
   display: grid;
   grid-template-columns: 1.05fr 1fr;
   align-items: stretch;
-  gap: 0;
+  gap: clamp(22px, 3vw, 42px);
+  padding: clamp(16px, 2.6vw, 30px);
   border: 1px solid var(--ds-band-hairline);
   border-radius: var(--radius-lg);
-  overflow: hidden;
   background: color-mix(in srgb, var(--lu-ink-900) 72%, transparent);
 }
 
@@ -131,6 +175,8 @@
   margin: 0;
   min-width: 0;
   display: flex;
+  border-radius: var(--radius-md);
+  overflow: hidden;
   background: var(--lu-ink-900);
 }
 
@@ -163,8 +209,8 @@
   flex-direction: column;
   justify-content: center;
   min-width: 0;
-  padding: var(--space-9) var(--space-10);
-  border-left: 1px solid color-mix(in srgb, var(--lu-mint) 26%, var(--ds-band-hairline));
+  padding: var(--space-7) var(--space-6);
+  border-left: 1px solid color-mix(in srgb, var(--lu-mint) 30%, var(--ds-band-hairline));
 }
 
 .finish-detail-meta {
@@ -272,11 +318,11 @@
 @media (max-width: 1080px) {
   .finishes-swatch-grid { grid-template-columns: repeat(3, 1fr); }
 
-  .finish-showcase-box { grid-template-columns: 1fr; }
+  .finish-showcase-box { grid-template-columns: 1fr; gap: 18px; }
   .finish-showcase-details {
     border-left: none;
-    border-top: 1px solid color-mix(in srgb, var(--lu-mint) 26%, var(--ds-band-hairline));
-    padding: var(--space-7);
+    border-top: 1px solid color-mix(in srgb, var(--lu-mint) 30%, var(--ds-band-hairline));
+    padding: var(--space-6) var(--space-2) var(--space-2);
   }
   .finish-showcase-img { min-height: 0; aspect-ratio: 16 / 10; }
 }
@@ -287,7 +333,7 @@
   .finishes-swatch-grid { grid-template-columns: repeat(2, 1fr); gap: 10px; }
   .finish-swatch-btn img { aspect-ratio: 16 / 11; }
   .finish-tech-specs { grid-template-columns: 1fr; gap: var(--space-3); }
-  .finish-showcase-details { padding: var(--space-5); }
+  .finish-showcase-details { padding: var(--space-5) var(--space-2) var(--space-2); }
 }
 
 @media (prefers-reduced-motion: reduce) {
