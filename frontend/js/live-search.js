@@ -5,27 +5,33 @@
    Reuses the /api/products/search endpoint.
    ------------------------------------------------------------
    Contract for host markup:
-   <form class="livesearch" data-livesearch data-locale="en">
-     <input data-livesearch-input ...>
-     <div data-livesearch-results></div>   (optional; created if missing)
-   </form>
+   <div data-livesearch>                    (wrapper, or the form itself)
+     <form>
+       <input data-livesearch-input data-locale="en" ...>
+     </form>
+     <div data-livesearch-results></div>    (optional; created if missing)
+   </div>
    ============================================================ */
 
 (function () {
   'use strict';
 
   function boot() {
-    var forms = document.querySelectorAll('form[data-livesearch]');
-    if (forms.length === 0) return;
+    var hosts = document.querySelectorAll('[data-livesearch]');
+    if (hosts.length === 0) return;
 
-    forms.forEach(function (form) {
-      if (form.__livesearch) return;
-      form.__livesearch = true;
+    hosts.forEach(function (host) {
+      if (host.__livesearch) return;
+      host.__livesearch = true;
+
+      // the host may be the form itself or a wrapper around it
+      var form = host.matches('form') ? host : host.querySelector('form');
+      if (!form) return;
 
       var input = form.querySelector('[data-livesearch-input]');
       if (!input) return;
 
-      var box = form.querySelector('[data-livesearch-results]');
+      var box = host.querySelector('[data-livesearch-results]');
       if (!box) {
         box = document.createElement('div');
         box.className = 'livesearch-results';
@@ -203,7 +209,7 @@
 
       /* close on outside click */
       document.addEventListener('click', function (e) {
-        if (!form.contains(e.target)) {
+        if (!host.contains(e.target)) {
           collapse();
         }
       });

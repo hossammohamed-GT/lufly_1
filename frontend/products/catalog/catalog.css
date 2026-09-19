@@ -420,7 +420,8 @@
 
 @media (max-width: 620px) {
   .catalog { padding-block: 18px 56px; }
-  .catalog-toolbar { padding: 11px; }
+  .catalog-searchform { padding: 11px; }
+  .catalog-guide:not(:empty) { margin: 0 11px 11px; }
   .catalog-sort { display: none; }
   .catalog-go { flex: 1; }
 }
