@@ -13,22 +13,22 @@
   border-bottom: 1px solid var(--ds-band-hairline);
 }
 
-/* engineering-blueprint backdrop; the veil follows the theme */
+/* finish-workshop backdrop; the veil follows the theme */
 .finishes-backdrop {
   position: absolute;
   inset: 0;
   background:
     radial-gradient(120% 90% at 80% 0%, color-mix(in srgb, var(--lu-teal-500) 13%, transparent), transparent 58%),
-    radial-gradient(95% 75% at 8% 100%, color-mix(in srgb, var(--lu-deep-teal) 48%, transparent), transparent 66%),
-    linear-gradient(180deg, color-mix(in srgb, var(--lu-ink-900) 93%, transparent), color-mix(in srgb, var(--lu-ink-900) 80%, transparent)),
-    url('../../../images/lifestyle/blueprint-drafting.jpg') center / cover;
+    radial-gradient(95% 75% at 8% 100%, color-mix(in srgb, var(--lu-deep-teal) 42%, transparent), transparent 66%),
+    linear-gradient(180deg, color-mix(in srgb, var(--lu-ink-900) 90%, transparent), color-mix(in srgb, var(--lu-ink-900) 76%, transparent)),
+    url('../../../images/lifestyle/finish-workshop.jpg') center / cover;
 }
 
 [data-theme="light"] .finishes-backdrop {
   background:
     radial-gradient(120% 90% at 80% 0%, color-mix(in srgb, var(--lu-teal-500) 10%, transparent), transparent 58%),
-    linear-gradient(180deg, color-mix(in srgb, var(--lu-neutral-50) 86%, transparent), color-mix(in srgb, var(--lu-neutral-50) 52%, transparent)),
-    url('../../../images/lifestyle/blueprint-drafting.jpg') center / cover;
+    linear-gradient(180deg, color-mix(in srgb, var(--lu-neutral-50) 93%, transparent), color-mix(in srgb, var(--lu-neutral-50) 70%, transparent)),
+    url('../../../images/lifestyle/finish-workshop.jpg') center / cover;
 }
 
 /* light theme: the band text flips dark so it stays readable over the
