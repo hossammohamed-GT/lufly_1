@@ -11,8 +11,10 @@
   --lfc-ease: cubic-bezier(.19, 1, .22, 1);
   --lfc-dur: 6500ms;
 
-  height: 100vh;
-  height: 100svh;
+  /* Fill the first screen exactly: small viewport minus the announcement bar
+     (--luann-h) and the navbar slab (--mnav-row1). Pure CSS - no JS measuring. */
+  height: calc(100vh - var(--luann-h, 0px) - var(--mnav-row1, 64px));
+  height: calc(100svh - var(--luann-h, 0px) - var(--mnav-row1, 64px));
   min-height: 480px;
   overflow: hidden;
   background: var(--lu-ink-900, #2c2b28);
@@ -291,7 +293,38 @@
 
 @media (max-width: 760px) {
   .lfc-progress { display: none; }
-  .lfc-arrows { bottom: 20px; }
-  .lfc-inner { max-width: 95%; }
+  .lfc-arrows { inset-inline-end: 14px; bottom: 16px; }
+  .lfc-arrow { width: 38px; height: 38px; font-size: 12px; }
+  .lfc-inner { max-width: 100%; }
   .lfc-beam { display: none; }
+
+  /* keep the copy clear of the arrows and safe inside the first screen */
+  .lfc-panel {
+    padding-inline: 22px;
+    padding-top: 14px;
+    padding-bottom: 84px;
+    align-items: flex-start;
+  }
+  .lfc-kicker { font-size: 10px; letter-spacing: 0.24em; margin-bottom: 14px; }
+  [dir="rtl"] .lfc-kicker { letter-spacing: 0.1em; }
+  .lfc-title { font-size: clamp(29px, 8.6vw, 42px); }
+  .lfc-rule { margin: 14px 0 12px; }
+  .lfc-sub { font-size: 13.5px; line-height: 1.62; }
+  .lfc-ctas { gap: 10px; margin-top: 20px; }
+  .lfc-cta { padding: 12px 20px; font-size: 11px; letter-spacing: 0.12em; }
+  .lfc-logoBox { width: min(280px, 70vw); margin-bottom: 18px; }
+  .lfc-tag { letter-spacing: 0.3em; }
+  [dir="rtl"] .lfc-tag { letter-spacing: 0.08em; }
+  .lfc-grain { background-size: 32px 32px; }
+}
+
+/* short screens (landscape phones, small laptops) stay on one screen */
+@media (max-height: 560px) {
+  .lfc-panel { padding-top: 10px; padding-bottom: 66px; }
+  .lfc-title { font-size: clamp(26px, 7.5vh, 40px); }
+  .lfc-kicker { margin-bottom: 10px; }
+  .lfc-rule { margin: 10px 0; }
+  .lfc-sub { display: none; }
+  .lfc-ctas { margin-top: 14px; }
+  .lfc-logoBox { width: min(220px, 44vh); margin-bottom: 10px; }
 }

@@ -10,5 +10,9 @@ return function (Router $router): void {
 
     $router->group(['middleware' => 'web'], function (Router $router): void {
         $router->localized('GET', 'home', [HomeController::class, 'index'])->name('home');
+
+        // Contact page: /en/contact, /tr/iletisim, /cs/kontakt
+        $router->localized('GET', 'contact', [HomeController::class, 'contact'], 'contact')
+            ->name('contact');
     });
 };

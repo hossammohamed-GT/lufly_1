@@ -1,0 +1,270 @@
+/* ==========================================================================
+   Contact page - one calm place for every channel
+   Static page: no JS, no scroll effects. Design-system tokens only.
+   ========================================================================== */
+
+.cpage {
+  padding-block: clamp(40px, 6vw, 72px) clamp(56px, 8vw, 96px);
+  background:
+    radial-gradient(1200px 420px at 85% -10%,
+      color-mix(in srgb, var(--lu-teal-500) 9%, transparent), transparent 70%),
+    var(--ds-bg);
+  color: var(--ds-text);
+  font-family: var(--font-body);
+  min-height: calc(100svh - var(--luann-h, 0px) - var(--mnav-row1, 64px));
+}
+
+.cpage-inner {
+  max-width: 1080px;
+  margin-inline: auto;
+  padding-inline: var(--container-pad, 24px);
+  display: grid;
+  gap: clamp(28px, 4vw, 40px);
+}
+
+/* ---------- header ---------- */
+
+.cpage-head { display: grid; gap: 10px; max-width: 640px; }
+
+.cpage-kicker {
+  margin: 0;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 10.5px;
+  font-weight: 700;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--ds-primary);
+}
+
+.cpage-kicker::before {
+  content: "";
+  width: 22px;
+  height: 2px;
+  background: var(--ds-primary);
+  border-radius: 2px;
+}
+
+.cpage-head h1 {
+  margin: 0;
+  font-family: var(--font-display);
+  font-size: clamp(30px, 5vw, 44px);
+  font-weight: 700;
+  letter-spacing: 0.01em;
+  line-height: 1.08;
+}
+
+.cpage-sub {
+  margin: 0;
+  font-size: 14.5px;
+  line-height: 1.65;
+  color: var(--ds-text-muted);
+}
+
+/* ---------- channel cards ---------- */
+
+.cpage-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 14px;
+}
+
+.cpage-card {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 10px;
+  padding: 22px 22px 24px;
+  border-radius: var(--radius-lg);
+  border: 1px solid var(--ds-border);
+  background: var(--ds-surface);
+  box-shadow: var(--shadow-1);
+  transition: transform 160ms ease, box-shadow 160ms ease, border-color 160ms ease;
+}
+
+.cpage-card:hover {
+  transform: translateY(-3px);
+  box-shadow: var(--shadow-2);
+  border-color: color-mix(in srgb, var(--ds-primary) 34%, var(--ds-border));
+}
+
+.cpage-card-wa {
+  background:
+    linear-gradient(160deg,
+      color-mix(in srgb, var(--lu-teal-500) 12%, var(--ds-surface)) 0%,
+      var(--ds-surface) 55%);
+}
+
+.cpage-card-icon {
+  display: grid;
+  place-items: center;
+  width: 44px;
+  height: 44px;
+  border-radius: 12px;
+  color: var(--ds-primary);
+  background: var(--ds-primary-soft);
+  border: 1px solid color-mix(in srgb, var(--ds-primary) 22%, transparent);
+}
+
+.cpage-card h2 {
+  margin: 2px 0 0;
+  font-family: var(--font-body);
+  font-size: 16px;
+  font-weight: 700;
+  letter-spacing: 0.01em;
+}
+
+.cpage-card-desc {
+  margin: 0;
+  font-size: 12.5px;
+  line-height: 1.6;
+  color: var(--ds-text-muted);
+}
+
+.cpage-strong {
+  font-family: var(--font-display);
+  font-size: 19px;
+  font-weight: 700;
+  color: var(--ds-text);
+  text-decoration: none;
+  letter-spacing: 0.01em;
+}
+
+.cpage-strong:hover { color: var(--ds-primary); }
+
+.cpage-company {
+  margin: 0;
+  font-size: 12.5px;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  line-height: 1.5;
+}
+
+.cpage-hours {
+  margin: 4px 0 0;
+  padding-top: 12px;
+  border-top: 1px dashed var(--ds-border);
+  width: 100%;
+  display: grid;
+  gap: 2px;
+}
+
+.cpage-hours dt {
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--ds-text-muted);
+}
+
+.cpage-hours dd {
+  margin: 0;
+  font-size: 12.5px;
+  font-weight: 600;
+}
+
+.cpage-card .cpage-btn { margin-top: auto; }
+
+.cpage-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  margin-top: 6px;
+  padding: 11px 18px;
+  border-radius: 999px;
+  background: var(--ds-primary);
+  color: var(--ds-primary-text);
+  font-size: 11.5px;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  text-decoration: none;
+  transition: background-color 160ms ease, transform 160ms ease;
+}
+
+.cpage-btn:hover {
+  background: var(--ds-primary-hover);
+  transform: translateY(-1px);
+}
+
+[dir="rtl"] .cpage-btn svg,
+[dir="rtl"] .cpage-chip svg { transform: scaleX(-1); }
+
+/* ---------- quick requests ---------- */
+
+.cpage-quick {
+  display: grid;
+  gap: 14px;
+  padding: 20px 22px 22px;
+  border-radius: var(--radius-lg);
+  border: 1px dashed color-mix(in srgb, var(--ds-primary) 34%, var(--ds-border));
+  background: var(--ds-primary-tint);
+}
+
+.cpage-quick-title {
+  margin: 0;
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--ds-text-muted);
+}
+
+.cpage-quick-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.cpage-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 16px;
+  border-radius: 999px;
+  border: 1px solid color-mix(in srgb, var(--ds-primary) 30%, var(--ds-border));
+  background: var(--ds-surface);
+  color: var(--ds-text);
+  font-size: 12.5px;
+  font-weight: 600;
+  text-decoration: none;
+  transition: border-color 160ms ease, color 160ms ease, transform 160ms ease;
+}
+
+.cpage-chip svg { color: var(--ds-primary); }
+
+.cpage-chip:hover {
+  border-color: var(--ds-primary);
+  color: var(--ds-primary);
+  transform: translateY(-1px);
+}
+
+.cpage-note {
+  margin: 0;
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  font-size: 12px;
+  color: var(--ds-text-muted);
+}
+
+.cpage-note svg { color: var(--ds-primary); flex: none; }
+
+/* ---------- responsive ---------- */
+
+@media (max-width: 900px) {
+  .cpage-grid { grid-template-columns: 1fr 1fr; }
+}
+
+@media (max-width: 620px) {
+  .cpage { padding-block: 30px 56px; }
+  .cpage-grid { grid-template-columns: 1fr; gap: 11px; }
+  .cpage-card { padding: 18px 18px 20px; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .cpage-card,
+  .cpage-btn,
+  .cpage-chip { transition: none; }
+}

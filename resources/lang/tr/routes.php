@@ -7,4 +7,5 @@ return [
     'products.index' => 'urunler',
     'products.show' => 'urunler/{slug}',
     'login' => 'giris',
+    'contact' => 'iletisim',
 ];

@@ -78,4 +78,34 @@ class HomeController extends Controller
             'seo' => $this->seo,
         ]);
     }
+
+    public function contact(): Response
+    {
+        $locale = $this->translator->getLocale();
+
+        $seoTitles = [
+            'en' => 'Contact LUFLY | WhatsApp, Email and Factory Direct Line',
+            'tr' => 'LUFLY İletişim | WhatsApp, E-posta ve Fabrika Direkt Hattı',
+            'cs' => 'Kontakt LUFLY | WhatsApp, e-mail a přímá linka továrny',
+        ];
+
+        $seoDescriptions = [
+            'en' => 'Reach the LUFLY architectural team directly: WhatsApp +90 850 3040 817, email info@lufly.tr, catalog and BIM requests, and our Gaziantep manufacturing and export hub in Turkey.',
+            'tr' => 'LUFLY mimari ekibine doğrudan ulaşın: WhatsApp +90 850 3040 817, e-posta info@lufly.tr, katalog ve BIM talepleri ve Gaziantep üretim ile ihracat üssümüz.',
+            'cs' => 'Oslovte architektonický tým LUFLY přímo: WhatsApp +90 850 3040 817, e-mail info@lufly.tr, žádosti o katalog a BIM a naše výrobní a exportní centrum v Gaziantepu.',
+        ];
+
+        $pageTitle = $seoTitles[$locale] ?? $seoTitles['en'];
+        $pageDesc = $seoDescriptions[$locale] ?? $seoDescriptions['en'];
+
+        $this->seo->setTitle($pageTitle);
+        $this->seo->setDescription($pageDesc);
+        $this->seo->setCanonical(route('contact'));
+
+        return $this->view('contact.index', [
+            'title' => $pageTitle,
+            'locale' => $locale,
+            'seo' => $this->seo,
+        ]);
+    }
 }

@@ -7,4 +7,5 @@ return [
     'products.index' => 'products',
     'products.show' => 'products/{slug}',
     'login' => 'login',
+    'contact' => 'contact',
 ];

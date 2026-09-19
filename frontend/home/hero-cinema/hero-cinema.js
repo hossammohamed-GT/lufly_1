@@ -29,14 +29,9 @@
   var N = scenes.length;
   if (N === 0) return;
 
-  /* ---- Viewport fit ---- */
-  function fitHeight() {
-    var top = root.getBoundingClientRect().top + (window.scrollY || 0);
-    var h = window.innerHeight - top;
-    root.style.height = Math.max(480, Math.round(h)) + 'px';
-  }
-  fitHeight();
-  window.addEventListener('resize', fitHeight, { passive: true });
+  /* Height is handled in pure CSS: the section is sized with
+     calc(100svh - announcement bar - navbar row) in hero-cinema.css, so the
+     hero always fills the first screen without JS measuring. */
 
   /* ---- Responsive backgrounds ---- */
   scenes.forEach(function (sc, idx) {

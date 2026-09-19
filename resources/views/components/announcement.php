@@ -54,12 +54,19 @@ foreach ($items as $announcement) {
 
     $style = (string) ($announcement->style ?? 'promo');
 
+    /* '{contact}' in link_url resolves to the localized contact page
+       (/en/contact, /tr/iletisim, /cs/kontakt). Any other URL is kept as is. */
+    $link = $announcement->link_url;
+    if (is_string($link) && str_contains($link, '{contact}')) {
+        $link = route('contact');
+    }
+
     $messages[] = [
         'id' => (int) $announcement->id,
         'stamp' => (string) ($announcement->updated_at ?? ''),
         'message' => $message,
         'cta' => $payload['cta_label'] ?? null,
-        'link' => $announcement->link_url,
+        'link' => $link,
         'style' => $style,
         'icon' => $icon($style),
     ];
@@ -163,6 +170,7 @@ if ($messages === []) {
         if (items.length === 0 && root.parentNode) {
             root.parentNode.removeChild(root);
         }
+        document.documentElement.classList.toggle('luann-dismissed', items.length === 0);
     }
 
     var active = 0;

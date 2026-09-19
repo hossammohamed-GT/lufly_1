@@ -50,7 +50,7 @@ $indexLinks = [
     ['key' => 'news', 'url' => '#corporate'],
     [
         'key' => 'contact',
-        'url' => 'https://wa.me/908503040817?text=' . rawurlencode('Hello LUFLY, I would like to contact your architectural team.'),
+        'url' => route('contact'),
     ],
 ];
 

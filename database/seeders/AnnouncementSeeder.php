@@ -22,7 +22,7 @@ class AnnouncementSeeder extends Seeder
         $announcementId = (int) $this->db->insert('announcements', [
             'placement' => 'topbar',
             'style' => 'promo',
-            'link_url' => null,
+            'link_url' => '/{contact}',
             'is_active' => 1,
             'starts_at' => null,
             'ends_at' => null,
@@ -32,9 +32,9 @@ class AnnouncementSeeder extends Seeder
         ]);
 
         $messages = [
-            'en' => ['message' => '50% discount today on selected wall-hung toilets', 'cta_label' => 'Shop now'],
-            'tr' => ['message' => 'Seçili asma klozetlerde bugün %50 indirim', 'cta_label' => 'Hemen keşfet'],
-            'cs' => ['message' => 'Dnes sleva 50 % na vybrané závěsné WC', 'cta_label' => 'Prohlédnout'],
+            'en' => ['message' => '50% discount today on selected wall-hung toilets', 'cta_label' => 'Talk to customer service'],
+            'tr' => ['message' => 'Seçili asma klozetlerde bugün %50 indirim', 'cta_label' => 'Müşteri hizmetleriyle görüşün'],
+            'cs' => ['message' => 'Dnes sleva 50 % na vybrané závěsné WC', 'cta_label' => 'Promluvte si se zákaznickým servisem'],
         ];
 
         foreach ($messages as $locale => $fields) {

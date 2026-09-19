@@ -1,6 +1,8 @@
 /* The one value the app shell needs from this component: how much room the side
-   spine takes, so page content can clear it without touching component classes. */
-:root { --mnav-rail-w: 0px; }
+   spine takes, so page content can clear it without touching component classes.
+   --mnav-row1 is global for the same reason: the hero subtracts it so the first
+   screen is always exactly filled (row 1 is a fixed 64px slab). */
+:root { --mnav-rail-w: 0px; --mnav-row1: 64px; }
 
 /* ==========================================================================
    LUFLY - Component: navbar ("Machined Glass")

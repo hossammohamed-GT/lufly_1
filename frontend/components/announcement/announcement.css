@@ -13,8 +13,18 @@
      and goes fully static under prefers-reduced-motion
    ========================================================================== */
 
-.lufly-announcements {
+/* Bar height is a global variable so the hero can subtract it and always
+   fill the first screen exactly. html.luann-dismissed clears it when the
+   visitor closes the bar. */
+:root {
   --luann-h: 44px;
+}
+
+html.luann-dismissed {
+  --luann-h: 0px;
+}
+
+.lufly-announcements {
   --luann-ink: var(--lu-neutral-0);
   --luann-accent: var(--lu-mint);
   --luann-chip-bg: color-mix(in srgb, var(--lu-neutral-0) 12%, transparent);
@@ -392,7 +402,7 @@ a.luann-cta:active {
 /* ---------- responsive + motion safety ---------- */
 
 @media (max-width: 640px) {
-  .lufly-announcements {
+  :root {
     --luann-h: 40px;
   }
 
