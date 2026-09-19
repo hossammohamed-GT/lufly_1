@@ -708,3 +708,58 @@
   border-color: var(--ds-text);
   color: var(--ds-surface);
 }
+
+
+/* ---- thumbnail strip under the stage ---- */
+.pdp-thumbs {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 12px;
+}
+
+.pdp-thumb {
+  position: relative;
+  width: 64px;
+  height: 64px;
+  padding: 0;
+  flex: 0 0 auto;
+  border: 1px solid var(--ds-border);
+  border-radius: 10px;
+  background: var(--ds-bg);
+  overflow: hidden;
+  cursor: pointer;
+  opacity: 0.62;
+  transition: opacity 160ms ease, border-color 160ms ease, transform 160ms ease;
+}
+
+.pdp-thumb:hover,
+.pdp-thumb:focus-visible {
+  opacity: 1;
+  transform: translateY(-2px);
+}
+
+.pdp-thumb.is-on {
+  opacity: 1;
+  border-color: var(--ds-text);
+  box-shadow: 0 0 0 1px var(--ds-text);
+}
+
+.pdp-thumb-img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+/* drawings keep their paper ground so the thumb still reads as a drawing */
+.pdp-view[data-pdp-view="drawing"] .pdp-thumb { background: #fdfdfb; }
+.pdp-view[data-pdp-view="drawing"] .pdp-thumb-img {
+  object-fit: contain;
+  mix-blend-mode: multiply;
+  padding: 4px;
+}
+
+@media (max-width: 560px) {
+  .pdp-thumb { width: 54px; height: 54px; }
+}

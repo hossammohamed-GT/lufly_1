@@ -105,12 +105,26 @@ $fmt = static fn (float $v): string => rtrim(rtrim(number_format($v, 0, '.', '')
                                     aria-label="<?= e(trans('products.view_next')) ?>">
                                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" width="18" height="18" aria-hidden="true"><path d="m9 6 6 6-6 6"/></svg>
                             </button>
-                            <div class="pdp-slide-dots" role="tablist" aria-label="<?= e($v['label']) ?>">
-                                <?php foreach ($v['images'] as $dIndex => $unused): ?>
+                        <?php endif; ?>
+
+                        <?php if (count($v['images']) > 1): ?>
+                            <!-- thumbnail strip: makes it obvious at a glance that the
+                                 product has more pictures, and jumps straight to one -->
+                            <div class="pdp-thumbs" role="tablist" aria-label="<?= e($v['label']) ?>">
+                                <?php foreach ($v['images'] as $dIndex => $thumb): ?>
                                     <button type="button"
-                                            class="pdp-slide-dot<?= $dIndex === 0 ? ' is-on' : '' ?>"
+                                            class="pdp-thumb<?= $dIndex === 0 ? ' is-on' : '' ?>"
                                             data-pdp-dot="<?= (int) $dIndex ?>"
-                                            aria-label="<?= e($v['label']) ?> <?= (int) $dIndex + 1 ?>"></button>
+                                            role="tab"
+                                            aria-selected="<?= $dIndex === 0 ? 'true' : 'false' ?>"
+                                            aria-label="<?= e($v['label']) ?> <?= (int) $dIndex + 1 ?>">
+                                        <img src="<?= e(asset($thumb)) ?>"
+                                             alt=""
+                                             class="pdp-thumb-img"
+                                             width="96" height="96"
+                                             loading="lazy" decoding="async"
+                                             onerror="this.onerror=null; this.closest('.pdp-thumb').remove();">
+                                    </button>
                                 <?php endforeach; ?>
                             </div>
                         <?php endif; ?>
