@@ -6,7 +6,7 @@
     'brushed-rose-gold': {
       title: 'Brushed Rose Gold (PVD)',
       tag: 'PVD TITANIUM VAPOR DEPOSITION / 10-YEAR COLOR STABILITY',
-      image: 'images/finishes/brushed-rose-gold.jpg',
+      image: 'images/finishes/swatch-rose-gold.jpg',
       desc: 'An opulent, warm metallic hue crafted via vacuum plasma PVD. Ultra-resistant to micro-scratches, finger marks, and corrosion in coastal and humid spa environments.',
       base: 'Solid Brass CW617N',
       coating: 'PVD Titanium 0.4um',
@@ -16,7 +16,7 @@
     chrome: {
       title: 'Polished Mirror Chrome',
       tag: '12-MICRON MULTI-STAGE ELECTROPLATING / ISO 9227 TESTED',
-      image: 'images/finishes/chrome.jpg',
+      image: 'images/finishes/swatch-chrome.jpg',
       desc: 'The quintessential architectural finish. Triple-layer nickel-chromium electroplating delivering flawless diamond mirror reflectivity and effortless descaling.',
       base: 'Low-Lead Architectural Brass',
       coating: 'Multi-layer Ni-Cr 12.5um',
@@ -26,7 +26,7 @@
     'brushed-gold': {
       title: 'Brushed Royal Gold (PVD)',
       tag: 'ARCHITECTURAL MATTE BRASS / RESISTANT TO AGGRESSIVE ACIDS',
-      image: 'images/finishes/brushed-gold.jpg',
+      image: 'images/finishes/swatch-gold.jpg',
       desc: 'A luminous, subtle champagne-gold with directional brushwork that captures natural bathroom lighting while resisting soap film and water spotting.',
       base: 'Dezincification Resistant Brass (DZR)',
       coating: 'Zirconium PVD Physical Vapor',
@@ -36,7 +36,7 @@
     'matte-black': {
       title: 'Matte Obsidian Black',
       tag: 'ELECTROSTATIC SOFT-TOUCH POWDER COATING / ZERO GLARE',
-      image: 'images/finishes/matte-black.jpg',
+      image: 'images/finishes/swatch-black.jpg',
       desc: 'A tactile, non-reflective velvety black engineered for bold monolithic contrasts with white vitreous china and natural stone vanities.',
       base: 'Solid Cast Brass & Duroplast',
       coating: 'Electrophoretic Matte Coating',
@@ -46,7 +46,7 @@
     'brushed-steel': {
       title: 'Brushed Architectural Steel',
       tag: 'AISI 304/316 MARINE GRADE ALLOY / HYGIENIC SURFACE',
-      image: 'images/finishes/brushed-steel.jpg',
+      image: 'images/finishes/swatch-steel.jpg',
       desc: 'Industrial precision and raw architectural honesty. Naturally antibacterial with linear satin polish that endures decades of heavy commercial use.',
       base: 'AISI 304 Stainless Steel',
       coating: 'Linear 320-Grit Satin Brush',
@@ -56,7 +56,7 @@
     gunmetal: {
       title: 'Gunmetal Titanium Grey',
       tag: 'DEEP ANTHRACITE PVD / AEROSPACE HARDNESS',
-      image: 'images/finishes/gunmetal.jpg',
+      image: 'images/finishes/swatch-gunmetal.jpg',
       desc: 'A moody, deep charcoal metallic finish designed for modern loft, brutalist, and dark spa architecture with an iridescent aquatic undertone.',
       base: 'Solid Brass CW617N',
       coating: 'PVD Titanium Carbonitride',
@@ -162,8 +162,16 @@
       if (!lightbox) {
         return;
       }
+      /* show the exact image the visitor was just looking at */
+      if (lbImg && image.src) {
+        lbImg.src = image.src;
+      }
       var key = buttons[current] ? buttons[current].dataset.finish : ORDER[current];
-      apply(key);
+      var data = FINISHES[key];
+      if (data) {
+        setText(lbTitle, data.title);
+        setText(lbTag, data.tag);
+      }
       lastTrigger = document.activeElement;
       lightbox.hidden = false;
       document.body.classList.add('finish-lightbox-open');

@@ -6,42 +6,42 @@ $view->pushScript('frontend/home/finishes/finishes.js');
 $finishes = [
     [
         'key' => 'brushed-rose-gold',
-        'img' => 'images/finishes/brushed-rose-gold.jpg',
+        'img' => 'images/finishes/swatch-rose-gold.jpg',
         'label' => 'Rose Gold',
         'title' => trans('home.finish_rose_title'),
         'desc' => trans('home.finish_rose_desc'),
     ],
     [
         'key' => 'chrome',
-        'img' => 'images/finishes/chrome.jpg',
+        'img' => 'images/finishes/swatch-chrome.jpg',
         'label' => 'Chrome',
         'title' => trans('home.finish_chrome_title'),
         'desc' => trans('home.finish_chrome_desc'),
     ],
     [
         'key' => 'brushed-gold',
-        'img' => 'images/finishes/brushed-gold.jpg',
+        'img' => 'images/finishes/swatch-gold.jpg',
         'label' => 'Brushed Gold',
         'title' => trans('home.finish_gold_title'),
         'desc' => trans('home.finish_gold_desc'),
     ],
     [
         'key' => 'matte-black',
-        'img' => 'images/finishes/matte-black.jpg',
+        'img' => 'images/finishes/swatch-black.jpg',
         'label' => 'Matte Black',
         'title' => trans('home.finish_black_title'),
         'desc' => trans('home.finish_black_desc'),
     ],
     [
         'key' => 'brushed-steel',
-        'img' => 'images/finishes/brushed-steel.jpg',
+        'img' => 'images/finishes/swatch-steel.jpg',
         'label' => 'Brushed Steel',
         'title' => trans('home.finish_steel_title'),
         'desc' => trans('home.finish_steel_desc'),
     ],
     [
         'key' => 'gunmetal',
-        'img' => 'images/finishes/gunmetal.jpg',
+        'img' => 'images/finishes/swatch-gunmetal.jpg',
         'label' => 'Gunmetal',
         'title' => trans('home.finish_gunmetal_title'),
         'desc' => trans('home.finish_gunmetal_desc'),
@@ -81,7 +81,7 @@ $finishes = [
                 <button type="button" class="finish-view-btn" id="finish-view-btn"
                         aria-label="<?= e(trans('home.finish_zoom')) ?>"
                         title="<?= e(trans('home.finish_zoom')) ?>">
-                    <img src="<?= e(asset('images/finishes/brushed-rose-gold.jpg')) ?>"
+                    <img src="<?= e(asset('images/finishes/swatch-rose-gold.jpg')) ?>"
                          alt="LUFLY Brushed Rose Gold finish"
                          id="finish-showcase-img"
                          class="finish-showcase-img">
@@ -142,7 +142,7 @@ $finishes = [
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" width="26" height="26"><path d="m15 18-6-6 6-6"/></svg>
         </button>
         <figure class="finish-lightbox-figure">
-            <img src="<?= e(asset('images/finishes/brushed-rose-gold.jpg')) ?>" alt="" id="finish-lightbox-img">
+            <img src="<?= e(asset('images/finishes/swatch-rose-gold.jpg')) ?>" alt="" id="finish-lightbox-img">
             <figcaption>
                 <strong id="finish-lightbox-title"><?= e(trans('home.finish_default_title')) ?></strong>
                 <span id="finish-lightbox-tag">PVD TITANIUM VAPOR DEPOSITION</span>

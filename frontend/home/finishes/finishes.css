@@ -1,7 +1,7 @@
 /* Home component: finish selector - machined editorial edition.
-   Dark band over the workshop photo, responsive swatch GRID (never a
-   horizontal scroller), one clean showcase image that opens a full-screen
-   viewer on tap. Class names are kept for finishes.js. */
+   Deep ink band with a soft metallic glow (no photo backdrop), real
+   texture swatches in a responsive grid, one showcase image whose
+   full-screen viewer always shows the exact same image. */
 
 .finishes-section {
   position: relative;
@@ -16,8 +16,9 @@
   position: absolute;
   inset: 0;
   background:
-    linear-gradient(90deg, color-mix(in srgb, var(--lu-ink-900) 90%, transparent), color-mix(in srgb, var(--lu-ink-900) 74%, transparent) 48%, color-mix(in srgb, var(--lu-ink-900) 90%, transparent)),
-    url('../../../images/lifestyle/luxury-hero.jpg') center / cover;
+    radial-gradient(120% 90% at 80% 0%, color-mix(in srgb, var(--lu-teal-500) 13%, transparent), transparent 58%),
+    radial-gradient(95% 75% at 8% 100%, color-mix(in srgb, var(--lu-deep-teal) 48%, transparent), transparent 66%),
+    linear-gradient(180deg, var(--lu-ink-900) 0%, color-mix(in srgb, var(--lu-ink-900) 82%, #000) 100%);
 }
 
 .finishes-container { position: relative; z-index: 1; }
@@ -42,12 +43,12 @@
 
 .finishes-heading-note span { display: block; width: 70px; height: 1px; margin-top: var(--space-4); background: var(--ds-band-line); }
 
-/* ---------- finish cards: clear images, real grid, no horizontal scroll ---------- */
+/* ---------- finish cards: the texture IS the card ---------- */
 
 .finishes-swatch-grid {
   display: grid;
   grid-template-columns: repeat(6, 1fr);
-  gap: 14px;
+  gap: 12px;
   margin-bottom: var(--space-7);
 }
 
@@ -57,39 +58,42 @@
   flex-direction: column;
   align-items: stretch;
   min-width: 0;
-  padding: 0 0 12px;
+  padding: 0;
   color: var(--ds-band-text);
-  background: color-mix(in srgb, var(--lu-ink-800) 72%, transparent);
+  background: var(--lu-ink-800);
   border: 1px solid var(--ds-band-hairline);
   border-radius: var(--radius-md);
   cursor: pointer;
   overflow: hidden;
   text-align: start;
-  transition: border-color 0.22s ease, background 0.22s ease, transform 0.22s ease;
+  transition: border-color 0.22s ease, box-shadow 0.22s ease, transform 0.22s ease;
 }
 
 .finish-swatch-btn:hover { transform: translateY(-3px); }
 
-.finish-swatch-btn:hover,
-.finish-swatch-btn.is-active {
-  background: color-mix(in srgb, var(--lu-ink-800) 90%, transparent);
-  border-color: color-mix(in srgb, var(--lu-mint) 60%, transparent);
+.finish-swatch-btn:hover {
+  border-color: color-mix(in srgb, var(--lu-mint) 55%, var(--ds-band-hairline));
 }
 
 .finish-swatch-btn.is-active {
-  box-shadow: 0 10px 28px color-mix(in srgb, var(--lu-teal-500) 26%, transparent);
+  border-color: var(--lu-mint);
+  box-shadow:
+    inset 0 0 0 1px var(--lu-mint),
+    0 14px 34px color-mix(in srgb, var(--lu-teal-500) 30%, transparent);
 }
 
 .finish-swatch-btn img {
   display: block;
   width: 100%;
-  aspect-ratio: 4 / 3;
+  aspect-ratio: 16 / 11;
   object-fit: cover;
-  margin-bottom: 10px;
 }
 
+.finish-swatch-btn:hover img { filter: brightness(1.06); }
+
 .swatch-label {
-  margin: 0 var(--space-3);
+  display: block;
+  margin: 10px 12px 0;
   font-size: var(--text-sm);
   font-weight: var(--weight-semibold);
   letter-spacing: 0.02em;
@@ -99,7 +103,8 @@
 }
 
 .finish-swatch-btn small {
-  margin: 3px var(--space-3) 0;
+  display: block;
+  margin: 3px 12px 11px;
   color: var(--ds-band-text-muted);
   font-family: var(--font-mono);
   font-size: 9px;
