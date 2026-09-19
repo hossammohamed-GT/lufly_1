@@ -8,6 +8,7 @@
  * @var Core\View\View $view
  */
 $view->layout('layouts.frontend');
+$view->pushStyle('frontend/css/product-card.css');
 $view->pushStyle('frontend/products/catalog/catalog.css');
 $view->pushScript('frontend/products/catalog/catalog.js');
 /** @var Core\Database\Paginator $paginator */

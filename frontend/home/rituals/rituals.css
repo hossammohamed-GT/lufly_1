@@ -1,38 +1,47 @@
-/* Home component: water rituals. */
+/* Home component: water rituals - machined editorial edition.
+   Flat numbered slabs on a blueprint grid, hairline top rules instead of
+   glass boxes. Number first, mono codes, metric tag as a coded chip. */
 
 .rituals-section {
-  padding: var(--space-20) 0;
+  padding: var(--space-16) 0;
   border-bottom: 1px solid var(--ds-border);
+  background:
+    repeating-linear-gradient(0deg,
+      color-mix(in srgb, var(--ds-primary) 4%, transparent) 0 1px, transparent 1px 56px),
+    repeating-linear-gradient(90deg,
+      color-mix(in srgb, var(--ds-primary) 4%, transparent) 0 1px, transparent 1px 56px),
+    var(--ds-bg);
 }
 
 .rituals-grid {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
-  gap: var(--space-8);
+  gap: var(--space-6);
 }
 
 .ritual-card {
-  padding: var(--space-8);
-  background: var(--ds-glass-bg);
-  backdrop-filter: var(--ds-glass-blur);
-  -webkit-backdrop-filter: var(--ds-glass-blur);
-  border: 1px solid var(--ds-glass-border);
-  border-radius: var(--radius-sm);
-  transition: var(--transition-smooth);
+  position: relative;
+  padding: var(--space-6);
+  background: var(--ds-surface);
+  border: 1px solid var(--ds-border);
+  border-top: 2px solid color-mix(in srgb, var(--ds-text) 20%, transparent);
+  border-radius: var(--radius-md);
+  transition: border-color 200ms ease, transform 200ms ease, box-shadow 200ms ease;
 }
 
 .ritual-card:hover {
-  border-color: var(--ds-primary);
-  transform: translateY(-4px);
-  box-shadow: var(--shadow-hover);
+  border-top-color: var(--ds-primary);
+  transform: translateY(-3px);
+  box-shadow: var(--shadow-2);
 }
 
 .ritual-number {
-  font-family: var(--font-display);
-  font-size: var(--text-sm);
+  font-family: var(--font-mono);
+  font-size: 10px;
   color: var(--ds-primary);
-  letter-spacing: var(--tracking-wider);
-  font-weight: var(--weight-black);
+  letter-spacing: 0.2em;
+  font-weight: var(--weight-bold);
+  text-transform: uppercase;
   margin-bottom: var(--space-4);
 }
 
@@ -42,6 +51,7 @@
   font-weight: var(--weight-bold);
   color: var(--ds-text);
   margin: 0 0 var(--space-3) 0;
+  line-height: 1.15;
 }
 
 .ritual-card p {
@@ -53,14 +63,22 @@
 
 .ritual-metric-tag {
   display: inline-block;
-  font-size: var(--text-xs);
-  font-weight: var(--weight-semibold);
-  color: var(--ds-secondary);
+  font-family: var(--font-mono);
+  font-size: 9.5px;
+  font-weight: var(--weight-bold);
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--ds-primary);
   background: var(--ds-primary-soft);
-  padding: var(--space-1) var(--space-3);
-  border-radius: var(--radius-xs);
+  border: 1px solid color-mix(in srgb, var(--ds-primary) 26%, transparent);
+  padding: 5px 11px;
+  border-radius: 999px;
 }
 
 @media (max-width: 1024px) {
-  .rituals-grid {grid-template-columns: 1fr;}
+  .rituals-grid { grid-template-columns: 1fr; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .ritual-card { transition: none; }
 }

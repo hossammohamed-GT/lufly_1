@@ -1,107 +1,70 @@
-/* Home component: featured masterpieces. */
+/* Home component: featured products ("masterpieces") on the machined grid.
+   The cards themselves are the shared editorial product card
+   (frontend/css/product-card.css); this file only frames the section. */
 
 .masterpieces-section {
-  padding: var(--space-20) 0;
-  border-bottom: 1px solid var(--ds-border);
-  background: var(--ds-surface);
+  padding: var(--space-16) 0;
+  border-block: 1px solid var(--ds-border);
+  background:
+    radial-gradient(900px 380px at 108% 0%,
+      color-mix(in srgb, var(--ds-primary) 6%, transparent), transparent 70%),
+    var(--ds-surface);
 }
 
-.products-grid {
-  display: grid;
-  grid-template-columns: repeat(4, 1fr);
-  gap: var(--space-6);
-}
-
-.product-card-luxury {
-  background: var(--ds-bg);
-  border: 1px solid var(--ds-border);
-  border-radius: var(--radius-xs);
-  padding: var(--space-5);
+.masterpieces-head {
   display: flex;
-  flex-direction: column;
-  transition: var(--transition-smooth);
-}
-
-.product-card-luxury:hover {
-  transform: translateY(-6px);
-  box-shadow: var(--shadow-hover);
-  border-color: var(--ds-primary);
-  background: var(--ds-surface);
-}
-
-.product-img-box {
-  height: 220px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  margin-bottom: var(--space-4);
-  position: relative;
-}
-
-.product-img-box img {
-  max-width: 88%;
-  max-height: 88%;
-  object-fit: contain;
-  transition: transform 0.4s ease;
-}
-
-.product-card-luxury:hover .product-img-box img {transform: scale(1.06);}
-
-.product-card-luxury { position: relative; }
-
-.product-title {
-  font-size: var(--text-base);
-  font-weight: var(--weight-bold);
-  color: var(--ds-text);
-  margin: 0 0 var(--space-2) 0;
-  line-height: var(--leading-snug);
-}
-
-.product-specs {
-  font-size: var(--text-xs);
-  color: var(--ds-text-muted);
-  line-height: var(--leading-snug);
-  margin-bottom: var(--space-4);
-  flex-grow: 1;
-}
-
-.product-card-actions {
-  display: flex;
-  align-items: center;
+  align-items: flex-end;
   justify-content: space-between;
-  padding-top: var(--space-3);
-  border-top: 1px solid var(--ds-border);
+  gap: 16px;
+  flex-wrap: wrap;
+  margin-bottom: var(--space-8);
 }
 
-.btn-inquire-whatsapp {
-  font-size: var(--text-xs);
-  font-weight: var(--weight-semibold);
-  color: var(--ds-primary);
-  text-decoration: none;
+.masterpieces-all {
   display: inline-flex;
   align-items: center;
-  gap: var(--space-1);
-  transition: color 0.2s ease;
+  gap: 9px;
+  padding: 10px 18px;
+  border-radius: 999px;
+  border: 1px solid var(--ds-border);
+  background: var(--ds-bg);
+  color: var(--ds-text);
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  text-decoration: none;
+  transition: color 150ms ease, border-color 150ms ease, transform 150ms ease;
 }
 
-.btn-inquire-whatsapp:hover {color: var(--ds-primary-hover);}
+.masterpieces-all:hover {
+  color: var(--ds-primary);
+  border-color: color-mix(in srgb, var(--ds-primary) 45%, var(--ds-border));
+  transform: translateY(-1px);
+}
 
-@media (max-width: 1024px) {
-  .products-grid {grid-template-columns: repeat(2, 1fr);}
+[dir="rtl"] .masterpieces-all svg { transform: scaleX(-1); }
+
+/* host grid for the shared cards */
+.masterpieces-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 14px;
+}
+
+@media (max-width: 1100px) {
+  .masterpieces-grid { grid-template-columns: repeat(2, 1fr); }
 }
 
 @media (max-width: 640px) {
-  .products-grid {grid-template-columns: 1fr;}
+  .masterpieces-section { padding: var(--space-10) 0; }
+  .masterpieces-grid { grid-template-columns: 1fr 1fr; gap: 10px; }
 }
 
-.masterpieces-head { margin-bottom: var(--space-10); }
-.masterpieces-section .section-title { margin-bottom: 0; }
-
-.product-link {
-  color: var(--ds-text);
-  font-size: var(--text-xs);
-  font-weight: var(--weight-semibold);
-  text-decoration: none;
+@media (max-width: 380px) {
+  .masterpieces-grid { grid-template-columns: 1fr; }
 }
 
-.product-link:hover { color: var(--ds-primary); }
+@media (prefers-reduced-motion: reduce) {
+  .masterpieces-all { transition: none; }
+}

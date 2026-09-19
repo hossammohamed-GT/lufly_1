@@ -1,40 +1,53 @@
-/* Home component: corporate entity. */
+/* Home component: corporate entity - machined editorial edition.
+   One solid entity slab on the blueprint grid; the spec desk is the fixed
+   deep-teal machined panel (announcement-bar language). */
 
 .corporate-section {
-  padding: var(--space-20) 0;
-  background: var(--ds-bg);
+  padding: var(--space-16) 0;
+  background:
+    repeating-linear-gradient(0deg,
+      color-mix(in srgb, var(--ds-primary) 4%, transparent) 0 1px, transparent 1px 56px),
+    repeating-linear-gradient(90deg,
+      color-mix(in srgb, var(--ds-primary) 4%, transparent) 0 1px, transparent 1px 56px),
+    var(--ds-bg);
   border-bottom: 1px solid var(--ds-border);
 }
 
 .corporate-box {
   background: var(--ds-surface);
   border: 1px solid var(--ds-border);
-  border-radius: var(--radius-sm);
-  padding: var(--space-12);
-  box-shadow: var(--shadow-soft);
+  border-radius: var(--radius-lg);
+  padding: var(--space-10);
+  box-shadow: var(--shadow-1);
   display: grid;
   grid-template-columns: 1.2fr 0.8fr;
-  gap: var(--space-12);
+  gap: var(--space-10);
   align-items: center;
 }
 
 .corporate-info h3 {
   font-family: var(--font-display);
-  font-size: var(--text-3xl);
-  font-weight: var(--weight-black);
+  font-size: var(--text-2xl);
+  font-weight: var(--weight-bold);
   color: var(--ds-text);
   margin: 0 0 var(--space-3) 0;
+  line-height: 1.15;
 }
 
 .corporate-legal-badge {
-  display: inline-block;
-  font-size: var(--text-xs);
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  font-family: var(--font-mono);
+  font-size: 9.5px;
   font-weight: var(--weight-bold);
-  letter-spacing: var(--tracking-wide);
-  color: var(--ds-secondary);
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--ds-primary);
   background: var(--ds-primary-soft);
-  padding: var(--space-1) var(--space-3);
-  border-radius: var(--radius-xs);
+  border: 1px solid color-mix(in srgb, var(--ds-primary) 26%, transparent);
+  padding: 5px 11px;
+  border-radius: 999px;
   margin-bottom: var(--space-4);
 }
 
@@ -49,32 +62,104 @@
   list-style: none;
   padding: 0;
   margin: 0;
-  display: flex;
-  flex-direction: column;
-  gap: var(--space-3);
+  border-top: 1px solid var(--ds-border);
+}
+
+.corporate-details-list li {
+  padding: 10px 2px;
+  border-bottom: 1px dashed var(--ds-border);
   font-size: var(--text-sm);
   color: var(--ds-text);
 }
 
-.corporate-details-list li b {
+.corporate-details-list b {
+  font-family: var(--font-mono);
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
   color: var(--ds-text-muted);
+  margin-inline-end: 6px;
+}
+
+/* machined spec desk (fixed brand palette) */
+.spec-desk {
+  position: relative;
+  overflow: hidden;
+  padding: var(--space-7);
+  border-radius: var(--radius-md);
+  color: var(--lu-neutral-0);
+  background:
+    linear-gradient(180deg, color-mix(in srgb, var(--lu-neutral-0) 8%, transparent) 0%, transparent 46%),
+    linear-gradient(135deg, var(--lu-deep-teal) 0%, var(--lu-teal-700) 100%);
+  border: 1px solid color-mix(in srgb, var(--lu-mint) 28%, transparent);
+  box-shadow: var(--shadow-1);
+}
+
+.spec-desk::after {
+  content: "";
+  position: absolute;
+  inset-inline: 0;
+  top: 0;
+  height: 2px;
+  background: linear-gradient(90deg, transparent, color-mix(in srgb, var(--lu-mint) 70%, transparent), transparent);
+}
+
+.spec-desk-badge {
   display: inline-block;
-  width: 140px;
+  font-family: var(--font-mono);
+  font-size: 9.5px;
+  font-weight: 700;
+  letter-spacing: 0.2em;
+  color: var(--lu-mint);
+  border: 1px solid color-mix(in srgb, var(--lu-mint) 42%, transparent);
+  background: color-mix(in srgb, var(--lu-neutral-0) 8%, transparent);
+  border-radius: 999px;
+  padding: 5px 12px;
+  margin-bottom: var(--space-4);
+}
+
+.spec-desk-title {
+  font-family: var(--font-display);
+  font-size: var(--text-xl);
+  font-weight: var(--weight-bold);
+  color: var(--lu-neutral-0);
+  margin: 0 0 var(--space-3) 0;
+  line-height: 1.15;
+}
+
+.spec-desk-text {
+  font-size: var(--text-sm);
+  line-height: var(--leading-normal);
+  color: color-mix(in srgb, var(--lu-neutral-0) 78%, transparent);
+  margin: 0 0 var(--space-6) 0;
+}
+
+.spec-desk-cta {
+  display: inline-flex;
+  align-items: center;
+  gap: 9px;
+  padding: 12px 20px;
+  border-radius: 999px;
+  background: var(--lu-mint);
+  color: var(--lu-deep-teal);
+  font-size: 11px;
+  font-weight: 800;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  text-decoration: none;
+  transition: transform 160ms ease, box-shadow 160ms ease;
+}
+
+.spec-desk-cta:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 10px 26px color-mix(in srgb, var(--lu-mint) 30%, transparent);
 }
 
 @media (max-width: 1024px) {
-  .corporate-box {grid-template-columns: 1fr;}
+  .corporate-box { grid-template-columns: 1fr; padding: var(--space-7); gap: var(--space-7); }
 }
 
-.spec-desk-col { display: flex; flex-direction: column; gap: var(--space-4); }
-.spec-desk { padding: var(--space-6); text-align: center; }
-.spec-desk-badge {
-  margin-bottom: var(--space-3);
-  color: var(--ds-primary);
-  font-size: var(--text-lg);
-  font-weight: var(--weight-bold);
-  letter-spacing: var(--tracking-wide);
+@media (prefers-reduced-motion: reduce) {
+  .spec-desk-cta { transition: none; }
 }
-.spec-desk-title { margin: 0 0 var(--space-2); font-size: var(--text-base); color: var(--ds-text); }
-.spec-desk-text { margin: 0 0 var(--space-4); color: var(--ds-text-muted); font-size: var(--text-sm); }
-.spec-desk-cta { width: 100%; justify-content: center; }

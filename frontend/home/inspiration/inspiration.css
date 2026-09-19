@@ -1,7 +1,9 @@
-/* Home component: inspiration carousel. */
+/* Home component: inspiration rooms - machined editorial edition.
+   Editorial photo cards with hairline frames and a coded tag; hover keeps
+   the photo zoom but adds the primary frame instead of a glassy lift. */
 
 .inspiration-section {
-  padding: var(--space-20) 0;
+  padding: var(--space-16) 0;
   border-bottom: 1px solid var(--ds-border);
   background: var(--ds-surface);
 }
@@ -9,44 +11,60 @@
 .inspiration-carousel {
   display: grid;
   grid-template-columns: repeat(4, 1fr);
-  gap: var(--space-6);
+  gap: var(--space-5);
 }
 
 .inspiration-card {
   position: relative;
-  border-radius: var(--radius-sm);
+  border-radius: var(--radius-md);
   overflow: hidden;
   border: 1px solid var(--ds-border);
   background: var(--ds-bg);
-  transition: var(--transition-smooth);
+  transition: transform 220ms ease, box-shadow 220ms ease, border-color 220ms ease;
 }
 
 .inspiration-card:hover {
   transform: translateY(-4px);
-  box-shadow: var(--shadow-hover);
+  border-color: color-mix(in srgb, var(--ds-primary) 45%, var(--ds-border));
+  box-shadow: var(--shadow-2);
 }
 
 .inspiration-img-wrap {
   height: 260px;
   overflow: hidden;
+  position: relative;
 }
+
+.inspiration-img-wrap::after {
+  content: "";
+  position: absolute;
+  inset-inline: 0;
+  bottom: 0;
+  height: 1px;
+  background: color-mix(in srgb, var(--ds-primary) 40%, transparent);
+  opacity: 0;
+  transition: opacity 220ms ease;
+}
+
+.inspiration-card:hover .inspiration-img-wrap::after { opacity: 1; }
 
 .inspiration-img {
   width: 100%;
   height: 100%;
   object-fit: cover;
-  transition: transform 0.5s ease;
+  transition: transform 0.55s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
-.inspiration-card:hover .inspiration-img {transform: scale(1.06);}
+.inspiration-card:hover .inspiration-img { transform: scale(1.06); }
 
-.inspiration-body {padding: var(--space-5);}
+.inspiration-body { padding: var(--space-5); }
 
 .inspiration-tag {
-  font-size: var(--text-caption);
+  font-family: var(--font-mono);
+  font-size: 9.5px;
   font-weight: var(--weight-bold);
   text-transform: uppercase;
-  letter-spacing: var(--tracking-wide);
+  letter-spacing: 0.18em;
   color: var(--ds-primary);
   margin-bottom: var(--space-1);
   display: block;
@@ -54,9 +72,11 @@
 
 .inspiration-body h4 {
   margin: 0 0 var(--space-2) 0;
-  font-size: var(--text-base);
+  font-family: var(--font-display);
+  font-size: var(--text-lg);
   font-weight: var(--weight-bold);
   color: var(--ds-text);
+  line-height: 1.2;
 }
 
 .inspiration-body p {
@@ -67,9 +87,15 @@
 }
 
 @media (max-width: 1024px) {
-  .inspiration-carousel {grid-template-columns: repeat(2, 1fr);}
+  .inspiration-carousel { grid-template-columns: repeat(2, 1fr); }
 }
 
 @media (max-width: 640px) {
-  .inspiration-carousel {grid-template-columns: 1fr;}
+  .inspiration-carousel { grid-template-columns: 1fr; }
+  .inspiration-img-wrap { height: 220px; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .inspiration-card { transition: none; }
+  .inspiration-img { transition: none; }
 }

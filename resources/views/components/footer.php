@@ -19,11 +19,11 @@
             <div class="footer-col">
                 <h5><?= e(trans('common.footer_sanitary')) ?></h5>
                 <ul>
-                    <li><a href="<?= e(route('products.index', ['category_id' => 1])) ?>"><?= e(trans('home.category_toilets')) ?></a></li>
-                    <li><a href="<?= e(route('products.index', ['category_id' => 1])) ?>"><?= e(trans('home.hero1_primary')) ?></a></li>
-                    <li><a href="<?= e(route('products.index', ['category_id' => 2])) ?>"><?= e(trans('home.category_basins')) ?></a></li>
-                    <li><a href="<?= e(route('products.index', ['category_id' => 2])) ?>"><?= e(trans('home.hero3_primary')) ?></a></li>
-                    <li><a href="<?= e(route('products.index', ['category_id' => 3])) ?>"><?= e(trans('home.category_commercial')) ?></a></li>
+                    <li><a href="<?= e(route('products.index', ['category' => 'wall-hung-toilets'])) ?>"><?= e(trans('home.category_toilets')) ?></a></li>
+                    <li><a href="<?= e(route('products.index', ['category' => 'wall-hung-toilets'])) ?>"><?= e(trans('home.hero1_primary')) ?></a></li>
+                    <li><a href="<?= e(route('products.index', ['category' => 'designer-washbasins'])) ?>"><?= e(trans('home.category_basins')) ?></a></li>
+                    <li><a href="<?= e(route('products.index', ['category' => 'designer-washbasins'])) ?>"><?= e(trans('home.hero3_primary')) ?></a></li>
+                    <li><a href="<?= e(route('products.index', ['category' => 'vanity-cabinets'])) ?>"><?= e(trans('home.category_commercial')) ?></a></li>
                 </ul>
             </div>
 
@@ -31,11 +31,11 @@
             <div class="footer-col">
                 <h5><?= e(trans('common.footer_finishes')) ?></h5>
                 <ul>
-                    <li><a href="#finishes"><?= e(trans('home.finish_rose_title')) ?></a></li>
-                    <li><a href="#finishes"><?= e(trans('home.finish_gold_title')) ?></a></li>
-                    <li><a href="#finishes"><?= e(trans('home.finish_chrome_title')) ?></a></li>
-                    <li><a href="#finishes"><?= e(trans('home.finish_black_title')) ?></a></li>
-                    <li><a href="#finishes"><?= e(trans('home.finish_gunmetal_title')) ?></a></li>
+                    <li><a href="<?= e(route('home')) ?>#finishes"><?= e(trans('home.finish_rose_title')) ?></a></li>
+                    <li><a href="<?= e(route('home')) ?>#finishes"><?= e(trans('home.finish_gold_title')) ?></a></li>
+                    <li><a href="<?= e(route('home')) ?>#finishes"><?= e(trans('home.finish_chrome_title')) ?></a></li>
+                    <li><a href="<?= e(route('home')) ?>#finishes"><?= e(trans('home.finish_black_title')) ?></a></li>
+                    <li><a href="<?= e(route('home')) ?>#finishes"><?= e(trans('home.finish_gunmetal_title')) ?></a></li>
                 </ul>
             </div>
 
@@ -45,8 +45,8 @@
                 <ul>
                     <li><a href="<?= e(route('contact')) ?>"><?= e(trans('nav.download_catalog')) ?></a></li>
                     <li><a href="<?= e(route('contact')) ?>"><?= e(trans('nav.tender_pack')) ?></a></li>
-                    <li><a href="#corporate">EN 997 &middot; EN 817 &middot; CE</a></li>
-                    <li><a href="#rituals"><?= e(trans('home.rituals_title')) ?></a></li>
+                    <li><a href="<?= e(route('home')) ?>#corporate">EN 997 &middot; EN 817 &middot; CE</a></li>
+                    <li><a href="<?= e(route('home')) ?>#rituals"><?= e(trans('home.rituals_title')) ?></a></li>
                     <li><a href="<?= e(route('products.index')) ?>"><?= e(trans('home.full_catalog')) ?></a></li>
                 </ul>
             </div>
