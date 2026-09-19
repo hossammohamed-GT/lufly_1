@@ -27,14 +27,21 @@ class ProductController extends Controller
     {
         $locale = $this->translator->getLocale();
         $categorySlug = (string) $request->query('category', '');
+        $categoryId = (int) $request->query('category_id', '0');
         $searchQuery = (string) $request->query('q', '');
+        $sort = (string) $request->query('sort', 'newest');
+        if (!in_array($sort, ['newest', 'name', 'model'], true)) {
+            $sort = 'newest';
+        }
         $fallback = (string) config('localization.fallback', 'en');
 
         $paginator = $this->products->paginate([
             'locale' => $locale,
             'status' => 'active',
             'category_slug' => $categorySlug,
+            'category_id' => $categoryId,
             'search' => $searchQuery,
+            'sort' => $sort,
         ], (int) $request->query('page', '1'), 12);
 
         $connection = \Modules\Products\Models\Product::query()->connection();
@@ -64,6 +71,7 @@ class ProductController extends Controller
             'categories' => $categories,
             'activeCategory' => $categorySlug,
             'searchQuery' => $searchQuery,
+            'sort' => $sort,
             'locale' => $locale,
             'seo' => $this->seo,
         ]);

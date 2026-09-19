@@ -41,9 +41,17 @@ class HomeController extends Controller
         );
 
         $rawFeatured = \Modules\Products\Models\Product::query()
+            ->where('is_featured', 1)
             ->where('status', 'active')
             ->limit(6)
             ->get();
+
+        if (count($rawFeatured) < 3) {
+            $rawFeatured = \Modules\Products\Models\Product::query()
+                ->where('status', 'active')
+                ->limit(6)
+                ->get();
+        }
 
         $featuredProducts = array_map(function ($p) use ($locale) {
             return $p->translate($locale);

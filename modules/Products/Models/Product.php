@@ -79,6 +79,7 @@ class Product extends Model
             'price' => (float) ($primaryVariant['price'] ?? 0),
             'stock_status' => $primaryVariant['stock_status'] ?? 'in_stock',
             'image' => $this->primaryImageUrl(),
+            'situ_image' => $this->situImageUrl(),
             'specs' => $specs,
 
             /* full related data */
@@ -161,6 +162,14 @@ class Product extends Model
                 return (string) $row['path'];
             }
         }
+
+        return (string) ($rows[0]['path'] ?? '');
+    }
+
+    /** First "situ" (installed on location) image URL, empty string when none. */
+    private function situImageUrl(): string
+    {
+        $rows = $this->media('situ');
 
         return (string) ($rows[0]['path'] ?? '');
     }
