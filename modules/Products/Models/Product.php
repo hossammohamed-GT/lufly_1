@@ -82,6 +82,13 @@ class Product extends Model
             'situ_image' => $this->situImageUrl(),
             'specs' => $specs,
 
+            /* every usable photo, plus the technical drawings */
+            'gallery' => array_map(
+                static fn (array $row): string => (string) $row['path'],
+                $this->gallery(),
+            ),
+            'drawings' => $this->drawings(),
+
             /* full related data */
             'variants' => $variants,
             'dimensions' => $dimensions,
@@ -133,14 +140,25 @@ class Product extends Model
         return $row;
     }
 
-    /** Gallery + drawings from the media library, ordered. */
-    public function media(?string $type = null): array
+    /**
+     * Gallery + drawings from the media library, ordered.
+     *
+     * Media rows imported from the legacy system whose file was never
+     * exported carry status "missing"; they are skipped by default so the
+     * storefront never renders a broken image. Pass $includeMissing to audit
+     * what is still outstanding.
+     */
+    public function media(?string $type = null, bool $includeMissing = false): array
     {
         $sql = 'SELECT pm.type, pm.is_primary, pm.sort_order, m.*
                 FROM product_media pm
                 INNER JOIN media m ON m.id = pm.media_id
                 WHERE pm.product_id = ? AND (pm.variant_id IS NULL)';
         $bindings = [$this->getKey()];
+
+        if (!$includeMissing) {
+            $sql .= " AND m.status <> 'missing'";
+        }
 
         if ($type !== null) {
             $sql .= ' AND pm.type = ?';
@@ -152,10 +170,36 @@ class Product extends Model
         return static::db()->connection()->select($sql, $bindings);
     }
 
-    /** Primary image URL (media library first, then any gallery item). */
+    /**
+     * Photos for the product gallery (drawings excluded), primary first.
+     *
+     * @return array<int, array<string, mixed>>
+     */
+    public function gallery(): array
+    {
+        return array_values(array_filter(
+            $this->media(),
+            static fn (array $row): bool => (string) $row['type'] !== 'drawing',
+        ));
+    }
+
+    /**
+     * Technical drawing URLs for this product, empty when none was exported.
+     *
+     * @return array<int, string>
+     */
+    public function drawings(): array
+    {
+        return array_map(
+            static fn (array $row): string => (string) $row['path'],
+            $this->media('drawing'),
+        );
+    }
+
+    /** Primary image URL (the flagged primary first, then any photo). */
     private function primaryImageUrl(): string
     {
-        $rows = $this->media();
+        $rows = $this->gallery();
 
         foreach ($rows as $row) {
             if ((int) $row['is_primary'] === 1) {

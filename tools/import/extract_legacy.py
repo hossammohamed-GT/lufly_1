@@ -68,6 +68,29 @@ def detect_locale(text: str) -> str:
     return 'en'
 
 
+def resolve_file(post_id: str, legacy_file: str, on_disk: set, claimed: set) -> str:
+    """Map a legacy upload path to its exported `prod_{id}_{file}` name.
+
+    The exporter dropped WordPress' "-scaled" suffix on some files and
+    re-encoded a few others, so try those variants before giving up and
+    returning the canonical name (which then reports available=False).
+    """
+    basename = os.path.basename(legacy_file)
+    root, ext = os.path.splitext(basename)
+    roots = [root]
+    if root.endswith('-scaled'):
+        roots.append(root[: -len('-scaled')])
+
+    for candidate_root in roots:
+        for candidate_ext in dict.fromkeys([ext, '.jpg', '.jpeg', '.png', '.webp']):
+            candidate = f'prod_{post_id}_{candidate_root}{candidate_ext}'
+            # never let two different attachments resolve onto the same export
+            if candidate in on_disk and candidate not in claimed:
+                return candidate
+
+    return f'prod_{post_id}_{basename}'
+
+
 def slugify(value: str) -> str:
     value = unicodedata.normalize('NFKD', value).encode('ascii', 'ignore').decode()
     value = re.sub(r'[^a-zA-Z0-9]+', '-', value).strip('-').lower()
@@ -180,15 +203,55 @@ def main() -> int:
             cats.append(mapped[0])
         cats = list(dict.fromkeys(cats))
 
-        # -- images: files exported next to this legacy post id
-        images = ['/images/products/' + f for f in by_post_id.get(pid, [])]
-        thumb = pmeta.get('_thumbnail_id')
-        attached = attachments.get(thumb) if thumb else None
-        if attached:
-            preferred = '/images/products/prod_%s_%s' % (pid, os.path.basename(attached))
-            if preferred in images:
-                images.remove(preferred)
-                images.insert(0, preferred)
+        # -- images: the full set the legacy product references, in order.
+        # [0] = featured thumbnail, then the _product_image_gallery ids.
+        # Files whose name contains "drawing" are the technical drawings.
+        images = []
+        seen_attachment = set()
+        matched_files = set()
+        thumb = (pmeta.get('_thumbnail_id') or '').strip()
+        gallery = [g.strip() for g in (pmeta.get('_product_image_gallery') or '').split(',') if g.strip()]
+
+        for attachment_id in ([thumb] if thumb else []) + gallery:
+            if attachment_id in seen_attachment:
+                continue
+            seen_attachment.add(attachment_id)
+            legacy_file = attachments.get(attachment_id)
+            if not legacy_file:
+                continue
+
+            filename = resolve_file(pid, legacy_file, on_disk, matched_files)
+            basename = os.path.basename(legacy_file).lower()
+            kind = 'drawing' if 'drawing' in basename else ('main' if not images else 'gallery')
+
+            matched_files.add(filename)
+            images.append({
+                'type': kind,
+                'path': '/images/products/' + filename,
+                'available': filename in on_disk,
+                'legacy_file': legacy_file,
+                'legacy_attachment_id': int(attachment_id) if attachment_id.isdigit() else None,
+            })
+
+        # a drawing must never be the primary shot
+        if images and images[0]['type'] == 'drawing':
+            photo = next((i for i, im in enumerate(images) if im['type'] != 'drawing'), None)
+            if photo is not None:
+                images.insert(0, images.pop(photo))
+            images[0]['type'] = 'main' if images[0]['type'] != 'drawing' else images[0]['type']
+
+        # any exported file we did not reach through the metadata still belongs
+        # to this product (the export is named prod_{legacyId}_{originalFile})
+        for extra in by_post_id.get(pid, []):
+            if extra in matched_files:
+                continue
+            images.append({
+                'type': 'drawing' if 'drawing' in extra.lower() else ('main' if not images else 'gallery'),
+                'path': '/images/products/' + extra,
+                'available': True,
+                'legacy_file': None,
+                'legacy_attachment_id': None,
+            })
 
         if not images and not description:
             continue  # empty placeholder / abandoned draft row
@@ -253,8 +316,9 @@ def main() -> int:
     ordered_slugs += [s for s in used_categories if s not in ordered_slugs]
     for i, slug in enumerate(ordered_slugs, start=1):
         names = used_categories[slug]
-        first = next((p['images'][0] for p in products
-                      if slug in p['categories'] and p['images']), None)
+        first = next((im['path'] for p in products if p['category'] == slug
+                      for im in p['images']
+                      if im['type'] != 'drawing' and im['available']), None)
         categories.append({
             'slug': slug,
             'sort_order': i,
@@ -266,6 +330,22 @@ def main() -> int:
     for i, category in enumerate(categories, start=1):
         category['sort_order'] = i
 
+    # manifest of images the legacy product references but that were never
+    # exported, so they can be pulled off the old server in one pass
+    missing_rows = ['legacy_post_id,type,legacy_upload_path,expected_filename']
+    for p in products:
+        for im in p['images']:
+            if im['available'] or not im['legacy_file']:
+                continue
+            missing_rows.append('%s,%s,%s,%s' % (
+                p['legacy_id'], im['type'], im['legacy_file'],
+                os.path.basename(im['path'])))
+
+    with open(os.path.join(ROOT, 'tools', 'import', 'missing-images.csv'), 'w',
+              encoding='utf-8') as fh:
+        fh.write('\n'.join(missing_rows) + '\n')
+    print('missing-images.csv rows:', len(missing_rows) - 1)
+
     os.makedirs(OUT, exist_ok=True)
     with open(os.path.join(OUT, 'products.json'), 'w', encoding='utf-8') as fh:
         json.dump(products, fh, ensure_ascii=False, indent=2)
@@ -273,7 +353,14 @@ def main() -> int:
         json.dump(categories, fh, ensure_ascii=False, indent=2)
 
     print('products:', len(products))
+    total_images = sum(len(p['images']) for p in products)
+    on_disk_images = sum(1 for p in products for im in p['images'] if im['available'])
+    drawings = sum(1 for p in products for im in p['images'] if im['type'] == 'drawing')
     print('with image:', sum(1 for p in products if p['images']))
+    print('image refs:', total_images, '| on disk:', on_disk_images,
+          '| missing files:', total_images - on_disk_images)
+    print('drawings:', drawings,
+          '| products with >1 image:', sum(1 for p in products if len(p['images']) > 1))
     print('with model code:', sum(1 for p in products if p['model_code']))
     print('with specs:', sum(1 for p in products if p['specifications']))
     print('with description:', sum(1 for p in products if p['description']))

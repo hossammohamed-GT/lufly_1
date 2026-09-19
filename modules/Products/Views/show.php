@@ -18,6 +18,9 @@ $situImg = (string) ($product['situ_image'] ?? '');
 $modelCode = (string) ($product['model_code'] ?? $product['sku'] ?? '');
 $variants = is_array($product['variants'] ?? null) ? $product['variants'] : [];
 $specs = is_array($product['specs'] ?? null) ? $product['specs'] : [];
+$gallery = is_array($product['gallery'] ?? null) ? $product['gallery'] : [];
+$drawings = is_array($product['drawings'] ?? null) ? $product['drawings'] : [];
+$drawingImg = (string) ($drawings[0] ?? '');
 $dimensions = is_array($product['dimensions'] ?? null) ? $product['dimensions'] : null;
 $categorySlug = (string) ($product['category_slug'] ?? '');
 $productUrl = route('products.show', ['slug' => $product['slug'] ?? $slug]);
@@ -84,6 +87,14 @@ $fmt = static fn (float $v): string => rtrim(rtrim(number_format($v, 0, '.', '')
                 </figure>
 
                 <figure class="pdp-view" data-pdp-view="drawing">
+                    <?php if ($drawingImg !== ''): ?>
+                    <!-- real technical drawing exported from the factory catalog -->
+                    <img src="<?= e(asset($drawingImg)) ?>"
+                         alt="<?= e(($product['name'] ?? '') . ' - ' . trans('products.view_drawing')) ?>"
+                         class="pdp-view-img"
+                         width="900" height="700"
+                         loading="lazy" decoding="async">
+                    <?php else: ?>
                     <div class="pdp-sheet">
                         <svg class="pdp-sheet-svg" viewBox="0 0 520 430" role="img"
                              aria-label="<?= e(trans('products.sheet_title')) ?> <?= e($modelCode) ?>">
@@ -132,12 +143,26 @@ $fmt = static fn (float $v): string => rtrim(rtrim(number_format($v, 0, '.', '')
                             <text class="pdp-block" x="400" y="402"><?= e(trans('products.sheet_scale')) ?></text>
                         </svg>
                     </div>
+                    <?php endif; ?>
                     <figcaption class="pdp-view-tag">02 &middot; <?= e(trans('products.view_drawing')) ?></figcaption>
                 </figure>
 
+                <?php
+                /* third view: the dedicated in-situ shot when one exists,
+                   otherwise the next real photo from the product gallery */
+                $altImg = $situImg;
+                if ($altImg === '') {
+                    foreach ($gallery as $candidate) {
+                        if ((string) $candidate !== $img) {
+                            $altImg = (string) $candidate;
+                            break;
+                        }
+                    }
+                }
+                ?>
                 <figure class="pdp-view" data-pdp-view="situ">
-                    <?php if ($situImg !== ''): ?>
-                        <img src="<?= e(asset($situImg)) ?>"
+                    <?php if ($altImg !== ''): ?>
+                        <img src="<?= e(asset($altImg)) ?>"
                              alt="<?= e(($product['name'] ?? '') . ' - installed') ?>"
                              class="pdp-view-img pdp-view-img-cover"
                              width="900" height="700"

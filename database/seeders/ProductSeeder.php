@@ -131,27 +131,55 @@ class ProductSeeder extends Seeder
                 ]);
             }
 
-            /* ---- media: the exported legacy images present on disk ---- */
+            /* ---- media ----
+               Every image the legacy product references, in its original
+               order: the featured shot first, then the gallery, with the
+               technical drawings flagged as type "drawing". Files that were
+               never exported off the old server are recorded as status
+               "missing" so the storefront can skip them and the gap stays
+               visible (see tools/import/missing-images.csv). */
             $images = is_array($item['images'] ?? null) ? $item['images'] : [];
-            foreach (array_values($images) as $index => $image) {
-                $image = '/' . ltrim((string) $image, '/');
-                $filename = basename($image);
+            $sortOrder = 0;
+            $hasPrimary = false;
+
+            foreach ($images as $image) {
+                if (!is_array($image)) {
+                    continue;
+                }
+
+                $path = '/' . ltrim((string) ($image['path'] ?? ''), '/');
+                if ($path === '/') {
+                    continue;
+                }
+
+                $type = (string) ($image['type'] ?? 'gallery');
+                $available = (bool) ($image['available'] ?? false);
+                $filename = basename($path);
                 $extension = strtolower(pathinfo($filename, PATHINFO_EXTENSION) ?: 'jpg');
+                $sortOrder++;
+
+                /* the primary flag only ever goes to a real photo on disk */
+                $isPrimary = !$hasPrimary && $available && $type !== 'drawing';
+                if ($isPrimary) {
+                    $hasPrimary = true;
+                }
 
                 $mediaId = (int) $this->db->insert('media', [
                     'uuid' => $this->uuid4(),
                     'collection' => 'products',
                     'filename' => $filename,
                     'original_name' => $filename,
-                    'path' => $image,
+                    'path' => $path,
                     'mime_type' => $extension === 'png' ? 'image/png' : 'image/jpeg',
                     'extension' => $extension,
                     'size' => 0,
                     'meta' => json_encode([
                         'source' => 'legacy-wordpress',
                         'legacy_post_id' => $item['legacy_id'] ?? null,
+                        'legacy_file' => $image['legacy_file'] ?? null,
+                        'legacy_attachment_id' => $image['legacy_attachment_id'] ?? null,
                     ], JSON_UNESCAPED_UNICODE),
-                    'status' => 'active',
+                    'status' => $available ? 'active' : 'missing',
                     'created_at' => date('Y-m-d H:i:s'),
                     'updated_at' => date('Y-m-d H:i:s'),
                 ]);
@@ -160,9 +188,9 @@ class ProductSeeder extends Seeder
                     'product_id' => $productId,
                     'variant_id' => null,
                     'media_id' => $mediaId,
-                    'type' => $index === 0 ? 'main' : 'gallery',
-                    'sort_order' => $index + 1,
-                    'is_primary' => $index === 0 ? 1 : 0,
+                    'type' => $type,
+                    'sort_order' => $sortOrder,
+                    'is_primary' => $isPrimary ? 1 : 0,
                     'created_at' => date('Y-m-d H:i:s'),
                     'updated_at' => date('Y-m-d H:i:s'),
                 ]);

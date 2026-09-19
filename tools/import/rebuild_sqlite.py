@@ -119,24 +119,36 @@ def main():
                 (pid, key, value[:255], index),
             )
 
-        for index, image in enumerate(item.get('images') or []):
-            image = '/' + image.lstrip('/')
-            filename = os.path.basename(image)
+        sort_order_img, has_primary = 0, False
+        for image in item.get('images') or []:
+            path = '/' + str(image.get('path', '')).lstrip('/')
+            if path == '/':
+                continue
+            kind = image.get('type', 'gallery')
+            available = bool(image.get('available'))
+            filename = os.path.basename(path)
             ext = (os.path.splitext(filename)[1][1:] or 'jpg').lower()
+            sort_order_img += 1
+            is_primary = (not has_primary) and available and kind != 'drawing'
+            if is_primary:
+                has_primary = True
             cur.execute(
                 'INSERT INTO media (uuid, collection, filename, original_name, path, mime_type, extension, size, meta, status, created_at, updated_at)'
                 ' VALUES (?,?,?,?,?,?,?,0,?,?,?,?)',
-                (str(uuid.uuid4()), 'products', filename, filename, image,
+                (str(uuid.uuid4()), 'products', filename, filename, path,
                  'image/png' if ext == 'png' else 'image/jpeg', ext,
-                 json.dumps({'source': 'legacy-wordpress', 'legacy_post_id': item['legacy_id']}, ensure_ascii=False),
-                 'active', NOW, NOW),
+                 json.dumps({'source': 'legacy-wordpress',
+                             'legacy_post_id': item['legacy_id'],
+                             'legacy_file': image.get('legacy_file'),
+                             'legacy_attachment_id': image.get('legacy_attachment_id')},
+                            ensure_ascii=False),
+                 'active' if available else 'missing', NOW, NOW),
             )
             media_id = cur.lastrowid
             cur.execute(
                 'INSERT INTO product_media (product_id, variant_id, media_id, type, sort_order, is_primary, created_at, updated_at)'
                 ' VALUES (?,NULL,?,?,?,?,?,?)',
-                (pid, media_id, 'main' if index == 0 else 'gallery', index + 1,
-                 1 if index == 0 else 0, NOW, NOW),
+                (pid, media_id, kind, sort_order_img, 1 if is_primary else 0, NOW, NOW),
             )
 
         meta_desc = (item.get('short_description') or item.get('description') or '').replace('\n', ' ')[:500]
