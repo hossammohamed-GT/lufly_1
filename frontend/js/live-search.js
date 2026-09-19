@@ -33,7 +33,6 @@
         box.setAttribute('aria-live', 'polite');
         form.appendChild(box);
       }
-
       var base = document.documentElement.getAttribute('data-base') || '';
       var locale = input.getAttribute('data-locale') ||
         document.documentElement.getAttribute('lang') || 'en';
@@ -80,6 +79,12 @@
       function fill(text) {
         box.innerHTML = '<div class="livesearch-status">' + text + '</div>';
         box.classList.add('is-open');
+        form.classList.add('is-searching');
+      }
+
+      function collapse() {
+        box.classList.remove('is-open');
+        form.classList.remove('is-searching');
       }
 
       function showIdle() {
@@ -171,6 +176,7 @@
       });
 
       input.addEventListener('focus', function () {
+        form.classList.add('is-searching');
         var query = input.value.trim();
         if (query.length >= 2) {
           var cacheKey = locale + ':' + query.toLowerCase();
@@ -198,13 +204,13 @@
       /* close on outside click */
       document.addEventListener('click', function (e) {
         if (!form.contains(e.target)) {
-          box.classList.remove('is-open');
+          collapse();
         }
       });
 
       input.addEventListener('keydown', function (e) {
         if (e.key === 'Escape') {
-          box.classList.remove('is-open');
+          collapse();
         }
       });
     });

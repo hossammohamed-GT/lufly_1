@@ -682,6 +682,23 @@ hr { border: 0; border-top: var(--border-hairline) solid var(--ds-border); }
   background: var(--ds-surface);
   color: var(--ds-text);
   font: inherit;
+  appearance: none;
+  -webkit-appearance: none;
+  cursor: pointer;
+}
+
+/* native dropdown lists (option popups) follow the theme */
+.select option,
+.select optgroup {
+  background: var(--ds-surface);
+  color: var(--ds-text);
+}
+
+.select option:checked,
+.select option:hover {
+  background: color-mix(in srgb, var(--ds-primary) 18%, var(--ds-surface));
+  color: var(--ds-primary);
+}
   transition: border-color var(--duration-fast) var(--ease-out), box-shadow var(--duration-fast) var(--ease-out);
 }
 

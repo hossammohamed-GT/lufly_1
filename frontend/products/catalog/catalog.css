@@ -75,26 +75,37 @@
   white-space: nowrap;
 }
 
-/* ---------- toolbar: search + sort ---------- */
+/* ---------- toolbar: expanding search + sort + guide panel ---------- */
 
 .catalog-toolbar {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  flex-wrap: wrap;
-  padding: 14px;
-  border-radius: var(--radius-lg);
-  border: 1px solid var(--ds-border);
-  background: var(--ds-surface);
-  box-shadow: var(--shadow-1);
+  display: grid;
+  gap: 0;
   margin-bottom: 16px;
   animation: catUp 0.6s cubic-bezier(0.16, 1, 0.3, 1) 0.1s both;
 }
 
+.catalog-searchform {
+  display: flex;
+  align-items: stretch;
+  gap: 10px;
+  padding: 12px;
+  border-radius: var(--radius-lg);
+  border: 1px solid var(--ds-border);
+  background: var(--ds-surface);
+  box-shadow: var(--shadow-1);
+  transition: border-color 220ms ease, box-shadow 220ms ease;
+}
+
+/* the search box grows and owns the whole bar while the user is in it */
+.catalog-searchform.is-searching {
+  border-color: color-mix(in srgb, var(--ds-primary) 55%, var(--ds-border));
+  box-shadow: 0 0 0 3px var(--ds-primary-soft), var(--shadow-2);
+}
+
 .catalog-search {
   position: relative;
-  flex: 1;
-  min-width: 220px;
+  flex: 1 1 auto;
+  min-width: 0;
   display: flex;
   align-items: center;
 }
@@ -104,12 +115,15 @@
   inset-inline-start: 14px;
   color: var(--ds-text-muted);
   pointer-events: none;
+  transition: color 200ms ease;
 }
+
+.catalog-searchform.is-searching .catalog-search > svg { color: var(--ds-primary); }
 
 .catalog-search-input {
   width: 100%;
-  padding: 11px 40px 11px 40px;
-  border-radius: 10px;
+  padding: 12px 14px 12px 40px;
+  border-radius: 12px;
   border: 1px solid var(--ds-border);
   background: var(--ds-bg);
   color: var(--ds-text);
@@ -118,7 +132,7 @@
   transition: border-color 150ms ease, box-shadow 150ms ease;
 }
 
-[dir="rtl"] .catalog-search-input { padding: 11px 40px; }
+[dir="rtl"] .catalog-search-input { padding: 12px 40px 12px 14px; }
 
 .catalog-search-input::placeholder { color: var(--ds-text-muted); }
 
@@ -128,28 +142,51 @@
   box-shadow: 0 0 0 3px var(--ds-primary-soft);
 }
 
-.catalog-clear {
-  position: absolute;
-  inset-inline-end: 12px;
-  color: var(--ds-text-muted);
-  font-size: 17px;
-  line-height: 1;
-  text-decoration: none;
-  padding: 2px 4px;
+.catalog-go {
+  flex: none;
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  margin-inline-start: 8px;
+  padding: 0 16px;
+  border-radius: 10px;
+  border: none;
+  background: var(--ds-primary);
+  color: var(--ds-primary-text);
+  font-size: 11px;
+  font-weight: 800;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  cursor: pointer;
+  transition: background-color 150ms ease;
 }
 
-.catalog-clear:hover { color: var(--ds-danger); }
+.catalog-go:hover { background: var(--ds-primary-hover); }
 
 .catalog-sort {
+  flex: 0 0 auto;
   display: inline-flex;
   align-items: center;
   gap: 9px;
+  padding-inline: 4px 2px;
   font-family: var(--font-mono);
   font-size: 9.5px;
   font-weight: 700;
   letter-spacing: 0.18em;
   text-transform: uppercase;
   color: var(--ds-text-muted);
+  transition: opacity 0.3s ease, flex-basis 0.42s cubic-bezier(0.16, 1, 0.3, 1),
+    padding 0.42s cubic-bezier(0.16, 1, 0.3, 1), margin 0.42s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+/* while searching, the sort control folds away and the field owns the bar */
+.catalog-searchform.is-searching .catalog-sort {
+  flex-basis: 0;
+  opacity: 0;
+  overflow: hidden;
+  padding-inline: 0;
+  margin-inline-start: -10px;
+  pointer-events: none;
 }
 
 .catalog-sort-select {
@@ -168,26 +205,66 @@
   transition: border-color 150ms ease;
 }
 
+[dir="rtl"] .catalog-sort-select {
+  padding: 11px 14px 11px 34px;
+  background-position: left 12px center;
+}
+
 .catalog-sort-select:focus {
   outline: none;
   border-color: color-mix(in srgb, var(--ds-primary) 55%, var(--ds-border));
 }
 
-.catalog-go {
-  padding: 11px 20px;
-  border-radius: 10px;
-  border: none;
-  background: var(--ds-primary);
-  color: var(--ds-primary-text);
-  font-size: 11px;
-  font-weight: 800;
-  letter-spacing: 0.12em;
-  text-transform: uppercase;
-  cursor: pointer;
-  transition: background-color 150ms ease;
+/* ---------- guidance panel: colored, clearly instructional ---------- */
+
+.catalog-guide { display: none; }
+
+.catalog-guide:not(:empty) {
+  display: block;
+  margin: 0 12px 12px;
+  animation: catUp 0.28s cubic-bezier(0.16, 1, 0.3, 1) both;
 }
 
-.catalog-go:hover { background: var(--ds-primary-hover); }
+.catalog-guide .livesearch-results {
+  margin-top: 0;
+  border-radius: 0 0 var(--radius-md) var(--radius-md);
+  border-top: 1px dashed color-mix(in srgb, var(--ds-primary) 30%, var(--ds-border));
+  box-shadow: none;
+  background: var(--ds-bg);
+}
+
+.catalog-guide .livesearch-status {
+  border-inline-start: 3px solid var(--lu-info);
+  background: color-mix(in srgb, var(--lu-info) 8%, var(--ds-surface));
+  color: var(--ds-text);
+}
+
+.catalog-guide .livesearch-status.is-ok {
+  border-inline-start-color: var(--lu-success);
+  background: color-mix(in srgb, var(--lu-success) 9%, var(--ds-surface));
+  color: var(--ds-text);
+}
+
+.livesearch-results.is-busy .livesearch-status {
+  border-inline-start-color: var(--lu-warning);
+  background: color-mix(in srgb, var(--lu-warning) 10%, var(--ds-surface));
+  animation: livesearchPulse 1.1s ease-in-out infinite;
+}
+
+@keyframes livesearchPulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.72; }
+}
+
+.livesearch-hint {
+  display: inline-block;
+  padding: 2px 8px;
+  border-radius: 999px;
+  border: 1px solid color-mix(in srgb, var(--lu-info) 32%, transparent);
+  background: color-mix(in srgb, var(--lu-info) 10%, transparent);
+  color: var(--ds-text-muted);
+  font-size: 10.5px;
+}
 
 /* ---------- category rail ---------- */
 

@@ -57,30 +57,33 @@ $fallbackImg = '/images/products/prod_146_1620-111-a.jpg';
             </span>
         </header>
 
-        <form method="GET" action="<?= e(route('products.index')) ?>" class="catalog-toolbar" data-livesearch>
-            <?php if ($activeCategory !== ''): ?>
-                <input type="hidden" name="category" value="<?= e($activeCategory) ?>">
-            <?php endif; ?>
-
-            <div class="catalog-search">
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" width="16" height="16" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg>
-                <input type="text" name="q" value="<?= e($searchQuery) ?>" placeholder="<?= e(trans('common.search')) ?>" class="catalog-search-input" data-livesearch-input data-locale="<?= e($locale) ?>" autocomplete="off" aria-label="<?= e(trans('common.search')) ?>">
-                <?php if ($searchQuery !== '' || $activeCategory !== ''): ?>
-                    <a href="<?= e(route('products.index')) ?>" class="catalog-clear" aria-label="<?= e(trans('common.cancel')) ?>">&times;</a>
+        <div class="catalog-toolbar" data-livesearch>
+            <form method="GET" action="<?= e(route('products.index')) ?>" class="catalog-searchform">
+                <?php if ($activeCategory !== ''): ?>
+                    <input type="hidden" name="category" value="<?= e($activeCategory) ?>">
                 <?php endif; ?>
-            </div>
 
-            <label class="catalog-sort">
-                <span><?= e(trans('products.sort_label')) ?></span>
-                <select name="sort" class="catalog-sort-select" data-catalog-sort>
-                    <?php foreach ($sortOptions as $value => $label): ?>
-                        <option value="<?= e($value) ?>" <?= $sort === $value ? 'selected' : '' ?>><?= e($label) ?></option>
-                    <?php endforeach; ?>
-                </select>
-            </label>
+                <div class="catalog-search" data-catalog-field>
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" width="16" height="16" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg>
+                    <input type="text" name="q" value="<?= e($searchQuery) ?>" placeholder="<?= e(trans('common.search')) ?>" class="catalog-search-input" data-livesearch-input data-locale="<?= e($locale) ?>" autocomplete="off" aria-label="<?= e(trans('common.search')) ?>">
+                    <button type="submit" class="catalog-go" aria-label="<?= e(trans('common.search')) ?>">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" width="15" height="15" aria-hidden="true"><path d="M5 12h14"/><path d="m13 6 6 6-6 6"/></svg>
+                        <span><?= e(trans('common.search')) ?></span>
+                    </button>
+                </div>
 
-            <button type="submit" class="catalog-go"><?= e(trans('common.search')) ?></button>
-        </form>
+                <label class="catalog-sort" data-catalog-sortwrap>
+                    <span class="catalog-sort-label"><?= e(trans('products.sort_label')) ?></span>
+                    <select name="sort" class="catalog-sort-select" data-catalog-sort>
+                        <?php foreach ($sortOptions as $value => $label): ?>
+                            <option value="<?= e($value) ?>" <?= $sort === $value ? 'selected' : '' ?>><?= e($label) ?></option>
+                        <?php endforeach; ?>
+                    </select>
+                </label>
+            </form>
+
+            <div class="catalog-guide" data-livesearch-results aria-live="polite"></div>
+        </div>
 
         <nav class="catalog-rail" aria-label="<?= e(trans('common.category')) ?>">
             <a href="<?= e($buildUrl(['category' => null])) ?>"
