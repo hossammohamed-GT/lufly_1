@@ -22,6 +22,8 @@ return [
     'view_main' => 'Ürün',
     'view_drawing' => 'Teknik çizim',
     'view_situ' => 'Montajlı',
+    'view_prev' => 'Önceki görsel',
+    'view_next' => 'Sonraki görsel',
     'sheet_title' => 'Teknik föy',
     'sheet_scale' => 'Ölçek NTS',
     'sheet_dims_on_request' => 'Kesin ölçüler teknik talep üzerine',

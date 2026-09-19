@@ -26,3 +26,80 @@
     init();
   }
 })();
+
+/* ============================================================
+   Product card: cycle through the product photos on hover.
+   Delegated from the grid so cards injected by live search work too.
+   ============================================================ */
+
+(function () {
+  'use strict';
+
+  var INTERVAL = 900;
+  var timers = new WeakMap();
+
+  function slides(media) {
+    return media.querySelectorAll('[data-pcard-slide]');
+  }
+
+  function show(media, index) {
+    var imgs = slides(media);
+    var dots = media.querySelectorAll('[data-pcard-dot]');
+    if (imgs.length === 0) return;
+
+    index = (index + imgs.length) % imgs.length;
+    imgs.forEach(function (img, n) { img.classList.toggle('is-on', n === index); });
+    dots.forEach(function (dot, n) { dot.classList.toggle('is-on', n === index); });
+    media.setAttribute('data-pcard-index', String(index));
+  }
+
+  function start(media) {
+    if (timers.has(media)) return;
+    if (slides(media).length < 2) return;
+    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+
+    var timer = setInterval(function () {
+      show(media, parseInt(media.getAttribute('data-pcard-index') || '0', 10) + 1);
+    }, INTERVAL);
+
+    timers.set(media, timer);
+  }
+
+  function stop(media) {
+    var timer = timers.get(media);
+    if (timer) {
+      clearInterval(timer);
+      timers.delete(media);
+    }
+    show(media, 0);
+  }
+
+  function init() {
+    document.addEventListener('pointerenter', function (e) {
+      var media = e.target.closest ? e.target.closest('[data-pcard-cycle]') : null;
+      if (media) start(media);
+    }, true);
+
+    document.addEventListener('pointerleave', function (e) {
+      var media = e.target.closest ? e.target.closest('[data-pcard-cycle]') : null;
+      if (media) stop(media);
+    }, true);
+
+    /* keyboard users get the same preview when the card link is focused */
+    document.addEventListener('focusin', function (e) {
+      var media = e.target.closest ? e.target.closest('[data-pcard-cycle]') : null;
+      if (media) start(media);
+    });
+
+    document.addEventListener('focusout', function (e) {
+      var media = e.target.closest ? e.target.closest('[data-pcard-cycle]') : null;
+      if (media) stop(media);
+    });
+  }
+
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', init);
+  } else {
+    init();
+  }
+})();

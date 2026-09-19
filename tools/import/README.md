@@ -91,3 +91,26 @@ real data arrives:
 - **Collections, attributes, dimensions, documents, prices, announcements** -
   no such data exists in the legacy dump, so the tables are empty and are
   filled from Admin.
+
+
+## How images are grouped on the storefront
+
+Media rows are typed, and the UI is driven entirely by those types. Nothing is
+hardcoded, and each group holds **any number** of images:
+
+| `product_media.type` | Where it shows | Notes |
+| --- | --- | --- |
+| `main`, `gallery` | Tab 01 "Product" | the catalog photos |
+| `drawing` | Tab 02 "Drawing" | the real `*-Drawing.jpg` sheets; never used as the primary shot |
+| `situ` | Tab 03 "Installed" | the product photographed mounted on location |
+
+- A tab is rendered **only when that group has at least one image**, so a
+  product with no drawing has no Drawing button at all, and the same for
+  Installed.
+- Within a tab, several images get prev/next arrows, dots, a counter, swipe
+  and arrow-key support.
+- On the catalog listing, hovering a card cycles through its photos
+  (`gallery` + `situ`); drawings are excluded from cards.
+
+`situ` images are not present in the legacy dump: mark them by setting
+`product_media.type = 'situ'` from Admin once the on-location photos are shot.

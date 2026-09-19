@@ -95,8 +95,13 @@
 
 .pdp-view.is-on {
   display: block;
+  position: relative;
   animation: pdpViewIn 0.45s cubic-bezier(0.16, 1, 0.3, 1) both;
 }
+
+/* a view can hold several images: only the active one is shown */
+.pdp-view .pdp-view-img { display: none; }
+.pdp-view .pdp-view-img.is-on { display: block; }
 
 @keyframes pdpViewIn {
   from { opacity: 0; transform: translateY(10px); }
@@ -533,4 +538,72 @@
   .pdp-viewtab,
   .pdp-back,
   .pdp-crumb a { transition: none; }
+}
+
+
+/* ---------- multi-image controls inside a view ---------- */
+
+.pdp-slide-nav {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  display: grid;
+  place-items: center;
+  width: 38px;
+  height: 38px;
+  border-radius: 999px;
+  border: 1px solid var(--ds-border);
+  background: color-mix(in srgb, var(--ds-surface) 88%, transparent);
+  color: var(--ds-text);
+  cursor: pointer;
+  opacity: 0;
+  transition: opacity 180ms ease, background 180ms ease, border-color 180ms ease;
+}
+
+.pdp-view:hover .pdp-slide-nav,
+.pdp-slide-nav:focus-visible {
+  opacity: 1;
+}
+
+.pdp-slide-nav:hover {
+  background: var(--ds-surface);
+  border-color: color-mix(in srgb, var(--ds-primary) 55%, var(--ds-border));
+}
+
+.pdp-slide-prev { inset-inline-start: 14px; }
+.pdp-slide-next { inset-inline-end: 14px; }
+
+.pdp-slide-dots {
+  position: absolute;
+  bottom: 16px;
+  inset-inline: 0;
+  display: flex;
+  justify-content: center;
+  gap: 7px;
+}
+
+.pdp-slide-dot {
+  width: 7px;
+  height: 7px;
+  padding: 0;
+  border-radius: 999px;
+  border: 1px solid var(--ds-border);
+  background: color-mix(in srgb, var(--ds-surface) 80%, transparent);
+  cursor: pointer;
+  transition: background 180ms ease, transform 180ms ease;
+}
+
+.pdp-slide-dot.is-on {
+  background: var(--ds-primary);
+  transform: scale(1.35);
+}
+
+.pdp-view-count {
+  margin-inline-start: 8px;
+  opacity: 0.75;
+}
+
+/* touch devices have no hover: keep the arrows visible */
+@media (hover: none) {
+  .pdp-slide-nav { opacity: 1; }
 }

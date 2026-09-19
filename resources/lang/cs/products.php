@@ -22,6 +22,8 @@ return [
     'view_main' => 'Produkt',
     'view_drawing' => 'Výkres',
     'view_situ' => 'Instalace',
+    'view_prev' => 'Předchozí obrázek',
+    'view_next' => 'Další obrázek',
     'sheet_title' => 'Technický list',
     'sheet_scale' => 'Měřítko NTS',
     'sheet_dims_on_request' => 'Přesné rozměry na technický požadavek',

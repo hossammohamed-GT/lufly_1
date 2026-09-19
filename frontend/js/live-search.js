@@ -321,16 +321,32 @@
           var shortDesc = esc(String(product.short_description || '').trim());
           var slug = encodeURIComponent(product.slug || product.id || '');
           var href = base + '/' + encodeURIComponent(locale) + '/products/' + slug;
-          var situ = product.situ_image ? img(product.situ_image) : '';
+          /* hover cycles through every real photo: catalog shots then
+             installed views. Drawings never appear on a card. */
+          var photos = [];
+          (product.gallery || []).forEach(function (p) { if (p) photos.push(img(p)); });
+          (product.situ_images || []).forEach(function (p) { if (p) photos.push(img(p)); });
+          if (product.situ_image && photos.indexOf(img(product.situ_image)) === -1) {
+            photos.push(img(product.situ_image));
+          }
+          photos = photos.filter(function (p, i) { return p && photos.indexOf(p) === i; });
+          if (photos.length === 0) photos = [img(product.image)];
+
           var no = ('00' + (index + 1)).slice(-3);
           var delay = (0.05 + 0.05 * (index % 6)).toFixed(2);
 
           return '<article class="pcard" style="--pcard-delay:' + delay + 's">' +
-            '<a class="pcard-media" href="' + href + '">' +
-            '<img class="pcard-img" src="' + esc(img(product.image)) + '" alt="' + name + '" loading="lazy" decoding="async" width="420" height="320"' +
-            ' onerror="this.onerror=null;this.src=\'' + fallback + '\'">' +
-            (situ ? '<img class="pcard-img pcard-img-situ" src="' + esc(situ) + '" alt="" loading="lazy" decoding="async" width="420" height="320"' +
-              ' onerror="this.onerror=null;this.remove();">' : '') +
+            '<a class="pcard-media" href="' + href + '"' + (photos.length > 1 ? ' data-pcard-cycle' : '') + '>' +
+            photos.map(function (src, n) {
+              return '<img class="pcard-img' + (n === 0 ? ' is-on' : '') + '" data-pcard-slide="' + n + '"' +
+                ' src="' + esc(src) + '" alt="' + (n === 0 ? name : '') + '" loading="lazy" decoding="async" width="420" height="320"' +
+                ' onerror="this.onerror=null;this.remove();">';
+            }).join('') +
+            (photos.length > 1
+              ? '<span class="pcard-dots" aria-hidden="true">' + photos.map(function (u, n) {
+                  return '<i class="pcard-dot' + (n === 0 ? ' is-on' : '') + '" data-pcard-dot="' + n + '"></i>';
+                }).join('') + '</span>'
+              : '') +
             '<span class="pcard-hint" aria-hidden="true">' + arrow + esc(g.details) + '</span>' +
             '</a>' +
             '<div class="pcard-body">' +

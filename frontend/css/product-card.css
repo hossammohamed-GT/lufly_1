@@ -48,17 +48,41 @@
   transition: opacity 0.35s ease, transform 0.45s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
-.pcard-img-situ {
-  object-fit: cover;
-  padding: 0;
+/* a card can carry several photos; hover cycles through them */
+.pcard-img { opacity: 0; }
+.pcard-img.is-on { opacity: 1; }
+
+.pcard:hover .pcard-img.is-on { transform: scale(1.03); }
+
+.pcard-dots {
+  position: absolute;
+  inset-inline: 0;
+  bottom: 8px;
+  display: flex;
+  justify-content: center;
+  gap: 5px;
   opacity: 0;
+  transition: opacity 0.25s ease;
+  pointer-events: none;
 }
 
-.pcard:hover .pcard-img:not(.pcard-img-situ) { transform: scale(1.03); }
+.pcard:hover .pcard-dots { opacity: 1; }
 
-.pcard:hover .pcard-img-situ {
-  opacity: 1;
-  transform: scale(1.02);
+.pcard-dot {
+  width: 5px;
+  height: 5px;
+  border-radius: 999px;
+  background: color-mix(in srgb, var(--ds-text) 28%, transparent);
+  transition: background 0.25s ease, transform 0.25s ease;
+}
+
+.pcard-dot.is-on {
+  background: var(--ds-primary);
+  transform: scale(1.4);
+}
+
+@media (hover: none) {
+  .pcard-dots { opacity: 1; }
 }
 
 .pcard-hint {

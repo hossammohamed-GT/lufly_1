@@ -82,12 +82,14 @@ class Product extends Model
             'situ_image' => $this->situImageUrl(),
             'specs' => $specs,
 
-            /* every usable photo, plus the technical drawings */
+            /* three independent image groups, each holding any number of
+               images: product photos, technical drawings, installed shots */
             'gallery' => array_map(
                 static fn (array $row): string => (string) $row['path'],
                 $this->gallery(),
             ),
             'drawings' => $this->drawings(),
+            'situ_images' => $this->situImages(),
 
             /* full related data */
             'variants' => $variants,
@@ -171,7 +173,8 @@ class Product extends Model
     }
 
     /**
-     * Photos for the product gallery (drawings excluded), primary first.
+     * Product photos for the main gallery: everything that is neither a
+     * technical drawing nor an installed ("situ") shot. Primary first.
      *
      * @return array<int, array<string, mixed>>
      */
@@ -179,8 +182,21 @@ class Product extends Model
     {
         return array_values(array_filter(
             $this->media(),
-            static fn (array $row): bool => (string) $row['type'] !== 'drawing',
+            static fn (array $row): bool => !in_array((string) $row['type'], ['drawing', 'situ'], true),
         ));
+    }
+
+    /**
+     * Installed / in-situ photos (the product mounted on location).
+     *
+     * @return array<int, string>
+     */
+    public function situImages(): array
+    {
+        return array_map(
+            static fn (array $row): string => (string) $row['path'],
+            $this->media('situ'),
+        );
     }
 
     /**

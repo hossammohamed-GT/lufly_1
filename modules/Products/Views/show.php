@@ -18,48 +18,43 @@ $situImg = (string) ($product['situ_image'] ?? '');
 $modelCode = (string) ($product['model_code'] ?? $product['sku'] ?? '');
 $variants = is_array($product['variants'] ?? null) ? $product['variants'] : [];
 $specs = is_array($product['specs'] ?? null) ? $product['specs'] : [];
-$gallery = is_array($product['gallery'] ?? null) ? $product['gallery'] : [];
-$drawings = is_array($product['drawings'] ?? null) ? $product['drawings'] : [];
-$drawingImg = (string) ($drawings[0] ?? '');
+/* three independent image groups; each may hold any number of images */
+$gallery = is_array($product['gallery'] ?? null) ? array_values($product['gallery']) : [];
+$drawings = is_array($product['drawings'] ?? null) ? array_values($product['drawings']) : [];
+$situImages = is_array($product['situ_images'] ?? null) ? array_values($product['situ_images']) : [];
+
+if ($situImages === [] && $situImg !== '') {
+    $situImages = [$situImg];
+}
+if ($gallery === [] && $img !== '') {
+    $gallery = [$img];
+}
+
+/* a tab only exists when that group actually has images */
+$views = [];
+if ($gallery !== []) {
+    $views[] = ['key' => 'main', 'label' => trans('products.view_main'), 'images' => $gallery];
+}
+if ($drawings !== []) {
+    $views[] = ['key' => 'drawing', 'label' => trans('products.view_drawing'), 'images' => $drawings];
+}
+if ($situImages !== []) {
+    $views[] = ['key' => 'situ', 'label' => trans('products.view_situ'), 'images' => $situImages];
+}
 $dimensions = is_array($product['dimensions'] ?? null) ? $product['dimensions'] : null;
 $categorySlug = (string) ($product['category_slug'] ?? '');
 $productUrl = route('products.show', ['slug' => $product['slug'] ?? $slug]);
 
-/* pick the technical-sheet silhouette from the category */
-$silhouette = 'basin';
-if ($categorySlug === 'bathroom-ceramics' || $categorySlug === 'accessible-range') {
-    $silhouette = 'toilet';
-} elseif ($categorySlug === 'kids') {
-    $silhouette = 'vanity';
-}
-
-/* dimensions in millimetres (real data when the factory enters it) */
+/* dimensions in millimetres, shown in the spec table when the factory has
+   entered them */
 $dims = [
     'w' => isset($dimensions['width_mm']) ? (float) $dimensions['width_mm'] : 0.0,
     'h' => isset($dimensions['height_mm']) ? (float) $dimensions['height_mm'] : 0.0,
     'd' => isset($dimensions['depth_mm']) ? (float) $dimensions['depth_mm'] : 0.0,
 ];
 $hasDims = $dims['w'] > 0 && $dims['h'] > 0;
-
-/* default sheet proportions per silhouette when no dimensions are stored */
-$defaults = [
-    'toilet' => ['w' => 540.0, 'h' => 340.0],
-    'basin' => ['w' => 600.0, 'h' => 180.0],
-    'vanity' => ['w' => 600.0, 'h' => 500.0],
-];
-$sheetW = $hasDims ? $dims['w'] : $defaults[$silhouette]['w'];
-$sheetH = $hasDims ? $dims['h'] : $defaults[$silhouette]['h'];
-
-/* scale millimetres onto a 300px-max drawing area, keep 1:1 aspect */
-$k = 300.0 / max($sheetW, $sheetH, 1.0);
-$k = min($k, 0.9);
-$dw = $sheetW * $k;
-$dh = $sheetH * $k;
-
-/* sheet geometry (viewBox 520 x 430) */
-$bx = 260.0 - $dw / 2.0;   /* outline left */
-$by = 250.0 - $dh;         /* outline top (floor at y=250) */
 $fmt = static fn (float $v): string => rtrim(rtrim(number_format($v, 0, '.', ''), '0'), '.');
+
 ?>
 <main class="pdp" id="main">
     <div class="pdp-inner">
@@ -76,112 +71,59 @@ $fmt = static fn (float $v): string => rtrim(rtrim(number_format($v, 0, '.', '')
             <section class="pdp-stage" aria-label="<?= e(trans('products.sheet_title')) ?>">
                 <span class="pdp-stage-beam" aria-hidden="true"></span>
 
-                <figure class="pdp-view is-on" data-pdp-view="main">
-                    <img src="<?= e(asset($img)) ?>"
-                         alt="<?= e($product['name'] ?? '') ?>"
-                         class="pdp-view-img"
-                         width="900" height="700"
-                         decoding="async"
-                         onerror="this.onerror=null; this.src='<?= e(asset($fallbackImg)) ?>';">
-                    <figcaption class="pdp-view-tag">01 &middot; <?= e(trans('products.view_main')) ?></figcaption>
-                </figure>
+                <?php foreach ($views as $vIndex => $v): ?>
+                    <figure class="pdp-view<?= $vIndex === 0 ? ' is-on' : '' ?>" data-pdp-view="<?= e($v['key']) ?>">
+                        <?php foreach ($v['images'] as $iIndex => $src): ?>
+                            <img src="<?= e(asset($src)) ?>"
+                                 alt="<?= e(($product['name'] ?? '') . ' - ' . $v['label']) ?>"
+                                 class="pdp-view-img<?= $v['key'] === 'situ' ? ' pdp-view-img-cover' : '' ?><?= $iIndex === 0 ? ' is-on' : '' ?>"
+                                 data-pdp-slide="<?= (int) $iIndex ?>"
+                                 width="900" height="700"
+                                 <?= $vIndex === 0 && $iIndex === 0 ? 'decoding="async"' : 'loading="lazy" decoding="async"' ?>
+                                 onerror="this.onerror=null; this.remove();">
+                        <?php endforeach; ?>
 
-                <figure class="pdp-view" data-pdp-view="drawing">
-                    <?php if ($drawingImg !== ''): ?>
-                    <!-- real technical drawing exported from the factory catalog -->
-                    <img src="<?= e(asset($drawingImg)) ?>"
-                         alt="<?= e(($product['name'] ?? '') . ' - ' . trans('products.view_drawing')) ?>"
-                         class="pdp-view-img"
-                         width="900" height="700"
-                         loading="lazy" decoding="async">
-                    <?php else: ?>
-                    <div class="pdp-sheet">
-                        <svg class="pdp-sheet-svg" viewBox="0 0 520 430" role="img"
-                             aria-label="<?= e(trans('products.sheet_title')) ?> <?= e($modelCode) ?>">
-                            <!-- frame + corner ticks -->
-                            <rect class="pdp-frame" x="10" y="10" width="500" height="410"/>
-                            <path class="pdp-tick" d="M10 34h18M34 10v18M510 396h-18M486 420v-18"/>
+                        <?php if (count($v['images']) > 1): ?>
+                            <button type="button" class="pdp-slide-nav pdp-slide-prev" data-pdp-prev
+                                    aria-label="<?= e(trans('products.view_prev')) ?>">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" width="18" height="18" aria-hidden="true"><path d="m15 6-6 6 6 6"/></svg>
+                            </button>
+                            <button type="button" class="pdp-slide-nav pdp-slide-next" data-pdp-next
+                                    aria-label="<?= e(trans('products.view_next')) ?>">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" width="18" height="18" aria-hidden="true"><path d="m9 6 6 6-6 6"/></svg>
+                            </button>
+                            <div class="pdp-slide-dots" role="tablist" aria-label="<?= e($v['label']) ?>">
+                                <?php foreach ($v['images'] as $dIndex => $unused): ?>
+                                    <button type="button"
+                                            class="pdp-slide-dot<?= $dIndex === 0 ? ' is-on' : '' ?>"
+                                            data-pdp-dot="<?= (int) $dIndex ?>"
+                                            aria-label="<?= e($v['label']) ?> <?= (int) $dIndex + 1 ?>"></button>
+                                <?php endforeach; ?>
+                            </div>
+                        <?php endif; ?>
 
-                            <?php if ($silhouette === 'toilet'): ?>
-                                <!-- wall-hung fixture, side elevation -->
-                                <path class="pdp-line" d="M96 70v180"/>
-                                <path class="pdp-ghost" d="M96 90l<?= e($dw + 40) ?> -12"/>
-                                <rect class="pdp-line" x="<?= e($bx) ?>" y="<?= e($by) ?>" width="<?= e($dw) ?>" height="<?= e(round($dh * 0.58)) ?>" rx="14"/>
-                                <path class="pdp-line" d="M<?= e($bx + $dw * 0.14) ?> <?= e($by + $dh * 0.58) ?> h<?= e($dw * 0.72) ?> q<?= e($dw * 0.14) ?> 0 <?= e($dw * 0.14) ?> <?= e($dh * 0.20) ?> q0 <?= e($dh * 0.22) ?> -<?= e($dw * 0.5) ?> <?= e($dh * 0.22) ?> q-<?= e($dw * 0.5) ?> 0 -<?= e($dw * 0.5) ?> -<?= e($dh * 0.22) ?> q0 -<?= e($dh * 0.14) ?> <?= e($dw * 0.14) ?> -<?= e($dh * 0.20) ?> z"/>
-                                <line class="pdp-thin" x1="<?= e($bx) ?>" y1="<?= e($by + $dh * 0.30) ?>" x2="<?= e($bx + $dw) ?>" y2="<?= e($by + $dh * 0.30) ?>"/>
-                            <?php elseif ($silhouette === 'vanity'): ?>
-                                <!-- cabinet front elevation -->
-                                <rect class="pdp-line" x="<?= e($bx) ?>" y="<?= e($by) ?>" width="<?= e($dw) ?>" height="<?= e($dh) ?>" rx="8"/>
-                                <line class="pdp-thin" x1="260" y1="<?= e($by + 10) ?>" x2="260" y2="<?= e($by + $dh - 10) ?>"/>
-                                <rect class="pdp-thinfill" x="<?= e($bx + $dw * 0.08) ?>" y="<?= e($by + $dh * 0.10) ?>" width="<?= e($dw * 0.84) ?>" height="<?= e($dh * 0.14) ?>" rx="6"/>
-                                <line class="pdp-line" x1="<?= e($bx) ?>" y1="<?= e($by + $dh) ?>" x2="<?= e($bx + $dw) ?>" y2="<?= e($by + $dh) ?>"/>
-                            <?php else: ?>
-                                <!-- washbasin front elevation -->
-                                <path class="pdp-line" d="M<?= e($bx) ?> <?= e($by) ?> h<?= e($dw) ?> q6 0 6 8 v<?= e(round($dh * 0.34) - 8) ?> q0 <?= e($dh * 0.38) ?> -<?= e($dw * 0.30) ?> <?= e($dh * 0.46) ?> h-<?= e($dw * 0.40) ?> q-<?= e($dw * 0.30) ?> <?= e(-$dh * 0.08) ?> -<?= e($dw * 0.30) ?> -<?= e($dh * 0.46) ?> v-<?= e(round($dh * 0.34) - 8) ?> q0 -8 6 -8 z"/>
-                                <circle class="pdp-thin" cx="260" cy="<?= e($by + 12) ?>" r="4"/>
+                        <figcaption class="pdp-view-tag">
+                            <?= e(str_pad((string) ($vIndex + 1), 2, '0', STR_PAD_LEFT)) ?> &middot; <?= e($v['label']) ?>
+                            <?php if (count($v['images']) > 1): ?>
+                                <span class="pdp-view-count" data-pdp-counter>1/<?= count($v['images']) ?></span>
                             <?php endif; ?>
+                        </figcaption>
+                    </figure>
+                <?php endforeach; ?>
 
-                            <?php if ($hasDims): ?>
-                                <!-- width dimension line (top) -->
-                                <line class="pdp-dim" x1="<?= e($bx) ?>" y1="<?= e($by - 26) ?>" x2="<?= e($bx + $dw) ?>" y2="<?= e($by - 26) ?>"/>
-                                <line class="pdp-dim" x1="<?= e($bx) ?>" y1="<?= e($by - 32) ?>" x2="<?= e($bx) ?>" y2="<?= e($by - 20) ?>"/>
-                                <line class="pdp-dim" x1="<?= e($bx + $dw) ?>" y1="<?= e($by - 32) ?>" x2="<?= e($bx + $dw) ?>" y2="<?= e($by - 20) ?>"/>
-                                <text class="pdp-dim-label" x="<?= e(260) ?>" y="<?= e($by - 34) ?>" text-anchor="middle">W <?= e($fmt($dims['w'])) ?></text>
-                                <!-- height dimension line (right) -->
-                                <line class="pdp-dim" x1="<?= e($bx + $dw + 26) ?>" y1="<?= e($by) ?>" x2="<?= e($bx + $dw + 26) ?>" y2="<?= e($by + $dh) ?>"/>
-                                <line class="pdp-dim" x1="<?= e($bx + $dw + 20) ?>" y1="<?= e($by) ?>" x2="<?= e($bx + $dw + 32) ?>" y2="<?= e($by) ?>"/>
-                                <line class="pdp-dim" x1="<?= e($bx + $dw + 20) ?>" y1="<?= e($by + $dh) ?>" x2="<?= e($bx + $dw + 32) ?>" y2="<?= e($by + $dh) ?>"/>
-                                <text class="pdp-dim-label" x="<?= e($bx + $dw + 38) ?>" y="<?= e($by + $dh / 2) ?>" text-anchor="start">H <?= e($fmt($dims['h'])) ?></text>
-                            <?php else: ?>
-                                <text class="pdp-dim-label" x="260" y="<?= e($by - 30) ?>" text-anchor="middle"><?= e(trans('products.sheet_dims_on_request')) ?></text>
-                            <?php endif; ?>
-
-                            <!-- title block -->
-                            <line class="pdp-thin" x1="10" y1="382" x2="510" y2="382"/>
-                            <text class="pdp-block-strong" x="24" y="402">MODEL <?= e($modelCode) ?></text>
-                            <text class="pdp-block" x="290" y="402">EN 997 &middot; CE</text>
-                            <text class="pdp-block" x="400" y="402"><?= e(trans('products.sheet_scale')) ?></text>
-                        </svg>
+                <?php if (count($views) > 1): ?>
+                    <div class="pdp-viewtabs" role="tablist" aria-label="<?= e(trans('products.sheet_title')) ?>">
+                        <?php foreach ($views as $vIndex => $v): ?>
+                            <button type="button"
+                                    class="pdp-viewtab<?= $vIndex === 0 ? ' is-on' : '' ?>"
+                                    data-pdp-tab="<?= e($v['key']) ?>"
+                                    role="tab"
+                                    aria-selected="<?= $vIndex === 0 ? 'true' : 'false' ?>">
+                                <span class="pdp-viewtab-code"><?= e(str_pad((string) ($vIndex + 1), 2, '0', STR_PAD_LEFT)) ?></span><?= e($v['label']) ?>
+                            </button>
+                        <?php endforeach; ?>
                     </div>
-                    <?php endif; ?>
-                    <figcaption class="pdp-view-tag">02 &middot; <?= e(trans('products.view_drawing')) ?></figcaption>
-                </figure>
-
-                <?php
-                /* third view: the dedicated in-situ shot when one exists,
-                   otherwise the next real photo from the product gallery */
-                $altImg = $situImg;
-                if ($altImg === '') {
-                    foreach ($gallery as $candidate) {
-                        if ((string) $candidate !== $img) {
-                            $altImg = (string) $candidate;
-                            break;
-                        }
-                    }
-                }
-                ?>
-                <figure class="pdp-view" data-pdp-view="situ">
-                    <?php if ($altImg !== ''): ?>
-                        <img src="<?= e(asset($altImg)) ?>"
-                             alt="<?= e(($product['name'] ?? '') . ' - installed') ?>"
-                             class="pdp-view-img pdp-view-img-cover"
-                             width="900" height="700"
-                             loading="lazy" decoding="async">
-                    <?php endif; ?>
-                    <figcaption class="pdp-view-tag">03 &middot; <?= e(trans('products.view_situ')) ?></figcaption>
-                </figure>
-
-                <div class="pdp-viewtabs" role="tablist" aria-label="<?= e(trans('products.sheet_title')) ?>">
-                    <button type="button" class="pdp-viewtab is-on" data-pdp-tab="main" role="tab" aria-selected="true">
-                        <span class="pdp-viewtab-code">01</span><?= e(trans('products.view_main')) ?>
-                    </button>
-                    <button type="button" class="pdp-viewtab" data-pdp-tab="drawing" role="tab" aria-selected="false">
-                        <span class="pdp-viewtab-code">02</span><?= e(trans('products.view_drawing')) ?>
-                    </button>
-                    <button type="button" class="pdp-viewtab" data-pdp-tab="situ" role="tab" aria-selected="false">
-                        <span class="pdp-viewtab-code">03</span><?= e(trans('products.view_situ')) ?>
-                    </button>
-                </div>
+                <?php endif; ?>
             </section>
 
             <!-- ================= info panel ================= -->
