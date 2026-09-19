@@ -2,6 +2,7 @@
 /** @var Core\View\View $view */
 $view->pushStyle('frontend/css/product-card.css');
 $view->pushStyle('frontend/home/masterpieces/masterpieces.css');
+$view->pushScript('frontend/products/catalog/catalog.js');
 /** @var array $featuredProducts */
 $fallbackImg = '/images/products/prod_146_1620-111-a.jpg';
 $featured = is_array($featuredProducts ?? null) ? $featuredProducts : [];
@@ -22,7 +23,16 @@ $featured = is_array($featuredProducts ?? null) ? $featuredProducts : [];
         <div class="masterpieces-grid catalog-grid">
             <?php foreach (array_slice($featured, 0, 4) as $idx => $product):
                 $img = (string) ($product['image'] ?? '') !== '' ? (string) $product['image'] : $fallbackImg;
-                $situ = (string) ($product['situ_image'] ?? '');
+                /* same media contract as the catalogue grid: every gallery and
+                   in-situ photo, drawings excluded, de-duplicated */
+                $cardImgs = is_array($product['gallery'] ?? null) ? array_values($product['gallery']) : [];
+                foreach ((is_array($product['situ_images'] ?? null) ? $product['situ_images'] : []) as $s) {
+                    $cardImgs[] = $s;
+                }
+                $cardImgs = array_values(array_unique(array_filter($cardImgs, static fn ($v) => (string) $v !== '')));
+                if ($cardImgs === []) {
+                    $cardImgs = [$img];
+                }
                 $name = (string) ($product['name'] ?? ('LUFLY ' . ($product['sku'] ?? 'Sanitary Fixture')));
                 $sku = (string) ($product['sku'] ?? 'SKU-PENDING');
                 $desc = trim((string) ($product['short_description'] ?? ''));
@@ -30,14 +40,22 @@ $featured = is_array($featuredProducts ?? null) ? $featuredProducts : [];
                 $detailUrl = $slug !== '' ? route('products.show', ['slug' => $slug]) : route('products.index');
             ?>
                 <article class="pcard" style="--pcard-delay: <?= e((string) (0.06 * ($idx + 1))) ?>s">
-                    <a class="pcard-media" href="<?= e($detailUrl) ?>">
-                        <img src="<?= e(asset($img)) ?>" alt="<?= e($name) ?>"
-                             class="pcard-img" loading="lazy" decoding="async" width="420" height="320"
-                             onerror="this.onerror=null; this.src='<?= e(asset($fallbackImg)) ?>';">
-                        <?php if ($situ !== ''): ?>
-                            <img src="<?= e(asset($situ)) ?>" alt=""
-                                 class="pcard-img pcard-img-situ" loading="lazy" decoding="async" width="420" height="320"
+                    <a class="pcard-media" href="<?= e($detailUrl) ?>"
+                       <?= count($cardImgs) > 1 ? 'data-pcard-cycle' : '' ?>>
+                        <?php foreach ($cardImgs as $ci => $cSrc): ?>
+                            <img src="<?= e(asset($cSrc)) ?>"
+                                 alt="<?= $ci === 0 ? e($name) : '' ?>"
+                                 class="pcard-img<?= $ci === 0 ? ' is-on' : '' ?>"
+                                 data-pcard-slide="<?= (int) $ci ?>"
+                                 loading="lazy" decoding="async" width="420" height="320"
                                  onerror="this.onerror=null; this.remove();">
+                        <?php endforeach; ?>
+                        <?php if (count($cardImgs) > 1): ?>
+                            <span class="pcard-dots" aria-hidden="true">
+                                <?php foreach ($cardImgs as $ci => $unusedDot): ?>
+                                    <i class="pcard-dot<?= $ci === 0 ? ' is-on' : '' ?>" data-pcard-dot="<?= (int) $ci ?>"></i>
+                                <?php endforeach; ?>
+                            </span>
                         <?php endif; ?>
                         <span class="pcard-hint" aria-hidden="true">
                             <svg viewBox="0 0 20 20" fill="currentColor" width="13" height="13"><path fill-rule="evenodd" d="M10.293 3.293a1 1 0 011.414 0l6 6a1 1 0 010 1.414l-6 6a1 1 0 01-1.414-1.414L14.586 11H3a1 1 0 110-2h11.586l-4.293-4.293a1 1 0 010-1.414z" clip-rule="evenodd"/></svg>

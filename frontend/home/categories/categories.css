@@ -3,9 +3,45 @@
    frames and a primary frame on hover. */
 
 .categories-section {
+  position: relative;
   padding: var(--space-16) 0;
   border-bottom: 1px solid var(--ds-border);
   background: var(--ds-bg);
+}
+
+/* ---- fixed (attachment) showroom backdrop: the page scrolls but the photo
+   stays put, so this band reads as a window rather than another card ---- */
+.categories-section::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+  background:
+    linear-gradient(180deg,
+      color-mix(in srgb, var(--lu-ink-900) 88%, transparent),
+      color-mix(in srgb, var(--lu-ink-900) 78%, transparent)),
+    url('../../../images/lifestyle/categories-backdrop.jpg') center / cover fixed;
+}
+
+[data-theme="light"] .categories-section::before {
+  background:
+    linear-gradient(180deg,
+      color-mix(in srgb, var(--lu-neutral-50) 90%, transparent),
+      color-mix(in srgb, var(--lu-neutral-50) 82%, transparent)),
+    url('../../../images/lifestyle/categories-backdrop.jpg') center / cover fixed;
+}
+
+/* keep the content above the backdrop */
+.categories-section > .container { position: relative; z-index: 1; }
+
+/* iOS ignores background-attachment: fixed, so fall back to a normal
+   cover image there rather than leaving a zoomed, jittery band */
+@media (hover: none) {
+  .categories-section::before,
+  [data-theme="light"] .categories-section::before {
+    background-attachment: scroll;
+  }
 }
 
 .category-mosaic {
