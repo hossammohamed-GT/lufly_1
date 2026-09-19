@@ -34,7 +34,9 @@
   display: block;
   aspect-ratio: 7 / 5;
   overflow: hidden;
-  background: var(--ds-bg);
+  /* product shots are cut out on pure white; matching the stage to that
+     white makes the letterboxing around a contain-fit image disappear */
+  background: #ffffff;
 }
 
 .pcard-img {

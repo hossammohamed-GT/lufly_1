@@ -19,16 +19,19 @@
   pointer-events: none;
   background:
     linear-gradient(180deg,
-      color-mix(in srgb, var(--ds-bg) 86%, transparent),
-      color-mix(in srgb, var(--ds-bg) 76%, transparent)),
+      color-mix(in srgb, var(--ds-bg) 62%, transparent),
+      color-mix(in srgb, var(--ds-bg) 48%, transparent)),
     url('../../../images/lifestyle/rituals-backdrop.jpg') center / cover fixed;
 }
 
 [data-theme="light"] .rituals-section::before {
+  /* dark photo on a light page: lift and desaturate it so the band reads
+     as bright rather than as a heavy block */
+  filter: brightness(1.85) saturate(0.6);
   background:
     linear-gradient(180deg,
-      color-mix(in srgb, var(--ds-bg) 93%, transparent),
-      color-mix(in srgb, var(--ds-bg) 88%, transparent)),
+      color-mix(in srgb, var(--ds-bg) 78%, transparent),
+      color-mix(in srgb, var(--ds-bg) 68%, transparent)),
     url('../../../images/lifestyle/rituals-backdrop.jpg') center / cover fixed;
 }
 

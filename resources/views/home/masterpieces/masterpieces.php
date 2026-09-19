@@ -3,6 +3,8 @@
 $view->pushStyle('frontend/css/product-card.css');
 $view->pushStyle('frontend/home/masterpieces/masterpieces.css');
 $view->pushScript('frontend/products/catalog/catalog.js');
+$view->pushStyle('frontend/components/skeleton/skeleton.css');
+$view->pushScript('frontend/components/skeleton/skeleton.js');
 /** @var array $featuredProducts */
 $fallbackImg = '/images/products/prod_146_1620-111-a.jpg';
 $featured = is_array($featuredProducts ?? null) ? $featuredProducts : [];
@@ -20,7 +22,26 @@ $featured = is_array($featuredProducts ?? null) ? $featuredProducts : [];
             </a>
         </div>
 
-        <div class="masterpieces-grid catalog-grid">
+        <!-- database driven: a glass skeleton holds the shape while the
+             product imagery decodes, so this block never blocks first paint -->
+        <div data-sk-host>
+            <div class="sk-grid" data-sk-skeleton aria-hidden="true">
+                <?php for ($i = 0; $i < 4; $i++): ?>
+                    <div class="sk sk-card">
+                        <div class="sk-card-media"></div>
+                        <div class="sk-card-body">
+                            <div class="sk-card-top">
+                                <span class="sk-line"></span>
+                                <span class="sk-line"></span>
+                            </div>
+                            <div class="sk-line is-lg w-85"></div>
+                            <div class="sk-line is-sm w-55"></div>
+                        </div>
+                    </div>
+                <?php endfor; ?>
+            </div>
+
+        <div class="masterpieces-grid catalog-grid" data-sk-real>
             <?php foreach (array_slice($featured, 0, 4) as $idx => $product):
                 $img = (string) ($product['image'] ?? '') !== '' ? (string) $product['image'] : $fallbackImg;
                 /* same media contract as the catalogue grid: every gallery and
@@ -76,6 +97,7 @@ $featured = is_array($featuredProducts ?? null) ? $featuredProducts : [];
                     </div>
                 </article>
             <?php endforeach; ?>
+        </div>
         </div>
     </div>
 </section>

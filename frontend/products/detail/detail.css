@@ -111,10 +111,11 @@
   overflow: hidden;
 }
 
-/* photos sit on the neutral product background */
+/* product shots are cut out on white, so the stage is white too and the
+   image blends into it with no visible empty margin */
 .pdp-frameplate-main,
 .pdp-frameplate-situ {
-  background: var(--ds-bg);
+  background: #ffffff;
 }
 
 /* drawings get the blueprint treatment: paper-white ground, a ruled
@@ -178,7 +179,7 @@
   max-height: 470px;
   object-fit: contain;
   border-radius: calc(var(--radius-lg) - 6px);
-  background: var(--ds-bg);
+  background: #ffffff;
 }
 
 .pdp-view-img-cover {
@@ -716,7 +717,7 @@
   flex: 0 0 auto;
   border: 1px solid var(--ds-border);
   border-radius: 10px;
-  background: var(--ds-bg);
+  background: #ffffff;
   overflow: hidden;
   cursor: pointer;
   opacity: 0.62;

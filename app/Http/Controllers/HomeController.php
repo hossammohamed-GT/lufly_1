@@ -47,10 +47,29 @@ class HomeController extends Controller
             ->get();
 
         if (count($rawFeatured) < 3) {
-            $rawFeatured = \Modules\Products\Models\Product::query()
-                ->where('status', 'active')
-                ->limit(6)
-                ->get();
+            /* No curated selection yet. Rather than the first N rows - which
+               all come from the same category and look repetitive - take one
+               product per category so the showcase spans the range. */
+            $ids = array_column(
+                $connection->select(
+                    "SELECT MIN(id) AS id
+                       FROM products
+                      WHERE status = 'active' AND deleted_at IS NULL
+                   GROUP BY category_id
+                   ORDER BY category_id ASC
+                      LIMIT 8",
+                ),
+                'id',
+            );
+
+            $rawFeatured = $ids === []
+                ? \Modules\Products\Models\Product::query()
+                    ->where('status', 'active')
+                    ->limit(6)
+                    ->get()
+                : \Modules\Products\Models\Product::query()
+                    ->whereIn('id', $ids)
+                    ->get();
         }
 
         $featuredProducts = array_map(function ($p) use ($locale) {

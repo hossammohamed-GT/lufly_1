@@ -1,0 +1,112 @@
+/* ==========================================================================
+   Glass skeletons.
+
+   Instead of holding the whole page behind the preloader while database
+   driven sections resolve, those sections render a translucent "glass" card
+   in the shape of the real content. The user sees the layout immediately and
+   the data swaps in underneath, so the loading screen is reserved for the
+   genuinely heavy, static first paint.
+   ========================================================================== */
+
+.sk {
+  position: relative;
+  overflow: hidden;
+  border: 1px solid color-mix(in srgb, var(--ds-border) 80%, transparent);
+  border-radius: var(--radius-md, 10px);
+  background: color-mix(in srgb, var(--ds-surface) 55%, transparent);
+  -webkit-backdrop-filter: blur(9px) saturate(1.15);
+  backdrop-filter: blur(9px) saturate(1.15);
+}
+
+/* the travelling sheen that signals "still working" */
+.sk::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  transform: translateX(-100%);
+  background: linear-gradient(
+    90deg,
+    transparent 0%,
+    color-mix(in srgb, var(--ds-text) 7%, transparent) 45%,
+    color-mix(in srgb, var(--ds-text) 11%, transparent) 55%,
+    transparent 100%
+  );
+  animation: skSheen 1.25s ease-in-out infinite;
+}
+
+@keyframes skSheen {
+  to { transform: translateX(100%); }
+}
+
+/* ---- primitives ---- */
+
+.sk-line {
+  height: 11px;
+  border-radius: 999px;
+  background: color-mix(in srgb, var(--ds-text) 11%, transparent);
+}
+
+.sk-line + .sk-line { margin-top: 9px; }
+
+.sk-line.is-sm { height: 9px; }
+.sk-line.is-lg { height: 15px; }
+.sk-line.w-30 { width: 30%; }
+.sk-line.w-40 { width: 40%; }
+.sk-line.w-55 { width: 55%; }
+.sk-line.w-70 { width: 70%; }
+.sk-line.w-85 { width: 85%; }
+
+/* ---- product card skeleton: mirrors .pcard exactly so nothing jumps
+   when the real markup replaces it ---- */
+
+.sk-card {
+  display: flex;
+  flex-direction: column;
+}
+
+.sk-card-media {
+  aspect-ratio: 7 / 5;
+  background: color-mix(in srgb, var(--ds-text) 7%, transparent);
+  border-bottom: 1px solid color-mix(in srgb, var(--ds-border) 70%, transparent);
+}
+
+.sk-card-body {
+  padding: 16px 18px 20px;
+}
+
+.sk-card-top {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 14px;
+}
+
+.sk-card-top .sk-line { width: 64px; height: 8px; margin: 0; }
+
+/* ---- grid wrapper, same columns as the catalogue ---- */
+
+.sk-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: var(--space-5, 20px);
+}
+
+@media (max-width: 1024px) { .sk-grid { grid-template-columns: repeat(2, 1fr); } }
+@media (max-width: 560px)  { .sk-grid { grid-template-columns: 1fr; } }
+
+/* ---- swap behaviour: the skeleton is removed once the real content is in.
+   Keeping both in the DOM briefly avoids a flash of empty space. ---- */
+
+[data-sk-host] > [data-sk-real] { display: none; }
+[data-sk-host].is-ready > [data-sk-real] { display: block; }
+[data-sk-host].is-ready > [data-sk-skeleton] { display: none; }
+
+/* grids need their display value preserved when revealed */
+[data-sk-host].is-ready > [data-sk-real].catalog-grid,
+[data-sk-host].is-ready > [data-sk-real].masterpieces-grid {
+  display: grid;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .sk::after { animation: none; }
+}

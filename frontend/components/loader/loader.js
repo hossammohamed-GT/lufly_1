@@ -237,10 +237,23 @@
     done: exitLoader
   };
 
-  /* Listen for window ready */
-  window.addEventListener('load', function () {
-    pageLoaded = true;
-  });
+  /* Listen for window ready.
+
+     'load' waits for every image on the page, including the product imagery
+     in database driven sections - exactly the content that is skeleton backed
+     and therefore does not need to gate the loading screen. So treat the page
+     as ready at DOMContentLoaded plus fonts, and let 'load' act only as a
+     backstop. Static-heavy pages still get the full sequence; data sections
+     fill in behind their glass placeholders. */
+  function markLoaded() { pageLoaded = true; }
+
+  window.addEventListener('load', markLoaded);
+
+  if (document.fonts && document.fonts.ready && typeof document.fonts.ready.then === 'function') {
+    document.fonts.ready.then(markLoaded);
+  } else {
+    setTimeout(markLoaded, 400);
+  }
 
   if (document.readyState === 'complete') {
     pageLoaded = true;
@@ -249,6 +262,22 @@
     document.addEventListener('DOMContentLoaded', startInitialSequence);
   } else {
     startInitialSequence();
+  }
+
+  /* ---- Which navigations deserve the full-screen loader? ----
+     Anything product related is skeleton-backed, so showing the preloader on
+     top of it would be two loading states for one action. Everything else
+     (home, corporate pages, contact) is static and genuinely benefits. */
+  var SKELETON_PATHS = /(\/products?\b|\/katalog|\/produkty|\/urunler)/i;
+
+  function isLightNavigation(url, link) {
+    if (link && link.hasAttribute('data-loader-skip')) return true;
+    if (link && link.hasAttribute('data-loader-force')) return false;
+
+    /* pagination, filtering and sorting on the current page */
+    if (url.pathname === window.location.pathname) return true;
+
+    return SKELETON_PATHS.test(url.pathname);
   }
 
   /* ---- Auto-wire: link clicks ---- */
@@ -274,6 +303,12 @@
     if (targetUrl.origin !== window.location.origin) return;
     if (targetUrl.pathname === window.location.pathname && targetUrl.search === window.location.search) return;
 
+    /* The full-screen loader is reserved for heavy, static-first pages.
+       Product browsing (catalogue, filters, sorting, a product page) renders
+       glass skeletons in place instead, so repeat navigation never feels
+       gated behind an animation. */
+    if (isLightNavigation(targetUrl, link)) return;
+
     var navMsg = locale === 'tr' ? 'Sayfa hazırlanıyor' :
                  locale === 'cs' ? 'Připravujeme stránku' : 'Loading page';
     showLoader(navMsg, true);
@@ -283,6 +318,11 @@
   document.addEventListener('submit', function (e) {
     var form = e.target;
     if (!form || form.target === '_blank' || e.defaultPrevented) return;
+    if (form.hasAttribute('data-loader-skip')) return;
+
+    /* catalogue search/filter forms are skeleton-backed */
+    var action = form.getAttribute('action') || window.location.pathname;
+    if (SKELETON_PATHS.test(action)) return;
     var submitMsg = locale === 'tr' ? 'İşleminiz gerçekleştiriliyor' :
                     locale === 'cs' ? 'Zpracováváme požadavek' : 'Processing request';
     showLoader(submitMsg, true);

@@ -13,6 +13,8 @@ $view->pushStyle('frontend/css/live-search.css');
 $view->pushStyle('frontend/products/catalog/catalog.css');
 $view->pushScript('frontend/js/live-search.js');
 $view->pushScript('frontend/products/catalog/catalog.js');
+$view->pushStyle('frontend/components/skeleton/skeleton.css');
+$view->pushScript('frontend/components/skeleton/skeleton.js');
 /** @var Core\Database\Paginator $paginator */
 /** @var array $categories */
 /** @var array $categoryCounts */
@@ -118,7 +120,23 @@ $fallbackImg = '/images/products/prod_146_1620-111-a.jpg';
                 <a href="<?= e(route('products.index')) ?>" class="catalog-empty-btn"><?= e(trans('common.all_categories')) ?></a>
             </div>
         <?php else: ?>
-            <div class="catalog-grid" data-catalog-grid>
+            <div data-sk-host>
+            <div class="sk-grid" data-sk-skeleton aria-hidden="true">
+                <?php for ($sk = 0; $sk < 8; $sk++): ?>
+                    <div class="sk sk-card">
+                        <div class="sk-card-media"></div>
+                        <div class="sk-card-body">
+                            <div class="sk-card-top">
+                                <span class="sk-line"></span>
+                                <span class="sk-line"></span>
+                            </div>
+                            <div class="sk-line is-lg w-85"></div>
+                            <div class="sk-line is-sm w-55"></div>
+                        </div>
+                    </div>
+                <?php endfor; ?>
+            </div>
+            <div class="catalog-grid" data-catalog-grid data-sk-real>
                 <?php foreach ($paginator->items() as $index => $product):
                     $item = $product->translate($locale);
                     $img = (string) ($item['image'] ?? '') !== '' ? (string) $item['image'] : $fallbackImg;
@@ -175,6 +193,7 @@ $fallbackImg = '/images/products/prod_146_1620-111-a.jpg';
                         </div>
                     </article>
                 <?php endforeach; ?>
+            </div>
             </div>
 
             <?php if ($paginator->lastPage() > 1): ?>

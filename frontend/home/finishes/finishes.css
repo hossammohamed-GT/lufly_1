@@ -22,14 +22,15 @@
   background:
     radial-gradient(120% 90% at 80% 0%, color-mix(in srgb, var(--lu-teal-500) 13%, transparent), transparent 58%),
     radial-gradient(95% 75% at 8% 100%, color-mix(in srgb, var(--lu-deep-teal) 42%, transparent), transparent 66%),
-    linear-gradient(180deg, color-mix(in srgb, var(--lu-ink-900) 90%, transparent), color-mix(in srgb, var(--lu-ink-900) 76%, transparent)),
+    linear-gradient(180deg, color-mix(in srgb, var(--lu-ink-900) 72%, transparent), color-mix(in srgb, var(--lu-ink-900) 58%, transparent)),
     url('../../../images/lifestyle/finish-workshop.jpg') center / cover fixed;
 }
 
 [data-theme="light"] .finishes-backdrop {
+  filter: brightness(1.12);
   background:
     radial-gradient(120% 90% at 80% 0%, color-mix(in srgb, var(--lu-teal-500) 8%, transparent), transparent 58%),
-    linear-gradient(180deg, color-mix(in srgb, var(--lu-neutral-50) 12%, transparent), color-mix(in srgb, var(--lu-neutral-50) 8%, transparent)),
+    linear-gradient(180deg, color-mix(in srgb, var(--lu-neutral-50) 74%, transparent), color-mix(in srgb, var(--lu-neutral-50) 64%, transparent)),
     url('../../../images/lifestyle/finish-workshop-light.jpg') center / cover fixed;
 }
 

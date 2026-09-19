@@ -205,8 +205,17 @@
 
       /* ---------- grid takeover ---------- */
 
+      /* the grid lives inside a skeleton host; while live search owns it the
+         real content must stay visible rather than flipping back to glass */
+      function ensureGridVisible() {
+        if (!grid) return;
+        var host = grid.closest ? grid.closest('[data-sk-host]') : null;
+        if (host) host.classList.add('is-ready');
+      }
+
       function rememberGrid() {
         if (isLive || !grid) return;
+        ensureGridVisible();
         savedGrid = grid.innerHTML;
         savedCount = countEl ? countEl.textContent : '';
         isLive = true;
