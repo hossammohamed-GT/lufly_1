@@ -72,16 +72,29 @@ $fmt = static fn (float $v): string => rtrim(rtrim(number_format($v, 0, '.', '')
                 <span class="pdp-stage-beam" aria-hidden="true"></span>
 
                 <?php foreach ($views as $vIndex => $v): ?>
-                    <figure class="pdp-view<?= $vIndex === 0 ? ' is-on' : '' ?>" data-pdp-view="<?= e($v['key']) ?>">
-                        <?php foreach ($v['images'] as $iIndex => $src): ?>
-                            <img src="<?= e(asset($src)) ?>"
-                                 alt="<?= e(($product['name'] ?? '') . ' - ' . $v['label']) ?>"
-                                 class="pdp-view-img<?= $v['key'] === 'situ' ? ' pdp-view-img-cover' : '' ?><?= $iIndex === 0 ? ' is-on' : '' ?>"
-                                 data-pdp-slide="<?= (int) $iIndex ?>"
-                                 width="900" height="700"
-                                 <?= $vIndex === 0 && $iIndex === 0 ? 'decoding="async"' : 'loading="lazy" decoding="async"' ?>
-                                 onerror="this.onerror=null; this.remove();">
-                        <?php endforeach; ?>
+                    <figure class="pdp-view<?= $vIndex === 0 ? ' is-on' : '' ?>"
+                            data-pdp-view="<?= e($v['key']) ?>">
+                        <div class="pdp-frameplate pdp-frameplate-<?= e($v['key']) ?>">
+                            <?php foreach ($v['images'] as $iIndex => $src): ?>
+                                <img src="<?= e(asset($src)) ?>"
+                                     alt="<?= e(($product['name'] ?? '') . ' - ' . $v['label']) ?>"
+                                     class="pdp-view-img<?= $v['key'] === 'situ' ? ' pdp-view-img-cover' : '' ?><?= $iIndex === 0 ? ' is-on' : '' ?>"
+                                     data-pdp-slide="<?= (int) $iIndex ?>"
+                                     width="900" height="700"
+                                     <?= $vIndex === 0 && $iIndex === 0 ? 'decoding="async"' : 'loading="lazy" decoding="async"' ?>
+                                     onerror="this.onerror=null; this.remove();">
+                            <?php endforeach; ?>
+
+                            <?php if ($v['key'] === 'drawing'): ?>
+                                <!-- blueprint title block: keeps the drawing reading
+                                     as a technical document, not a photo -->
+                                <span class="pdp-plate-tick" aria-hidden="true"></span>
+                                <div class="pdp-plate-block">
+                                    <span class="pdp-plate-model">MODEL <?= e($modelCode) ?></span>
+                                    <span class="pdp-plate-std">EN 997 &middot; CE</span>
+                                </div>
+                            <?php endif; ?>
+                        </div>
 
                         <?php if (count($v['images']) > 1): ?>
                             <button type="button" class="pdp-slide-nav pdp-slide-prev" data-pdp-prev
@@ -111,19 +124,20 @@ $fmt = static fn (float $v): string => rtrim(rtrim(number_format($v, 0, '.', '')
                     </figure>
                 <?php endforeach; ?>
 
-                <?php if (count($views) > 1): ?>
-                    <div class="pdp-viewtabs" role="tablist" aria-label="<?= e(trans('products.sheet_title')) ?>">
-                        <?php foreach ($views as $vIndex => $v): ?>
-                            <button type="button"
-                                    class="pdp-viewtab<?= $vIndex === 0 ? ' is-on' : '' ?>"
-                                    data-pdp-tab="<?= e($v['key']) ?>"
-                                    role="tab"
-                                    aria-selected="<?= $vIndex === 0 ? 'true' : 'false' ?>">
-                                <span class="pdp-viewtab-code"><?= e(str_pad((string) ($vIndex + 1), 2, '0', STR_PAD_LEFT)) ?></span><?= e($v['label']) ?>
-                            </button>
-                        <?php endforeach; ?>
-                    </div>
-                <?php endif; ?>
+                <div class="pdp-viewtabs" role="tablist" aria-label="<?= e(trans('products.sheet_title')) ?>">
+                    <?php foreach ($views as $vIndex => $v): ?>
+                        <button type="button"
+                                class="pdp-viewtab<?= $vIndex === 0 ? ' is-on' : '' ?>"
+                                data-pdp-tab="<?= e($v['key']) ?>"
+                                role="tab"
+                                aria-selected="<?= $vIndex === 0 ? 'true' : 'false' ?>">
+                            <span class="pdp-viewtab-code"><?= e(str_pad((string) ($vIndex + 1), 2, '0', STR_PAD_LEFT)) ?></span><?= e($v['label']) ?>
+                            <?php if (count($v['images']) > 1): ?>
+                                <span class="pdp-viewtab-n"><?= count($v['images']) ?></span>
+                            <?php endif; ?>
+                        </button>
+                    <?php endforeach; ?>
+                </div>
             </section>
 
             <!-- ================= info panel ================= -->

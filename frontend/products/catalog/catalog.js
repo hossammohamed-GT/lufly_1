@@ -35,7 +35,9 @@
 (function () {
   'use strict';
 
-  var INTERVAL = 900;
+  /* hovering advances to the next photo straight away, then each
+     following photo is held for HOLD ms before moving on */
+  var HOLD = 3000;
   var timers = new WeakMap();
 
   function slides(media) {
@@ -53,15 +55,19 @@
     media.setAttribute('data-pcard-index', String(index));
   }
 
+  function advance(media) {
+    show(media, parseInt(media.getAttribute('data-pcard-index') || '0', 10) + 1);
+  }
+
   function start(media) {
     if (timers.has(media)) return;
     if (slides(media).length < 2) return;
     if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
 
-    var timer = setInterval(function () {
-      show(media, parseInt(media.getAttribute('data-pcard-index') || '0', 10) + 1);
-    }, INTERVAL);
+    /* immediate first step, so the hover feels responsive */
+    advance(media);
 
+    var timer = setInterval(function () { advance(media); }, HOLD);
     timers.set(media, timer);
   }
 

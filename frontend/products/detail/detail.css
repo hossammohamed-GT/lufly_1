@@ -103,6 +103,69 @@
 .pdp-view .pdp-view-img { display: none; }
 .pdp-view .pdp-view-img.is-on { display: block; }
 
+/* ---- frame plate: gives every group its own visible surface so a
+   drawing is never mistaken for a product photo ---- */
+.pdp-frameplate {
+  position: relative;
+  border-radius: calc(var(--radius-lg) - 4px);
+  overflow: hidden;
+}
+
+/* photos sit on the neutral product background */
+.pdp-frameplate-main,
+.pdp-frameplate-situ {
+  background: var(--ds-bg);
+}
+
+/* drawings get the blueprint treatment: paper-white ground, a ruled
+   border and a title block, so the tab label is not the only clue */
+.pdp-frameplate-drawing {
+  background:
+    linear-gradient(0deg, rgba(0, 0, 0, 0.035) 1px, transparent 1px) 0 0 / 100% 28px,
+    linear-gradient(90deg, rgba(0, 0, 0, 0.035) 1px, transparent 1px) 0 0 / 28px 100%,
+    #fdfdfb;
+  border: 1px solid var(--ds-border);
+  padding: 18px 18px 46px;
+}
+
+.pdp-frameplate-drawing .pdp-view-img {
+  background: transparent;
+  max-height: 430px;
+  mix-blend-mode: multiply;
+}
+
+/* ruled corner ticks, echoing the old SVG sheet */
+.pdp-plate-tick {
+  position: absolute;
+  inset: 8px;
+  pointer-events: none;
+  background:
+    linear-gradient(currentColor, currentColor) 0 0 / 16px 1px no-repeat,
+    linear-gradient(currentColor, currentColor) 0 0 / 1px 16px no-repeat,
+    linear-gradient(currentColor, currentColor) 100% 100% / 16px 1px no-repeat,
+    linear-gradient(currentColor, currentColor) 100% 100% / 1px 16px no-repeat;
+  color: rgba(0, 0, 0, 0.32);
+}
+
+.pdp-plate-block {
+  position: absolute;
+  inset-inline: 8px;
+  bottom: 8px;
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 9px 12px;
+  border-top: 1px solid rgba(0, 0, 0, 0.16);
+  font-family: var(--font-mono);
+  font-size: 9.5px;
+  font-weight: 700;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: rgba(0, 0, 0, 0.62);
+}
+
+.pdp-plate-model { color: rgba(0, 0, 0, 0.82); }
+
 @keyframes pdpViewIn {
   from { opacity: 0; transform: translateY(10px); }
   to { opacity: 1; transform: translateY(0); }
@@ -606,4 +669,42 @@
 /* touch devices have no hover: keep the arrows visible */
 @media (hover: none) {
   .pdp-slide-nav { opacity: 1; }
+}
+
+
+/* ---- view tabs: always present, so the group a picture belongs to is
+   readable at a glance even when a product has only one group ---- */
+.pdp-viewtab.is-on {
+  color: var(--ds-text);
+  border-color: var(--ds-text);
+  background: var(--ds-surface);
+}
+
+.pdp-viewtab-code {
+  opacity: 0.55;
+}
+
+.pdp-viewtab.is-on .pdp-viewtab-code {
+  opacity: 1;
+}
+
+/* small badge showing how many images the group holds */
+.pdp-viewtab-n {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 16px;
+  height: 16px;
+  padding: 0 4px;
+  border-radius: 999px;
+  background: var(--ds-bg);
+  border: 1px solid var(--ds-border);
+  font-size: 9px;
+  line-height: 1;
+}
+
+.pdp-viewtab.is-on .pdp-viewtab-n {
+  background: var(--ds-text);
+  border-color: var(--ds-text);
+  color: var(--ds-surface);
 }
