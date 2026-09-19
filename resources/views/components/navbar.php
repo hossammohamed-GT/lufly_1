@@ -40,8 +40,8 @@ $isActive = static function (string $target) use ($currentPath, $currentQuery): 
 };
 
 $indexLinks = [
-    ['key' => 'bathroom', 'url' => route('products.index', ['category' => 'wall-hung-toilets'])],
-    ['key' => 'kitchen', 'url' => route('products.index', ['category' => 'designer-washbasins'])],
+    ['key' => 'bathroom', 'url' => route('products.index', ['category' => 'bathroom-ceramics'])],
+    ['key' => 'kitchen', 'url' => route('products.index', ['category' => 'sink-mixers'])],
     ['key' => 'latest', 'url' => route('products.index', ['sort' => 'newest'])],
     ['key' => 'collections', 'url' => route('products.index')],
     ['key' => 'finishes', 'url' => route('home') . '#finishes'],

@@ -1,0 +1,82 @@
+[
+  {
+    "slug": "bathroom-ceramics",
+    "sort_order": 1,
+    "image": "/images/products/prod_146_1620-111-a.jpg",
+    "names": {
+      "en": "Bathroom Ceramics",
+      "cs": "Koupelnová keramika"
+    },
+    "product_count": 75
+  },
+  {
+    "slug": "kids",
+    "sort_order": 2,
+    "image": "/images/products/prod_2059_1685-242-a.jpg",
+    "names": {
+      "en": "Kids",
+      "cs": "Dětský program"
+    },
+    "product_count": 49
+  },
+  {
+    "slug": "washbasin-mixers",
+    "sort_order": 3,
+    "image": "/images/products/prod_2115_1654-002.jpg",
+    "names": {
+      "en": "Washbasin Mixers",
+      "cs": "Umyvadlové baterie"
+    },
+    "product_count": 82
+  },
+  {
+    "slug": "sink-mixers",
+    "sort_order": 4,
+    "image": "/images/products/prod_2189_1623-001.jpg",
+    "names": {
+      "en": "Sink Mixers",
+      "cs": "Dřezové baterie"
+    },
+    "product_count": 14
+  },
+  {
+    "slug": "shower-sets",
+    "sort_order": 5,
+    "image": "/images/products/prod_2109_1654-001.jpg",
+    "names": {
+      "en": "Shower Sets",
+      "cs": "Sprchové sety"
+    },
+    "product_count": 26
+  },
+  {
+    "slug": "sensor-products",
+    "sort_order": 6,
+    "image": "/images/products/prod_2814_Screenshot-2026-07-16-153026.png",
+    "names": {
+      "en": "Sensor Products",
+      "cs": "Senzorové produkty"
+    },
+    "product_count": 22
+  },
+  {
+    "slug": "accessible-range",
+    "sort_order": 7,
+    "image": "/images/products/prod_2637_Screenshot-2025-12-22-151140.png",
+    "names": {
+      "en": "Accessible Range",
+      "cs": "Bezbariérový program"
+    },
+    "product_count": 10
+  },
+  {
+    "slug": "soft-porcelain",
+    "sort_order": 8,
+    "image": "/images/products/prod_214_SOANA.jpg",
+    "names": {
+      "en": "Soft Porcelain",
+      "cs": "Jemný porcelán"
+    },
+    "product_count": 2
+  }
+]

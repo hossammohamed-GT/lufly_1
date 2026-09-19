@@ -82,6 +82,7 @@ return [
     'category_showers_desc' => '38°C Termostatik Emniyet Gövdesi · Tepe Yağmurlama',
     'category_commercial' => 'Ticari ve Kamusal Vitrifiye',
     'category_commercial_desc' => 'Radar Sensörlü Pisuvarlar ve Temassız Kızılötesi Sistemler',
+    'category_kids' => 'Çocuk Banyo Serisi',
 
     'inspiration_tag' => 'Mekânsal Yaşam Alanları',
     'inspiration_title' => 'Seçkin Projelerden İlham Alın',

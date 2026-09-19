@@ -7,77 +7,24 @@ namespace Database\Seeders;
 use Core\Database\Seeding\Seeder;
 
 /**
- * Imports the legacy product data (database/seeders/data/products.json)
- * into the new product architecture:
+ * Imports the REAL LUFLY catalog extracted from the legacy WordPress /
+ * WooCommerce database (delete_files/lufly_new.sql) into the new product
+ * architecture.
  *
- * products -> translations, default variant, specifications, dimensions,
- * attribute values, media, seo meta, search keywords and an import log row
- * so the provenance of every row stays traceable.
+ * Source of truth : database/seeders/data/products.json
+ * Produced by     : tools/import/extract_legacy.py
+ *
+ * Every field written here exists in the legacy system. Nothing is invented:
+ * if the legacy record had no description, specification, or translation,
+ * the corresponding row is simply not created. Missing locales (tr) and
+ * extra gallery images are filled in later from Admin.
  */
 class ProductSeeder extends Seeder
 {
-    /** sku prefix -> category slug (list of pairs: avoids PHP int-key casts) */
-    private const SKU_CATEGORY_MAP = [
-        ['1620', 'wall-hung-toilets'],
-        ['1650', 'luxury-bidets'],
-        ['1610', 'designer-washbasins'],
-        ['1660', 'vanity-cabinets'],
-        ['1685', 'designer-washbasins'],
-        ['1690', 'architectural-ceramics'],
-        ['1654', 'designer-washbasins'],
-        ['1623', 'wall-hung-toilets'],
-        ['1501', 'luxury-bidets'],
-        ['1502', 'luxury-bidets'],
-        ['1503', 'luxury-bidets'],
-        ['1651', 'designer-washbasins'],
-        ['1653', 'designer-washbasins'],
-        ['1659', 'designer-washbasins'],
-        ['4311', 'vanity-cabinets'],
-        ['9243', 'vanity-cabinets'],
-        ['DL-01', 'designer-washbasins'],
-        ['DL-05', 'vanity-cabinets'],
-        ['DL-08', 'designer-washbasins'],
-        ['PE-1', 'architectural-ceramics'],
-        ['PE-3', 'architectural-ceramics'],
-    ];
-
-    private const CATEGORY_I18N = [
-        'wall-hung-toilets' => [
-            'en' => 'Wall-Hung Toilet',
-            'tr' => 'Asma Klozet',
-            'cs' => 'Závěsné WC',
-            'installation' => 'Wall Hung',
-        ],
-        'luxury-bidets' => [
-            'en' => 'Luxury Bidet',
-            'tr' => 'Lüks Bide',
-            'cs' => 'Luxusní bidet',
-            'installation' => 'Wall Hung',
-        ],
-        'designer-washbasins' => [
-            'en' => 'Designer Washbasin',
-            'tr' => 'Tasarım Lavabo',
-            'cs' => 'Designové umyvadlo',
-            'installation' => 'Countertop',
-        ],
-        'vanity-cabinets' => [
-            'en' => 'Bathroom Vanity',
-            'tr' => 'Banyo Dolabı',
-            'cs' => 'Koupelnová skříňka',
-            'installation' => 'Vanity',
-        ],
-        'architectural-ceramics' => [
-            'en' => 'Architectural Ceramic',
-            'tr' => 'Mimari Seramik',
-            'cs' => 'Architektonická keramika',
-            'installation' => 'Wall Mounted',
-        ],
-    ];
-
     public function run(): void
     {
         $dataFile = __DIR__ . '/data/products.json';
-        if (!file_exists($dataFile)) {
+        if (!is_file($dataFile)) {
             return;
         }
 
@@ -94,133 +41,100 @@ class ProductSeeder extends Seeder
         $brand = $this->db->table('brands')->where('slug', 'lufly')->first();
         $brandId = $brand !== null ? (int) $brand['id'] : null;
 
-        $attributeIds = [];
-        foreach ($this->db->table('attributes')->get() as $a) {
-            $attributeIds[(string) $a['code']] = (int) $a['id'];
-        }
-
-        $optionByKey = [];
-        foreach ($this->db->table('attribute_options')->orderBy('sort_order', 'asc')->get() as $o) {
-            $optionByKey[(int) $o['attribute_id'] . '|' . (string) $o['value']] = (int) $o['id'];
-        }
-
-        $seenSkus = [];
-        $featuredBudget = 8;
         $sortCounter = 0;
+        $usedSkus = [];
 
         foreach ($items as $item) {
-            $modelCode = trim((string) ($item['sku'] ?? ''));
-            if ($modelCode === '') {
-                $modelCode = 'LUFLY-' . ($item['id'] ?? uniqid());
-            }
-
-            if (isset($seenSkus[$modelCode])) {
-                continue;
-            }
-            $seenSkus[$modelCode] = true;
-
-            $categorySlug = $this->categorySlugFor($modelCode);
-            $categoryId = $catMap[$categorySlug] ?? ($catMap['wall-hung-toilets'] ?? null);
-            $i18n = self::CATEGORY_I18N[$categorySlug] ?? self::CATEGORY_I18N['wall-hung-toilets'];
-
-            $slug = trim('lufly-' . strtolower(preg_replace('/[^A-Za-z0-9-]+/', '-', $modelCode) ?? ''), '-');
-            if ($this->db->table('products')->where('slug', $slug)->exists()) {
+            $slug = trim((string) ($item['slug'] ?? ''));
+            if ($slug === '' || $this->db->table('products')->where('slug', $slug)->exists()) {
                 continue;
             }
 
-            $isFeatured = $featuredBudget > 0;
-            if ($isFeatured) {
-                $featuredBudget--;
-            }
+            $modelCode = trim((string) ($item['model_code'] ?? ''));
+            $categorySlug = (string) ($item['category'] ?? '');
+            $categoryId = $catMap[$categorySlug] ?? null;
             $sortCounter++;
 
             $productId = (int) $this->db->insert('products', [
-                'model_code' => $modelCode,
+                'model_code' => $modelCode !== '' ? $modelCode : null,
                 'slug' => $slug,
                 'category_id' => $categoryId,
+                'collection_id' => null,
                 'brand_id' => $brandId,
-                'status' => 'active',
-                'is_featured' => $isFeatured ? 1 : 0,
+                'status' => (string) ($item['status'] ?? 'active'),
+                'is_featured' => 0,
                 'sort_order' => $sortCounter,
-                'created_at' => date('Y-m-d H:i:s'),
-                'updated_at' => date('Y-m-d H:i:s'),
+                'created_at' => $this->stamp($item['created_at'] ?? null),
+                'updated_at' => $this->stamp($item['updated_at'] ?? null),
             ]);
 
-            /* ---- translations ---- */
-            $translations = [
-                'en' => [
-                    'name' => 'LUFLY ' . $i18n['en'] . ' ' . $modelCode,
-                    'short_description' => 'Premium Turkish vitreous china ' . strtolower($i18n['en']) . ' with antibacterial hygienic glaze and 10-year factory warranty.',
-                    'description' => 'Architectural specification for LUFLY ' . $i18n['en'] . ' (Model: ' . $modelCode . '). Manufactured in Gaziantep, Turkey to strict European EN and CE standards. Material: Vitreous China, 10-Year Guarantee.',
-                ],
-                'tr' => [
-                    'name' => 'LUFLY ' . $i18n['tr'] . ' ' . $modelCode,
-                    'short_description' => 'Yüksek kaliteli hijyenik sırlı ' . mb_strtolower($i18n['tr']) . ' (Kod: ' . $modelCode . '). 10 yıl fabrika garantili.',
-                    'description' => 'LUFLY ' . $i18n['tr'] . ' serisi (Kod: ' . $modelCode . '). Gaziantep üretim tesislerimizde Avrupa EN-997 ve CE standartlarına uygun olarak üretilmiştir.',
-                ],
-                'cs' => [
-                    'name' => 'LUFLY ' . $i18n['cs'] . ' ' . $modelCode,
-                    'short_description' => 'Prémiová turecká sanitární keramika ' . mb_strtolower($i18n['cs']) . ' s hygienickou glazurou a 10letou zárukou.',
-                    'description' => 'Architektonická specifikace LUFLY ' . $i18n['cs'] . ' (model ' . $modelCode . '). Vyrobeno v Gaziantepu v Turecku podle evropských norem EN a CE. Materiál: vitrážová keramika, 10letá záruka.',
-                ],
-            ];
+            /* ---- translations ----
+               The legacy record carries exactly one language (en or cs). It is
+               written under its own locale, plus copied verbatim under the
+               fallback locale (en) so listings and search never show a blank
+               product. Nothing is machine translated or invented: the fallback
+               row holds the original legacy text until a translator edits it. */
+            $locale = (string) ($item['locale'] ?? 'en');
+            $fallback = (string) config('localization.fallback', 'en');
+            $locales = $locale === $fallback ? [$locale] : [$locale, $fallback];
 
-            foreach ($translations as $locale => $fields) {
+            foreach ($locales as $translationLocale) {
                 $this->db->insert('product_translations', [
                     'product_id' => $productId,
-                    'locale' => $locale,
-                    'name' => $fields['name'],
-                    'short_description' => $fields['short_description'],
-                    'description' => $fields['description'],
+                    'locale' => $translationLocale,
+                    'name' => (string) ($item['name'] ?? $modelCode),
+                    'short_description' => $this->nullIfEmpty((string) ($item['short_description'] ?? '')),
+                    'description' => $this->nullIfEmpty((string) ($item['description'] ?? '')),
                 ]);
             }
 
-            /* ---- default variant (the sellable copy) ---- */
-            $variantId = (int) $this->db->insert('product_variants', [
-                'product_id' => $productId,
-                'sku' => $modelCode,
-                'variant_name' => null,
-                'price' => 0.00,
-                'stock_status' => 'in_stock',
-                'sort_order' => 1,
-                'status' => 'active',
-                'created_at' => date('Y-m-d H:i:s'),
-                'updated_at' => date('Y-m-d H:i:s'),
-            ]);
+            /* ---- default variant: the legacy SKU, no invented price ---- */
+            $sku = trim((string) ($item['sku'] ?? '')) ?: $modelCode;
+            if ($sku !== '') {
+                $unique = $sku;
+                $suffix = 2;
+                while (isset($usedSkus[$unique])) {
+                    $unique = $sku . '-' . $suffix;
+                    $suffix++;
+                }
+                $usedSkus[$unique] = true;
 
-            /* ---- flexible specifications ---- */
-            $specs = [
-                ['spec_key' => 'Material', 'spec_value' => 'Vitreous China / Premium Ceramic', 'unit' => null],
-                ['spec_key' => 'Origin', 'spec_value' => 'Gaziantep, Turkey', 'unit' => null],
-                ['spec_key' => 'Finish', 'spec_value' => 'Glossy Hygienic Glaze', 'unit' => null],
-                ['spec_key' => 'Warranty', 'spec_value' => '10 Years Factory Guarantee', 'unit' => null],
-                ['spec_key' => 'Standards', 'spec_value' => 'EN 997 / CE Certified', 'unit' => null],
-            ];
+                $this->db->insert('product_variants', [
+                    'product_id' => $productId,
+                    'sku' => $unique,
+                    'variant_name' => null,
+                    'price' => 0.00,
+                    'stock_status' => 'in_stock',
+                    'sort_order' => 1,
+                    'status' => 'active',
+                    'created_at' => date('Y-m-d H:i:s'),
+                    'updated_at' => date('Y-m-d H:i:s'),
+                ]);
+            }
 
-            foreach ($specs as $specIndex => $spec) {
+            /* ---- specifications parsed out of the legacy product copy ---- */
+            $specs = is_array($item['specifications'] ?? null) ? $item['specifications'] : [];
+            foreach (array_values($specs) as $index => $spec) {
+                $key = trim((string) ($spec['key'] ?? ''));
+                $value = trim((string) ($spec['value'] ?? ''));
+                if ($key === '' || $value === '') {
+                    continue;
+                }
+
                 $this->db->insert('product_specifications', [
                     'product_id' => $productId,
                     'variant_id' => null,
-                    'spec_key' => $spec['spec_key'],
-                    'spec_value' => $spec['spec_value'],
-                    'unit' => $spec['unit'],
-                    'sort_order' => $specIndex + 1,
+                    'spec_key' => $key,
+                    'spec_value' => mb_substr($value, 0, 255),
+                    'unit' => null,
+                    'sort_order' => $index + 1,
                 ]);
             }
 
-            /* ---- attribute values (Color / Material / Finish / Installation) ---- */
-            $this->attachAttribute($attributeIds, $optionByKey, $productId, $variantId, 'material', 'Vitreous China');
-            $this->attachAttribute($attributeIds, $optionByKey, $productId, $variantId, 'finish', 'Glossy Hygienic Glaze');
-            $this->attachAttribute($attributeIds, $optionByKey, $productId, $variantId, 'color', 'White');
-            $this->attachAttribute($attributeIds, $optionByKey, $productId, $variantId, 'installation-type', (string) $i18n['installation']);
-            if ($categorySlug === 'wall-hung-toilets' || $categorySlug === 'luxury-bidets') {
-                $this->attachAttribute($attributeIds, $optionByKey, $productId, $variantId, 'flush-type', 'Rimless');
-            }
-
-            /* ---- media (library row + product attachment) ---- */
-            $image = $item['image'] ?? null;
-            if (is_string($image) && $image !== '') {
-                $image = '/' . ltrim($image, '/');
+            /* ---- media: the exported legacy images present on disk ---- */
+            $images = is_array($item['images'] ?? null) ? $item['images'] : [];
+            foreach (array_values($images) as $index => $image) {
+                $image = '/' . ltrim((string) $image, '/');
                 $filename = basename($image);
                 $extension = strtolower(pathinfo($filename, PATHINFO_EXTENSION) ?: 'jpg');
 
@@ -233,7 +147,10 @@ class ProductSeeder extends Seeder
                     'mime_type' => $extension === 'png' ? 'image/png' : 'image/jpeg',
                     'extension' => $extension,
                     'size' => 0,
-                    'meta' => json_encode(['source' => 'legacy-catalog'], JSON_UNESCAPED_UNICODE),
+                    'meta' => json_encode([
+                        'source' => 'legacy-wordpress',
+                        'legacy_post_id' => $item['legacy_id'] ?? null,
+                    ], JSON_UNESCAPED_UNICODE),
                     'status' => 'active',
                     'created_at' => date('Y-m-d H:i:s'),
                     'updated_at' => date('Y-m-d H:i:s'),
@@ -243,20 +160,24 @@ class ProductSeeder extends Seeder
                     'product_id' => $productId,
                     'variant_id' => null,
                     'media_id' => $mediaId,
-                    'type' => 'thumbnail',
-                    'sort_order' => 1,
-                    'is_primary' => 1,
+                    'type' => $index === 0 ? 'main' : 'gallery',
+                    'sort_order' => $index + 1,
+                    'is_primary' => $index === 0 ? 1 : 0,
                     'created_at' => date('Y-m-d H:i:s'),
                     'updated_at' => date('Y-m-d H:i:s'),
                 ]);
             }
 
-            /* ---- seo meta (en) ---- */
+            /* ---- seo meta built from the product's own title/copy ---- */
             $this->db->insert('seo_meta', [
                 'product_id' => $productId,
-                'locale' => 'en',
-                'meta_title' => 'LUFLY ' . $i18n['en'] . ' ' . $modelCode . ' | LUFLY Sanitary Ware',
-                'meta_description' => $translations['en']['short_description'],
+                'locale' => $locale,
+                'meta_title' => mb_substr((string) ($item['name'] ?? $modelCode) . ' | LUFLY', 0, 255),
+                'meta_description' => $this->nullIfEmpty(mb_substr(
+                    str_replace("\n", ' ', (string) ($item['short_description'] ?? $item['description'] ?? '')),
+                    0,
+                    500,
+                )),
                 'og_title' => null,
                 'og_description' => null,
                 'canonical_url' => null,
@@ -264,31 +185,33 @@ class ProductSeeder extends Seeder
                 'updated_at' => date('Y-m-d H:i:s'),
             ]);
 
-            /* ---- search keywords ---- */
-            $keywords = array_unique(array_filter([
-                'LUFLY',
-                $modelCode,
-                $i18n['en'],
-                self::CATEGORY_I18N[$categorySlug]['en'] ?? null,
-                'Sanitary Ware',
-                'Bathroom',
-                $categorySlug === 'wall-hung-toilets' ? 'WC' : null,
-                $categorySlug === 'wall-hung-toilets' ? 'Toilet' : null,
-            ]));
+            /* ---- search keywords derived from real name + model code ---- */
+            $keywords = ['lufly'];
+            if ($modelCode !== '') {
+                $keywords[] = mb_strtolower($modelCode);
+            }
+            foreach (preg_split('/[^\p{L}\p{N}-]+/u', (string) ($item['name'] ?? '')) ?: [] as $word) {
+                if (mb_strlen($word) >= 3) {
+                    $keywords[] = mb_strtolower($word);
+                }
+            }
+            if ($categorySlug !== '') {
+                $keywords[] = str_replace('-', ' ', $categorySlug);
+            }
 
-            foreach ($keywords as $keyword) {
+            foreach (array_unique($keywords) as $keyword) {
                 $this->db->insert('product_search_keywords', [
                     'product_id' => $productId,
-                    'keyword' => mb_strtolower((string) $keyword),
+                    'keyword' => mb_substr($keyword, 0, 150),
                 ]);
             }
 
-            /* ---- import log (provenance) ---- */
+            /* ---- import log (provenance back to the legacy post id) ---- */
             $this->db->insert('product_import_logs', [
                 'product_id' => $productId,
-                'source_file' => 'database/seeders/data/products.json',
-                'source_page' => null,
-                'detected_sku' => $modelCode,
+                'source_file' => 'delete_files/lufly_new.sql',
+                'source_page' => $item['legacy_id'] ?? null,
+                'detected_sku' => $modelCode !== '' ? $modelCode : null,
                 'status' => 'imported',
                 'raw_data' => json_encode($item, JSON_UNESCAPED_UNICODE),
                 'created_at' => date('Y-m-d H:i:s'),
@@ -297,43 +220,20 @@ class ProductSeeder extends Seeder
         }
     }
 
-    /** @param array<string, int> $attributeIds @param array<string, int> $optionByKey */
-    private function attachAttribute(
-        array $attributeIds,
-        array $optionByKey,
-        int $productId,
-        int $variantId,
-        string $attributeCode,
-        string $optionValue,
-    ): void {
-        $attributeId = $attributeIds[$attributeCode] ?? null;
-        if ($attributeId === null) {
-            return;
-        }
+    private function nullIfEmpty(string $value): ?string
+    {
+        $value = trim($value);
 
-        $optionId = $optionByKey[$attributeId . '|' . $optionValue] ?? null;
-        if ($optionId === null) {
-            return;
-        }
-
-        $this->db->insert('product_attribute_values', [
-            'product_id' => $productId,
-            'variant_id' => $variantId,
-            'attribute_id' => $attributeId,
-            'attribute_option_id' => $optionId,
-            'custom_value' => null,
-        ]);
+        return $value === '' ? null : $value;
     }
 
-    private function categorySlugFor(string $sku): string
+    private function stamp(?string $value): string
     {
-        foreach (self::SKU_CATEGORY_MAP as [$prefix, $slug]) {
-            if (str_starts_with($sku, $prefix)) {
-                return $slug;
-            }
+        if ($value === null || $value === '' || str_starts_with($value, '0000')) {
+            return date('Y-m-d H:i:s');
         }
 
-        return 'wall-hung-toilets';
+        return $value;
     }
 
     /** RFC 4122-ish v4 uuid without OpenSSL dependency. */

@@ -82,6 +82,7 @@ return [
     'category_showers_desc' => 'Termostatické jádro 38 °C · Hlavové dešťové sprchy',
     'category_commercial' => 'Komerční sanitární technika',
     'category_commercial_desc' => 'Pisoáry s radarovým senzorem a bezdotykové systémy',
+    'category_kids' => 'Dětský koupelnový program',
 
     'inspiration_tag' => 'Prostorové inspirace',
     'inspiration_title' => 'Architektonická díla v realizacích',

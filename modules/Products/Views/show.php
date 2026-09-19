@@ -24,9 +24,9 @@ $productUrl = route('products.show', ['slug' => $product['slug'] ?? $slug]);
 
 /* pick the technical-sheet silhouette from the category */
 $silhouette = 'basin';
-if ($categorySlug === 'wall-hung-toilets' || $categorySlug === 'luxury-bidets') {
+if ($categorySlug === 'bathroom-ceramics' || $categorySlug === 'accessible-range') {
     $silhouette = 'toilet';
-} elseif ($categorySlug === 'vanity-cabinets') {
+} elseif ($categorySlug === 'kids') {
     $silhouette = 'vanity';
 }
 

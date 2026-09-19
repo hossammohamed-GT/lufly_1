@@ -19,11 +19,11 @@
             <div class="footer-col">
                 <h5><?= e(trans('common.footer_sanitary')) ?></h5>
                 <ul>
-                    <li><a href="<?= e(route('products.index', ['category' => 'wall-hung-toilets'])) ?>"><?= e(trans('home.category_toilets')) ?></a></li>
-                    <li><a href="<?= e(route('products.index', ['category' => 'wall-hung-toilets'])) ?>"><?= e(trans('home.hero1_primary')) ?></a></li>
-                    <li><a href="<?= e(route('products.index', ['category' => 'designer-washbasins'])) ?>"><?= e(trans('home.category_basins')) ?></a></li>
-                    <li><a href="<?= e(route('products.index', ['category' => 'designer-washbasins'])) ?>"><?= e(trans('home.hero3_primary')) ?></a></li>
-                    <li><a href="<?= e(route('products.index', ['category' => 'vanity-cabinets'])) ?>"><?= e(trans('home.category_commercial')) ?></a></li>
+                    <li><a href="<?= e(route('products.index', ['category' => 'bathroom-ceramics'])) ?>"><?= e(trans('home.category_toilets')) ?></a></li>
+                    <li><a href="<?= e(route('products.index', ['category' => 'washbasin-mixers'])) ?>"><?= e(trans('home.category_basins')) ?></a></li>
+                    <li><a href="<?= e(route('products.index', ['category' => 'shower-sets'])) ?>"><?= e(trans('home.category_showers')) ?></a></li>
+                    <li><a href="<?= e(route('products.index', ['category' => 'sensor-products'])) ?>"><?= e(trans('home.category_commercial')) ?></a></li>
+                    <li><a href="<?= e(route('products.index', ['category' => 'kids'])) ?>"><?= e(trans('home.category_kids')) ?></a></li>
                 </ul>
             </div>
 

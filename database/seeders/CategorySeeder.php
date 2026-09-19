@@ -6,133 +6,56 @@ namespace Database\Seeders;
 
 use Core\Database\Seeding\Seeder;
 
+/**
+ * Categories come from the legacy LUFLY WooCommerce taxonomy
+ * (database/seeders/data/categories.json, produced by
+ * tools/import/extract_legacy.py). No invented categories.
+ *
+ * Only the locales the legacy data actually carries (en, cs) are written.
+ * Turkish translations are added later by the content team from Admin.
+ */
 class CategorySeeder extends Seeder
 {
     public function run(): void
     {
-        $categories = [
-            [
-                'slug' => 'wall-hung-toilets',
-                'image' => '/images/products/prod_146_1620-111-a.jpg',
-                'translations' => [
-                    'en' => [
-                        'name' => 'Wall-Hung Toilets',
-                        'description' => 'Premium European rimless wall-hung ceramic toilets with hygienic antibacterial glaze.',
-                    ],
-                    'tr' => [
-                        'name' => 'Asma Klozetler',
-                        'description' => 'Hijyenik sırlı, kanalsız modern asma klozet ve rezervuar sistemleri.',
-                    ],
-                    'cs' => [
-                        'name' => 'Závěsná WC',
-                        'description' => 'Prémiová bezokrajová závěsná keramická WC s hygienickou antibakteriální glazurou.',
-                    ],
-                ],
-            ],
-            [
-                'slug' => 'luxury-bidets',
-                'image' => '/images/products/prod_167_1650-081.jpg',
-                'translations' => [
-                    'en' => [
-                        'name' => 'Luxury Bidets',
-                        'description' => 'Architectural wall-hung and floor-standing European sanitary bidets.',
-                    ],
-                    'tr' => [
-                        'name' => 'Lüks Bidetler',
-                        'description' => 'Modern mimari asma ve ayaklı bide serileri.',
-                    ],
-                    'cs' => [
-                        'name' => 'Luxusní bidety',
-                        'description' => 'Architektonické závěsné a stojící evropské bidety.',
-                    ],
-                ],
-            ],
-            [
-                'slug' => 'designer-washbasins',
-                'image' => '/images/products/prod_180_1610-242-65.jpg',
-                'translations' => [
-                    'en' => [
-                        'name' => 'Designer Washbasins',
-                        'description' => 'Countertop, vanity and wall-mounted luxury vitreous china washbasins.',
-                    ],
-                    'tr' => [
-                        'name' => 'Tasarım Lavabolar',
-                        'description' => 'Tezgah üstü, çanak ve duvara monte lüks seramik lavabolar.',
-                    ],
-                    'cs' => [
-                        'name' => 'Designová umyvadla',
-                        'description' => 'Umyvadla na desku a nábytková luxusní keramická umyvadla.',
-                    ],
-                ],
-            ],
-            [
-                'slug' => 'vanity-cabinets',
-                'image' => '/images/products/prod_204_1610-242.jpg',
-                'translations' => [
-                    'en' => [
-                        'name' => 'Vanity & Cabinets',
-                        'description' => 'Moisture-resistant luxury bathroom vanities, mirrors, and modular furniture.',
-                    ],
-                    'tr' => [
-                        'name' => 'Banyo Dolapları',
-                        'description' => 'Suya ve neme dayanıklı lüks banyo dolapları ve ayna modülleri.',
-                    ],
-                    'cs' => [
-                        'name' => 'Koupelnové skříňky',
-                        'description' => 'Koupelnový nábytek a skříňky vysoce odolné proti vlhkosti.',
-                    ],
-                ],
-            ],
-            [
-                'slug' => 'architectural-ceramics',
-                'image' => '/images/products/prod_2050_1690-000.jpg',
-                'translations' => [
-                    'en' => [
-                        'name' => 'Architectural Ceramics',
-                        'description' => 'High-durability commercial and residential vitrified ceramic surfaces and tiles.',
-                    ],
-                    'tr' => [
-                        'name' => 'Mimari Seramikler',
-                        'description' => 'Yüksek dayanımlı ticari ve konut mimari seramik yüzeyler ve aksesuarlar.',
-                    ],
-                    'cs' => [
-                        'name' => 'Architektonická keramika',
-                        'description' => 'Vysoce odolné keramické povrchy a doplňky pro rezidenční i komerční projekty.',
-                    ],
-                ],
-            ],
-        ];
+        $file = __DIR__ . '/data/categories.json';
+        if (!is_file($file)) {
+            return;
+        }
 
-        $sort = 0;
+        $categories = json_decode((string) file_get_contents($file), true);
+        if (!is_array($categories)) {
+            return;
+        }
 
-        foreach ($categories as $cat) {
-            $sort++;
-            $existing = $this->db->table('categories')->where('slug', $cat['slug'])->first();
-            if ($existing) {
-                $categoryId = (int) $existing['id'];
-            } else {
-                $categoryId = (int) $this->db->insert('categories', [
-                    'slug' => $cat['slug'],
-                    'image' => $cat['image'],
-                    'sort_order' => $sort,
-                    'is_featured' => $sort === 1 ? 1 : 0,
-                    'status' => 'active',
-                    'seo' => json_encode(['title' => $cat['translations']['en']['name']], JSON_UNESCAPED_UNICODE),
-                    'created_at' => date('Y-m-d H:i:s'),
-                    'updated_at' => date('Y-m-d H:i:s'),
-                ]);
+        foreach ($categories as $category) {
+            $slug = (string) ($category['slug'] ?? '');
+            if ($slug === '' || $this->db->table('categories')->where('slug', $slug)->exists()) {
+                continue;
             }
 
-            foreach ($cat['translations'] as $locale => $trans) {
-                if ($this->db->table('category_translations')->where('category_id', $categoryId)->where('locale', $locale)->exists()) {
-                    continue;
-                }
+            $sortOrder = (int) ($category['sort_order'] ?? 0);
+            $names = is_array($category['names'] ?? null) ? $category['names'] : [];
 
+            $categoryId = (int) $this->db->insert('categories', [
+                'parent_id' => null,
+                'slug' => $slug,
+                'image' => $category['image'] ?? null,
+                'icon' => null,
+                'is_featured' => $sortOrder <= 4 ? 1 : 0,
+                'sort_order' => $sortOrder,
+                'status' => 'active',
+                'seo' => json_encode(['title' => $names['en'] ?? $slug], JSON_UNESCAPED_UNICODE),
+                'created_at' => date('Y-m-d H:i:s'),
+                'updated_at' => date('Y-m-d H:i:s'),
+            ]);
+
+            foreach ($names as $locale => $name) {
                 $this->db->insert('category_translations', [
                     'category_id' => $categoryId,
-                    'locale' => $locale,
-                    'name' => $trans['name'],
-                    'description' => $trans['description'],
+                    'locale' => (string) $locale,
+                    'name' => (string) $name,
+                    'description' => null,
                 ]);
             }
         }

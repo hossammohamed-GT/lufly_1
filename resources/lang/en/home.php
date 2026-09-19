@@ -82,6 +82,7 @@ return [
     'category_showers_desc' => 'Thermostatic 38°C Safety Core · Rain Systems',
     'category_commercial' => 'Commercial Sanitary Architecture',
     'category_commercial_desc' => 'Radar Sensor Urinals & Touchless Infrared Systems',
+    'category_kids' => 'Kids Bathroom Range',
 
     'inspiration_tag' => 'Spatial Sanctuary Showcase',
     'inspiration_title' => 'Architectural Masterpieces in Situ',

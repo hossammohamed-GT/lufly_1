@@ -116,7 +116,7 @@ $finishes = [
                     <a href="<?= e(route('contact')) ?>" id="finish-wa-btn" class="btn-primary-teal">
                         <span><?= e(trans('home.finish_inquire')) ?></span>
                     </a>
-                    <a href="<?= e(route('products.index', ['category' => 'architectural-ceramics'])) ?>" class="btn-secondary-glass">
+                    <a href="<?= e(route('products.index', ['category' => 'washbasin-mixers'])) ?>" class="btn-secondary-glass">
                         <span><?= e(trans('home.view_mixers')) ?></span>
                     </a>
                 </div>
