@@ -54,6 +54,20 @@ class ProductController extends Controller
             [$locale, $fallback]
         );
 
+        /* per-category counts for the coded category rail */
+        $categoryCounts = [];
+        foreach ($connection->select(
+            "SELECT c.slug AS slug, COUNT(p.id) AS n
+             FROM categories c
+             LEFT JOIN products p ON p.category_id = c.id AND p.deleted_at IS NULL AND p.status = 'active'
+             WHERE c.deleted_at IS NULL AND c.status = 'active'
+             GROUP BY c.id, c.slug",
+            []
+        ) as $row) {
+            $categoryCounts[(string) $row['slug']] = (int) $row['n'];
+        }
+        $categoryCounts[''] = array_sum($categoryCounts);
+
         $pageTitle = trans('products.title');
         $catalogDescs = [
             'en' => 'Browse the complete architectural catalog of luxury sanitary ware, rimless toilets, and PVD brassware from LUFLY.',
@@ -69,6 +83,7 @@ class ProductController extends Controller
             'title' => $pageTitle,
             'paginator' => $paginator,
             'categories' => $categories,
+            'categoryCounts' => $categoryCounts,
             'activeCategory' => $categorySlug,
             'searchQuery' => $searchQuery,
             'sort' => $sort,
@@ -81,6 +96,18 @@ class ProductController extends Controller
     {
         $locale = $this->translator->getLocale();
         $product = $this->products->findTranslatedBySlug($slug, $locale);
+
+        /* Category slug drives the technical-sheet silhouette on the page. */
+        $categorySlug = '';
+        if (!empty($product['category_id'])) {
+            $connection = \Modules\Products\Models\Product::query()->connection();
+            $row = $connection->selectOne(
+                'SELECT slug FROM categories WHERE id = ? AND deleted_at IS NULL',
+                [(int) $product['category_id']],
+            );
+            $categorySlug = (string) ($row['slug'] ?? '');
+        }
+        $product['category_slug'] = $categorySlug;
 
         $productName = (string) ($product['name'] ?? 'LUFLY Architectural Fixture');
         $productDesc = (string) ($product['short_description'] ?? $product['description'] ?? '');
