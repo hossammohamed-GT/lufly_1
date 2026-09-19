@@ -25,48 +25,40 @@ $contactUrl = route('contact');
 
         <div class="trust-grid">
             <!-- 01. Warranty & Structural Load -->
-            <article class="trust-card">
-                <div class="trust-card-top">
-                    <div class="trust-stat">
-                        <strong>10</strong><span><?= e(trans('home.year')) ?></span>
-                    </div>
-                    <span class="trust-card-index">01</span>
+            <article class="trust-item">
+                <span class="trust-card-index">01</span>
+                <div class="trust-stat">
+                    <strong>10</strong><span><?= e(trans('home.year')) ?></span>
                 </div>
                 <h3><?= e(trans('home.trust_guarantee_title')) ?></h3>
                 <p><?= e(trans('home.trust_guarantee_desc')) ?></p>
             </article>
 
             <!-- 02. Factory Direct & Water Economy -->
-            <article class="trust-card">
-                <div class="trust-card-top">
-                    <div class="trust-stat">
-                        <strong>45</strong><span>%</span>
-                    </div>
-                    <span class="trust-card-index">02</span>
+            <article class="trust-item">
+                <span class="trust-card-index">02</span>
+                <div class="trust-stat">
+                    <strong>45</strong><span>%</span>
                 </div>
                 <h3><?= e(trans('home.trust_water_title')) ?></h3>
                 <p><?= e(trans('home.trust_water_desc')) ?></p>
             </article>
 
             <!-- 03. Vitreous Ceramic & Nano Glaze -->
-            <article class="trust-card">
-                <div class="trust-card-top">
-                    <div class="trust-stat">
-                        <strong>1,250</strong><span>°C</span>
-                    </div>
-                    <span class="trust-card-index">03</span>
+            <article class="trust-item">
+                <span class="trust-card-index">03</span>
+                <div class="trust-stat">
+                    <strong>1,250</strong><span>°C</span>
                 </div>
                 <h3><?= e(trans('home.trust_ceramic_title')) ?></h3>
                 <p><?= e(trans('home.trust_ceramic_desc')) ?></p>
             </article>
 
             <!-- 04. Logistics & Global Supply -->
-            <article class="trust-card">
-                <div class="trust-card-top">
-                    <div class="trust-stat">
-                        <strong>34</strong><span>+</span>
-                    </div>
-                    <span class="trust-card-index">04</span>
+            <article class="trust-item">
+                <span class="trust-card-index">04</span>
+                <div class="trust-stat">
+                    <strong>34</strong><span>+</span>
                 </div>
                 <h3><?= e(trans('home.trust_global_title')) ?></h3>
                 <p><?= e(trans('home.trust_global_desc')) ?></p>
