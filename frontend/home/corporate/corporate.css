@@ -3,9 +3,40 @@
    deep-teal machined panel (announcement-bar language). */
 
 .corporate-section {
+  position: relative;
   padding: var(--space-16) 0;
   background: var(--ds-bg);
   border-bottom: 1px solid var(--ds-border);
+}
+
+/* ---- fixed production-hall backdrop, veiled per theme (same concept as
+   the finishes and rituals bands) ---- */
+.corporate-section::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+  background:
+    linear-gradient(180deg,
+      color-mix(in srgb, var(--ds-bg) 86%, transparent),
+      color-mix(in srgb, var(--ds-bg) 76%, transparent)),
+    url('../../../images/lifestyle/corporate-backdrop.jpg') center / cover fixed;
+}
+
+[data-theme="light"] .corporate-section::before {
+  background:
+    linear-gradient(180deg,
+      color-mix(in srgb, var(--ds-bg) 93%, transparent),
+      color-mix(in srgb, var(--ds-bg) 88%, transparent)),
+    url('../../../images/lifestyle/corporate-backdrop.jpg') center / cover fixed;
+}
+
+.corporate-section > .container { position: relative; z-index: 1; }
+
+@media (hover: none) {
+  .corporate-section::before,
+  [data-theme="light"] .corporate-section::before { background-attachment: scroll; }
 }
 
 .corporate-box {

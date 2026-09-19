@@ -4,8 +4,7 @@ $view->pushStyle('frontend/home/trust-bar/trust-bar.css');
 
 $contactUrl = route('contact');
 ?>
-<section class="band trust-bar" id="engineering-trust" aria-labelledby="trust-title"
-    style="--trust-bg: url('<?= e(asset('images/lifestyle/quality-inspection.jpg')) ?>')">
+<section class="band trust-bar" id="engineering-trust" aria-labelledby="trust-title">
     <div class="trust-inner">
         <div class="trust-head">
             <div class="trust-heading">

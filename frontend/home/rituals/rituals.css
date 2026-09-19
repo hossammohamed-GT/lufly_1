@@ -3,9 +3,40 @@
    glass boxes. Number first, mono codes, metric tag as a coded chip. */
 
 .rituals-section {
+  position: relative;
   padding: var(--space-16) 0;
   border-bottom: 1px solid var(--ds-border);
   background: var(--ds-bg);
+}
+
+/* ---- still-water backdrop, veiled per theme so the cards stay readable.
+   Same light/dark concept used by the finishes band. ---- */
+.rituals-section::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+  background:
+    linear-gradient(180deg,
+      color-mix(in srgb, var(--ds-bg) 86%, transparent),
+      color-mix(in srgb, var(--ds-bg) 76%, transparent)),
+    url('../../../images/lifestyle/rituals-backdrop.jpg') center / cover fixed;
+}
+
+[data-theme="light"] .rituals-section::before {
+  background:
+    linear-gradient(180deg,
+      color-mix(in srgb, var(--ds-bg) 93%, transparent),
+      color-mix(in srgb, var(--ds-bg) 88%, transparent)),
+    url('../../../images/lifestyle/rituals-backdrop.jpg') center / cover fixed;
+}
+
+.rituals-section > .container { position: relative; z-index: 1; }
+
+@media (hover: none) {
+  .rituals-section::before,
+  [data-theme="light"] .rituals-section::before { background-attachment: scroll; }
 }
 
 .rituals-grid {
