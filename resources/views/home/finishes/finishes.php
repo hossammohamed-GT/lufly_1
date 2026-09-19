@@ -78,18 +78,10 @@ $finishes = [
 
         <div class="finish-showcase-box scroll-reveal" data-delay="2">
             <figure class="finish-showcase-media">
-                <button type="button" class="finish-view-btn" id="finish-view-btn"
-                        aria-label="<?= e(trans('home.finish_zoom')) ?>"
-                        title="<?= e(trans('home.finish_zoom')) ?>">
-                    <img src="<?= e(asset('images/finishes/swatch-rose-gold.jpg')) ?>"
-                         alt="LUFLY Brushed Rose Gold finish"
-                         id="finish-showcase-img"
-                         class="finish-showcase-img">
-                    <span class="finish-zoom-chip" aria-hidden="true">
-                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" width="13" height="13"><circle cx="11" cy="11" r="7"/><path d="m21 21-4.3-4.3"/><path d="M11 8v6M8 11h6"/></svg>
-                        <?= e(trans('home.finish_zoom')) ?>
-                    </span>
-                </button>
+                <img src="<?= e(asset('images/finishes/swatch-rose-gold.jpg')) ?>"
+                     alt="LUFLY Brushed Rose Gold finish"
+                     id="finish-showcase-img"
+                     class="finish-showcase-img">
                 <figcaption class="finish-image-caption"><?= e(trans('home.finish_caption')) ?></figcaption>
             </figure>
 
@@ -132,24 +124,4 @@ $finishes = [
         </div>
     </div>
 
-    <!-- full-screen finish viewer -->
-    <div class="finish-lightbox" id="finish-lightbox" role="dialog" aria-modal="true"
-         aria-label="<?= e(trans('home.finish_zoom')) ?>" hidden>
-        <button type="button" class="finish-lightbox-close" id="finish-lightbox-close" aria-label="<?= e(trans('home.finish_close')) ?>">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" width="22" height="22"><path d="M18 6 6 18M6 6l12 12"/></svg>
-        </button>
-        <button type="button" class="finish-lightbox-nav is-prev" id="finish-lightbox-prev" aria-label="<?= e(trans('home.finish_prev')) ?>">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" width="26" height="26"><path d="m15 18-6-6 6-6"/></svg>
-        </button>
-        <figure class="finish-lightbox-figure">
-            <img src="<?= e(asset('images/finishes/swatch-rose-gold.jpg')) ?>" alt="" id="finish-lightbox-img">
-            <figcaption>
-                <strong id="finish-lightbox-title"><?= e(trans('home.finish_default_title')) ?></strong>
-                <span id="finish-lightbox-tag">PVD TITANIUM VAPOR DEPOSITION</span>
-            </figcaption>
-        </figure>
-        <button type="button" class="finish-lightbox-nav is-next" id="finish-lightbox-next" aria-label="<?= e(trans('home.finish_next')) ?>">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" width="26" height="26"><path d="m9 18 6-6-6-6"/></svg>
-        </button>
-    </div>
 </section>

@@ -67,10 +67,6 @@ return [
     'finishes_note_4' => 'která osloví',
     'finish_caption' => 'Povrchová úprava pro vyšší standard',
     'finish_inquire' => 'Požádat o vzorník povrchu',
-    'finish_zoom' => 'Zobrazit v plné velikosti',
-    'finish_close' => 'Zavřít',
-    'finish_prev' => 'Předchozí povrch',
-    'finish_next' => 'Další povrch',
     'view_mixers' => 'Prozkoumat kolekci baterií',
 
     'collections_tag' => 'Architektonické kolekce',

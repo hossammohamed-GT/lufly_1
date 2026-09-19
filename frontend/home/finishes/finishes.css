@@ -1,7 +1,8 @@
 /* Home component: finish selector - machined editorial edition.
    Deep ink band with a soft metallic glow (no photo backdrop), real
-   texture swatches in a responsive grid, one showcase image whose
-   full-screen viewer always shows the exact same image. */
+   texture swatches in a responsive grid, one showcase panel with a
+   clear divider between image and details. Selecting a swatch swaps
+   the showcase image and scrolls it into view on small screens. */
 
 .finishes-section {
   position: relative;
@@ -133,55 +134,13 @@
   background: var(--lu-ink-900);
 }
 
-.finish-view-btn {
-  position: relative;
-  display: block;
-  width: 100%;
-  padding: 0;
-  border: 0;
-  background: var(--lu-ink-900);
-  cursor: zoom-in;
-  overflow: hidden;
-}
-
 .finish-showcase-img {
   display: block;
   width: 100%;
   height: 100%;
   min-height: 460px;
   object-fit: cover;
-  transition: opacity 0.25s ease, transform 0.45s cubic-bezier(0.16, 1, 0.3, 1);
-}
-
-.finish-view-btn:hover .finish-showcase-img { transform: scale(1.025); }
-
-.finish-zoom-chip {
-  position: absolute;
-  top: 14px;
-  inset-inline-end: 14px;
-  display: inline-flex;
-  align-items: center;
-  gap: 7px;
-  padding: 8px 13px;
-  border-radius: 999px;
-  border: 1px solid color-mix(in srgb, var(--lu-mint) 45%, transparent);
-  background: color-mix(in srgb, var(--lu-ink-900) 78%, transparent);
-  color: var(--lu-mint);
-  font-family: var(--font-mono);
-  font-size: 9.5px;
-  font-weight: 700;
-  letter-spacing: 0.14em;
-  text-transform: uppercase;
-  backdrop-filter: blur(4px);
-  opacity: 0;
-  transform: translateY(-4px);
-  transition: opacity 0.22s ease, transform 0.22s ease;
-}
-
-.finish-view-btn:hover .finish-zoom-chip,
-.finish-view-btn:focus-visible .finish-zoom-chip {
-  opacity: 1;
-  transform: translateY(0);
+  transition: opacity 0.25s ease;
 }
 
 .finish-image-caption {
@@ -205,7 +164,7 @@
   justify-content: center;
   min-width: 0;
   padding: var(--space-9) var(--space-10);
-  border-left: 1px solid var(--ds-band-hairline);
+  border-left: 1px solid color-mix(in srgb, var(--lu-mint) 26%, var(--ds-band-hairline));
 }
 
 .finish-detail-meta {
@@ -308,126 +267,18 @@
   color: var(--lu-mint);
 }
 
-/* ---------- full-screen viewer ---------- */
-
-.finish-lightbox {
-  position: fixed;
-  inset: 0;
-  z-index: 140;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  padding: clamp(16px, 4vw, 56px);
-  background: color-mix(in srgb, var(--lu-ink-950, #07110f) 94%, transparent);
-  backdrop-filter: blur(8px);
-  animation: finishLightboxIn 0.22s ease both;
-}
-
-.finish-lightbox[hidden] { display: none; }
-
-@keyframes finishLightboxIn {
-  from { opacity: 0; }
-  to { opacity: 1; }
-}
-
-.finish-lightbox-figure {
-  margin: 0;
-  min-width: 0;
-  max-width: min(1240px, 100%);
-  text-align: center;
-  animation: finishFigureIn 0.26s cubic-bezier(0.16, 1, 0.3, 1) both;
-}
-
-@keyframes finishFigureIn {
-  from { opacity: 0; transform: scale(0.965); }
-  to { opacity: 1; transform: scale(1); }
-}
-
-.finish-lightbox-figure img {
-  display: block;
-  width: 100%;
-  max-height: 76vh;
-  object-fit: contain;
-  border-radius: var(--radius-md);
-  border: 1px solid var(--ds-band-hairline);
-  background: var(--lu-ink-900);
-}
-
-.finish-lightbox-figure figcaption {
-  display: flex;
-  align-items: baseline;
-  justify-content: center;
-  flex-wrap: wrap;
-  gap: 6px 16px;
-  margin-top: 16px;
-}
-
-.finish-lightbox-figure strong {
-  color: var(--ds-band-text);
-  font-family: var(--font-display);
-  font-size: var(--text-lg);
-}
-
-.finish-lightbox-figure span {
-  color: var(--lu-mint);
-  font-family: var(--font-mono);
-  font-size: 9.5px;
-  letter-spacing: 0.18em;
-  text-transform: uppercase;
-}
-
-.finish-lightbox-close {
-  position: absolute;
-  top: clamp(14px, 3vw, 30px);
-  inset-inline-end: clamp(14px, 3vw, 30px);
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  width: 46px;
-  height: 46px;
-  border-radius: 999px;
-  border: 1px solid color-mix(in srgb, var(--lu-neutral-0) 28%, transparent);
-  background: color-mix(in srgb, var(--lu-ink-900) 70%, transparent);
-  color: var(--ds-band-text);
-  cursor: pointer;
-  transition: border-color 0.18s ease, color 0.18s ease;
-}
-
-.finish-lightbox-close:hover { border-color: var(--lu-mint); color: var(--lu-mint); }
-
-.finish-lightbox-nav {
-  position: absolute;
-  top: 50%;
-  transform: translateY(-50%);
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  width: 48px;
-  height: 48px;
-  border-radius: 999px;
-  border: 1px solid color-mix(in srgb, var(--lu-neutral-0) 28%, transparent);
-  background: color-mix(in srgb, var(--lu-ink-900) 70%, transparent);
-  color: var(--ds-band-text);
-  cursor: pointer;
-  transition: border-color 0.18s ease, color 0.18s ease;
-}
-
-.finish-lightbox-nav:hover { border-color: var(--lu-mint); color: var(--lu-mint); }
-
-.finish-lightbox-nav.is-prev { inset-inline-start: clamp(10px, 2.5vw, 28px); }
-.finish-lightbox-nav.is-next { inset-inline-end: clamp(10px, 2.5vw, 28px); }
-
-body.finish-lightbox-open { overflow: hidden; }
-
 /* ---------- responsive: grid collapses, nothing overflows ---------- */
 
 @media (max-width: 1080px) {
   .finishes-swatch-grid { grid-template-columns: repeat(3, 1fr); }
 
   .finish-showcase-box { grid-template-columns: 1fr; }
-  .finish-showcase-details { border-left: none; border-top: 1px solid var(--ds-band-hairline); padding: var(--space-7); }
+  .finish-showcase-details {
+    border-left: none;
+    border-top: 1px solid color-mix(in srgb, var(--lu-mint) 26%, var(--ds-band-hairline));
+    padding: var(--space-7);
+  }
   .finish-showcase-img { min-height: 0; aspect-ratio: 16 / 10; }
-  .finish-lightbox-figure img { max-height: 64vh; }
 }
 
 @media (max-width: 640px) {
@@ -437,14 +288,8 @@ body.finish-lightbox-open { overflow: hidden; }
   .finish-swatch-btn img { aspect-ratio: 16 / 11; }
   .finish-tech-specs { grid-template-columns: 1fr; gap: var(--space-3); }
   .finish-showcase-details { padding: var(--space-5); }
-  .finish-zoom-chip { opacity: 1; transform: none; }
-  .finish-lightbox-figure img { max-height: 56vh; }
-  .finish-lightbox-nav { top: auto; bottom: clamp(12px, 3vw, 24px); transform: none; width: 44px; height: 44px; }
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .finish-lightbox,
-  .finish-lightbox-figure { animation: none; }
-  .finish-showcase-img,
-  .finish-view-btn:hover .finish-showcase-img { transition: none; transform: none; }
+  .finish-showcase-img { transition: none; }
 }

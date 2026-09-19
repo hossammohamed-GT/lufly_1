@@ -67,10 +67,6 @@ return [
     'finishes_note_4' => 'that commands',
     'finish_caption' => 'A finish for a higher standard',
     'finish_inquire' => 'Request a Finish Swatch',
-    'finish_zoom' => 'View full size',
-    'finish_close' => 'Close',
-    'finish_prev' => 'Previous finish',
-    'finish_next' => 'Next finish',
     'view_mixers' => 'Explore Mixer Collection',
 
     'collections_tag' => 'Architectural Suites',

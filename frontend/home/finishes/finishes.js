@@ -1,4 +1,5 @@
-/* Finish selector: swatch data, showcase swap, full-screen viewer. */
+/* Finish selector: swatch data, showcase swap, auto-scroll to the
+   showcase panel on phones so the user always sees what changed. */
 (function () {
   'use strict';
 
@@ -76,7 +77,7 @@
     }
 
     var base = document.documentElement.getAttribute('data-base') || '';
-    var viewBtn = document.getElementById('finish-view-btn');
+    var showcase = section.querySelector('.finish-showcase-box');
     var title = document.getElementById('finish-title');
     var tag = document.getElementById('finish-tag');
     var desc = document.getElementById('finish-desc');
@@ -86,17 +87,8 @@
     var cartridge = document.getElementById('finish-cartridge');
     var aerator = document.getElementById('finish-aerator');
 
-    var lightbox = document.getElementById('finish-lightbox');
-    var lbImg = document.getElementById('finish-lightbox-img');
-    var lbTitle = document.getElementById('finish-lightbox-title');
-    var lbTag = document.getElementById('finish-lightbox-tag');
-    var lbClose = document.getElementById('finish-lightbox-close');
-    var lbPrev = document.getElementById('finish-lightbox-prev');
-    var lbNext = document.getElementById('finish-lightbox-next');
-
     var current = 0;
     var swapTimer = null;
-    var lastTrigger = null;
 
     function setText(node, value) {
       if (node && value) {
@@ -123,7 +115,6 @@
       setText(aerator, data.aerator);
       setText(indexEl, pad(ORDER.indexOf(key) + 1));
 
-      /* single clean image swap, no fancy framing */
       image.style.opacity = '0';
       if (swapTimer) {
         window.clearTimeout(swapTimer);
@@ -132,11 +123,22 @@
         image.src = base + '/' + data.image;
         image.style.opacity = '1';
       }, 160);
+    }
 
-      if (lbImg) {
-        lbImg.src = base + '/' + data.image;
-        setText(lbTitle, data.title);
-        setText(lbTag, data.tag);
+    /* on phones the showcase sits below the fold: bring it into view
+       after a selection so the change is never missed */
+    function revealShowcase() {
+      if (!showcase || typeof showcase.scrollIntoView !== 'function') {
+        return;
+      }
+      var rect = showcase.getBoundingClientRect();
+      var vh = window.innerHeight || document.documentElement.clientHeight;
+      if (rect.top > vh * 0.72 || rect.bottom < vh * 0.3) {
+        var reduce = window.matchMedia &&
+          window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+        try {
+          showcase.scrollIntoView({ behavior: reduce ? 'auto' : 'smooth', block: 'start' });
+        } catch (e) { /* older browsers */ }
       }
     }
 
@@ -148,94 +150,13 @@
         other.setAttribute('aria-pressed', active ? 'true' : 'false');
       });
       apply(key);
+      revealShowcase();
     }
 
     buttons.forEach(function (button) {
       button.addEventListener('click', function () {
         select(button.dataset.finish, button);
       });
-    });
-
-    /* ---------- full-screen viewer ---------- */
-
-    function openLightbox() {
-      if (!lightbox) {
-        return;
-      }
-      /* show the exact image the visitor was just looking at */
-      if (lbImg && image.src) {
-        lbImg.src = image.src;
-      }
-      var key = buttons[current] ? buttons[current].dataset.finish : ORDER[current];
-      var data = FINISHES[key];
-      if (data) {
-        setText(lbTitle, data.title);
-        setText(lbTag, data.tag);
-      }
-      lastTrigger = document.activeElement;
-      lightbox.hidden = false;
-      document.body.classList.add('finish-lightbox-open');
-      if (lbClose) {
-        lbClose.focus();
-      }
-    }
-
-    function closeLightbox() {
-      if (!lightbox || lightbox.hidden) {
-        return;
-      }
-      lightbox.hidden = true;
-      document.body.classList.remove('finish-lightbox-open');
-      if (lastTrigger && typeof lastTrigger.focus === 'function') {
-        lastTrigger.focus();
-      }
-    }
-
-    function step(delta) {
-      var next = (current + delta + ORDER.length) % ORDER.length;
-      current = next;
-      var btn = buttons[next] || null;
-      if (btn) {
-        buttons.forEach(function (other) {
-          var active = other === btn;
-          other.classList.toggle('is-active', active);
-          other.setAttribute('aria-pressed', active ? 'true' : 'false');
-        });
-      }
-      apply(ORDER[next]);
-    }
-
-    if (viewBtn) {
-      viewBtn.addEventListener('click', openLightbox);
-    }
-    if (lbClose) {
-      lbClose.addEventListener('click', closeLightbox);
-    }
-    if (lbPrev) {
-      lbPrev.addEventListener('click', function () { step(-1); });
-    }
-    if (lbNext) {
-      lbNext.addEventListener('click', function () { step(1); });
-    }
-    if (lightbox) {
-      lightbox.addEventListener('click', function (e) {
-        if (e.target === lightbox) {
-          closeLightbox();
-        }
-      });
-    }
-
-    document.addEventListener('keydown', function (e) {
-      if (!lightbox || lightbox.hidden) {
-        return;
-      }
-      if (e.key === 'Escape') {
-        closeLightbox();
-      } else if (e.key === 'ArrowLeft') {
-        step(-1);
-      } else if (e.key === 'ArrowRight') {
-        step(1);
-      }
     });
   }
 

@@ -67,10 +67,6 @@ return [
     'finishes_note_4' => 'Zarafet',
     'finish_caption' => 'Üstün standartlar için tasarlandı',
     'finish_inquire' => 'Numune Talebi İçin Bize Ulaşın',
-    'finish_zoom' => 'Tam boyut gör',
-    'finish_close' => 'Kapat',
-    'finish_prev' => 'Önceki kaplama',
-    'finish_next' => 'Sonraki kaplama',
     'view_mixers' => 'Armatür Koleksiyonunu İnceleyin',
 
     'collections_tag' => 'Mimari Seriler',
