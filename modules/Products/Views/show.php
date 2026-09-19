@@ -130,7 +130,7 @@ $fmt = static fn (float $v): string => rtrim(rtrim(number_format($v, 0, '.', '')
                         <?php endif; ?>
 
                         <figcaption class="pdp-view-tag">
-                            <?= e(str_pad((string) ($vIndex + 1), 2, '0', STR_PAD_LEFT)) ?> &middot; <?= e($v['label']) ?>
+                            <?= e($v['label']) ?>
                             <?php if (count($v['images']) > 1): ?>
                                 <span class="pdp-view-count" data-pdp-counter>1/<?= count($v['images']) ?></span>
                             <?php endif; ?>
@@ -145,7 +145,7 @@ $fmt = static fn (float $v): string => rtrim(rtrim(number_format($v, 0, '.', '')
                                 data-pdp-tab="<?= e($v['key']) ?>"
                                 role="tab"
                                 aria-selected="<?= $vIndex === 0 ? 'true' : 'false' ?>">
-                            <span class="pdp-viewtab-code"><?= e(str_pad((string) ($vIndex + 1), 2, '0', STR_PAD_LEFT)) ?></span><?= e($v['label']) ?>
+                            <?= e($v['label']) ?>
                             <?php if (count($v['images']) > 1): ?>
                                 <span class="pdp-viewtab-n"><?= count($v['images']) ?></span>
                             <?php endif; ?>

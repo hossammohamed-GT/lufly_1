@@ -307,8 +307,6 @@
   transition: color 150ms ease, border-color 150ms ease, background-color 150ms ease;
 }
 
-.pdp-viewtab-code { opacity: 0.6; }
-
 .pdp-viewtab:hover {
   color: var(--ds-text);
   border-color: color-mix(in srgb, var(--ds-primary) 40%, var(--ds-border));
@@ -678,14 +676,6 @@
   color: var(--ds-text);
   border-color: var(--ds-text);
   background: var(--ds-surface);
-}
-
-.pdp-viewtab-code {
-  opacity: 0.55;
-}
-
-.pdp-viewtab.is-on .pdp-viewtab-code {
-  opacity: 1;
 }
 
 /* small badge showing how many images the group holds */
