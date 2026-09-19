@@ -149,7 +149,12 @@ body.ready {
   height: 100%;
   overflow: visible;
   transition: opacity .4s ease;
+  animation: ldSettle .45s ease 1.56s both;
 }
+
+/* ---- "Building the brand": every glyph piece flies in on its own path.
+   Staggered so the mark assembles piece by piece, then the whole group
+   settles with a tiny vibration. ---- */
 
 .ld-draw path {
   fill: none;
@@ -157,25 +162,123 @@ body.ready {
   stroke-width: 7;
   stroke-linecap: round;
   stroke-linejoin: round;
-  stroke-dasharray: 1;
-  stroke-dashoffset: 1;
+  opacity: 0;
+  transform-box: fill-box;
+  transform-origin: center;
   filter: drop-shadow(0 0 8px color-mix(in srgb, var(--lu-mint) 45%, transparent));
-  animation: ldDraw .8s var(--ld-ease) forwards;
-  animation-delay: calc(.1s + var(--i) * .1s);
+  animation-duration: .58s;
+  animation-timing-function: var(--ld-ease);
+  animation-fill-mode: both;
 }
 
-.ld-draw path:nth-child(1) { --i: 0; }
-.ld-draw path:nth-child(2) { --i: 1; }
-.ld-draw path:nth-child(3) { --i: 2; }
-.ld-draw path:nth-child(4) { --i: 3; }
-.ld-draw path:nth-child(5) { --i: 4; }
-.ld-draw path:nth-child(6) { --i: 5; }
-.ld-draw path:nth-child(7) { --i: 6; }
-.ld-draw path:nth-child(8) { --i: 7; }
-
-@keyframes ldDraw {
-  to { stroke-dashoffset: 0; }
+/* two-tone identity: mint strokes with two soft-ink accents */
+.ld-draw path:nth-child(4),
+.ld-draw path:nth-child(8) {
+  stroke: color-mix(in srgb, var(--lu-neutral-0) 82%, var(--lu-mint));
 }
+
+.ld-draw path:nth-child(1) { animation-name: ldPieceUp;     animation-delay: .20s; }
+.ld-draw path:nth-child(2) { animation-name: ldPieceLeft;   animation-delay: .31s; }
+.ld-draw path:nth-child(3) { animation-name: ldPieceArc;    animation-delay: .42s; animation-duration: .64s; }
+.ld-draw path:nth-child(4) { animation-name: ldPieceDrop;   animation-delay: .53s; animation-duration: .66s; }
+.ld-draw path:nth-child(5) { animation-name: ldPieceRise;   animation-delay: .64s; }
+.ld-draw path:nth-child(6) { animation-name: ldPieceRight;  animation-delay: .75s; }
+.ld-draw path:nth-child(7) { animation-name: ldPieceBounce; animation-delay: .86s; animation-duration: .7s; }
+.ld-draw path:nth-child(8) { animation-name: ldPieceSpin;   animation-delay: .97s; animation-duration: .62s; }
+
+@keyframes ldPieceUp     { 0% { opacity: 0; transform: translateY(46px); } 30% { opacity: 1; } 100% { opacity: 1; transform: translateY(0); } }
+@keyframes ldPieceLeft   { 0% { opacity: 0; transform: translateX(-38px); } 30% { opacity: 1; } 100% { opacity: 1; transform: translateX(0); } }
+@keyframes ldPieceRight  { 0% { opacity: 0; transform: translateX(40px); } 30% { opacity: 1; } 100% { opacity: 1; transform: translateX(0); } }
+@keyframes ldPieceArc    { 0% { opacity: 0; transform: translate(-34px, 30px); } 30% { opacity: 1; } 55% { transform: translate(10px, -9px); } 100% { opacity: 1; transform: translate(0, 0); } }
+@keyframes ldPieceRise   { 0% { opacity: 0; transform: translate(30px, 34px) rotate(8deg); } 30% { opacity: 1; } 100% { opacity: 1; transform: translate(0, 0) rotate(0deg); } }
+@keyframes ldPieceDrop   { 0% { opacity: 0; transform: translateY(-46px); } 30% { opacity: 1; } 70% { transform: translateY(7px); } 85% { transform: translateY(-3px); } 100% { opacity: 1; transform: translateY(0); } }
+@keyframes ldPieceBounce { 0% { opacity: 0; transform: translateY(42px) scale(.94); } 28% { opacity: 1; } 62% { transform: translateY(-8px) scale(1.01); } 82% { transform: translateY(3px); } 100% { opacity: 1; transform: translateY(0) scale(1); } }
+@keyframes ldPieceSpin   { 0% { opacity: 0; transform: translateY(-34px) rotate(12deg); } 30% { opacity: 1; } 75% { transform: translateY(3px) rotate(-2.5deg); } 100% { opacity: 1; transform: translateY(0) rotate(0deg); } }
+
+/* settling motion: tiny vibration before full rest */
+@keyframes ldSettle {
+  0% { transform: scale(1); }
+  40% { transform: scale(1.015) translateY(-1.5px); }
+  70% { transform: scale(0.998); }
+  100% { transform: scale(1); }
+}
+
+/* ---- seed dot: minimal presence before the first piece ---- */
+
+.ld-seed {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  width: 10px;
+  height: 10px;
+  margin: -5px 0 0 -5px;
+  border-radius: 50%;
+  background: var(--lu-mint);
+  box-shadow: 0 0 18px 5px color-mix(in srgb, var(--lu-mint) 55%, transparent);
+  animation: ldSeed 1.05s ease .05s both;
+  z-index: 2;
+}
+
+@keyframes ldSeed {
+  0% { opacity: 0; transform: scale(.4); }
+  18% { opacity: 1; transform: scale(1); }
+  52% { opacity: .9; transform: scale(1.3); }
+  100% { opacity: 0; transform: scale(2.4); }
+}
+
+/* ---- glass-floor reflection (flipped, squashed, teal tint) ---- */
+
+.ld-floor {
+  position: absolute;
+  top: calc(100% + 4px);
+  left: 10%;
+  right: 10%;
+  height: 1px;
+  background: linear-gradient(90deg,
+    transparent,
+    color-mix(in srgb, var(--lu-mint) 62%, transparent),
+    transparent);
+  opacity: 0;
+  animation: ldReflectIn .9s ease 1.38s both;
+  pointer-events: none;
+  z-index: 1;
+}
+
+.ld-reflect {
+  position: absolute;
+  top: 70%;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  transform: scaleY(-.3);
+  transform-origin: 50% 100%;
+  filter: blur(1.3px);
+  opacity: 0;
+  animation: ldReflectIn 1s ease 1.45s both;
+  pointer-events: none;
+  z-index: 1;
+  -webkit-mask-image: linear-gradient(to top, rgba(0, 0, 0, .95) 4%, rgba(0, 0, 0, .3) 38%, transparent 56%);
+  mask-image: linear-gradient(to top, rgba(0, 0, 0, .95) 4%, rgba(0, 0, 0, .3) 38%, transparent 56%);
+}
+
+.ld-reflect path {
+  fill: none;
+  stroke: color-mix(in srgb, var(--lu-teal-500) 70%, var(--lu-mint));
+  stroke-width: 7;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+@keyframes ldReflectIn {
+  from { opacity: 0; }
+  to { opacity: .32; }
+}
+
+/* navigation overlays: skip the choreography, show the finished state */
+.ld-loader.is-nav .ld-seed { display: none; }
+.ld-loader.is-nav .ld-floor,
+.ld-loader.is-nav .ld-reflect { animation: none; opacity: .32; }
+.ld-loader.is-nav .ld-draw { animation: none; }
 
 .ld-logoBox.filling .ld-draw {
   opacity: 0;
@@ -416,7 +519,11 @@ body.ready {
 
 /* ---------------- reduced motion ---------------- */
 
-.ld-reduced .ld-draw { display: none; }
+.ld-reduced .ld-draw { animation: none; }
+.ld-reduced .ld-draw path { animation: none; opacity: 1; transform: none; }
+.ld-reduced .ld-seed { display: none; }
+.ld-reduced .ld-floor { animation: none; opacity: .5; }
+.ld-reduced .ld-reflect { animation: none; opacity: .32; }
 .ld-reduced .ld-water { opacity: 1; }
 .ld-reduced .wave,
 .ld-reduced .bubble,

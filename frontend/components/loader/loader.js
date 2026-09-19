@@ -1,7 +1,8 @@
 /* ============================================================
    LUFLY - Preloader & Global Loading Controller (Optimized Edition)
-   Timeline: SVG stroke draw -> water fills glyphs (real progress %)
-   + snappy fluid motion + craftsman stage messages -> seal flash -> completion.
+   Timeline: brand assembly (seed dot -> glyph pieces fly in on their own
+   paths -> settle + reflection) -> water fills glyphs (real progress %)
+   + craftsman stage messages -> seal flash -> completion.
    Global API: window.LUFLYLoader.show(msg), update(pct, msg), hide()
    ============================================================ */
 
@@ -52,7 +53,9 @@
   if (!loader) return;
 
   var reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-  var T_DRAW   = reduced ? 60 : 300;
+  /* T_DRAW now covers the "building the brand" assembly (seed dot, glyph
+     pieces fly in, settle) before the water-fill progress phase starts. */
+  var T_DRAW   = reduced ? 60 : 1700;
   var T_HOLD   = reduced ? 80 : 180;
   var T_SEAL   = reduced ? 0 : 160;
 

@@ -1,8 +1,10 @@
 <?php
 /**
  * LUFLY: Global Preloader & Loading Experience
- * "Water-Fill" inside brand glyphs, factory craft background on initial load,
- * dynamic progress and informative messages in English, Turkish and Czech.
+ * "Building the brand" assembly (seed dot, glyph pieces, settle, reflection),
+ * then water rises inside the glyphs (= real progress), factory craft
+ * background on initial load, dynamic progress and informative messages
+ * in English, Turkish and Czech.
  *
  * @var Core\Localization\Translator|null $translator
  */
@@ -48,7 +50,11 @@ $foot = $foots[$locale] ?? $foots['en'];
         <div class="ld-kicker"><?= e($kicker) ?></div>
 
         <div class="ld-logoBox" id="ldLogoBox">
-            <!-- stroke-draw sketch (hand-tuned to the brand mark) -->
+            <!-- seed: a single mint dot before the brand assembles -->
+            <span class="ld-seed" aria-hidden="true"></span>
+
+            <!-- "Building the brand": each glyph piece enters on its own
+                 motion path (up, from the side, arc, bounce) and settles -->
             <svg class="ld-draw" viewBox="0 0 510 325" aria-hidden="true">
                 <path pathLength="1" d="M 30 16 L 30 298 Q 30 306 38 306 L 116 306"/>
                 <path pathLength="1" d="M 64 16 L 64 174"/>
@@ -67,6 +73,19 @@ $foot = $foots[$locale] ?? $foots['en'];
                     <span class="wave w2"></span>
                 </div>
             </div>
+
+            <!-- glass-floor reflection under the assembled mark -->
+            <span class="ld-floor" aria-hidden="true"></span>
+            <svg class="ld-reflect" viewBox="0 0 510 325" aria-hidden="true">
+                <path d="M 30 16 L 30 298 Q 30 306 38 306 L 116 306"/>
+                <path d="M 64 16 L 64 174"/>
+                <path d="M 64 244 L 116 244"/>
+                <path d="M 158 148 L 158 246 Q 158 292 198 292 Q 238 292 238 246 L 238 148"/>
+                <path d="M 288 292 L 288 82 Q 288 42 330 42"/>
+                <path d="M 256 148 L 320 148"/>
+                <path d="M 378 16 L 378 292"/>
+                <path d="M 416 148 L 456 238 L 496 148 L 424 306"/>
+            </svg>
         </div>
 
         <div class="ld-tag" id="ldTag"><?= e($tag) ?></div>
