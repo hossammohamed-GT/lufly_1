@@ -30,7 +30,6 @@
 }
 
 .category-card-monolith:hover {
-  transform: translateY(-5px);
   box-shadow: var(--shadow-2);
   border-color: color-mix(in srgb, var(--ds-primary) 50%, var(--ds-border));
 }

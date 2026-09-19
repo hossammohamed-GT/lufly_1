@@ -24,9 +24,34 @@
 }
 
 .inspiration-card:hover {
-  transform: translateY(-4px);
-  border-color: color-mix(in srgb, var(--ds-primary) 45%, var(--ds-border));
   box-shadow: var(--shadow-2);
+}
+
+/* ---- hover: a teal hairline draws itself from the top-left all the way
+   round the card over 1.5s, instead of the card jumping upwards ---- */
+.inspiration-trace {
+  position: absolute;
+  inset: 1px;
+  width: calc(100% - 2px);
+  height: calc(100% - 2px);
+  z-index: 3;
+  pointer-events: none;
+  overflow: hidden;
+}
+
+.inspiration-trace-rect {
+  fill: none;
+  stroke: var(--ds-primary);
+  stroke-width: 2;
+  /* pathLength=1 lets one dash cover the whole perimeter regardless of size */
+  stroke-dasharray: 1;
+  stroke-dashoffset: 1;
+  transition: stroke-dashoffset 1.5s cubic-bezier(0.65, 0, 0.35, 1);
+}
+
+.inspiration-card:hover .inspiration-trace-rect,
+.inspiration-card:focus-within .inspiration-trace-rect {
+  stroke-dashoffset: 0;
 }
 
 .inspiration-img-wrap {
@@ -98,4 +123,5 @@
 @media (prefers-reduced-motion: reduce) {
   .inspiration-card { transition: none; }
   .inspiration-img { transition: none; }
+  .inspiration-trace-rect { transition: none; }
 }

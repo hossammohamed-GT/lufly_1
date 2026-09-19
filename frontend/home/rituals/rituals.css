@@ -26,7 +26,6 @@
 
 .ritual-card:hover {
   border-top-color: var(--ds-primary);
-  transform: translateY(-3px);
   box-shadow: var(--shadow-2);
 }
 

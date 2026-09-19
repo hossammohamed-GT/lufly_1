@@ -25,7 +25,6 @@
 }
 
 .pcard:hover {
-  transform: translateY(-4px);
   border-color: color-mix(in srgb, var(--ds-primary) 40%, var(--ds-border));
   box-shadow: var(--shadow-2);
 }

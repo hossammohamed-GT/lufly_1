@@ -300,7 +300,6 @@
 .search-result-card:focus-visible {
   border-color: var(--ds-primary);
   background: var(--ds-primary-tint);
-  transform: translateY(-2px);
   box-shadow: var(--shadow-2);
 }
 

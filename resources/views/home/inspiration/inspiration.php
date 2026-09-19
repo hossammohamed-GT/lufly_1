@@ -13,6 +13,9 @@ $view->pushStyle('frontend/home/inspiration/inspiration.css');
         <div class="inspiration-carousel">
             <!-- Room 1 -->
             <div class="inspiration-card scroll-reveal" data-delay="1">
+                <svg class="inspiration-trace" aria-hidden="true" focusable="false">
+                    <rect class="inspiration-trace-rect" x="0" y="0" width="100%" height="100%" rx="10" pathLength="1" />
+                </svg>
                 <div class="inspiration-img-wrap">
                     <img src="<?= e(asset('images/lifestyle/spa-suite.jpg')) ?>" alt="<?= e(trans('home.inspiration_1_title')) ?>" loading="lazy" decoding="async" class="inspiration-img">
                 </div>
@@ -25,6 +28,9 @@ $view->pushStyle('frontend/home/inspiration/inspiration.css');
 
             <!-- Room 2 -->
             <div class="inspiration-card scroll-reveal" data-delay="2">
+                <svg class="inspiration-trace" aria-hidden="true" focusable="false">
+                    <rect class="inspiration-trace-rect" x="0" y="0" width="100%" height="100%" rx="10" pathLength="1" />
+                </svg>
                 <div class="inspiration-img-wrap">
                     <img src="<?= e(asset('images/lifestyle/modern-bathroom.png')) ?>" alt="<?= e(trans('home.inspiration_2_title')) ?>" loading="lazy" decoding="async" class="inspiration-img">
                 </div>
@@ -37,6 +43,9 @@ $view->pushStyle('frontend/home/inspiration/inspiration.css');
 
             <!-- Room 3 -->
             <div class="inspiration-card scroll-reveal" data-delay="3">
+                <svg class="inspiration-trace" aria-hidden="true" focusable="false">
+                    <rect class="inspiration-trace-rect" x="0" y="0" width="100%" height="100%" rx="10" pathLength="1" />
+                </svg>
                 <div class="inspiration-img-wrap">
                     <img src="<?= e(asset('images/lifestyle/minimal-basin.png')) ?>" alt="<?= e(trans('home.inspiration_3_title')) ?>" loading="lazy" decoding="async" class="inspiration-img">
                 </div>
@@ -49,6 +58,9 @@ $view->pushStyle('frontend/home/inspiration/inspiration.css');
 
             <!-- Room 4 -->
             <div class="inspiration-card scroll-reveal" data-delay="4">
+                <svg class="inspiration-trace" aria-hidden="true" focusable="false">
+                    <rect class="inspiration-trace-rect" x="0" y="0" width="100%" height="100%" rx="10" pathLength="1" />
+                </svg>
                 <div class="inspiration-img-wrap">
                     <img src="<?= e(asset('images/lifestyle/kitchen-suite.png')) ?>" alt="<?= e(trans('home.inspiration_4_title')) ?>" loading="lazy" decoding="async" class="inspiration-img">
                 </div>
