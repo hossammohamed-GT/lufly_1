@@ -17,23 +17,36 @@
   inset: 0;
   z-index: 0;
   pointer-events: none;
-  background:
-    linear-gradient(180deg,
-      color-mix(in srgb, var(--ds-bg) 62%, transparent),
-      color-mix(in srgb, var(--ds-bg) 48%, transparent)),
-    url('../../../images/lifestyle/rituals-backdrop.jpg') center / cover fixed;
+  background: url('../../../images/lifestyle/rituals-backdrop.jpg') center / cover fixed;
+}
+
+/* veil lives on its own layer so brightness/contrast tuning applies to the
+   photograph only - filtering a combined layer also lightens the veil and
+   cancels itself out */
+.rituals-section::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+  background: linear-gradient(180deg,
+    color-mix(in srgb, var(--ds-bg) 34%, transparent),
+    color-mix(in srgb, var(--ds-bg) 22%, transparent));
 }
 
 [data-theme="light"] .rituals-section::before {
-  /* dark photo on a light page: lift and desaturate it so the band reads
-     as bright rather than as a heavy block */
-  filter: brightness(1.85) saturate(0.6);
-  background:
-    linear-gradient(180deg,
-      color-mix(in srgb, var(--ds-bg) 78%, transparent),
-      color-mix(in srgb, var(--ds-bg) 68%, transparent)),
-    url('../../../images/lifestyle/rituals-backdrop.jpg') center / cover fixed;
+  /* the source photo is dark; lift it so it reads on a pale page without
+     blowing out the detail (the veil above is now light, so a gentler
+     lift is enough) */
+  filter: brightness(1.55) contrast(0.92) saturate(0.85);
 }
+
+[data-theme="light"] .rituals-section::after {
+  background: linear-gradient(180deg,
+    color-mix(in srgb, var(--ds-bg) 30%, transparent),
+    color-mix(in srgb, var(--ds-bg) 18%, transparent));
+}
+
 
 .rituals-section > .container { position: relative; z-index: 1; }
 
