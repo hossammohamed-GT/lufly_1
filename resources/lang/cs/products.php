@@ -40,4 +40,7 @@ return [
     'sort_name' => 'Název A-Z',
     'sort_model' => 'Kód modelu',
     'sort_label' => 'Řazení',
+    'scope_label' => 'Hledat v',
+    'scope_category' => 'Této kategorii',
+    'scope_all' => 'Všech produktech',
 ];

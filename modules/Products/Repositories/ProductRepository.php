@@ -129,6 +129,7 @@ class ProductRepository extends Repository
         $locale = $filters['locale'] ?? 'en';
         $queryTerm = (string) ($filters['search'] ?? '');
         $status = (string) ($filters['status'] ?? 'active');
+        $categorySlug = trim((string) ($filters['category'] ?? ''));
         $searchValue = trim($queryTerm);
 
         if ($searchValue === '') {
@@ -137,6 +138,22 @@ class ProductRepository extends Repository
 
         $connection = Product::query()->connection();
         $like = '%' . $searchValue . '%';
+
+        $categoryClause = '';
+        if ($categorySlug !== '') {
+            $categoryClause = ' AND EXISTS (
+                   SELECT 1 FROM categories c
+                   WHERE c.id = p.category_id
+                     AND c.deleted_at IS NULL
+                     AND c.slug = ?
+               )';
+        }
+
+        $params = [$status, $like, $like, $like, $like, $like];
+        if ($categoryClause !== '') {
+            $params[] = $categorySlug;
+        }
+        $params[] = (int) $limit;
 
         $rows = $connection->select(
             "SELECT DISTINCT p.*
@@ -165,9 +182,10 @@ class ProductRepository extends Repository
                          AND LOWER(pk.keyword) LIKE LOWER(?)
                    )
                )
+               {$categoryClause}
              ORDER BY p.id DESC
              LIMIT ?",
-              [$status, $like, $like, $like, $like, $like, (int) $limit],
+            $params,
         );
 
         return array_map(static fn (array $row): Product => Product::fromRow($row), $rows);

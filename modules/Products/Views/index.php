@@ -57,7 +57,10 @@ $fallbackImg = '/images/products/prod_146_1620-111-a.jpg';
             </span>
         </header>
 
-        <div class="catalog-toolbar" data-livesearch>
+        <div class="catalog-toolbar" data-livesearch
+            data-livesearch-grid="[data-catalog-grid]"
+            data-livesearch-pagination="[data-catalog-pagination]"
+            data-livesearch-count=".catalog-count">
             <form method="GET" action="<?= e(route('products.index')) ?>" class="catalog-searchform">
                 <?php if ($activeCategory !== ''): ?>
                     <input type="hidden" name="category" value="<?= e($activeCategory) ?>">
@@ -65,7 +68,7 @@ $fallbackImg = '/images/products/prod_146_1620-111-a.jpg';
 
                 <div class="catalog-search" data-catalog-field>
                     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" width="16" height="16" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg>
-                    <input type="text" name="q" value="<?= e($searchQuery) ?>" placeholder="<?= e(trans('common.search')) ?>" class="catalog-search-input" data-livesearch-input data-locale="<?= e($locale) ?>" autocomplete="off" aria-label="<?= e(trans('common.search')) ?>">
+                    <input type="text" name="q" value="<?= e($searchQuery) ?>" placeholder="<?= e(trans('common.search')) ?>" class="catalog-search-input" data-livesearch-input data-livesearch-limit="36" data-locale="<?= e($locale) ?>" autocomplete="off" aria-label="<?= e(trans('common.search')) ?>">
                     <button type="submit" class="catalog-go" aria-label="<?= e(trans('common.search')) ?>">
                         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" width="15" height="15" aria-hidden="true"><path d="M5 12h14"/><path d="m13 6 6 6-6 6"/></svg>
                         <span><?= e(trans('common.search')) ?></span>
@@ -82,7 +85,15 @@ $fallbackImg = '/images/products/prod_146_1620-111-a.jpg';
                 </label>
             </form>
 
-            <div class="catalog-guide" data-livesearch-results aria-live="polite"></div>
+            <div class="catalog-guide" data-livesearch-results aria-live="polite">
+                <div class="catalog-scope" data-livesearch-scope>
+                    <span class="catalog-scope-label"><?= e(trans('products.scope_label')) ?></span>
+                    <?php if ($activeCategory !== ''): ?>
+                        <button type="button" class="catalog-scope-btn is-active" data-scope="category"><?= e(trans('products.scope_category')) ?></button>
+                    <?php endif; ?>
+                    <button type="button" class="catalog-scope-btn <?= $activeCategory === '' ? 'is-active' : '' ?>" data-scope="all"><?= e(trans('products.scope_all')) ?></button>
+                </div>
+            </div>
         </div>
 
         <nav class="catalog-rail" aria-label="<?= e(trans('common.category')) ?>">
@@ -107,7 +118,7 @@ $fallbackImg = '/images/products/prod_146_1620-111-a.jpg';
                 <a href="<?= e(route('products.index')) ?>" class="catalog-empty-btn"><?= e(trans('common.all_categories')) ?></a>
             </div>
         <?php else: ?>
-            <div class="catalog-grid">
+            <div class="catalog-grid" data-catalog-grid>
                 <?php foreach ($paginator->items() as $index => $product):
                     $item = $product->translate($locale);
                     $img = (string) ($item['image'] ?? '') !== '' ? (string) $item['image'] : $fallbackImg;
@@ -152,7 +163,7 @@ $fallbackImg = '/images/products/prod_146_1620-111-a.jpg';
             </div>
 
             <?php if ($paginator->lastPage() > 1): ?>
-                <nav class="catpag" aria-label="Pagination">
+                <nav class="catpag" data-catalog-pagination aria-label="Pagination">
                     <?php if ($paginator->page() > 1): ?>
                         <a class="catpag-arrow" href="<?= e($buildUrl(['page' => $paginator->page() - 1])) ?>" aria-label="Previous">&larr;</a>
                     <?php endif; ?>

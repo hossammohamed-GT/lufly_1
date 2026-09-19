@@ -40,4 +40,7 @@ return [
     'sort_name' => 'İsim A-Z',
     'sort_model' => 'Model kodu',
     'sort_label' => 'Sırala',
+    'scope_label' => 'Arama yeri',
+    'scope_category' => 'Bu kategoride',
+    'scope_all' => 'Tüm ürünler',
 ];

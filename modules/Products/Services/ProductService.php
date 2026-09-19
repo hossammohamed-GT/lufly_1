@@ -29,7 +29,7 @@ class ProductService
     }
 
     /** @return array<int, array<string, mixed>> */
-    public function quickSearch(string $query, string $locale = 'en', int $limit = 8): array
+    public function quickSearch(string $query, string $locale = 'en', int $limit = 8, ?string $categorySlug = null): array
     {
         $term = trim($query);
         if ($term === '') {
@@ -40,6 +40,7 @@ class ProductService
             'locale' => $locale,
             'status' => 'active',
             'search' => $term,
+            'category' => (string) $categorySlug,
         ], $limit);
 
         return array_map(

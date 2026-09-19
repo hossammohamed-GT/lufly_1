@@ -1,5 +1,6 @@
 /* ============================================================
-   Catalog: auto-submit the sort select. Plain behaviour only.
+   Catalog: the sort select re-renders live search results
+   instantly; without an active live search it submits the form.
    ============================================================ */
 
 (function () {
@@ -10,6 +11,11 @@
     if (!select || !select.form) return;
 
     select.addEventListener('change', function () {
+      if (select.form.classList.contains('is-live')) {
+        /* live search owns the grid: re-sort in place, no reload */
+        select.form.dispatchEvent(new CustomEvent('livesearch:rerender'));
+        return;
+      }
       select.form.submit();
     });
   }

@@ -1,17 +1,25 @@
 /* ============================================================
    Live product search (shared)
-   Type 2+ characters, pause, full product cards appear below the
-   field (same editorial cards as the catalog grid), with skeleton
-   cards while loading and a "view all results" jump. Reuses the
-   /api/products/search endpoint.
+   THE search system of the site. There is no separate results
+   page: typing filters the product grid in place, with scope
+   (current category / all products), skeleton cards while
+   loading, and a shareable URL (replaceState, no navigation).
    ------------------------------------------------------------
    Contract for host markup:
-   <div data-livesearch>                    (wrapper, or the form itself)
+   <div data-livesearch                                     (required)
+        data-livesearch-grid="[data-catalog-grid]"          (optional: results grid)
+        data-livesearch-pagination="[data-catalog-pagination]" (optional: hidden while live)
+        data-livesearch-count=".catalog-count">             (optional: live count badge)
      <form>
-       <input data-livesearch-input data-locale="en" ...>
+       <input data-livesearch-input data-locale="en"
+              data-livesearch-limit="36" ...>
      </form>
-     <div data-livesearch-results></div>    (optional; created if missing)
-   </div>
+     <div data-livesearch-results>                (status panel; scope row lives here)
+       <div data-livesearch-scope>                (optional)
+         <button type="button" data-scope="category">..</button>
+         <button type="button" data-scope="all">..</button>
+       </div>
+     </div>
    ============================================================ */
 
 (function () {
@@ -35,19 +43,42 @@
       var box = host.querySelector('[data-livesearch-results]');
       if (!box) {
         box = document.createElement('div');
-        box.className = 'livesearch-results';
         box.setAttribute('data-livesearch-results', '');
         box.setAttribute('aria-live', 'polite');
         form.appendChild(box);
       }
+
+      var gridSel = host.getAttribute('data-livesearch-grid') || '';
+      var grid = gridSel ? document.querySelector(gridSel) : null;
+      var pagSel = host.getAttribute('data-livesearch-pagination') || '';
+      var pagination = pagSel ? document.querySelector(pagSel) : null;
+      var countSel = host.getAttribute('data-livesearch-count') || '';
+      var countEl = countSel ? document.querySelector(countSel) : null;
+      var limit = parseInt(input.getAttribute('data-livesearch-limit') || '8', 10) || 8;
+      var sortSelect = form.querySelector('[data-catalog-sort]');
+      var categorySlug = '';
+      var hiddenCategory = form.querySelector('input[name="category"]');
+      if (hiddenCategory) categorySlug = hiddenCategory.value || '';
+
       var base = document.documentElement.getAttribute('data-base') || '';
       var locale = input.getAttribute('data-locale') ||
         document.documentElement.getAttribute('lang') || 'en';
 
+      var scopeWrap = host.querySelector('[data-livesearch-scope]');
+      var scope = 'all';
+      if (scopeWrap) {
+        var activeBtn = scopeWrap.querySelector('[data-scope].is-active');
+        scope = activeBtn ? activeBtn.getAttribute('data-scope') : 'all';
+      }
+
       var cache = {};
       var debounce = null;
       var inFlight = null;
-      var typing = null;
+      var lastQuery = '';
+      var isLive = false;
+      var savedGrid = '';
+      var savedCount = '';
+      var paginationHidden = false;
 
       var guides = {
         en: {
@@ -58,7 +89,11 @@
           empty: 'No architectural fixtures found matching ":q"',
           hint: 'Tip: try a model code like 1620 or a name like "wall-hung"',
           details: 'View details',
-          viewAll: 'View all results'
+          share: 'Copy link',
+          copied: 'Link copied',
+          clear: 'Clear search',
+          countOne: '1 item',
+          countMany: ':n items'
         },
         tr: {
           idle: 'Kataloğda aramak için yazmaya başlayın...',
@@ -68,7 +103,11 @@
           empty: '":q" ile eşleşen ürün bulunamadı',
           hint: 'İpucu: 1620 gibi bir model kodu ya da "asma klozet" deneyin',
           details: 'Detayları gör',
-          viewAll: 'Tüm sonuçları gör'
+          share: 'Bağlantıyı kopyala',
+          copied: 'Bağlantı kopyalandı',
+          clear: 'Aramayı temizle',
+          countOne: '1 ürün',
+          countMany: ':n ürün'
         },
         cs: {
           idle: 'Začněte psát pro vyhledávání v katalogu...',
@@ -78,7 +117,11 @@
           empty: 'Nebyly nalezeny žádné produkty odpovídající ":q"',
           hint: 'Tip: zkuste kód modelu jako 1620 nebo název "závěsné WC"',
           details: 'Zobrazit detail',
-          viewAll: 'Zobrazit všechny výsledky'
+          share: 'Kopírovat odkaz',
+          copied: 'Odkaz zkopírován',
+          clear: 'Vymazat hledání',
+          countOne: '1 položka',
+          countMany: ':n položek'
         }
       };
       var g = guides[locale] || guides.en;
@@ -89,19 +132,103 @@
         });
       }
 
-      function fill(text) {
-        box.innerHTML = '<div class="livesearch-status">' + text + '</div>';
-        box.classList.add('is-open');
-        form.classList.add('is-searching');
+      function img(raw) {
+        if (!raw) return base + '/images/favicon.png';
+        if (/^(?:https?:)?\/\//.test(raw)) return raw;
+        return base + '/' + String(raw).replace(/^\/+/, '');
       }
 
-      function collapse() {
-        box.classList.remove('is-open');
-        form.classList.remove('is-searching');
+      /* ---------- status panel (scope row stays in the DOM, listeners intact) ---------- */
+
+      var statusEl = box.querySelector('.livesearch-status');
+      if (!statusEl) {
+        statusEl = document.createElement('div');
+        statusEl.className = 'livesearch-status';
+        box.appendChild(statusEl);
+      }
+
+      function setStatus(text, withShare) {
+        statusEl.innerHTML = text + (withShare ? shareButton() : '');
+        box.classList.add('is-open');
+        form.classList.add('is-searching');
+        if (withShare) bindShare();
       }
 
       function showIdle() {
-        fill(esc(g.idle) + ' <span class="livesearch-hint">' + esc(g.hint) + '</span>');
+        setStatus(esc(g.idle) + ' <span class="livesearch-hint">' + esc(g.hint) + '</span>');
+      }
+
+      function shareButton() {
+        return '<button type="button" class="livesearch-share" data-livesearch-share title="' + esc(g.share) + '">' +
+          '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" width="13" height="13" aria-hidden="true">' +
+          '<path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/>' +
+          '<path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/>' +
+          '</svg><span>' + esc(g.share) + '</span></button>';
+      }
+
+      function bindShare() {
+        var btn = statusEl.querySelector('[data-livesearch-share]');
+        if (!btn || btn.__shareBound) return;
+        btn.__shareBound = true;
+        btn.addEventListener('click', function () {
+          copyLink().then(function () {
+            btn.classList.add('is-copied');
+            var label = btn.querySelector('span');
+            if (label) label.textContent = g.copied;
+            window.setTimeout(function () {
+              btn.classList.remove('is-copied');
+              if (label) label.textContent = g.share;
+            }, 1600);
+          });
+        });
+      }
+
+      function copyLink() {
+        var url = window.location.href;
+        if (navigator.clipboard && navigator.clipboard.writeText) {
+          return navigator.clipboard.writeText(url);
+        }
+        return new Promise(function (resolve) {
+          try {
+            var ta = document.createElement('textarea');
+            ta.value = url;
+            ta.style.position = 'fixed';
+            ta.style.opacity = '0';
+            document.body.appendChild(ta);
+            ta.select();
+            document.execCommand('copy');
+            document.body.removeChild(ta);
+          } catch (e) { /* clipboard unavailable */ }
+          resolve();
+        });
+      }
+
+      /* ---------- grid takeover ---------- */
+
+      function rememberGrid() {
+        if (isLive || !grid) return;
+        savedGrid = grid.innerHTML;
+        savedCount = countEl ? countEl.textContent : '';
+        isLive = true;
+        form.classList.add('is-live');
+        if (pagination && !paginationHidden) {
+          pagination.style.display = 'none';
+          paginationHidden = true;
+        }
+      }
+
+      function restoreGrid() {
+        if (!isLive) return;
+        if (grid) grid.innerHTML = savedGrid;
+        if (countEl) countEl.textContent = savedCount;
+        if (pagination && paginationHidden) {
+          pagination.style.display = '';
+          paginationHidden = false;
+        }
+        isLive = false;
+        form.classList.remove('is-live');
+        lastQuery = '';
+        syncUrl('');
       }
 
       function skeletonCards(count) {
@@ -114,33 +241,81 @@
           '</div></div>';
         var out = '';
         for (var i = 0; i < count; i++) out += one;
-        return '<div class="livesearch-cards" aria-hidden="true">' + out + '</div>';
+        return out;
       }
 
-      function showBusy(query) {
-        box.innerHTML =
-          '<div class="livesearch-status">' + esc(g.busy.replace(':q', query)) + '</div>' +
-          skeletonCards(4);
-        box.classList.add('is-open', 'is-busy');
-        form.classList.add('is-searching');
+      /* make sure the user sees the skeletons / results appear */
+      function revealGrid() {
+        if (!grid || typeof grid.scrollIntoView !== 'function') return;
+        var rect = grid.getBoundingClientRect();
+        if (rect.top > window.innerHeight * 0.6 || rect.top < 0) {
+          var reduce = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+          try {
+            grid.scrollIntoView({ behavior: reduce ? 'auto' : 'smooth', block: 'start' });
+          } catch (e) { /* older browsers */ }
+        }
       }
 
-      function img(raw) {
-        if (!raw) return base + '/images/favicon.png';
-        if (/^(?:https?:)?\/\//.test(raw)) return raw;
-        return base + '/' + String(raw).replace(/^\/+/, '');
+      /* ---------- url + sort ---------- */
+
+      function syncUrl(query) {
+        if (!window.history || !window.history.replaceState) return;
+        var params = {};
+        if (scope === 'category' && categorySlug) params.category = categorySlug;
+        if (query) params.q = query;
+        var sort = sortSelect ? sortSelect.value : '';
+        if (sort && sort !== 'newest') params.sort = sort;
+        var keys = Object.keys(params);
+        var qs = keys.map(function (k) {
+          return encodeURIComponent(k) + '=' + encodeURIComponent(params[k]);
+        }).join('&');
+        window.history.replaceState(null, '', window.location.pathname + (qs ? '?' + qs : ''));
       }
+
+      function sortedMatches(matches) {
+        var list = matches.slice();
+        if (currentSort() === 'name') {
+          list.sort(function (a, b) {
+            return String(a.name || '').localeCompare(String(b.name || ''), locale);
+          });
+        } else if (currentSort() === 'model') {
+          list.sort(function (a, b) {
+            return String(a.model_code || a.sku || '').localeCompare(String(b.model_code || b.sku || ''), locale, { numeric: true });
+          });
+        }
+        return list;
+      }
+
+      function currentSort() {
+        return sortSelect ? sortSelect.value : 'newest';
+      }
+
+      /* ---------- rendering ---------- */
 
       function render(matches, query) {
-        if (!matches.length) {
-          fill(esc(g.empty.replace(':q', query)));
+        var list = sortedMatches(matches);
+
+        if (!list.length) {
+          setStatus(esc(g.empty.replace(':q', query)));
+          if (grid) {
+            rememberGrid();
+            grid.innerHTML =
+              '<div class="catalog-empty catalog-empty-live">' +
+              '<span class="catalog-empty-code">0</span>' +
+              '<p>' + esc(g.empty.replace(':q', query)) + '</p>' +
+              '<button type="button" class="catalog-empty-btn" data-livesearch-clear>' + esc(g.clear) + '</button>' +
+              '</div>';
+            var clearBtn = grid.querySelector('[data-livesearch-clear]');
+            if (clearBtn) clearBtn.addEventListener('click', clearSearch);
+          }
+          syncUrl(query);
           return;
         }
 
         var fallback = img(null);
         var arrow = '<svg viewBox="0 0 20 20" fill="currentColor" width="13" height="13" aria-hidden="true"><path fill-rule="evenodd" d="M10.293 3.293a1 1 0 011.414 0l6 6a1 1 0 010 1.414l-6 6a1 1 0 01-1.414-1.414L14.586 11H3a1 1 0 110-2h11.586l-4.293-4.293a1 1 0 010-1.414z" clip-rule="evenodd"/></svg>';
 
-        var cards = matches.map(function (product, index) {
+        var cards = list.map(function (product, index) {
           var name = esc(product.name || product.sku || 'LUFLY fixture');
           var sku = esc(product.sku || product.model_code || '');
           var shortDesc = esc(String(product.short_description || '').trim());
@@ -148,7 +323,7 @@
           var href = base + '/' + encodeURIComponent(locale) + '/products/' + slug;
           var situ = product.situ_image ? img(product.situ_image) : '';
           var no = ('00' + (index + 1)).slice(-3);
-          var delay = (0.05 + 0.05 * index).toFixed(2);
+          var delay = (0.05 + 0.05 * (index % 6)).toFixed(2);
 
           return '<article class="pcard" style="--pcard-delay:' + delay + 's">' +
             '<a class="pcard-media" href="' + href + '">' +
@@ -165,23 +340,47 @@
             '</div></article>';
         }).join('');
 
-        box.innerHTML =
-          '<div class="livesearch-status is-ok">' + esc(g.found.replace(':n', matches.length).replace(':q', query)) + '</div>' +
-          '<div class="livesearch-cards">' + cards + '</div>' +
-          '<a class="livesearch-all" href="' + base + '/' + encodeURIComponent(locale) +
-          '/products?q=' + encodeURIComponent(query) + '">' + arrow + esc(g.viewAll) + '</a>';
-        box.classList.add('is-open');
+        setStatus(esc(g.found.replace(':n', list.length).replace(':q', query)), true);
+
+        if (grid) {
+          rememberGrid();
+          grid.innerHTML = cards;
+        } else {
+          var cardsEl = box.querySelector('.livesearch-cards');
+          if (!cardsEl) {
+            cardsEl = document.createElement('div');
+            cardsEl.className = 'livesearch-cards';
+            box.appendChild(cardsEl);
+          }
+          cardsEl.innerHTML = cards;
+        }
+
+        if (countEl) {
+          countEl.textContent = list.length === 1
+            ? g.countOne
+            : g.countMany.replace(':n', String(list.length));
+        }
+        syncUrl(query);
       }
 
-      function search(query) {
-        var cacheKey = locale + ':' + query.toLowerCase();
+      /* ---------- search ---------- */
+
+      function search(query, reveal) {
+        lastQuery = query;
+        var cacheKey = locale + ':' + scope + ':' + query.toLowerCase();
         if (cache[cacheKey]) {
           render(cache[cacheKey], query);
+          if (reveal) revealGrid();
           return;
         }
 
-        showBusy(query);
+        setStatus(esc(g.busy.replace(':q', query)));
         box.classList.add('is-busy');
+        if (grid) {
+          rememberGrid();
+          grid.innerHTML = skeletonCards(6);
+          if (reveal) revealGrid();
+        }
 
         if (inFlight && typeof inFlight.abort === 'function') {
           inFlight.abort();
@@ -190,8 +389,13 @@
           inFlight = new AbortController();
         }
 
-        fetch(base + '/api/products/search?q=' + encodeURIComponent(query) +
-          '&limit=8&locale=' + encodeURIComponent(locale), {
+        var url = base + '/api/products/search?q=' + encodeURIComponent(query) +
+          '&limit=' + limit + '&locale=' + encodeURIComponent(locale);
+        if (scope === 'category' && categorySlug) {
+          url += '&category=' + encodeURIComponent(categorySlug);
+        }
+
+        fetch(url, {
           headers: { Accept: 'application/json' },
           signal: inFlight ? inFlight.signal : undefined
         })
@@ -200,26 +404,55 @@
             box.classList.remove('is-busy');
             var data = json && Array.isArray(json.data) ? json.data : [];
             cache[cacheKey] = data;
-            render(data, query);
+            if (lastQuery === query) render(data, query);
           })
           .catch(function () { /* aborted or offline */ });
       }
+
+      function clearSearch() {
+        input.value = '';
+        restoreGrid();
+        box.classList.remove('is-busy');
+        showIdle();
+        input.focus();
+      }
+
+      /* ---------- scope toggle ---------- */
+
+      if (scopeWrap) {
+        scopeWrap.addEventListener('click', function (e) {
+          var btn = e.target.closest('[data-scope]');
+          if (!btn || btn.getAttribute('data-scope') === scope) return;
+          scope = btn.getAttribute('data-scope');
+          scopeWrap.querySelectorAll('[data-scope]').forEach(function (b) {
+            b.classList.toggle('is-active', b === btn);
+          });
+          var pending = lastQuery || input.value.trim();
+          if (pending && pending.length >= 2) {
+            search(pending, true);
+          }
+        });
+      }
+
+      /* ---------- input wiring ---------- */
 
       input.addEventListener('input', function () {
         var query = input.value.trim();
         window.clearTimeout(debounce);
 
         if (query.length === 0) {
+          restoreGrid();
           showIdle();
           return;
         }
         if (query.length === 1) {
-          fill(esc(g.min));
+          restoreGrid();
+          setStatus(esc(g.min));
           return;
         }
 
         debounce = window.setTimeout(function () {
-          search(query);
+          search(query, true);
         }, 600);
       });
 
@@ -227,44 +460,62 @@
         form.classList.add('is-searching');
         var query = input.value.trim();
         if (query.length >= 2) {
-          var cacheKey = locale + ':' + query.toLowerCase();
+          var cacheKey = locale + ':' + scope + ':' + query.toLowerCase();
           if (cache[cacheKey]) {
             render(cache[cacheKey], query);
-          } else {
+          } else if (!isLive) {
             search(query);
           }
         } else if (query.length === 1) {
-          fill(esc(g.min));
+          setStatus(esc(g.min));
         } else {
           showIdle();
         }
       });
 
-      /* Enter still navigates to the full results page */
+      /* Enter never navigates: the live grid already shows everything */
       form.addEventListener('submit', function (e) {
+        e.preventDefault();
         var query = input.value.trim();
         if (query.length < 2) {
-          e.preventDefault();
-          fill(esc(g.min));
+          setStatus(esc(g.min));
           return;
         }
-        e.preventDefault();
-        window.location.href = base + '/' + encodeURIComponent(locale) +
-          '/products?q=' + encodeURIComponent(query);
+        search(query, true);
       });
 
-      /* close on outside click */
+      /* sort re-renders the live results client-side (catalog.js dispatches this) */
+      form.addEventListener('livesearch:rerender', function () {
+        if (isLive && lastQuery) {
+          var cacheKey = locale + ':' + scope + ':' + lastQuery.toLowerCase();
+          if (cache[cacheKey]) render(cache[cacheKey], lastQuery);
+        }
+      });
+
+      /* close the panel on outside click (grid results stay) */
       document.addEventListener('click', function (e) {
         if (!host.contains(e.target)) {
-          collapse();
+          box.classList.remove('is-open');
+          form.classList.remove('is-searching');
         }
       });
 
       input.addEventListener('keydown', function (e) {
         if (e.key === 'Escape') {
-          collapse();
+          clearSearch();
+          input.blur();
         }
       });
+
+      /* ---------- deep link: /products?q=... opens in live search ---------- */
+      var urlQuery = '';
+      try {
+        urlQuery = new URLSearchParams(window.location.search).get('q') || '';
+      } catch (e2) { /* older browsers */ }
+      if (urlQuery.trim().length >= 2) {
+        input.value = urlQuery.trim();
+        search(urlQuery.trim());
+      }
     });
   }
 

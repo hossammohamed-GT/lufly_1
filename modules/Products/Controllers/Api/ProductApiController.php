@@ -40,12 +40,16 @@ class ProductApiController extends Controller
         $locale = (string) $request->query('locale', $this->translator->getLocale());
         $query = trim((string) $request->query('q', ''));
         $limit = max(1, (int) $request->query('limit', '8'));
+        $category = trim((string) $request->query('category', ''));
+        if (!preg_match('/^[a-z0-9-]{1,150}$/', $category)) {
+            $category = '';
+        }
 
         if ($query === '') {
             return ApiResponse::success([]);
         }
 
-        $items = $this->products->quickSearch($query, $locale, $limit);
+        $items = $this->products->quickSearch($query, $locale, $limit, $category !== '' ? $category : null);
 
         return ApiResponse::success($items);
     }

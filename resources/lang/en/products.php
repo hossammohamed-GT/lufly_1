@@ -40,4 +40,7 @@ return [
     'sort_name' => 'Name A to Z',
     'sort_model' => 'Model code',
     'sort_label' => 'Sort',
+    'scope_label' => 'Search in',
+    'scope_category' => 'This category',
+    'scope_all' => 'All products',
 ];
