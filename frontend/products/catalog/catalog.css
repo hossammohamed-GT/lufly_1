@@ -108,6 +108,7 @@
   min-width: 0;
   display: flex;
   align-items: center;
+  transition: flex-basis 0.42s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
 .catalog-search > svg {
@@ -143,7 +144,7 @@
 }
 
 .catalog-go {
-  flex: none;
+  flex: 0 0 auto;
   display: inline-flex;
   align-items: center;
   gap: 7px;
@@ -157,11 +158,25 @@
   font-weight: 800;
   letter-spacing: 0.12em;
   text-transform: uppercase;
+  white-space: nowrap;
   cursor: pointer;
-  transition: background-color 150ms ease;
+  overflow: hidden;
+  transition: background-color 150ms ease, opacity 0.3s ease,
+    flex-basis 0.42s cubic-bezier(0.16, 1, 0.3, 1),
+    padding 0.42s cubic-bezier(0.16, 1, 0.3, 1),
+    margin 0.42s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
 .catalog-go:hover { background: var(--ds-primary-hover); }
+
+/* while searching, the submit button folds away and the sort stays visible */
+.catalog-searchform.is-searching .catalog-go {
+  flex-basis: 0;
+  opacity: 0;
+  padding-inline: 0;
+  margin-inline-start: -8px;
+  pointer-events: none;
+}
 
 .catalog-sort {
   flex: 0 0 auto;
@@ -175,18 +190,6 @@
   letter-spacing: 0.18em;
   text-transform: uppercase;
   color: var(--ds-text-muted);
-  transition: opacity 0.3s ease, flex-basis 0.42s cubic-bezier(0.16, 1, 0.3, 1),
-    padding 0.42s cubic-bezier(0.16, 1, 0.3, 1), margin 0.42s cubic-bezier(0.16, 1, 0.3, 1);
-}
-
-/* while searching, the sort control folds away and the field owns the bar */
-.catalog-searchform.is-searching .catalog-sort {
-  flex-basis: 0;
-  opacity: 0;
-  overflow: hidden;
-  padding-inline: 0;
-  margin-inline-start: -10px;
-  pointer-events: none;
 }
 
 .catalog-sort-select {
@@ -227,6 +230,7 @@
 
 .catalog-guide .livesearch-results {
   margin-top: 0;
+  max-height: min(70vh, 640px);
   border-radius: 0 0 var(--radius-md) var(--radius-md);
   border-top: 1px dashed color-mix(in srgb, var(--ds-primary) 30%, var(--ds-border));
   box-shadow: none;

@@ -1,8 +1,9 @@
 /* ============================================================
    Live product search (shared)
-   Same experience as the navbar search: type 2+ characters, pause,
-   results appear below the field. No submit button needed.
-   Reuses the /api/products/search endpoint.
+   Type 2+ characters, pause, full product cards appear below the
+   field (same editorial cards as the catalog grid), with skeleton
+   cards while loading and a "view all results" jump. Reuses the
+   /api/products/search endpoint.
    ------------------------------------------------------------
    Contract for host markup:
    <div data-livesearch>                    (wrapper, or the form itself)
@@ -55,7 +56,9 @@
           busy: 'Searching for ":q"...',
           found: 'Found :n fixtures matching ":q"',
           empty: 'No architectural fixtures found matching ":q"',
-          hint: 'Tip: try a model code like 1620 or a name like "wall-hung"'
+          hint: 'Tip: try a model code like 1620 or a name like "wall-hung"',
+          details: 'View details',
+          viewAll: 'View all results'
         },
         tr: {
           idle: 'Kataloğda aramak için yazmaya başlayın...',
@@ -63,7 +66,9 @@
           busy: '":q" için aranıyor...',
           found: '":q" için :n ürün bulundu',
           empty: '":q" ile eşleşen ürün bulunamadı',
-          hint: 'İpucu: 1620 gibi bir model kodu ya da "asma klozet" deneyin'
+          hint: 'İpucu: 1620 gibi bir model kodu ya da "asma klozet" deneyin',
+          details: 'Detayları gör',
+          viewAll: 'Tüm sonuçları gör'
         },
         cs: {
           idle: 'Začněte psát pro vyhledávání v katalogu...',
@@ -71,7 +76,9 @@
           busy: 'Vyhledává se ":q"...',
           found: 'Nalezeno :n produktů pro ":q"',
           empty: 'Nebyly nalezeny žádné produkty odpovídající ":q"',
-          hint: 'Tip: zkuste kód modelu jako 1620 nebo název "závěsné WC"'
+          hint: 'Tip: zkuste kód modelu jako 1620 nebo název "závěsné WC"',
+          details: 'Zobrazit detail',
+          viewAll: 'Zobrazit všechny výsledky'
         }
       };
       var g = guides[locale] || guides.en;
@@ -97,6 +104,27 @@
         fill(esc(g.idle) + ' <span class="livesearch-hint">' + esc(g.hint) + '</span>');
       }
 
+      function skeletonCards(count) {
+        var one = '<div class="livesearch-skel" aria-hidden="true">' +
+          '<div class="livesearch-skel-media"></div>' +
+          '<div class="livesearch-skel-body">' +
+          '<span class="livesearch-skel-line is-w35"></span>' +
+          '<span class="livesearch-skel-line is-w80"></span>' +
+          '<span class="livesearch-skel-line is-w55"></span>' +
+          '</div></div>';
+        var out = '';
+        for (var i = 0; i < count; i++) out += one;
+        return '<div class="livesearch-cards" aria-hidden="true">' + out + '</div>';
+      }
+
+      function showBusy(query) {
+        box.innerHTML =
+          '<div class="livesearch-status">' + esc(g.busy.replace(':q', query)) + '</div>' +
+          skeletonCards(4);
+        box.classList.add('is-open', 'is-busy');
+        form.classList.add('is-searching');
+      }
+
       function img(raw) {
         if (!raw) return base + '/images/favicon.png';
         if (/^(?:https?:)?\/\//.test(raw)) return raw;
@@ -109,25 +137,39 @@
           return;
         }
 
-        var cards = matches.map(function (product) {
+        var fallback = img(null);
+        var arrow = '<svg viewBox="0 0 20 20" fill="currentColor" width="13" height="13" aria-hidden="true"><path fill-rule="evenodd" d="M10.293 3.293a1 1 0 011.414 0l6 6a1 1 0 010 1.414l-6 6a1 1 0 01-1.414-1.414L14.586 11H3a1 1 0 110-2h11.586l-4.293-4.293a1 1 0 010-1.414z" clip-rule="evenodd"/></svg>';
+
+        var cards = matches.map(function (product, index) {
           var name = esc(product.name || product.sku || 'LUFLY fixture');
           var sku = esc(product.sku || product.model_code || '');
+          var shortDesc = esc(String(product.short_description || '').trim());
           var slug = encodeURIComponent(product.slug || product.id || '');
           var href = base + '/' + encodeURIComponent(locale) + '/products/' + slug;
+          var situ = product.situ_image ? img(product.situ_image) : '';
+          var no = ('00' + (index + 1)).slice(-3);
+          var delay = (0.05 + 0.05 * index).toFixed(2);
 
-          return '<a class="livesearch-card" href="' + href + '">' +
-            '<img class="livesearch-thumb" src="' + img(product.image) + '" alt="" loading="lazy" decoding="async" width="56" height="56">' +
-            '<span class="livesearch-body">' +
-            '<span class="livesearch-name">' + name + '</span>' +
-            (sku ? '<span class="livesearch-sku">' + esc(g.skuLabel || 'SKU') + ' ' + sku + '</span>' : '') +
-            '</span>' +
-            '<svg class="livesearch-arrow" viewBox="0 0 20 20" fill="currentColor" width="14" height="14" aria-hidden="true"><path fill-rule="evenodd" d="M10.293 3.293a1 1 0 011.414 0l6 6a1 1 0 010 1.414l-6 6a1 1 0 01-1.414-1.414L14.586 11H3a1 1 0 110-2h11.586l-4.293-4.293a1 1 0 010-1.414z" clip-rule="evenodd"/></svg>' +
-            '</a>';
+          return '<article class="pcard" style="--pcard-delay:' + delay + 's">' +
+            '<a class="pcard-media" href="' + href + '">' +
+            '<img class="pcard-img" src="' + esc(img(product.image)) + '" alt="' + name + '" loading="lazy" decoding="async" width="420" height="320"' +
+            ' onerror="this.onerror=null;this.src=\'' + fallback + '\'">' +
+            (situ ? '<img class="pcard-img pcard-img-situ" src="' + esc(situ) + '" alt="" loading="lazy" decoding="async" width="420" height="320"' +
+              ' onerror="this.onerror=null;this.remove();">' : '') +
+            '<span class="pcard-hint" aria-hidden="true">' + arrow + esc(g.details) + '</span>' +
+            '</a>' +
+            '<div class="pcard-body">' +
+            '<div class="pcard-top"><span class="pcard-code">' + (sku || 'LUFLY') + '</span><span class="pcard-no">' + no + '</span></div>' +
+            '<h3 class="pcard-title"><a href="' + href + '">' + name + '</a></h3>' +
+            (shortDesc ? '<p class="pcard-desc">' + shortDesc + '</p>' : '') +
+            '</div></article>';
         }).join('');
 
         box.innerHTML =
           '<div class="livesearch-status is-ok">' + esc(g.found.replace(':n', matches.length).replace(':q', query)) + '</div>' +
-          '<div class="livesearch-grid">' + cards + '</div>';
+          '<div class="livesearch-cards">' + cards + '</div>' +
+          '<a class="livesearch-all" href="' + base + '/' + encodeURIComponent(locale) +
+          '/products?q=' + encodeURIComponent(query) + '">' + arrow + esc(g.viewAll) + '</a>';
         box.classList.add('is-open');
       }
 
@@ -138,7 +180,7 @@
           return;
         }
 
-        fill(esc(g.busy.replace(':q', query)).replace(':q', esc(query)));
+        showBusy(query);
         box.classList.add('is-busy');
 
         if (inFlight && typeof inFlight.abort === 'function') {
@@ -188,7 +230,11 @@
           var cacheKey = locale + ':' + query.toLowerCase();
           if (cache[cacheKey]) {
             render(cache[cacheKey], query);
+          } else {
+            search(query);
           }
+        } else if (query.length === 1) {
+          fill(esc(g.min));
         } else {
           showIdle();
         }

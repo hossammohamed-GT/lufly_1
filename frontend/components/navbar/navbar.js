@@ -392,18 +392,24 @@
     var guides = {
       en: {
         minChars: 'Please type at least 2 characters to start searching...',
+        busy: 'Searching for ":q"...',
         empty: 'No architectural fixtures found matching "' + escapeHtml(query) + '"',
-        hint: 'Search by product name, SKU code, or category'
+        hint: 'Search by product name, SKU code, or category',
+        viewAll: 'View all results'
       },
       tr: {
         minChars: 'Aramaya başlamak için lütfen en az 2 karakter girin...',
+        busy: '":q" için aranıyor...',
         empty: '"' + escapeHtml(query) + '" ile eşleşen ürün bulunamadı',
-        hint: 'Ürün adı, stok kodu veya kategori ile arayabilirsiniz'
+        hint: 'Ürün adı, stok kodu veya kategori ile arayabilirsiniz',
+        viewAll: 'Tüm sonuçları gör'
       },
       cs: {
         minChars: 'Pro zahájení vyhledávání zadejte alespoň 2 znaky...',
+        busy: 'Vyhledává se ":q"...',
         empty: 'Nebyly nalezeny žádné produkty odpovídající "' + escapeHtml(query) + '"',
-        hint: 'Hledejte podle názvu produktu, kódu SKU nebo kategorie'
+        hint: 'Hledejte podle názvu produktu, kódu SKU nebo kategorie',
+        viewAll: 'Zobrazit všechny výsledky'
       }
     };
     var d = guides[loc] || guides.en;
@@ -417,6 +423,35 @@
       '<span class="search-status-text">' + text + '</span>' +
       '</div>';
     resultsBox.classList.add('is-open');
+  }
+
+  /* skeleton result rows so the user sees cards are on their way */
+  function showSearchBusy(query) {
+    if (!resultsBox) return;
+    var one = '<div class="livesearch-skel livesearch-skel-row" aria-hidden="true">' +
+      '<span class="livesearch-skel-thumb"></span>' +
+      '<span class="livesearch-skel-body">' +
+      '<span class="livesearch-skel-line is-w35"></span>' +
+      '<span class="livesearch-skel-line is-w80"></span>' +
+      '</span></div>';
+    var skels = '';
+    for (var i = 0; i < 4; i++) skels += one;
+
+    resultsBox.innerHTML = '<div class="search-status-banner">' +
+      '<span class="search-status-icon"><svg class="icon icon-sm" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg></span>' +
+      '<span class="search-status-text">' + escapeHtml(getGuideText('busy', query)) + '</span>' +
+      '</div>' +
+      '<div class="search-results-grid">' + skels + '</div>';
+    resultsBox.classList.add('is-open');
+  }
+
+  function viewAllLink(query) {
+    var href = base + '/' + encodeURIComponent(locale()) +
+      '/products?q=' + encodeURIComponent(query);
+    return '<a class="livesearch-all" href="' + href + '">' +
+      '<svg viewBox="0 0 20 20" fill="currentColor" width="13" height="13" aria-hidden="true"><path fill-rule="evenodd" d="M10.293 3.293a1 1 0 011.414 0l6 6a1 1 0 010 1.414l-6 6a1 1 0 01-1.414-1.414L14.586 11H3a1 1 0 110-2h11.586l-4.293-4.293a1 1 0 010-1.414z" clip-rule="evenodd"/></svg>' +
+      escapeHtml(getGuideText('viewAll', query)) +
+      '</a>';
   }
 
   function renderResults(matches, query) {
@@ -437,7 +472,8 @@
         '<span class="search-status-icon"><svg class="icon icon-sm" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"></polyline></svg></span>' +
         '<span class="search-status-text">' + headerMsg + '</span>' +
         '</div>' +
-        '<div class="search-results-grid">' + matches.map(resultCard).join('') + '</div>';
+        '<div class="search-results-grid">' + matches.map(resultCard).join('') + '</div>' +
+        viewAllLink(query);
     }
 
     resultsBox.classList.add('is-open');
@@ -493,6 +529,8 @@
         if (inFlight && typeof inFlight.abort === 'function') {
           inFlight.abort();
         }
+
+        showSearchBusy(query);
 
         var url = base + '/api/products/search?q=' + encodeURIComponent(query) +
           '&limit=8&locale=' + encodeURIComponent(locale());
