@@ -1,0 +1,132 @@
+/* ==========================================================================
+   Live search (shared) - same feel as the navbar search.
+   Status line + compact result cards under any search field. Token-driven.
+   ========================================================================== */
+
+.livesearch-results {
+  display: none;
+  margin-top: 10px;
+  padding: var(--space-3);
+  border: 1px solid var(--ds-border);
+  border-radius: var(--radius-lg);
+  background: var(--ds-surface);
+  box-shadow: var(--shadow-2);
+  max-height: min(64vh, 480px);
+  overflow-y: auto;
+  overscroll-behavior: contain;
+}
+
+.livesearch-results.is-open { display: block; animation: livesearchIn 0.24s cubic-bezier(0.16, 1, 0.3, 1) both; }
+
+@keyframes livesearchIn {
+  from { opacity: 0; transform: translateY(-6px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.livesearch-status {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 8px;
+  padding: 9px 12px;
+  margin-bottom: var(--space-2);
+  border-radius: var(--radius-md);
+  border: 1px solid var(--ds-border);
+  background: var(--ds-bg);
+  color: var(--ds-text-muted);
+  font-size: 12px;
+}
+
+.livesearch-status.is-ok {
+  color: var(--ds-primary);
+  border-color: color-mix(in srgb, var(--ds-primary) 30%, var(--ds-border));
+  background: var(--ds-primary-tint);
+}
+
+.livesearch-results.is-busy .livesearch-status { color: var(--ds-text); }
+
+.livesearch-hint {
+  color: var(--ds-text-muted);
+  font-size: 11px;
+  opacity: 0.85;
+}
+
+.livesearch-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(230px, 1fr));
+  gap: 8px;
+}
+
+.livesearch-card {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 9px 10px;
+  border: 1px solid var(--ds-border);
+  border-radius: var(--radius-md);
+  background: var(--ds-bg);
+  text-decoration: none;
+  transition: border-color 140ms ease, background-color 140ms ease, transform 140ms ease;
+}
+
+.livesearch-card:hover {
+  border-color: color-mix(in srgb, var(--ds-primary) 50%, var(--ds-border));
+  background: var(--ds-primary-tint);
+  transform: translateY(-1px);
+}
+
+.livesearch-thumb {
+  flex: none;
+  width: 52px;
+  height: 52px;
+  object-fit: contain;
+  border: 1px solid var(--ds-border);
+  border-radius: var(--radius-sm);
+  background: var(--ds-surface);
+  padding: 3px;
+}
+
+.livesearch-body {
+  display: grid;
+  gap: 3px;
+  min-width: 0;
+  flex: 1;
+}
+
+.livesearch-name {
+  color: var(--ds-text);
+  font-size: 12.5px;
+  font-weight: 600;
+  line-height: 1.3;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.livesearch-sku {
+  color: var(--ds-primary);
+  font-family: var(--font-mono);
+  font-size: 9.5px;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+}
+
+.livesearch-arrow {
+  flex: none;
+  color: var(--ds-text-muted);
+  transition: color 140ms ease, transform 140ms ease;
+}
+
+.livesearch-card:hover .livesearch-arrow {
+  color: var(--ds-primary);
+  transform: translateX(2px);
+}
+
+[dir="rtl"] .livesearch-arrow { transform: scaleX(-1); }
+[dir="rtl"] .livesearch-card:hover .livesearch-arrow { transform: scaleX(-1) translateX(2px); }
+
+@media (prefers-reduced-motion: reduce) {
+  .livesearch-results.is-open { animation: none; }
+  .livesearch-card,
+  .livesearch-arrow { transition: none; }
+}

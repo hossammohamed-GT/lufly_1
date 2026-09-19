@@ -9,7 +9,9 @@
  */
 $view->layout('layouts.frontend');
 $view->pushStyle('frontend/css/product-card.css');
+$view->pushStyle('frontend/css/live-search.css');
 $view->pushStyle('frontend/products/catalog/catalog.css');
+$view->pushScript('frontend/js/live-search.js');
 $view->pushScript('frontend/products/catalog/catalog.js');
 /** @var Core\Database\Paginator $paginator */
 /** @var array $categories */
@@ -55,14 +57,14 @@ $fallbackImg = '/images/products/prod_146_1620-111-a.jpg';
             </span>
         </header>
 
-        <form method="GET" action="<?= e(route('products.index')) ?>" class="catalog-toolbar">
+        <form method="GET" action="<?= e(route('products.index')) ?>" class="catalog-toolbar" data-livesearch>
             <?php if ($activeCategory !== ''): ?>
                 <input type="hidden" name="category" value="<?= e($activeCategory) ?>">
             <?php endif; ?>
 
             <div class="catalog-search">
                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" width="16" height="16" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg>
-                <input type="text" name="q" value="<?= e($searchQuery) ?>" placeholder="<?= e(trans('common.search')) ?>" class="catalog-search-input" aria-label="<?= e(trans('common.search')) ?>">
+                <input type="text" name="q" value="<?= e($searchQuery) ?>" placeholder="<?= e(trans('common.search')) ?>" class="catalog-search-input" data-livesearch-input data-locale="<?= e($locale) ?>" autocomplete="off" aria-label="<?= e(trans('common.search')) ?>">
                 <?php if ($searchQuery !== '' || $activeCategory !== ''): ?>
                     <a href="<?= e(route('products.index')) ?>" class="catalog-clear" aria-label="<?= e(trans('common.cancel')) ?>">&times;</a>
                 <?php endif; ?>
