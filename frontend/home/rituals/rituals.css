@@ -5,12 +5,7 @@
 .rituals-section {
   padding: var(--space-16) 0;
   border-bottom: 1px solid var(--ds-border);
-  background:
-    repeating-linear-gradient(0deg,
-      color-mix(in srgb, var(--ds-primary) 4%, transparent) 0 1px, transparent 1px 56px),
-    repeating-linear-gradient(90deg,
-      color-mix(in srgb, var(--ds-primary) 4%, transparent) 0 1px, transparent 1px 56px),
-    var(--ds-bg);
+  background: var(--ds-bg);
 }
 
 .rituals-grid {

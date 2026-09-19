@@ -85,10 +85,7 @@
   padding: 14px;
   border-radius: var(--radius-lg);
   border: 1px solid var(--ds-border);
-  background:
-    repeating-linear-gradient(90deg,
-      color-mix(in srgb, var(--ds-primary) 4%, transparent) 0 1px, transparent 1px 44px),
-    var(--ds-surface);
+  background: var(--ds-surface);
   box-shadow: var(--shadow-1);
   margin-bottom: 16px;
   animation: catUp 0.6s cubic-bezier(0.16, 1, 0.3, 1) 0.1s both;

@@ -35,10 +35,7 @@
   display: block;
   aspect-ratio: 7 / 5;
   overflow: hidden;
-  background:
-    repeating-linear-gradient(90deg,
-      color-mix(in srgb, var(--ds-primary) 4%, transparent) 0 1px, transparent 1px 44px),
-    var(--ds-bg);
+  background: var(--ds-bg);
 }
 
 .pcard-img {

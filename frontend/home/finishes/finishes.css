@@ -16,11 +16,7 @@
   position: absolute;
   inset: 0;
   background:
-    repeating-linear-gradient(0deg,
-      color-mix(in srgb, var(--lu-mint) 5%, transparent) 0 1px, transparent 1px 56px),
-    repeating-linear-gradient(90deg,
-      color-mix(in srgb, var(--lu-mint) 5%, transparent) 0 1px, transparent 1px 56px),
-    linear-gradient(90deg, color-mix(in srgb, var(--lu-ink-900) 88%, transparent), color-mix(in srgb, var(--lu-ink-900) 72%, transparent) 48%, color-mix(in srgb, var(--lu-ink-900) 88%, transparent)),
+    linear-gradient(90deg, color-mix(in srgb, var(--lu-ink-900) 90%, transparent), color-mix(in srgb, var(--lu-ink-900) 74%, transparent) 48%, color-mix(in srgb, var(--lu-ink-900) 90%, transparent)),
     url('../../../images/lifestyle/luxury-hero.jpg') center / cover;
 }
 

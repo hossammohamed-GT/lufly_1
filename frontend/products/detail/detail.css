@@ -71,10 +71,6 @@
   background:
     radial-gradient(640px 300px at 50% -12%,
       color-mix(in srgb, var(--ds-primary) 7%, transparent), transparent 70%),
-    repeating-linear-gradient(0deg,
-      color-mix(in srgb, var(--ds-primary) 5%, transparent) 0 1px, transparent 1px 44px),
-    repeating-linear-gradient(90deg,
-      color-mix(in srgb, var(--ds-primary) 5%, transparent) 0 1px, transparent 1px 44px),
     var(--ds-surface);
   box-shadow: var(--shadow-1);
   padding: 18px 18px 16px;

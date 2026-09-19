@@ -13,11 +13,7 @@
   background-color: var(--ds-bg);
   background-image:
     radial-gradient(1100px 460px at 12% -8%,
-      color-mix(in srgb, var(--lu-teal-500) 10%, transparent), transparent 68%),
-    repeating-linear-gradient(0deg,
-      color-mix(in srgb, var(--ds-primary) 6%, transparent) 0 1px, transparent 1px 54px),
-    repeating-linear-gradient(90deg,
-      color-mix(in srgb, var(--ds-primary) 6%, transparent) 0 1px, transparent 1px 54px);
+      color-mix(in srgb, var(--lu-teal-500) 10%, transparent), transparent 68%);
   min-height: calc(100svh - var(--luann-h, 0px) - var(--mnav-row1, 64px));
 }
 
