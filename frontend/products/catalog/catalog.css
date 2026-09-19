@@ -224,7 +224,7 @@
 
 .catalog-guide.is-open {
   display: block;
-  margin: 0 12px 12px;
+  margin: 8px 12px 12px;
   animation: catUp 0.28s cubic-bezier(0.16, 1, 0.3, 1) both;
 }
 
@@ -233,9 +233,9 @@
   display: flex;
   align-items: center;
   flex-wrap: wrap;
-  gap: 8px;
-  padding: 0 0 10px;
-  margin-bottom: 10px;
+  gap: 10px;
+  padding: 2px 0 12px;
+  margin-bottom: 12px;
   border-bottom: 1px dashed color-mix(in srgb, var(--ds-primary) 30%, var(--ds-border));
 }
 
@@ -246,13 +246,13 @@
   letter-spacing: 0.18em;
   text-transform: uppercase;
   color: var(--ds-text-muted);
-  margin-inline-end: 2px;
+  margin-inline-end: 6px;
 }
 
 .catalog-scope-btn {
   appearance: none;
   -webkit-appearance: none;
-  padding: 7px 14px;
+  padding: 8px 16px;
   border-radius: 999px;
   border: 1px solid var(--ds-border);
   background: var(--ds-bg);
@@ -437,7 +437,10 @@
   transition: background-color 150ms ease;
 }
 
-.catalog-empty-btn:hover { background: var(--ds-primary-hover); }
+.catalog-empty-btn:hover {
+  background: var(--ds-primary-hover);
+  color: var(--ds-primary-text);
+}
 
 /* ---------- pagination ---------- */
 
