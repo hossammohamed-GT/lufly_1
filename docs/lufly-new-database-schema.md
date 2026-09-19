@@ -13,8 +13,9 @@ This document describes the local MySQL database `lufly_new`.
 | WordPress theme | `avanam` |
 | Child stylesheet | `avanam-stoneware` |
 
-The exact no-data SQL dump is available at
-[`database/schema/lufly_new.sql`](../database/schema/lufly_new.sql).
+The old system lives outside this repository; its structure-only SQL
+dump (`lufly_new.sql`) was removed from the repo during cleanup and is
+not shipped with the native application anymore.
 
 ## Important distinction
 
@@ -245,6 +246,6 @@ WHERE tr.object_id = 123;
 
 ## Generated source
 
-The SQL file in [`database/schema/lufly_new.sql`](../database/schema/lufly_new.sql)
-was exported from the local MySQL server with structure only; it contains no
-product or customer data.
+The structure-only SQL dump was exported from the local MySQL server; it
+contained no product or customer data. It has since been removed from this
+repository (legacy reference only).
