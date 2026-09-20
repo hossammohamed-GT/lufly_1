@@ -259,6 +259,33 @@
     done: exitLoader
   };
 
+  /* ---- Which navigations deserve the full-screen loader? ----
+     Deny-listing product paths was the wrong way round: any route not on the
+     list (categories, search, anything localized) still triggered it. The
+     rule is now an explicit allow-list - only the static pages, home and
+     contact, ever show the loading screen. Everything else is skeleton
+     backed and navigates without it. */
+  var LOADER_PATHS = [
+    'contact',   /* en */
+    'kontakt',   /* cs */
+    'iletisim'   /* tr */
+  ];
+
+  function isHomePath(pathname) {
+    /* home is '' after the locale segment: '/', '/en', '/en/' */
+    var parts = pathname.split('/').filter(function (x) { return x !== ''; });
+    if (parts.length === 0) return true;
+    if (parts.length === 1 && parts[0].length <= 5) return true; /* locale only */
+    return false;
+  }
+
+  function isLoaderPath(pathname) {
+    if (isHomePath(pathname)) return true;
+    var parts = pathname.split('/').filter(function (x) { return x !== ''; });
+    var last = parts[parts.length - 1] || '';
+    return LOADER_PATHS.indexOf(last.toLowerCase()) !== -1;
+  }
+
   /* Listen for window ready.
 
      'load' waits for every image on the page, including the product imagery
@@ -296,11 +323,25 @@
      catalogue, category or product URL must not show the loading screen at
      all, because those pages are skeleton backed. */
   function bootLoader() {
+    /* Never let an unexpected error here leave body.ld-loading applied: that
+       class sets overflow:hidden, so a throw at boot freezes the whole site. */
+    try {
+      bootLoaderInner();
+    } catch (err) {
+      releasePage();
+    }
+  }
+
+  function releasePage() {
+    if (loader) loader.style.display = 'none';
+    document.body.classList.remove('ld-loading');
+    document.body.classList.add('ready');
+    isExited = true;
+  }
+
+  function bootLoaderInner() {
     if (!isLoaderPath(window.location.pathname)) {
-      loader.style.display = 'none';
-      document.body.classList.remove('ld-loading');
-      document.body.classList.add('ready');
-      isExited = true;
+      releasePage();
       return;
     }
     startInitialSequence();
@@ -313,33 +354,6 @@
     document.addEventListener('DOMContentLoaded', bootLoader);
   } else {
     bootLoader();
-  }
-
-  /* ---- Which navigations deserve the full-screen loader? ----
-     Deny-listing product paths was the wrong way round: any route not on the
-     list (categories, search, anything localized) still triggered it. The
-     rule is now an explicit allow-list - only the static pages, home and
-     contact, ever show the loading screen. Everything else is skeleton
-     backed and navigates without it. */
-  var LOADER_PATHS = [
-    'contact',   /* en */
-    'kontakt',   /* cs */
-    'iletisim'   /* tr */
-  ];
-
-  function isHomePath(pathname) {
-    /* home is '' after the locale segment: '/', '/en', '/en/' */
-    var parts = pathname.split('/').filter(function (x) { return x !== ''; });
-    if (parts.length === 0) return true;
-    if (parts.length === 1 && parts[0].length <= 5) return true; /* locale only */
-    return false;
-  }
-
-  function isLoaderPath(pathname) {
-    if (isHomePath(pathname)) return true;
-    var parts = pathname.split('/').filter(function (x) { return x !== ''; });
-    var last = parts[parts.length - 1] || '';
-    return LOADER_PATHS.indexOf(last.toLowerCase()) !== -1;
   }
 
   function isLightNavigation(url, link) {
