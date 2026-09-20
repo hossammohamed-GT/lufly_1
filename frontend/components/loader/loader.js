@@ -255,13 +255,27 @@
     setTimeout(markLoaded, 400);
   }
 
+  /* The same allow-list governs the first paint: landing directly on a
+     catalogue, category or product URL must not show the loading screen at
+     all, because those pages are skeleton backed. */
+  function bootLoader() {
+    if (!isLoaderPath(window.location.pathname)) {
+      loader.style.display = 'none';
+      document.body.classList.remove('ld-loading');
+      document.body.classList.add('ready');
+      isExited = true;
+      return;
+    }
+    startInitialSequence();
+  }
+
   if (document.readyState === 'complete') {
     pageLoaded = true;
-    startInitialSequence();
+    bootLoader();
   } else if (document.readyState === 'loading') {
-    document.addEventListener('DOMContentLoaded', startInitialSequence);
+    document.addEventListener('DOMContentLoaded', bootLoader);
   } else {
-    startInitialSequence();
+    bootLoader();
   }
 
   /* ---- Which navigations deserve the full-screen loader? ----

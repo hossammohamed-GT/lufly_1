@@ -13,3 +13,7 @@ Thumbs.db
 !/storage/backups/.gitkeep
 .vercel
 .env*
+
+# Python bytecode from the import tooling
+__pycache__/
+*.py[cod]
