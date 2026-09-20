@@ -120,11 +120,10 @@
 
 /* drawings get the blueprint treatment: paper-white ground, a ruled
    border and a title block, so the tab label is not the only clue */
+/* plain paper ground: the ruled grid I had here was a pattern used nowhere
+   else on the site, so it read as a glitch rather than as blueprint paper */
 .pdp-frameplate-drawing {
-  background:
-    linear-gradient(0deg, rgba(0, 0, 0, 0.035) 1px, transparent 1px) 0 0 / 100% 28px,
-    linear-gradient(90deg, rgba(0, 0, 0, 0.035) 1px, transparent 1px) 0 0 / 28px 100%,
-    #fdfdfb;
+  background: #ffffff;
   border: 1px solid var(--ds-border);
   padding: 18px 18px 46px;
 }

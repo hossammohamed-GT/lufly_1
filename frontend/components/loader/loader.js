@@ -265,10 +265,31 @@
   }
 
   /* ---- Which navigations deserve the full-screen loader? ----
-     Anything product related is skeleton-backed, so showing the preloader on
-     top of it would be two loading states for one action. Everything else
-     (home, corporate pages, contact) is static and genuinely benefits. */
-  var SKELETON_PATHS = /(\/products?\b|\/katalog|\/produkty|\/urunler)/i;
+     Deny-listing product paths was the wrong way round: any route not on the
+     list (categories, search, anything localized) still triggered it. The
+     rule is now an explicit allow-list - only the static pages, home and
+     contact, ever show the loading screen. Everything else is skeleton
+     backed and navigates without it. */
+  var LOADER_PATHS = [
+    'contact',   /* en */
+    'kontakt',   /* cs */
+    'iletisim'   /* tr */
+  ];
+
+  function isHomePath(pathname) {
+    /* home is '' after the locale segment: '/', '/en', '/en/' */
+    var parts = pathname.split('/').filter(function (x) { return x !== ''; });
+    if (parts.length === 0) return true;
+    if (parts.length === 1 && parts[0].length <= 5) return true; /* locale only */
+    return false;
+  }
+
+  function isLoaderPath(pathname) {
+    if (isHomePath(pathname)) return true;
+    var parts = pathname.split('/').filter(function (x) { return x !== ''; });
+    var last = parts[parts.length - 1] || '';
+    return LOADER_PATHS.indexOf(last.toLowerCase()) !== -1;
+  }
 
   function isLightNavigation(url, link) {
     if (link && link.hasAttribute('data-loader-skip')) return true;
@@ -277,7 +298,8 @@
     /* pagination, filtering and sorting on the current page */
     if (url.pathname === window.location.pathname) return true;
 
-    return SKELETON_PATHS.test(url.pathname);
+    /* anything that is not home or contact skips the loader */
+    return !isLoaderPath(url.pathname);
   }
 
   /* ---- Auto-wire: link clicks ---- */
@@ -320,9 +342,15 @@
     if (!form || form.target === '_blank' || e.defaultPrevented) return;
     if (form.hasAttribute('data-loader-skip')) return;
 
-    /* catalogue search/filter forms are skeleton-backed */
+    /* only forms that post to a loader page (i.e. contact) show it */
     var action = form.getAttribute('action') || window.location.pathname;
-    if (SKELETON_PATHS.test(action)) return;
+    var actionPath;
+    try {
+      actionPath = new URL(action, window.location.href).pathname;
+    } catch (err) {
+      actionPath = window.location.pathname;
+    }
+    if (!isLoaderPath(actionPath)) return;
     var submitMsg = locale === 'tr' ? 'İşleminiz gerçekleştiriliyor' :
                     locale === 'cs' ? 'Zpracováváme požadavek' : 'Processing request';
     showLoader(submitMsg, true);
