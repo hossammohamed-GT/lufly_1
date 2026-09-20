@@ -55,9 +55,12 @@
   var reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
   /* T_DRAW now covers the "building the brand" assembly (seed dot, glyph
      pieces fly in, settle) before the water-fill progress phase starts. */
-  var T_DRAW   = reduced ? 60 : 1700;
-  var T_HOLD   = reduced ? 80 : 180;
-  var T_SEAL   = reduced ? 0 : 160;
+  /* These used to total ~2s of mandatory animation before the page could be
+     revealed, which by itself reads as a freeze. The assembly is now clipped
+     to a length that still shows the brand without holding the site hostage. */
+  var T_DRAW   = reduced ? 60 : 700;
+  var T_HOLD   = reduced ? 60 : 90;
+  var T_SEAL   = reduced ? 0 : 120;
 
   if (reduced) loader.classList.add('ld-reduced');
 
@@ -131,7 +134,7 @@
     /* Hard ceiling. Whatever happens - a stalled font promise, a blocked
        resource, an image that never fires load - the loader must come down.
        A stuck splash screen is far worse than an early one. */
-    var HARD_STOP = reduced ? 1200 : 6000;
+    var HARD_STOP = reduced ? 800 : 2500;
     setTimeout(finish, HARD_STOP);
 
     function frame(now) {
@@ -266,13 +269,28 @@
      fill in behind their glass placeholders. */
   function markLoaded() { pageLoaded = true; }
 
+  /* Deliberately NOT gated on window 'load'. That event waits for every image
+     on the page - the home page alone carries megabytes of photography - so
+     using it meant the splash screen stayed up until the last byte arrived.
+     The DOM being ready is what actually matters for revealing the layout;
+     images fade in behind their skeletons afterwards.
+
+     'load' and fonts.ready are kept purely as early signals, never as the
+     only path, and a short timer guarantees the flag flips regardless. */
   window.addEventListener('load', markLoaded);
 
   if (document.fonts && document.fonts.ready && typeof document.fonts.ready.then === 'function') {
-    document.fonts.ready.then(markLoaded);
-  } else {
-    setTimeout(markLoaded, 400);
+    document.fonts.ready.then(markLoaded).catch(markLoaded);
   }
+
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', markLoaded);
+  } else {
+    markLoaded();
+  }
+
+  /* absolute backstop */
+  setTimeout(markLoaded, 1200);
 
   /* The same allow-list governs the first paint: landing directly on a
      catalogue, category or product URL must not show the loading screen at

@@ -41,7 +41,7 @@ $searchTerms = ['Bath Mixer', 'Washbasin Mixer', 'Washbasin', 'Sink Mixer'];
                     <rect class="inspiration-trace-rect" x="0" y="0" width="100%" height="100%" rx="10" pathLength="1" />
                 </svg>
                 <div class="inspiration-img-wrap">
-                    <img src="<?= e(asset('images/lifestyle/modern-bathroom.png')) ?>" alt="<?= e(trans('home.inspiration_2_title')) ?>" loading="lazy" decoding="async" class="inspiration-img">
+                    <img src="<?= e(asset('images/lifestyle/modern-bathroom.jpg')) ?>" alt="<?= e(trans('home.inspiration_2_title')) ?>" loading="lazy" decoding="async" class="inspiration-img">
                 </div>
                 <div class="inspiration-body">
                     <span class="inspiration-tag"><?= e(trans('home.inspiration_2_tag')) ?></span>
@@ -58,7 +58,7 @@ $searchTerms = ['Bath Mixer', 'Washbasin Mixer', 'Washbasin', 'Sink Mixer'];
                     <rect class="inspiration-trace-rect" x="0" y="0" width="100%" height="100%" rx="10" pathLength="1" />
                 </svg>
                 <div class="inspiration-img-wrap">
-                    <img src="<?= e(asset('images/lifestyle/minimal-basin.png')) ?>" alt="<?= e(trans('home.inspiration_3_title')) ?>" loading="lazy" decoding="async" class="inspiration-img">
+                    <img src="<?= e(asset('images/lifestyle/minimal-basin.jpg')) ?>" alt="<?= e(trans('home.inspiration_3_title')) ?>" loading="lazy" decoding="async" class="inspiration-img">
                 </div>
                 <div class="inspiration-body">
                     <span class="inspiration-tag"><?= e(trans('home.inspiration_3_tag')) ?></span>
@@ -75,7 +75,7 @@ $searchTerms = ['Bath Mixer', 'Washbasin Mixer', 'Washbasin', 'Sink Mixer'];
                     <rect class="inspiration-trace-rect" x="0" y="0" width="100%" height="100%" rx="10" pathLength="1" />
                 </svg>
                 <div class="inspiration-img-wrap">
-                    <img src="<?= e(asset('images/lifestyle/kitchen-suite.png')) ?>" alt="<?= e(trans('home.inspiration_4_title')) ?>" loading="lazy" decoding="async" class="inspiration-img">
+                    <img src="<?= e(asset('images/lifestyle/kitchen-suite.jpg')) ?>" alt="<?= e(trans('home.inspiration_4_title')) ?>" loading="lazy" decoding="async" class="inspiration-img">
                 </div>
                 <div class="inspiration-body">
                     <span class="inspiration-tag"><?= e(trans('home.inspiration_4_tag')) ?></span>
