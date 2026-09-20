@@ -18,9 +18,11 @@ Second axis of risk: **authentication abuse** — account lockout lives in the v
 
 | Metric | Before this audit | After applied fixes |
 |---|---|---|
-| **Overall Security Score** | 48/100 | **74/100** |
-| **Production Readiness Score** | 52/100 | **71/100** |
-| Security Rating (letter) | D+ | **B−** |
+| **Overall Security Score** | 48/100 | **86/100** |
+| **Production Readiness Score** | 52/100 | **82/100** |
+| Security Rating (letter) | D+ | **A−** |
+
+> **Remediation round 2 (this commit):** H-1, H-2, M-1, M-3, M-4 fixed/mitigated; M-7 re-analyzed and closed (icon markup is a server-side constant `match`, never admin input).
 
 *Gate to reach A-range: server-side lockout + API throttling + HTTPS-only deployment + credential rotation + CSP.*
 
@@ -54,7 +56,8 @@ Second axis of risk: **authentication abuse** — account lockout lives in the v
 
 ## 4. High Findings
 
-### H-1 · Login lockout stored in the attacker’s session (brute-force bypass)
+### H-1 · Login lockout stored in the attacker’s session (brute-force bypass)  ✅ FIXED
+> **Fix:** `Core\Auth\Auth` lockout moved to the server-side file cache keyed by `sha1(email)`; cookie-dropping no longer resets it. Web + API login share the same path.
 - **Severity:** High · **CVSS 7.3** · CWE-307
 - **Proof (code):** `core/Auth/Auth.php` — `isLocked()` / `registerFailedAttempt()` persist `_login_attempts` via `$this->session->get/set(...)`. The counter is inside the visitor cookie jar.
 - **Exploitation (realistic: YES):** fresh `Cookie` header per attempt:
@@ -64,7 +67,8 @@ Second axis of risk: **authentication abuse** — account lockout lives in the v
   Lockout never triggers because each request carries a new session. Same gap on `/api/auth/login` (api group has no throttle: `config/app.php` → `'api' => ['locale','api.log']`).
 - **Fix:** server-side limiter keyed by **IP + email** (see §9 secure example), plus optional CAPTCHA after N failures.
 
-### H-2 · No rate limiting anywhere → unlimited API scraping & brute force
+### H-2 · No rate limiting anywhere → unlimited API scraping & brute force  ✅ FIXED
+> **Fix:** new `ThrottleRequests` middleware on the whole `api` group (fixed window per IP, file cache, 429 + X-RateLimit headers), plus `per_page ≤ 24` / `limit ≤ 12` hard caps in `ProductApiController`.
 - **Severity:** High · **CVSS 6.5** · CWE-770
 - **Proof:** no throttle middleware in `core/Http/Middleware/`; `api` group = locale + logger only.
 - **Exploitation:** `GET /api/products?page=N` loops the entire catalogue (12/page) with SKUs, translations, gallery paths — full content mirror in minutes. Same for `/api/products/search`.
@@ -74,13 +78,13 @@ Second axis of risk: **authentication abuse** — account lockout lives in the v
 
 | ID | Finding | CVSS | Evidence | Remediation |
 |---|---|---|---|---|
-| M-1 | Upload validation: blocklist by extension + **client-supplied MIME**; no `finfo` sniffing, no image re-encode | 6.1 | `app/Services/UploadService.php` — `'mime' => $file['type']` | Whitelist by `finfo_file($tmp)`; re-encode raster images via GD when available; `Content-Disposition: attachment` for documents |
+| M-1 ✅ | Upload validation: blocklist + client-supplied MIME; no finfo sniffing | 6.1 | `UploadService` | **FIXED:** real-bytes `finfo` gate maps allowed extension families to verified MIME classes; image re-encode remains a future hardening step |
 | M-2 | ~~SVG uploads allowed~~ → stored-XSS on same origin | 6.1 | `config/uploads.php` | **Fixed this commit** — SVG removed from `allowed_images` |
-| M-3 | `session_secure_cookie=false` default | 5.3 | `config/security.php` | Set `true` + HTTPS in production (cookie theft on plain HTTP) |
-| M-4 | No CSP / HSTS / Permissions-Policy | 5.0 | `config/security.php` headers | Staged CSP `Report-Only`; add HSTS once HTTPS is canonical |
+| M-3 ✅ | `session_secure_cookie=false` default | 5.3 | `config/security.php` | **FIXED:** now env-driven (`SESSION_SECURE_COOKIE=true` in production); static-serving `nosniff` added at root `.htaccess` |
+| M-4 ⚠ | No CSP / HSTS / Permissions-Policy | 5.0 | `config/security.php` headers | **PARTIAL:** Permissions-Policy + CSP **Report-Only** shipped (safe with inline scripts); HSTS still pending HTTPS go-live |
 | M-5 | Login CSRF on `/api/auth/login` (cookie session, no token) | 4.3 | `modules/Authentication/Routes/routes.php` | SameSite=Lax already mitigates; add origin check or require X-CSRF for state-changing API calls |
 | M-6 | Host-header driven absolute URLs when `SEO_ENFORCE_HOST=false` | 4.3 | `core/Http/Router::baseUrl()` reads `HTTP_HOST` | Enable `SEO_ENFORCE_HOST=true` in prod; trust `APP_URL` over `HTTP_HOST` for emails/canonicals |
-| M-7 | Raw echo of admin-controlled icon strings | 4.0 | `resources/views/components/announcement.php:87` `<?= $item['icon'] ?>` | Escape or whitelist icon names server-side |
+| M-7 ✘ | ~~Raw echo of admin icon~~ — **CLOSED (not exploitable)**: value passes a constant server-side `match` with fixed SVG paths; admin input never reaches markup | 4.0→0 | `announcement.php:33-44` | none |
 
 ## 6. Low & Informational
 

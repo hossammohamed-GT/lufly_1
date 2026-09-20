@@ -27,6 +27,7 @@ class UploadService
         $original = (string) ($file['name'] ?? 'file');
         $extension = strtolower(pathinfo($original, PATHINFO_EXTENSION));
         $this->assertAllowedExtension($extension);
+        $this->assertRealMimeMatches((string) ($file['tmp_name'] ?? ''), $extension);
 
         $maxKb = (int) config('uploads.max_size_kb', 10240);
         $sizeKb = ((int) ($file['size'] ?? 0)) / 1024;
@@ -73,6 +74,46 @@ class UploadService
         }
         if ($error !== UPLOAD_ERR_OK) {
             throw new UploadException(trans('errors.upload_php_error', ['code' => (string) $error]));
+        }
+    }
+
+    /**
+     * Server-side content sniffing (audit M-1): the client-supplied
+     * $_FILES['type'] is untrusted; finfo reads the actual bytes and the
+     * real MIME must be coherent with the claimed extension.
+     */
+    private function assertRealMimeMatches(string $tmpName, string $extension): void
+    {
+        if ($tmpName === '' || !is_file($tmpName)) {
+            throw new UploadException(trans('errors.upload_missing'));
+        }
+        if (!class_exists(\finfo::class)) {
+            return; /* fileinfo ext disabled: extension allowlist still applies */
+        }
+
+        $real = (string) ((new \finfo(FILEINFO_MIME_TYPE))->file($tmpName) ?: '');
+
+        $imageMimes = ['image/jpeg', 'image/png', 'image/gif', 'image/webp'];
+        $officeMimes = [
+            'application/msword', 'application/vnd.ms-excel', 'application/pdf',
+            'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
+            'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+            'application/zip', 'application/x-zip', 'application/x-cfb',
+            'application/vnd.ms-office', 'text/plain', 'text/csv', 'application/octet-stream',
+        ];
+
+        $ok = match (true) {
+            in_array($extension, (array) config('uploads.allowed_images', []), true)
+                => in_array($real, $imageMimes, true),
+            in_array($extension, (array) config('uploads.allowed_documents', []), true)
+                => in_array($real, $officeMimes, true) || str_starts_with($real, 'text/'),
+            in_array($extension, (array) config('uploads.allowed_videos', []), true)
+                => str_starts_with($real, 'video/') || $real === 'application/octet-stream',
+            default => false,
+        };
+
+        if (!$ok) {
+            throw new UploadException(trans('errors.upload_type_blocked'));
         }
     }
 

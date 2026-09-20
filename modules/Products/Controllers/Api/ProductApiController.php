@@ -21,11 +21,15 @@ class ProductApiController extends Controller
 
     public function index(Request $request): JsonResponse
     {
+        /* hard caps: bulk extraction must stay slow (audit H-2) */
+        $perPage = min(24, max(1, (int) $request->query('per_page', '12')));
+        $page = max(1, (int) $request->query('page', '1'));
+
         $paginator = $this->products->paginate([
             'locale' => (string) $request->query('locale', $this->translator->getLocale()),
             'status' => (string) $request->query('status', 'active'),
             'search' => (string) $request->query('q', ''),
-        ], (int) $request->query('page', '1'), (int) $request->query('per_page', '10'));
+        ], $page, $perPage);
 
         $items = array_map(
             fn ($product) => $product->translate((string) $request->query('locale', $this->translator->getLocale())),
@@ -39,7 +43,7 @@ class ProductApiController extends Controller
     {
         $locale = (string) $request->query('locale', $this->translator->getLocale());
         $query = trim((string) $request->query('q', ''));
-        $limit = max(1, (int) $request->query('limit', '8'));
+        $limit = min(12, max(1, (int) $request->query('limit', '8')));
         $category = trim((string) $request->query('category', ''));
         if (!preg_match('/^[a-z0-9-]{1,150}$/', $category)) {
             $category = '';

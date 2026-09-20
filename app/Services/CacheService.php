@@ -63,6 +63,14 @@ class CacheService
         return is_file($path) ? unlink($path) : true;
     }
 
+    /** Atomic-ish increment inside a fixed window (LOCK_EX in set()). */
+    public function incrementWindow(string $key, int $ttlSeconds): int
+    {
+        $count = (int) $this->get($key, 0) + 1;
+        $this->set($key, $count, $ttlSeconds);
+        return $count;
+    }
+
     public function flush(): void
     {
         foreach ((array) glob($this->app->storagePath('cache/*.cache')) as $file) {

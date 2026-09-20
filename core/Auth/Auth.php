@@ -18,6 +18,7 @@ class Auth
     public function __construct(
         private readonly Session $session,
         private readonly UserProviderInterface $users,
+        private readonly \App\Services\CacheService $cache,
     ) {
     }
 
@@ -96,10 +97,17 @@ class Auth
         $this->cachedPermissions = null;
     }
 
+    /* Lockout state lives in the server-side cache (file driver), keyed by
+       email. Storing it in the visitor session - as before - let an attacker
+       bypass the lock simply by discarding cookies. */
+    private function attemptsKey(string $email): string
+    {
+        return 'login_attempts:' . sha1(mb_strtolower(trim($email)));
+    }
+
     private function isLocked(string $email): bool
     {
-        $attempts = (array) $this->session->get('_login_attempts', []);
-        $entry = $attempts[$email] ?? null;
+        $entry = $this->cache->get($this->attemptsKey($email));
 
         return is_array($entry)
             && ($entry['count'] ?? 0) >= (int) config('security.login_max_attempts', 5)
@@ -108,23 +116,24 @@ class Auth
 
     private function registerFailedAttempt(string $email): void
     {
-        $attempts = (array) $this->session->get('_login_attempts', []);
-        $count = (int) (($attempts[$email]['count'] ?? 0) + 1);
+        $entry = $this->cache->get($this->attemptsKey($email), ['count' => 0, 'locked_until' => 0]);
+        if (!is_array($entry)) {
+            $entry = ['count' => 0, 'locked_until' => 0];
+        }
 
-        $attempts[$email] = [
+        $lockout = (int) config('security.login_lockout_seconds', 300);
+        $count = (int) ($entry['count'] ?? 0) + 1;
+
+        $this->cache->set($this->attemptsKey($email), [
             'count' => $count,
             'locked_until' => $count >= (int) config('security.login_max_attempts', 5)
-                ? time() + (int) config('security.login_lockout_seconds', 300)
+                ? time() + $lockout
                 : 0,
-        ];
-
-        $this->session->set('_login_attempts', $attempts);
+        ], max(300, $lockout + 300));
     }
 
     private function clearAttempts(string $email): void
     {
-        $attempts = (array) $this->session->get('_login_attempts', []);
-        unset($attempts[$email]);
-        $this->session->set('_login_attempts', $attempts);
+        $this->cache->forget($this->attemptsKey($email));
     }
 }

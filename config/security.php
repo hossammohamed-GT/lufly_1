@@ -9,14 +9,19 @@ return [
     'login_lockout_seconds' => (int) env('SECURITY_LOGIN_LOCKOUT_SECONDS', 300),
 
     'session_name' => 'lufly_session',
-    'session_lifetime' => (int) env('SESSION_LIFETIME', 7200),
-    'session_secure_cookie' => false,
+    'session_lifetime' => (int) env('SESSION_LIFETIME', 3600),
+    /* Set SESSION_SECURE_COOKIE=true together with HTTPS in production;
+       a Secure cookie over plain http would break local logins. */
+    'session_secure_cookie' => (bool) env('SESSION_SECURE_COOKIE', false),
 
     'headers' => [
         'X-Frame-Options' => 'SAMEORIGIN',
         'X-Content-Type-Options' => 'nosniff',
         'Referrer-Policy' => 'strict-origin-when-cross-origin',
-        'X-XSS-Protection' => '1; mode=block',
+        'Permissions-Policy' => 'camera=(), microphone=(), geolocation=()',
+        /* Report-Only: collects violations without breaking the inline theme
+           bootstrap / JSON-LD. Promote to enforcing CSP after a report cycle. */
+        'Content-Security-Policy-Report-Only' => "default-src 'self'; img-src 'self' data: https:; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; script-src 'self' 'unsafe-inline'; connect-src 'self'; frame-ancestors 'self'; base-uri 'self'; form-action 'self' https://wa.me",
     ],
 
     'uploads' => [

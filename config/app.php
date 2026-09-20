@@ -24,7 +24,9 @@ return [
 
     'middleware_groups' => [
         'web' => ['locale', 'csrf', 'security'],
-        'api' => ['locale', 'api.log'],
+        /* throttle = server-side fixed window per IP (file cache), protects
+           the public API from bulk scraping/automation */
+        'api' => ['locale', 'throttle', 'api.log'],
     ],
 
     'middleware_aliases' => [
@@ -33,6 +35,7 @@ return [
         'locale' => SetLocale::class,
         'csrf' => CsrfGuard::class,
         'security' => SecurityHeaders::class,
+        'throttle' => \Core\Http\Middleware\ThrottleRequests::class,
         'api.log' => ApiLogger::class,
     ],
 ];

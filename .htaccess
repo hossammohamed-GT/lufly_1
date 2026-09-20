@@ -1,6 +1,12 @@
 Options -Indexes
 RewriteEngine On
 
+<IfModule mod_headers.c>
+    # Static assets (uploads, frontend) bypass the PHP middleware, so give
+    # them the content-sniffing protection here at web-server level.
+    Header always set X-Content-Type-Options "nosniff"
+</IfModule>
+
 # ---------------------------------------------------------------------
 # SECURITY (2026-09-20 audit): the repo root IS the web root here, so any
 # real file below it was downloadable over HTTP. Deny credentials,
