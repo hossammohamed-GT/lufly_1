@@ -171,11 +171,13 @@
 }
 
 /* responsive handled by the grids that host the cards */
+
+/* Phone: ONE card per row (readable) with a notably larger photo. */
 @media (max-width: 620px) {
-  .catalog-grid { grid-template-columns: 1fr 1fr; gap: 10px; }
-  .pcard-body { padding: 11px 12px 13px; }
-  .pcard-desc { display: none; }
-  .pcard-title { font-size: 13px; }
+  .catalog-grid { grid-template-columns: 1fr; gap: 14px; }
+  .pcard-media { aspect-ratio: 4 / 3; }
+  .pcard-body { padding: 12px 14px 14px; }
+  .pcard-title { font-size: 15px; }
   .pcard-hint { display: none; }
 }
 

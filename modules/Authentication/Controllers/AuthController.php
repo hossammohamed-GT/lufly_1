@@ -39,6 +39,11 @@ class AuthController extends Controller
         $data = (new LoginRequest())->handle($request);
 
         if (!$this->auth->attempt($data['email'], $data['password'])) {
+            \Core\Logging\Log::channel('security')->warning('Login failed', [
+                'email' => $data['email'],
+                'ip' => $request->ip(),
+            ]);
+
             if ($request->expectsJson()) {
                 throw new AuthenticationException(trans('auth.failed'));
             }

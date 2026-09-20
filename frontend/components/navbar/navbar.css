@@ -526,6 +526,7 @@
   background: var(--ds-primary-soft);
   color: var(--ds-primary);
   font-weight: var(--weight-bold);
+  cursor: default;
 }
 
 .mnav-lang-name { flex: 1; }
@@ -1443,6 +1444,7 @@
   border-color: var(--ds-nav-line);
   background: var(--ds-primary-soft);
   color: var(--ds-primary);
+  cursor: default;
 }
 
 /* ---------- 9. focus + fallbacks ---------- */
