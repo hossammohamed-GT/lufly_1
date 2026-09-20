@@ -463,7 +463,7 @@ CREATE TABLE `product_attribute_values` (
     KEY product_attribute_values_attribute_id_index (`attribute_id`),
     `attribute_option_id` BIGINT UNSIGNED NULL,
     `custom_value` VARCHAR(255) NULL,
-    UNIQUE KEY product_attribute_values_product_id_variant_id_attribute_id_attribute_option_id_unique (`product_id`, `variant_id`, `attribute_id`, `attribute_option_id`),
+    UNIQUE KEY product_attribute_values_product_id_variant_id_attrib_f489b387e3 (`product_id`, `variant_id`, `attribute_id`, `attribute_option_id`),
     FOREIGN KEY (`product_id`) REFERENCES `products` (`id`) ON DELETE CASCADE,
     FOREIGN KEY (`variant_id`) REFERENCES `product_variants` (`id`) ON DELETE CASCADE,
     FOREIGN KEY (`attribute_id`) REFERENCES `attributes` (`id`) ON DELETE CASCADE,
@@ -553,7 +553,7 @@ CREATE TABLE `product_relations` (
     `related_product_id` BIGINT UNSIGNED NOT NULL,
     KEY product_relations_related_product_id_index (`related_product_id`),
     `relation_type` VARCHAR(50) NOT NULL DEFAULT 'related',
-    UNIQUE KEY product_relations_product_id_related_product_id_relation_type_unique (`product_id`, `related_product_id`, `relation_type`),
+    UNIQUE KEY product_relations_product_id_related_product_id_relat_104bd1c391 (`product_id`, `related_product_id`, `relation_type`),
     FOREIGN KEY (`product_id`) REFERENCES `products` (`id`) ON DELETE CASCADE,
     FOREIGN KEY (`related_product_id`) REFERENCES `products` (`id`) ON DELETE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
