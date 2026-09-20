@@ -40,8 +40,12 @@ $kicker = $kickers[$locale] ?? $kickers['en'];
 $tag = $tags[$locale] ?? $tags['en'];
 $msg = $msgs[$locale] ?? $msgs['en'];
 $foot = $foots[$locale] ?? $foots['en'];
+
+/* Deployment base path ('/lufly_1' when served from a sub-folder, '' at a
+   domain root) so the JS can classify URLs correctly anywhere. */
+$basePath = rtrim((string) (parse_url((string) config('app.url'), PHP_URL_PATH) ?? ''), '/');
 ?>
-<div class="ld-loader is-initial" id="ldLoader" role="status" aria-label="Loading">
+<div class="ld-loader is-initial" id="ldLoader" role="status" aria-label="Loading" data-base="<?= e($basePath) ?>">
     <div class="ld-blob a"></div>
     <div class="ld-blob b"></div>
     <div class="ld-vignette"></div>

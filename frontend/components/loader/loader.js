@@ -52,6 +52,19 @@
 
   if (!loader) return;
 
+  /* The app may be deployed under a sub-directory (XAMPP: /lufly_1/). Strip
+     that base before classifying URLs - otherwise home (/lufly_1/en) never
+     matches the home rule and the loader is skipped (shows a lone seed dot
+     and vanishes). */
+  var basePath = (loader.getAttribute('data-base') || '').replace(/\/+$/, '');
+  function stripBase(pathname) {
+    if (basePath && pathname.toLowerCase().indexOf(basePath.toLowerCase()) === 0) {
+      var rest = pathname.slice(basePath.length);
+      return rest === '' ? '/' : rest;
+    }
+    return pathname;
+  }
+
   var reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
   /* T_DRAW now covers the "building the brand" assembly (seed dot, glyph
      pieces fly in, settle) before the water-fill progress phase starts. */
@@ -340,7 +353,7 @@
   }
 
   function bootLoaderInner() {
-    if (!isLoaderPath(window.location.pathname)) {
+    if (!isLoaderPath(stripBase(window.location.pathname))) {
       releasePage();
       return;
     }
@@ -364,7 +377,7 @@
     if (url.pathname === window.location.pathname) return true;
 
     /* anything that is not home or contact skips the loader */
-    return !isLoaderPath(url.pathname);
+    return !isLoaderPath(stripBase(url.pathname));
   }
 
   /* ---- Auto-wire: link clicks ---- */
