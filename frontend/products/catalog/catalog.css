@@ -502,6 +502,7 @@
 
 @media (max-width: 620px) {
   .catalog { padding-block: 18px 56px; }
+  .catalog-grid { grid-template-columns: 1fr; gap: 14px; }
   .catalog-searchform { padding: 11px; }
   .catalog-guide.is-open { margin: 0 11px 11px; }
   .catalog-sort { display: none; }
