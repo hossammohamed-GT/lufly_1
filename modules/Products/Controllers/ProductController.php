@@ -79,6 +79,45 @@ class ProductController extends Controller
         $this->seo->setDescription($catalogDescs[$locale] ?? $catalogDescs['en']);
         $this->seo->setCanonical(route('products.index'));
 
+        /* Faceted states (filters, search, sorting, pagination) share the
+           canonical of the clean catalogue URL and stay out of the index:
+           crawlers may follow them, but only one catalog page ranks. */
+        $isFaceted = $categorySlug !== '' || $categoryId > 0 || $searchQuery !== ''
+            || $sort !== 'newest' || (int) $request->query('page', '1') > 1;
+        if ($isFaceted) {
+            $this->seo->setRobots('noindex, follow');
+        }
+        $this->seo->setAlternatesFor('products.index');
+
+        if (!$isFaceted) {
+            /* ItemList rich result for the first visible products. */
+            $listItems = [];
+            foreach (array_slice($paginator->items(), 0, 20) as $item) {
+                $translated = is_object($item) && method_exists($item, 'translate')
+                    ? $item->translate($locale)
+                    : (array) $item;
+                $slug = (string) ($translated['slug'] ?? '');
+                if ($slug === '') {
+                    continue;
+                }
+                $listItems[] = [
+                    'url' => route('products.show', ['slug' => $slug]),
+                    'name' => (string) ($translated['name'] ?? $slug),
+                    'image' => !empty($translated['image']) ? asset((string) $translated['image']) : null,
+                ];
+            }
+            if ($listItems !== []) {
+                $this->seo->addItemListSchema($listItems, $pageTitle);
+            }
+            $this->seo->addWebPageSchema([
+                'type' => 'CollectionPage',
+                'name' => $pageTitle,
+                'description' => $catalogDescs[$locale] ?? $catalogDescs['en'],
+                'url' => route('products.index'),
+                'inLanguage' => $locale,
+            ]);
+        }
+
         return $this->view('products::index', [
             'title' => $pageTitle,
             'paginator' => $paginator,
@@ -112,15 +151,33 @@ class ProductController extends Controller
         $productName = (string) ($product['name'] ?? 'LUFLY Architectural Fixture');
         $productDesc = (string) ($product['short_description'] ?? $product['description'] ?? '');
 
+        $canonical = route('products.show', ['slug' => $product['slug'] ?? $slug]);
+
         $this->seo->setTitle($productName);
         $this->seo->setDescription($productDesc);
         $this->seo->setFromEntity($product);
-        $this->seo->setCanonical(route('products.show', ['slug' => $product['slug'] ?? $slug]));
+        $this->seo->setCanonical($canonical);
         $this->seo->setType('product');
+        $this->seo->setAlternatesFor('products.show', ['slug' => $product['slug'] ?? $slug]);
 
-        if (!empty($product['image'])) {
-            $this->seo->setImage(asset($product['image']));
-        }
+        /* share card: dynamically rendered OG image carrying the product name */
+        $this->seo->setImage(route('seo.ogimage', [
+            'title' => $productName,
+            'subtitle' => $product['category_slug'] !== '' ? 'LUFLY ' . ucfirst((string) $product['category_slug']) : 'LUFLY',
+        ]));
+
+        $this->seo->addProductSchema($product, $canonical);
+        $this->seo->addWebPageSchema([
+            'name' => $productName,
+            'description' => $productDesc,
+            'url' => $canonical,
+            'inLanguage' => $locale,
+        ]);
+        $this->seo->addBreadcrumb([
+            ['name' => 'LUFLY', 'url' => route('home')],
+            ['name' => trans('products.title'), 'url' => route('products.index')],
+            ['name' => $productName, 'url' => $canonical],
+        ]);
 
         return $this->view('products::show', [
             'title' => $productName,

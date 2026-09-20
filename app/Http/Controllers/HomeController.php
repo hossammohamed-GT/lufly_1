@@ -100,6 +100,13 @@ class HomeController extends Controller
         $this->seo->setDescription($pageDesc);
         $this->seo->setCanonical(route('home'));
         $this->seo->setImage(asset('/images/lifestyle/heroc-1.webp'));
+        $this->seo->setAlternatesFor('home');
+        $this->seo->addWebPageSchema([
+            'name' => $pageTitle,
+            'description' => $pageDesc,
+            'url' => route('home'),
+            'inLanguage' => $locale,
+        ]);
 
         return $this->view('home.index', [
             'title' => $pageTitle,
@@ -133,6 +140,33 @@ class HomeController extends Controller
         $this->seo->setTitle($pageTitle);
         $this->seo->setDescription($pageDesc);
         $this->seo->setCanonical(route('contact'));
+        $this->seo->setAlternatesFor('contact');
+        $this->seo->addWebPageSchema([
+            'type' => 'ContactPage',
+            'name' => $pageTitle,
+            'description' => $pageDesc,
+            'url' => route('contact'),
+            'inLanguage' => $locale,
+        ]);
+
+        /* FAQ structured data mirrors exactly what the page renders, from the
+           same translation keys, so schema and content can never drift. */
+        $faqs = [];
+        for ($i = 1; $i <= 4; $i++) {
+            $q = trans('contact.faq_' . $i . '_q');
+            $a = trans('contact.faq_' . $i . '_a');
+            if ($q !== 'contact.faq_' . $i . '_q' && $a !== 'contact.faq_' . $i . '_a') {
+                $faqs[] = ['q' => $q, 'a' => $a];
+            }
+        }
+        if ($faqs !== []) {
+            $this->seo->addFaqSchema($faqs);
+        }
+
+        $this->seo->addBreadcrumb([
+            ['name' => 'LUFLY', 'url' => route('home')],
+            ['name' => $pageTitle, 'url' => route('contact')],
+        ]);
 
         return $this->view('contact.index', [
             'title' => $pageTitle,

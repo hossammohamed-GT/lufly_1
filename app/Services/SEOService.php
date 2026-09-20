@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace App\Services;
 
+use App\Services\Seo\UrlLocalizer;
+
 class SEOService
 {
     /** @var array<string, mixed> */
@@ -15,7 +17,7 @@ class SEOService
     /** @var array<int, array{type: string, data: array<string, mixed>}> */
     private array $structured = [];
 
-    public function __construct()
+    public function __construct(private readonly UrlLocalizer $urls)
     {
         $this->meta = (array) config('seo.defaults', []);
         $this->meta['type'] = 'website';
@@ -75,6 +77,123 @@ class SEOService
     {
         $this->alternates[$lang] = $url;
         return $this;
+    }
+
+    /**
+     * Register the correct translated URL of a route for every supported
+     * locale. Never hand-build alternates by swapping the locale prefix —
+     * slugs differ per language (/en/products vs /tr/urunler).
+     *
+     * @param array<string, string> $params
+     */
+    public function setAlternatesFor(string $routeKey, array $params = []): self
+    {
+        $this->alternates = $this->urls->alternates($routeKey, $params);
+        return $this;
+    }
+
+    /** One x-default entry: the default-locale variant. */
+    public function xDefaultUrl(string $routeKey, array $params = []): string
+    {
+        $default = (string) config('localization.default', 'en');
+        return $this->urls->localizedUrl($routeKey, $default, $params);
+    }
+
+    /* ------------------------------------------------ schema builders */
+
+    /** @param list<array{name: string, url: string}> $items */
+    public function addBreadcrumb(array $items): self
+    {
+        $elements = [];
+        foreach (array_values($items) as $i => $item) {
+            $elements[] = [
+                '@type' => 'ListItem',
+                'position' => $i + 1,
+                'name' => $item['name'],
+                'item' => $item['url'],
+            ];
+        }
+        return $this->addStructuredData('BreadcrumbList', ['itemListElement' => $elements]);
+    }
+
+    /**
+     * Product rich-result schema. Deliberately no offers/price: this is a
+     * B2B catalogue, and price-less offers trigger merchant warnings.
+     *
+     * @param array<string, mixed> $product translated product payload
+     */
+    public function addProductSchema(array $product, string $canonicalUrl): self
+    {
+        $images = [];
+        if (!empty($product['image'])) {
+            $images[] = asset((string) $product['image']);
+        }
+        foreach ((array) ($product['gallery'] ?? []) as $path) {
+            $abs = asset((string) $path);
+            if (!in_array($abs, $images, true)) {
+                $images[] = $abs;
+            }
+        }
+
+        $description = trim(preg_replace('/\s+/', ' ', strip_tags((string) ($product['short_description'] ?? $product['description'] ?? ''))) ?? '');
+
+        return $this->addStructuredData('Product', [
+            '@id' => $canonicalUrl . '#product',
+            'name' => (string) ($product['name'] ?? ''),
+            'description' => $description !== '' ? mb_substr($description, 0, 500) : (string) ($product['name'] ?? ''),
+            'image' => $images,
+            'sku' => (string) ($product['sku'] ?? ''),
+            'mpn' => (string) ($product['model_code'] ?? $product['sku'] ?? ''),
+            'url' => $canonicalUrl,
+            'category' => (string) ($product['category_slug'] ?? ''),
+            'brand' => ['@type' => 'Brand', 'name' => 'LUFLY'],
+            'manufacturer' => ['@id' => url('/#organization')],
+            'countryOfOrigin' => ['@type' => 'Country', 'name' => 'TR'],
+        ]);
+    }
+
+    /** @param list<array{url: string, name: string, image?: string}> $items */
+    public function addItemListSchema(array $items, string $name): self
+    {
+        $elements = [];
+        foreach (array_values($items) as $i => $item) {
+            $entry = [
+                '@type' => 'ListItem',
+                'position' => $i + 1,
+                'url' => $item['url'],
+                'name' => $item['name'],
+            ];
+            if (!empty($item['image'])) {
+                $entry['image'] = $item['image'];
+            }
+            $elements[] = $entry;
+        }
+        return $this->addStructuredData('ItemList', ['name' => $name, 'itemListElement' => $elements]);
+    }
+
+    /** @param list<array{q: string, a: string}> $faqs */
+    public function addFaqSchema(array $faqs): self
+    {
+        $entities = [];
+        foreach ($faqs as $faq) {
+            $entities[] = [
+                '@type' => 'Question',
+                'name' => $faq['q'],
+                'acceptedAnswer' => ['@type' => 'Answer', 'text' => $faq['a']],
+            ];
+        }
+        return $this->addStructuredData('FAQPage', ['mainEntity' => $entities]);
+    }
+
+    /** @param array{name?: string, description?: string, url: string, inLanguage?: string, type?: string} $data */
+    public function addWebPageSchema(array $data): self
+    {
+        $type = (string) ($data['type'] ?? 'WebPage');
+        unset($data['type']);
+        return $this->addStructuredData($type, $data + [
+            'isPartOf' => ['@id' => url('/#website')],
+            'about' => ['@id' => url('/#organization')],
+        ]);
     }
 
     /** @param array<string, mixed> $entity entity data merged into structured data */
