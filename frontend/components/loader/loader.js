@@ -1,55 +1,16 @@
 /* ============================================================
-   LUFLY - Preloader & Global Loading Controller (Optimized Edition)
-   Timeline: brand assembly (seed dot -> glyph pieces fly in on their own
-   paths -> settle + reflection) -> water fills glyphs (real progress %)
-   + craftsman stage messages -> seal flash -> completion.
-   Global API: window.LUFLYLoader.show(msg), update(pct, msg), hide()
+   LUFLY - Preloader "The Seed" & Global Loading Controller
+   One mint dot owns the whole loading moment: pop-in -> breathing
+   -> water ripples -> charge-up -> seal pop -> curtain exit.
+   All choreography lives in loader.css keyframes; this controller
+   only schedules seal/exit and classifies which pages get the
+   loader at all.
    ============================================================ */
 
 (function () {
   'use strict';
 
-  var root = document.documentElement;
-  var locale = (root.getAttribute('lang') || 'en').toLowerCase();
-
-  var MESSAGES_BY_LOCALE = {
-    en: [
-      [0,   'Precision casting of high-purity brass'],
-      [20,  'Robotic CNC machining to 0.01 mm'],
-      [45,  'Aerospace PVD titanium surface treatment'],
-      [70,  'Calibrating Kerox® ceramic cores'],
-      [90,  'Hydrodynamic pressure testing and quality audit'],
-      [100, 'System ready Welcome to LUFLY']
-    ],
-    tr: [
-      [0,   'Yüksek saflıkta pirinç gövde dökümü'],
-      [20,  '0.01 mm robotik CNC hassas işleme'],
-      [45,  'Havacılık sınıfı PVD titanyum kaplama'],
-      [70,  'Kerox® seramik göbek montajı'],
-      [90,  'Hidrodinamik basınç ve kalite testi'],
-      [100, 'Hazır LUFLY dünyasına hoş geldiniz']
-    ],
-    cs: [
-      [0,   'Přesné lití vysoce čisté mosazi'],
-      [20,  'Robotické CNC obrábění s přesností 0,01 mm'],
-      [45,  'Aplikace titanového PVD povrchu'],
-      [70,  'Kalibrace keramických kartuší Kerox®'],
-      [90,  'Hydrodynamická tlaková zkouška a audit kvality'],
-      [100, 'Připraveno Vítejte ve světě LUFLY']
-    ]
-  };
-
-  var MESSAGES = MESSAGES_BY_LOCALE[locale] || MESSAGES_BY_LOCALE.en;
-
-  var loader   = document.getElementById('ldLoader');
-  var box      = document.getElementById('ldLogoBox');
-  var water    = document.getElementById('ldWaterBody');
-  var ui       = document.getElementById('ldUi');
-  var track    = document.getElementById('ldFill');
-  var pct      = document.getElementById('ldPct');
-  var msg      = document.getElementById('ldMsg');
-  var tag      = document.getElementById('ldTag');
-
+  var loader = document.getElementById('ldLoader');
   if (!loader) return;
 
   /* The app may be deployed under a sub-directory (XAMPP: /lufly_1/). Strip
@@ -65,136 +26,16 @@
     return pathname;
   }
 
-  var reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-  /* T_DRAW now covers the "building the brand" assembly (seed dot, glyph
-     pieces fly in, settle) before the water-fill progress phase starts. */
-  /* These used to total ~2s of mandatory animation before the page could be
-     revealed, which by itself reads as a freeze. The assembly is now clipped
-     to a length that still shows the brand without holding the site hostage. */
-  var T_DRAW   = reduced ? 60 : 700;
-  var T_HOLD   = reduced ? 60 : 90;
-  var T_SEAL   = reduced ? 0 : 120;
+  var reduced = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
-  if (reduced) loader.classList.add('ld-reduced');
+  /* --- seed choreography timing (must match loader.css keyframes) --- */
+  var T_SHOW = reduced ? 1100 : 2400;   /* seed enters, breathes, ripples, charges */
+  var T_SEAL = reduced ? 120 : 280;     /* final pop before the curtain */
+  var T_CURTAIN = 900;                  /* slide-out transition (css: .85s + .01) */
+  var HARD_STOP = 6000;                 /* never trap the page behind the splash */
+  var NAV_HOLD = reduced ? 200 : 520;   /* how long the nav flash holds */
 
-  /* ---- Bubbles ---- */
-  if (!reduced && water && !water.querySelector('.bubble')) {
-    for (var i = 0; i < 5; i++) {
-      var b = document.createElement('span');
-      var s = 3 + Math.random() * 4;
-      b.className = 'bubble';
-      b.style.width = s + 'px';
-      b.style.height = s + 'px';
-      b.style.left = (10 + Math.random() * 80) + '%';
-      b.style.animationDuration = (1.1 + Math.random() * 1.4) + 's';
-      b.style.animationDelay = (Math.random() * 1.5) + 's';
-      water.appendChild(b);
-    }
-  }
-
-  var stage = -1;
   var isExited = false;
-  var customMessageActive = false;
-
-  function setMessage(text, isFinal) {
-    if (!msg) return;
-    msg.classList.add('swap');
-    setTimeout(function () {
-      msg.textContent = text;
-      if (isFinal) msg.classList.add('final');
-      else msg.classList.remove('final');
-      msg.classList.remove('swap');
-    }, 100);
-  }
-
-  function setStage(p) {
-    if (customMessageActive) return;
-    var s = 0;
-    for (var i = 0; i < MESSAGES.length; i++) {
-      if (p >= MESSAGES[i][0]) s = i;
-    }
-    if (s === stage) return;
-    stage = s;
-    setMessage(MESSAGES[s][1], s === MESSAGES.length - 1);
-  }
-
-  function setProgress(p) {
-    if (!water || !track || !pct) return;
-    var val = Math.min(100, Math.max(0, p));
-    water.style.height = Math.min(106, val * 1.06) + '%';
-    track.style.width = val + '%';
-    pct.textContent = Math.round(val) + '%';
-    setStage(val);
-  }
-
-  var pageLoaded = false;
-  var currentP = 0;
-  var animFrameId = null;
-
-  function runInitialLoad(onDone) {
-    var t0 = performance.now();
-    var duration = reduced ? 250 : 650;
-    var finished = false;
-
-    function finish() {
-      if (finished) return;
-      finished = true;
-      if (animFrameId) cancelAnimationFrame(animFrameId);
-      setProgress(100);
-      if (typeof onDone === 'function') onDone();
-    }
-
-    /* Hard ceiling. Whatever happens - a stalled font promise, a blocked
-       resource, an image that never fires load - the loader must come down.
-       A stuck splash screen is far worse than an early one. */
-    var HARD_STOP = reduced ? 800 : 2500;
-    setTimeout(finish, HARD_STOP);
-
-    function frame(now) {
-      if (finished) return;
-
-      var elapsed = (now - t0) / duration;
-      if (elapsed > 1) elapsed = 1;
-
-      var ease = 1 - Math.pow(1 - elapsed, 3);
-      var target = pageLoaded ? ease * 100 : Math.min(92, ease * 100);
-
-      currentP += (target - currentP) * 0.22;
-      if (pageLoaded && elapsed >= 0.95) currentP = 100;
-
-      setProgress(currentP);
-
-      /* Only the pageLoaded branch can reach 100. Waiting for 99.6 while the
-         target is capped at 92 was an infinite loop: currentP converges on 92
-         and never crosses the threshold. Require pageLoaded explicitly. */
-      if (pageLoaded && currentP >= 99.6) {
-        finish();
-        return;
-      }
-
-      animFrameId = requestAnimationFrame(frame);
-    }
-
-    animFrameId = requestAnimationFrame(frame);
-  }
-
-  function startInitialSequence() {
-    document.body.classList.add('ld-loading');
-    loader.classList.add('is-initial');
-
-    setTimeout(function () {
-      if (box) box.classList.add('filling');
-      if (ui) ui.classList.add('on');
-      if (tag) tag.classList.add('on');
-
-      runInitialLoad(function () {
-        setTimeout(function () {
-          if (box) box.classList.add('seal');
-          setTimeout(exitLoader, T_SEAL);
-        }, T_HOLD);
-      });
-    }, T_DRAW);
-  }
 
   function exitLoader() {
     if (isExited) return;
@@ -202,82 +43,56 @@
     loader.classList.add('exit');
     document.body.classList.remove('ld-loading');
     document.body.classList.add('ready');
-
     setTimeout(function () {
-      loader.style.display = 'none';
-    }, 450);
+      if (isExited) loader.style.display = 'none';
+    }, T_CURTAIN);
   }
 
-  function showLoader(customMsg, isNavigation) {
-    if (animFrameId) cancelAnimationFrame(animFrameId);
-    isExited = false;
+  /* Boot skip path: pages that never get the loader must not flash it. */
+  function releasePage() {
+    loader.style.display = 'none';
+    document.body.classList.remove('ld-loading');
+    document.body.classList.add('ready');
+    isExited = true;
+  }
+
+  /* Initial visit: let the seed own the full moment, then seal and exit.
+     No progress gating - the animation IS the wait, by design. */
+  function startInitialSequence() {
     document.body.classList.add('ld-loading');
-    loader.style.display = 'flex';
-    loader.classList.remove('exit');
-
-    if (isNavigation) {
-      loader.classList.add('is-nav');
-      loader.classList.remove('is-initial');
-    } else {
-      loader.classList.remove('is-nav');
-    }
-
-    if (box) {
-      box.classList.add('filling');
-      box.classList.remove('seal');
-    }
-    if (ui) ui.classList.add('on');
-    if (tag) tag.classList.add('on');
-
-    if (customMsg) {
-      customMessageActive = true;
-      setMessage(customMsg, false);
-    } else {
-      customMessageActive = false;
-    }
-
-    setProgress(20);
-    var t0 = performance.now();
-    function step(now) {
-      var progress = Math.min(94, 20 + (now - t0) * 0.12);
-      setProgress(progress);
-      if (!isExited && progress < 94) {
-        animFrameId = requestAnimationFrame(step);
-      }
-    }
-    animFrameId = requestAnimationFrame(step);
+    setTimeout(function () { loader.classList.add('seal'); }, T_SHOW);
+    setTimeout(exitLoader, T_SHOW + T_SEAL);
+    /* absolute backstop; harmless once exitLoader has run */
+    setTimeout(exitLoader, HARD_STOP);
   }
 
-  function hideLoader(finalMsg, onComplete) {
-    if (animFrameId) cancelAnimationFrame(animFrameId);
-    setProgress(100);
+  /* Navigation flash (home/contact links + contact form submits): same
+     seed, shorter hold. CSS animations restart because display was none. */
+  function showLoader() {
+    isExited = false;
+    loader.classList.remove('exit', 'seal');
+    loader.classList.add('is-nav');
+    loader.style.display = '';
+    document.body.classList.add('ld-loading');
+    setTimeout(exitLoader, HARD_STOP);
+  }
 
-    var endMsg = finalMsg || MESSAGES[MESSAGES.length - 1][1];
-    setMessage(endMsg, true);
-
-    if (box) box.classList.add('seal');
-
+  function hideLoader(after, onComplete) {
+    var hold = typeof after === 'number' ? after : NAV_HOLD;
+    var cb = typeof after === 'function' ? after : onComplete;
     setTimeout(function () {
-      exitLoader();
-      if (typeof onComplete === 'function') onComplete();
-    }, T_HOLD + T_SEAL);
+      loader.classList.add('seal');
+      setTimeout(function () {
+        exitLoader();
+        if (typeof cb === 'function') cb();
+      }, T_SEAL);
+    }, hold);
   }
-
-  window.LUFLYLoader = {
-    start: startInitialSequence,
-    show: showLoader,
-    setProgress: setProgress,
-    setMessage: function (t) { customMessageActive = true; setMessage(t, false); },
-    hide: hideLoader,
-    done: exitLoader
-  };
 
   /* ---- Which navigations deserve the full-screen loader? ----
-     Deny-listing product paths was the wrong way round: any route not on the
-     list (categories, search, anything localized) still triggered it. The
-     rule is now an explicit allow-list - only the static pages, home and
-     contact, ever show the loading screen. Everything else is skeleton
-     backed and navigates without it. */
+     Explicit allow-list: home and contact only. Everything else
+     (catalogue, product, search) is skeleton backed and navigates
+     without it. */
   var LOADER_PATHS = [
     'contact',   /* en */
     'kontakt',   /* cs */
@@ -299,42 +114,6 @@
     return LOADER_PATHS.indexOf(last.toLowerCase()) !== -1;
   }
 
-  /* Listen for window ready.
-
-     'load' waits for every image on the page, including the product imagery
-     in database driven sections - exactly the content that is skeleton backed
-     and therefore does not need to gate the loading screen. So treat the page
-     as ready at DOMContentLoaded plus fonts, and let 'load' act only as a
-     backstop. Static-heavy pages still get the full sequence; data sections
-     fill in behind their glass placeholders. */
-  function markLoaded() { pageLoaded = true; }
-
-  /* Deliberately NOT gated on window 'load'. That event waits for every image
-     on the page - the home page alone carries megabytes of photography - so
-     using it meant the splash screen stayed up until the last byte arrived.
-     The DOM being ready is what actually matters for revealing the layout;
-     images fade in behind their skeletons afterwards.
-
-     'load' and fonts.ready are kept purely as early signals, never as the
-     only path, and a short timer guarantees the flag flips regardless. */
-  window.addEventListener('load', markLoaded);
-
-  if (document.fonts && document.fonts.ready && typeof document.fonts.ready.then === 'function') {
-    document.fonts.ready.then(markLoaded).catch(markLoaded);
-  }
-
-  if (document.readyState === 'loading') {
-    document.addEventListener('DOMContentLoaded', markLoaded);
-  } else {
-    markLoaded();
-  }
-
-  /* absolute backstop */
-  setTimeout(markLoaded, 1200);
-
-  /* The same allow-list governs the first paint: landing directly on a
-     catalogue, category or product URL must not show the loading screen at
-     all, because those pages are skeleton backed. */
   function bootLoader() {
     /* Never let an unexpected error here leave body.ld-loading applied: that
        class sets overflow:hidden, so a throw at boot freezes the whole site. */
@@ -345,14 +124,9 @@
     }
   }
 
-  function releasePage() {
-    if (loader) loader.style.display = 'none';
-    document.body.classList.remove('ld-loading');
-    document.body.classList.add('ready');
-    isExited = true;
-  }
-
   function bootLoaderInner() {
+    /* Landing directly on a catalogue, category or product URL must not show
+       the loading screen at all, because those pages are skeleton backed. */
     if (!isLoaderPath(stripBase(window.location.pathname))) {
       releasePage();
       return;
@@ -360,10 +134,7 @@
     startInitialSequence();
   }
 
-  if (document.readyState === 'complete') {
-    pageLoaded = true;
-    bootLoader();
-  } else if (document.readyState === 'loading') {
+  if (document.readyState === 'loading') {
     document.addEventListener('DOMContentLoaded', bootLoader);
   } else {
     bootLoader();
@@ -403,15 +174,11 @@
     if (targetUrl.origin !== window.location.origin) return;
     if (targetUrl.pathname === window.location.pathname && targetUrl.search === window.location.search) return;
 
-    /* The full-screen loader is reserved for heavy, static-first pages.
-       Product browsing (catalogue, filters, sorting, a product page) renders
-       glass skeletons in place instead, so repeat navigation never feels
-       gated behind an animation. */
+    /* The full-screen loader is reserved for home and contact. Product
+       browsing renders glass skeletons in place instead. */
     if (isLightNavigation(targetUrl, link)) return;
 
-    var navMsg = locale === 'tr' ? 'Sayfa hazırlanıyor' :
-                 locale === 'cs' ? 'Připravujeme stránku' : 'Loading page';
-    showLoader(navMsg, true);
+    showLoader();
   }, { passive: true });
 
   /* ---- Auto-wire: form submissions ---- */
@@ -428,9 +195,19 @@
     } catch (err) {
       actionPath = window.location.pathname;
     }
-    if (!isLoaderPath(actionPath)) return;
-    var submitMsg = locale === 'tr' ? 'İşleminiz gerçekleştiriliyor' :
-                    locale === 'cs' ? 'Zpracováváme požadavek' : 'Processing request';
-    showLoader(submitMsg, true);
+    if (!isLoaderPath(stripBase(actionPath))) return;
+    showLoader();
   }, { passive: true });
+
+  /* Public API. setProgress/setMessage are accepted no-ops: the seed
+     choreography carries the moment now, but older callers stay safe.
+     .done() is used by app.js to dismiss the loader on bfcache restore. */
+  window.LUFLYLoader = {
+    start: startInitialSequence,
+    show: showLoader,
+    setProgress: function () {},
+    setMessage: function () {},
+    hide: hideLoader,
+    done: exitLoader
+  };
 })();
