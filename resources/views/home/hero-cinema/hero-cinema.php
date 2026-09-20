@@ -51,7 +51,9 @@ $slides = [
             <div class="lfc-scene"
                  role="img" aria-label="<?= e($s['alt']) ?>"
                  data-img="<?= e(asset("images/lifestyle/{$s['img']}.webp")) ?>"
-                 data-img-m="<?= e(asset("images/lifestyle/{$s['img']}-m.webp")) ?>"></div>
+                 data-img-m="<?= e(asset("images/lifestyle/{$s['img']}-m.webp")) ?>"
+                 data-img-light="<?= e(asset("images/lifestyle/{$s['img']}-light.jpg")) ?>"
+                 data-img-light-m="<?= e(asset("images/lifestyle/{$s['img']}-light-m.jpg")) ?>"></div>
         <?php endforeach; ?>
     </div>
 

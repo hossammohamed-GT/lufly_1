@@ -72,6 +72,18 @@
 
 .lfc-atmo { position: absolute; inset: 0; z-index: 4; pointer-events: none; }
 
+/* Light theme: the hero swaps to high-key daylight photos (handled in JS),
+   so the scrim softens to let the brightness breathe while the light ink
+   text keeps its contrast. */
+[data-theme="light"] .lfc-shade {
+  background:
+    linear-gradient(90deg, rgba(18, 22, 22, 0.62) 0%, rgba(18, 22, 22, 0.30) 46%, rgba(18, 22, 22, 0) 74%),
+    linear-gradient(0deg, rgba(18, 22, 22, 0.55) 0%, rgba(18, 22, 22, 0) 42%);
+}
+[data-theme="light"] .lfc-vignette {
+  background: radial-gradient(120% 100% at 50% 45%, transparent 62%, rgba(40, 46, 46, 0.35) 100%);
+}
+
 .lfc-glow {
   position: absolute; top: -25%; right: -15%; width: 55vw; height: 55vw;
   background: radial-gradient(circle, rgba(28, 139, 139, 0.14) 0%, transparent 65%);

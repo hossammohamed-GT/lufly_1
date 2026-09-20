@@ -29,20 +29,62 @@
   var N = scenes.length;
   if (N === 0) return;
 
-  /* Height is handled in pure CSS: the section is sized with
-     calc(100svh - announcement bar - navbar row) in hero-cinema.css, so the
-     hero always fills the first screen without JS measuring. */
+  /* ---- Exact first-screen height (pixel-precise) ----
+     The CSS calc() approximation can leave a few-px strip of the next
+     section visible below the hero (sub-pixel navbar/borders, scrollbar
+     quirks). Measure once here: the hero is whatever space is left in the
+     viewport below its own top edge. Re-measured on resize. */
+  function fitToScreen() {
+    var top = root.getBoundingClientRect().top;
+    var h = Math.round(window.innerHeight - top);
+    if (h >= 320) root.style.height = h + 'px';
+  }
+  fitToScreen();
+  window.addEventListener('resize', fitToScreen, { passive: true });
+  window.addEventListener('orientationchange', fitToScreen, { passive: true });
 
-  /* ---- Responsive backgrounds ---- */
-  scenes.forEach(function (sc, idx) {
-    var url = isMobile ? (sc.getAttribute('data-img-m') || sc.getAttribute('data-img'))
-                       : sc.getAttribute('data-img');
-    if (idx === 0 && url) {
-      sc.style.backgroundImage = 'url("' + url + '")';
-    } else if (url) {
-      sc._bgUrl = url;
+  /* ---- Theme-aware responsive backgrounds ----
+     Dark theme keeps the original cinematic shots; light theme swaps in the
+     dedicated high-key variants (data-img-light[-m]). Watching data-theme
+     on <html> makes hero photos follow the switcher instantly. */
+  function themeIsLight() {
+    return document.documentElement.getAttribute('data-theme') === 'light';
+  }
+  function sceneUrl(sc) {
+    var light = themeIsLight();
+    if (isMobile) {
+      return sc.getAttribute(light ? 'data-img-light-m' : 'data-img-m')
+          || sc.getAttribute(light ? 'data-img-light' : 'data-img');
     }
-  });
+    return sc.getAttribute(light ? 'data-img-light' : 'data-img');
+  }
+  function applyBackgrounds(lazyOthers) {
+    scenes.forEach(function (sc, idx) {
+      var url = sceneUrl(sc);
+      if (!url) return;
+      if (idx === 0 && lazyOthers) {
+        sc.style.backgroundImage = 'url("' + url + '")';
+      } else if (lazyOthers) {
+        sc._bgUrl = url;
+      } else {
+        sc.style.backgroundImage = 'url("' + url + '")';
+        sc._bgUrl = url;
+      }
+    });
+  }
+  applyBackgrounds(true);
+
+  /* Re-apply instantly when the theme flips. */
+  if (window.MutationObserver) {
+    new MutationObserver(function (muts) {
+      for (var i = 0; i < muts.length; i++) {
+        if (muts[i].attributeName === 'data-theme') {
+          applyBackgrounds(false);
+          break;
+        }
+      }
+    }).observe(document.documentElement, { attributes: true, attributeFilter: ['data-theme'] });
+  }
 
   /* Lazy-load subsequent backgrounds on idle */
   if ('requestIdleCallback' in window) {
