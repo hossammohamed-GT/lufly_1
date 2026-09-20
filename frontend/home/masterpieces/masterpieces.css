@@ -58,11 +58,7 @@
 
 @media (max-width: 640px) {
   .masterpieces-section { padding: var(--space-10) 0; }
-  .masterpieces-grid { grid-template-columns: 1fr 1fr; gap: 10px; }
-}
-
-@media (max-width: 380px) {
-  .masterpieces-grid { grid-template-columns: 1fr; }
+  .masterpieces-grid { grid-template-columns: 1fr; gap: 14px; }
 }
 
 @media (prefers-reduced-motion: reduce) {

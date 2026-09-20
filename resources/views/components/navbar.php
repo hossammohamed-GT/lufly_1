@@ -215,17 +215,27 @@ src="<?= e(asset('images/logo.png')) ?>"
                     <div class="mnav-lang-menu" role="menu" aria-label="<?= e(trans('nav.language', [], $currentLocale)) ?>">
                         <div class="mnav-lang-menu-title"><?= e(trans('nav.language', [], $currentLocale)) ?></div>
                         <?php foreach ($languageLinks as $code => $link): ?>
-                            <a class="mnav-lang-option<?= $code === $currentLocale ? ' is-current' : '' ?>"
-                               role="menuitem"
-                               href="<?= e($link['target']) ?>"
-                               lang="<?= e($code) ?>">
-                                <span class="mnav-flag" aria-hidden="true"><?= $view->component('flag', ['code' => $code]) ?></span>
-                                <span class="mnav-lang-name"><?= e($link['label']) ?></span>
-                                <span class="mnav-lang-badge"><?= e(strtoupper($code)) ?></span>
-                                <?php if ($code === $currentLocale): ?>
+                            <?php if ($code === $currentLocale): ?>
+                                <?php /* Active locale renders as a non-clickable item. */ ?>
+                                <span class="mnav-lang-option is-current"
+                                      role="menuitem"
+                                      aria-current="true"
+                                      lang="<?= e($code) ?>">
+                                    <span class="mnav-flag" aria-hidden="true"><?= $view->component('flag', ['code' => $code]) ?></span>
+                                    <span class="mnav-lang-name"><?= e($link['label']) ?></span>
+                                    <span class="mnav-lang-badge"><?= e(strtoupper($code)) ?></span>
                                     <span class="mnav-lang-check" aria-hidden="true">&check;</span>
-                                <?php endif; ?>
-                            </a>
+                                </span>
+                            <?php else: ?>
+                                <a class="mnav-lang-option"
+                                   role="menuitem"
+                                   href="<?= e($link['target']) ?>"
+                                   lang="<?= e($code) ?>">
+                                    <span class="mnav-flag" aria-hidden="true"><?= $view->component('flag', ['code' => $code]) ?></span>
+                                    <span class="mnav-lang-name"><?= e($link['label']) ?></span>
+                                    <span class="mnav-lang-badge"><?= e(strtoupper($code)) ?></span>
+                                </a>
+                            <?php endif; ?>
                         <?php endforeach; ?>
                     </div>
                 </div>
@@ -298,12 +308,22 @@ src="<?= e(asset('images/logo.png')) ?>"
 
             <div class="mnav-sheet-utils">
                 <?php foreach ($languageLinks as $code => $link): ?>
-                    <a class="mnav-util-link<?= $code === $currentLocale ? ' is-current' : '' ?>"
-                       href="<?= e($link['target']) ?>"
-                       lang="<?= e($code) ?>">
-                        <span class="mnav-flag" aria-hidden="true"><?= $view->component('flag', ['code' => $code]) ?></span>
-                        <?= e(strtoupper($code)) ?>
-                    </a>
+                    <?php if ($code === $currentLocale): ?>
+                        <?php /* Active locale renders as a non-clickable item. */ ?>
+                        <span class="mnav-util-link is-current"
+                              aria-current="true"
+                              lang="<?= e($code) ?>">
+                            <span class="mnav-flag" aria-hidden="true"><?= $view->component('flag', ['code' => $code]) ?></span>
+                            <?= e(strtoupper($code)) ?>
+                        </span>
+                    <?php else: ?>
+                        <a class="mnav-util-link"
+                           href="<?= e($link['target']) ?>"
+                           lang="<?= e($code) ?>">
+                            <span class="mnav-flag" aria-hidden="true"><?= $view->component('flag', ['code' => $code]) ?></span>
+                            <?= e(strtoupper($code)) ?>
+                        </a>
+                    <?php endif; ?>
                 <?php endforeach; ?>
 
                 <a class="mnav-util-link" href="<?= auth()->check() ? e(route('admin.dashboard')) : e(route('login')) ?>">

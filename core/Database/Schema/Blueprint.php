@@ -266,6 +266,14 @@ class Blueprint
     /** @param string[] $columns */
     private function indexName(array $columns, bool $unique): string
     {
-        return $this->table . '_' . implode('_', $columns) . ($unique ? '_unique' : '_index');
+        $name = $this->table . '_' . implode('_', $columns) . ($unique ? '_unique' : '_index');
+
+        // MySQL identifiers are limited to 64 characters; stay deterministic
+        // by truncating the readable part and appending a stable hash suffix.
+        if (strlen($name) > 64) {
+            $name = rtrim(substr($name, 0, 53), '_') . '_' . substr(md5($name), 0, 10);
+        }
+
+        return $name;
     }
 }

@@ -1,15 +1,101 @@
-/* Error pages: 401, 403, 404, 422, 500. */
+/* error pages (401 / 403 / 404 / 422 / 500)——centered, branded staging */
 
 .error-page {
-  display: grid;
-  gap: var(--space-4);
-  justify-items: center;
-  padding-block: var(--space-16);
+  position: relative;
   text-align: center;
+  padding-block: var(--space-12, 96px) var(--space-14, 120px);
+  overflow: hidden;
+  isolation: isolate;
 }
 
-.error-code { margin: 0; color: var(--ds-primary); font-family: var(--font-display); font-size: var(--text-5xl); font-weight: var(--weight-black); }
-.error-title { margin: 0; }
-.error-message { margin: 0; color: var(--ds-text-muted); }
-.error-list { color: var(--ds-danger); text-align: start; }
-.error-debug { max-width: 70ch; text-align: start; font-size: var(--text-sm); }
+/* oversized ghost numerals */
+.error-code {
+  position: relative;
+  z-index: -1;
+  display: inline-block;
+  margin: 0 0 -0.18em;
+  font-size: clamp(96px, 22vw, 220px);
+  font-weight: 800;
+  line-height: 0.92;
+  letter-spacing: -0.04em;
+  background: linear-gradient(180deg,
+      color-mix(in srgb, var(--ds-primary, #1c8b8b) 88%, #fff) 0%,
+      color-mix(in srgb, var(--ds-primary, #1c8b8b) 34%, transparent) 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  opacity: 0.9;
+  user-select: none;
+}
+.error-code span { display: inline-block; animation: errFloat 6s ease-in-out infinite; }
+.error-code span:nth-child(2) { animation-delay: -2s; }
+.error-code span:nth-child(3) { animation-delay: -4s; }
+@keyframes errFloat {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-10px); }
+}
+
+.error-title {
+  margin: 0 0 14px;
+  font-size: clamp(26px, 4.4vw, 44px);
+  font-weight: 700;
+  letter-spacing: -0.015em;
+}
+
+.error-message {
+  max-width: 56ch;
+  margin: 0 auto 30px;
+  font-size: clamp(15px, 1.6vw, 17px);
+  line-height: 1.75;
+  opacity: 0.82;
+}
+
+.error-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  justify-content: center;
+}
+
+.error-hint {
+  margin-top: 34px;
+  font-size: 13px;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  opacity: 0.45;
+}
+
+/* ambient brand orbs behind the 404 staging */
+.error-orb {
+  position: absolute;
+  z-index: -2;
+  border-radius: 50%;
+  filter: blur(60px);
+  opacity: 0.35;
+  pointer-events: none;
+  animation: errOrb 11s ease-in-out infinite alternate;
+}
+.error-orb-a {
+  width: 340px; height: 340px;
+  top: -90px; inset-inline-start: 6%;
+  background: color-mix(in srgb, var(--ds-primary, #1c8b8b) 55%, transparent);
+}
+.error-orb-b {
+  width: 280px; height: 280px;
+  bottom: -70px; inset-inline-end: 8%;
+  background: color-mix(in srgb, var(--ds-gold, #c9a24d) 42%, transparent);
+  animation-delay: -5.5s;
+}
+@keyframes errOrb {
+  from { transform: translate3d(0, 0, 0) scale(1); }
+  to   { transform: translate3d(24px, -18px, 0) scale(1.08); }
+}
+
+@media (max-width: 620px) {
+  .error-page { padding-block: 72px 88px; }
+  .error-actions .btn { flex: 1 1 auto; max-width: 260px; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .error-code span, .error-orb { animation: none; }
+}

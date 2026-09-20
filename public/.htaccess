@@ -1,5 +1,59 @@
 Options -Indexes
 RewriteEngine On
 
+# ---------------------------------------------------------------------
+# SEO canonicalisation (PRODUCTION ONLY - uncomment after going live,
+# and replace example.com with your canonical host). The same result can
+# be achieved without touching this file by setting SEO_ENFORCE_HOST=true
+# in .env once APP_URL points at the canonical https host.
+#
+# RewriteCond %{HTTPS} off [OR]
+# RewriteCond %{HTTP_HOST} ^www\.example\.com$ [NC]
+# RewriteRule ^ https://example.com%{REQUEST_URI} [R=308,L]
+# ---------------------------------------------------------------------
+
 RewriteCond %{REQUEST_FILENAME} !-f
 RewriteRule ^ index.php [QSA,L]
+
+# ---------------------------------------------------------------------
+# Core Web Vitals: long-lived caching for immutable static assets.
+# Guarded by IfModule so a missing Apache module can never 500 the site.
+# ---------------------------------------------------------------------
+
+<IfModule mod_expires.c>
+    ExpiresActive On
+    ExpiresByType image/webp "access plus 1 year"
+    ExpiresByType image/avif "access plus 1 year"
+    ExpiresByType image/jpeg "access plus 1 year"
+    ExpiresByType image/png "access plus 1 year"
+    ExpiresByType image/svg+xml "access plus 1 month"
+    ExpiresByType image/x-icon "access plus 1 month"
+    ExpiresByType text/css "access plus 1 month"
+    ExpiresByType application/javascript "access plus 1 month"
+    ExpiresByType font/woff2 "access plus 1 year"
+</IfModule>
+
+<IfModule mod_headers.c>
+    # immutable: images & fonts never change under the same URL
+    <FilesMatch "\.(webp|avif|jpe?g|png|gif|ico|woff2?)$">
+        Header set Cache-Control "public, max-age=31536000, immutable"
+    </FilesMatch>
+    # css/js are not fingerprinted yet: short cache, safe iterative deploys
+    <FilesMatch "\.(css|js)$">
+        Header set Cache-Control "public, max-age=2592000"
+    </FilesMatch>
+    # Security headers (also an SEO trust signal)
+    Header always set X-Content-Type-Options "nosniff"
+    Header always set X-Frame-Options "SAMEORIGIN"
+    Header always set Referrer-Policy "strict-origin-when-cross-origin"
+</IfModule>
+
+<IfModule mod_deflate.c>
+    AddOutputFilterByType DEFLATE text/html text/css application/javascript application/json application/xml image/svg+xml
+</IfModule>
+
+<IfModule mod_mime.c>
+    AddType image/avif .avif
+    AddType image/webp .webp
+    AddType font/woff2 .woff2
+</IfModule>

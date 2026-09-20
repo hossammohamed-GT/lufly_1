@@ -3,6 +3,7 @@
  * Global SEO & Social Meta Component
  * @var \App\Services\SEOService|null $seo
  * @var string|null $title
+ * @var int|null $status          present on error pages (4xx/5xx)
  */
 
 $defaults = (array) config('seo.defaults', []);
@@ -16,21 +17,59 @@ $keywords = is_array($meta['keywords'] ?? null)
 
 $currentUrl = (string) request()->url();
 $canonical = $meta['canonical'] ?? $currentUrl;
-$robots = $meta['robots'] ?? 'index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1';
 $ogType = $meta['type'] ?? 'website';
 $siteName = $meta['site_name'] ?? 'LUFLY Architectural Sanitary Ware';
-$image = !empty($meta['image']) ? asset($meta['image']) : asset('/images/lifestyle/heroc-1.webp');
+/* asset() must never wrap an already-absolute URL (double-origin bug) */
+$rawImage = (string) ($meta['image'] ?? '');
+$image = $rawImage !== ''
+    ? (preg_match('#^https?://#i', $rawImage) ? $rawImage : asset($rawImage))
+    : asset('/images/lifestyle/heroc-1.webp');
+
+/* Error pages must never enter the index: noindex them even though the
+   layout chrome still renders. */
+$robots = $meta['robots'] ?? 'index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1';
+if (isset($status) && (int) $status >= 400) {
+    $robots = 'noindex, nofollow';
+}
 
 $translator = app('Core\Localization\Translator');
 $currentLocale = $translator instanceof \Core\Localization\Translator ? $translator->getLocale() : 'en';
 $supportedLocales = $translator instanceof \Core\Localization\Translator ? $translator->supported() : ['en' => 'English', 'tr' => 'Türkçe', 'cs' => 'Čeština'];
 
-$localeMap = [
-    'en' => 'en_US',
-    'tr' => 'tr_TR',
-    'cs' => 'cs_CZ',
-];
+$localeMap = ['en' => 'en_US', 'tr' => 'tr_TR', 'cs' => 'cs_CZ'];
 $ogLocale = $localeMap[$currentLocale] ?? 'en_US';
+
+/* hreflang: prefer the routing-accurate alternates the controller
+   registered through SEOService (translated slugs per locale). The
+   prefix-swap fallback stays for pages that never register them. */
+$alternates = $seo !== null ? $seo->alternates() : [];
+$xDefault = null;
+if ($alternates !== []) {
+    $defaultLocale = (string) config('localization.default', 'en');
+    $xDefault = $alternates[$defaultLocale] ?? reset($alternates);
+} elseif ($seo === null && !isset($status)) {
+    foreach (array_keys($supportedLocales) as $code) {
+        $path = (string) (parse_url($canonical, PHP_URL_PATH) ?? '');
+        $alternates[$code] = url('/' . $code . preg_replace('#^/(?:en|tr|cs)#', '', $path));
+    }
+    $xDefault = url('/en');
+}
+
+$verification = (array) config('seo.verification', []);
+$twitterHandle = (string) ($defaults['twitter_handle'] ?? '');
+$business = (array) config('seo.business', []);
+
+$searchPath = '/' . $currentLocale;
+if ($translator instanceof \Core\Localization\Translator) {
+    $translated = $translator->trans('routes.products.index', [], $currentLocale);
+    if ($translated !== 'routes.products.index') {
+        $searchPath .= '/' . ltrim($translated, '/');
+    }
+}
+
+/* one shared @id base so every schema block cross-links */
+$orgId = url('/#organization');
+$siteId = url('/#website');
 ?>
 <title><?= e($pageTitle) ?></title>
 <meta name="description" content="<?= e($description) ?>">
@@ -38,17 +77,24 @@ $ogLocale = $localeMap[$currentLocale] ?? 'en_US';
 <meta name="keywords" content="<?= e($keywords) ?>">
 <?php endif; ?>
 <meta name="robots" content="<?= e($robots) ?>">
-<meta name="author" content="LUFLY İNŞAAT SANAYİ VE TİCARET LİMİTED ŞİRKETİ">
+<meta name="author" content="<?= e($business['legal_name'] ?? 'LUFLY') ?>">
 <meta name="publisher" content="LUFLY">
 <link rel="canonical" href="<?= e($canonical) ?>">
 
+<?php if (!empty($verification['google'])): ?>
+<meta name="google-site-verification" content="<?= e($verification['google']) ?>">
+<?php endif; ?>
+<?php if (!empty($verification['bing'])): ?>
+<meta name="msvalidate.01" content="<?= e($verification['bing']) ?>">
+<?php endif; ?>
+
 <!-- Multilingual SEO / Hreflang Tags -->
-<?php foreach ($supportedLocales as $code => $name): 
-    $altUrl = url('/' . $code . (parse_url($canonical, PHP_URL_PATH) ? preg_replace('#^/(?:en|tr|cs)#', '', parse_url($canonical, PHP_URL_PATH)) : ''));
-?>
-<link rel="alternate" hreflang="<?= e($code) ?>" href="<?= e($altUrl) ?>">
+<?php foreach ($alternates as $code => $altUrl): ?>
+<link rel="alternate" hreflang="<?= e((string) $code) ?>" href="<?= e($altUrl) ?>">
 <?php endforeach; ?>
-<link rel="alternate" hreflang="x-default" href="<?= e(url('/en')) ?>">
+<?php if ($xDefault !== null): ?>
+<link rel="alternate" hreflang="x-default" href="<?= e($xDefault) ?>">
+<?php endif; ?>
 
 <!-- Open Graph / Facebook -->
 <meta property="og:type" content="<?= e($ogType) ?>">
@@ -70,59 +116,93 @@ $ogLocale = $localeMap[$currentLocale] ?? 'en_US';
 
 <!-- Twitter Cards -->
 <meta name="twitter:card" content="summary_large_image">
+<?php if ($twitterHandle !== ''): ?>
+<meta name="twitter:site" content="<?= e($twitterHandle) ?>">
+<?php endif; ?>
 <meta name="twitter:title" content="<?= e($pageTitle) ?>">
 <meta name="twitter:description" content="<?= e($description) ?>">
 <meta name="twitter:image" content="<?= e($image) ?>">
 <meta name="twitter:image:alt" content="<?= e($pageTitle) ?>">
 
-<!-- Global Organization & WebSite JSON-LD Schema -->
-<script type="application/ld+json">
-{
-  "@context": "https://schema.org",
-  "@graph": [
-    {
-      "@type": "Organization",
-      "@id": "<?= e(url('/#organization')) ?>",
-      "name": "LUFLY İNŞAAT SANAYİ VE TİCARET LİMİTED ŞİRKETİ",
-      "alternateName": "LUFLY",
-      "url": "<?= e(url('/')) ?>",
-      "logo": {
-        "@type": "ImageObject",
-        "url": "<?= e(asset('images/logo.png')) ?>",
-        "caption": "LUFLY Sanitary Architecture"
-      },
-      "address": {
-        "@type": "PostalAddress",
-        "addressLocality": "Gaziantep",
-        "addressCountry": "TR"
-      },
-      "contactPoint": [
-        {
-          "@type": "ContactPoint",
-          "telephone": "+90-850-3040-817",
-          "contactType": "customer service",
-          "email": "info@lufly.tr",
-          "availableLanguage": ["English", "Turkish", "Czech"]
-        }
-      ]
-    },
-    {
-      "@type": "WebSite",
-      "@id": "<?= e(url('/#website')) ?>",
-      "url": "<?= e(url('/')) ?>",
-      "name": "LUFLY",
-      "description": "European Architectural Sanitary Ware Manufacturer & Global Export",
-      "publisher": {
-        "@id": "<?= e(url('/#organization')) ?>"
-      },
-      "potentialAction": {
-        "@type": "SearchAction",
-        "target": "<?= e(url('/products?q={search_term_string}')) ?>",
-        "query-input": "required name=search_term_string"
-      }
-    }
-  ]
+<!-- Global Organization, LocalBusiness & WebSite JSON-LD Schema -->
+<?php
+$graph = [
+    [
+        '@type' => 'Organization',
+        '@id' => $orgId,
+        'name' => $business['legal_name'] ?? 'LUFLY',
+        'alternateName' => $business['brand_name'] ?? 'LUFLY',
+        'url' => url('/'),
+        'logo' => [
+            '@type' => 'ImageObject',
+            'url' => asset('images/logo.png'),
+            'caption' => 'LUFLY Sanitary Architecture',
+        ],
+        'address' => [
+            '@type' => 'PostalAddress',
+            'streetAddress' => $business['street'] ?? '',
+            'addressLocality' => $business['city'] ?? 'Gaziantep',
+            'addressRegion' => $business['region'] ?? 'Gaziantep',
+            'postalCode' => $business['postal_code'] ?? '',
+            'addressCountry' => $business['country'] ?? 'TR',
+        ],
+        'contactPoint' => [[
+            '@type' => 'ContactPoint',
+            'telephone' => $business['telephone'] ?? '',
+            'contactType' => 'customer service',
+            'email' => $business['email'] ?? '',
+            'availableLanguage' => ['English', 'Turkish', 'Czech'],
+        ]],
+    ],
+    [
+        '@type' => 'LocalBusiness',
+        '@id' => url('/#localbusiness'),
+        'name' => $business['brand_name'] ?? 'LUFLY',
+        'description' => $business['description'] ?? '',
+        'url' => url('/'),
+        'image' => $image,
+        'telephone' => $business['telephone'] ?? '',
+        'email' => $business['email'] ?? '',
+        'address' => [
+            '@type' => 'PostalAddress',
+            'streetAddress' => $business['street'] ?? '',
+            'addressLocality' => $business['city'] ?? 'Gaziantep',
+            'addressRegion' => $business['region'] ?? 'Gaziantep',
+            'postalCode' => $business['postal_code'] ?? '',
+            'addressCountry' => $business['country'] ?? 'TR',
+        ],
+        'parentOrganization' => ['@id' => $orgId],
+        'priceRange' => '$$',
+    ],
+    [
+        '@type' => 'WebSite',
+        '@id' => $siteId,
+        'url' => url('/'),
+        'name' => $business['brand_name'] ?? 'LUFLY',
+        'description' => $business['description'] ?? '',
+        'inLanguage' => array_keys($supportedLocales),
+        'publisher' => ['@id' => $orgId],
+        'potentialAction' => [
+            '@type' => 'SearchAction',
+            'target' => ['@type' => 'EntryPoint', 'urlTemplate' => url($searchPath) . '?q={search_term_string}'],
+            'query-input' => 'required name=search_term_string',
+        ],
+    ],
+];
+
+if (!empty($business['same_as'])) {
+    $graph[0]['sameAs'] = array_values((array) $business['same_as']);
 }
+if (!empty($business['latitude']) && !empty($business['longitude'])) {
+    $graph[1]['geo'] = [
+        '@type' => 'GeoCoordinates',
+        'latitude' => (float) $business['latitude'],
+        'longitude' => (float) $business['longitude'],
+    ];
+}
+?>
+<script type="application/ld+json">
+<?= json_encode(['@context' => 'https://schema.org', '@graph' => $graph], JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE) ?>
 </script>
 <?php
 if ($seo !== null) {
@@ -131,4 +211,3 @@ if ($seo !== null) {
         echo '<script type="application/ld+json">' . json_encode($payload, JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE) . '</script>';
     }
 }
-?>

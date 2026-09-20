@@ -53,7 +53,28 @@ try {
     document.documentElement.setAttribute('data-theme', stored || (dark ? 'dark' : 'light'));
 } catch (error) { /* storage unavailable */ }
 </script>
-<?= $view->renderFile($view->resolvePath('components.seo'), ['seo' => $seo ?? null, 'title' => $title ?? null]) ?>
+<?= $view->renderFile($view->resolvePath('components.seo'), ['seo' => $seo ?? null, 'title' => $title ?? null, 'status' => $status ?? null]) ?>
+<?php
+/* Analytics & measurement: every provider renders only when its ID is
+   configured, so a bare install ships zero third-party requests. */
+$analytics = (array) config('seo.analytics', []);
+$ga4 = trim((string) ($analytics['ga4'] ?? ''));
+$gtm = trim((string) ($analytics['gtm'] ?? ''));
+$clarity = trim((string) ($analytics['clarity'] ?? ''));
+?>
+<?php if ($gtm !== ''): ?>
+<!-- Google Tag Manager -->
+<script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src='https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);})(window,document,'script','dataLayer','<?= e($gtm) ?>');</script>
+<?php endif; ?>
+<?php if ($ga4 !== ''): ?>
+<!-- Google Analytics 4 -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=<?= e($ga4) ?>"></script>
+<script>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}gtag('js',new Date());gtag('config','<?= e($ga4) ?>',{anonymize_ip:true});</script>
+<?php endif; ?>
+<?php if ($clarity !== ''): ?>
+<!-- Microsoft Clarity -->
+<script>(function(c,l,a,r,i,t,y){c[a]=c[a]||function(){(c[a].q=c[a].q||[]).push(arguments)};t=l.createElement(r);t.async=1;t.src="https://www.clarity.ms/tag/"+i;y=l.getElementsByTagName(r)[0];y.parentNode.insertBefore(t,y);})(window,document,"clarity","script","<?= e($clarity) ?>");</script>
+<?php endif; ?>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap">
@@ -76,6 +97,10 @@ try {
 <?php endforeach; ?>
 </head>
 <body class="ds-app aquatic-stage ld-loading">
+<?php if ($gtm !== ''): ?>
+<!-- Google Tag Manager (noscript) -->
+<noscript><iframe src="https://www.googletagmanager.com/ns.html?id=<?= e($gtm) ?>" height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
+<?php endif; ?>
 <?= $view->renderFile($view->resolvePath('components.loader'), ['translator' => $translator]) ?>
 <?= $announcement ?>
 <a class="skip-link" href="#main"><?= e(trans('common.skip_to_content')) ?></a>

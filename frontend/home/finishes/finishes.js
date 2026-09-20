@@ -34,6 +34,16 @@
       cartridge: 'Kerox Ultra-Smooth 500k Cycles',
       aerator: 'PRO-ECO Water-Saving 4.8 L/min'
     },
+    'mirror-gold': {
+      title: 'Polished Mirror Gold (PVD)',
+      tag: 'HIGH-GLOSS PVD GOLD / PERMANENT MIRROR BRILLIANCE',
+      image: 'images/finishes/swatch-mirror-gold.jpg',
+      desc: 'A flawless high-gloss gold mirror sealed in the PVD vacuum chamber, holding permanent brilliance and corrosion resistance where plated gold would fade.',
+      base: 'Solid Brass CW617N',
+      coating: 'PVD Zirconium Nitride Mirror',
+      cartridge: 'Kerox Hungary 35mm Ceramic',
+      aerator: 'Neoperl Coin-Slot Pro-Eco 5.7 L/min'
+    },
     'matte-black': {
       title: 'Matte Obsidian Black',
       tag: 'ELECTROSTATIC SOFT-TOUCH POWDER COATING / ZERO GLARE',
@@ -44,15 +54,15 @@
       cartridge: 'Ceramic Disc Heavy-Duty',
       aerator: 'Integrated Concealed Aerator'
     },
-    'brushed-steel': {
-      title: 'Brushed Architectural Steel',
-      tag: 'AISI 304/316 MARINE GRADE ALLOY / HYGIENIC SURFACE',
-      image: 'images/finishes/swatch-steel.jpg',
-      desc: 'Industrial precision and raw architectural honesty. Naturally antibacterial with linear satin polish that endures decades of heavy commercial use.',
-      base: 'AISI 304 Stainless Steel',
-      coating: 'Linear 320-Grit Satin Brush',
-      cartridge: 'High-Pressure Ceramic Disc',
-      aerator: 'Splash-Free Micro-Aerator'
+    'brushed-nickel': {
+      title: 'Brushed Nickel (PVD)',
+      tag: 'SATIN BRUSHED PVD / FINGERPRINT-RESISTANT SHEEN',
+      image: 'images/finishes/swatch-brushed-nickel.jpg',
+      desc: 'A warm satin-silver finish with fine directional brushing, bonded in a PVD vacuum chamber for enduring elegance that shrugs off fingerprints and daily wear.',
+      base: 'Solid Brass CW617N',
+      coating: 'PVD Satin Nickel 0.4um',
+      cartridge: 'Kerox Hungary 35mm Ceramic',
+      aerator: 'Neoperl Coin-Slot Pro-Eco 5.7 L/min'
     },
     gunmetal: {
       title: 'Gunmetal Titanium Grey',
@@ -63,10 +73,30 @@
       coating: 'PVD Titanium Carbonitride',
       cartridge: 'Thermostatic 38C Safety Core',
       aerator: 'Cascade Soft Flow'
+    },
+    'brushed-gunmetal': {
+      title: 'Brushed Gunmetal (PVD)',
+      tag: 'BRUSHED ANTHRACITE PVD / SOFT MATTE METALLIC',
+      image: 'images/finishes/swatch-brushed-gunmetal.jpg',
+      desc: 'Directional brushing softens the deep gunmetal tone into a refined matte metallic sheen that hides water marks and pairs with stone and dark timber.',
+      base: 'Solid Brass CW617N',
+      coating: 'PVD Brushed Titanium Carbonitride',
+      cartridge: 'Kerox Ultra-Smooth 500k Cycles',
+      aerator: 'Anti-Limescale Laminar Stream'
+    },
+    'gun-gray': {
+      title: 'Gun Gray (PVD)',
+      tag: 'SATIN GRAY PVD / LOW-GLARE ARCHITECTURAL TONE',
+      image: 'images/finishes/swatch-gun-gray.jpg',
+      desc: 'A calm satin gray metallic engineered for minimalist architecture, with a low-glare surface that keeps its even tone under harsh bathroom lighting.',
+      base: 'Solid Brass CW617N',
+      coating: 'PVD Satin Gray Titanium',
+      cartridge: 'Sedal European Ceramic 35mm',
+      aerator: 'PRO-ECO Water-Saving 4.8 L/min'
     }
   };
 
-  var ORDER = ['brushed-rose-gold', 'chrome', 'brushed-gold', 'matte-black', 'brushed-steel', 'gunmetal'];
+  var ORDER = ['brushed-rose-gold', 'chrome', 'brushed-gold', 'mirror-gold', 'matte-black', 'brushed-nickel', 'gunmetal', 'brushed-gunmetal', 'gun-gray'];
 
   function init() {
     var section = document.querySelector('.finishes-section');

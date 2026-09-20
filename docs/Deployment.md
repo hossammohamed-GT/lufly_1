@@ -1,115 +1,56 @@
-# Deployment (XAMPP)
+# Deployment
 
-## Requirements
+## XAMPP / local development
 
-- PHP **8.2+** (`pdo_mysql` enabled - XAMPP default)
-- MySQL 5.7+/MariaDB
-- Apache with `mod_rewrite` (XAMPP default)
-
-## Local development with PHP built-in server
-
-From the project root, use the bundled router so both the application and
-`frontend/` assets are served correctly:
-
-```bash
-php cli serve --host=127.0.0.1 --port=8080
-```
-
-Open `http://127.0.0.1:8080/en/` after the server starts.
-
-Do not use `php -S 127.0.0.1:8080` by itself from the project root. Without
-`server.php`, the request routing and public asset paths can be incorrect and
-the page may appear as unstyled HTML.
-
-## Setup
-
-1. Copy the project into `C:\xampp\htdocs\lufly` (or a Linux htdocs path).
-2. Duplicate the environment file and adjust values:
-
-   ```bash
-   cp .env.example .env       # DB_DATABASE, DB_USERNAME, DB_PASSWORD, APP_URL
-   php cli key:generate       # writes APP_KEY
+1. Clone under `C:\xampp\htdocs\lufly_1`.
+2. **Import the database**: phpMyAdmin → Import → `lufly-database.sql` → Go
+   (creates database `lufly`, all 38 tables, all data).
+3. Copy `.env.example` → `.env` and set:
+   ```dotenv
+   DB_CONNECTION=mysql
+   DB_DATABASE=lufly
+   DB_USERNAME=root
+   DB_PASSWORD=
+   APP_URL=http://localhost/lufly_1/
    ```
+4. Open `http://localhost/lufly_1/`.
+   Zero-config alternative: `DB_CONNECTION=sqlite` (uses `database/lufly.sqlite`, same content).
 
-   `APP_URL` must match how the browser reaches the app, e.g.
-   `http://localhost/lufly`.
+`.htaccess` at the project root already rewrites requests to `public/index.php`,
+so the public web root can be the project folder itself — nothing else to configure in Apache/XAMPP.
 
-3. Import the database. Two equivalent options:
+## Shared hosting (cPanel-style, FTP upload)
 
-   **Option A - one-file import (recommended).** Import the bundled
-   [`lufly-database.sql`](../lufly-database.sql) through phpMyAdmin
-   (*Import -> Choose file -> Go*). It creates the `lufly` database, all
-   tables (full product architecture + announcements) and all seed data -
-   the site is fully usable right after the import.
-
-   From the command line it is the same thing:
-
-   ```bash
-   mysql -u root < lufly-database.sql
+1. Upload the repository contents to the hosting folder (e.g. `public_html/`).
+2. Import `lufly-database.sql` through the hosting's phpMyAdmin.
+3. Create `.env` with the hosting's MySQL credentials (`DB_HOST` is usually `localhost`).
+4. Production values:
+   ```dotenv
+   APP_ENV=production
+   APP_DEBUG=false
+   APP_URL=https://your-domain.com/
    ```
-
-   **Option B - build it yourself.** Create the database then run the
-   framework migrations and seeders (identical result):
-
-   ```sql
-   CREATE DATABASE lufly CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
-   ```
-
-   ```bash
-   php cli migrate
-   php cli seed
-   ```
-
-   After changing the schema or seeders, regenerate the export so it stays
-   the single source of truth for deployment:
-
-   ```bash
-   php cli db:export-mysql    # refreshes lufly-database.sql
-   ```
-
-5. Ensure writability of `storage/` (logs, cache, uploads).
-
-6. Browse to `http://localhost/lufly` - the bundled root `.htaccess` rewrites all
-   non-file requests into `public/index.php`, while real files (frontend assets,
-   docs) are served directly.
-
-## Default credentials
-
-| Email | Password | Role |
-| --- | --- | --- |
-| `admin@lufly.test` | `password` | admin |
-
-**Change or remove this account before going live.**
-
-## Alternative: VirtualHost on public/
-
-```apache
-<VirtualHost *:80>
-    DocumentRoot "C:/xampp/htdocs/lufly/public"
-    ServerName lufly.test
-</VirtualHost>
-```
-
-Set `APP_URL=http://lufly.test` accordingly.
+5. If hosting allows setting the docroot to a subfolder, point it at `public/` —
+   otherwise the root `.htaccess` handles routing automatically.
+6. Make `storage/` (logs, cache, uploads, backups) writable by PHP.
 
 ## Production checklist
 
-- `APP_ENV=production`, `APP_DEBUG=false`
-- `APP_KEY` generated, strong DB credentials
-- Seed account removed; passwords ≥ 12 chars
-- `storage/` outside web reach when docroot is `public/` (already the case);
-  with the root `.htaccess` mode, add a `Deny from all` for `storage/`
-- HTTPS: set `session_secure_cookie => true` in `config/security.php`
-- Backups: DB dump + `storage/uploads`
+- [ ] Import ran with **zero errors** (`#1059`-style identifier issues are fixed in the export)
+- [ ] `.env` has `APP_DEBUG=false` on production
+- [ ] Rotate the seeded admin password (`/admin`) — bcrypt cost is set via `SECURITY_BCRYPT_COST`
+- [ ] `APP_KEY` set (`php cli key:generate` when rotating)
+- [ ] `storage/` not publicly listable; `Options -Indexes` is already in `.htaccess`
+- [ ] Site reachable in all locales: `/en`, `/tr`, `/cs`
+- [ ] robots.txt + sitemap.xml served from `public/`
+- [ ] Backups: `php cli backup:db` → `storage/backups/`
 
-## Useful commands
+## Troubleshooting
 
-```bash
-php cli list
-php cli migrate --fresh
-php cli rollback --steps=1
-php cli schema:dump
-php cli erd
-php cli docs:api
-php cli serve --port=8080      # PHP built-in server (no Apache needed)
-```
+| Symptom | Cause → Fix |
+|---|---|
+| 500 / blank page right after deploy | `APP_DEBUG=true` temporarily → `storage/logs/` shows the error |
+| `View not found: .../components/X.php` | A deleted component is still referenced — see "View engine" in Architecture.md |
+| Login page OK but `/admin` redirects out | Session/cookie on MySQL — confirm `SESSION_LIFETIME` + writable `storage/` |
+| `Unknown database 'lufly'` | Import step skipped or `DB_DATABASE` mismatch |
+| Mojibake (Türkçe/čeština broken) | Database not utf8mb4 — re-import with the shipped export (it sets charset) |

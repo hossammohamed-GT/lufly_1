@@ -1,82 +1,65 @@
 # Database
 
-## Connection
+## Two artifacts, always in sync
 
-PDO based (`core/Database/Connection.php`), configured in `config/database.php` and
-`.env` (`DB_CONNECTION=mysql` by default; `sqlite` available for local tooling).
-Every executed statement is written to `storage/logs/database.log`.
+| File | Role | Used when |
+|---|---|---|
+| `database/lufly.sqlite` | SQLite dev database | `DB_CONNECTION=sqlite` (zero-config local dev) |
+| `lufly-database.sql` | **Self-contained MySQL export** | `DB_CONNECTION=mysql` (XAMPP, production) |
 
-## Migrations
+The SQL file creates everything from scratch: `CREATE DATABASE IF NOT EXISTS lufly`,
+`USE lufly`, `DROP TABLE IF EXISTS` + `CREATE TABLE` for all 38 tables, then row-per-row `INSERT`s.
+Safe to re-import any number of times (phpMyAdmin → Import).
 
-```bash
-php cli migrate            # run pending migrations
-php cli migrate --fresh    # drop all tables, then migrate
-php cli rollback           # roll back the last batch
-php cli rollback --steps=2
-php cli seed               # run DatabaseSeeder
-php cli seed --class=ProductSeeder
-```
-
-- History is tracked in the `migrations` table (`migration`, `batch`, `applied_at`).
-- Each migration implements `up()` and `down()` (`core/Database/Migration/Migration.php`).
-- Files live in `database/migrations/` and are applied in filename order.
-
-## Schema definitions (Prisma-inspired)
-
-Declarative table descriptions live in `database/schema/*Schema.php` and extend
-`Core\Database\Schema\SchemaDefinition`. Migrations execute them:
-
-```php
-public function up(): void
-{
-    $this->schema->createFromDefinition(new ProductsSchema());
-}
-```
-
-Generate the full DDL or an ER diagram from the definitions:
+**After changing data** (via admin panel or seeders), regenerate the export so both artifacts stay equal:
 
 ```bash
-php cli schema:dump       # database/schema/schema.sql
-php cli erd               # database/erd/erd.md (Mermaid)
-php cli db:export-mysql   # lufly-database.sql (XAMPP / phpMyAdmin import file)
+php cli db:export-mysql
 ```
 
-The catalog uses the full product architecture (products, variants, flexible
-specifications, central media library, documents, relations, SEO meta,
-search keywords, import logs) plus the announcements tables. See
-[Product-Database.md](Product-Database.md) for the complete map in Arabic.
+## Workflow: schema → migrations → seeders
 
-## Reusable data types
+1. **Table definitions** — `database/schema/*.php` (`Blueprint` DSL) are the source of truth for DDL.
+   They're compiled per-driver (MySQL / SQLite) by the connection layer.
+2. **Migrations** — `database/migrations/2026_01_01_*.php` (17 files) build the tables.
+   Run state is tracked in the `migrations` table; the export marks all 17 as applied,
+   so a freshly imported MySQL database never re-runs them.
+   Migrations run **only via CLI** (`php cli migrate`), never at HTTP boot.
+3. **Seeders** — `database/seeders/*` populate reference data:
+   `LanguageSeeder, RoleSeeder, PermissionSeeder, UserSeeder, SettingSeeder, CategorySeeder,
+   ProductSeeder, CatalogSeeder, AnnouncementSeeder`.
+   Product/category content comes from `database/seeders/data/products.json` + `categories.json`;
+   seeding is idempotent.
 
-`Core\Database\Schema\Types` centralizes column shapes, exposed on every Blueprint:
+```bash
+php cli migrate          # build schema
+php cli seed             # fill data
+php cli backup:db        # → storage/backups/
+```
 
-| Type | Meaning |
-| --- | --- |
-| `id()` | BIGINT unsigned auto-increment PK |
-| `uuid(col)` | CHAR(36) |
-| `string_50/100/255(col)` | VARCHAR(50/100/255) |
-| `email(col)` / `phone(col)` | VARCHAR(255) / VARCHAR(50) |
-| `slug(col)` | VARCHAR(255) + index |
-| `json(col)` | JSON |
-| `long_text(col)` | LONGTEXT |
-| `status(col)` | VARCHAR(50) default `active` + index |
-| `timestamps()` | created_at + updated_at |
-| `soft_delete()` | deleted_at (nullable, indexed) |
-| `seo(col)` | nullable JSON meta blob |
+## The 38 tables by domain
 
-## Soft deletes
+| Domain | Tables |
+|---|---|
+| System | `migrations`, `settings`, `activity_logs`, `audits`, `api_logs`, `notifications` |
+| Auth | `users`, `roles`, `permissions`, `role_permissions`, `user_roles` |
+| I18n | `languages` (+ `*_translations` tables below) |
+| Catalog | `products`, `product_translations`, `categories`, `category_translations`, `brands`, `collections`, `collection_translations` |
+| Catalog extras | `product_variants`, `product_media`, `product_relations`, `product_dimensions`, `product_documents`, `product_specifications`, `product_search_keywords`, `product_import_logs` |
+| Attributes | `attributes`, `attribute_options`, `product_attribute_values` |
+| Media | `media` (files on disk, paths under `/images/…`) |
+| CMS (schema ready) | `pages`, `page_translations`, `blogs`, `blog_translations` — currently unused/empty |
+| SEO | `seo_meta` per `(product_id, locale)` |
 
-Models set `protected static bool $softDelete = true;` (default). `Model::delete()`
-stamps `deleted_at`; `Model::query()` excludes trashed rows; `Model::withTrashed()`
-and `restore()` are available.
+## Conventions that matter
 
-## Dynamic translation tables
-
-`product_translations`, `category_translations`, `page_translations`,
-`blog_translations` - each keyed by `(entity_id, locale)` with a unique constraint.
-Managed through `LocalizationService::syncTranslations()`.
-
-## Audit trail
-
-Repositories with `$auditing = true` write before/after snapshots to `audits`
-(entity, entity_id, action, before, after, user_id, timestamp). See `docs/Security.md`.
+- **Translations pattern** — every translatable entity has a sibling `<entity>_translations`
+  table keyed `(…_id, locale)` with a UNIQUE constraint. Query joins pick exactly one locale.
+- **MySQL identifier limit** — index/constraint names are capped at **64 chars**;
+  `Blueprint::indexName()` truncates + appends a stable hash automatically.
+- **utf8mb4 everywhere** — the export sets `CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci`;
+  required for the Turkish and Czech texts.
+- **Foreign keys cascade** — deleting a product removes its translations, media links,
+  SEO rows etc. (`ON DELETE CASCADE`), so there are no orphans.
+- Index **names in the SQLite file can differ** from the MySQL export (SQLite has no length
+  limit) — structure and data are identical, only internal index names may be longer.

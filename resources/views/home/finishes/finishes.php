@@ -3,11 +3,17 @@
 $view->pushStyle('frontend/home/finishes/finishes.css');
 $view->pushScript('frontend/home/finishes/finishes.js');
 
+/* Finish list confirmed with the factory (management review):
+   every finish below is currently available, "Brushed Steel" is
+   renamed to "Brushed Nickel", Mirror Gold plus the Gunmetal
+   variants (Brushed Gunmetal / Gun Gray) were added, and the PVD
+   badge is shown only where PVD is actually used. */
 $finishes = [
     [
         'key' => 'brushed-rose-gold',
         'img' => 'images/finishes/swatch-rose-gold.jpg',
         'label' => 'Rose Gold',
+        'tech' => 'PVD',
         'title' => trans('home.finish_rose_title'),
         'desc' => trans('home.finish_rose_desc'),
     ],
@@ -15,6 +21,7 @@ $finishes = [
         'key' => 'chrome',
         'img' => 'images/finishes/swatch-chrome.jpg',
         'label' => 'Chrome',
+        'tech' => 'Electroplated',
         'title' => trans('home.finish_chrome_title'),
         'desc' => trans('home.finish_chrome_desc'),
     ],
@@ -22,29 +29,57 @@ $finishes = [
         'key' => 'brushed-gold',
         'img' => 'images/finishes/swatch-gold.jpg',
         'label' => 'Brushed Gold',
+        'tech' => 'PVD',
         'title' => trans('home.finish_gold_title'),
         'desc' => trans('home.finish_gold_desc'),
+    ],
+    [
+        'key' => 'mirror-gold',
+        'img' => 'images/finishes/swatch-mirror-gold.jpg',
+        'label' => 'Mirror Gold',
+        'tech' => 'PVD',
+        'title' => trans('home.finish_mirror_gold_title'),
+        'desc' => trans('home.finish_mirror_gold_desc'),
     ],
     [
         'key' => 'matte-black',
         'img' => 'images/finishes/swatch-black.jpg',
         'label' => 'Matte Black',
+        'tech' => 'Powder Coat',
         'title' => trans('home.finish_black_title'),
         'desc' => trans('home.finish_black_desc'),
     ],
     [
-        'key' => 'brushed-steel',
-        'img' => 'images/finishes/swatch-steel.jpg',
-        'label' => 'Brushed Steel',
-        'title' => trans('home.finish_steel_title'),
-        'desc' => trans('home.finish_steel_desc'),
+        'key' => 'brushed-nickel',
+        'img' => 'images/finishes/swatch-brushed-nickel.jpg',
+        'label' => 'Brushed Nickel',
+        'tech' => 'PVD',
+        'title' => trans('home.finish_nickel_title'),
+        'desc' => trans('home.finish_nickel_desc'),
     ],
     [
         'key' => 'gunmetal',
         'img' => 'images/finishes/swatch-gunmetal.jpg',
         'label' => 'Gunmetal',
+        'tech' => 'PVD',
         'title' => trans('home.finish_gunmetal_title'),
         'desc' => trans('home.finish_gunmetal_desc'),
+    ],
+    [
+        'key' => 'brushed-gunmetal',
+        'img' => 'images/finishes/swatch-brushed-gunmetal.jpg',
+        'label' => 'Brushed Gunmetal',
+        'tech' => 'PVD',
+        'title' => trans('home.finish_brushed_gunmetal_title'),
+        'desc' => trans('home.finish_brushed_gunmetal_desc'),
+    ],
+    [
+        'key' => 'gun-gray',
+        'img' => 'images/finishes/swatch-gun-gray.jpg',
+        'label' => 'Gun Gray',
+        'tech' => 'PVD',
+        'title' => trans('home.finish_gun_gray_title'),
+        'desc' => trans('home.finish_gun_gray_desc'),
     ],
 ];
 ?>
@@ -71,7 +106,7 @@ $finishes = [
                         aria-pressed="<?= $i === 0 ? 'true' : 'false' ?>">
                     <img src="<?= e(asset($finish['img'])) ?>" alt="<?= e($finish['label']) ?> finish" loading="lazy" decoding="async">
                     <span class="swatch-label"><?= e($finish['label']) ?></span>
-                    <small>PVD</small>
+                    <small><?= e($finish['tech']) ?></small>
                 </button>
             <?php endforeach; ?>
         </div>

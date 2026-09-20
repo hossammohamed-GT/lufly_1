@@ -80,9 +80,7 @@ final class Handler
                 'errors' => $e instanceof ValidationException ? $e->errors() : new \stdClass(),
                 'error_code' => $code,
             ];
-            if (self::isDebug() && $status === 500) {
-                $payload['debug'] = self::debugPayload($e);
-            }
+            /* No debug payload is ever attached to responses - it lives in the logs. */
 
             return new JsonResponse($payload, $status);
         }
@@ -97,7 +95,7 @@ final class Handler
             'title' => self::statusTitle($status),
             'message' => self::publicMessage($e, $status),
             'errors' => $e instanceof ValidationException ? $e->errors() : [],
-            'debug' => self::isDebug() && $status === 500 ? self::debugPayload($e) : null,
+            'debug' => null, /* never rendered on public pages - logs only */
         ];
 
         try {
@@ -131,10 +129,22 @@ final class Handler
 
     private static function publicMessage(Throwable $e, int $status): string
     {
-        if ($status >= 500 && !self::isDebug()) {
-            return trans('errors.server_error');
+        /* 5xx must NEVER leak backend details to visitors - regardless of
+           APP_DEBUG. Full exception + trace go to storage/logs/error.log. */
+        if ($status >= 500) {
+            try {
+                $message = trans('errors.server_error');
+                if (is_string($message) && $message !== '' && $message !== 'errors.server_error') {
+                    return $message;
+                }
+            } catch (Throwable) {
+                // translator itself unavailable - static safe text below
+            }
+
+            return 'The service is temporarily unavailable. Please try again in a moment.';
         }
 
+        /* 4xx exceptions carry user-facing (translated) messages by design. */
         return $e->getMessage();
     }
 
