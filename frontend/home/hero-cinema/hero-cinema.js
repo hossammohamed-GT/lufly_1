@@ -36,7 +36,10 @@
      viewport below its own top edge. Re-measured on resize. */
   function fitToScreen() {
     var top = root.getBoundingClientRect().top;
-    var h = Math.round(window.innerHeight - top);
+    var space = window.innerHeight - top;
+    /* On phones a full-viewport hero feels endless - settle at 80% so the
+       first content below starts to greet the eye instead. */
+    var h = Math.round(isMobile ? space * 0.8 : space);
     if (h >= 320) root.style.height = h + 'px';
   }
   fitToScreen();

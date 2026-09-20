@@ -4,6 +4,11 @@ declare(strict_types=1);
 
 return [
     'server_error' => 'Something went wrong. Please try again later.',
+    'page_not_found_title' => 'Page not found',
+    'page_not_found_message' => 'The page you are looking for may have been moved, renamed, or never existed. Let us guide you back.',
+    'page_not_found_hint' => 'or use the menu above to keep exploring',
+    'back_home' => 'Back to homepage',
+    'browse_products' => 'Browse the catalog',
     'product_not_found' => 'The requested product could not be found.',
     'user_not_found' => 'The requested user could not be found.',
     'media_not_found' => 'The requested media item could not be found.',

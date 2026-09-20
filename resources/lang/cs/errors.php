@@ -4,6 +4,11 @@ declare(strict_types=1);
 
 return [
     'server_error' => 'Něco se pokazilo. Zkuste to prosím později.',
+    'page_not_found_title' => 'Stránka nebyla nalezena',
+    'page_not_found_message' => 'Stránka, kterou hledáte, mohla být přesunuta, přejmenována nebo nikdy neexistovala. Navedeme vás zpět.',
+    'page_not_found_hint' => 'nebo pokračujte v prohlížení pomocí horní nabídky',
+    'back_home' => 'Zpět na úvodní stránku',
+    'browse_products' => 'Procházet katalog',
     'product_not_found' => 'Požadovaný produkt nebyl nalezen.',
     'user_not_found' => 'Požadovaný uživatel nebyl nalezen.',
     'media_not_found' => 'Požadovaná položka médií nebyla nalezena.',

@@ -4,6 +4,11 @@ declare(strict_types=1);
 
 return [
     'server_error' => 'Bir sorun oluştu. Lütfen daha sonra tekrar deneyin.',
+    'page_not_found_title' => 'Sayfa bulunamadı',
+    'page_not_found_message' => 'Aradığınız sayfa taşınmış, yeniden adlandırılmış veya hiç var olmamış olabilir. Sizi doğru yola geri götürelim.',
+    'page_not_found_hint' => 'veya keşfetmeye devam etmek için üstteki menüyü kullanın',
+    'back_home' => 'Ana sayfaya dön',
+    'browse_products' => 'Kataloğu incele',
     'product_not_found' => 'İstenen ürün bulunamadı.',
     'user_not_found' => 'İstenen kullanıcı bulunamadı.',
     'media_not_found' => 'İstenen medya öğesi bulunamadı.',
