@@ -112,6 +112,10 @@
 [data-sk-host].is-ready > [data-sk-skeleton] { display: none; }
 [data-sk-host].is-ready > [data-sk-real] { display: revert; }
 
+/* Catalog results are a grid, not the block-level default restored by
+   `display: revert` above. */
+[data-sk-host].is-ready > [data-sk-real].catalog-grid { display: grid; }
+
 @media (prefers-reduced-motion: reduce) {
   .sk::after { animation: none; }
 }
