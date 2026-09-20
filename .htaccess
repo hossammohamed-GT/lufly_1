@@ -1,7 +1,17 @@
 Options -Indexes
 RewriteEngine On
 
-# Serve real files at project root directly (frontend assets, logo, docs).
+# ---------------------------------------------------------------------
+# SECURITY (2026-09-20 audit): the repo root IS the web root here, so any
+# real file below it was downloadable over HTTP. Deny credentials,
+# source, dumps, logs and VCS metadata BEFORE the file passthrough rule.
+# ---------------------------------------------------------------------
+RewriteRule ^\.(env|git) - [R=404,L]
+RewriteRule ^(app|bootstrap\.php|config|core|database|docs|modules|resources|routes|tests|work_tr|vendor) - [R=404,L]
+RewriteRule ^storage/(logs|cache|backups) - [R=404,L]
+RewriteRule \.(sql|sqlite|mdb|log|md|json|lock|dist|example|py|sh|ini|ya?ml|bak|old)$ - [R=404,L]
+
+# Serve real files at project root directly (frontend assets, uploads).
 RewriteCond %{REQUEST_FILENAME} -f
 RewriteRule ^ - [L]
 
