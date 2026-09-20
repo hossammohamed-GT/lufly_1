@@ -40,36 +40,41 @@ class HomeController extends Controller
             [$locale, $fallback]
         );
 
-        $rawFeatured = \Modules\Products\Models\Product::query()
-            ->where('is_featured', 1)
-            ->where('status', 'active')
-            ->limit(6)
-            ->get();
+        /* Rotating showcase: every visit picks ONE random product per
+           category, then keeps 4 for the grid - so each reload shows a
+           different mix that always spans distinct categories. Curated
+           (is_featured) products win within their category when any exist. */
+        $pool = $connection->select(
+            "SELECT id, category_id, is_featured
+               FROM products
+              WHERE status = 'active' AND deleted_at IS NULL",
+        );
 
-        if (count($rawFeatured) < 3) {
-            /* No curated selection yet. Rather than the first N rows - which
-               all come from the same category and look repetitive - take one
-               product per category so the showcase spans the range. */
-            $ids = array_column(
-                $connection->select(
-                    "SELECT MIN(id) AS id
-                       FROM products
-                      WHERE status = 'active' AND deleted_at IS NULL
-                   GROUP BY category_id
-                   ORDER BY category_id ASC
-                      LIMIT 8",
-                ),
-                'id',
-            );
+        $byCategory = [];
+        foreach ($pool as $row) {
+            $byCategory[(int) $row['category_id']][] = $row;
+        }
 
-            $rawFeatured = $ids === []
-                ? \Modules\Products\Models\Product::query()
-                    ->where('status', 'active')
-                    ->limit(6)
-                    ->get()
-                : \Modules\Products\Models\Product::query()
-                    ->whereIn('id', $ids)
-                    ->get();
+        $ids = [];
+        foreach ($byCategory as $list) {
+            $featuredOnly = array_values(array_filter($list, static fn ($r) => (int) $r['is_featured'] === 1));
+            $bucket = $featuredOnly !== [] ? $featuredOnly : $list;
+            $ids[] = (int) $bucket[array_rand($bucket)]['id'];
+        }
+        shuffle($ids);                 /* random category order every time */
+        $ids = array_slice($ids, 0, 4); /* the grid renders 4 cards */
+
+        $rawFeatured = [];
+        if ($ids !== []) {
+            $byId = [];
+            foreach (\Modules\Products\Models\Product::query()->whereIn('id', $ids)->get() as $model) {
+                $byId[(int) $model->getKey()] = $model;
+            }
+            foreach ($ids as $id) {
+                if (isset($byId[$id])) {
+                    $rawFeatured[] = $byId[$id];
+                }
+            }
         }
 
         $featuredProducts = array_map(function ($p) use ($locale) {
