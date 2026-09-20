@@ -5,8 +5,6 @@
 !/storage/logs/.gitkeep
 !/storage/cache/.gitkeep
 !/storage/uploads/.gitkeep
-/vendor/*
-!/vendor/README.md
 .DS_Store
 Thumbs.db
 /storage/backups/*
