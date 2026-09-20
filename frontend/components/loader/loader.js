@@ -1,10 +1,9 @@
 /* ============================================================
-   LUFLY - Preloader "The Seed" & Global Loading Controller
-   One mint dot owns the whole loading moment: pop-in -> breathing
-   -> water ripples -> charge-up -> seal pop -> curtain exit.
-   All choreography lives in loader.css keyframes; this controller
-   only schedules seal/exit and classifies which pages get the
-   loader at all.
+   LUFLY - Preloader "Building the brand" & Global Loading Controller
+   Seed dot -> glyph pieces fly in -> settle + glass reflection ->
+   seal glow -> curtain exit. All choreography lives in loader.css
+   keyframes; this controller only schedules seal/exit and classifies
+   which pages get the loader at all.
    ============================================================ */
 
 (function () {
@@ -27,10 +26,11 @@
   }
 
   var reduced = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  if (reduced) loader.classList.add('ld-reduced');
 
-  /* --- seed choreography timing (must match loader.css keyframes) --- */
-  var T_SHOW = reduced ? 1100 : 2400;   /* seed enters, breathes, ripples, charges */
-  var T_SEAL = reduced ? 120 : 280;     /* final pop before the curtain */
+  /* --- assembly choreography timing (must match loader.css keyframes) --- */
+  var T_SHOW = reduced ? 1100 : 2500;   /* seed -> pieces assemble -> settle + reflection in */
+  var T_SEAL = reduced ? 150 : 450;     /* mark glow pulse before the curtain */
   var T_CURTAIN = 900;                  /* slide-out transition (css: .85s + .01) */
   var HARD_STOP = 6000;                 /* never trap the page behind the splash */
   var NAV_HOLD = reduced ? 200 : 520;   /* how long the nav flash holds */
@@ -56,7 +56,7 @@
     isExited = true;
   }
 
-  /* Initial visit: let the seed own the full moment, then seal and exit.
+  /* Initial visit: the assembly owns the full moment, then seal and exit.
      No progress gating - the animation IS the wait, by design. */
   function startInitialSequence() {
     document.body.classList.add('ld-loading');
@@ -66,8 +66,8 @@
     setTimeout(exitLoader, HARD_STOP);
   }
 
-  /* Navigation flash (home/contact links + contact form submits): same
-     seed, shorter hold. CSS animations restart because display was none. */
+  /* Navigation flash (home/contact links + contact form submits): the
+     finished mark without the choreography, shorter hold. */
   function showLoader() {
     isExited = false;
     loader.classList.remove('exit', 'seal');
@@ -199,7 +199,7 @@
     showLoader();
   }, { passive: true });
 
-  /* Public API. setProgress/setMessage are accepted no-ops: the seed
+  /* Public API. setProgress/setMessage are accepted no-ops: the assembly
      choreography carries the moment now, but older callers stay safe.
      .done() is used by app.js to dismiss the loader on bfcache restore. */
   window.LUFLYLoader = {

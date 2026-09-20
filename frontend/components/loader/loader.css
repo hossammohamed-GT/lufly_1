@@ -1,15 +1,15 @@
 /* ============================================================
-   LUFLY - Preloader "The Seed"
-   One mint dot owns the whole loading moment: pop-in -> breathing
-   pulses -> water ripples -> charge-up -> seal pop -> glowing
-   curtain exit. Tokens resolve through design-system/style.css.
+   LUFLY - Preloader "Building the brand"
+   Seed dot -> glyph pieces fly in on their own paths -> settle
+   + glass reflection -> seal glow -> glowing curtain exit.
+   Tokens resolve through design-system/style.css with fallbacks.
    ============================================================ */
 
 :root {
-  --ld-seed-hi: #eafffb;
+  --ld-teal-hi: var(--lu-mint, #7fe2d0);
   --ld-mint: var(--lu-mint, #7fe2d0);
   --ld-teal: var(--lu-teal-500, #1c8b8b);
-  --ld-teal-deep: var(--lu-teal-800, #0c4347);
+  --ld-ease: cubic-bezier(.19, 1, .22, 1);
 }
 
 body.ld-loading {
@@ -59,7 +59,7 @@ body.ld-loading {
   align-items: center;
   justify-content: center;
   /* Balanced translucent scrim: preserves page visibility underneath
-     while guaranteeing high contrast for the seed choreography */
+     while guaranteeing high contrast for the brand assembly */
   background: rgba(4, 9, 10, 0.42);
   backdrop-filter: blur(12px) saturate(140%);
   -webkit-backdrop-filter: blur(12px) saturate(140%);
@@ -84,7 +84,7 @@ body.ld-loading {
   right: 0;
   bottom: -3px;
   height: 3px;
-  background: linear-gradient(90deg, transparent, var(--ld-mint), transparent);
+  background: linear-gradient(90deg, transparent, var(--ld-teal-hi), transparent);
   box-shadow: 0 0 60px 12px color-mix(in srgb, var(--ld-mint) 45%, transparent);
 }
 
@@ -107,144 +107,172 @@ body.ld-loading {
   margin: auto;
 }
 
-/* ---------------- the seed ---------------- */
+/* ---------------- logo box: assemble + reflect ---------------- */
 
-.ld-orb {
+.ld-logoBox {
   position: relative;
-  width: clamp(130px, 28vmin, 190px);
-  aspect-ratio: 1;
-  display: grid;
-  place-items: center;
+  z-index: 3;
+  width: min(340px, 62vw);
+  aspect-ratio: 510 / 325;
+  transform-origin: center center;
+  flex-shrink: 0;
 }
 
-/* soft ambient aura rotating behind the dot */
-.ld-halo {
+.ld-draw {
   position: absolute;
   inset: 0;
-  border-radius: 50%;
-  background: conic-gradient(
-    from 0deg,
-    transparent 0deg,
-    color-mix(in srgb, var(--ld-mint) 55%, transparent) 90deg,
-    transparent 190deg,
-    color-mix(in srgb, var(--ld-teal) 40%, transparent) 290deg,
-    transparent 360deg
-  );
-  filter: blur(14px);
+  width: 100%;
+  height: 100%;
+  overflow: visible;
+  animation: ldSettle .45s ease 1.56s both;
+}
+
+/* ---- "Building the brand": every glyph piece flies in on its own path.
+   Staggered so the mark assembles piece by piece, then the whole group
+   settles with a tiny vibration. ---- */
+
+.ld-draw path {
+  fill: none;
+  stroke: var(--ld-teal-hi);
+  stroke-width: 7;
+  stroke-linecap: round;
+  stroke-linejoin: round;
   opacity: 0;
-  animation: ldHalo 2400ms ease forwards;
+  transform-box: fill-box;
+  transform-origin: center;
+  filter: drop-shadow(0 0 8px color-mix(in srgb, var(--ld-mint) 45%, transparent));
+  animation-duration: .58s;
+  animation-timing-function: var(--ld-ease);
+  animation-fill-mode: both;
 }
 
-@keyframes ldHalo {
-  0%   { opacity: 0; transform: rotate(0deg) scale(.6); }
-  18%  { opacity: .5; }
-  82%  { opacity: .7; }
-  100% { opacity: .45; transform: rotate(300deg) scale(1.05); }
+/* two-tone identity: mint strokes with two soft-ink accents */
+.ld-draw path:nth-child(4),
+.ld-draw path:nth-child(8) {
+  stroke: color-mix(in srgb, var(--lu-neutral-0, #ffffff) 82%, var(--ld-mint));
 }
 
-/* the dot itself: enters with a pop, breathes twice, then charges up */
+.ld-draw path:nth-child(1) { animation-name: ldPieceUp;     animation-delay: .20s; }
+.ld-draw path:nth-child(2) { animation-name: ldPieceLeft;   animation-delay: .31s; }
+.ld-draw path:nth-child(3) { animation-name: ldPieceArc;    animation-delay: .42s; animation-duration: .64s; }
+.ld-draw path:nth-child(4) { animation-name: ldPieceDrop;   animation-delay: .53s; animation-duration: .66s; }
+.ld-draw path:nth-child(5) { animation-name: ldPieceRise;   animation-delay: .64s; }
+.ld-draw path:nth-child(6) { animation-name: ldPieceRight;  animation-delay: .75s; }
+.ld-draw path:nth-child(7) { animation-name: ldPieceBounce; animation-delay: .86s; animation-duration: .7s; }
+.ld-draw path:nth-child(8) { animation-name: ldPieceSpin;   animation-delay: .97s; animation-duration: .62s; }
+
+@keyframes ldPieceUp     { 0% { opacity: 0; transform: translateY(46px); } 30% { opacity: 1; } 100% { opacity: 1; transform: translateY(0); } }
+@keyframes ldPieceLeft   { 0% { opacity: 0; transform: translateX(-38px); } 30% { opacity: 1; } 100% { opacity: 1; transform: translateX(0); } }
+@keyframes ldPieceRight  { 0% { opacity: 0; transform: translateX(40px); } 30% { opacity: 1; } 100% { opacity: 1; transform: translateX(0); } }
+@keyframes ldPieceArc    { 0% { opacity: 0; transform: translate(-34px, 30px); } 30% { opacity: 1; } 55% { transform: translate(10px, -9px); } 100% { opacity: 1; transform: translate(0, 0); } }
+@keyframes ldPieceRise   { 0% { opacity: 0; transform: translate(30px, 34px) rotate(8deg); } 30% { opacity: 1; } 100% { opacity: 1; transform: translate(0, 0) rotate(0deg); } }
+@keyframes ldPieceDrop   { 0% { opacity: 0; transform: translateY(-46px); } 30% { opacity: 1; } 70% { transform: translateY(7px); } 85% { transform: translateY(-3px); } 100% { opacity: 1; transform: translateY(0); } }
+@keyframes ldPieceBounce { 0% { opacity: 0; transform: translateY(42px) scale(.94); } 28% { opacity: 1; } 62% { transform: translateY(-8px) scale(1.01); } 82% { transform: translateY(3px); } 100% { opacity: 1; transform: translateY(0) scale(1); } }
+@keyframes ldPieceSpin   { 0% { opacity: 0; transform: translateY(-34px) rotate(12deg); } 30% { opacity: 1; } 75% { transform: translateY(3px) rotate(-2.5deg); } 100% { opacity: 1; transform: translateY(0) rotate(0deg); } }
+
+/* settling motion: tiny vibration before full rest */
+@keyframes ldSettle {
+  0% { transform: scale(1); }
+  40% { transform: scale(1.015) translateY(-1.5px); }
+  70% { transform: scale(0.998); }
+  100% { transform: scale(1); }
+}
+
+/* ---- seed dot: minimal presence before the first piece ---- */
+
 .ld-seed {
-  position: relative;
-  z-index: 2;
-  width: clamp(14px, 3vmin, 18px);
-  aspect-ratio: 1;
-  border-radius: 50%;
-  background: radial-gradient(circle at 34% 30%, var(--ld-seed-hi) 0%, var(--ld-mint) 42%, var(--ld-teal) 100%);
-  opacity: 0;
-  transform: scale(.2);
-  animation: ldSeedLife 2400ms cubic-bezier(.34, 1.3, .5, 1) forwards;
-}
-
-@keyframes ldSeedLife {
-  0% {
-    opacity: 0;
-    transform: scale(.2);
-    box-shadow: 0 0 0 0 rgba(127, 226, 208, 0);
-  }
-  7% {
-    opacity: 1;
-    transform: scale(1.28);
-    box-shadow: 0 0 22px 4px rgba(127, 226, 208, .45), 0 0 60px 10px rgba(28, 139, 139, .3);
-  }
-  12% { transform: scale(.92); }
-  16% { transform: scale(1); }
-  /* first breath */
-  30% { transform: scale(1.18); }
-  40% { transform: scale(1); }
-  /* second, deeper breath */
-  56% { transform: scale(1.26); }
-  68% { transform: scale(1); }
-  /* charge-up before the seal */
-  84% {
-    transform: scale(1.38);
-    box-shadow: 0 0 34px 10px rgba(127, 226, 208, .75), 0 0 110px 26px rgba(28, 139, 139, .5);
-  }
-  100% {
-    opacity: 1;
-    transform: scale(1.05);
-    box-shadow: 0 0 26px 7px rgba(127, 226, 208, .6), 0 0 80px 18px rgba(28, 139, 139, .42);
-  }
-}
-
-/* water-ripple rings the seed sends out as it breathes */
-.ld-ring {
   position: absolute;
-  inset: 0;
-  margin: auto;
-  width: 26px;
-  height: 26px;
+  left: 50%;
+  top: 50%;
+  width: 10px;
+  height: 10px;
+  margin: -5px 0 0 -5px;
   border-radius: 50%;
-  border: 2px solid color-mix(in srgb, var(--ld-mint) 80%, transparent);
-  box-shadow: 0 0 18px 2px rgba(127, 226, 208, .35);
+  background: var(--ld-mint);
+  box-shadow: 0 0 18px 5px color-mix(in srgb, var(--ld-mint) 55%, transparent);
+  animation: ldSeed 1.05s ease .05s both;
+  z-index: 2;
+}
+
+@keyframes ldSeed {
+  0% { opacity: 0; transform: scale(.4); }
+  18% { opacity: 1; transform: scale(1); }
+  52% { opacity: .9; transform: scale(1.3); }
+  100% { opacity: 0; transform: scale(2.4); }
+}
+
+/* ---- glass-floor reflection (flipped, squashed, teal tint) ---- */
+
+.ld-floor {
+  position: absolute;
+  top: calc(100% + 4px);
+  left: 10%;
+  right: 10%;
+  height: 1px;
+  background: linear-gradient(90deg,
+    transparent,
+    color-mix(in srgb, var(--ld-mint) 62%, transparent),
+    transparent);
   opacity: 0;
-  transform: scale(.2);
-  animation: ldRipple 1100ms cubic-bezier(.16, .66, .36, 1) forwards;
+  animation: ldReflectIn .9s ease 1.38s both;
+  pointer-events: none;
+  z-index: 1;
 }
 
-.ld-ring.r1 { animation-delay: 550ms; }
-.ld-ring.r2 { animation-delay: 1200ms; border-width: 1.6px; }
-.ld-ring.r3 { animation-delay: 1850ms; border-width: 1.2px; }
-
-@keyframes ldRipple {
-  0%   { opacity: 0; transform: scale(.2); }
-  12%  { opacity: .85; }
-  100% { opacity: 0; transform: scale(5.2); }
-}
-
-/* ---------------- seal & exit ---------------- */
-
-.ld-loader.seal .ld-seed {
-  animation: ldSeedPop .28s ease-in forwards;
-}
-
-.ld-loader.seal .ld-ring,
-.ld-loader.seal .ld-halo {
-  animation-play-state: paused;
-  transition: opacity .2s ease;
+.ld-reflect {
+  position: absolute;
+  top: 70%;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  transform: scaleY(-.3);
+  transform-origin: 50% 100%;
+  filter: blur(1.3px);
   opacity: 0;
+  animation: ldReflectIn 1s ease 1.45s both;
+  pointer-events: none;
+  z-index: 1;
+  -webkit-mask-image: linear-gradient(to top, rgba(0, 0, 0, .95) 4%, rgba(0, 0, 0, .3) 38%, transparent 56%);
+  mask-image: linear-gradient(to top, rgba(0, 0, 0, .95) 4%, rgba(0, 0, 0, .3) 38%, transparent 56%);
 }
 
-@keyframes ldSeedPop {
-  0%   { opacity: 1; transform: scale(1.05); }
-  45%  { opacity: 1; transform: scale(2.2); box-shadow: 0 0 60px 22px rgba(127, 226, 208, .9); }
-  100% { opacity: 0; transform: scale(2.6); box-shadow: 0 0 90px 30px rgba(127, 226, 208, 0); }
+.ld-reflect path {
+  fill: none;
+  stroke: color-mix(in srgb, var(--ld-teal) 70%, var(--ld-mint));
+  stroke-width: 7;
+  stroke-linecap: round;
+  stroke-linejoin: round;
 }
 
-/* nav re-entry: the seed should play again each time the loader shows */
-.ld-loader:not(.exit) .ld-seed {
-  animation-name: ldSeedLife;
+@keyframes ldReflectIn {
+  from { opacity: 0; }
+  to { opacity: .32; }
+}
+
+/* navigation overlays: the finished mark, no replay of the choreography */
+.ld-loader.is-nav .ld-seed { display: none; }
+.ld-loader.is-nav .ld-draw { animation: none; }
+.ld-loader.is-nav .ld-draw path { animation: none; opacity: 1; }
+.ld-loader.is-nav .ld-floor { animation: none; opacity: .5; }
+.ld-loader.is-nav .ld-reflect { animation: none; opacity: .32; }
+
+/* ---------------- seal: one warm glow pulse, then the curtain ---------------- */
+
+.ld-loader.seal .ld-logoBox {
+  animation: ldSeal .45s var(--ld-ease) both;
+}
+
+@keyframes ldSeal {
+  0% { transform: scale(1); filter: drop-shadow(0 0 0 transparent); }
+  50% { transform: scale(1.02); filter: drop-shadow(0 0 20px color-mix(in srgb, var(--ld-mint) 50%, transparent)); }
+  100% { transform: scale(1); filter: none; }
 }
 
 /* ---------------- reduced motion ---------------- */
 
-@media (prefers-reduced-motion: reduce) {
-  .ld-seed {
-    animation: none;
-    opacity: 1;
-    transform: none;
-    box-shadow: 0 0 20px 4px rgba(127, 226, 208, .5);
-  }
-  .ld-ring,
-  .ld-halo { display: none; }
-  .ld-loader.seal .ld-seed { animation: ldSeedPop .12s ease-in forwards; }
-}
+.ld-reduced .ld-draw { animation: none; }
+.ld-reduced .ld-draw path { animation: none; opacity: 1; transform: none; }
+.ld-reduced .ld-seed { display: none; }
+.ld-reduced .ld-floor { animation: none; opacity: .5; }
+.ld-reduced .ld-reflect { animation: none; opacity: .32; }
+.ld-loader.ld-reduced { transition-duration: .35s; }
