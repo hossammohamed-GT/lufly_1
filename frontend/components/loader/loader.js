@@ -118,8 +118,25 @@
   function runInitialLoad(onDone) {
     var t0 = performance.now();
     var duration = reduced ? 250 : 650;
+    var finished = false;
+
+    function finish() {
+      if (finished) return;
+      finished = true;
+      if (animFrameId) cancelAnimationFrame(animFrameId);
+      setProgress(100);
+      if (typeof onDone === 'function') onDone();
+    }
+
+    /* Hard ceiling. Whatever happens - a stalled font promise, a blocked
+       resource, an image that never fires load - the loader must come down.
+       A stuck splash screen is far worse than an early one. */
+    var HARD_STOP = reduced ? 1200 : 6000;
+    setTimeout(finish, HARD_STOP);
 
     function frame(now) {
+      if (finished) return;
+
       var elapsed = (now - t0) / duration;
       if (elapsed > 1) elapsed = 1;
 
@@ -131,9 +148,11 @@
 
       setProgress(currentP);
 
-      if (currentP >= 99.6) {
-        setProgress(100);
-        if (typeof onDone === 'function') onDone();
+      /* Only the pageLoaded branch can reach 100. Waiting for 99.6 while the
+         target is capped at 92 was an infinite loop: currentP converges on 92
+         and never crosses the threshold. Require pageLoaded explicitly. */
+      if (pageLoaded && currentP >= 99.6) {
+        finish();
         return;
       }
 

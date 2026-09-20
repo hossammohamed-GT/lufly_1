@@ -97,15 +97,20 @@
 /* ---- swap behaviour: the skeleton is removed once the real content is in.
    Keeping both in the DOM briefly avoids a flash of empty space. ---- */
 
-[data-sk-host] > [data-sk-real] { display: none; }
-[data-sk-host].is-ready > [data-sk-real] { display: block; }
-[data-sk-host].is-ready > [data-sk-skeleton] { display: none; }
+/* Fail-safe direction: the REAL content is visible by default and the
+   skeleton is what gets hidden. Hiding real content by default meant that if
+   the script failed to run - an error anywhere earlier on the page, a blocked
+   file, an old browser - the products disappeared permanently. Content must
+   never depend on JavaScript to be seen.
 
-/* grids need their display value preserved when revealed */
-[data-sk-host].is-ready > [data-sk-real].catalog-grid,
-[data-sk-host].is-ready > [data-sk-real].masterpieces-grid {
-  display: grid;
-}
+   The script adds .sk-armed only once it is running and able to reveal
+   again, so the placeholder is shown strictly while that guarantee holds. */
+[data-sk-host].sk-armed > [data-sk-real] { display: none; }
+[data-sk-host].sk-armed > [data-sk-skeleton] { display: grid; }
+
+[data-sk-host] > [data-sk-skeleton] { display: none; }
+[data-sk-host].is-ready > [data-sk-skeleton] { display: none; }
+[data-sk-host].is-ready > [data-sk-real] { display: revert; }
 
 @media (prefers-reduced-motion: reduce) {
   .sk::after { animation: none; }

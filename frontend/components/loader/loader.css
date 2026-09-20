@@ -19,6 +19,34 @@ body.ld-loading {
   overflow: hidden !important;
 }
 
+/* Last-resort safety net, pure CSS so it works even if the script dies.
+   The loader is only allowed to hold the page for a few seconds; after that
+   it fades out and scrolling is returned no matter what state JS is in.
+   Nothing here depends on a class being added by JavaScript. */
+@keyframes ldFailsafe {
+  to { opacity: 0; visibility: hidden; pointer-events: none; }
+}
+
+.ld-loader {
+  animation: ldFailsafe 0.4s ease 8s forwards;
+}
+
+body.ld-loading {
+  animation: ldRestoreScroll 0s linear 8.4s forwards;
+}
+
+@keyframes ldRestoreScroll {
+  to { overflow: auto !important; }
+}
+
+/* once the normal exit path runs, the failsafe must not interfere */
+.ld-loader.exit { animation: none; }
+
+@media (prefers-reduced-motion: reduce) {
+  .ld-loader { animation-delay: 3s; }
+  body.ld-loading { animation-delay: 3.4s; }
+}
+
 body.ready {
   overflow: auto;
 }

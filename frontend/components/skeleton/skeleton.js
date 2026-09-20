@@ -18,12 +18,17 @@
   var CEILING = 2200;
 
   function revealHost(host) {
-    if (!host || host.classList.contains('is-ready')) return;
+    if (!host) return;
+    host.classList.remove('sk-armed');
     host.classList.add('is-ready');
   }
 
   function initHost(host) {
     var real = host.querySelector('[data-sk-real]');
+
+    /* Arm only now: from this point the script is demonstrably running, so
+       hiding the real content is safe because we can always reveal it. */
+    host.classList.add('sk-armed');
     if (!real) {
       revealHost(host);
       return;
