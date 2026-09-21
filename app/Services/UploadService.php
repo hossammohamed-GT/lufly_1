@@ -34,13 +34,44 @@ class UploadService
             throw new UploadException(trans('errors.upload_too_large', ['max' => (string) $maxKb]));
         }
 
-        $filename = Str::random(24) . '.' . $extension;
-        $relative = trim($directory, '/') . '/' . date('Y/m');
-        $baseUploadPath = (string) config('uploads.path', 'public/images/uploads');
-        $targetDir = $this->app->basePath($baseUploadPath . '/' . $relative);
+        $directory = str_replace('\\', '/', $directory);
+        if (str_contains($directory, '..') || str_contains($directory, "\0")) {
+            throw new UploadException('Path traversal detected in upload directory.');
+        }
 
+        // Sanitize path segments: only allow letters, numbers, hyphens, and underscores
+        $segments = array_values(array_filter(explode('/', trim($directory, '/')), fn ($s) => $s !== '' && $s !== '.'));
+        foreach ($segments as $seg) {
+            if (!preg_match('/^[a-zA-Z0-9_\-]+$/', $seg)) {
+                throw new UploadException('Invalid directory segment in upload path.');
+            }
+        }
+        $cleanDir = implode('/', $segments);
+        if ($cleanDir === '') {
+            $cleanDir = 'general';
+        }
+
+        $filename = Str::random(24) . '.' . $extension;
+        $relative = $cleanDir . '/' . date('Y/m');
+        $baseUploadPath = (string) config('uploads.path', 'public/images/uploads');
+        $uploadRoot = realpath($this->app->basePath($baseUploadPath));
+        if ($uploadRoot === false) {
+            $uploadRoot = $this->app->basePath($baseUploadPath);
+            if (!is_dir($uploadRoot) && !mkdir($uploadRoot, 0775, true)) {
+                throw new UploadException(trans('errors.upload_directory_failed'));
+            }
+            $uploadRoot = realpath($uploadRoot);
+        }
+
+        $targetDir = $this->app->basePath($baseUploadPath . '/' . $relative);
         if (!is_dir($targetDir) && !mkdir($targetDir, 0775, true)) {
             throw new UploadException(trans('errors.upload_directory_failed'));
+        }
+
+        // Verify targetDir is strictly within uploadRoot
+        $realTarget = realpath($targetDir);
+        if ($realTarget === false || $uploadRoot === false || !str_starts_with($realTarget, $uploadRoot)) {
+            throw new UploadException('Target upload directory is outside of allowed upload root.');
         }
 
         $moved = is_uploaded_file((string) $file['tmp_name'])
@@ -67,22 +98,35 @@ class UploadService
             'extension' => $extension,
             'mime' => (string) ($file['type'] ?? 'application/octet-stream'),
             'size' => (int) ($file['size'] ?? 0),
-            'directory' => trim($directory, '/'),
+            'directory' => $cleanDir,
         ];
     }
 
     public function delete(string $relativePath): bool
     {
-        $clean = ltrim($relativePath, '/');
+        $clean = ltrim(str_replace('\\', '/', $relativePath), '/');
+        if (str_contains($clean, '..') || str_contains($clean, "\0")) {
+            return false;
+        }
+
         $baseUploadPath = (string) config('uploads.path', 'public/images/uploads');
-        
+        $uploadRoot = realpath($this->app->basePath($baseUploadPath));
+        if ($uploadRoot === false) {
+            return false;
+        }
+
         if (str_starts_with($clean, 'images/uploads/')) {
             $full = $this->app->basePath('public/' . $clean);
         } else {
             $full = $this->app->basePath($baseUploadPath . '/' . $clean);
         }
 
-        return is_file($full) ? unlink($full) : false;
+        $realTarget = realpath($full);
+        if ($realTarget === false || !str_starts_with($realTarget, $uploadRoot) || !is_file($realTarget)) {
+            return false;
+        }
+
+        return unlink($realTarget);
     }
 
     /** @param array<string, mixed> $file */
