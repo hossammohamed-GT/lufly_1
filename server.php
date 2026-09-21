@@ -6,15 +6,27 @@ $uri = urldecode(
     parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH) ?? ''
 );
 
-// Serve static files from public/ directly
-if ($uri !== '/' && file_exists(__DIR__ . '/public' . $uri)) {
+// Block sensitive files and directories immediately
+$isBlocked = preg_match('/(^|\/)(\.env|\.git|\.sqlite|\.db|\.sql|\.log)($|\.|\/)/i', $uri)
+    || preg_match('#^/(storage|database|core|app|modules|config|scratch|tests)(/|$)#i', $uri);
+
+if ($isBlocked) {
+    http_response_code(403);
+    header('Content-Type: text/plain; charset=utf-8');
+    echo '403 Forbidden: Access Denied';
+    exit;
+}
+
+// Serve static files from public/ directly (excluding sensitive extensions)
+if ($uri !== '/' && file_exists(__DIR__ . '/public' . $uri) && !is_dir(__DIR__ . '/public' . $uri)) {
     return false;
 }
 
-// Serve static files from root directly (frontend design system, admin assets, etc.)
-if ($uri !== '/' && file_exists(__DIR__ . $uri) && !is_dir(__DIR__ . $uri)) {
+// Serve static frontend assets from root directly (css, js, fonts, images)
+if (str_starts_with($uri, '/frontend/') && file_exists(__DIR__ . $uri) && !is_dir(__DIR__ . $uri)) {
     return false;
 }
 
 // Route all other application traffic through the front controller
 require_once __DIR__ . '/public/index.php';
+

@@ -1,9 +1,18 @@
 Options -Indexes
 RewriteEngine On
 
-# Serve real files at project root directly (frontend assets, logo, docs).
-RewriteCond %{REQUEST_FILENAME} -f
-RewriteRule ^ - [L]
+# Block sensitive files (dotfiles, env, sqlite, sql, db, logs, lock, config, etc.)
+<FilesMatch "^\.|\.(env|sqlite|db|sql|log|lock|json|md)$">
+    Require all denied
+</FilesMatch>
 
-# Everything else is routed through the front controller in public/.
+# Block access to internal application directories
+RewriteRule ^(storage|database|core|app|modules|config|scratch|tests)(/.*)?$ - [F,L,NC]
+
+# Serve frontend assets from root directly
+RewriteRule ^frontend/.* - [L]
+
+# Route all other traffic through public/
+RewriteCond %{REQUEST_URI} !^/public/
 RewriteRule ^(.*)$ public/$1 [QSA,L]
+
