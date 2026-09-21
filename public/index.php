@@ -6,7 +6,7 @@ use Core\Foundation\Application;
 use Core\Http\Kernel;
 use Core\Http\Request;
 
-define('LUFLY_START', microtime(true));
+defined('LUFLY_START') || define('LUFLY_START', microtime(true));
 
 $app = require dirname(__DIR__) . '/bootstrap.php';
 
