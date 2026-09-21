@@ -5,8 +5,8 @@ declare(strict_types=1);
 return [
     'disk' => env('UPLOAD_DISK', 'local'),
 
-    // Relative to storage/uploads (served through /storage/uploads/...).
-    'path' => 'storage/uploads',
+    // Stored inside public/images/uploads (accessible directly and via asset()).
+    'path' => 'public/images/uploads',
 
     'max_size_kb' => (int) env('UPLOAD_MAX_SIZE', 10240),
 

@@ -36,7 +36,8 @@ class UploadService
 
         $filename = Str::random(24) . '.' . $extension;
         $relative = trim($directory, '/') . '/' . date('Y/m');
-        $targetDir = $this->app->basePath(config('uploads.path', 'storage/uploads') . '/' . $relative);
+        $baseUploadPath = (string) config('uploads.path', 'public/images/uploads');
+        $targetDir = $this->app->basePath($baseUploadPath . '/' . $relative);
 
         if (!is_dir($targetDir) && !mkdir($targetDir, 0775, true)) {
             throw new UploadException(trans('errors.upload_directory_failed'));
@@ -46,8 +47,17 @@ class UploadService
             throw new UploadException(trans('errors.upload_move_failed'));
         }
 
+        // Generate web-accessible path (compatible with asset() and storefront)
+        $cleanBase = ltrim($baseUploadPath, '/');
+        if (str_starts_with($cleanBase, 'public/')) {
+            $webPrefix = '/' . substr($cleanBase, strlen('public/'));
+        } else {
+            $webPrefix = '/' . $cleanBase;
+        }
+        $webPath = rtrim($webPrefix, '/') . '/' . $relative . '/' . $filename;
+
         return [
-            'path' => $relative . '/' . $filename,
+            'path' => $webPath,
             'filename' => $filename,
             'original_name' => $original,
             'extension' => $extension,
@@ -59,7 +69,14 @@ class UploadService
 
     public function delete(string $relativePath): bool
     {
-        $full = $this->app->basePath(config('uploads.path', 'storage/uploads') . '/' . ltrim($relativePath, '/'));
+        $clean = ltrim($relativePath, '/');
+        $baseUploadPath = (string) config('uploads.path', 'public/images/uploads');
+        
+        if (str_starts_with($clean, 'images/uploads/')) {
+            $full = $this->app->basePath('public/' . $clean);
+        } else {
+            $full = $this->app->basePath($baseUploadPath . '/' . $clean);
+        }
 
         return is_file($full) ? unlink($full) : false;
     }
