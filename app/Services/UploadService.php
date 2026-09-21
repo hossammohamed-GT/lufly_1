@@ -43,7 +43,11 @@ class UploadService
             throw new UploadException(trans('errors.upload_directory_failed'));
         }
 
-        if (!move_uploaded_file((string) $file['tmp_name'], $targetDir . '/' . $filename)) {
+        $moved = is_uploaded_file((string) $file['tmp_name'])
+            ? move_uploaded_file((string) $file['tmp_name'], $targetDir . '/' . $filename)
+            : (@rename((string) $file['tmp_name'], $targetDir . '/' . $filename) || @copy((string) $file['tmp_name'], $targetDir . '/' . $filename));
+
+        if (!$moved) {
             throw new UploadException(trans('errors.upload_move_failed'));
         }
 

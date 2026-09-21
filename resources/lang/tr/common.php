@@ -24,6 +24,7 @@ return [
     'saved' => 'Başarıyla kaydedildi.',
     'deleted' => 'Başarıyla silindi.',
     'uploaded' => 'Başarıyla yüklendi.',
+    'image' => 'Resim',
     'actions' => 'İşlemler',
     'status' => 'Durum',
     'active' => 'Aktif',

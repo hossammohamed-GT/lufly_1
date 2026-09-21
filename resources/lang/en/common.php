@@ -24,6 +24,7 @@ return [
     'saved' => 'Saved successfully.',
     'deleted' => 'Deleted successfully.',
     'uploaded' => 'Uploaded successfully.',
+    'image' => 'Image',
     'actions' => 'Actions',
     'status' => 'Status',
     'active' => 'Active',

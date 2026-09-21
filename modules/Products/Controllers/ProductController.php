@@ -211,6 +211,7 @@ class ProductController extends Controller
         return $this->view('products::Admin.form', [
             'title' => trans('common.create_product'),
             'product' => null,
+            'primaryImage' => null,
             'translations' => [],
         ]);
     }
@@ -224,6 +225,10 @@ class ProductController extends Controller
             $this->translationsFromForm($data),
         );
 
+        if ($request->hasFile('image')) {
+            $this->attachPrimaryImage((int) $product->id, $request->file('image'));
+        }
+
         return $this->redirect(route('admin.products.edit', ['id' => $product->id]))
             ->with('_success', trans('common.saved'));
     }
@@ -231,11 +236,14 @@ class ProductController extends Controller
     public function adminEdit(int $id): Response
     {
         $product = $this->products->find($id);
+        $translated = $product !== null ? $product->translate($this->translator->getLocale()) : [];
+        $primaryImage = !empty($translated['image']) ? (string) $translated['image'] : null;
 
         return $this->view('products::Admin.form', [
             'title' => trans('common.edit_product'),
             'product' => $product,
-            'translations' => $product->translations(),
+            'primaryImage' => $primaryImage,
+            'translations' => $product !== null ? $product->translations() : [],
         ]);
     }
 
@@ -244,6 +252,10 @@ class ProductController extends Controller
         $data = (new UpdateProductRequest())->forProduct($id)->handle($request);
 
         $this->products->update($id, $this->coreFields($data), $this->translationsFromForm($data));
+
+        if ($request->hasFile('image')) {
+            $this->attachPrimaryImage($id, $request->file('image'));
+        }
 
         return $this->redirect(route('admin.products.edit', ['id' => $id]))
             ->with('_success', trans('common.saved'));
@@ -299,5 +311,32 @@ class ProductController extends Controller
         }
 
         return $translations;
+    }
+
+    /**
+     * @param array<string, mixed> $file
+     */
+    private function attachPrimaryImage(int $productId, array $file): void
+    {
+        /** @var \App\Services\MediaService $mediaService */
+        $mediaService = app(\App\Services\MediaService::class);
+        $media = $mediaService->storeFromUpload($file, 'products', auth()->id());
+
+        $connection = \Modules\Products\Models\Product::query()->connection();
+        $connection->affect(
+            'UPDATE product_media SET is_primary = 0 WHERE product_id = ?',
+            [$productId]
+        );
+
+        $connection->insert('product_media', [
+            'product_id' => $productId,
+            'variant_id' => null,
+            'media_id' => (int) $media->id,
+            'type' => 'main',
+            'sort_order' => 1,
+            'is_primary' => 1,
+            'created_at' => date('Y-m-d H:i:s'),
+            'updated_at' => date('Y-m-d H:i:s'),
+        ]);
     }
 }

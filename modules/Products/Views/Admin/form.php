@@ -26,8 +26,19 @@ $collectionId = (string) ($product->collection_id ?? '');
 $brandId = (string) ($product->brand_id ?? '');
 $isFeatured = $product === null ? 0 : (int) $product->is_featured;
 ?>
-<form method="post" action="<?= e($action) ?>" class="stack admin-form">
+<form method="post" action="<?= e($action) ?>" enctype="multipart/form-data" class="stack admin-form">
     <?= csrf_field() ?>
+
+    <div class="field">
+        <label class="field-label" for="image"><?= e(trans('common.image') ?? 'Image') ?></label>
+        <?php if (!empty($primaryImage)): ?>
+            <div class="product-thumb-box" style="margin-bottom: 8px;">
+                <img src="<?= asset($primaryImage) ?>" alt="Product preview" class="product-form-preview" style="max-width: 120px; max-height: 120px; object-fit: contain; border-radius: 6px; border: 1px solid var(--ds-border, #e2e8f0); padding: 4px; background: var(--ds-surface, #fff);">
+            </div>
+        <?php endif; ?>
+        <input class="input" type="file" id="image" name="image" accept="image/*">
+        <span class="field-help" style="display: block; margin-top: 4px; font-size: 0.82rem; color: var(--ds-text-muted, #64748b);"><?= !empty($primaryImage) ? 'Upload a new image to replace current primary image' : 'Upload primary product image (JPG, PNG, WebP)' ?></span>
+    </div>
 
     <div class="grid grid-2">
         <?= $view->component('input', ['name' => 'model_code', 'label' => trans('common.model_code'), 'value' => $product->model_code ?? '', 'required' => true]) ?>

@@ -24,6 +24,7 @@ return [
     'saved' => 'Úspěšně uloženo.',
     'deleted' => 'Úspěšně smazáno.',
     'uploaded' => 'Úspěšně nahráno.',
+    'image' => 'Obrázek',
     'actions' => 'Akce',
     'status' => 'Stav',
     'active' => 'Aktivní',

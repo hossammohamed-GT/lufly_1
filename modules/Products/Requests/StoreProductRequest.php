@@ -19,6 +19,7 @@ class StoreProductRequest extends FormRequest
             'brand_id' => 'nullable|integer',
             'is_featured' => 'nullable|in:0,1',
             'status' => 'required|in:draft,active,hidden,discontinued,coming_soon',
+            'image' => 'nullable|file',
             'name_en' => 'required|string|max:255',
             'name_tr' => 'nullable|string|max:255',
             'name_cs' => 'nullable|string|max:255',
