@@ -20,12 +20,22 @@ class Session
             return;
         }
 
+        $secure = (bool) config('security.session_secure_cookie', false);
+        if (!$secure && (
+            (isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off')
+            || (isset($_SERVER['HTTP_X_FORWARDED_PROTO']) && $_SERVER['HTTP_X_FORWARDED_PROTO'] === 'https')
+            || (isset($_SERVER['SERVER_PORT']) && (int) $_SERVER['SERVER_PORT'] === 443)
+            || env('APP_ENV') === 'production'
+        )) {
+            $secure = true;
+        }
+
         session_set_cookie_params([
             'lifetime' => (int) config('security.session_lifetime', 7200),
             'path' => '/',
-            'httponly' => true,
-            'samesite' => 'Lax',
-            'secure' => (bool) config('security.session_secure_cookie', false),
+            'httponly' => (bool) config('security.session_httponly', true),
+            'samesite' => (string) config('security.session_samesite', 'Lax'),
+            'secure' => $secure,
         ]);
         session_name((string) config('security.session_name', 'lufly_session'));
         session_start();

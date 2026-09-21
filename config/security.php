@@ -8,9 +8,11 @@ return [
     'login_max_attempts' => (int) env('SECURITY_LOGIN_MAX_ATTEMPTS', 5),
     'login_lockout_seconds' => (int) env('SECURITY_LOGIN_LOCKOUT_SECONDS', 300),
 
-    'session_name' => 'lufly_session',
+    'session_name' => (string) env('SESSION_NAME', 'lufly_session'),
     'session_lifetime' => (int) env('SESSION_LIFETIME', 7200),
-    'session_secure_cookie' => false,
+    'session_secure_cookie' => (bool) env('SESSION_SECURE_COOKIE', env('APP_ENV') === 'production' || (isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off')),
+    'session_samesite' => (string) env('SESSION_SAMESITE', 'Lax'),
+    'session_httponly' => true,
 
     'headers' => [
         'X-Frame-Options' => 'SAMEORIGIN',
