@@ -26,6 +26,7 @@ class MediaController extends Controller
             'title' => trans('common.media_library'),
             'paginator' => $paginator,
             'items' => $paginator->items(),
+            'collections' => $this->media->collections(),
         ]);
     }
 
@@ -35,7 +36,14 @@ class MediaController extends Controller
 
         /** @var array<string, mixed> $file */
         $file = $request->file('file');
-        $this->media->storeFromUpload($file, (string) $request->input('collection', 'general'), auth()->id());
+
+        $selected = trim((string) $request->input('collection', 'general'));
+        $newCollection = trim((string) $request->input('new_collection', ''));
+        $collection = ($selected === '__new__' && $newCollection !== '')
+            ? $newCollection
+            : ($selected !== '__new__' && $selected !== '' ? $selected : 'general');
+
+        $this->media->storeFromUpload($file, $collection, auth()->id());
 
         return $this->redirect(route('admin.media.index'))
             ->with('_success', trans('common.uploaded'));
