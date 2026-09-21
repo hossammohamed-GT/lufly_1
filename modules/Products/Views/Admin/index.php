@@ -45,3 +45,5 @@ foreach ($paginator->items() as $product) {
         <?php endforeach; ?>
     </tbody>
 </table>
+
+<?= $view->component('pagination', ['paginator' => $paginator]) ?>

@@ -191,9 +191,14 @@ class ProductController extends Controller
 
     public function adminIndex(Request $request): Response
     {
+        $search = trim((string) $request->query('q', ''));
+        $page = max(1, (int) $request->query('page', '1'));
+        $perPage = 15;
+
         $paginator = $this->products->paginate([
-            'search' => (string) $request->query('q', ''),
-        ], (int) $request->query('page', '1'), 10);
+            'search' => $search,
+            'locale' => $this->translator->getLocale(),
+        ], $page, $perPage);
 
         return $this->view('products::Admin.index', [
             'title' => trans('common.products'),

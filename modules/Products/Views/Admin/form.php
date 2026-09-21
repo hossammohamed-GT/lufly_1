@@ -89,7 +89,7 @@ $isFeatured = $product === null ? 0 : (int) $product->is_featured;
             <legend><?= e(strtoupper($locale)) ?></legend>
             <?= $view->component('input', ['name' => 'name_' . $locale, 'label' => trans('products.name') . ' (' . strtoupper($locale) . ')', 'value' => $tr['name'] ?? '', 'required' => $locale === 'en']) ?>
             <div class="field">
-                <label class="field-label" for="short_description_<?= e($locale) ?>"><?= e(trans('products.description')) - short (<?= e(strtoupper($locale)) ?>)</label>
+                <label class="field-label" for="short_description_<?= e($locale) ?>"><?= e(trans('products.description')) ?> - short (<?= e(strtoupper($locale)) ?>)</label>
                 <input class="input" id="short_description_<?= e($locale) ?>" name="short_description_<?= e($locale) ?>" type="text" maxlength="500" value="<?= e((string) ($tr['short_description'] ?? '')) ?>">
             </div>
             <div class="field">
