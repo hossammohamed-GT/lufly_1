@@ -19,7 +19,7 @@ class UpdateProductRequest extends FormRequest
 
     public function rules(): array
     {
-        return [
+        $rules = [
             'model_code' => 'required|string|max:100|unique:products,model_code,' . $this->productId,
             'slug' => 'nullable|string|max:255',
             'price' => 'nullable|numeric|min:0',
@@ -29,17 +29,20 @@ class UpdateProductRequest extends FormRequest
             'is_featured' => 'nullable|in:0,1',
             'status' => 'required|in:draft,active,hidden,discontinued,coming_soon',
             'image' => 'nullable|file',
-            'name_en' => 'required|string|max:255',
-            'name_tr' => 'nullable|string|max:255',
-            'name_cs' => 'nullable|string|max:255',
-            'short_description_en' => 'nullable|string|max:500',
-            'short_description_tr' => 'nullable|string|max:500',
-            'short_description_cs' => 'nullable|string|max:500',
-            'description_en' => 'nullable|string',
-            'description_tr' => 'nullable|string',
-            'description_cs' => 'nullable|string',
             'meta_title' => 'nullable|string|max:255',
             'meta_description' => 'nullable|string|max:500',
         ];
+
+        $translator = app(\Core\Localization\Translator::class);
+        $locales = $translator->locales();
+        $fallback = (string) config('localization.fallback', 'en');
+
+        foreach ($locales as $locale) {
+            $rules['name_' . $locale] = ($locale === $fallback ? 'required|' : 'nullable|') . 'string|max:255';
+            $rules['short_description_' . $locale] = 'nullable|string|max:500';
+            $rules['description_' . $locale] = 'nullable|string';
+        }
+
+        return $rules;
     }
 }
