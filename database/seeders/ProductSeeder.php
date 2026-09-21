@@ -166,7 +166,7 @@ class ProductSeeder extends Seeder
 
                 $mediaId = (int) $this->db->insert('media', [
                     'uuid' => $this->uuid4(),
-                    'collection' => 'products',
+                    'collection' => $categorySlug !== '' ? $categorySlug : 'products',
                     'filename' => $filename,
                     'original_name' => $filename,
                     'path' => $path,
