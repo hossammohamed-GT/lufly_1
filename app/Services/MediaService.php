@@ -20,7 +20,12 @@ class MediaService
      */
     public function storeFromUpload(array $file, string $collection = 'general', int|string|null $ownerId = null): Media
     {
-        $stored = $this->uploads->store($file, $collection);
+        $cleanCollection = trim(preg_replace('/[^a-zA-Z0-9_\-]+/', '-', strtolower(trim($collection))), '-');
+        if ($cleanCollection === '') {
+            $cleanCollection = 'general';
+        }
+
+        $stored = $this->uploads->store($file, $cleanCollection);
 
         $media = Media::create([
             'collection' => $stored['directory'],
@@ -81,5 +86,21 @@ class MediaService
         $media->delete();
 
         $this->activity->deleted('media', $id);
+    }
+
+    /**
+     * @return array<int, array{collection: string, count: int}>
+     */
+    public function collections(): array
+    {
+        $connection = Media::query()->connection();
+        $rows = $connection->select(
+            "SELECT collection, COUNT(*) as count FROM media WHERE collection IS NOT NULL AND collection <> '' GROUP BY collection ORDER BY count DESC, collection ASC"
+        );
+
+        return array_map(static fn (array $row): array => [
+            'collection' => (string) $row['collection'],
+            'count' => (int) $row['count'],
+        ], $rows);
     }
 }
