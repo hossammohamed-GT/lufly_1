@@ -64,6 +64,16 @@ class MediaService
         return $items;
     }
 
+    public function paginate(int $page = 1, int $perPage = 20, ?string $collection = null): \Core\Database\Paginator
+    {
+        $query = Media::query()->orderBy('id', 'desc');
+        if ($collection !== null && $collection !== '') {
+            $query->where('collection', $collection);
+        }
+
+        return $query->paginate($page, $perPage);
+    }
+
     public function delete(int $id): void
     {
         $media = $this->find($id);

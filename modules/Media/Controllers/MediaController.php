@@ -16,11 +16,16 @@ class MediaController extends Controller
     {
     }
 
-    public function index(): Response
+    public function index(Request $request): Response
     {
+        $page = max(1, (int) $request->query('page', '1'));
+        $perPage = 20;
+        $paginator = $this->media->paginate($page, $perPage);
+
         return $this->view('media::Admin.index', [
             'title' => trans('common.media_library'),
-            'items' => $this->media->all(),
+            'paginator' => $paginator,
+            'items' => $paginator->items(),
         ]);
     }
 
