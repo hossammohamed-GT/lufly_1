@@ -24,12 +24,12 @@ $view->layout('layouts.admin');
                 }
                 ?>
                 <?php foreach ($collectionsList as $col): ?>
-                    <option value="<?= e($col['collection']) ?>" <?= $col['collection'] === 'products' ? 'selected' : '' ?>>
-                        📁 <?= e($col['collection']) ?> (<?= $col['count'] ?>)
+                    <option value="<?= e($col['collection']) ?>" <?= $col['collection'] === ($collectionsList[0]['collection'] ?? '') ? 'selected' : '' ?>>
+                        📁 <?= e($col['label'] ?? $col['collection']) ?> (<?= $col['count'] ?>)
                     </option>
                 <?php endforeach; ?>
                 <?php if (!$hasGeneral): ?>
-                    <option value="general">📁 general</option>
+                    <option value="general">📁 General</option>
                 <?php endif; ?>
                 <option value="__new__">➕ Create new collection...</option>
             </select>
@@ -71,7 +71,7 @@ $totalFiles = array_sum(array_column($collections ?? [], 'count'));
     <?php foreach (($collections ?? []) as $col): ?>
         <a href="<?= e(route('admin.media.index', ['collection' => $col['collection']])) ?>"
            style="text-decoration: none; padding: 5px 12px; font-size: 0.82rem; font-weight: 500; border-radius: 20px; border: 1px solid <?= $activeCol === $col['collection'] ? 'var(--ds-primary, #0f766e)' : 'var(--ds-border, #cbd5e1)' ?>; background: <?= $activeCol === $col['collection'] ? 'var(--ds-primary, #0f766e)' : 'var(--ds-surface, #fff)' ?>; color: <?= $activeCol === $col['collection'] ? '#fff' : 'var(--ds-text, #334155)' ?>;">
-            📁 <?= e($col['collection']) ?> (<?= $col['count'] ?>)
+            📁 <?= e($col['label'] ?? $col['collection']) ?> (<?= $col['count'] ?>)
         </a>
     <?php endforeach; ?>
 </div>
@@ -120,7 +120,11 @@ $totalFiles = array_sum(array_column($collections ?? [], 'count'));
                     </td>
                     <td><span class="badge"><?= e($media->mime_type) ?></span></td>
                     <td><?= (int) round(((int) $media->size) / 1024) ?></td>
-                    <td><?= e($media->collection) ?></td>
+                    <td>
+                        <a href="<?= e(route('admin.media.index', ['collection' => $media->collection])) ?>" class="badge badge-ghost" style="text-decoration: none; font-size: 0.8rem;" title="Filter by this collection">
+                            📁 <?= e(ucwords(str_replace(['-', '_'], ' ', (string) $media->collection))) ?>
+                        </a>
+                    </td>
                     <td>
                         <div style="display: flex; gap: 0.5rem; align-items: center;">
                             <button type="button" class="btn btn-sm btn-ghost" onclick="const btn = this; navigator.clipboard.writeText('<?= $mediaUrl ?>').then(() => { const old = btn.textContent; btn.textContent = 'Copied!'; setTimeout(() => btn.textContent = old, 1500); });" title="Copy URL">

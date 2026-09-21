@@ -89,17 +89,27 @@ class MediaService
     }
 
     /**
-     * @return array<int, array{collection: string, count: int}>
+     * @return array<int, array{collection: string, label: string, count: int}>
      */
     public function collections(): array
     {
         $connection = Media::query()->connection();
         $rows = $connection->select(
-            "SELECT collection, COUNT(*) as count FROM media WHERE collection IS NOT NULL AND collection <> '' GROUP BY collection ORDER BY count DESC, collection ASC"
+            "SELECT m.collection, COUNT(*) as count,
+                    (SELECT ct.name FROM categories c
+                     LEFT JOIN category_translations ct ON ct.category_id = c.id AND ct.locale = 'en'
+                     WHERE c.slug = m.collection LIMIT 1) as category_name
+             FROM media m
+             WHERE m.collection IS NOT NULL AND m.collection <> ''
+             GROUP BY m.collection
+             ORDER BY count DESC, m.collection ASC"
         );
 
         return array_map(static fn (array $row): array => [
             'collection' => (string) $row['collection'],
+            'label' => !empty($row['category_name'])
+                ? (string) $row['category_name']
+                : ucwords(str_replace(['-', '_'], ' ', (string) $row['collection'])),
             'count' => (int) $row['count'],
         ], $rows);
     }
