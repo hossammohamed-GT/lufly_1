@@ -20,13 +20,15 @@ class MediaController extends Controller
     {
         $page = max(1, (int) $request->query('page', '1'));
         $perPage = 20;
-        $paginator = $this->media->paginate($page, $perPage);
+        $activeCollection = trim((string) $request->query('collection', ''));
+        $paginator = $this->media->paginate($page, $perPage, $activeCollection !== '' ? $activeCollection : null);
 
         return $this->view('media::Admin.index', [
             'title' => trans('common.media_library'),
             'paginator' => $paginator,
             'items' => $paginator->items(),
             'collections' => $this->media->collections(),
+            'activeCollection' => $activeCollection,
         ]);
     }
 

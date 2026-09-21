@@ -58,6 +58,24 @@ function toggleNewCollectionInput(select) {
 }
 </script>
 
+<?php
+$activeCol = $activeCollection ?? '';
+$totalFiles = array_sum(array_column($collections ?? [], 'count'));
+?>
+<div class="media-filter-bar" style="display: flex; gap: 8px; flex-wrap: wrap; margin: 1.5rem 0 1rem 0; align-items: center;">
+    <span style="font-size: 0.85rem; font-weight: 600; color: var(--ds-text-muted, #64748b); margin-right: 4px;">Collection:</span>
+    <a href="<?= e(route('admin.media.index')) ?>"
+       style="text-decoration: none; padding: 5px 12px; font-size: 0.82rem; font-weight: 500; border-radius: 20px; border: 1px solid <?= $activeCol === '' ? 'var(--ds-primary, #0f766e)' : 'var(--ds-border, #cbd5e1)' ?>; background: <?= $activeCol === '' ? 'var(--ds-primary, #0f766e)' : 'var(--ds-surface, #fff)' ?>; color: <?= $activeCol === '' ? '#fff' : 'var(--ds-text, #334155)' ?>;">
+        All (<?= $totalFiles ?>)
+    </a>
+    <?php foreach (($collections ?? []) as $col): ?>
+        <a href="<?= e(route('admin.media.index', ['collection' => $col['collection']])) ?>"
+           style="text-decoration: none; padding: 5px 12px; font-size: 0.82rem; font-weight: 500; border-radius: 20px; border: 1px solid <?= $activeCol === $col['collection'] ? 'var(--ds-primary, #0f766e)' : 'var(--ds-border, #cbd5e1)' ?>; background: <?= $activeCol === $col['collection'] ? 'var(--ds-primary, #0f766e)' : 'var(--ds-surface, #fff)' ?>; color: <?= $activeCol === $col['collection'] ? '#fff' : 'var(--ds-text, #334155)' ?>;">
+            📁 <?= e($col['collection']) ?> (<?= $col['count'] ?>)
+        </a>
+    <?php endforeach; ?>
+</div>
+
 <table class="table">
     <thead>
         <tr>
