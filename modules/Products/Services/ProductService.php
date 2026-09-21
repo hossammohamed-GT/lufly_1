@@ -71,6 +71,16 @@ class ProductService
         return $product;
     }
 
+    public function findPublic(int $id): Product
+    {
+        $product = $this->find($id);
+        if (!in_array((string) $product->status, ['active', 'coming_soon'], true)) {
+            throw new NotFoundException(trans('errors.product_not_found'));
+        }
+
+        return $product;
+    }
+
     /**
      * @param array<string, mixed> $data core fields
      * @param array<string, array<string, mixed>> $translations locale => fields

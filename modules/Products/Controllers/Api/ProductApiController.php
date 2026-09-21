@@ -21,9 +21,19 @@ class ProductApiController extends Controller
 
     public function index(Request $request): JsonResponse
     {
+        $canManage = auth()->check() && (auth()->userCan('products.view') || auth()->userCan('products.manage'));
+        $allowedPublicStatuses = ['active', 'coming_soon'];
+
+        $requestedStatus = (string) $request->query('status', 'active');
+        if (!$canManage) {
+            $status = in_array($requestedStatus, $allowedPublicStatuses, true) ? $requestedStatus : 'active';
+        } else {
+            $status = $requestedStatus;
+        }
+
         $paginator = $this->products->paginate([
             'locale' => (string) $request->query('locale', $this->translator->getLocale()),
-            'status' => (string) $request->query('status', 'active'),
+            'status' => $status,
             'search' => (string) $request->query('q', ''),
         ], (int) $request->query('page', '1'), (int) $request->query('per_page', '10'));
 
@@ -56,13 +66,19 @@ class ProductApiController extends Controller
 
     public function show(Request $request, int $id): JsonResponse
     {
-        $product = $this->products->find($id);
+        $canManage = auth()->check() && (auth()->userCan('products.view') || auth()->userCan('products.manage'));
+        $product = $canManage ? $this->products->find($id) : $this->products->findPublic($id);
         $locale = (string) $request->query('locale', $this->translator->getLocale());
 
-        return ApiResponse::success([
+        $data = [
             'product' => $product->translate($locale),
-            'translations' => $product->translations(),
-        ]);
+        ];
+
+        if ($canManage) {
+            $data['translations'] = $product->translations();
+        }
+
+        return ApiResponse::success($data);
     }
 
     public function store(Request $request): JsonResponse
