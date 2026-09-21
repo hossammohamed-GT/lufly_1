@@ -7,13 +7,56 @@ $view->layout('layouts.admin');
     <?= csrf_field() ?>
     <div class="grid grid-2">
         <div class="field">
-            <label class="field-label" for="file">File</label>
+            <label class="field-label" for="file"><?= e(trans('common.file') ?? 'File') ?></label>
             <input class="input" type="file" id="file" name="file" required>
         </div>
-        <?= $view->component('input', ['name' => 'collection', 'label' => 'Collection', 'value' => 'general']) ?>
+        <div class="field">
+            <label class="field-label" for="media_collection_select">Collection</label>
+            <select class="input" id="media_collection_select" name="collection" onchange="toggleNewCollectionInput(this)">
+                <?php
+                $collectionsList = $collections ?? [];
+                $hasGeneral = false;
+                foreach ($collectionsList as $col) {
+                    if ($col['collection'] === 'general') {
+                        $hasGeneral = true;
+                        break;
+                    }
+                }
+                ?>
+                <?php foreach ($collectionsList as $col): ?>
+                    <option value="<?= e($col['collection']) ?>" <?= $col['collection'] === 'products' ? 'selected' : '' ?>>
+                        📁 <?= e($col['collection']) ?> (<?= $col['count'] ?>)
+                    </option>
+                <?php endforeach; ?>
+                <?php if (!$hasGeneral): ?>
+                    <option value="general">📁 general</option>
+                <?php endif; ?>
+                <option value="__new__">➕ Create new collection...</option>
+            </select>
+            <div id="new_collection_wrapper" style="display: none; margin-top: 8px;">
+                <input class="input" type="text" id="new_collection_input" name="new_collection" placeholder="Type new collection name (e.g. banners, showrooms, catalog)..." maxlength="50">
+            </div>
+        </div>
     </div>
     <?= $view->component('button', ['label' => trans('common.uploaded'), 'variant' => 'primary', 'type' => 'submit']) ?>
 </form>
+
+<script>
+function toggleNewCollectionInput(select) {
+    const wrap = document.getElementById('new_collection_wrapper');
+    const input = document.getElementById('new_collection_input');
+    if (!wrap || !input) return;
+    if (select.value === '__new__') {
+        wrap.style.display = 'block';
+        input.focus();
+        input.required = true;
+    } else {
+        wrap.style.display = 'none';
+        input.required = false;
+        input.value = '';
+    }
+}
+</script>
 
 <table class="table">
     <thead>
