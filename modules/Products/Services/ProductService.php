@@ -129,6 +129,7 @@ class ProductService
         $price = $data['price'] ?? null;
         $metaTitle = $data['meta_title'] ?? null;
         $metaDescription = $data['meta_description'] ?? null;
+        $newModelCode = isset($data['model_code']) ? (string) $data['model_code'] : (string) $product->model_code;
         unset($data['price'], $data['meta_title'], $data['meta_description']);
 
         $this->products->update($id, $data);
@@ -137,9 +138,7 @@ class ProductService
             $this->localization->syncTranslations('product', $id, $translations);
         }
 
-        if ($price !== null) {
-            $this->syncDefaultVariant($id, (string) $product->model_code, (float) $price);
-        }
+        $this->syncDefaultVariant($id, $newModelCode, $price !== null ? (float) $price : null);
 
         if ($metaTitle !== null || $metaDescription !== null) {
             $this->syncSeoMeta($id, [
@@ -160,25 +159,27 @@ class ProductService
     }
 
     /**
-     * Keep the first (default) variant in sync with the model code and the
-     * price edited in the admin form. Variants beyond the first are managed
+     * Keep a single canonical default variant in sync so storefront pricing/SKU
+     * stays coherent even before multi-variant features are managed directly
      * from their own screens as the catalog grows.
      */
-    private function syncDefaultVariant(int $productId, string $modelCode, float $price): void
+    private function syncDefaultVariant(int $productId, string $modelCode, ?float $price = null): void
     {
         $connection = Product::query()->connection();
 
         $variant = $connection->selectOne(
-            'SELECT id FROM product_variants WHERE product_id = ? AND deleted_at IS NULL ORDER BY sort_order ASC, id ASC LIMIT 1',
+            'SELECT id, price FROM product_variants WHERE product_id = ? AND deleted_at IS NULL ORDER BY sort_order ASC, id ASC LIMIT 1',
             [$productId],
         );
+
+        $sku = $modelCode !== '' ? $modelCode : ('LUFLY-' . $productId);
 
         if ($variant === null) {
             $connection->table('product_variants')->insert([
                 'product_id' => $productId,
-                'sku' => $modelCode !== '' ? $modelCode : ('LUFLY-' . $productId),
+                'sku' => $sku,
                 'variant_name' => null,
-                'price' => $price,
+                'price' => $price ?? 0.0,
                 'stock_status' => 'in_stock',
                 'sort_order' => 1,
                 'status' => 'active',
@@ -189,10 +190,15 @@ class ProductService
             return;
         }
 
-        $connection->table('product_variants')->where('id', (int) $variant['id'])->update([
-            'price' => $price,
+        $updates = [
+            'sku' => $sku,
             'updated_at' => date('Y-m-d H:i:s'),
-        ]);
+        ];
+        if ($price !== null) {
+            $updates['price'] = $price;
+        }
+
+        $connection->table('product_variants')->where('id', (int) $variant['id'])->update($updates);
     }
 
     /** @param array<string, mixed> $data */
