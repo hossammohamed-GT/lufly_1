@@ -98,33 +98,129 @@ class Auth
 
     private function isLocked(string $email): bool
     {
-        $attempts = (array) $this->session->get('_login_attempts', []);
-        $entry = $attempts[$email] ?? null;
+        $maxAttempts = (int) config('security.login_max_attempts', 5);
+        $cleanEmail = strtolower(trim($email));
+        $ip = (string) ($_SERVER['REMOTE_ADDR'] ?? '127.0.0.1');
 
-        return is_array($entry)
-            && ($entry['count'] ?? 0) >= (int) config('security.login_max_attempts', 5)
-            && ($entry['locked_until'] ?? 0) > time();
+        $emailKey = 'login_lockout_email_' . sha1($cleanEmail);
+        $ipKey = 'login_lockout_ip_' . sha1($ip);
+
+        // 1. Check persistent email lockout
+        $emailEntry = $this->readLockoutEntry($emailKey);
+        if ($emailEntry && ($emailEntry['count'] ?? 0) >= $maxAttempts && ($emailEntry['locked_until'] ?? 0) > time()) {
+            return true;
+        }
+
+        // 2. Check persistent IP lockout
+        $ipEntry = $this->readLockoutEntry($ipKey);
+        $maxIpAttempts = $maxAttempts * 3;
+        if ($ipEntry && ($ipEntry['count'] ?? 0) >= $maxIpAttempts && ($ipEntry['locked_until'] ?? 0) > time()) {
+            return true;
+        }
+
+        // 3. Fallback check for session
+        $attempts = (array) $this->session->get('_login_attempts', []);
+        $sessionEntry = $attempts[$cleanEmail] ?? null;
+        if (is_array($sessionEntry) && ($sessionEntry['count'] ?? 0) >= $maxAttempts && ($sessionEntry['locked_until'] ?? 0) > time()) {
+            return true;
+        }
+
+        return false;
     }
 
     private function registerFailedAttempt(string $email): void
     {
+        $maxAttempts = (int) config('security.login_max_attempts', 5);
+        $lockoutSeconds = (int) config('security.login_lockout_seconds', 300);
+        $cleanEmail = strtolower(trim($email));
+        $ip = (string) ($_SERVER['REMOTE_ADDR'] ?? '127.0.0.1');
+
+        $emailKey = 'login_lockout_email_' . sha1($cleanEmail);
+        $ipKey = 'login_lockout_ip_' . sha1($ip);
+
+        // 1. Update persistent email attempts
+        $emailEntry = $this->readLockoutEntry($emailKey) ?? ['count' => 0, 'locked_until' => 0];
+        $emailCount = (int) (($emailEntry['count'] ?? 0) + 1);
+        $emailLockedUntil = $emailCount >= $maxAttempts ? time() + $lockoutSeconds : 0;
+        $this->writeLockoutEntry($emailKey, [
+            'count' => $emailCount,
+            'locked_until' => $emailLockedUntil,
+            'expires_at' => time() + $lockoutSeconds,
+        ]);
+
+        // 2. Update persistent IP attempts
+        $ipEntry = $this->readLockoutEntry($ipKey) ?? ['count' => 0, 'locked_until' => 0];
+        $ipCount = (int) (($ipEntry['count'] ?? 0) + 1);
+        $ipLockedUntil = $ipCount >= ($maxAttempts * 3) ? time() + $lockoutSeconds : 0;
+        $this->writeLockoutEntry($ipKey, [
+            'count' => $ipCount,
+            'locked_until' => $ipLockedUntil,
+            'expires_at' => time() + $lockoutSeconds,
+        ]);
+
+        // 3. Update session
         $attempts = (array) $this->session->get('_login_attempts', []);
-        $count = (int) (($attempts[$email]['count'] ?? 0) + 1);
-
-        $attempts[$email] = [
-            'count' => $count,
-            'locked_until' => $count >= (int) config('security.login_max_attempts', 5)
-                ? time() + (int) config('security.login_lockout_seconds', 300)
-                : 0,
+        $attempts[$cleanEmail] = [
+            'count' => $emailCount,
+            'locked_until' => $emailLockedUntil,
         ];
-
         $this->session->set('_login_attempts', $attempts);
     }
 
     private function clearAttempts(string $email): void
     {
+        $cleanEmail = strtolower(trim($email));
+        $emailKey = 'login_lockout_email_' . sha1($cleanEmail);
+        $this->deleteLockoutEntry($emailKey);
+
         $attempts = (array) $this->session->get('_login_attempts', []);
-        unset($attempts[$email]);
+        unset($attempts[$cleanEmail]);
         $this->session->set('_login_attempts', $attempts);
+    }
+
+    private function getLockoutPath(string $key): string
+    {
+        $dir = function_exists('base_path') ? base_path('storage/cache') : (dirname(__DIR__, 2) . '/storage/cache');
+        if (!is_dir($dir)) {
+            @mkdir($dir, 0775, true);
+        }
+
+        return $dir . '/' . $key . '.json';
+    }
+
+    /** @return array<string, mixed>|null */
+    private function readLockoutEntry(string $key): ?array
+    {
+        $path = $this->getLockoutPath($key);
+        if (!is_file($path)) {
+            return null;
+        }
+
+        $data = @json_decode((string) file_get_contents($path), true);
+        if (!is_array($data)) {
+            return null;
+        }
+
+        if (($data['locked_until'] ?? 0) < time() && ($data['expires_at'] ?? 0) < time()) {
+            @unlink($path);
+            return null;
+        }
+
+        return $data;
+    }
+
+    /** @param array<string, mixed> $data */
+    private function writeLockoutEntry(string $key, array $data): void
+    {
+        $path = $this->getLockoutPath($key);
+        @file_put_contents($path, json_encode($data), LOCK_EX);
+    }
+
+    private function deleteLockoutEntry(string $key): void
+    {
+        $path = $this->getLockoutPath($key);
+        if (is_file($path)) {
+            @unlink($path);
+        }
     }
 }
