@@ -41,11 +41,18 @@ class NotificationService
         );
     }
 
-    public function markRead(int|string $notificationId): void
+    public function markRead(int|string $notificationId, int|string|null $userId = null): bool
     {
-        $this->db->connection()->table('notifications')
-            ->where('id', (int) $notificationId)
-            ->update(['read_at' => date('Y-m-d H:i:s')]);
+        $query = $this->db->connection()->table('notifications')
+            ->where('id', (int) $notificationId);
+
+        if ($userId !== null) {
+            $query->where('user_id', (int) $userId);
+        }
+
+        $affected = $query->update(['read_at' => date('Y-m-d H:i:s')]);
+
+        return $affected > 0;
     }
 
     public function markAllRead(int|string $userId): void

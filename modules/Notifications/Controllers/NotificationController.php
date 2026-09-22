@@ -26,7 +26,15 @@ class NotificationController extends Controller
 
     public function markRead(int $id): Response
     {
-        $this->notifications->markRead($id);
+        $userId = auth()->id();
+        if ($userId === null) {
+            return \Core\Http\ApiResponse::error(trans('errors.unauthorized') ?: 'Unauthorized', [], 401, 'unauthorized');
+        }
+
+        $marked = $this->notifications->markRead($id, $userId);
+        if (!$marked) {
+            throw new \Core\Exceptions\NotFoundException('The requested notification could not be found.');
+        }
 
         return \Core\Http\ApiResponse::success(null, trans('common.saved'));
     }
