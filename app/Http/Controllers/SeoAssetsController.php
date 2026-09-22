@@ -59,8 +59,10 @@ class SeoAssetsController extends Controller
            per localized variant, all linked through hreflang alternates. */
         $expanded = [];
         foreach ($this->sitemaps->productEntries() as $entry) {
-            foreach ((array) $entry['locales'] as $loc) {
-                $expanded[] = $entry + ['loc' => $loc];
+            foreach ((array) ($entry['locales'] ?? []) as $loc) {
+                $item = $entry;
+                $item['loc'] = (string) $loc;
+                $expanded[] = $item;
             }
         }
 
