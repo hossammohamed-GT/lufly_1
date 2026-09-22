@@ -41,22 +41,42 @@ final class BackupDbCommand extends Command
         }
 
         if ($connection === 'mysql') {
-            $host = config('database.connections.mysql.host', '127.0.0.1');
-            $database = config('database.connections.mysql.database', 'lufly');
-            $user = config('database.connections.mysql.username', 'root');
-            $pass = config('database.connections.mysql.password', '');
+            $host = (string) config('database.connections.mysql.host', '127.0.0.1');
+            $port = (string) config('database.connections.mysql.port', '3306');
+            $database = (string) config('database.connections.mysql.database', 'lufly');
+            $user = (string) config('database.connections.mysql.username', 'root');
+            $pass = (string) config('database.connections.mysql.password', '');
             $target = "{$backupDir}/lufly-backup-{$timestamp}.sql";
 
-            $cmd = sprintf(
-                'mysqldump --host=%s --user=%s %s %s > %s',
-                escapeshellarg((string) $host),
-                escapeshellarg((string) $user),
-                $pass !== '' ? '--password=' . escapeshellarg((string) $pass) : '',
-                escapeshellarg((string) $database),
-                escapeshellarg($target)
-            );
+            // Write credentials to a protected temporary options file (readable only by current process owner)
+            $cnfFile = tempnam($backupDir, 'my_cnf_');
+            if ($cnfFile === false) {
+                $this->error('Failed to create secure credentials file.');
+                return 1;
+            }
+            chmod($cnfFile, 0600);
 
-            exec($cmd, $output, $code);
+            $cnfContent = "[client]\n"
+                . "host=" . addcslashes($host, "\"\\\n") . "\n"
+                . "port=" . (int) $port . "\n"
+                . "user=" . addcslashes($user, "\"\\\n") . "\n"
+                . "password=" . addcslashes($pass, "\"\\\n") . "\n";
+
+            file_put_contents($cnfFile, $cnfContent, LOCK_EX);
+
+            try {
+                $cmd = sprintf(
+                    'mysqldump --defaults-extra-file=%s --single-transaction --quick %s > %s',
+                    escapeshellarg($cnfFile),
+                    escapeshellarg($database),
+                    escapeshellarg($target)
+                );
+
+                exec($cmd, $output, $code);
+            } finally {
+                @unlink($cnfFile);
+            }
+
             if ($code === 0 && file_exists($target)) {
                 $sizeKb = round(filesize($target) / 1024, 2);
                 $this->success("MySQL backup completed successfully! [{$sizeKb} KB] -> {$target}");
