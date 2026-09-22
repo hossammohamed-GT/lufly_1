@@ -34,6 +34,8 @@ class UploadService
             throw new UploadException(trans('errors.upload_too_large', ['max' => (string) $maxKb]));
         }
 
+        $this->assertSafeContent((string) $file['tmp_name'], $extension);
+
         $directory = str_replace('\\', '/', $directory);
         if (str_contains($directory, '..') || str_contains($directory, "\0")) {
             throw new UploadException('Path traversal detected in upload directory.');
@@ -156,6 +158,79 @@ class UploadService
 
         if (!in_array($extension, $allowed, true)) {
             throw new UploadException(trans('errors.upload_type_not_allowed', ['extension' => $extension]));
+        }
+    }
+
+    private function assertSafeContent(string $tmpPath, string $extension): void
+    {
+        if (!is_file($tmpPath) || !is_readable($tmpPath)) {
+            throw new UploadException(trans('errors.upload_missing'));
+        }
+
+        // 1. Inspect MIME type using fileinfo
+        $detectedMime = 'application/octet-stream';
+        if (function_exists('finfo_open')) {
+            $finfo = finfo_open(FILEINFO_MIME_TYPE);
+            if ($finfo !== false) {
+                $mime = finfo_file($finfo, $tmpPath);
+                if (is_string($mime)) {
+                    $detectedMime = $mime;
+                }
+                finfo_close($finfo);
+            }
+        }
+
+        // Validate raster images match expected image MIME types
+        $rasterMimes = [
+            'jpg' => ['image/jpeg'],
+            'jpeg' => ['image/jpeg'],
+            'png' => ['image/png'],
+            'gif' => ['image/gif'],
+            'webp' => ['image/webp'],
+        ];
+        if (isset($rasterMimes[$extension])) {
+            if (!in_array($detectedMime, $rasterMimes[$extension], true)) {
+                throw new UploadException(trans('errors.upload_type_not_allowed', ['extension' => $extension]));
+            }
+        }
+
+        // 2. Prevent embedded PHP/executable scripts in any file
+        $sample = file_get_contents($tmpPath, false, null, 0, 8192);
+        if ($sample !== false && (stripos($sample, '<?php') !== false || stripos($sample, '<?=') !== false)) {
+            throw new UploadException(trans('errors.upload_type_blocked'));
+        }
+
+        // 3. Deep SVG content inspection and security sanitization checks
+        if ($extension === 'svg' || str_contains($detectedMime, 'svg') || str_contains($detectedMime, 'xml')) {
+            $content = file_get_contents($tmpPath);
+            if ($content === false || trim($content) === '') {
+                throw new UploadException('Uploaded SVG file is empty or unreadable.');
+            }
+
+            // Reject executable tags
+            if (preg_match('/<\s*(?:script|foreignobject|iframe|embed|object|applet|meta|link|base)\b/i', $content)) {
+                throw new UploadException('Uploaded SVG contains prohibited executable tags.');
+            }
+
+            // Reject inline event handlers: onload=, onerror=, onclick=, etc.
+            if (preg_match('/\bon[a-z]{3,}\s*=/i', $content)) {
+                throw new UploadException('Uploaded SVG contains prohibited event handlers.');
+            }
+
+            // Reject dangerous link protocols: href="javascript:...", xlink:href="javascript:..."
+            if (preg_match('/(?:href|xlink:href|src)\s*=\s*["\']?\s*(?:javascript|vbscript|data\s*:\s*text\/html)/i', $content)) {
+                throw new UploadException('Uploaded SVG contains prohibited script or data URIs.');
+            }
+
+            // Reject XML External Entity (XXE) and DOCTYPE injection
+            if (preg_match('/<!(?:ENTITY|DOCTYPE\s+[^>]*SYSTEM)/i', $content)) {
+                throw new UploadException('Uploaded SVG contains prohibited external entity references.');
+            }
+
+            // Reject XML stylesheets that could load arbitrary remote CSS or scripts
+            if (preg_match('/<\?xml-stylesheet/i', $content)) {
+                throw new UploadException('Uploaded SVG contains prohibited XML stylesheets.');
+            }
         }
     }
 }
