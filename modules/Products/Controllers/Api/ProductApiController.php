@@ -31,11 +31,15 @@ class ProductApiController extends Controller
             $status = $requestedStatus;
         }
 
+        $page = max(1, (int) $request->query('page', '1'));
+        $rawPerPage = (int) $request->query('per_page', '10');
+        $perPage = min(100, max(1, $rawPerPage));
+
         $paginator = $this->products->paginate([
             'locale' => (string) $request->query('locale', $this->translator->getLocale()),
             'status' => $status,
             'search' => (string) $request->query('q', ''),
-        ], (int) $request->query('page', '1'), (int) $request->query('per_page', '10'));
+        ], $page, $perPage);
 
         $items = array_map(
             fn ($product) => $product->translate((string) $request->query('locale', $this->translator->getLocale())),
@@ -49,7 +53,7 @@ class ProductApiController extends Controller
     {
         $locale = (string) $request->query('locale', $this->translator->getLocale());
         $query = trim((string) $request->query('q', ''));
-        $limit = max(1, (int) $request->query('limit', '8'));
+        $limit = min(50, max(1, (int) $request->query('limit', '8')));
         $category = trim((string) $request->query('category', ''));
         if (!preg_match('/^[a-z0-9-]{1,150}$/', $category)) {
             $category = '';
