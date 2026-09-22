@@ -56,22 +56,24 @@ class SeoAssetsController extends Controller
     public function sitemapProducts(): Response
     {
         /* products.xml carries every URL in every locale: one <url> block
-           per localized variant, all linked through hreflang alternates. */
-        $expanded = [];
-        foreach ($this->sitemaps->productEntries() as $entry) {
-            foreach ((array) ($entry['locales'] ?? []) as $loc) {
-                $item = $entry;
-                $item['loc'] = (string) $loc;
-                $expanded[] = $item;
+           per localized variant, all linked through hreflang alternates.
+           Yielded via generator to keep memory usage bounded during generation. */
+        $generator = function () {
+            foreach ($this->sitemaps->productEntriesGenerator() as $entry) {
+                foreach ((array) ($entry['locales'] ?? []) as $loc) {
+                    $item = $entry;
+                    $item['loc'] = (string) $loc;
+                    yield $item;
+                }
             }
-        }
+        };
 
-        return $this->xml($this->sitemaps->renderUrlset($expanded));
+        return $this->xml($this->sitemaps->renderUrlset($generator()));
     }
 
     public function sitemapImages(): Response
     {
-        return $this->xml($this->sitemaps->renderImageSitemap($this->sitemaps->productEntries()));
+        return $this->xml($this->sitemaps->renderImageSitemap($this->sitemaps->productEntriesGenerator()));
     }
 
     private function xml(string $body): Response

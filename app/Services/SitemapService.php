@@ -48,49 +48,75 @@ class SitemapService
         return $entries;
     }
 
+    /**
+     * Streams product entries in bounded chunks to avoid loading large catalogs and all media into memory at once.
+     *
+     * @param int $chunkSize
+     * @return \Generator<int, array<string, mixed>>
+     */
+    public function productEntriesGenerator(int $chunkSize = 250): \Generator
+    {
+        $connection = \Modules\Products\Models\Product::query()->connection();
+        $lastId = 0;
+
+        while (true) {
+            $products = (array) $connection->select(
+                "SELECT id, slug, updated_at
+                   FROM products
+                  WHERE status = 'active' AND deleted_at IS NULL AND id > ?
+                  ORDER BY id ASC
+                  LIMIT ?",
+                [$lastId, $chunkSize]
+            );
+
+            if (empty($products)) {
+                break;
+            }
+
+            $productIds = array_map(static fn (array $p): int => (int) $p['id'], $products);
+            $lastId = (int) end($productIds);
+
+            $placeholders = implode(',', array_fill(0, count($productIds), '?'));
+            $imageRows = (array) $connection->select(
+                "SELECT pm.product_id, m.path
+                   FROM product_media pm
+                   INNER JOIN media m ON m.id = pm.media_id
+                  WHERE pm.product_id IN ({$placeholders})
+                    AND pm.variant_id IS NULL
+                    AND m.status <> 'missing'
+                  ORDER BY pm.is_primary DESC, pm.sort_order ASC",
+                $productIds
+            );
+
+            $imagesByProduct = [];
+            foreach ($imageRows as $row) {
+                $imagesByProduct[(int) $row['product_id']][] = (string) $row['path'];
+            }
+            unset($imageRows);
+
+            foreach ($products as $product) {
+                $slug = (string) $product['slug'];
+                if ($slug === '') {
+                    continue;
+                }
+                yield [
+                    'loc' => $this->urls->localizedUrl('products.show', 'en', ['slug' => $slug]),
+                    'locales' => $this->buildProductLocs($slug),
+                    'alternates' => $this->urls->alternates('products.show', ['slug' => $slug]),
+                    'images' => $imagesByProduct[(int) $product['id']] ?? [],
+                    'lastmod' => substr((string) ($product['updated_at'] ?? ''), 0, 10) ?: date('Y-m-d'),
+                    'changefreq' => 'weekly',
+                    'priority' => '0.8',
+                ];
+            }
+            unset($products, $imagesByProduct);
+        }
+    }
+
     /** @return list<array<string, mixed>> */
     public function productEntries(): array
     {
-        $connection = \Modules\Products\Models\Product::query()->connection();
-
-        $products = (array) $connection->select(
-            "SELECT id, slug, updated_at
-               FROM products
-              WHERE status = 'active' AND deleted_at IS NULL
-              ORDER BY id ASC"
-        );
-
-        $imageRows = (array) $connection->select(
-            "SELECT pm.product_id, m.path
-               FROM product_media pm
-               INNER JOIN media m ON m.id = pm.media_id
-              WHERE pm.variant_id IS NULL AND m.status <> 'missing'
-              ORDER BY pm.is_primary DESC, pm.sort_order ASC"
-        );
-
-        $imagesByProduct = [];
-        foreach ($imageRows as $row) {
-            $imagesByProduct[(int) $row['product_id']][] = (string) $row['path'];
-        }
-
-        $entries = [];
-        foreach ($products as $product) {
-            $slug = (string) $product['slug'];
-            if ($slug === '') {
-                continue;
-            }
-            $entries[] = [
-                'loc' => $this->urls->localizedUrl('products.show', 'en', ['slug' => $slug]),
-                'locales' => $this->buildProductLocs($slug),
-                'alternates' => $this->urls->alternates('products.show', ['slug' => $slug]),
-                'images' => $imagesByProduct[(int) $product['id']] ?? [],
-                'lastmod' => substr((string) ($product['updated_at'] ?? ''), 0, 10) ?: date('Y-m-d'),
-                'changefreq' => 'weekly',
-                'priority' => '0.8',
-            ];
-        }
-
-        return $entries;
+        return iterator_to_array($this->productEntriesGenerator());
     }
 
     /** Every locale renders one <url> block; carried separately so images can repeat per URL without re-querying. */
@@ -128,8 +154,8 @@ class SitemapService
     }
 
     /** urlset from entries (see pageEntries/productEntries). */
-    /** @param list<array<string, mixed>> $entries */
-    public function renderUrlset(array $entries, bool $withImages = true): string
+    /** @param iterable<array<string, mixed>> $entries */
+    public function renderUrlset(iterable $entries, bool $withImages = true): string
     {
         $xml = '<?xml version="1.0" encoding="UTF-8"?>' . "\n";
         $xml .= '<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"'
@@ -176,8 +202,8 @@ class SitemapService
     }
 
     /** Dedicated image sitemap: one <url> per product carrying all its media. */
-    /** @param list<array<string, mixed>> $entries */
-    public function renderImageSitemap(array $entries): string
+    /** @param iterable<array<string, mixed>> $entries */
+    public function renderImageSitemap(iterable $entries): string
     {
         return $this->renderUrlset($entries, true);
     }
