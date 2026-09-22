@@ -5,6 +5,7 @@ $view->layout('layouts.admin');
 /** @var array<string, array<string, mixed>> $translations */
 $action = $product === null ? route('admin.products.store') : route('admin.products.update', ['id' => $product->id]);
 $locales = $translator->locales();
+$fallbackLocale = (string) config('localization.fallback', 'en');
 
 /* default variant price (the simple price field edits the first variant) */
 $price = '';
@@ -98,7 +99,7 @@ $isFeatured = $product === null ? 0 : (int) $product->is_featured;
     <?php foreach ($locales as $locale): $tr = $translations[$locale] ?? []; ?>
         <fieldset class="translation-set">
             <legend><?= e(strtoupper($locale)) ?></legend>
-            <?= $view->component('input', ['name' => 'name_' . $locale, 'label' => trans('products.name') . ' (' . strtoupper($locale) . ')', 'value' => $tr['name'] ?? '', 'required' => $locale === 'en']) ?>
+            <?= $view->component('input', ['name' => 'name_' . $locale, 'label' => trans('products.name') . ' (' . strtoupper($locale) . ')', 'value' => $tr['name'] ?? '', 'required' => $locale === $fallbackLocale]) ?>
             <div class="field">
                 <label class="field-label" for="short_description_<?= e($locale) ?>"><?= e(trans('products.description')) ?> - short (<?= e(strtoupper($locale)) ?>)</label>
                 <input class="input" id="short_description_<?= e($locale) ?>" name="short_description_<?= e($locale) ?>" type="text" maxlength="500" value="<?= e((string) ($tr['short_description'] ?? '')) ?>">
