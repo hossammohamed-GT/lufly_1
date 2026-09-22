@@ -87,25 +87,27 @@ class ProductService
      */
     public function create(array $data, array $translations): Product
     {
-        $modelCode = (string) ($data['model_code'] ?? '');
+        return Product::query()->connection()->transaction(function () use ($data, $translations): Product {
+            $modelCode = (string) ($data['model_code'] ?? '');
 
-        $data['slug'] = $this->slugs->generate(
-            (string) (($data['slug'] ?? '') ?: ($translations['en']['name'] ?? $modelCode ?: 'product')),
-            'products',
-        );
+            $data['slug'] = $this->slugs->generate(
+                (string) (($data['slug'] ?? '') ?: ($translations['en']['name'] ?? $modelCode ?: 'product')),
+                'products',
+            );
 
-        $data['is_featured'] = (int) (($data['is_featured'] ?? '0') === '1');
+            $data['is_featured'] = (int) (($data['is_featured'] ?? '0') === '1');
 
-        /** @var Product $product */
-        $product = $this->products->create($data);
-        $this->localization->syncTranslations('product', $product->id, $translations);
+            /** @var Product $product */
+            $product = $this->products->create($data);
+            $this->localization->syncTranslations('product', $product->id, $translations);
 
-        $this->syncDefaultVariant((int) $product->id, $modelCode, (float) ($data['price'] ?? 0));
-        $this->syncSeoMeta((int) $product->id, $data);
+            $this->syncDefaultVariant((int) $product->id, $modelCode, (float) ($data['price'] ?? 0));
+            $this->syncSeoMeta((int) $product->id, $data);
 
-        $this->activity->created('product', $product->id, ['slug' => $product->slug]);
+            $this->activity->created('product', $product->id, ['slug' => $product->slug]);
 
-        return $product;
+            return $product;
+        });
     }
 
     /**
@@ -114,48 +116,52 @@ class ProductService
      */
     public function update(int $id, array $data, array $translations = []): Product
     {
-        $product = $this->find($id);
+        return Product::query()->connection()->transaction(function () use ($id, $data, $translations): Product {
+            $product = $this->find($id);
 
-        if (isset($data['slug']) && $data['slug'] !== '' && $data['slug'] !== $product->slug) {
-            $data['slug'] = $this->slugs->generate((string) $data['slug'], 'products', 'slug', $id);
-        } else {
-            unset($data['slug']);
-        }
+            if (isset($data['slug']) && $data['slug'] !== '' && $data['slug'] !== $product->slug) {
+                $data['slug'] = $this->slugs->generate((string) $data['slug'], 'products', 'slug', $id);
+            } else {
+                unset($data['slug']);
+            }
 
-        if (array_key_exists('is_featured', $data)) {
-            $data['is_featured'] = (int) (($data['is_featured'] ?? '0') === '1');
-        }
+            if (array_key_exists('is_featured', $data)) {
+                $data['is_featured'] = (int) (($data['is_featured'] ?? '0') === '1');
+            }
 
-        $price = $data['price'] ?? null;
-        $metaTitle = $data['meta_title'] ?? null;
-        $metaDescription = $data['meta_description'] ?? null;
-        $newModelCode = isset($data['model_code']) ? (string) $data['model_code'] : (string) $product->model_code;
-        unset($data['price'], $data['meta_title'], $data['meta_description']);
+            $price = $data['price'] ?? null;
+            $metaTitle = $data['meta_title'] ?? null;
+            $metaDescription = $data['meta_description'] ?? null;
+            $newModelCode = isset($data['model_code']) ? (string) $data['model_code'] : (string) $product->model_code;
+            unset($data['price'], $data['meta_title'], $data['meta_description']);
 
-        $this->products->update($id, $data);
+            $this->products->update($id, $data);
 
-        if ($translations !== []) {
-            $this->localization->syncTranslations('product', $id, $translations);
-        }
+            if ($translations !== []) {
+                $this->localization->syncTranslations('product', $id, $translations);
+            }
 
-        $this->syncDefaultVariant($id, $newModelCode, $price !== null ? (float) $price : null);
+            $this->syncDefaultVariant($id, $newModelCode, $price !== null ? (float) $price : null);
 
-        if ($metaTitle !== null || $metaDescription !== null) {
-            $this->syncSeoMeta($id, [
-                'meta_title' => (string) $metaTitle,
-                'meta_description' => (string) $metaDescription,
-            ]);
-        }
+            if ($metaTitle !== null || $metaDescription !== null) {
+                $this->syncSeoMeta($id, [
+                    'meta_title' => (string) $metaTitle,
+                    'meta_description' => (string) $metaDescription,
+                ]);
+            }
 
-        $this->activity->updated('product', $id);
+            $this->activity->updated('product', $id);
 
-        return $this->find($id);
+            return $this->find($id);
+        });
     }
 
     public function delete(int $id): void
     {
-        $this->products->delete($id);
-        $this->activity->deleted('product', $id);
+        Product::query()->connection()->transaction(function () use ($id): void {
+            $this->products->delete($id);
+            $this->activity->deleted('product', $id);
+        });
     }
 
     /**
