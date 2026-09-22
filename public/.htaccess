@@ -12,6 +12,15 @@ RewriteEngine On
 # RewriteRule ^ https://example.com%{REQUEST_URI} [R=308,L]
 # ---------------------------------------------------------------------
 
+# Deny direct execution of arbitrary script files inside public
+<FilesMatch "\.(php|phtml|phar|sh|pl|cgi|py|bash|bat|cmd|exe)$">
+    Order Deny,Allow
+    Deny from all
+</FilesMatch>
+<Files "index.php">
+    Allow from all
+</Files>
+
 RewriteCond %{REQUEST_FILENAME} !-f
 RewriteRule ^ index.php [QSA,L]
 

@@ -17,7 +17,16 @@ if ($isBlocked) {
     exit;
 }
 
-// Serve static files from public/ directly (excluding sensitive extensions)
+// Block executable scripts from being served directly as static files
+$isExecutableScript = preg_match('/\.(php|phtml|phar|php[34578]|cgi|pl|py|sh|bash|exe|dll|bat|cmd)($|\?)/i', $uri);
+if ($isExecutableScript && $uri !== '/index.php') {
+    http_response_code(403);
+    header('Content-Type: text/plain; charset=utf-8');
+    echo '403 Forbidden: Execution Denied';
+    exit;
+}
+
+// Serve static files from public/ directly (excluding sensitive/script extensions)
 if ($uri !== '/' && file_exists(__DIR__ . '/public' . $uri) && !is_dir(__DIR__ . '/public' . $uri)) {
     return false;
 }
