@@ -97,9 +97,15 @@ class ProductRepository extends Repository
 
         $whereSql = $where === [] ? '' : ' WHERE ' . implode(' AND ', $where);
 
+        $nameCollate = match ($connection->driver()) {
+            'sqlite' => 'pt.name COLLATE NOCASE ASC',
+            'mysql' => 'pt.name ASC',
+            default => 'LOWER(pt.name) ASC',
+        };
+
         $orderBySql = match ($sort) {
             'model' => ' ORDER BY p.model_code ASC, p.id DESC',
-            'name' => ' ORDER BY pt.name COLLATE NOCASE ASC, p.id DESC',
+            'name' => " ORDER BY {$nameCollate}, p.id DESC",
             default => ' ORDER BY p.id DESC',
         };
 
