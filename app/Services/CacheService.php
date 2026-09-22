@@ -30,7 +30,12 @@ class CacheService
     {
         $ttl ??= (int) config('cache.default_ttl', 3600);
 
-        $payload = serialize(['expires' => time() + $ttl, 'value' => $value]);
+        try {
+            $payload = json_encode(['expires' => time() + $ttl, 'value' => $value], JSON_THROW_ON_ERROR | JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE);
+        } catch (\JsonException) {
+            $payload = serialize(['expires' => time() + $ttl, 'value' => $value]);
+        }
+
         $path = $this->path($key);
         @mkdir(dirname($path), 0775, true);
 
@@ -78,9 +83,28 @@ class CacheService
             return null;
         }
 
-        $payload = @unserialize((string) file_get_contents($path));
+        $raw = (string) file_get_contents($path);
+        if (trim($raw) === '') {
+            return null;
+        }
 
-        return is_array($payload) ? $payload : null;
+        try {
+            $data = json_decode($raw, true, 512, JSON_THROW_ON_ERROR);
+            if (is_array($data) && array_key_exists('expires', $data)) {
+                return $data;
+            }
+        } catch (\JsonException) {
+            // Not JSON formatted; fall back to safe restricted unserialize
+        }
+
+        // Prevent arbitrary PHP object instantiation and gadget chain execution
+        $payload = @unserialize($raw, ['allowed_classes' => false]);
+
+        if (is_array($payload) && array_key_exists('value', $payload) && !is_object($payload['value'])) {
+            return $payload;
+        }
+
+        return null;
     }
 
     private function path(string $key): string
