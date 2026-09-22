@@ -142,13 +142,20 @@ class SEOService
             'name' => (string) ($product['name'] ?? ''),
             'description' => $description !== '' ? mb_substr($description, 0, 500) : (string) ($product['name'] ?? ''),
             'image' => $images,
-            'sku' => (string) ($product['sku'] ?? ''),
+            'sku' => (string) ($product['sku'] ?? $product['model_code'] ?? ''),
             'mpn' => (string) ($product['model_code'] ?? $product['sku'] ?? ''),
             'url' => $canonicalUrl,
             'category' => (string) ($product['category_slug'] ?? ''),
             'brand' => ['@type' => 'Brand', 'name' => 'LUFLY'],
             'manufacturer' => ['@id' => url('/#organization')],
             'countryOfOrigin' => ['@type' => 'Country', 'name' => 'TR'],
+            'offers' => [
+                '@type' => 'Offer',
+                'url' => $canonicalUrl,
+                'priceCurrency' => 'EUR',
+                'price' => (float) ($product['price'] ?? 0),
+                'availability' => 'https://schema.org/' . (($product['stock_status'] ?? 'in_stock') === 'out_of_stock' ? 'OutOfStock' : 'InStock'),
+            ],
         ]);
     }
 
