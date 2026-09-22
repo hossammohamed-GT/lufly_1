@@ -14,6 +14,7 @@ use Throwable;
 class Connection
 {
     private ?PDO $pdo = null;
+    private int $queryCount = 0;
 
     /** @param array<string, mixed> $config */
     public function __construct(private readonly array $config)
@@ -78,9 +79,20 @@ class Connection
         return $password === null ? null : (string) $password;
     }
 
+    public function getQueryCount(): int
+    {
+        return $this->queryCount;
+    }
+
+    public function resetQueryCount(): void
+    {
+        $this->queryCount = 0;
+    }
+
     /** @param array<int|string, mixed> $bindings */
     public function query(string $sql, array $bindings = []): PDOStatement
     {
+        $this->queryCount++;
         $this->log($sql, $bindings);
 
         try {
@@ -113,6 +125,7 @@ class Connection
 
     public function exec(string $sql): void
     {
+        $this->queryCount++;
         $this->log($sql, []);
 
         try {

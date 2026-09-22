@@ -122,6 +122,7 @@ class ProductRepository extends Repository
         );
 
         $items = array_map(static fn (array $row): Product => Product::fromRow($row), $rows);
+        Product::eagerLoad($items);
 
         return new Paginator($items, $total, $page, $perPage);
     }
@@ -194,6 +195,9 @@ class ProductRepository extends Repository
             $params,
         );
 
-        return array_map(static fn (array $row): Product => Product::fromRow($row), $rows);
+        $items = array_map(static fn (array $row): Product => Product::fromRow($row), $rows);
+        Product::eagerLoad($items);
+
+        return $items;
     }
 }

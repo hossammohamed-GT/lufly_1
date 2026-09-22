@@ -77,6 +77,8 @@ class HomeController extends Controller
             }
         }
 
+        \Modules\Products\Models\Product::eagerLoad($rawFeatured);
+
         $featuredProducts = array_map(function ($p) use ($locale) {
             return $p->translate($locale);
         }, $rawFeatured);

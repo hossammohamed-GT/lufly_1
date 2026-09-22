@@ -31,9 +31,143 @@ class Product extends Model
     /** Cached translated payload (used by translate()). */
     private ?array $resolved = null;
 
+    /** Preloaded relations for batch hydration */
+    private ?array $preloadedTranslations = null;
+    private ?array $preloadedVariants = null;
+    private ?array $preloadedSpecs = null;
+    private ?array $preloadedDimensions = null;
+    private bool $hasLoadedDimensions = false;
+    private ?array $preloadedMedia = null;
+
+    /**
+     * Eager load relations for an array of Product models to eliminate N+1 queries.
+     *
+     * @param Product[] $products
+     * @param string[] $relations
+     * @return Product[]
+     */
+    public static function eagerLoad(array $products, array $relations = ['translations', 'variants', 'specs', 'dimensions', 'media']): array
+    {
+        if ($products === []) {
+            return $products;
+        }
+
+        /** @var array<int, Product> $map */
+        $map = [];
+        foreach ($products as $p) {
+            if ($p instanceof self && $p->getKey() !== null) {
+                $id = (int) $p->getKey();
+                $map[$id] = $p;
+                if (in_array('translations', $relations, true)) {
+                    $p->preloadedTranslations = [];
+                }
+                if (in_array('variants', $relations, true)) {
+                    $p->preloadedVariants = [];
+                }
+                if (in_array('specs', $relations, true)) {
+                    $p->preloadedSpecs = [];
+                }
+                if (in_array('dimensions', $relations, true)) {
+                    $p->preloadedDimensions = null;
+                    $p->hasLoadedDimensions = true;
+                }
+                if (in_array('media', $relations, true)) {
+                    $p->preloadedMedia = [];
+                }
+            }
+        }
+
+        $ids = array_keys($map);
+        if ($ids === []) {
+            return $products;
+        }
+
+        $conn = static::db()->connection();
+        $placeholders = implode(',', array_fill(0, count($ids), '?'));
+
+        if (in_array('translations', $relations, true)) {
+            $tRows = $conn->select(
+                "SELECT * FROM product_translations WHERE product_id IN ({$placeholders})",
+                $ids,
+            );
+            foreach ($tRows as $row) {
+                $pId = (int) $row['product_id'];
+                if (isset($map[$pId])) {
+                    $map[$pId]->preloadedTranslations[$row['locale']] = $row;
+                }
+            }
+        }
+
+        if (in_array('variants', $relations, true)) {
+            $vRows = $conn->select(
+                "SELECT * FROM product_variants WHERE product_id IN ({$placeholders}) AND deleted_at IS NULL ORDER BY sort_order ASC, id ASC",
+                $ids,
+            );
+            foreach ($vRows as $row) {
+                $pId = (int) $row['product_id'];
+                if (isset($map[$pId])) {
+                    $map[$pId]->preloadedVariants[] = array_merge($row, [
+                        'id' => (int) $row['id'],
+                        'price' => (float) $row['price'],
+                    ]);
+                }
+            }
+        }
+
+        if (in_array('specs', $relations, true)) {
+            $sRows = $conn->select(
+                "SELECT product_id, spec_key, spec_value, unit FROM product_specifications WHERE product_id IN ({$placeholders}) AND variant_id IS NULL ORDER BY sort_order ASC, id ASC",
+                $ids,
+            );
+            foreach ($sRows as $row) {
+                $pId = (int) $row['product_id'];
+                if (isset($map[$pId])) {
+                    $map[$pId]->preloadedSpecs[] = $row;
+                }
+            }
+        }
+
+        if (in_array('dimensions', $relations, true)) {
+            $dRows = $conn->select(
+                "SELECT product_id, width_mm, height_mm, depth_mm, weight_kg FROM product_dimensions WHERE product_id IN ({$placeholders}) AND variant_id IS NULL",
+                $ids,
+            );
+            foreach ($dRows as $row) {
+                $pId = (int) $row['product_id'];
+                if (isset($map[$pId])) {
+                    $map[$pId]->preloadedDimensions = $row;
+                    $map[$pId]->hasLoadedDimensions = true;
+                }
+            }
+        }
+
+        if (in_array('media', $relations, true)) {
+            $mRows = $conn->select(
+                "SELECT pm.product_id, pm.type, pm.is_primary, pm.sort_order, m.*
+                 FROM product_media pm
+                 INNER JOIN media m ON m.id = pm.media_id
+                 WHERE pm.product_id IN ({$placeholders}) AND (pm.variant_id IS NULL)
+                 ORDER BY pm.is_primary DESC, pm.sort_order ASC, pm.id ASC",
+                $ids,
+            );
+            foreach ($mRows as $row) {
+                $pId = (int) $row['product_id'];
+                if (isset($map[$pId])) {
+                    $map[$pId]->preloadedMedia[] = $row;
+                }
+            }
+        }
+
+        return $products;
+    }
+
     /** @return array<string, array<string, mixed>> locale => row */
     public function translations(): array
     {
+        if ($this->preloadedTranslations !== null) {
+            return $this->preloadedTranslations;
+        }
+
         $rows = static::db()->connection()->select(
             'SELECT * FROM product_translations WHERE product_id = ?',
             [$this->getKey()],
@@ -44,7 +178,7 @@ class Product extends Model
             $out[$row['locale']] = $row;
         }
 
-        return $out;
+        return $this->preloadedTranslations = $out;
     }
 
     /**
@@ -102,12 +236,16 @@ class Product extends Model
     /** @return array<int, array<string, mixed>> ordered variant rows */
     public function variants(): array
     {
+        if ($this->preloadedVariants !== null) {
+            return $this->preloadedVariants;
+        }
+
         $rows = static::db()->connection()->select(
             'SELECT * FROM product_variants WHERE product_id = ? AND deleted_at IS NULL ORDER BY sort_order ASC, id ASC',
             [$this->getKey()],
         );
 
-        return array_map(static fn (array $row): array => array_merge($row, [
+        return $this->preloadedVariants = array_map(static fn (array $row): array => array_merge($row, [
             'id' => (int) $row['id'],
             'price' => (float) $row['price'],
         ]), $rows);
@@ -120,6 +258,10 @@ class Product extends Model
      */
     public function specs(): array
     {
+        if ($this->preloadedSpecs !== null) {
+            return $this->preloadedSpecs;
+        }
+
         $rows = static::db()->connection()->select(
             'SELECT spec_key, spec_value, unit FROM product_specifications
              WHERE product_id = ? AND variant_id IS NULL
@@ -127,19 +269,24 @@ class Product extends Model
             [$this->getKey()],
         );
 
-        return $rows;
+        return $this->preloadedSpecs = $rows;
     }
 
     /** @return array<string, mixed>|null */
     public function dimensions(): ?array
     {
+        if ($this->hasLoadedDimensions) {
+            return $this->preloadedDimensions;
+        }
+
         $row = static::db()->connection()->selectOne(
             'SELECT width_mm, height_mm, depth_mm, weight_kg FROM product_dimensions
              WHERE product_id = ? AND variant_id IS NULL LIMIT 1',
             [$this->getKey()],
         );
 
-        return $row;
+        $this->hasLoadedDimensions = true;
+        return $this->preloadedDimensions = $row;
     }
 
     /**
@@ -152,24 +299,30 @@ class Product extends Model
      */
     public function media(?string $type = null, bool $includeMissing = false): array
     {
-        $sql = 'SELECT pm.type, pm.is_primary, pm.sort_order, m.*
-                FROM product_media pm
-                INNER JOIN media m ON m.id = pm.media_id
-                WHERE pm.product_id = ? AND (pm.variant_id IS NULL)';
-        $bindings = [$this->getKey()];
-
-        if (!$includeMissing) {
-            $sql .= " AND m.status <> 'missing'";
+        if ($this->preloadedMedia !== null) {
+            $rows = $this->preloadedMedia;
+        } else {
+            $sql = 'SELECT pm.type, pm.is_primary, pm.sort_order, m.*
+                    FROM product_media pm
+                    INNER JOIN media m ON m.id = pm.media_id
+                    WHERE pm.product_id = ? AND (pm.variant_id IS NULL)
+                    ORDER BY pm.is_primary DESC, pm.sort_order ASC, pm.id ASC';
+            $rows = static::db()->connection()->select($sql, [$this->getKey()]);
+            $this->preloadedMedia = $rows;
         }
 
-        if ($type !== null) {
-            $sql .= ' AND pm.type = ?';
-            $bindings[] = $type;
+        $filtered = [];
+        foreach ($rows as $row) {
+            if (!$includeMissing && ($row['status'] ?? '') === 'missing') {
+                continue;
+            }
+            if ($type !== null && ($row['type'] ?? '') !== $type) {
+                continue;
+            }
+            $filtered[] = $row;
         }
 
-        $sql .= ' ORDER BY pm.is_primary DESC, pm.sort_order ASC, pm.id ASC';
-
-        return static::db()->connection()->select($sql, $bindings);
+        return $filtered;
     }
 
     /**
