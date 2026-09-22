@@ -53,9 +53,9 @@ class UploadService
             $cleanDir = 'general';
         }
 
-        $filename = Str::random(24) . '.' . $extension;
+        $filename = $this->generateFilename($original, $extension);
         $relative = $cleanDir . '/' . date('Y/m');
-        $baseUploadPath = (string) config('uploads.path', 'public/images/uploads');
+        $baseUploadPath = $this->getUploadBasePath();
         $uploadRoot = realpath($this->app->basePath($baseUploadPath));
         if ($uploadRoot === false) {
             $uploadRoot = $this->app->basePath($baseUploadPath);
@@ -104,14 +104,62 @@ class UploadService
         ];
     }
 
-    public function delete(string $relativePath): bool
+    /**
+     * Resolve base upload path respecting config('uploads.disk') and config('uploads.disks').
+     */
+    public function getUploadBasePath(?string $disk = null): string
+    {
+        $diskName = $disk ?? (string) config('uploads.disk', 'local');
+        $disks = (array) config('uploads.disks', []);
+
+        if (isset($disks[$diskName]['path']) && is_string($disks[$diskName]['path'])) {
+            return $disks[$diskName]['path'];
+        }
+
+        if ($diskName === 'private' || $diskName === 'secure') {
+            return 'storage/app/uploads';
+        }
+
+        return (string) config('uploads.path', 'public/images/uploads');
+    }
+
+    /**
+     * Generate filename based on configured naming strategy ('random', 'slug', 'original').
+     */
+    public function generateFilename(string $original, string $extension, ?string $strategy = null): string
+    {
+        $strategy = $strategy ?? (string) config('uploads.naming', 'random');
+
+        if ($strategy === 'slug') {
+            $baseName = pathinfo($original, PATHINFO_FILENAME);
+            $slug = Str::slug($baseName);
+            if ($slug === '') {
+                $slug = 'file';
+            }
+            return $slug . '-' . Str::random(8) . '.' . $extension;
+        }
+
+        if ($strategy === 'original') {
+            $baseName = pathinfo($original, PATHINFO_FILENAME);
+            $cleanName = preg_replace('/[^a-zA-Z0-9_\-]+/', '-', $baseName);
+            $cleanName = trim((string) $cleanName, '-');
+            if ($cleanName === '') {
+                $cleanName = 'file';
+            }
+            return $cleanName . '.' . $extension;
+        }
+
+        return Str::random(24) . '.' . $extension;
+    }
+
+    public function delete(string $relativePath, ?string $disk = null): bool
     {
         $clean = ltrim(str_replace('\\', '/', $relativePath), '/');
         if (str_contains($clean, '..') || str_contains($clean, "\0")) {
             return false;
         }
 
-        $baseUploadPath = (string) config('uploads.path', 'public/images/uploads');
+        $baseUploadPath = $this->getUploadBasePath($disk);
         $uploadRoot = realpath($this->app->basePath($baseUploadPath));
         if ($uploadRoot === false) {
             return false;

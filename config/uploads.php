@@ -5,6 +5,15 @@ declare(strict_types=1);
 return [
     'disk' => env('UPLOAD_DISK', 'local'),
 
+    'disks' => [
+        'local' => [
+            'path' => 'public/images/uploads',
+        ],
+        'private' => [
+            'path' => 'storage/app/uploads',
+        ],
+    ],
+
     // Stored inside public/images/uploads (accessible directly and via asset()).
     'path' => 'public/images/uploads',
 
@@ -14,5 +23,5 @@ return [
     'allowed_documents' => ['pdf', 'doc', 'docx', 'xls', 'xlsx', 'csv', 'txt'],
     'allowed_videos' => ['mp4', 'webm', 'mov'],
 
-    'naming' => 'random', // random | slug
+    'naming' => env('UPLOAD_NAMING', 'random'), // random | slug | original
 ];
