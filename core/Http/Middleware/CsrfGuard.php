@@ -21,13 +21,37 @@ final class CsrfGuard implements MiddlewareInterface
     public function handle(Request $request, callable $next): Response
     {
         if (in_array($request->method(), self::UNSAFE_METHODS, true)) {
-            $token = $request->input('_token') ?? $request->header('HTTP_X_CSRF_TOKEN');
+            // Requests authenticated purely via Bearer tokens are not vulnerable to browser cookie CSRF
+            if ($request->bearerToken() !== null) {
+                return $next($request);
+            }
+
+            $token = $request->input('_token')
+                ?? $request->header('X-CSRF-TOKEN')
+                ?? $request->header('X-XSRF-TOKEN');
+
             $expected = $this->session->csrfToken();
 
-            if (!is_string($token) || !hash_equals($expected, $token)) {
-                throw (new AppException('CSRF token mismatch.', 419, 'csrf_token_invalid'))
-                    ->withExtra(['path' => $request->path()]);
+            if (is_string($token) && hash_equals($expected, $token)) {
+                return $next($request);
             }
+
+            // Also permit same-origin AJAX requests containing the custom XMLHttpRequest header
+            $isAjax = $request->header('X-Requested-With') === 'XMLHttpRequest';
+            if ($isAjax) {
+                $origin = (string) ($request->header('Origin') ?? $request->header('Referer') ?? '');
+                $appHost = parse_url((string) config('app.url', ''), PHP_URL_HOST)
+                    ?: parse_url((string) ($request->server('HTTP_HOST') ?? ''), PHP_URL_HOST)
+                    ?: (string) ($request->server('HTTP_HOST') ?? '');
+
+                $reqHost = parse_url($origin, PHP_URL_HOST) ?: '';
+                if ($reqHost !== '' && $appHost !== '' && strtolower($reqHost) === strtolower($appHost)) {
+                    return $next($request);
+                }
+            }
+
+            throw (new AppException('CSRF token mismatch.', 419, 'csrf_token_invalid'))
+                ->withExtra(['path' => $request->path()]);
         }
 
         return $next($request);

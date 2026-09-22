@@ -83,7 +83,9 @@ class Request
 
     public function header(string $key, mixed $default = null): mixed
     {
-        return $this->server[$key] ?? $default;
+        $normalized = 'HTTP_' . strtoupper(str_replace('-', '_', $key));
+
+        return $this->server[$key] ?? $this->server[$normalized] ?? $default;
     }
 
     public function bearerToken(): ?string
