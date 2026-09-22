@@ -234,32 +234,35 @@ $fmt = static fn (float $v): string => rtrim(rtrim(number_format($v, 0, '.', '')
     </div>
 </main>
 
+<?php
+$schemaData = [
+    '@context' => 'https://schema.org/',
+    '@type' => 'Product',
+    'name' => (string) ($product['name'] ?? ''),
+    'image' => array_values(array_filter([
+        asset($img),
+        $situImg !== '' ? asset($situImg) : null,
+    ])),
+    'description' => (string) ($product['short_description'] ?? ''),
+    'sku' => ($product['sku'] ?? '') !== '' ? (string) $product['sku'] : $modelCode,
+    'mpn' => $modelCode,
+    'brand' => [
+        '@type' => 'Brand',
+        'name' => 'LUFLY',
+    ],
+    'manufacturer' => [
+        '@type' => 'Organization',
+        'name' => 'LUFLY İNŞAAT SANAYİ VE TİCARET LİMİTED ŞİRKETİ',
+    ],
+    'offers' => [
+        '@type' => 'Offer',
+        'url' => $productUrl,
+        'priceCurrency' => 'EUR',
+        'availability' => 'https://schema.org/' . (($product['stock_status'] ?? 'in_stock') === 'out_of_stock' ? 'OutOfStock' : 'InStock'),
+    ],
+];
+?>
 <!-- Schema.org JSON-LD Structured Data -->
 <script type="application/ld+json">
-{
-  "@context": "https://schema.org/",
-  "@type": "Product",
-  "name": <?= json_encode($product['name'] ?? '', JSON_UNESCAPED_UNICODE) ?>,
-  "image": <?= json_encode(array_values(array_filter([
-      asset($img),
-      $situImg !== '' ? asset($situImg) : null,
-  ])), JSON_UNESCAPED_UNICODE) ?>,
-  "description": <?= json_encode($product['short_description'] ?? '', JSON_UNESCAPED_UNICODE) ?>,
-  "sku": <?= json_encode(($product['sku'] ?? '') !== '' ? $product['sku'] : $modelCode, JSON_UNESCAPED_UNICODE) ?>,
-  "mpn": <?= json_encode($modelCode, JSON_UNESCAPED_UNICODE) ?>,
-  "brand": {
-    "@type": "Brand",
-    "name": "LUFLY"
-  },
-  "manufacturer": {
-    "@type": "Organization",
-    "name": "LUFLY İNŞAAT SANAYİ VE TİCARET LİMİTED ŞİRKETİ"
-  },
-  "offers": {
-    "@type": "Offer",
-    "url": <?= json_encode($productUrl, JSON_UNESCAPED_UNICODE) ?>,
-    "priceCurrency": "EUR",
-    "availability": "https://schema.org/<?= e(($product['stock_status'] ?? 'in_stock') === 'out_of_stock' ? 'OutOfStock' : 'InStock') ?>"
-  }
-}
+<?= json_encode($schemaData, JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT | JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE) ?>
 </script>
