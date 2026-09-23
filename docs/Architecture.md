@@ -255,6 +255,23 @@ render order read from `home/index.php`: a plain band that starts painting a
 photograph, a photo band whose backdrop stops resolving, a missing veil layer or
 lifted container, and two neighbouring photo bands all fail it.
 
+The category mosaic sits **on** that photographed band, so its tiles are cards:
+a 7/5 white shot stage (`object-fit: contain`) with the name under it. Keep that
+framing - the catalogue photographs are cut-outs shot on pure white, and a
+full-bleed `cover` crop of one either zooms a wide fixture into a detail or
+squeezes a tall one into a sliver (the same reason `product-card.css` uses a
+white stage and `contain`). The tile is not a "photo tile"; if a new category
+band is ever built, reuse this shape instead of reintroducing a scrim.
+
+Each tile leads with a **different product of its own category**: `HomeController`
+collects every `main` / `gallery` photograph per category (never a `drawing`,
+one shot per product) and hands the view up to three shuffled paths
+(`$category['shots']`). So the mosaic changes from visit to visit, and
+`frontend/home/categories/categories.js` turns the stage over - on hover where
+there is a pointer, on a staggered timer on touch, and only while the tile is on
+screen. The category's own `image` column is the fallback when a category has no
+product photographs yet.
+
 ## Database access
 
 - `Core\Database\DatabaseManager` → `Connection` (PDO, driver chosen by `DB_CONNECTION`: `mysql` | `sqlite`).

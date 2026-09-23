@@ -13,7 +13,7 @@
 
 .trust-bar { content-visibility: auto; contain-intrinsic-size: auto 620px; }
 .finishes-section { content-visibility: auto; contain-intrinsic-size: auto 720px; }
-.categories-section { content-visibility: auto; contain-intrinsic-size: auto 900px; }
+.categories-section { content-visibility: auto; contain-intrinsic-size: auto 760px; }
 .inspiration-section { content-visibility: auto; contain-intrinsic-size: auto 920px; }
 .rituals-section { content-visibility: auto; contain-intrinsic-size: auto 720px; }
 .masterpieces-section { content-visibility: auto; contain-intrinsic-size: auto 820px; }
@@ -23,7 +23,7 @@
 @media (max-width: 760px) {
   .trust-bar { contain-intrinsic-size: auto 610px; }
   .finishes-section { contain-intrinsic-size: auto 980px; }
-  .categories-section { contain-intrinsic-size: auto 1120px; }
+  .categories-section { contain-intrinsic-size: auto 1850px; }
   .inspiration-section { contain-intrinsic-size: auto 1420px; }
   .rituals-section { contain-intrinsic-size: auto 1180px; }
   .masterpieces-section { contain-intrinsic-size: auto 1520px; }

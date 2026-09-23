@@ -91,7 +91,7 @@ stylesheet is then checked against the intended background:
 | hero-cinema | photograph (`heroc-*`, chosen at runtime) |
 | trust-bar | plain |
 | finishes | plain (ink + glow, no `url()`) |
-| categories | photograph (`categories-backdrop.jpg`) |
+| categories | photograph (`categories-backdrop.jpg`), with product-card framed tiles on it |
 | inspiration | plain |
 | rituals | photograph (`rituals-backdrop.jpg`) |
 | masterpieces | plain |

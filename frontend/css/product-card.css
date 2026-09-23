@@ -69,16 +69,18 @@
 
 .pcard:hover .pcard-dots { opacity: 1; }
 
+/* the dots sit on the white shot stage, so they are neutral too - the active
+   one is simply darker, no teal */
 .pcard-dot {
   width: 5px;
   height: 5px;
   border-radius: 999px;
-  background: color-mix(in srgb, var(--ds-text) 28%, transparent);
+  background: color-mix(in srgb, var(--lu-ink-900) 26%, transparent);
   transition: background 0.25s ease, transform 0.25s ease;
 }
 
 .pcard-dot.is-on {
-  background: var(--ds-primary);
+  background: color-mix(in srgb, var(--lu-ink-950) 78%, transparent);
   transform: scale(1.4);
 }
 
@@ -122,6 +124,8 @@
   }
 }
 
+/* Neutral, not teal: the pill sits on the white shot stage, and the teal fill
+   read as a blue button stapled to the bottom of the card. */
 .pcard-hint {
   position: absolute;
   inset-inline-end: 10px;
@@ -131,13 +135,14 @@
   gap: 6px;
   padding: 6px 11px;
   border-radius: 999px;
+  border: 1px solid color-mix(in srgb, var(--lu-neutral-0) 18%, transparent);
   font-family: var(--font-mono);
   font-size: 8.5px;
   font-weight: 700;
   letter-spacing: 0.14em;
   text-transform: uppercase;
-  color: var(--ds-primary-text);
-  background: color-mix(in srgb, var(--ds-primary) 88%, transparent);
+  color: var(--lu-neutral-0);
+  background: color-mix(in srgb, var(--lu-ink-950) 82%, transparent);
   opacity: 0;
   transform: translateY(6px);
   transition: opacity 0.25s ease, transform 0.25s ease;

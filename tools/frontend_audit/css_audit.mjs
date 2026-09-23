@@ -62,7 +62,7 @@ const TARGETS = [
   ['finish picker', '.finishes-picker', ['grid-template-columns']],
   ['finish showcase', '.finish-showcase-img', ['min-height', 'aspect-ratio']],
   ['category mosaic', '.category-mosaic', ['grid-template-columns']],
-  ['category tile', '.category-card-monolith', ['height']],
+  ['category stage', '.category-card-stage', ['aspect-ratio']],
   ['inspiration grid', '.inspiration-carousel', ['grid-template-columns']],
   ['inspiration art', '.inspiration-img-wrap', ['height']],
   ['rituals grid', '.rituals-grid', ['grid-template-columns']],
@@ -322,7 +322,7 @@ for (const device of devices) {
 
   /* A tall band of art is only a problem where it has to share the screen with
      the hero: below the fold the page is meant to scroll, so those stay notes. */
-  for (const [label, selector] of [['category tile', '.category-card-monolith'], ['inspiration art', '.inspiration-img-wrap'], ['ritual art', '.ritual-figure']]) {
+  for (const [label, selector] of [['inspiration art', '.inspiration-img-wrap'], ['ritual art', '.ritual-figure']]) {
     const decls = resolve(rules, selector, ['height'], ctx);
     const value = resolveLength(decls.height, ctx) || 0;
     if (value > device.height * 0.75 && device.width <= 480) {
