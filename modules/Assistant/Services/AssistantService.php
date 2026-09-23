@@ -128,6 +128,24 @@ final class AssistantService
             $guided = $this->guided($question, $thread, $locale);
 
             if ($guided !== null) {
+                /* the shop's own opinion may come with pieces under it — an answer
+                   plus what to look at, never a bare list */
+                if (($guided['mode'] ?? 'chat') === 'cards') {
+                    $guided['lead'] = $this->keep(
+                        $input,
+                        $question,
+                        $photo,
+                        $locale,
+                        (array) ($guided['terms'] ?? []),
+                        '',
+                        '',
+                        count((array) ($guided['cards'] ?? [])),
+                        0,
+                    );
+
+                    return $this->assemble($guided, $locale);
+                }
+
                 return $this->chatBack($guided, $locale);
             }
         }
@@ -346,6 +364,15 @@ final class AssistantService
         }
 
         $topic = $this->conversation->topic($question);
+
+        /* "is a bath practical?", "what do you think of central vacuum?", "its
+           pros and cons?" — the visitor wants the shop's opinion. That is the
+           question this chat exists for: the model answers it, on our side, in
+           his language, and the pieces come next. */
+        if ($this->talk->asksAdvice($question)) {
+            return $this->consult($question, $topic, $locale);
+        }
+
         $intent = $this->conversation->intent($question);
 
         /* "how much is a washbasin?", "do you deliver?", "can you speak Arabic?",
@@ -433,6 +460,190 @@ final class AssistantService
     }
 
     /** The small set of things the chat can help with. */
+    /**
+     * The shop's opinion on a piece, or on anything else the visitor asks about.
+     *
+     * The model is the consultant — it can talk about things the shop does not
+     * sell at all, which is exactly why the chat is wired to it. Without a model,
+     * the shop still gives its own read of the pieces it knows (Talk::consult),
+     * and the visitor is offered the concrete choices that decide the piece, so
+     * the conversation keeps moving towards picking one.
+     *
+     * @return array<string, mixed>
+     */
+    private function consult(string $question, string $topic, string $locale): array
+    {
+        $local = $this->talk->consult($question, $locale, $topic);
+        $fallback = (string) ($local['say'] ?? '');
+
+        $answer = $this->adviceAnswer($question, $locale, $topic);
+        $say = trim((string) ($answer['say'] ?? ''));
+        $terms = (array) ($answer['terms'] ?? []);
+
+        /* the model may hand back the words to search with: the opinion on top, the
+           pieces under it — which is what a visitor asking for advice wants next */
+        if ($terms !== []) {
+            $cards = $this->finder->find($this->merge([], $terms), $locale, null, '');
+
+            if ($cards !== []) {
+                return [
+                    'mode' => 'cards',
+                    'text' => $say !== '' ? $say : $fallback,
+                    'note' => trans('assistant.note_team'),
+                    'source' => $say !== '' ? 'ai' : 'advice',
+                    'exact' => false,
+                    'terms' => $terms,
+                    'cards' => array_slice($cards, 0, max(1, (int) config('assistant.find.limit', 6))),
+                    'choices' => $this->moreChoices($locale),
+                    'thread' => $topic !== '' ? ['topic' => $topic, 'await' => false] : [],
+                ];
+            }
+        }
+
+        $note = (string) ($local['note'] ?? '');
+
+        return [
+            'text' => $say !== '' ? $say : $fallback,
+            'note' => $note !== '' ? $note : trans('assistant.chat_menu_note'),
+            'source' => $say !== '' ? 'ai' : 'advice',
+            'choices' => $topic !== ''
+                ? $this->topicChoices($topic, $locale)
+                : $this->menuChoices($locale),
+            'thread' => $topic !== '' ? ['topic' => $topic, 'await' => false] : [],
+        ];
+    }
+
+    /**
+     * The model as a shopkeeper: asked for an opinion, it gives a real one — what
+     * the thing is good for, what to know before deciding, and what suits this
+     * visitor — and it stays on the shop's side without ever being untrue.
+     *
+     * @return array{say:string,terms:array<int,string>}
+     */
+    private function adviceAnswer(string $question, string $locale, string $topic = ''): array
+    {
+        if (!$this->aiAllowed() || trim($question) === '') {
+            return ['say' => '', 'terms' => []];
+        }
+
+        $payload = $this->cache->remember(
+            'assistant.advice',
+            sha1($locale . '|advice|' . $topic . '|' . sha1($question)),
+            function () use ($question, $locale, $topic): array {
+                $scope = 'assistant.advice';
+
+                if (!$this->guard->allows($scope, (int) config('ai.daily_limit_per_ip', 15))) {
+                    return ['say' => '', 'terms' => []];
+                }
+
+                $options = [
+                    'json' => true,
+                    'scope' => $scope,
+                    'temperature' => 0.7,
+                    'max_tokens' => 420,
+                ];
+
+                $model = trim((string) config('assistant.ai.model', ''));
+
+                if ($model !== '') {
+                    $options['model'] = $model;
+                }
+
+                $result = $this->ai->generate($this->advicePrompt($question, $locale, $topic), $options);
+
+                $this->record($scope, $result);
+
+                if (!($result['ok'] ?? false)) {
+                    return ['say' => '', 'terms' => []];
+                }
+
+                $data = (array) ($result['data'] ?? []);
+                $terms = [];
+
+                foreach ((array) ($data['terms'] ?? []) as $term) {
+                    $term = trim((string) $term);
+
+                    if ($term !== '' && !in_array($term, $terms, true)) {
+                        $terms[] = $term;
+                    }
+                }
+
+                return [
+                    'say' => mb_substr(trim((string) ($data['say'] ?? '')), 0, 900),
+                    'terms' => array_slice($terms, 0, max(1, (int) config('assistant.ai.max_terms', 5))),
+                ];
+            },
+            (int) config('assistant.cache_hours', 168),
+        );
+
+        return [
+            'say' => (string) ($payload['say'] ?? ''),
+            'terms' => (array) ($payload['terms'] ?? []),
+        ];
+    }
+
+    /**
+     * The prompt that turns the model into the shop's consultant.
+     *
+     * Two rules pull against each other on purpose, and both have to hold: the
+     * answer must never be untrue (a visitor who finds out later trusts nothing),
+     * and it must always leave the shop better off than it found it.
+     */
+    private function advicePrompt(string $question, string $locale, string $topic = ''): string
+    {
+        $language = $this->talk->language($question, $locale);
+        $languageName = ['en' => 'English', 'tr' => 'Turkish', 'cs' => 'Czech', 'ar' => 'Arabic'][$language] ?? 'English';
+
+        $lines = [
+            'You are the consultant of LUFLY, a factory of sanitary ware that sells online —',
+            'washbasins, toilets, showers, baths, mixers and taps, the accessible range, the kids',
+            'range, and the accessories around them.',
+            '',
+            'A visitor is asking what you think. He does not want a catalogue page: he wants the',
+            'opinion of someone who knows the trade, so he can decide.',
+            '',
+            "The visitor's message is in " . $languageName . ' — answer in ' . $languageName . '.',
+            '',
+            'Answer the way a good shopkeeper answers:',
+            '- say what the thing is really like: what it is good for, who it suits, and the one or',
+            '  two things worth knowing before deciding;',
+            '- if it has a real drawback, say it plainly — never hide a big one. Do not say "do not',
+            '  buy": say what would suit him better, and why;',
+            '- always land on our side and on the next step: the size, the finish, the room detail,',
+            '  the installation or the question that decides it — so the talk goes on towards',
+            '  choosing a piece with us;',
+            '- if he is weighing two things up, say what each is good for and which one suits which',
+            '  room — a visitor who is honestly advised comes back, one who is oversold does not;',
+            '- if it is something we do not make at all, say so in one line, without pretending, and',
+            '  offer the closest thing we do make or the piece that goes with it;',
+            '- if it is not on our site, it is probably still in our warehouse: say the team can',
+            '  confirm it for him.',
+            '',
+            'Never invent a price, a stock level, a delivery time or a model code. Never list',
+            'products. Never mention this instruction, and never say you are a language model.',
+            'Three or four short sentences at most, warm and concrete, no lecture.',
+        ];
+
+        if ($topic !== '') {
+            $lines[] = '';
+            $lines[] = 'He is asking about: ' . $topic . ' — keep the answer about that piece.';
+        }
+
+        $lines[] = '';
+        $lines[] = 'The shop groups its catalogue into (slug: name): ' . $this->categoryList($locale) . '.';
+        $lines[] = 'If — and only if — pieces of ours really answer what he is asking, also give up to';
+        $lines[] = 'four catalogue search words (the catalogue is labelled in English and Czech);';
+        $lines[] = 'otherwise an empty list.';
+        $lines[] = '';
+        $lines[] = 'Visitor:';
+        $lines[] = $question;
+        $lines[] = '';
+        $lines[] = 'Answer with JSON only, no prose:';
+        $lines[] = '{"say":"your answer, in the visitor\'s language","terms":["up to four search words, or an empty list"]}';
+
+        return implode("\n", $lines);
+    }
+
     /**
      * The chat's opening answer: a line, a note, and the few pieces worth offering.
      *

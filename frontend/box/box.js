@@ -152,23 +152,37 @@
     var url = button.getAttribute('data-box-endpoint') || addEndpoint();
     if (!productId || !url || button.classList.contains('is-busy')) return;
 
+    /* The tap is answered at once: the piece is in the box from the visitor's
+       point of view the moment he presses, and the server's answer only confirms
+       it (or puts it back when it could not). A round trip that has to reach a
+       database — and, on a real host, the shop's own mail — must never be
+       something the visitor waits behind. */
+    var wasOn = button.classList.contains('is-on');
+    var before = currentCount();
+    var wanted = !wasOn;
+
+    paintButtons(productId, wanted, button.getAttribute('data-box-label-on'), button.getAttribute('data-box-label-off'));
+    paintCount(before + (wanted ? 1 : -1));
     button.classList.add('is-busy');
 
     post(url, { product_id: productId }).then(function (data) {
       button.classList.remove('is-busy');
 
       if (!data.ok && data.status === 422 && data.errors && data.errors.product_id) {
+        undo(productId, wasOn, before);
         say(document.querySelector('[data-box-status]'), data.errors.product_id[0], 'error');
         announce({ productId: productId, added: false, failed: true, message: data.errors.product_id[0] });
         return;
       }
 
       if (!data.ok) {
+        undo(productId, wasOn, before);
         say(document.querySelector('[data-box-status]'), button.getAttribute('data-box-error') || '', 'error');
         announce({ productId: productId, added: false, failed: true });
         return;
       }
 
+      /* the server is the truth: it knows whether the piece went in or came out */
       keepToken(data.token);
       paintCount(data.count);
       paintButtons(productId, data.added, button.getAttribute('data-box-label-on'), button.getAttribute('data-box-label-off'));
@@ -176,9 +190,24 @@
       announce({ productId: productId, added: data.added, count: data.count, message: data.message });
     }).catch(function () {
       button.classList.remove('is-busy');
+      undo(productId, wasOn, before);
       announce({ productId: productId, added: false, failed: true });
     });
   });
+
+  /** The badge's number right now (the optimistic paint needs a starting point). */
+  function currentCount() {
+    var node = document.querySelector('[data-box-count]');
+    var value = node ? parseInt(node.textContent, 10) : 0;
+
+    return isNaN(value) ? 0 : value;
+  }
+
+  /** The server said no: put the button and the badge back where they were. */
+  function undo(productId, wasOn, before) {
+    paintButtons(productId, wasOn, null, null);
+    paintCount(before);
+  }
 
   /* ---- 2. take one out from the box page -------------------------------- */
 

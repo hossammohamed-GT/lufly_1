@@ -385,6 +385,10 @@ final class Conversation
         /* Arabic letters that are written differently but read the same */
         $text = str_replace(['أ', 'إ', 'آ', 'ى', 'ئ', 'ؤ', 'ة'], ['ا', 'ا', 'ا', 'ي', 'ي', 'و', 'ه'], $text);
         $text = (string) preg_replace('/[^\p{L}\p{N}]+/u', ' ', $text);
+        /* the Arabic article is glued to the front of the word and changes nothing:
+           "الحوض" is the same piece as "حوض", and a visitor writing it must be
+           understood without us listing every form of every word */
+        $text = (string) preg_replace('/(^| )ال(?=\p{L}{3})/u', '$1', $text);
 
         return trim((string) preg_replace('/\s+/u', ' ', $text));
     }

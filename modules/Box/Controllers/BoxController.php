@@ -96,9 +96,12 @@ class BoxController extends Controller
             ? trans('box.added_named', ['name' => $name])
             : trans('box.removed_named', ['name' => $name]);
 
-        /* Saving tells the team — not on every click, and never loudly: a
-           failure here must not spoil the save the visitor just made. */
-        $notified = $result['added'] ? $this->tellTheTeam($locale) : false;
+        /* Saving tells the team — not on every click, and never loudly. The notice
+           is *decided* here (and the box is stamped, so a second click within the
+           cooldown never queues another one), but the mail itself is sent after
+           the visitor has his answer: a saved piece must not wait on an SMTP
+           handshake. */
+        $notified = $result['added'] && $this->teamShouldHear($locale);
 
         $response = ApiResponse::success([
             'product_id' => (int) $product->getKey(),
@@ -108,6 +111,10 @@ class BoxController extends Controller
             'message' => $message,
             'notified' => $notified,
         ], $message);
+
+        if ($notified) {
+            $response->defer(fn (): bool => $this->tellTheTeam($locale));
+        }
 
         return $this->box->attachCookie($response);
     }
@@ -284,14 +291,13 @@ class BoxController extends Controller
     }
 
     /**
-     * "A visitor saved these" — the team hears about a box while it is being
-     * filled, not only when it is sent.
+     * Should the team hear about this save?
      *
-     * One message per box per cooldown window: five clicks in a row are one
-     * note, not five. Silent on failure: the piece is already saved, and the
-     * visitor should never see the shop's mail trouble.
+     * Cheap, and it stamps the box, so the decision is made once even though the
+     * mail itself goes out later. One message per box per cooldown window: five
+     * clicks in a row are one note, not five.
      */
-    private function tellTheTeam(string $locale): bool
+    private function teamShouldHear(string $locale): bool
     {
         if (!(bool) config('box.saved_notice', true)) {
             return false;
@@ -310,6 +316,30 @@ class BoxController extends Controller
             return false;
         }
 
+        if ($this->box->items($locale) === []) {
+            return false;
+        }
+
+        $box->update(['notified_at' => date('Y-m-d H:i:s')]);
+
+        return true;
+    }
+
+    /**
+     * "A visitor saved these" — the mail itself.
+     *
+     * Runs after the visitor's answer has left the building, so a saved piece
+     * never waits on an SMTP handshake. Silent on failure: the piece is already
+     * saved, and the visitor should never see the shop's mail trouble.
+     */
+    private function tellTheTeam(string $locale): bool
+    {
+        $box = $this->box->current();
+
+        if ($box === null) {
+            return false;
+        }
+
         $items = $this->box->items($locale);
 
         if ($items === []) {
@@ -318,13 +348,7 @@ class BoxController extends Controller
 
         $result = $this->mailer->saved($box, $items, $locale, (string) ($box->email ?? ''));
 
-        if (!$result['sent']) {
-            return false;
-        }
-
-        $box->update(['notified_at' => date('Y-m-d H:i:s')]);
-
-        return true;
+        return (bool) $result['sent'];
     }
 
     /** Cooldown / daily cap on the public "send my box" endpoint. */

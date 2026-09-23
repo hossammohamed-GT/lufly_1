@@ -70,8 +70,10 @@
   animation: boxDrop 420ms cubic-bezier(0.16, 1, 0.3, 1);
 }
 
+/* While the server confirms, the button keeps the state the visitor just gave it:
+   a second tap is simply ignored. (Dimming it was the old "…wait…" look — now
+   nothing moves under his finger.) */
 .boxbtn.is-busy {
-  opacity: .55;
   pointer-events: none;
 }
 
