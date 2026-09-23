@@ -119,6 +119,12 @@ php cli ai:doctor --image     # tests every key and the image model
 
 Notes that save a support ticket:
 
+- `ai:doctor --image` answering `429` for the picture while the text keys pass
+  is a quota, not a broken key: the free tier does not always include image
+  generation. Leave `AI_IMAGE_MODEL=` empty to switch pictures off (the planner
+  then hides its button) or use an account with billing.
+- Comments at the end of a `.env` line are fine; the loader drops them. A value
+  that still cannot be a model name is ignored, and `ai:doctor` prints the line.
 - Keys created in AI Studio today start with `AQ.` and are **only** accepted in
   the `x-goog-api-key` header (a `?key=` URL answers 404). The client does this
   already.

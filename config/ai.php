@@ -14,6 +14,27 @@ declare(strict_types=1);
  * Nothing here is billed by this application: if the pool runs dry the AI
  * features answer "busy", and the storefront keeps working.
  */
+/*
+ * A model name has to look like one. The .env loader already drops inline
+ * comments, but a value with a space, a `#` or a newline in it (a comment
+ * pasted onto the same line by hand, a copied line breaking in two) is not a
+ * model and never reaches Google: it falls back to the default instead, and
+ * `php cli ai:doctor` says which line it was.
+ */
+$rawImageModel = trim((string) env('AI_IMAGE_MODEL', 'gemini-2.5-flash-image'));
+
+$model = static function (string $key, string $default = ''): string {
+    $value = (string) env($key, $default);
+
+    if (trim($value) === '') {
+        return '';
+    }
+
+    $value = trim((string) preg_replace('/\s.*$/', '', trim($value)));
+
+    return preg_match('/^[A-Za-z0-9._-]+$/', $value) === 1 ? $value : '';
+};
+
 return [
     /* master switch — also available as FEATURE_AI in .env */
     'enabled' => (bool) env('AI_ENABLED', (bool) env('FEATURE_AI', true)),
@@ -41,16 +62,22 @@ return [
      * that account, so a weaker key can serve the cheap jobs (labels, keywords)
      * while the main key keeps the reasoning ones.
      */
-    'model' => (string) env('AI_MODEL', 'gemini-2.5-flash'),
+    'model' => $model('AI_MODEL', 'gemini-2.5-flash') ?: 'gemini-2.5-flash',
     'models' => [
-        (string) env('AI_MODEL_1', ''),
-        (string) env('AI_MODEL_2', ''),
-        (string) env('AI_MODEL_3', ''),
-        (string) env('AI_MODEL_4', ''),
-        (string) env('AI_MODEL_5', ''),
+        $model('AI_MODEL_1'),
+        $model('AI_MODEL_2'),
+        $model('AI_MODEL_3'),
+        $model('AI_MODEL_4'),
+        $model('AI_MODEL_5'),
     ],
-    /* model that may generate images (Nano Banana). '' disables image output. */
-    'image_model' => (string) env('AI_IMAGE_MODEL', 'gemini-2.5-flash-image'),
+    /*
+     * Model that may generate images (Nano Banana). `AI_IMAGE_MODEL=` (empty)
+     * switches image output off — the planner then hides its picture button
+     * instead of promising something the account cannot draw.
+     */
+    'image_model' => $rawImageModel === ''
+        ? ''
+        : ($model('AI_IMAGE_MODEL', 'gemini-2.5-flash-image') ?: 'gemini-2.5-flash-image'),
 
     /* request shape */
     'timeout' => (int) env('AI_TIMEOUT', 45),

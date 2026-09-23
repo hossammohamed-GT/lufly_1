@@ -37,6 +37,12 @@ final class AiDoctorCommand extends Command
         $this->line('text model   : ' . (string) config('ai.model', ''));
         $this->line('image model  : ' . ((string) config('ai.image_model', '') !== '' ? (string) config('ai.image_model') : 'disabled'));
         $this->line('timeout      : ' . (int) config('ai.timeout', 45) . 's');
+
+        /* A value that cannot be a model name (a comment pasted onto the same
+           line, a line that broke in two) never reaches Google: say which line
+           it was instead of letting a 400 blame the key. */
+        $this->warnAboutModelValues();
+
         $this->line('');
 
         if ($client->keyCount() === 0) {
@@ -75,6 +81,7 @@ final class AiDoctorCommand extends Command
             $this->line('');
             $started = microtime(true);
             $result = $client->image('A single matte white wall-hung toilet on a plain light grey studio background, product photo.');
+            $quota = $this->looksLikeQuota((string) ($result['error'] ?? ''));
             $ms = (int) round((microtime(true) - $started) * 1000);
 
             if ($result['ok'] && $result['images'] !== []) {
@@ -85,6 +92,14 @@ final class AiDoctorCommand extends Command
                 $this->success(sprintf('image model ok   %dms  →  %s (%d KB) saved to %s', $ms, $result['images'][0]['mime'], (int) round($bytes / 1024), $file));
             } else {
                 $this->error('image model FAIL → ' . $this->shorten((string) ($result['error'] ?: 'no image returned')));
+
+                if ($quota) {
+                    $this->line('   the key itself is fine (Google answered) — the image quota is not:');
+                    $this->line('   image generation is the first thing the free tier withholds. Options:');
+                    $this->line('     · leave AI_IMAGE_MODEL= empty — the planner then hides its picture button');
+                    $this->line('       and the plan, the drawing and the products keep working;');
+                    $this->line('     · or point AI_IMAGE_MODEL at an account with billing enabled.');
+                }
             }
         }
 
@@ -98,6 +113,38 @@ final class AiDoctorCommand extends Command
         }
 
         return 0;
+    }
+
+    /**
+     * Is a model value in .env something that could never be a model name?
+     * Returns how many lines were flagged.
+     */
+    private function warnAboutModelValues(): int
+    {
+        $keys = ['AI_MODEL', 'AI_MODEL_1', 'AI_MODEL_2', 'AI_MODEL_3', 'AI_MODEL_4', 'AI_MODEL_5', 'AI_IMAGE_MODEL'];
+        $flagged = 0;
+
+        foreach ($keys as $key) {
+            $raw = trim((string) env($key, ''));
+
+            /* empty is a legitimate answer: "use the default" / "switched off" */
+            if ($raw === '' || preg_match('/^[A-Za-z0-9._-]+$/', $raw) === 1) {
+                continue;
+            }
+
+            $flagged++;
+            $this->error($key . ' in .env is not a model name: "' . $this->shorten($raw) . '"');
+            $this->line('   → a comment must live on its own line (`# …`), not at the end of a value line.');
+            $this->line('   → the value was ignored and the default model is used instead.');
+        }
+
+        return $flagged;
+    }
+
+    /** Google's 429: the request was understood, the quota is what ran out. */
+    private function looksLikeQuota(string $error): bool
+    {
+        return str_contains($error, '429') || stripos($error, 'quota') !== false;
     }
 
     /**

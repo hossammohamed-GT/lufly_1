@@ -131,6 +131,12 @@ Check the pool from the terminal — one tiny request per key, plus an image:
 php cli ai:doctor --image
 ```
 
+The doctor names the `.env` line when a value could never be a model name
+(a comment pasted onto the same line, a line that broke in two), so a 400 from
+Google never has to be traced by hand. An image request that answers `429`
+while the text keys pass means the account simply has no picture quota — set
+`AI_IMAGE_MODEL=` (empty) and the planner hides its picture button.
+
 Every answer is cached (`ai_cache`) and counted (`ai_usage`), so a repeated
 question costs nothing and a visitor cannot burn the quota. The `ai_cache` and
 `ai_usage` tables come with migration 19; on a live MySQL database paste
