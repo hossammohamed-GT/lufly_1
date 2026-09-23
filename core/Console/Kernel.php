@@ -21,6 +21,7 @@ class Kernel
         'serve' => Commands\ServeCommand::class,
         'key:generate' => Commands\KeyGenerateCommand::class,
         'backup:db' => Commands\BackupDbCommand::class,
+        'ai:doctor' => Commands\AiDoctorCommand::class,
         'list' => Commands\ListCommand::class,
     ];
 

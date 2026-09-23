@@ -6,6 +6,10 @@ return [
     // B2B Wholesale quotation & WhatsApp inquiry workflow
     'b2b_inquiry' => (bool) env('FEATURE_B2B_INQUIRY', true),
 
+    // AI helpers (Gemini key pool): the bathroom planner, the assistant and
+    // (later) the product finder. See config/ai.php.
+    'ai' => (bool) env('FEATURE_AI', true),
+
     // Hide prices by default for luxury sanitary B2B export pricing
     'show_prices' => (bool) env('FEATURE_SHOW_PRICES', false),
 

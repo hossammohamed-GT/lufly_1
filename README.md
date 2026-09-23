@@ -11,7 +11,7 @@ classic shared hosting / XAMPP and run immediately.
 ## Quick start (XAMPP / local)
 
 1. **Import the database** — `lufly-database.sql` (repo root). phpMyAdmin → **Import** → choose the file → **Go**.
-   It creates the `lufly` database, all 40 tables and all data from scratch.
+   It creates the `lufly` database, all 42 tables and all data from scratch.
 2. **Copy the environment file** and point it at MySQL:
    ```dotenv
    DB_CONNECTION=mysql
@@ -108,6 +108,33 @@ tables. Either run `php cli migrate`, import the shipped `lufly-database.sql`,
 or — on a live MySQL database you would rather not re-import — paste
 `database/sql/2026_01_01_000018_favorites_mysql.sql` into phpMyAdmin (it also
 records the migration, so a later `php cli migrate` stays quiet).
+
+## AI (Google Gemini)
+
+The AI features run on a pool of free Google AI Studio accounts: every key is a
+separate project with its own daily quota, and the client rotates them (a 429 on
+one key moves the request to the next). Keys are sent in the `x-goog-api-key`
+header — the format AI Studio issues today (`AQ.…`) only authenticates that way.
+
+```dotenv
+FEATURE_AI=true
+AI_KEY_1=AQ.…        # key of the first Google account
+AI_KEY_2=            # second account, and so on up to AI_KEY_5
+AI_MODEL=gemini-2.5-flash
+AI_MODEL_2=gemini-2.5-flash-lite   # optional, per account
+AI_IMAGE_MODEL=gemini-2.5-flash-image   # Nano Banana: draws the planned room
+```
+
+Check the pool from the terminal — one tiny request per key, plus an image:
+
+```bash
+php cli ai:doctor --image
+```
+
+Every answer is cached (`ai_cache`) and counted (`ai_usage`), so a repeated
+question costs nothing and a visitor cannot burn the quota. The `ai_cache` and
+`ai_usage` tables come with migration 19; on a live MySQL database paste
+`database/sql/2026_01_01_000019_ai_mysql.sql` instead of re-importing the dump.
 
 ## CLI (no artisan — it's `php cli …`)
 

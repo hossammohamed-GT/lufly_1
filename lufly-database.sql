@@ -57,6 +57,8 @@ DROP TABLE IF EXISTS `announcements`;
 DROP TABLE IF EXISTS `announcement_translations`;
 DROP TABLE IF EXISTS `favorites`;
 DROP TABLE IF EXISTS `favorite_items`;
+DROP TABLE IF EXISTS `ai_cache`;
+DROP TABLE IF EXISTS `ai_usage`;
 
 -- table: migrations
 CREATE TABLE `migrations` (
@@ -674,12 +676,46 @@ CREATE TABLE `favorite_items` (
     FOREIGN KEY (`product_id`) REFERENCES `products` (`id`) ON DELETE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
+-- table: ai_cache
+CREATE TABLE `ai_cache` (
+    `id` BIGINT UNSIGNED NOT NULL AUTO_INCREMENT PRIMARY KEY,
+    `scope` VARCHAR(50) NOT NULL,
+    `fingerprint` VARCHAR(100) NOT NULL,
+    `payload` JSON NOT NULL,
+    `model` VARCHAR(100) NULL,
+    `hits` INTEGER NOT NULL DEFAULT 0,
+    `expires_at` DATETIME NULL,
+    KEY ai_cache_expires_at_index (`expires_at`),
+    `created_at` DATETIME NULL,
+    `updated_at` DATETIME NULL,
+    UNIQUE KEY ai_cache_scope_fingerprint_unique (`scope`, `fingerprint`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+-- table: ai_usage
+CREATE TABLE `ai_usage` (
+    `id` BIGINT UNSIGNED NOT NULL AUTO_INCREMENT PRIMARY KEY,
+    `scope` VARCHAR(50) NOT NULL,
+    `ip_hash` VARCHAR(100) NOT NULL,
+    KEY ai_usage_ip_hash_index (`ip_hash`),
+    `key_slot` INTEGER NOT NULL DEFAULT 0,
+    `model` VARCHAR(100) NULL,
+    `prompt_tokens` INTEGER NOT NULL DEFAULT 0,
+    `output_tokens` INTEGER NOT NULL DEFAULT 0,
+    `duration_ms` INTEGER NOT NULL DEFAULT 0,
+    `ok` TINYINT(1) NOT NULL DEFAULT 1,
+    `day` DATE NOT NULL,
+    KEY ai_usage_day_index (`day`),
+    `error` VARCHAR(255) NULL,
+    `created_at` DATETIME NULL,
+    `updated_at` DATETIME NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
 
 -- =====================================================================
 -- Seed / live data
 -- =====================================================================
 
--- data: migrations (18 rows)
+-- data: migrations (19 rows)
 INSERT INTO `migrations` (`id`, `migration`, `batch`, `applied_at`) VALUES (1, '2026_01_01_000001_create_languages_table.php', 1, '2026-09-18 22:04:36');
 INSERT INTO `migrations` (`id`, `migration`, `batch`, `applied_at`) VALUES (2, '2026_01_01_000002_create_users_table.php', 1, '2026-09-18 22:04:36');
 INSERT INTO `migrations` (`id`, `migration`, `batch`, `applied_at`) VALUES (3, '2026_01_01_000003_create_roles_table.php', 1, '2026-09-18 22:04:36');
@@ -698,6 +734,7 @@ INSERT INTO `migrations` (`id`, `migration`, `batch`, `applied_at`) VALUES (15, 
 INSERT INTO `migrations` (`id`, `migration`, `batch`, `applied_at`) VALUES (16, '2026_01_01_000016_create_blogs_tables.php', 1, '2026-09-18 22:04:37');
 INSERT INTO `migrations` (`id`, `migration`, `batch`, `applied_at`) VALUES (17, '2026_01_01_000017_create_announcements_tables.php', 1, '2026-09-18 22:04:37');
 INSERT INTO `migrations` (`id`, `migration`, `batch`, `applied_at`) VALUES (18, '2026_01_01_000018_create_favorites_tables.php', 1, '2026-09-18 22:04:37');
+INSERT INTO `migrations` (`id`, `migration`, `batch`, `applied_at`) VALUES (19, '2026_01_01_000019_create_ai_tables.php', 1, '2026-09-18 22:04:37');
 
 -- data: languages (3 rows)
 INSERT INTO `languages` (`id`, `code`, `name`, `native_name`, `dir`, `active`, `sort_order`, `created_at`, `updated_at`, `deleted_at`) VALUES (1, 'en', 'English', 'English', 'ltr', 1, 1, '2026-09-18 22:04:37', '2026-09-18 22:04:37', NULL);

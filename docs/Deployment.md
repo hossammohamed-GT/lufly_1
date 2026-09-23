@@ -4,7 +4,7 @@
 
 1. Clone under `C:\xampp\htdocs\lufly_1`.
 2. **Import the database**: phpMyAdmin → Import → `lufly-database.sql` → Go
-   (creates database `lufly`, all 40 tables, all data).
+   (creates database `lufly`, all 42 tables, all data).
 3. Copy `.env.example` → `.env` and set:
    ```dotenv
    DB_CONNECTION=mysql
@@ -67,11 +67,41 @@ paste-ready MySQL patch next to the migration:
 | Patch | Adds |
 |---|---|
 | `database/sql/2026_01_01_000018_favorites_mysql.sql` | saved products (`favorites`, `favorite_items`) |
+| `database/sql/2026_01_01_000019_ai_mysql.sql` | AI foundation: cached answers + usage counters (`ai_cache`, `ai_usage`) |
 
 phpMyAdmin → select the database → **SQL** tab → paste the file → Go. The patch
 is safe to run twice, and it records the migration so a later `php cli migrate`
 does not try to create the tables again. With terminal access, `php cli migrate`
 does exactly the same.
+
+## AI (Gemini key pool)
+
+Five free AI Studio accounts give five daily quotas; the app rotates them and
+never keeps a broken key in rotation. Put the keys in `.env` and verify:
+
+```dotenv
+FEATURE_AI=true
+AI_KEY_1=AQ.…     # one line per Google account (up to AI_KEY_5)
+AI_KEY_2=
+AI_MODEL=gemini-2.5-flash
+AI_IMAGE_MODEL=gemini-2.5-flash-image
+AI_DAILY_LIMIT_PER_IP=15
+```
+
+```bash
+php cli ai:doctor --image     # tests every key and the image model
+```
+
+Notes that save a support ticket:
+
+- Keys created in AI Studio today start with `AQ.` and are **only** accepted in
+  the `x-goog-api-key` header (a `?key=` URL answers 404). The client does this
+  already.
+- The daily limit of a free project resets at midnight Pacific time.
+- If the pool is exhausted, AI features answer "busy" — the storefront and the
+  catalogue are unaffected.
+- `curl` is used when the extension exists, otherwise the request goes out over
+  a PHP stream, so a shared host with curl disabled still works.
 
 ## Production checklist
 

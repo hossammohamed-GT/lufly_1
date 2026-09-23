@@ -67,6 +67,8 @@ final class ExportMysqlCommand extends Command
         'product_import_logs',
         'announcements',
         'announcement_translations',
+        'ai_cache',
+        'ai_usage',
         'favorites',
         'favorite_items',
     ];
