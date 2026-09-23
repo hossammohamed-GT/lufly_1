@@ -42,14 +42,14 @@ php -S localhost:8000 server.php
 lufly-database.sql         MySQL export (import this on hosting)
 database/lufly.sqlite      SQLite dev database (same content)
 database/schema/*.php      Table definitions (source of truth for DDL)
-database/migrations/       Migration files (17, all applied)
+database/migrations/       Migration files (19, all applied)
 database/seeders/          Seeders (products/categories/users/roles/settings…)
 
 core/                      The mini-framework (Router, View, PDO layer, Console, Container…)
 app/Http/Controllers/      App-level controllers (Home, Contact…)
 modules/<Module>/          Self-contained modules:
                            Controllers / Models / Repositories / Services /
-                           Requests / Routes / Views   (10 modules)
+                           Requests / Routes / Views   (11 modules)
 routes/                    web.php · api.php · admin.php
 resources/views/           layouts + components + page views (home sections, contact, errors)
 resources/lang/<locale>/   UI translations per locale (nav.php, home.php, products.php, routes.php…)
@@ -135,6 +135,41 @@ Every answer is cached (`ai_cache`) and counted (`ai_usage`), so a repeated
 question costs nothing and a visitor cannot burn the quota. The `ai_cache` and
 `ai_usage` tables come with migration 19; on a live MySQL database paste
 `database/sql/2026_01_01_000019_ai_mysql.sql` instead of re-importing the dump.
+
+## Bathroom planner
+
+`/{locale}/planner` (tr: `banyo-planlayici`, cs: `planovac-koupelny`) — the visitor
+answers three questions (room size, shower or bathtub, look) and gets a plan:
+
+- **the items and their sizes** come from `config/planner.php`, which also knows
+  how much floor each piece needs;
+- **the drawing** is a scaled SVG built from those numbers — exact, printable and
+  free: no model and no image is involved;
+- **the matching products** are found with the ordinary catalogue search (LIKE
+  over names, SKUs and search keywords), never by sending the catalog to the AI;
+- **the welcome sentence** is the only thing the assistant writes, from a prompt
+  of a few hundred tokens that contains the answers and the item sizes — nothing
+  more. It is cached, so the second visitor of the same room costs no tokens;
+- **the picture of the finished room** is optional, one tap, and the only image
+  generation in the flow (`gemini-2.5-flash-image`).
+
+If the assistant is off, slow, out of quota, or has no network, the plan, the
+drawing and the items still arrive — in every language. Everything is cached in
+`ai_cache` and counted in `ai_usage` (one row per call, with the token counts),
+and a failed answer is only remembered for five minutes.
+
+```dotenv
+FEATURE_PLANNER=true
+PLANNER_AI=true                 # the assistant writes the welcome sentence
+FEATURE_PLANNER_RENDER=true     # the optional picture (uses AI_IMAGE_MODEL)
+PLANNER_RENDER_DAILY=3          # pictures per visitor per day
+PLANNER_HANDOFF_EMAIL=info@lufly.tr
+PLANNER_WHATSAPP=908503040817
+```
+
+The plan ends with a hand-off: one tap sends the whole plan (room, items, sizes,
+clearance) to the LUFLY team on WhatsApp, or an e-mail the shop sends with the
+visitor in `Reply-To`. Nothing extra to migrate — the planner uses the AI tables.
 
 ## CLI (no artisan — it's `php cli …`)
 

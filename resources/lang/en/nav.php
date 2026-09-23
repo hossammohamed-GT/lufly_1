@@ -14,6 +14,7 @@ return [
     'contact' => 'Contact',
     'search' => 'Search the catalogue',
     'search_placeholder' => 'Search architectural fixtures, magnetic, silia...',
+    'planner' => 'Bathroom planner',
     'favorites' => 'Saved list',
     'account' => 'Account / Portal',
     'download_catalog' => '2026 Catalog (PDF)',

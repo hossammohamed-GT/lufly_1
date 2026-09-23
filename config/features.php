@@ -28,4 +28,12 @@ return [
     // Saved-products lists ("favorites"): anonymous lists, a return link and
     // the e-mailed copy of everything the visitor saved (see config/favorites.php)
     'favorites' => (bool) env('FEATURE_FAVORITES', true),
+
+    // Bathroom planner: three taps → a sized plan, a scaled drawing and the
+    // matching products (see config/planner.php)
+    'planner' => (bool) env('FEATURE_PLANNER', true),
+
+    // The optional picture of the finished bathroom (one image per visitor
+    // per plan, kept inside a small daily allowance)
+    'render' => (bool) env('FEATURE_PLANNER_RENDER', true),
 ];

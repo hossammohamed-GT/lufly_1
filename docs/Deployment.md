@@ -74,6 +74,31 @@ is safe to run twice, and it records the migration so a later `php cli migrate`
 does not try to create the tables again. With terminal access, `php cli migrate`
 does exactly the same.
 
+## Bathroom planner
+
+The planner needs no new tables: it caches plans in `ai_cache` and counts calls
+in `ai_usage` (migration 19 / the patch file above).
+
+```dotenv
+FEATURE_PLANNER=true
+PLANNER_AI=true                 # false = built-in wording, zero AI calls
+FEATURE_PLANNER_RENDER=true     # the optional picture; needs AI_IMAGE_MODEL
+PLANNER_RENDER_DAILY=3
+PLANNER_HANDOFF_EMAIL=info@lufly.tr
+PLANNER_WHATSAPP=908503040817
+PLANNER_HANDOFF_PHONE="+90 850 3040 817"
+```
+
+- The plan, the item sizes and the drawing are computed locally — the drawing is
+  an SVG, so nothing has to be generated on the server.
+- The only AI calls are the welcome sentence (a few hundred tokens, cached for
+  `PLANNER_CACHE_HOURS`) and the optional picture (capped per visitor per day).
+- The hand-off e-mail goes to `PLANNER_HANDOFF_EMAIL` from the shop's address
+  with the visitor in `Reply-To`; WhatsApp opens `wa.me/<PLANNER_WHATSAPP>` with
+  the whole plan already typed in.
+- Test after deploying: open `/{locale}/planner`, answer the three questions,
+  check the drawing prints, then send a plan to yourself.
+
 ## AI (Gemini key pool)
 
 Five free AI Studio accounts give five daily quotas; the app rotates them and
@@ -114,6 +139,8 @@ Notes that save a support ticket:
 - [ ] robots.txt + sitemap.xml served from `public/`
 - [ ] Backups: `php cli backup:db` → `storage/backups/`
 - [ ] `MAIL_TRANSPORT=smtp` + credentials set, and one saved list mailed end to end
+- [ ] `php cli ai:doctor --image` answers on all five keys, and the planner's
+      picture button draws once (spends one image from the day's allowance)
 
 ## Troubleshooting
 

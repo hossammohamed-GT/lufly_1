@@ -13,4 +13,10 @@ return [
     'favorites.toggle' => 'favoriler/kaydet',
     'favorites.email' => 'favoriler/e-posta',
     'favorites.clear' => 'favoriler/temizle',
+
+    /* bathroom planner */
+    'planner.index' => 'banyo-planlayici',
+    'planner.step' => 'banyo-planlayici/adim',
+    'planner.render' => 'banyo-planlayici/gorsel',
+    'planner.send' => 'banyo-planlayici/gonder',
 ];

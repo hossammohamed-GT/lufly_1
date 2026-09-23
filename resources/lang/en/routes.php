@@ -13,4 +13,10 @@ return [
     'favorites.toggle' => 'favorites/toggle',
     'favorites.email' => 'favorites/email',
     'favorites.clear' => 'favorites/clear',
+
+    /* bathroom planner */
+    'planner.index' => 'planner',
+    'planner.step' => 'planner/step',
+    'planner.render' => 'planner/picture',
+    'planner.send' => 'planner/send',
 ];

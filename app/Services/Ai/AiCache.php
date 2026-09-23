@@ -80,7 +80,10 @@ class AiCache
             return;
         }
 
-        $failed = (bool) ($payload['ok'] === false);
+        /* a failed answer is remembered for a few minutes, a good one for the
+           cache life. Payloads that are not AI answers at all (the planner's
+           own plan, for one) carry no `ok` and are treated as good. */
+        $failed = ($payload['ok'] ?? null) === false;
         $hours ??= (int) config('ai.cache_hours', 720);
 
         $expires = $failed

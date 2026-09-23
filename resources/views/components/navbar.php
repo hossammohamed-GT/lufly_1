@@ -42,6 +42,7 @@ $isActive = static function (string $target) use ($currentPath, $currentQuery): 
 /* Saved-products list: the badge shows how many products this visitor saved.
    Without the cookie the service answers 0 without touching the database. */
 $favoritesOn = feature('favorites', true) && class_exists(\Modules\Favorites\Services\FavoriteService::class);
+$plannerOn = feature('planner', true) && class_exists(\Modules\Planner\Services\PlannerService::class);
 $savedCount = 0;
 if ($favoritesOn) {
     $savedCount = app(\Modules\Favorites\Services\FavoriteService::class)->count();
@@ -70,6 +71,14 @@ if ($favoritesOn) {
     ]]);
 }
 
+if ($plannerOn) {
+    /* the planner follows the saved list: plan a room, then save what fits */
+    array_splice($indexLinks, count($indexLinks) - 1, 0, [[
+        'key' => 'planner',
+        'url' => route('planner.index'),
+    ]]);
+}
+
 $railLinks = array_slice($indexLinks, 0, 4);
 
 $getSectionIcon = static function (string $key): string {
@@ -83,6 +92,7 @@ $getSectionIcon = static function (string $key): string {
         'inspirations' => '<svg class="icon mnav-cat-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10"></circle><polygon points="16.24 7.76 14.12 14.12 7.76 16.24 9.88 9.88 16.24 7.76"></polygon></svg>',
         'news' => '<svg class="icon mnav-cat-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 22h16a2 2 0 0 0 2-2V4a2 2 0 0 0-2-2H8a2 2 0 0 0-2 2v16a2 2 0 0 1-2 2Zm0 0a2 2 0 0 1-2-2v-9c0-1.1.9-2 2-2h2"></path><path d="M18 14h-8"></path><path d="M15 18h-5"></path><path d="M10 6h8v4h-8V6Z"></path></svg>',
         'favorites' => '<svg class="icon mnav-cat-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 20.6 4.2 12.8a5.1 5.1 0 0 1 0-7.2 5.1 5.1 0 0 1 7.2 0l.6.6.6-.6a5.1 5.1 0 0 1 7.2 0 5.1 5.1 0 0 1 0 7.2Z"></path></svg>',
+        'planner' => '<svg class="icon mnav-cat-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="4" width="18" height="16" rx="2"></rect><path d="M3 10h18M10 4v16"></path></svg>',
         'contact' => '<svg class="icon mnav-cat-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path></svg>',
         default => '<svg class="icon mnav-cat-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="4"></circle></svg>'
     };
@@ -204,6 +214,19 @@ src="<?= e(asset('images/logo.png')) ?>"
                         </svg>
                     </span>
                 </button>
+
+                <?php if ($plannerOn): ?>
+                    <a href="<?= e(route('planner.index')) ?>"
+                       class="mnav-icon-btn mnav-plan"
+                       title="<?= e(trans('nav.planner', [], $currentLocale)) ?>"
+                       aria-label="<?= e(trans('nav.planner', [], $currentLocale)) ?>">
+                        <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                             stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                            <rect x="3" y="4" width="18" height="16" rx="2"></rect>
+                            <path d="M3 10h18M10 4v16"></path>
+                        </svg>
+                    </a>
+                <?php endif; ?>
 
                 <?php if ($favoritesOn): ?>
                     <a href="<?= e(route('favorites.index')) ?>"
@@ -363,6 +386,17 @@ src="<?= e(asset('images/logo.png')) ?>"
                             <path d="M12 20.6 4.2 12.8a5.1 5.1 0 0 1 0-7.2 5.1 5.1 0 0 1 7.2 0l.6.6.6-.6a5.1 5.1 0 0 1 7.2 0 5.1 5.1 0 0 1 0 7.2Z"></path>
                         </svg>
                         <?= e(trans('nav.favorites', [], $currentLocale)) ?>
+                    </a>
+                <?php endif; ?>
+
+                <?php if ($plannerOn): ?>
+                    <a class="mnav-util-link" href="<?= e(route('planner.index')) ?>">
+                        <svg class="icon icon-sm" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                             stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                            <rect x="3" y="4" width="18" height="16" rx="2"></rect>
+                            <path d="M3 10h18M10 4v16"></path>
+                        </svg>
+                        <?= e(trans('nav.planner', [], $currentLocale)) ?>
                     </a>
                 <?php endif; ?>
 

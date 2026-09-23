@@ -10,6 +10,7 @@ return [
         'Languages',
         'Products',
         'Favorites',
+        'Planner',
         'Media',
         'Settings',
         'SEO',
