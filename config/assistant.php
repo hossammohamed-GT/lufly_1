@@ -73,7 +73,7 @@ return [
      * in one look whether the copy it is serving is the one that was just
      * deployed — instead of wondering why a fix does not show.
      */
-    'build' => (string) env('ASSISTANT_BUILD', '2026-09-24.4'),
+    'build' => (string) env('ASSISTANT_BUILD', '2026-09-24.5'),
 
     'ai' => [
         'enabled' => (bool) env('ASSISTANT_AI', true),

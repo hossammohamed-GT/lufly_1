@@ -180,14 +180,21 @@ $countKey = $count === 1 ? 'box.list_count_one' : 'box.list_count_many';
 
                         <form class="favs-mail" method="post" action="<?= e($sendEndpoint) ?>" data-box-send-form>
                             <?= csrf_field() ?>
-                            <label class="favs-mail-field">
-                                <span><?= e(trans('assistant.ask_label')) ?></span>
-                                <input type="email" name="email" required autocomplete="email"
-                                       value="<?= e($savedEmail) ?>"
-                                       placeholder="<?= e(trans('box.send_placeholder')) ?>">
+                            <label class="favs-mail-block">
+                                <span class="favs-mail-label"><?= e(trans('assistant.ask_label')) ?></span>
+                                <span class="favs-mail-field">
+                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"
+                                         stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                                        <rect x="3" y="5" width="18" height="14" rx="2.5"/>
+                                        <path d="m4 7 8 6 8-6"/>
+                                    </svg>
+                                    <input type="email" name="email" required autocomplete="email"
+                                           value="<?= e($savedEmail) ?>"
+                                           placeholder="<?= e(trans('box.send_placeholder')) ?>">
+                                </span>
                             </label>
-                            <label class="favs-mail-field">
-                                <span><?= e(trans('box.note_label')) ?></span>
+                            <label class="favs-mail-block">
+                                <span class="favs-mail-label"><?= e(trans('box.note_label')) ?></span>
                                 <textarea name="note" rows="3" maxlength="600"
                                           placeholder="<?= e(trans('box.note_placeholder')) ?>"><?= e($savedNote) ?></textarea>
                             </label>
