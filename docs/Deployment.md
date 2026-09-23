@@ -58,6 +58,21 @@ MAIL_ADMIN_ADDRESS=info@lufly.tr   # receives a copy of every mailed list
 domain. Test after deploying: open `/{locale}/favorites`, save a product, send
 the list and confirm both the visitor copy and the copy in the store inbox.
 
+## Database updates on a live install (no re-import)
+
+Never re-import `lufly-database.sql` over a live database just to add a table —
+it drops and recreates everything. Each feature that adds tables ships a
+paste-ready MySQL patch next to the migration:
+
+| Patch | Adds |
+|---|---|
+| `database/sql/2026_01_01_000018_favorites_mysql.sql` | saved products (`favorites`, `favorite_items`) |
+
+phpMyAdmin → select the database → **SQL** tab → paste the file → Go. The patch
+is safe to run twice, and it records the migration so a later `php cli migrate`
+does not try to create the tables again. With terminal access, `php cli migrate`
+does exactly the same.
+
 ## Production checklist
 
 - [ ] Import ran with **zero errors** (`#1059`-style identifier issues are fixed in the export)

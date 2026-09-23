@@ -103,8 +103,11 @@ FAVORITES_EMAIL_COOLDOWN=60
 FAVORITES_EMAIL_DAILY_LIMIT=5
 ```
 
-Run `php cli migrate` once on an existing database (or import the shipped
-`lufly-database.sql`) to create the `favorites` and `favorite_items` tables.
+An existing database needs one thing: the `favorites` and `favorite_items`
+tables. Either run `php cli migrate`, import the shipped `lufly-database.sql`,
+or — on a live MySQL database you would rather not re-import — paste
+`database/sql/2026_01_01_000018_favorites_mysql.sql` into phpMyAdmin (it also
+records the migration, so a later `php cli migrate` stays quiet).
 
 ## CLI (no artisan — it's `php cli …`)
 
