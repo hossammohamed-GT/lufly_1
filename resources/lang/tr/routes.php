@@ -15,6 +15,14 @@ return [
     'favorites.clear' => 'favoriler/temizle',
 
     /* bathroom planner */
+    /* quotation box */
+    'box.index' => 'kutu',
+    'box.claim' => 'kutu/{token}',
+    'box.add' => 'kutu/ekle',
+    'box.remove' => 'kutu/cikar',
+    'box.clear' => 'kutu/bosalt',
+    'box.send' => 'kutu/gonder',
+
     'planner.index' => 'banyo-planlayici',
     'planner.step' => 'banyo-planlayici/adim',
     'planner.fit' => 'banyo-planlayici/uyar-mi',

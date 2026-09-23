@@ -29,6 +29,10 @@ return [
     // the e-mailed copy of everything the visitor saved (see config/favorites.php)
     'favorites' => (bool) env('FEATURE_FAVORITES', true),
 
+    // The quotation box: a second, shareable list a visitor fills with the pieces
+    // he wants priced, and sends to the team in one message (see config/box.php)
+    'box' => (bool) env('FEATURE_BOX', true),
+
     // Bathroom planner: three taps → a sized plan, a scaled drawing and the
     // matching products (see config/planner.php)
     'planner' => (bool) env('FEATURE_PLANNER', true),

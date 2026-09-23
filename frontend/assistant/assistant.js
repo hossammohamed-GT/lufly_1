@@ -37,12 +37,19 @@
   var photosOn = root.getAttribute('data-assistant-photos') === '1';
   var askEmail = root.getAttribute('data-assistant-ask-email') === '1';
   var plannerSoon = root.getAttribute('data-assistant-planner-soon') === '1';
+  var favEndpoint = root.getAttribute('data-assistant-fav-endpoint') || '';
+  var boxEndpoint = root.getAttribute('data-assistant-box') || '';
+  var boxRemoveEndpoint = root.getAttribute('data-assistant-box-remove') || '';
+  var boxPage = root.getAttribute('data-assistant-box-page') || '';
   var waiting = parseJSON(root.getAttribute('data-assistant-waiting')) || [];
   var labels = parseJSON(root.getAttribute('data-assistant-labels')) || {};
   var EMAIL_KEY = 'lufly-chat-email';
   var SIZE_KEY = 'lufly-chat-size';
   var photo = null;
   var busy = false;
+  /* what the chat asked and what the visitor chose: a tiny bit of state that
+     travels with every message instead of being stored on the server */
+  var thread = null;
 
   if (!panel || !log || !form) return;
 
@@ -397,12 +404,15 @@
     scrollLog();
   }
 
-  /* the cards: the same picture, code and link the catalogue shows */
+  /* the cards: the same picture, code and link the catalogue shows — plus the
+     two things the visitor wants to do with a piece he likes: save it, or put it
+     in the box he will send to the team */
   function bank(cards) {
     var grid = el('div', 'aichat-bank');
 
     cards.forEach(function (card) {
-      var link = el('a', 'aichat-card');
+      var wrap = el('div', 'aichat-card');
+      var link = el('a', 'aichat-card-link');
       link.href = card.url || '#';
 
       var media = el('span', 'aichat-card-media');
@@ -421,10 +431,75 @@
       if (card.size) body.appendChild(el('span', 'aichat-card-size', card.size));
 
       link.appendChild(body);
-      grid.appendChild(link);
+      wrap.appendChild(link);
+
+      var tools = el('span', 'aichat-card-tools');
+
+      if (favEndpoint) tools.appendChild(heart(card));
+      if (boxEndpoint) tools.appendChild(boxButton(card));
+
+      if (tools.childNodes.length > 0) wrap.appendChild(tools);
+
+      grid.appendChild(wrap);
     });
 
     return grid;
+  }
+
+  /* the heart posts to the favourites endpoint — favourites.js paints every
+     copy of it and keeps the counter in the header in step */
+  function heart(card) {
+    var button = el('button', 'favbtn favbtn-card' + (card.fav ? ' is-on' : ''));
+    button.type = 'button';
+    button.setAttribute('data-fav-toggle', '');
+    button.setAttribute('data-fav-product', String(card.id || 0));
+    button.setAttribute('data-fav-endpoint', favEndpoint);
+    button.setAttribute('data-fav-label-on', labels.fav_saved || '');
+    button.setAttribute('data-fav-label-off', labels.fav_save || '');
+    button.setAttribute('aria-pressed', card.fav ? 'true' : 'false');
+    button.setAttribute('title', card.fav ? (labels.fav_saved || '') : (labels.fav_save || ''));
+    button.innerHTML = '<span class="favbtn-icon" aria-hidden="true">' +
+      '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" ' +
+      'stroke-linecap="round" stroke-linejoin="round"><path d="M12 20.6 4.2 12.8a5.1 5.1 0 0 1 0-7.2 ' +
+      '5.1 5.1 0 0 1 7.2 0l.6.6.6-.6a5.1 5.1 0 0 1 7.2 0 5.1 5.1 0 0 1 0 7.2Z"/></svg></span>';
+
+    return button;
+  }
+
+  function boxButton(card) {
+    var button = el('button', 'boxbtn' + (card.box ? ' is-on' : ''));
+    button.type = 'button';
+    button.setAttribute('data-box-add', '');
+    button.setAttribute('data-box-product', String(card.id || 0));
+    button.setAttribute('data-box-endpoint', boxEndpoint);
+    button.setAttribute('data-box-label-on', labels.box_added || '');
+    button.setAttribute('data-box-label-off', labels.box_add || '');
+    button.setAttribute('aria-pressed', card.box ? 'true' : 'false');
+    button.setAttribute('title', card.box ? (labels.box_added || '') : (labels.box_add || ''));
+    button.innerHTML = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" ' +
+      'stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">' +
+      '<path d="M4 8.5 6 4h12l2 4.5"/><path d="M4 8.5h16V19a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1V8.5Z"/>' +
+      '<path d="M9.5 13h5"/></svg>';
+
+    return button;
+  }
+
+  /* the few answers the chat offers: one tap, and the answer is the next turn
+     of the conversation */
+  function choices(list) {
+    var wrap = el('div', 'aichat-choices');
+
+    list.forEach(function (choice) {
+      var button = el('button', 'aichat-choice', choice.label || '');
+      button.type = 'button';
+      button.setAttribute('data-assistant-choice', choice.id || '');
+
+      if (choice.kind === 'ask') button.classList.add('is-ask');
+
+      wrap.appendChild(button);
+    });
+
+    return wrap.childNodes.length > 0 ? wrap : null;
   }
 
   function links(data) {
@@ -496,13 +571,16 @@
     });
   }
 
-  function send(override, productId) {
+  /* typing a fresh request ends the guide's question, unless the chat is waiting
+     for the answer to it (then the words are the answer) */
+
+  function send(override, productId, pick) {
     if (busy) return;
 
     var question = override !== undefined ? String(override) : (input ? input.value.trim() : '');
     var fromProduct = productId ? parseInt(productId, 10) : 0;
 
-    if (question === '' && !photo && !fromProduct) return;
+    if (question === '' && !photo && !fromProduct && !pick) return;
 
     if (askEmail && !email()) {
       if (gate) gate.hidden = false;
@@ -516,6 +594,8 @@
 
     if (shown === '' && fromProduct && context) shown = context.name || '';
     if (shown === '' && photo) shown = labels.photo_ready || '';
+    /* a tap on one of the chat's own choices: the words are the button itself */
+    if (shown === '' && pick) shown = pick.label || '';
 
     say('me', shown, photo ? previewShot(photo.data) : null);
 
@@ -536,6 +616,10 @@
     payload.set('q', question);
     payload.set('email', email());
     payload.set('product_id', String(fromProduct));
+
+    if (pick) payload.set('choice', pick.id || '');
+
+    if (thread) payload.set('thread', JSON.stringify(thread));
 
     if (sent) {
       payload.set('photo_name', sent.name || 'photo.jpg');
@@ -590,9 +674,20 @@
 
     if (data.note) bubble.appendChild(el('p', 'aichat-note', data.note));
 
-    var more = links(data);
+    var answers = choices(data.choices || []);
 
-    if (more) bubble.appendChild(more);
+    if (answers) bubble.appendChild(answers);
+
+    /* the "see all in the catalogue" / support links: only under a bank of
+       cards, where they mean something */
+    if (data.cards && data.cards.length > 0) {
+      var more = links(data);
+
+      if (more) bubble.appendChild(more);
+    }
+
+    /* the chat keeps the little bit of state it needs for the next turn */
+    thread = data.thread && data.thread.topic ? data.thread : null;
 
     if (welcome && welcome.parentNode) welcome.hidden = true;
 
@@ -605,7 +700,7 @@
     return meta ? meta.getAttribute('content') || '' : '';
   }
 
-  /* ---------- the chips ---------- */
+  /* ---------- the chips, and the choices the chat offers back ---------- */
 
   Array.prototype.forEach.call(root.querySelectorAll('[data-assistant-chip]'), function (chip) {
     chip.addEventListener('click', function () {
@@ -616,8 +711,33 @@
         return;
       }
 
+      thread = null;
       send(chip.getAttribute('data-assistant-chip-text') || chip.textContent.trim());
     });
+  });
+
+  document.addEventListener('click', function (event) {
+    var button = event.target.closest ? event.target.closest('[data-assistant-choice]') : null;
+
+    if (!button || !root.contains(button)) return;
+
+    event.preventDefault();
+
+    if (button.classList.contains('is-picked')) return;
+
+    button.classList.add('is-picked');
+    send('', 0, { id: button.getAttribute('data-assistant-choice') || '', label: button.textContent.trim() });
+  });
+
+  /* a piece landing in the box is worth a line in the conversation */
+  document.addEventListener('box:changed', function (event) {
+    var detail = (event && event.detail) || {};
+
+    if (detail.count === 0 || !detail.message) return;
+
+    if (!detail.added) return;
+
+    note(detail.message);
   });
 
 })();

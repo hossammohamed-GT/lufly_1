@@ -74,6 +74,78 @@ return [
         'max_terms' => 5,
     ],
 
+    /*
+     * The guided conversation.
+     *
+     * The chat is not a search box: a visitor who says hello, or who asks a
+     * question without naming a piece, gets a short answer and a small set of
+     * choices — never six products out of nowhere. Each topic below is one
+     * question the chat can ask, and each option is one answer the visitor can
+     * tap, carrying the catalogue words that option means.
+     *
+     * The words used to *recognise* a topic live in the Conversation service
+     * (they are language data, not settings); the sentences the visitor reads
+     * live in resources/lang/<locale>/assistant.php.
+     */
+    'guide' => [
+        'enabled' => (bool) env('ASSISTANT_GUIDE', true),
+
+        /* the small set of things a bathroom most often needs */
+        'topics' => [
+            'basin' => ['category' => 'bathroom-ceramics', 'terms' => ['washbasin']],
+            'toilet' => ['category' => 'bathroom-ceramics', 'terms' => ['wc']],
+            'shower' => ['category' => 'shower-sets', 'terms' => ['shower']],
+            'tap' => ['category' => '', 'terms' => ['mixer']],
+            'access' => ['category' => 'accessible-range', 'terms' => ['accessible']],
+            'kids' => ['category' => 'kids', 'terms' => ['children']],
+            'bath' => ['category' => '', 'terms' => ['bath']],
+        ],
+
+        /* what each answer means, as catalogue words */
+        'options' => [
+            'basin' => [
+                'small' => ['terms' => ['washbasin', 'small']],
+                'wide' => ['terms' => ['washbasin', '60']],
+                'counter' => ['terms' => ['washbasin', 'desk']],
+                'sensor' => ['terms' => ['sensor', 'tap']],
+                'show' => ['terms' => ['washbasin']],
+            ],
+            'toilet' => [
+                'hung' => ['terms' => ['wc', 'wall', 'hung']],
+                'floor' => ['terms' => ['wc', 'floor']],
+                'show' => ['terms' => ['wc']],
+            ],
+            'shower' => [
+                'set' => ['terms' => ['shower', 'mixer']],
+                'concealed' => ['terms' => ['concealed', 'shower']],
+                'sensor' => ['terms' => ['sensor', 'shower']],
+                'show' => ['terms' => ['shower']],
+            ],
+            'tap' => [
+                'basin' => ['terms' => ['basin', 'mixer']],
+                'sink' => ['terms' => ['sink', 'mixer']],
+                'sensor' => ['terms' => ['sensor', 'tap']],
+                'show' => ['terms' => ['mixer']],
+            ],
+            'access' => [
+                'seat' => ['terms' => ['accessible', 'seat']],
+                'rail' => ['terms' => ['grab', 'bar']],
+                'basin' => ['terms' => ['accessible', 'basin']],
+                'show' => ['terms' => ['accessible']],
+            ],
+            'kids' => [
+                'basin' => ['terms' => ['children', 'washbasin']],
+                'seat' => ['terms' => ['children', 'seat']],
+                'show' => ['terms' => ['children']],
+            ],
+            'bath' => [
+                'builtin' => ['terms' => ['bath', 'built']],
+                'free' => ['terms' => ['bath', 'free']],
+                'show' => ['terms' => ['bath']],
+            ],
+        ],
+    ],
+
     /* how long one answer is remembered (the wording may change, the catalogue not) */
     'cache_hours' => (int) env('ASSISTANT_CACHE_HOURS', 168),
 ];

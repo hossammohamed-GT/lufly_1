@@ -15,6 +15,14 @@ return [
     'favorites.clear' => 'favorites/clear',
 
     /* bathroom planner */
+    /* quotation box */
+    'box.index' => 'box',
+    'box.claim' => 'box/{token}',
+    'box.add' => 'box/add',
+    'box.remove' => 'box/remove',
+    'box.clear' => 'box/clear',
+    'box.send' => 'box/send',
+
     'planner.index' => 'planner',
     'planner.step' => 'planner/step',
     'planner.fit' => 'planner/fit',

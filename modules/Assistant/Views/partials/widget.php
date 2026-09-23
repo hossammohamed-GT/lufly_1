@@ -42,13 +42,32 @@ $plannerSoon = $plannerTab && (bool) config('planner.coming_soon', true);
 
 $waiting = $assistant->waiting($locale);
 
+/* the heart on every card in the chat, and the box: two independent lists the
+   visitor can fill while he talks to the finder */
+$favoritesOn = feature('favorites', true) && class_exists(\Modules\Favorites\Services\FavoriteService::class);
+$boxOn = feature('box', true) && class_exists(\Modules\Box\Services\BoxService::class);
+$boxCount = 0;
+
+if ($boxOn) {
+    try {
+        $boxCount = app(\Modules\Box\Services\BoxService::class)->count();
+    } catch (Throwable) {
+        $boxCount = 0;
+    }
+}
+
 $view->pushStyle('frontend/planner/planner.css');
 $view->pushStyle('frontend/assistant/chat.css');
 $view->pushScript('frontend/assistant/assistant.js');
 
-if (feature('favorites', true)) {
+if ($favoritesOn) {
     $view->pushStyle('frontend/favorites/favorites.css');
     $view->pushScript('frontend/favorites/favorites.js');
+}
+
+if ($boxOn) {
+    $view->pushStyle('frontend/box/box.css');
+    $view->pushScript('frontend/box/box.js');
 }
 ?>
 <div class="aichat" data-aichat data-assistant
@@ -59,6 +78,10 @@ if (feature('favorites', true)) {
      data-assistant-max-kb="<?= (int) config('assistant.photo.max_kb', 4096) ?>"
      data-assistant-ask-email="<?= ((bool) config('assistant.lead.ask_email', true) && (bool) config('assistant.lead.email', '')) ? '1' : '0' ?>"
      data-assistant-planner-soon="<?= $plannerSoon ? '1' : '0' ?>"
+     data-assistant-fav-endpoint="<?= $favoritesOn ? e(route('favorites.toggle')) : '' ?>"
+     data-assistant-box="<?= $boxOn ? e(route('box.add')) : '' ?>"
+     data-assistant-box-remove="<?= $boxOn ? e(route('box.remove')) : '' ?>"
+     data-assistant-box-page="<?= $boxOn ? e(route('box.index')) : '' ?>"
      data-assistant-labels="<?= e((string) json_encode([
          'email_saved' => trans('assistant.ask_saved'),
          'photo_ready' => trans('assistant.photo_ready'),
@@ -67,6 +90,11 @@ if (feature('favorites', true)) {
          'see_all' => trans('assistant.see_all'),
          'support_mail' => trans('assistant.support_mail'),
          'support_whatsapp' => trans('assistant.support_whatsapp'),
+         'fav_save' => $favoritesOn ? trans('favorites.save') : '',
+         'fav_saved' => $favoritesOn ? trans('favorites.saved') : '',
+         'box_add' => $boxOn ? trans('box.add') : '',
+         'box_added' => $boxOn ? trans('box.added') : '',
+         'box_err' => $boxOn ? trans('box.err') : '',
      ], JSON_UNESCAPED_UNICODE)) ?>">
 
     <button type="button" class="aichat-fab" data-aichat-toggle
@@ -236,6 +264,12 @@ if (feature('favorites', true)) {
 
         <footer class="aichat-foot">
             <span class="aichat-foot-free"><?= e(trans('assistant.foot')) ?></span>
+            <?php if ($boxOn): ?>
+                <a class="aichat-foot-link is-box" href="<?= e(route('box.index')) ?>" data-box-page-link>
+                    <?= e(trans('box.short')) ?>
+                    <span class="aichat-foot-count" data-box-count><?= (int) $boxCount ?></span>
+                </a>
+            <?php endif; ?>
             <a class="aichat-foot-link" href="<?= e(route('products.index')) ?>"><?= e(trans('common.products', [], $locale)) ?></a>
         </footer>
     </section>

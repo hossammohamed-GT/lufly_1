@@ -1338,6 +1338,27 @@ body.is-chat-resizing {
   text-decoration: underline;
 }
 
+/* the box, in the chat's footer: a link and the number of pieces in it */
+.aichat-foot-link.is-box {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.aichat-foot-count {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 18px;
+  height: 18px;
+  padding: 0 5px;
+  border-radius: var(--radius-full);
+  background: color-mix(in srgb, var(--ds-primary) 14%, transparent);
+  color: var(--ds-primary);
+  font-size: 10.5px;
+  font-weight: 600;
+}
+
 /* ---------- wider phones hold two columns ---------- */
 
 @media (max-width: 1000px) {

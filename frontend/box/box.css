@@ -1,0 +1,118 @@
+/* ==========================================================================
+   The quotation box
+   --------------------------------------------------------------------------
+   1. .boxbtn  — "put it in the box", on any card the finder shows
+   2. .boxs    — the box page: it borrows the saved-list layout (.favs-*) and
+                 only adds what is different — the request panel, the link row
+                 and the toast
+   ========================================================================== */
+
+/* --------------------------------------------------------------------------
+   1. the box button
+   -------------------------------------------------------------------------- */
+
+.boxbtn {
+  --box-size: 34px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 7px;
+  padding: 0;
+  width: var(--box-size);
+  height: var(--box-size);
+  border: 1px solid var(--ds-border);
+  border-radius: var(--radius-full);
+  background: var(--ds-glass-bg-strong, var(--ds-surface));
+  color: var(--ds-text-muted);
+  cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+  transition: color 160ms ease, border-color 160ms ease, background-color 160ms ease,
+              transform 160ms cubic-bezier(0.16, 1, 0.3, 1), box-shadow 160ms ease;
+}
+
+.boxbtn:hover {
+  color: var(--ds-primary);
+  border-color: var(--ds-primary-line);
+  transform: translateY(-1px);
+  box-shadow: var(--shadow-1);
+}
+
+.boxbtn:focus-visible {
+  outline: 2px solid var(--ds-focus-color);
+  outline-offset: 2px;
+}
+
+.boxbtn.is-on {
+  color: var(--ds-primary);
+  border-color: var(--ds-primary-line);
+  background: color-mix(in srgb, var(--ds-primary) 12%, transparent);
+}
+
+.boxbtn svg {
+  width: 17px;
+  height: 17px;
+}
+
+.boxbtn.is-busy {
+  opacity: 0.6;
+}
+
+/* --------------------------------------------------------------------------
+   2. the box page
+   -------------------------------------------------------------------------- */
+
+.boxs .favs-beam {
+  background: linear-gradient(90deg, transparent, var(--ds-primary), transparent);
+}
+
+.boxs .favs-panel-mail.is-box {
+  border-color: var(--ds-primary-line);
+  box-shadow: var(--shadow-2);
+}
+
+.boxs .favs-mail-field.is-note {
+  padding-block: 8px;
+}
+
+.boxs .favs-mail-field textarea {
+  width: 100%;
+  border: 0;
+  background: transparent;
+  color: inherit;
+  font: inherit;
+  resize: vertical;
+  min-height: 64px;
+  outline: none;
+}
+
+.boxs .favs-mail-field.is-note {
+  align-items: flex-start;
+  border: 1px solid var(--ds-border);
+  border-radius: var(--radius-lg, 14px);
+  padding: 10px 12px;
+  background: var(--ds-surface);
+}
+
+.box-toast {
+  position: fixed;
+  left: 50%;
+  bottom: 26px;
+  z-index: 90;
+  transform: translate(-50%, 18px);
+  max-width: min(90vw, 460px);
+  padding: 12px 18px;
+  border-radius: var(--radius-full);
+  border: 1px solid var(--ds-border);
+  background: var(--ds-glass-bg-strong, var(--ds-surface));
+  color: var(--ds-text);
+  font-size: var(--text-sm, 14px);
+  box-shadow: var(--shadow-2);
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 220ms ease, transform 220ms cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.box-toast.is-on {
+  opacity: 1;
+  transform: translate(-50%, 0);
+}
