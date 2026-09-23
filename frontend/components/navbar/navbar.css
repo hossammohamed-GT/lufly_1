@@ -403,6 +403,52 @@
 
 .mnav-search-open { display: none; }
 
+/* ---------- saved products ("favorites") ---------- */
+
+.mnav-fav { position: relative; }
+
+.mnav-fav .icon { transition: color var(--ds-nav-base) var(--ds-nav-ease), transform var(--ds-nav-base) var(--ds-nav-ease); }
+
+.mnav-fav:hover .icon { transform: translateY(-1px); }
+
+.mnav-fav.has-items { color: var(--ds-primary); }
+
+.mnav-fav-badge {
+  position: absolute;
+  top: 3px;
+  inset-inline-end: 1px;
+  min-width: 17px;
+  height: 17px;
+  padding: 0 4px;
+  border-radius: var(--radius-full);
+  background: var(--ds-primary);
+  color: var(--ds-primary-text);
+  font-family: var(--font-mono);
+  font-size: 9.5px;
+  font-weight: 700;
+  line-height: 17px;
+  text-align: center;
+  box-shadow: 0 0 0 2px var(--ds-surface);
+  transition: transform var(--ds-nav-base) var(--ds-nav-ease);
+}
+
+/* an empty badge keeps its place in the layout but is invisible */
+.mnav-fav-badge:empty { display: none; }
+
+.mnav-fav-badge.is-bump { animation: mnavFavBump 460ms cubic-bezier(0.16, 1, 0.3, 1); }
+
+@keyframes mnavFavBump {
+  0% { transform: scale(1); }
+  38% { transform: scale(1.42); }
+  100% { transform: scale(1); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .mnav-fav .icon,
+  .mnav-fav-badge { transition: none; }
+  .mnav-fav-badge.is-bump { animation: none; }
+}
+
 /* theme morph - sun and moon rotate through each other */
 .mnav-theme-icons {
   position: relative;

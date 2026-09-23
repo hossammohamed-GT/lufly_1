@@ -31,9 +31,20 @@ if (!function_exists('app')) {
 if (!function_exists('env')) {
     function env(string $key, mixed $default = null): mixed
     {
-        $value = $_ENV[$key] ?? getenv($key);
+        /* A key that is present keeps its value even when that value is falsy —
+           FEATURE_X=false in .env must return false and not fall back to the
+           default, which is what the old `false === unset` check did. */
+        if (array_key_exists($key, $_ENV)) {
+            $value = $_ENV[$key];
+        } else {
+            $value = getenv($key);
 
-        if ($value === false || $value === null) {
+            if ($value === false) {
+                return $default;
+            }
+        }
+
+        if ($value === null) {
             return $default;
         }
 

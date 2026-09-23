@@ -39,6 +39,14 @@ $isActive = static function (string $target) use ($currentPath, $currentQuery): 
     return $query === '' || $query === $currentQuery;
 };
 
+/* Saved-products list: the badge shows how many products this visitor saved.
+   Without the cookie the service answers 0 without touching the database. */
+$favoritesOn = feature('favorites', true) && class_exists(\Modules\Favorites\Services\FavoriteService::class);
+$savedCount = 0;
+if ($favoritesOn) {
+    $savedCount = app(\Modules\Favorites\Services\FavoriteService::class)->count();
+}
+
 $indexLinks = [
     ['key' => 'bathroom', 'url' => route('products.index', ['category' => 'bathroom-ceramics'])],
     ['key' => 'kitchen', 'url' => route('products.index', ['category' => 'sink-mixers'])],
@@ -54,6 +62,14 @@ $indexLinks = [
     ],
 ];
 
+if ($favoritesOn) {
+    /* the saved list sits between the editorial sections and the contact page */
+    array_splice($indexLinks, count($indexLinks) - 1, 0, [[
+        'key' => 'favorites',
+        'url' => route('favorites.index'),
+    ]]);
+}
+
 $railLinks = array_slice($indexLinks, 0, 4);
 
 $getSectionIcon = static function (string $key): string {
@@ -66,6 +82,7 @@ $getSectionIcon = static function (string $key): string {
         'rituals' => '<svg class="icon mnav-cat-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 2.69l5.66 5.66a8 8 0 1 1-11.31 0z"></path></svg>',
         'inspirations' => '<svg class="icon mnav-cat-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10"></circle><polygon points="16.24 7.76 14.12 14.12 7.76 16.24 9.88 9.88 16.24 7.76"></polygon></svg>',
         'news' => '<svg class="icon mnav-cat-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 22h16a2 2 0 0 0 2-2V4a2 2 0 0 0-2-2H8a2 2 0 0 0-2 2v16a2 2 0 0 1-2 2Zm0 0a2 2 0 0 1-2-2v-9c0-1.1.9-2 2-2h2"></path><path d="M18 14h-8"></path><path d="M15 18h-5"></path><path d="M10 6h8v4h-8V6Z"></path></svg>',
+        'favorites' => '<svg class="icon mnav-cat-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 20.6 4.2 12.8a5.1 5.1 0 0 1 0-7.2 5.1 5.1 0 0 1 7.2 0l.6.6.6-.6a5.1 5.1 0 0 1 7.2 0 5.1 5.1 0 0 1 0 7.2Z"></path></svg>',
         'contact' => '<svg class="icon mnav-cat-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path></svg>',
         default => '<svg class="icon mnav-cat-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="4"></circle></svg>'
     };
@@ -187,6 +204,19 @@ src="<?= e(asset('images/logo.png')) ?>"
                         </svg>
                     </span>
                 </button>
+
+                <?php if ($favoritesOn): ?>
+                    <a href="<?= e(route('favorites.index')) ?>"
+                       class="mnav-icon-btn mnav-fav<?= $savedCount > 0 ? ' has-items' : '' ?>"
+                       title="<?= e(trans('nav.favorites', [], $currentLocale)) ?>"
+                       aria-label="<?= e(trans('nav.favorites', [], $currentLocale)) ?>">
+                        <svg class="icon" viewBox="0 0 24 24" fill="<?= $savedCount > 0 ? 'currentColor' : 'none' ?>"
+                             stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                            <path d="M12 20.6 4.2 12.8a5.1 5.1 0 0 1 0-7.2 5.1 5.1 0 0 1 7.2 0l.6.6.6-.6a5.1 5.1 0 0 1 7.2 0 5.1 5.1 0 0 1 0 7.2Z"></path>
+                        </svg>
+                        <span class="mnav-fav-badge" data-fav-count><?= $savedCount > 0 ? (int) $savedCount : '' ?></span>
+                    </a>
+                <?php endif; ?>
 
                 <a href="<?= auth()->check() ? e(route('admin.dashboard')) : e(route('login')) ?>"
                    class="mnav-icon-btn mnav-account"
@@ -325,6 +355,16 @@ src="<?= e(asset('images/logo.png')) ?>"
                         </a>
                     <?php endif; ?>
                 <?php endforeach; ?>
+
+                <?php if ($favoritesOn): ?>
+                    <a class="mnav-util-link" href="<?= e(route('favorites.index')) ?>">
+                        <svg class="icon icon-sm" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                             stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                            <path d="M12 20.6 4.2 12.8a5.1 5.1 0 0 1 0-7.2 5.1 5.1 0 0 1 7.2 0l.6.6.6-.6a5.1 5.1 0 0 1 7.2 0 5.1 5.1 0 0 1 0 7.2Z"></path>
+                        </svg>
+                        <?= e(trans('nav.favorites', [], $currentLocale)) ?>
+                    </a>
+                <?php endif; ?>
 
                 <a class="mnav-util-link" href="<?= auth()->check() ? e(route('admin.dashboard')) : e(route('login')) ?>">
                     <?= e(trans('nav.account', [], $currentLocale)) ?>

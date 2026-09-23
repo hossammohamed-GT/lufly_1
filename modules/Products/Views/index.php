@@ -15,6 +15,8 @@ $view->pushScript('frontend/js/live-search.js');
 $view->pushScript('frontend/products/catalog/catalog.js');
 $view->pushStyle('frontend/components/skeleton/skeleton.css');
 $view->pushScript('frontend/components/skeleton/skeleton.js');
+$view->pushStyle('frontend/favorites/favorites.css');
+$view->pushScript('frontend/favorites/favorites.js');
 /** @var Core\Database\Paginator $paginator */
 /** @var array $categories */
 /** @var array $categoryCounts */
@@ -46,6 +48,14 @@ $buildUrl = static function (array $overrides = []) use ($activeCategory, $searc
 };
 
 $fallbackImg = '/images/products/prod_146_1620-111-a.jpg';
+
+/* Products this visitor already saved, so every card shows the heart in the
+   right state before the script runs (one query, and none at all for a visitor
+   who never used the list). */
+$savedIds = [];
+if (feature('favorites', true) && class_exists(\Modules\Favorites\Services\FavoriteService::class)) {
+    $savedIds = array_flip(app(\Modules\Favorites\Services\FavoriteService::class)->productIds());
+}
 ?>
 <main class="catalog" id="main">
     <div class="catalog-inner">
@@ -185,6 +195,12 @@ $fallbackImg = '/images/products/prod_146_1620-111-a.jpg';
                                 <?= e(trans('products.view_details')) ?>
                             </span>
                         </a>
+                        <?= $view->component('favorite-button', [
+                            'product_id' => (int) $product->getKey(),
+                            'name' => $cardName,
+                            'variant' => 'card',
+                            'on' => isset($savedIds[(int) $product->getKey()]),
+                        ]) ?>
                         <div class="pcard-body">
                             <div class="pcard-top">
                                 <span class="pcard-code"><?= e($cardCode) ?></span>

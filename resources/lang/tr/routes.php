@@ -8,4 +8,9 @@ return [
     'products.show' => 'urunler/{slug}',
     'login' => 'giris',
     'contact' => 'iletisim',
+    'favorites.index' => 'favoriler',
+    'favorites.claim' => 'favoriler/{token}',
+    'favorites.toggle' => 'favoriler/kaydet',
+    'favorites.email' => 'favoriler/e-posta',
+    'favorites.clear' => 'favoriler/temizle',
 ];

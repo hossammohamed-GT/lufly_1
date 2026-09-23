@@ -9,6 +9,7 @@ return [
         'Permissions',
         'Languages',
         'Products',
+        'Favorites',
         'Media',
         'Settings',
         'SEO',

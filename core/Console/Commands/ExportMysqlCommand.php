@@ -67,6 +67,8 @@ final class ExportMysqlCommand extends Command
         'product_import_logs',
         'announcements',
         'announcement_translations',
+        'favorites',
+        'favorite_items',
     ];
 
     public function handle(array $args, array $options): int

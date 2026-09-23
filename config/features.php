@@ -20,4 +20,8 @@ return [
 
     // Quick view modal for products in catalog
     'quick_view' => (bool) env('FEATURE_QUICK_VIEW', true),
+
+    // Saved-products lists ("favorites"): anonymous lists, a return link and
+    // the e-mailed copy of everything the visitor saved (see config/favorites.php)
+    'favorites' => (bool) env('FEATURE_FAVORITES', true),
 ];

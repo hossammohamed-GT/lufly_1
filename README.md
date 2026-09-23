@@ -11,7 +11,7 @@ classic shared hosting / XAMPP and run immediately.
 ## Quick start (XAMPP / local)
 
 1. **Import the database** — `lufly-database.sql` (repo root). phpMyAdmin → **Import** → choose the file → **Go**.
-   It creates the `lufly` database, all 38 tables and all data from scratch.
+   It creates the `lufly` database, all 40 tables and all data from scratch.
 2. **Copy the environment file** and point it at MySQL:
    ```dotenv
    DB_CONNECTION=mysql
@@ -66,6 +66,45 @@ config/                    app, database, modules, localization, seo, security�
 - Modules: **Products, Media, Settings, SEO, Users, Permissions, Languages, Notifications, Announcements**
 - The admin account is created by `UserSeeder` (see `database/seeders/UserSeeder.php` for the email; the password
   is bcrypt-hashed — rotate it after first login on any real deployment).
+
+## Saved products (favorites) & e-mail
+
+Every product can be saved with the heart on a catalogue card or on the product
+page. A list belongs to an anonymous visitor: its token lives in a long-lived
+cookie and travels in the e-mailed copy, so `/{locale}/favorites/{token}` reopens
+the same list on any device (`/en/favorites`, `/tr/favoriler`, `/cs/oblibene`).
+
+The list page mails the visitor one message with a card per product and a direct
+link to each product page (`favorites::emails.list`), and — with
+`FAVORITES_NOTIFY_ADMIN=true` — sends a lead copy to the store inbox
+(`favorites::emails.admin`) whose Reply-To is the visitor. If the visitor ticks
+“e-mail me whenever I save a new product”, later saves mail the updated list by
+themselves (20 s apart, capped by `FAVORITES_EMAIL_DAILY_LIMIT` per day).
+
+Mail goes out through `config/mail.php`: `log` (nothing leaves the server, the
+message is written to `storage/logs/mail.log`), `mail` (PHP `mail()`) or `smtp`.
+For `info@lufly.tr` set these in `.env` (see `.env.example`):
+
+```dotenv
+MAIL_TRANSPORT=smtp
+MAIL_HOST=mail.lufly.tr        # your mail server
+MAIL_PORT=587                  # 587 with tls, 465 with ssl
+MAIL_USERNAME=info@lufly.tr
+MAIL_PASSWORD=                 # mailbox password
+MAIL_ENCRYPTION=tls
+MAIL_FROM_ADDRESS=info@lufly.tr
+MAIL_FROM_NAME="LUFLY"
+MAIL_ADMIN_ADDRESS=info@lufly.tr
+
+FEATURE_FAVORITES=true
+FAVORITES_NOTIFY_ADMIN=true
+FAVORITES_MAX_ITEMS=60
+FAVORITES_EMAIL_COOLDOWN=60
+FAVORITES_EMAIL_DAILY_LIMIT=5
+```
+
+Run `php cli migrate` once on an existing database (or import the shipped
+`lufly-database.sql`) to create the `favorites` and `favorite_items` tables.
 
 ## CLI (no artisan — it's `php cli …`)
 

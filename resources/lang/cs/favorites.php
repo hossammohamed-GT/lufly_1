@@ -1,0 +1,114 @@
+<?php
+
+declare(strict_types=1);
+
+return [
+    /* page */
+    'eyebrow' => 'LUFLY · uložené produkty',
+    'title' => 'Váš uložený seznam',
+    'lede' => 'Vše, co jste si označili, na jednom místě. Pošlete si seznam e-mailem, otevřete produkt přímo ze zprávy nebo se na tuto stránku kdykoli vraťte.',
+    'meta_description' => 'Vaše uložené produkty LUFLY v jednom seznamu — pošlete si jej e-mailem, otevřete kterýkoli produkt a kdykoli se k seznamu vraťte.',
+
+    'stat_items' => 'uložené produkty',
+    'stat_language' => 'jazyk',
+    'stat_access' => 'přístup',
+    'stat_access_value' => 'bez účtu',
+
+    'list_title' => 'Uložené produkty',
+    'list_count_one' => 'Jeden produkt',
+    'list_count_many' => ':n produktů',
+    'open_product' => 'Otevřít produkt',
+    'remove' => 'Odebrat',
+    'save' => 'Uložit',
+    'saved' => 'Uloženo',
+    'save_to_list' => 'Uložit do seznamu',
+    'added_named' => ':name bylo přidáno do vašeho seznamu.',
+    'removed_named' => ':name bylo odebráno ze seznamu.',
+    'cleared' => 'Váš seznam je prázdný.',
+
+    /* empty state */
+    'empty_title' => 'Zatím nic neuloženo',
+    'empty_text' => 'Projděte katalog a klepněte na srdce u kteréhokoli produktu. Zůstane tady — a celý seznam vám můžeme poslat e-mailem.',
+    'empty_cta' => 'Prohlédnout katalog',
+    'step_1_title' => 'Uložte',
+    'step_1_text' => 'Klepněte na srdce na kartě produktu nebo na stránce produktu.',
+    'step_2_title' => 'Vraťte se',
+    'step_2_text' => 'Seznam na vás počká a zůstane spojený s tímto zařízením.',
+    'step_3_title' => 'Pošlete e-mailem',
+    'step_3_text' => 'Pošlete si seznam — každá položka nese přímý odkaz na svůj produkt.',
+
+    /* mail panel */
+    'mail_eyebrow' => 'Poslat seznam',
+    'mail_title' => 'Poslat mi tento seznam e-mailem',
+    'mail_text_one' => 'Jedna zpráva s uloženým produktem a přímým odkazem na něj.',
+    'mail_text_many' => 'Jedna zpráva s :n uloženými produkty a přímým odkazem na každý z nich.',
+    'mail_placeholder' => 'vy@firma.cz',
+    'mail_button' => 'Poslat seznam e-mailem',
+    'notify_label' => 'Posílat e-mail, když si uložím nový produkt',
+    'notify_hint' => 'To je jediná zpráva, kterou posíláme — zde ji můžete kdykoli vypnout.',
+    'mail_sending' => 'Odesílám…',
+    'mail_sent' => 'Seznam míří na :email.',
+    'mail_point_1' => 'Každý produkt s vlastním přímým odkazem',
+    'mail_point_2' => 'Seznam se otevře i na jiném zařízení',
+    'mail_point_3' => 'Bez účtu a bez hesla',
+
+    /* save-to-mail prompt */
+    'prompt_title' => 'Pošlete si tento produkt e-mailem',
+    'prompt_text' => 'Jedna zpráva s přímým odkazem na vše, co si uložíte — ve schránce připravená k otevření z jakéhokoli zařízení.',
+    'prompt_button' => 'Poslat mi to',
+    'prompt_sending' => 'Odesílám…',
+    'prompt_note' => 'Bez účtu — tuto adresu použijeme jen pro tento seznam.',
+    'prompt_close' => 'Zavřít',
+
+    /* permanent link */
+    'link_title' => 'Váš trvalý odkaz',
+    'link_text' => 'Tato adresa vždy otevře tento seznam — uložte si ji do záložek nebo pošlete kolegovi.',
+    'copy' => 'Kopírovat odkaz',
+    'copied' => 'Odkaz zkopírován.',
+    'copy_failed' => 'Adresu zkopírujte ručně.',
+
+    'clear_button' => 'Vymazat seznam',
+    'clear_confirm' => 'Odebrat všechny produkty z uloženého seznamu?',
+
+    'help_title' => 'Potřebujete ceny nebo BIM balíček?',
+    'help_text' => 'Pošlete nám seznam a odpovíme nabídkou pro váš projekt.',
+    'help_cta' => 'Kontaktovat výrobce',
+
+    /* errors */
+    'err_email' => 'Zadejte prosím platnou e-mailovou adresu.',
+    'err_empty' => 'Než seznam odešlete, uložte alespoň jeden produkt.',
+    'err_product' => 'Tento produkt už není dostupný.',
+    'err_cooldown' => 'Seznam byl právě odeslán — zkuste to za :s sekund.',
+    'err_daily_limit' => 'Seznam byl dnes odeslán už :n krát. Zkuste to prosím zítra.',
+    'err_send' => 'Zprávu nebylo možné odeslat. Zkuste to za chvíli znovu.',
+    'limit_reached' => 'Uložený seznam pojme nejvýše :n produktů. Pro další jeden odeberte.',
+    'expired' => 'Relace vypršela — obnovte stránku a zkuste to znovu.',
+
+    'not_found' => 'Tento uložený seznam nebyl nalezen.',
+
+    /* e-mail */
+    'mail_subject_one' => 'Váš uložený seznam LUFLY — 1 produkt',
+    'mail_subject_many' => 'Váš uložený seznam LUFLY — :n produktů',
+    'mail_admin_subject_one' => 'Uložený seznam od :email (1 produkt)',
+    'mail_admin_subject_many' => 'Uložený seznam od :email (:n produktů)',
+    'mail_preheader_one' => '1 uložený produkt LUFLY s přímým odkazem.',
+    'mail_preheader_many' => ':n uložených produktů LUFLY, každý s přímým odkazem.',
+    'mail_intro_one' => 'Toto je produkt, který jste si uložili na lufly.tr — tlačítko níže otevře jeho stránku.',
+    'mail_intro_many' => 'Zde je seznam, který jste si uložili na lufly.tr: :n produktů, každý s odkazem na svou stránku.',
+    'mail_open_product' => 'Zobrazit produkt',
+    'mail_direct_link' => 'otevře stránku produktu',
+    'mail_list_title' => 'Váš seznam stále po ruce',
+    'mail_list_hint' => 'Odkaz níže otevře stejný seznam na jakémkoli zařízení — telefon, tablet i počítač kolegy.',
+    'mail_list_button' => 'Otevřít seznam',
+    'mail_why' => 'Tento e-mail jste dostali, protože jste si vyžádali uložený seznam LUFLY.',
+    'mail_contact' => 'Dotazy, ceny nebo BIM balíček? Stačí odpovědět na tento e-mail.',
+    'admin_eyebrow' => 'uložený seznam · poptávka',
+    'mail_admin_intro' => 'Návštěvník si uložil tyto produkty a vyžádal kopii',
+    'mail_admin_meta_one' => 'V seznamu je 1 produkt',
+    'mail_admin_meta_many' => 'V seznamu je :n produktů',
+    'admin_visitor' => 'Návštěvník:',
+    'admin_product' => 'Produkt',
+    'admin_model' => 'Model',
+    'admin_open' => 'Otevřít',
+    'admin_reply_hint' => 'Odpovědí na tuto zprávu oslovíte návštěvníka přímo.',
+];

@@ -55,6 +55,8 @@ DROP TABLE IF EXISTS `product_search_keywords`;
 DROP TABLE IF EXISTS `product_import_logs`;
 DROP TABLE IF EXISTS `announcements`;
 DROP TABLE IF EXISTS `announcement_translations`;
+DROP TABLE IF EXISTS `favorites`;
+DROP TABLE IF EXISTS `favorite_items`;
 
 -- table: migrations
 CREATE TABLE `migrations` (
@@ -635,12 +637,49 @@ CREATE TABLE `announcement_translations` (
     FOREIGN KEY (`announcement_id`) REFERENCES `announcements` (`id`) ON DELETE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
+-- table: favorites
+CREATE TABLE `favorites` (
+    `id` BIGINT UNSIGNED NOT NULL AUTO_INCREMENT PRIMARY KEY,
+    `token` VARCHAR(100) NOT NULL UNIQUE,
+    `email` VARCHAR(255) NULL,
+    `locale` VARCHAR(50) NOT NULL DEFAULT 'en',
+    `user_id` BIGINT UNSIGNED NULL,
+    KEY favorites_user_id_index (`user_id`),
+    `ip_hash` VARCHAR(100) NULL,
+    `user_agent` VARCHAR(255) NULL,
+    `emails_sent` INTEGER NOT NULL DEFAULT 0,
+    `emails_today` INTEGER NOT NULL DEFAULT 0,
+    `last_emailed_at` DATETIME NULL,
+    `claimed_at` DATETIME NULL,
+    `notify` TINYINT(1) NULL,
+    `created_at` DATETIME NULL,
+    `updated_at` DATETIME NULL,
+    `deleted_at` DATETIME NULL,
+    KEY favorites_deleted_at_index (`deleted_at`),
+    FOREIGN KEY (`user_id`) REFERENCES `users` (`id`) ON DELETE SET NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+-- table: favorite_items
+CREATE TABLE `favorite_items` (
+    `id` BIGINT UNSIGNED NOT NULL AUTO_INCREMENT PRIMARY KEY,
+    `favorite_id` BIGINT UNSIGNED NOT NULL,
+    KEY favorite_items_favorite_id_index (`favorite_id`),
+    `product_id` BIGINT UNSIGNED NOT NULL,
+    KEY favorite_items_product_id_index (`product_id`),
+    `sort_order` INTEGER NOT NULL DEFAULT 0,
+    `created_at` DATETIME NULL,
+    `updated_at` DATETIME NULL,
+    UNIQUE KEY favorite_items_favorite_id_product_id_unique (`favorite_id`, `product_id`),
+    FOREIGN KEY (`favorite_id`) REFERENCES `favorites` (`id`) ON DELETE CASCADE,
+    FOREIGN KEY (`product_id`) REFERENCES `products` (`id`) ON DELETE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
 
 -- =====================================================================
 -- Seed / live data
 -- =====================================================================
 
--- data: migrations (17 rows)
+-- data: migrations (18 rows)
 INSERT INTO `migrations` (`id`, `migration`, `batch`, `applied_at`) VALUES (1, '2026_01_01_000001_create_languages_table.php', 1, '2026-09-18 22:04:36');
 INSERT INTO `migrations` (`id`, `migration`, `batch`, `applied_at`) VALUES (2, '2026_01_01_000002_create_users_table.php', 1, '2026-09-18 22:04:36');
 INSERT INTO `migrations` (`id`, `migration`, `batch`, `applied_at`) VALUES (3, '2026_01_01_000003_create_roles_table.php', 1, '2026-09-18 22:04:36');
@@ -658,6 +697,7 @@ INSERT INTO `migrations` (`id`, `migration`, `batch`, `applied_at`) VALUES (14, 
 INSERT INTO `migrations` (`id`, `migration`, `batch`, `applied_at`) VALUES (15, '2026_01_01_000015_create_pages_tables.php', 1, '2026-09-18 22:04:36');
 INSERT INTO `migrations` (`id`, `migration`, `batch`, `applied_at`) VALUES (16, '2026_01_01_000016_create_blogs_tables.php', 1, '2026-09-18 22:04:37');
 INSERT INTO `migrations` (`id`, `migration`, `batch`, `applied_at`) VALUES (17, '2026_01_01_000017_create_announcements_tables.php', 1, '2026-09-18 22:04:37');
+INSERT INTO `migrations` (`id`, `migration`, `batch`, `applied_at`) VALUES (18, '2026_01_01_000018_create_favorites_tables.php', 1, '2026-09-18 22:04:37');
 
 -- data: languages (3 rows)
 INSERT INTO `languages` (`id`, `code`, `name`, `native_name`, `dir`, `active`, `sort_order`, `created_at`, `updated_at`, `deleted_at`) VALUES (1, 'en', 'English', 'English', 'ltr', 1, 1, '2026-09-18 22:04:37', '2026-09-18 22:04:37', NULL);

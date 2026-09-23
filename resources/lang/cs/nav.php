@@ -14,6 +14,7 @@ return [
     'contact' => 'Kontakt',
     'search' => 'Hledat v katalogu',
     'search_placeholder' => 'Hledat sanitární techniku, magnetic, silia...',
+    'favorites' => 'Uložený seznam',
     'account' => 'Účet / Portál',
     'download_catalog' => 'Katalog 2026 (PDF)',
     'tender_pack' => 'BIM / Dokumentace',

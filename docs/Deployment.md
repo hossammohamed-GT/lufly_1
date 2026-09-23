@@ -4,7 +4,7 @@
 
 1. Clone under `C:\xampp\htdocs\lufly_1`.
 2. **Import the database**: phpMyAdmin → Import → `lufly-database.sql` → Go
-   (creates database `lufly`, all 38 tables, all data).
+   (creates database `lufly`, all 40 tables, all data).
 3. Copy `.env.example` → `.env` and set:
    ```dotenv
    DB_CONNECTION=mysql
@@ -34,6 +34,30 @@ so the public web root can be the project folder itself — nothing else to conf
    otherwise the root `.htaccess` handles routing automatically.
 6. Make `storage/` (logs, cache, uploads, backups) writable by PHP.
 
+## Mail (saved-list e-mails, `info@lufly.tr`)
+
+The saved-products list and every form notification leave the store through
+`config/mail.php`. Until the mailbox is configured the default transport is
+`log`, which writes the complete MIME message to `storage/logs/mail.log` and
+sends nothing — handy to test the flow before touching DNS.
+
+```dotenv
+MAIL_TRANSPORT=smtp
+MAIL_HOST=mail.lufly.tr     # the host your provider gave you for SMTP
+MAIL_PORT=587               # 587 = STARTTLS, 465 = implicit TLS
+MAIL_USERNAME=info@lufly.tr
+MAIL_PASSWORD=              # the mailbox password
+MAIL_ENCRYPTION=tls
+MAIL_FROM_ADDRESS=info@lufly.tr
+MAIL_FROM_NAME="LUFLY"
+MAIL_ADMIN_ADDRESS=info@lufly.tr   # receives a copy of every mailed list
+```
+
+`MAIL_TRANSPORT=mail` is the fallback when the host only offers PHP `mail()`
+(XAMPP, some cPanel accounts) — the From address then has to be local to the
+domain. Test after deploying: open `/{locale}/favorites`, save a product, send
+the list and confirm both the visitor copy and the copy in the store inbox.
+
 ## Production checklist
 
 - [ ] Import ran with **zero errors** (`#1059`-style identifier issues are fixed in the export)
@@ -44,6 +68,7 @@ so the public web root can be the project folder itself — nothing else to conf
 - [ ] Site reachable in all locales: `/en`, `/tr`, `/cs`
 - [ ] robots.txt + sitemap.xml served from `public/`
 - [ ] Backups: `php cli backup:db` → `storage/backups/`
+- [ ] `MAIL_TRANSPORT=smtp` + credentials set, and one saved list mailed end to end
 
 ## Troubleshooting
 

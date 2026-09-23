@@ -44,6 +44,8 @@ foreach ($styles as $style) {
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<?php /* storefront scripts post to the app with this token (favourites, quick actions) */ ?>
+<meta name="csrf-token" content="<?= e(csrf_token()) ?>">
 <link rel="icon" type="image/png" href="<?= e(asset('images/logo.png')) ?>">
 <script>
 /* theme before first paint */
@@ -112,6 +114,7 @@ $clarity = trim((string) ($analytics['clarity'] ?? ''));
 <?php if ($translator !== null): ?>
 <?= $view->renderFile($view->resolvePath('components.footer'), []) ?>
 <?php endif; ?>
+<?= $view->renderFile($view->resolvePath('components.favorite-mail-prompt'), []) ?>
 <script defer src="<?= e(asset('frontend/js/app.js')) ?>"></script>
 <?php foreach ($scripts as $script): ?>
 <script defer src="<?= e(asset($script)) ?>"></script>

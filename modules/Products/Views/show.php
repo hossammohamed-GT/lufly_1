@@ -9,6 +9,8 @@
 $view->layout('layouts.frontend');
 $view->pushStyle('frontend/products/detail/detail.css');
 $view->pushScript('frontend/products/detail/detail.js');
+$view->pushStyle('frontend/favorites/favorites.css');
+$view->pushScript('frontend/favorites/favorites.js');
 /** @var array<string, mixed> $product */
 /** @var string $locale */
 
@@ -47,6 +49,9 @@ if ($situImages !== []) {
 }
 $dimensions = is_array($product['dimensions'] ?? null) ? $product['dimensions'] : null;
 $categorySlug = (string) ($product['category_slug'] ?? '');
+$isSaved = feature('favorites', true)
+    && class_exists(\Modules\Favorites\Services\FavoriteService::class)
+    && app(\Modules\Favorites\Services\FavoriteService::class)->has((int) ($product['id'] ?? 0));
 $productUrl = route('products.show', ['slug' => $product['slug'] ?? $slug]);
 
 /* dimensions in millimetres, shown in the spec table when the factory has
@@ -230,6 +235,13 @@ $fmt = static fn (float $v): string => rtrim(rtrim(number_format($v, 0, '.', '')
                         <span><?= e(trans('products.request_quote')) ?></span>
                         <svg viewBox="0 0 20 20" fill="currentColor" width="15" height="15" aria-hidden="true"><path fill-rule="evenodd" d="M10.293 3.293a1 1 0 011.414 0l6 6a1 1 0 010 1.414l-6 6a1 1 0 01-1.414-1.414L14.586 11H3a1 1 0 110-2h11.586l-4.293-4.293a1 1 0 010-1.414z" clip-rule="evenodd"/></svg>
                     </a>
+                    <?= $view->component('favorite-button', [
+                        'product_id' => (int) ($product['id'] ?? 0),
+                        'name' => (string) ($product['name'] ?? ''),
+                        'variant' => 'pill',
+                        'on' => $isSaved,
+                        'label' => trans('favorites.save_to_list'),
+                    ]) ?>
                     <a href="<?= e(route('products.index')) ?>" class="pdp-back">&larr; <?= e(trans('products.title')) ?></a>
                 </div>
                 <p class="pdp-quote-note"><?= e(trans('products.quote_note')) ?></p>

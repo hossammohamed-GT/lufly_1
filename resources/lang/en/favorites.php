@@ -1,0 +1,114 @@
+<?php
+
+declare(strict_types=1);
+
+return [
+    /* page */
+    'eyebrow' => 'LUFLY · saved products',
+    'title' => 'Your saved list',
+    'lede' => 'Every fixture you marked, kept in one place. Mail the list to yourself, open a product straight from the message, or come back to this page whenever you like.',
+    'meta_description' => 'Your saved LUFLY products in one list — mail it to yourself, open any product directly and return to the list at any time.',
+
+    'stat_items' => 'saved products',
+    'stat_language' => 'language',
+    'stat_access' => 'access',
+    'stat_access_value' => 'no account',
+
+    'list_title' => 'Saved products',
+    'list_count_one' => 'One product',
+    'list_count_many' => ':n products',
+    'open_product' => 'Open product',
+    'remove' => 'Remove',
+    'save' => 'Save',
+    'saved' => 'Saved',
+    'save_to_list' => 'Save to my list',
+    'added_named' => ':name added to your saved list.',
+    'removed_named' => ':name removed from your saved list.',
+    'cleared' => 'Your saved list is empty.',
+
+    /* empty state */
+    'empty_title' => 'Nothing saved yet',
+    'empty_text' => 'Browse the catalogue and tap the heart on any product. It stays here — and we can mail the whole list to you.',
+    'empty_cta' => 'Browse the catalogue',
+    'step_1_title' => 'Save',
+    'step_1_text' => 'Tap the heart on a catalogue card or a product page.',
+    'step_2_title' => 'Return',
+    'step_2_text' => 'The list waits for you here and stays linked to this device.',
+    'step_3_title' => 'Mail it',
+    'step_3_text' => 'Send yourself the list — every item carries a direct link to its product.',
+
+    /* mail panel */
+    'mail_eyebrow' => 'Send the list',
+    'mail_title' => 'Mail me this list',
+    'mail_text_one' => 'One message with your saved product and a direct link to it.',
+    'mail_text_many' => 'One message with :n saved products and a direct link to each one.',
+    'mail_placeholder' => 'you@company.com',
+    'mail_button' => 'E-mail my list',
+    'notify_label' => 'E-mail me whenever I save a new product',
+    'notify_hint' => 'That is the only message we send — turn it off here whenever you like.',
+    'mail_sending' => 'Sending…',
+    'mail_sent' => 'The list is on its way to :email.',
+    'mail_point_1' => 'Every product with its own direct link',
+    'mail_point_2' => 'Opens the list again on any device',
+    'mail_point_3' => 'No account, no password',
+
+    /* save-to-mail prompt */
+    'prompt_title' => 'Mail this product to yourself',
+    'prompt_text' => 'One message with a direct link to everything you save, ready in your inbox to open from any device.',
+    'prompt_button' => 'Send it to me',
+    'prompt_sending' => 'Sending…',
+    'prompt_note' => 'No account needed — we use this address only for this list.',
+    'prompt_close' => 'Close',
+
+    /* permanent link */
+    'link_title' => 'Your permanent link',
+    'link_text' => 'This address always opens this list — keep it in your bookmarks or send it to a colleague.',
+    'copy' => 'Copy link',
+    'copied' => 'Link copied.',
+    'copy_failed' => 'Copy the address manually.',
+
+    'clear_button' => 'Clear the list',
+    'clear_confirm' => 'Remove every product from your saved list?',
+
+    'help_title' => 'Need prices or a BIM pack?',
+    'help_text' => 'Send us the list and we answer with a project quotation.',
+    'help_cta' => 'Talk to the factory',
+
+    /* errors */
+    'err_email' => 'Please enter a valid e-mail address.',
+    'err_empty' => 'Save a product before mailing the list.',
+    'err_product' => 'That product is not available any more.',
+    'err_cooldown' => 'The list was just sent — try again in :s seconds.',
+    'err_daily_limit' => 'The list has already been sent :n times today. Please try again tomorrow.',
+    'err_send' => 'The message could not be sent. Please try again in a moment.',
+    'limit_reached' => 'A saved list holds up to :n products. Remove one to add another.',
+    'expired' => 'Your session timed out — reload the page and try again.',
+
+    'not_found' => 'That saved list could not be found.',
+
+    /* e-mail */
+    'mail_subject_one' => 'Your LUFLY saved list — 1 product',
+    'mail_subject_many' => 'Your LUFLY saved list — :n products',
+    'mail_admin_subject_one' => 'Saved list from :email (1 product)',
+    'mail_admin_subject_many' => 'Saved list from :email (:n products)',
+    'mail_preheader_one' => '1 saved LUFLY product with its own direct link.',
+    'mail_preheader_many' => ':n saved LUFLY products, each with a direct link.',
+    'mail_intro_one' => 'This is the product you saved on lufly.tr — the button below opens its own page.',
+    'mail_intro_many' => 'Here is the list you saved on lufly.tr: :n products, each one linked to its own page.',
+    'mail_open_product' => 'View product',
+    'mail_direct_link' => 'opens the product page',
+    'mail_list_title' => 'Your list, always available',
+    'mail_list_hint' => 'The link below opens this same list on any device — phone, tablet or a colleague\'s computer.',
+    'mail_list_button' => 'Open my list',
+    'mail_why' => 'You received this e-mail because you asked for your saved LUFLY list.',
+    'mail_contact' => 'Questions, prices or a BIM pack? Simply reply to this e-mail.',
+    'admin_eyebrow' => 'saved list · lead',
+    'mail_admin_intro' => 'A visitor saved these products and asked for a copy',
+    'mail_admin_meta_one' => '1 product in the list',
+    'mail_admin_meta_many' => ':n products in the list',
+    'admin_visitor' => 'Visitor:',
+    'admin_product' => 'Product',
+    'admin_model' => 'Model',
+    'admin_open' => 'Open',
+    'admin_reply_hint' => 'Replying to this message answers the visitor directly.',
+];

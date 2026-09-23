@@ -14,6 +14,7 @@ return [
     'contact' => 'İletişim',
     'search' => 'Katalogda ara',
     'search_placeholder' => 'Mimari armatür, magnetic, silia ara...',
+    'favorites' => 'Kayıtlı liste',
     'account' => 'Hesap / Portal',
     'download_catalog' => '2026 Kataloğu (PDF)',
     'tender_pack' => 'BIM / İhale Paketi',
