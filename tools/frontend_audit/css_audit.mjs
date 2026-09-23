@@ -58,7 +58,8 @@ const TARGETS = [
   ['hero panel', '.lfc-panel', ['padding-top', 'padding-bottom']],
   ['hero title', '.lfc-title', ['font-size']],
   ['trust grid', '.trust-grid', ['grid-template-columns']],
-  ['finish swatches', '.finishes-swatch-grid', ['grid-template-columns']],
+  ['finish body', '.finishes-container', ['grid-template-columns']],
+  ['finish picker', '.finishes-picker', ['grid-template-columns']],
   ['finish showcase', '.finish-showcase-img', ['min-height', 'aspect-ratio']],
   ['category mosaic', '.category-mosaic', ['grid-template-columns']],
   ['category tile', '.category-card-monolith', ['height']],
@@ -336,7 +337,7 @@ for (const device of devices) {
     ['product grid', '.catalog-grid'],
     ['masterpieces grid', '.masterpieces-grid'],
     ['trust grid', '.trust-grid'],
-    ['finish swatches', '.finishes-swatch-grid'],
+    ['finish picker', '.finishes-picker'],
     ['footer grid', '.footer-grid'],
   ]) {
     const decls = resolve(rules, selector, ['grid-template-columns'], ctx);

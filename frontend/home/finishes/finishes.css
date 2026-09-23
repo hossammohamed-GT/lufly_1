@@ -73,7 +73,19 @@
   border-color: color-mix(in srgb, var(--lu-ink-900) 14%, transparent);
 }
 
-.finishes-container { position: relative; z-index: 1; }
+/* The heading spans both columns; the picker takes the narrow one beside the
+   showcase. Logical grid flow means RTL mirrors itself. */
+.finishes-container {
+  position: relative;
+  z-index: 1;
+  display: grid;
+  grid-template-columns: minmax(0, 232px) minmax(0, 1fr);
+  column-gap: clamp(18px, 2.4vw, 34px);
+  row-gap: clamp(16px, 2vw, 26px);
+  align-items: start;
+}
+
+.finishes-heading-row { grid-column: 1 / -1; margin-bottom: var(--space-4); }
 
 .finishes-heading-row {
   display: flex;
@@ -95,33 +107,30 @@
 
 .finishes-heading-note span { display: block; width: 70px; height: 1px; margin-top: var(--space-4); background: var(--ds-band-line); }
 
-/* ---------- finish cards: the texture IS the card ---------- */
+/* ---------- the picker: one named row per finish ----------
+   The texture is still shown (34px), but the name leads and the process tag
+   follows: nine of these rows are shorter than the nine tiles they replace, and
+   a phone gets one scrollable row of pills instead of a block of squares. */
 
-.finishes-swatch-grid {
-  display: grid;
-  grid-template-columns: repeat(9, minmax(0, 1fr));
-  gap: 12px;
-  margin-bottom: var(--space-7);
-}
+.finishes-picker { display: grid; gap: 4px; min-width: 0; }
 
 .finish-swatch-btn {
-  position: relative;
-  display: flex;
-  flex-direction: column;
-  align-items: stretch;
+  display: grid;
+  grid-template-columns: 34px minmax(0, 1fr) auto;
+  align-items: center;
+  gap: 10px;
   min-width: 0;
-  padding: 0;
+  padding: 4px 12px 4px 4px;
   color: var(--ds-band-text);
-  background: var(--lu-ink-800);
+  background: color-mix(in srgb, var(--lu-ink-800) 62%, transparent);
   border: 1px solid var(--ds-band-hairline);
   border-radius: var(--radius-md);
   cursor: pointer;
-  overflow: hidden;
   text-align: start;
-  transition: border-color 0.22s ease, box-shadow 0.22s ease, transform 0.22s ease;
+  transition: border-color 0.22s ease, box-shadow 0.22s ease, background 0.22s ease, transform 0.22s ease;
 }
 
-.finish-swatch-btn:hover { transform: translateY(-3px); }
+.finish-swatch-btn:hover { transform: translateY(-1px); }
 
 .finish-swatch-btn:hover {
   border-color: color-mix(in srgb, var(--lu-mint) 55%, var(--ds-band-hairline));
@@ -129,44 +138,48 @@
 
 .finish-swatch-btn.is-active {
   border-color: var(--lu-mint);
+  background: color-mix(in srgb, var(--lu-ink-700) 70%, transparent);
   box-shadow:
-    inset 0 0 0 1px var(--lu-mint),
-    0 14px 34px color-mix(in srgb, var(--lu-teal-500) 30%, transparent);
+    inset 0 0 0 1px color-mix(in srgb, var(--lu-mint) 55%, transparent),
+    0 10px 26px color-mix(in srgb, var(--lu-teal-500) 26%, transparent);
 }
 
-.finish-swatch-btn img {
+.finish-row-chip {
   display: block;
-  width: 100%;
-  aspect-ratio: 16 / 11;
+  width: 34px;
+  height: 34px;
+  border-radius: 6px;
   object-fit: cover;
+  border: 1px solid color-mix(in srgb, var(--lu-neutral-0) 18%, transparent);
 }
 
-.finish-swatch-btn:hover img { filter: brightness(1.06); }
+.finish-swatch-btn.is-active .finish-row-chip {
+  border-color: color-mix(in srgb, var(--lu-mint) 60%, transparent);
+}
 
-.swatch-label {
-  display: block;
-  margin: 10px 12px 0;
+.finish-row-name {
+  min-width: 0;
   font-size: var(--text-sm);
   font-weight: var(--weight-semibold);
-  letter-spacing: 0.02em;
+  letter-spacing: 0.015em;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
 }
 
-.finish-swatch-btn small {
-  display: block;
-  margin: 3px 12px 11px;
+.finish-row-tech {
   color: var(--ds-band-text-muted);
   font-family: var(--font-mono);
   font-size: 9px;
-  letter-spacing: 0.16em;
+  letter-spacing: 0.14em;
   text-transform: uppercase;
+  white-space: nowrap;
 }
 
 /* ---------- showcase split ---------- */
 
 .finish-showcase-box {
+  min-width: 0;
   display: grid;
   grid-template-columns: 1.05fr 1fr;
   align-items: stretch;
@@ -191,7 +204,9 @@
   display: block;
   width: 100%;
   height: 100%;
-  min-height: 460px;
+  /* it was 460px: the picker beside it is ~430px tall now, and the band no
+     longer has to be taller than the two columns need */
+  min-height: 340px;
   object-fit: cover;
   transition: opacity 0.25s ease;
 }
@@ -323,7 +338,34 @@
 /* ---------- responsive: grid collapses, nothing overflows ---------- */
 
 @media (max-width: 1080px) {
-  .finishes-swatch-grid { grid-template-columns: repeat(3, 1fr); }
+  /* one column, and the picker becomes a single scrollable row of pills: the
+     tile grid that turned into a 2x5 block of squares here was the tallest
+     thing on the page */
+  .finishes-container { grid-template-columns: minmax(0, 1fr); }
+
+  .finishes-picker {
+    display: flex;
+    gap: 8px;
+    overflow-x: auto;
+    padding-bottom: 8px;
+    scroll-snap-type: x proximity;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: thin;
+  }
+
+  .finish-swatch-btn {
+    flex: 0 0 auto;
+    display: inline-flex;
+    align-items: center;
+    gap: 9px;
+    min-height: 44px;            /* touch target */
+    padding: 4px 15px 4px 6px;
+    border-radius: 999px;
+    scroll-snap-align: start;
+  }
+
+  .finish-row-chip { width: 32px; height: 32px; border-radius: 50%; }
+  .finish-row-tech { display: none; }
 
   .finish-showcase-box { grid-template-columns: 1fr; gap: 18px; }
   .finish-showcase-details {
@@ -336,11 +378,17 @@
 
 @media (max-width: 640px) {
   .finishes-section { padding: var(--space-10) 0; }
-  .finishes-heading-row { flex-direction: column; gap: var(--space-5); margin-bottom: var(--space-7); }
-  .finishes-swatch-grid { grid-template-columns: repeat(2, 1fr); gap: 10px; }
-  .finish-swatch-btn img { aspect-ratio: 16 / 11; }
-  .finish-tech-specs { grid-template-columns: 1fr; gap: var(--space-3); }
-  .finish-showcase-details { padding: var(--space-5) var(--space-2) var(--space-2); }
+  .finishes-heading-row { flex-direction: column; gap: var(--space-4); margin-bottom: var(--space-2); }
+  /* the decorative four-line note keeps its words but loses its air */
+  .finishes-heading-note { line-height: 1.7; }
+  .finishes-heading-note span { width: 44px; margin-top: var(--space-3); }
+  .finish-showcase-details { padding: var(--space-5) var(--space-2) var(--space-1); }
+  /* four spec rows become two columns of two - same data, half the height */
+  .finish-tech-specs { grid-template-columns: 1fr 1fr; gap: var(--space-3) var(--space-4); }
+  .finish-desc { margin-bottom: var(--space-4); }
+  .finish-actions { gap: var(--space-3); }
+  .finishes-section .btn-primary-teal,
+  .finishes-section .btn-secondary-glass { padding: 12px 18px; }
 }
 
 @media (prefers-reduced-motion: reduce) {

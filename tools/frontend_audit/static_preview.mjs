@@ -38,8 +38,9 @@ if (!fs.existsSync(renderPath)) {
 
 /* the snapshot is generated with APP_URL=http://localhost/, so its asset URLs
    are absolute. Dropping the host turns them into root-relative paths that the
-   preview host serves directly - the same thing the real document does. */
-const snapshot = fs
+   preview host serves directly - the same thing the real document does. It is
+   re-read per request, so a fresh render shows up on the next reload. */
+const snapshot = () => fs
   .readFileSync(renderPath, 'utf8')
   .replaceAll('http://localhost', '')
   .replaceAll('https://localhost', '');
@@ -78,7 +79,7 @@ const server = http.createServer((req, res) => {
       'content-type': TYPES['.html'],
       'cache-control': 'no-store',
     });
-    res.end(snapshot);
+    res.end(snapshot());
     return;
   }
 

@@ -12,7 +12,7 @@
    measured height after the first paint, so these are first-paint hints only. */
 
 .trust-bar { content-visibility: auto; contain-intrinsic-size: auto 620px; }
-.finishes-section { content-visibility: auto; contain-intrinsic-size: auto 1080px; }
+.finishes-section { content-visibility: auto; contain-intrinsic-size: auto 720px; }
 .categories-section { content-visibility: auto; contain-intrinsic-size: auto 900px; }
 .inspiration-section { content-visibility: auto; contain-intrinsic-size: auto 920px; }
 .rituals-section { content-visibility: auto; contain-intrinsic-size: auto 720px; }
@@ -22,7 +22,7 @@
 
 @media (max-width: 760px) {
   .trust-bar { contain-intrinsic-size: auto 610px; }
-  .finishes-section { contain-intrinsic-size: auto 1620px; }
+  .finishes-section { contain-intrinsic-size: auto 980px; }
   .categories-section { contain-intrinsic-size: auto 1120px; }
   .inspiration-section { contain-intrinsic-size: auto 1420px; }
   .rituals-section { contain-intrinsic-size: auto 1180px; }
