@@ -25,6 +25,10 @@ replays the browser behaviour that used to break the hero:
 - **a burst of twelve resizes** while the viewport height wobbles (mobile URL bar)
   — the height must settle on one value.
 - **`orientationchange` / hidden window** — no bogus height.
+- **rotation** — every portrait phone is also measured flipped to landscape, where
+  the viewport is suddenly much shorter (and the landscape-phone CSS block applies):
+  the hero must be re-measured, not carried over, and if the script hands the very
+  short viewports (<200px of space) to the CSS fallback, that fallback has to fit.
 - the result must fit the first screen, cover what the copy needs, and stay under
   the portrait artwork cap (`1.35 × width`) that keeps a phone photo from being
   zoomed into a close-up.
@@ -37,6 +41,7 @@ height, the height the copy needs and the ceiling for each device.
 ```bash
 node tools/frontend_audit/css_audit.mjs                       # default 320/390/768/1280
 node tools/frontend_audit/css_audit.mjs --widths 360,412 --heights 640,800
+node tools/frontend_audit/css_audit.mjs --widths 280,320,568 --heights 320,568,844
 ```
 
 A miniature cascade evaluator: it reads `frontend/design-system/style.css` plus
@@ -47,6 +52,12 @@ skips hover/`::after` state rules, and reports the values that matter for layout
 
 It answers "does anything overflow, collapse to zero or keep a desktop number on
 a phone" without a rendering engine.
+
+Besides the curated table it runs a generic horizontal-overflow scan over every
+rule that applies at the tested viewport: fixed `width` / `min-width` /
+`inline-size` / `flex-basis` values larger than the screen, and `100vw` next to
+horizontal padding (the classic 100vw + gutter scrollbar). Tall art that only
+fills the screen *below* the fold is reported as a note, not as a defect.
 
 ## `hero_report.mjs` — the visual sheet
 

@@ -71,6 +71,12 @@ const TARGETS = [
   ['masterpieces grid', '.masterpieces-grid', ['grid-template-columns']],
   ['footer grid', '.footer-grid', ['grid-template-columns']],
   ['main region', '.ds-main', ['margin-inline-start', 'padding-inline-start']],
+  ['hero panel', '.lfc-panel', ['padding-top', 'padding-bottom']],
+  ['hero logo box', '.lfc-logoBox', ['width', 'margin-bottom', 'display']],
+  ['hero kicker', '.lfc-kicker', ['display']],
+  ['hero tag', '.lfc-tag', ['display']],
+  ['hero CTAs', '.lfc-ctas', ['margin-top', 'flex-wrap']],
+  ['hero CTA', '.lfc-cta', ['padding-top', 'font-size']],
   ['nav drawer', '.mnav-drawer', ['height', 'inline-size']],
   ['nav sheet', '.mnav-sheet', ['max-height', 'height']],
   ['nav results', '.mnav-results', ['max-height']],
@@ -248,6 +254,16 @@ for (const width of WIDTHS) {
 
 const issues = [];
 const problems = [];
+const notes = [];
+const reported = new Set();
+
+/* `::after` and `::before` boxes are decorative; the scan only cares about
+   rules that can widen the element itself */
+function selectorIsPseudoOnly(selector) {
+  return selector
+    .split(',')
+    .every((part) => part.includes('::'));
+}
 
 for (const device of devices) {
   const ctx = { width: device.width, height: device.height, touch: device.touch };
@@ -269,11 +285,13 @@ for (const device of devices) {
     problems.push(`${row.device}: hero CSS height ${heroHeight.height} resolves to ${Math.round(heroCssHeight)}px - taller than the viewport`);
   }
 
+  /* A tall band of art is only a problem where it has to share the screen with
+     the hero: below the fold the page is meant to scroll, so those stay notes. */
   for (const [label, selector] of [['category tile', '.category-card-monolith'], ['inspiration art', '.inspiration-img-wrap'], ['ritual art', '.ritual-figure']]) {
     const decls = resolve(rules, selector, ['height'], ctx);
     const value = resolveLength(decls.height, ctx) || 0;
-    if (value > device.height * 0.75) {
-      problems.push(`${row.device}: ${label} height ${decls.height} eats ${Math.round((value / device.height) * 100)}% of the screen`);
+    if (value > device.height * 0.75 && device.width <= 480) {
+      notes.push(`${row.device}: ${label} height ${decls.height} is ${Math.round((value / device.height) * 100)}% of the screen - it fills the first screen on its own, the page just scrolls`);
     }
   }
 
@@ -291,6 +309,44 @@ for (const device of devices) {
     const columns = countColumns(decls['grid-template-columns'] || '');
     if (columns && device.width <= 480 && columns > 2) {
       problems.push(`${row.device}: ${label} still asks for ${columns} columns`);
+    }
+  }
+
+  /* --- generic horizontal overflow scan ------------------------------------
+     Anything that asks for more pixels than the screen has (a fixed width, a
+     min-width floor, `100vw` next to horizontal padding) pushes the page
+     sideways. The design system clips overflow-x, but that only hides the
+     scrollbar - the content still gets cut. */
+  for (const rule of rules) {
+    if (!rule.conditions.every((condition) => mediaMatches(condition, ctx))) continue;
+    if (selectorIsPseudoOnly(rule.selector)) continue;
+
+    const decls = {};
+    for (const [prop, { value }] of declarations(rule.body)) decls[prop] = value;
+
+    const fixed = ['width', 'min-width', 'inline-size', 'min-inline-size', 'flex-basis'];
+    for (const prop of fixed) {
+      if (!(prop in decls)) continue;
+      const value = resolveLength(decls[prop], ctx);
+      if (value === null || value <= device.width + 1) continue;
+      const where = rule.selector.split(',')[0].trim();
+      /* only the first report per selector per device - one line is enough */
+      const key = `${row.device}|${where}|${prop}`;
+      if (reported.has(key)) continue;
+      reported.add(key);
+      problems.push(`${row.device}: ${where} { ${prop}: ${decls[prop]} } wants ${Math.round(value)}px on a ${device.width}px screen`);
+    }
+
+    const padded = (parseFloat(decls['padding-inline'] || decls['padding'] || '0') || 0)
+      + (parseFloat(decls['padding-left'] || decls['padding-inline-start'] || '0') || 0)
+      + (parseFloat(decls['padding-right'] || decls['padding-inline-end'] || '0') || 0);
+    if ((decls.width === '100vw' || decls['inline-size'] === '100vw') && padded > 0) {
+      const where = rule.selector.split(',')[0].trim();
+      const key = `${row.device}|${where}|100vw+padding`;
+      if (!reported.has(key)) {
+        reported.add(key);
+        problems.push(`${row.device}: ${where} is 100vw wide with ${padded}px of horizontal padding - ${Math.round(padded)}px of horizontal scroll`);
+      }
     }
   }
 
@@ -343,4 +399,10 @@ if (problems.length) {
   for (const problem of problems) console.log('  - ' + problem);
 } else {
   console.log('no layout problems detected at any tested viewport');
+}
+
+if (notes.length) {
+  console.log('');
+  console.log(`${notes.length} note(s) - not defects, just things worth knowing:`);
+  for (const note of notes) console.log('  - ' + note);
 }

@@ -32,7 +32,11 @@
    there - the max-height rule at the bottom hides the sub line), so the
    pre-script height must not be the portrait 80%. */
 @media (max-width: 760px) and (orientation: landscape) {
-  .lfc { height: calc(100svh - var(--luann-h, 0px)); }
+  /* the landscape screen is short: give it the whole viewport instead of the
+     portrait 80% - but subtract the navbar as well as the announcement bar,
+     otherwise the fallback hero is 56px taller than the space it has and the
+     first screen ends up showing a slice of the next section. */
+  .lfc { height: calc(100svh - var(--luann-h, 0px) - var(--mnav-row1, 56px)); }
 }
 
 @media (max-width: 760px) {
@@ -404,14 +408,18 @@
   .lfc-sub { display: none; }
 }
 
-/* short screens (landscape phones, small laptops) stay on one screen */
+/* short screens (landscape phones, small laptops) stay on one screen.
+   The hero clips its overflow, so whatever does not fit simply disappears off
+   the panel - and the CTAs sit at the bottom. Everything decorative goes, the
+   brand box and the type get smaller, and the two CTAs shrink so the row still
+   fits: on a 568x320 phone that is ~176px of copy inside a 224px panel. */
 @media (max-height: 560px) {
   .lfc { min-height: 200px; }
-  .lfc-panel { padding-top: 10px; padding-bottom: 66px; }
-  .lfc-title { font-size: clamp(26px, 7.5vh, 40px); }
-  .lfc-kicker { margin-bottom: 10px; }
-  .lfc-rule { margin: 10px 0; }
+  .lfc-panel { padding-top: 8px; padding-bottom: 56px; }
+  .lfc-title { font-size: clamp(24px, 7vh, 36px); }
+  .lfc-kicker, .lfc-tag, .lfc-rule { display: none; }
   .lfc-sub { display: none; }
-  .lfc-ctas { margin-top: 14px; }
-  .lfc-logoBox { width: min(220px, 44vh); margin-bottom: 10px; }
+  .lfc-ctas { margin-top: 12px; gap: 8px; flex-wrap: wrap; }
+  .lfc-cta { padding: 9px 16px; font-size: 11px; }
+  .lfc-logoBox { width: min(190px, 32vh); margin-bottom: 12px; }
 }

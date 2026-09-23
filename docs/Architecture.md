@@ -122,6 +122,14 @@ first screen at every breakpoint. When touching it, keep these invariants:
   media queries, and `<html>` attribute changes (the announcement bar resizes
   `--luann-h`; the theme flips the artwork).
 
+The hero clips its overflow (`.lfc { overflow: hidden }`), so whatever does not fit
+the panel simply disappears - which is why the short-screen blocks exist: at
+`max-height: 700` the type and paddings shrink, at `640` the paragraph goes, and at
+`560` the kicker, the tag and the rule go as well while the brand box and the CTAs
+shrink (a 568x320 landscape phone gets ~176px of copy inside a 224px panel). The
+landscape-phone fallback height subtracts both `--luann-h` and `--mnav-row1`, so it
+fits the same space the script measures.
+
 Artwork: `heroc-<n>{,-m,-p}.webp` (dark) and `heroc-<n>-light{,-m,-p}.jpg` (light),
 where `""` is desktop landscape, `-m` is a ≤760px landscape phone and `-p` is a
 ≤760px portrait phone crop. All 30 files must exist - the URL is chosen at runtime

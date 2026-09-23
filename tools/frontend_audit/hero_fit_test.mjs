@@ -37,6 +37,9 @@ const DEVICES = [
   { name: 'iPhone 15 Pro Max', width: 430, height: 932, port: true, mobile: true, chrome: 40 + 56, base: 340, para: 96, sub: 3.4 },
   { name: 'Pixel 7 412x915', width: 412, height: 915, port: true, mobile: true, chrome: 40 + 56, base: 335, para: 96, sub: 3.5 },
   { name: 'Galaxy S8 360x740', width: 360, height: 740, port: true, mobile: true, chrome: 40 + 56, base: 320, para: 96, sub: 3.8 },
+  { name: 'Galaxy Fold 280x653', width: 280, height: 653, port: true, mobile: true, chrome: 40 + 56, base: 290, para: 92, sub: 4.2 },
+  { name: 'iPhone 8 375x667', width: 375, height: 667, port: true, mobile: true, chrome: 40 + 56, base: 320, para: 92, sub: 3.8 },
+  { name: 'SE landscape 568x320', width: 568, height: 320, port: false, mobile: true, chrome: 40 + 56, base: 250, para: 84, sub: 3.8 },
   { name: 'iPhone 12 landscape', width: 844, height: 390, port: false, mobile: false, chrome: 40 + 58, base: 250, para: 84, sub: 0 },
   { name: 'iPad mini 768x1024', width: 768, height: 1024, port: true, mobile: false, chrome: 44 + 58, base: 330, para: 110, sub: 0 },
   { name: 'laptop 1280x720', width: 1280, height: 720, port: false, mobile: false, chrome: 44 + 64, base: 330, para: 110, sub: 0 },
@@ -45,14 +48,22 @@ const DEVICES = [
 
 /* panel metrics per stylesheet breakpoint - the stub has to agree with
    frontend/home/hero-cinema/hero-cinema.css or the numbers are fiction:
-     max-height 560  -> tight padding, 0.86 type scale, sub hidden
+     max-height 560  -> decorative lines gone, compact padding + type + CTAs
      max-height 640  -> sub hidden
      max-height 700  -> compact padding + 0.92 type scale
    and on phones the sub is clamped to ~9ch lines. */
 function panelMetrics(device) {
   const h = device.height;
-  const heightScale = h <= 560 ? 0.86 : h <= 700 ? 0.92 : 1;
-  const pad = h <= 560 ? { top: 10, bottom: 66 } : h <= 700 ? { top: 16, bottom: 72 } : { top: 28, bottom: 92 };
+
+  /* very short: the kicker, the tag and the rule are hidden and the paddings,
+     the brand box and the CTAs are the compact ones - what is left is roughly
+     the brand box plus the CTA row */
+  if (h <= 560) {
+    return { pad: { top: 8, bottom: 56 }, content: Math.min(device.base, 112), showSub: false };
+  }
+
+  const heightScale = h <= 700 ? 0.92 : 1;
+  const pad = h <= 700 ? { top: 16, bottom: 72 } : { top: 28, bottom: 92 };
   const showSub = h > 640 && device.sub > 0;
   const subHeight = showSub ? Math.round(device.para * (device.sub / 3.4)) : 0;
 
@@ -345,6 +356,30 @@ function checkDevice(device) {
   m.scrollTo(0);
   m.fire('orientationchange');
   m.flushTimers();
+
+  /* 4. rotation: the same phone flipped to landscape is a fresh profile with a
+        viewport that is now much shorter - the hero has to be re-measured, not
+        carried over from portrait (the landscape-phone CSS block only applies
+        in this orientation). */
+  if (device.port && device.mobile) {
+    const rotated = { ...device, name: `${device.name} (rotated)`, width: device.height, height: device.width, port: false };
+    const rm = runScene(rotated, { content: panelMetrics(rotated).content });
+    if (rm.heroHeight === null) {
+      /* the script leaves very short viewports (<200px of space) to the CSS
+         fallback, which has to fit the same space */
+      const cssFallback = rm.device.height - rm.device.chrome;
+      if (cssFallback > rm.space + 1) {
+        issues.push(`after rotating to landscape the CSS fallback does not fit the screen (${cssFallback} > ${rm.space})`);
+      }
+    } else {
+      if (rm.heroHeight > rm.space + 1) {
+        issues.push(`after rotating to landscape the hero is taller than the screen (${rm.heroHeight} > ${rm.space})`);
+      }
+      if (rm.heroHeight < rm.needed - 1) {
+        issues.push(`after rotating to landscape the copy is cut off (${rm.heroHeight} < ${rm.needed})`);
+      }
+    }
+  }
 
   return { device, height: start, settled: heights[heights.length - 1], issues, tight, needed };
 }
