@@ -87,7 +87,22 @@ return [
     'print' => 'Planı yazdır',
     'scale' => 'Ölçek',
 
+
+    /* the floating chat: the bubble in the corner of every page */
+    'chat_open' => 'Banyomu planla',
+    'chat_open_hint' => '3 dokunuş · ücretsiz',
+    'chat_subtitle' => 'Üç kısa soru, tek plan',
+    'chat_close' => 'Sohbeti kapat',
+    'chat_grow' => 'Pencereyi büyüt',
+    'chat_resize' => 'Pencereyi boyutlandırmak için sürükleyin',
+    'chat_about' => 'Sorulan ürün',
+    'chat_foot' => 'Ücretsiz · hesap gerekmez',
+    'chat_full' => 'Tam planlayıcıyı aç',
+
     /* the picture */
+    /* the free image quota is not there yet: promised, not offered */
+    'render_soon_pill' => 'Çok yakında',
+    'render_soon_hint' => 'Bu banyonun tam bu parçalarla çizilmiş görseli yolda. Yukarıdaki plan ve ölçekli çizim bugün kullanıma hazır.',
     'render_cta' => 'Bitmiş banyoyu göster',
     'render_hint' => 'İsteğe bağlı — yaklaşık yarım dakika sürer ve bugünkü görsel hakkınızdan birini kullanır.',
     'render_title' => 'Bitmiş banyo',
@@ -95,6 +110,18 @@ return [
     'render_off' => 'Görsel seçeneği şu anda kapalı.',
     'render_limit' => 'Bugünkü görsel hakkınız doldu — yarın tekrar deneyin.',
     'render_failed' => 'Görsel bu kez çizilemedi. Planınız eksiksiz ve güvende.',
+
+    /* "does it fit?" — answered from the product's own words, never a picture */
+    'fit_title' => 'Banyoma uyar mı?',
+    'fit_hint' => 'Tek dokunuş: bu ürünü yukarıdaki planla karşılaştırırız. Fotoğraf yok — açıklama ve ölçüler yeterli.',
+    'fit_cta' => 'Planımla karşılaştır',
+    'fit_about' => 'Ürün: :name',
+    'fit_wait' => 'Bu ürün planınızla karşılaştırılıyor…',
+    'fit_in_plan' => 'Planınızda :zone duvarında :item zaten var; önerilen ölçü :size. Bu ürün o ölçüyü aşmadığı sürece aynı yere girer; daha büyükse başka bir duvara alırız.',
+    'fit_not_in_plan' => ':area m² planınızda :item yok — oda yalnızca kapıyı boş bırakan parçaları alır. Bu ürün yine de diğerlerinden birinin yerine geçebilir: kodunu planla birlikte gönderin, ekibimiz çizime göre kontrol etsin.',
+    'fit_other' => 'Bu ürün planınızın kurulduğu parçalardan biri değil, yani planı değiştirmez. Kodunu planla birlikte gönderin, ekibimiz :w × :l cm odanıza göre kontrol etsin.',
+    'fit_mail_line' => 'Bakılan ürün: :name',
+    'err_fit' => 'Bu ürünü şu anda kontrol edemedik. Planınız yine de eksiksiz — ekibimize gönderin, onaylarlar.',
 
     /* handoff */
     'handoff_title' => 'Bunları benim için bulun',

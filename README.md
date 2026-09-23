@@ -157,7 +157,18 @@ answers three questions (room size, shower or bathtub, look) and gets a plan:
   of a few hundred tokens that contains the answers and the item sizes — nothing
   more. It is cached, so the second visitor of the same room costs no tokens;
 - **the picture of the finished room** is optional, one tap, and the only image
-  generation in the flow (`gemini-2.5-flash-image`).
+  generation in the flow (`gemini-2.5-flash-image`). While the free image quota
+  cannot answer, `PLANNER_RENDER_SOON=true` (the default) shows it as *coming
+  soon* instead of offering a button that would only fail;
+- **the chat floats on every page** — a bubble in the corner opens the same
+  conversation in a panel that can be expanded or dragged to any size, and the
+  visitor's size is remembered. On `/planner` the chat is the page, so the
+  bubble stays away;
+- **"does this piece fit my plan?"** — on a product page the plan offers one
+  extra question, answered from **the product's own words** (name, description,
+  category) compared with the plan. The catalogue is never swept and no image is
+  ever sent: the verdict is computed in PHP and the assistant only rephrases it,
+  once, cached per product and room.
 
 If the assistant is off, slow, out of quota, or has no network, the plan, the
 drawing and the items still arrive — in every language. Everything is cached in
@@ -167,7 +178,10 @@ and a failed answer is only remembered for five minutes.
 ```dotenv
 FEATURE_PLANNER=true
 PLANNER_AI=true                 # the assistant writes the welcome sentence
+PLANNER_CHAT=true               # the floating chat on every page
+PLANNER_FIT=true                # "does this piece fit my plan?" (text only)
 FEATURE_PLANNER_RENDER=true     # the optional picture (uses AI_IMAGE_MODEL)
+PLANNER_RENDER_SOON=true        # announce the picture as "coming soon"
 PLANNER_RENDER_DAILY=3          # pictures per visitor per day
 PLANNER_HANDOFF_EMAIL=info@lufly.tr
 PLANNER_WHATSAPP=908503040817

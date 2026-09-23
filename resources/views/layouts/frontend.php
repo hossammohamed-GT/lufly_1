@@ -23,6 +23,16 @@ $announcement = $translator !== null
     ? $view->renderFile($view->resolvePath('components.announcement'), ['translator' => $translator])
     : '';
 
+/* The bathroom planner travels as a floating chat on every storefront page
+   (it bows out on /planner, where the chat *is* the page). Rendered before the
+   assets are collected because it brings its own stylesheet and script. */
+$plannerChat = $translator !== null
+    && feature('planner', true)
+    && (bool) config('planner.enabled', true)
+    && $view->exists('planner::partials.widget')
+    ? $view->renderFile($view->resolvePath('planner::partials.widget'), [])
+    : '';
+
 $styles = $view->styles();
 $scripts = $view->scripts();
 $preloads = $view->preloads();
@@ -115,6 +125,7 @@ $clarity = trim((string) ($analytics['clarity'] ?? ''));
 <?= $view->renderFile($view->resolvePath('components.footer'), []) ?>
 <?php endif; ?>
 <?= $view->renderFile($view->resolvePath('components.favorite-mail-prompt'), []) ?>
+<?= $plannerChat ?>
 <script defer src="<?= e(asset('frontend/js/app.js')) ?>"></script>
 <?php foreach ($scripts as $script): ?>
 <script defer src="<?= e(asset($script)) ?>"></script>

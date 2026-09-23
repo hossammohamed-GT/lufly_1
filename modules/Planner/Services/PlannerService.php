@@ -332,6 +332,269 @@ class PlannerService
     }
 
     /**
+     * "Does this piece fit the plan I just made?" — the only thing the chat
+     * says about a single product.
+     *
+     * Cheapest possible answer: the verdict is computed locally from the plan
+     * (which item the product would be, in which size, on which wall) and the
+     * AI is only asked to phrase it. What travels to the model is the product's
+     * *words* — name, description, category — never an image and never the
+     * catalogue. With the AI off, slow or out of quota the local wording stands.
+     *
+     * @param array<string, mixed> $plan
+     * @param array{id: int, name: string, text: string, category: string, url: string} $context
+     * @return array{text: string, source: string}
+     */
+    public function fit(array $plan, array $context, string $locale = 'en'): array
+    {
+        $fit = $this->config()['fit'];
+        $facts = $this->fitFacts($plan, $context, $locale);
+        $fallback = $facts['text'];
+
+        if (!($fit['enabled'] ?? true)
+            || !($this->config()['ai']['enabled'] ?? true)
+            || !$this->ai->enabled()) {
+            return ['text' => $fallback, 'source' => 'local', 'fit' => $facts['key'], 'state' => $facts['state']];
+        }
+
+        /* the same product in the same room is asked about over and over */
+        $fingerprint = sha1(implode('|', [
+            $locale,
+            $this->fingerprint((array) $plan['answers']),
+            (string) $context['id'],
+            (string) $facts['key'],
+            sha1((string) $context['name'] . '|' . (string) $context['text']),
+        ]));
+
+        return $this->cache->remember(
+            'planner.fit.' . $locale,
+            $fingerprint,
+            fn (): array => $this->writeFit($plan, $context, $facts, $locale, $fallback),
+            (int) ($this->config()['cache_hours'] ?? 720),
+        );
+    }
+
+    /**
+     * One small request: the model rephrases a verdict this class already
+     * reached. It may not invent a size, a fitting or a price.
+     *
+     * @param array<string, mixed> $plan
+     * @param array{id: int, name: string, text: string, category: string, url: string} $context
+     * @param array{text: string, state: string, key: string|null} $facts
+     * @return array{text: string, source: string}
+     */
+    private function writeFit(array $plan, array $context, array $facts, string $locale, string $fallback): array
+    {
+        $fit = $this->config()['fit'];
+
+        if (!($fit['enabled'] ?? true) || !$this->guard->allows('planner.fit', (int) ($fit['daily_per_ip'] ?? 8))) {
+            return ['text' => $fallback, 'source' => 'local', 'fit' => $facts['key'], 'state' => $facts['state'], 'ok' => false];
+        }
+
+        $lines = [
+            'You are the bathroom planner of LUFLY, a sanitary-ware shop.',
+            'A visitor planned a bathroom and is now looking at one product. The plan below is already fixed — do not change it, do not add or remove anything.',
+            '',
+            'Their plan:',
+            (string) $plan['plan_text'],
+            '',
+            'The product they are looking at (described by text only, no picture):',
+            'Name: ' . (string) $context['name'],
+        ];
+
+        if ((string) $context['text'] !== '') {
+            $lines[] = 'Description: ' . (string) $context['text'];
+        }
+
+        if ((string) $context['category'] !== '') {
+            $lines[] = 'Category: ' . (string) $context['category'];
+        }
+
+        $lines = array_merge($lines, [
+            '',
+            'Verdict already decided for you, use exactly this:',
+            (string) $facts['text'],
+            '',
+            'Rewrite the verdict as a warm, plain answer of at most ' . (int) ($fit['max_words'] ?? 80) . ' words in the language with this code: ' . $locale . '.',
+            'Rules: keep every size exactly as given; never invent a dimension, a price or a brand; no markdown, no emoji; two short paragraphs at most.',
+        ]);
+
+        $result = $this->ai->generate(implode("\n", $lines), [
+            'scope' => 'planner.fit',
+            'locale' => $locale,
+        ]);
+
+        $this->record('planner.fit', $result);
+
+        if (!($result['ok'] ?? false) || trim((string) ($result['text'] ?? '')) === '') {
+            return [
+                'text' => $fallback,
+                'source' => 'local',
+                'fit' => $facts['key'],
+                'state' => $facts['state'],
+                'ok' => false,
+                'error' => $result['error'] ?? null,
+            ];
+        }
+
+        return [
+            'text' => trim((string) $result['text']),
+            'source' => 'ai',
+            'fit' => $facts['key'],
+            'state' => $facts['state'],
+            'ok' => true,
+            'model' => $result['model'] ?? null,
+        ];
+    }
+
+    /**
+     * The verdict, computed locally: which item of the plan this product would
+     * be, and what that means for the room. Zero tokens, never wrong about the
+     * plan, and the wording the AI gets to improve on.
+     *
+     * @param array<string, mixed> $plan
+     * @param array{id: int, name: string, text: string, category: string, url: string} $context
+     * @return array{text: string, state: string, key: string|null}
+     */
+    public function fitFacts(array $plan, array $context, string $locale = 'en'): array
+    {
+        $answers = (array) $plan['answers'];
+        $room = (array) ($plan['room'] ?? []);
+        $key = $this->matchSlot($context);
+
+        if ($key !== null) {
+            foreach ((array) $plan['items'] as $item) {
+                if ((string) ($item['key'] ?? '') === $key) {
+                    return [
+                        'key' => $key,
+                        'state' => 'in_plan',
+                        'text' => $this->t('fit_in_plan', $locale, [
+                            'item' => (string) $item['label'],
+                            'zone' => (string) $item['zone'],
+                            'size' => (string) $item['size'],
+                        ]),
+                    ];
+                }
+            }
+
+            return [
+                'key' => $key,
+                'state' => 'not_in_plan',
+                'text' => $this->t('fit_not_in_plan', $locale, [
+                    'item' => $this->itemName($key, $locale),
+                    'area' => (string) $answers['area'],
+                ]),
+            ];
+        }
+
+        return [
+            'key' => null,
+            'state' => 'other',
+            'text' => $this->t('fit_other', $locale, [
+                'w' => (string) ($room['w'] ?? ''),
+                'l' => (string) ($room['l'] ?? ''),
+            ]),
+        ];
+    }
+
+    /**
+     * Which slot of the plan a product would fill, from its own words: how many
+     * of a slot's keywords the name and description mention, then how specific
+     * the longest of them is.
+     *
+     * "Toilet paper holder … with shelf" mentions `paper` and `holder` — more
+     * than the one `toilet` the toilet slot hears — so it lands on the holder,
+     * where it belongs. A category on its own is never enough: six slots share
+     * `bathroom-ceramics`, and guessing between a toilet and a bathtub helps
+     * nobody.
+     *
+     * @param array{name?: string, text?: string, category?: string} $context
+     */
+    public function matchSlot(array $context): ?string
+    {
+        $slots = (array) ($this->config()['slots'] ?? []);
+        $category = strtolower(trim((string) ($context['category'] ?? '')));
+        $haystack = mb_strtolower(trim((string) ($context['name'] ?? '') . ' ' . (string) ($context['text'] ?? '')));
+
+        if ($haystack === '') {
+            return null;
+        }
+
+        $candidates = [];
+
+        foreach ($slots as $key => $slot) {
+            $hits = 0;
+            $longest = 0;
+
+            foreach ((array) ($slot['keywords'] ?? []) as $word) {
+                $word = mb_strtolower(trim((string) $word));
+
+                if ($word === '' || !$this->mentions($haystack, $word)) {
+                    continue;
+                }
+
+                $hits++;
+                $longest = max($longest, mb_strlen($word));
+            }
+
+            if ($hits === 0) {
+                continue;
+            }
+
+            $candidates[] = [
+                'key' => (string) $key,
+                'hits' => $hits,
+                'longest' => $longest,
+                'category' => $category !== '' && strtolower((string) ($slot['category'] ?? '')) === $category,
+            ];
+        }
+
+        if ($candidates === []) {
+            return null;
+        }
+
+        /* stable in PHP 8: the order in config/planner.php breaks the last tie */
+        usort($candidates, static fn (array $a, array $b): int => [$b['hits'], $b['longest'], $b['category']] <=> [$a['hits'], $a['longest'], $a['category']]);
+
+        return $candidates[0]['key'];
+    }
+
+    /**
+     * Does the text mention this word? Words of three letters or less ("wc",
+     * "bar") would otherwise match inside half the catalogue.
+     */
+    private function mentions(string $haystack, string $word): bool
+    {
+        if (mb_strlen($word) <= 3) {
+            return preg_match('/(?<![\p{L}\d])' . preg_quote($word, '/') . '(?![\p{L}\d])/u', $haystack) === 1;
+        }
+
+        return str_contains($haystack, $word);
+    }
+
+    /**
+     * The lines the chat rotates while the assistant is thinking. Varied on
+     * purpose: a visitor should never stare at one frozen sentence.
+     *
+     * @return array<int, string>
+     */
+    public function waitingMessages(string $locale = 'en'): array
+    {
+        $messages = [$this->t('thinking', $locale)];
+
+        for ($i = 1; $i <= 6; $i++) {
+            $key = 'wait_' . $i;
+            $value = $this->t($key, $locale);
+
+            if ($value !== 'planner.' . $key && $value !== '') {
+                $messages[] = $value;
+            }
+        }
+
+        return $messages;
+    }
+
+    /**
      * The picture of the finished room: optional, on demand, and the only step
      * in the whole flow that costs an image generation. The catalogue pictures
      * of the suggested items travel with the request, so the render matches the
@@ -645,7 +908,7 @@ class PlannerService
             return;
         }
 
-        $wall = $this->fit($key, $along, $out, $w, $l, $grid);
+        $wall = $this->fitsOnWall($key, $along, $out, $w, $l, $grid);
 
         if ($wall === null) {
             return;
@@ -675,7 +938,7 @@ class PlannerService
      *
      * @param array<string, array{start: int, end: int}> $grid
      */
-    private function fit(string $key, int $along, int $out, int $w, int $l, array $grid): ?string
+    private function fitsOnWall(string $key, int $along, int $out, int $w, int $l, array $grid): ?string
     {
         foreach (self::WALLS[$key] ?? ['back', 'left', 'right'] as $wall) {
             $roomDepth = $wall === 'back' ? $l : $w;

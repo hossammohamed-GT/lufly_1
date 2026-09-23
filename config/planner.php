@@ -110,8 +110,36 @@ return [
     /* the optional picture of the finished room */
     'render' => [
         'enabled' => (bool) env('PLANNER_RENDER', true),
+        /*
+         * Image generation is not something a free Google account can do today
+         * (every call comes back 429), so the plan shows a "coming soon" badge
+         * instead of a button that would only fail. The day a billed key is in
+         * AI_IMAGE_MODEL, PLANNER_RENDER_SOON=false brings the button back.
+         */
+        'soon' => (bool) env('PLANNER_RENDER_SOON', true),
         'daily_per_ip' => (int) env('PLANNER_RENDER_DAILY', 3),
         'references' => 2,
+    ],
+
+    /*
+     * "Does this piece fit the plan I just made?" — the one question the chat
+     * answers about a single product.
+     *
+     * The product travels as *text* (name, description, category): no images,
+     * no catalogue sweep, and the model sees the plan outline it already wrote.
+     * The verdict itself is computed here first; the AI only rephrases it.
+     */
+    'fit' => [
+        'enabled' => (bool) env('PLANNER_FIT', true),
+        'daily_per_ip' => (int) env('PLANNER_FIT_DAILY', 8),
+        'max_words' => 80,
+        /* how much of the product description may reach the model */
+        'text_chars' => 600,
+    ],
+
+    /* the chat that floats over every storefront page */
+    'chat' => [
+        'enabled' => (bool) env('PLANNER_CHAT', true),
     ],
 
     /* where a visitor's plan goes when they ask us to source the pieces */

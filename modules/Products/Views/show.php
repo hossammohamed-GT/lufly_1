@@ -64,6 +64,39 @@ $dims = [
 $hasDims = $dims['w'] > 0 && $dims['h'] > 0;
 $fmt = static fn (float $v): string => rtrim(rtrim(number_format($v, 0, '.', ''), '0'), '.');
 
+/*
+ * What the floating planner chat should know about this page.
+ *
+ * Text only, and very little of it: the product's own words plus its
+ * dimensions. No image and no catalogue ever travels with it — that is what
+ * makes "does this fit my bathroom?" cost almost nothing to answer.
+ */
+if (feature('planner', true) && (bool) config('planner.enabled', true)) {
+    $plannerText = trim((string) preg_replace(
+        '/\s+/u',
+        ' ',
+        strip_tags((string) ($product['short_description'] ?? $product['description'] ?? '')),
+    ));
+
+    if ($hasDims) {
+        $plannerText .= ($plannerText !== '' ? ' · ' : '')
+            . $fmt($dims['w']) . ' × ' . $fmt($dims['h'])
+            . ($dims['d'] > 0 ? ' × ' . $fmt($dims['d']) : '') . ' mm';
+    }
+
+    if ($modelCode !== '') {
+        $plannerText .= ($plannerText !== '' ? ' · ' : '') . 'Code ' . $modelCode;
+    }
+
+    $view->share(['plannerContext' => [
+        'id' => (int) ($product['id'] ?? 0),
+        'name' => (string) ($product['name'] ?? ''),
+        'text' => mb_substr($plannerText, 0, 600),
+        'category' => $categorySlug,
+        'url' => $productUrl,
+    ]]);
+}
+
 ?>
 <main class="pdp" id="main">
     <div class="pdp-inner">

@@ -82,7 +82,11 @@ in `ai_usage` (migration 19 / the patch file above).
 ```dotenv
 FEATURE_PLANNER=true
 PLANNER_AI=true                 # false = built-in wording, zero AI calls
+PLANNER_CHAT=true               # the chat floats in the corner of every page
+PLANNER_FIT=true                # "does this piece fit my plan?" on a product page
+PLANNER_FIT_DAILY=8
 FEATURE_PLANNER_RENDER=true     # the optional picture; needs AI_IMAGE_MODEL
+PLANNER_RENDER_SOON=true        # free quota: announce the picture as "coming soon"
 PLANNER_RENDER_DAILY=3
 PLANNER_HANDOFF_EMAIL=info@lufly.tr
 PLANNER_WHATSAPP=908503040817
@@ -92,12 +96,25 @@ PLANNER_HANDOFF_PHONE="+90 850 3040 817"
 - The plan, the item sizes and the drawing are computed locally — the drawing is
   an SVG, so nothing has to be generated on the server.
 - The only AI calls are the welcome sentence (a few hundred tokens, cached for
-  `PLANNER_CACHE_HOURS`) and the optional picture (capped per visitor per day).
+  `PLANNER_CACHE_HOURS`), the "does it fit?" answer (the visitor's own product,
+  as text, cached per product and room) and the optional picture (capped per
+  visitor per day). `PLANNER_AI=false` turns all of them off.
+- The chat floats over the storefront: the bubble opens the same conversation as
+  `/{locale}/planner` in a resizable panel. It is hidden on `/planner` itself and
+  steps aside while the saved-list mail sheet is open. Turning `PLANNER_CHAT=false`
+  keeps it on `/planner` only.
+- On a product page the plan adds one question — *does this piece fit?* — answered
+  from the product's **text** (name, description, category) compared with the
+  plan the visitor just made. No catalogue sweep, no images; the verdict is
+  computed in PHP and the assistant only rephrases it.
 - The hand-off e-mail goes to `PLANNER_HANDOFF_EMAIL` from the shop's address
-  with the visitor in `Reply-To`; WhatsApp opens `wa.me/<PLANNER_WHATSAPP>` with
-  the whole plan already typed in.
+  with the visitor in `Reply-To` (and, on a product page, the piece they were
+  looking at); WhatsApp opens `wa.me/<PLANNER_WHATSAPP>` with the whole plan
+  already typed in.
 - Test after deploying: open `/{locale}/planner`, answer the three questions,
-  check the drawing prints, then send a plan to yourself.
+  check the drawing prints, then send a plan to yourself. Then open any product
+  page, run the same three answers in the floating chat and tap *Check it against
+  my plan*.
 
 ## AI (Gemini key pool)
 
@@ -121,8 +138,10 @@ Notes that save a support ticket:
 
 - `ai:doctor --image` answering `429` for the picture while the text keys pass
   is a quota, not a broken key: the free tier does not always include image
-  generation. Leave `AI_IMAGE_MODEL=` empty to switch pictures off (the planner
-  then hides its button) or use an account with billing.
+  generation. Leave `AI_IMAGE_MODEL=` empty to switch pictures off, keep
+  `PLANNER_RENDER_SOON=true` (the default) so the plan promises the picture as
+  coming soon, or use an account with billing and set `PLANNER_RENDER_SOON=false`
+  to bring the live button back.
 - Comments at the end of a `.env` line are fine; the loader drops them. A value
   that still cannot be a model name is ignored, and `ai:doctor` prints the line.
 - Keys created in AI Studio today start with `AQ.` and are **only** accepted in

@@ -21,6 +21,10 @@ return function (Router $router): void {
         $router->localized('POST', 'planner.step', [PlannerController::class, 'step'])
             ->name('planner.step');
 
+        /* "does the piece I was looking at fit my plan?" (text only, no images) */
+        $router->localized('POST', 'planner.fit', [PlannerController::class, 'fit'])
+            ->name('planner.fit');
+
         /* the optional picture of the finished room */
         $router->localized('POST', 'planner.render', [PlannerController::class, 'render'])
             ->name('planner.render');

@@ -11,13 +11,18 @@
  * @var array<string, mixed> $plan
  * @var array<string, mixed> $answers
  * @var array<string, string> $handoff
- * @var bool $renderEnabled
+ * @var bool $renderEnabled   the picture button is live
+ * @var bool $renderSoon      the picture is announced but not offered yet
+ * @var array{name: string, hint: string}|null $fit   set on a product page
  * @var string $locale
  */
 $items = (array) ($plan['items'] ?? []);
 $room = (array) ($plan['room'] ?? []);
 $clearance = (int) ($plan['clearance'] ?? 0);
 $handoff = (array) ($handoff ?? []);
+$renderEnabled = (bool) ($renderEnabled ?? false);
+$renderSoon = (bool) ($renderSoon ?? false);
+$fit = is_array($fit ?? null) ? $fit : null;
 $fallbackImg = asset('/images/products/prod_146_1620-111-a.jpg');
 ?>
 <div class="planp" data-planner-plan>
@@ -116,7 +121,19 @@ $fallbackImg = asset('/images/products/prod_146_1620-111-a.jpg');
         </p>
     </section>
 
-    <?php if ($renderEnabled): ?>
+    <?php if ($renderSoon): ?>
+        <!-- the picture: promised, not offered. The free image quota is not
+             there yet (every call comes back 429), so the plan says "soon"
+             instead of showing a button that could only fail. -->
+        <section class="planp-render is-soon" data-planner-render-soon>
+            <h3 class="planp-h3">
+                <?= e(trans('planner.render_title')) ?>
+                <span class="planp-pill"><?= e(trans('planner.render_soon_pill')) ?></span>
+            </h3>
+            <p class="planp-note"><?= e(trans('planner.render_soon_hint')) ?></p>
+        </section>
+
+    <?php elseif ($renderEnabled): ?>
         <!-- the picture, only if the visitor asks for it -->
         <section class="planp-render" data-planner-render-block>
             <h3 class="planp-h3"><?= e(trans('planner.render_title')) ?></h3>
@@ -125,6 +142,21 @@ $fallbackImg = asset('/images/products/prod_146_1620-111-a.jpg');
                 <?= e(trans('planner.render_cta')) ?>
             </button>
             <div class="planp-render-out" data-planner-render-out hidden></div>
+        </section>
+    <?php endif; ?>
+
+    <?php if ($fit !== null): ?>
+        <!-- "does the piece I was looking at fit my plan?" — the question the
+             chat is asked on a product page, answered from the product's own
+             words: no catalogue sweep and not a single image -->
+        <section class="planp-fit" data-planner-fit-block>
+            <h3 class="planp-h3"><?= e(trans('planner.fit_title')) ?></h3>
+            <p class="planp-note"><?= e((string) $fit['hint']) ?></p>
+            <button type="button" class="planp-btn is-primary" data-planner-fit>
+                <?= e(trans('planner.fit_cta')) ?>
+            </button>
+            <p class="planp-fit-about"><?= e(trans('planner.fit_about', ['name' => (string) $fit['name']])) ?></p>
+            <div class="planp-fit-out" data-planner-fit-out hidden></div>
         </section>
     <?php endif; ?>
 

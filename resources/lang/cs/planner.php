@@ -87,7 +87,22 @@ return [
     'print' => 'Vytisknout plán',
     'scale' => 'Měřítko',
 
+
+    /* the floating chat: the bubble in the corner of every page */
+    'chat_open' => 'Naplánovat koupelnu',
+    'chat_open_hint' => '3 klepnutí · zdarma',
+    'chat_subtitle' => 'Tři krátké otázky, jeden plán',
+    'chat_close' => 'Zavřít chat',
+    'chat_grow' => 'Zvětšit okno',
+    'chat_resize' => 'Tažením změníte velikost okna',
+    'chat_about' => 'Dotaz na',
+    'chat_foot' => 'Zdarma · bez registrace',
+    'chat_full' => 'Otevřít celý plánovač',
+
     /* the picture */
+    /* the free image quota is not there yet: promised, not offered */
+    'render_soon_pill' => 'Již brzy',
+    'render_soon_hint' => 'Obrázek této koupelny s těmito konkrétními prvky je na cestě. Plán a kresba v měřítku jsou připravené k použití ještě dnes.',
     'render_cta' => 'Ukažte mi hotovou koupelnu',
     'render_hint' => 'Volitelné — trvá asi půl minuty a spotřebuje jeden obrázek z dnešního limitu.',
     'render_title' => 'Hotová koupelna',
@@ -95,6 +110,18 @@ return [
     'render_off' => 'Možnost obrázku je nyní vypnutá.',
     'render_limit' => 'Dnešní limit obrázků je vyčerpán — zkuste to prosím znovu zítra.',
     'render_failed' => 'Obrázek se tentokrát nepodařilo nakreslit. Plán je přesto kompletní a v bezpečí.',
+
+    /* "does it fit?" — answered from the product's own words, never a picture */
+    'fit_title' => 'Vešlo by se mi do koupelny?',
+    'fit_hint' => 'Jedno klepnutí: porovnáme tento výrobek s plánem výše. Bez fotografií — popis a rozměry stačí.',
+    'fit_cta' => 'Porovnat s mým plánem',
+    'fit_about' => 'Výrobek: :name',
+    'fit_wait' => 'Porovnáváme tento výrobek s vaším plánem…',
+    'fit_in_plan' => 'V plánu už máte :item na zdi :zone, doporučený rozměr :size. Tento výrobek zaujme stejné místo, pokud se do rozměru vejde; větší přesuneme na jinou stěnu.',
+    'fit_not_in_plan' => 'Váš plán pro :area m² :item neobsahuje — v místnosti zůstává jen to, co nechává dveře volné. I tak může nahradit některý z ostatních: pošlete nám jeho kód s plánem a tým jej zkontroluje proti výkresu.',
+    'fit_other' => 'Tento výrobek není součástí, na které je plán postaven, takže jej nemění. Pošlete nám jeho kód s plánem a tým jej zkontroluje proti vaší místnosti :w × :l cm.',
+    'fit_mail_line' => 'Zajímal se o: :name',
+    'err_fit' => 'Tento výrobek jsme teď nemohli zkontrolovat. Plán je i tak kompletní — pošlete ho našemu týmu a potvrdí vám to.',
 
     /* handoff */
     'handoff_title' => 'Sežeňte mi tyto díly',

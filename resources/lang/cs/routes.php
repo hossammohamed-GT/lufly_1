@@ -17,6 +17,7 @@ return [
     /* bathroom planner */
     'planner.index' => 'planovac-koupelny',
     'planner.step' => 'planovac-koupelny/krok',
+    'planner.fit' => 'planovac-koupelny/vejde-se',
     'planner.render' => 'planovac-koupelny/obrazek',
     'planner.send' => 'planovac-koupelny/odeslat',
 ];

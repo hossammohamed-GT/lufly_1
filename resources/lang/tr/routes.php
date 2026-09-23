@@ -17,6 +17,7 @@ return [
     /* bathroom planner */
     'planner.index' => 'banyo-planlayici',
     'planner.step' => 'banyo-planlayici/adim',
+    'planner.fit' => 'banyo-planlayici/uyar-mi',
     'planner.render' => 'banyo-planlayici/gorsel',
     'planner.send' => 'banyo-planlayici/gonder',
 ];

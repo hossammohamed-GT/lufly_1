@@ -17,6 +17,7 @@ return [
     /* bathroom planner */
     'planner.index' => 'planner',
     'planner.step' => 'planner/step',
+    'planner.fit' => 'planner/fit',
     'planner.render' => 'planner/picture',
     'planner.send' => 'planner/send',
 ];

@@ -346,6 +346,9 @@
     }
 
     prompt.hidden = false;
+    /* the planning chat floats in the same corner: it steps aside while this
+       sheet is on screen (frontend/planner/planner.css) */
+    if (document.body) document.body.classList.add('has-favmail');
     window.requestAnimationFrame(function () { prompt.classList.add('is-on'); });
 
     /* a keyboard popping up is helpful on a desktop, intrusive on a phone */
@@ -359,6 +362,7 @@
     if (!prompt) return;
     writePromptState(state || 'later');
     prompt.classList.remove('is-on');
+    if (document.body) document.body.classList.remove('has-favmail');
     window.setTimeout(function () { prompt.hidden = true; }, 260);
   }
 

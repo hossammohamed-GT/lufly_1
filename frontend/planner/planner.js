@@ -3,15 +3,22 @@
    --------------------------------------------------------------------------
    Three questions, three taps, one plan:
 
-     [data-planner]               the page: endpoints, waiting sentences and the
-                                  answers gathered so far live on it
+     [data-planner]               the root: endpoints, waiting sentences and the
+                                  answers gathered so far live on it. On /planner
+                                  it is the page; everywhere else it is the
+                                  floating chat (.aichat)
      [data-planner-answer]        one choice (size, wet area, look) — the button
                                   carries the field and the value it answers
      [data-planner-custom]        "my own size": two numbers and a submit
      [data-planner-thinking]      the line that rotates while the server works
      [data-planner-board-plan]    where the finished plan lands
+     [data-planner-fit]           "does this product fit my plan?" — answered
+                                  from the product's words, never its picture
      [data-planner-render]        the optional picture of the finished room
      [data-planner-send]          hand the plan to the LUFLY team by e-mail
+
+   The floating chat adds [data-aichat-*]: open/close, expand and drag-to-resize,
+   with the chosen size remembered in localStorage.
 
    Everything the browser sends is a tap the visitor made; the plan itself is
    always built (and cached) on the server.
@@ -29,6 +36,9 @@
   var boardEmpty = root.querySelector('[data-planner-board-empty]');
   var toast = root.querySelector('[data-planner-toast]');
   var trail = root.querySelectorAll('.planner-trail-step');
+  /* the same script drives the page and the floating chat */
+  var panel = root.querySelector('[data-aichat-panel]');
+  var isChat = !!panel;
   var token = (document.querySelector('meta[name="csrf-token"]') || {}).content || '';
   var busy = false;
   var waitTimer = null;
@@ -41,11 +51,37 @@
   var sentWaiting = root.getAttribute('data-planner-send-wait') || '';
   var customError = root.getAttribute('data-planner-custom-error') || '';
 
+  var fitWait = root.getAttribute('data-planner-fit-wait') || '';
+
   var waiting = [];
   try {
     waiting = JSON.parse(root.getAttribute('data-planner-waiting') || '[]') || [];
   } catch (error) {
     waiting = [];
+  }
+
+  /* the product this chat was opened on, as text: name, description, category.
+     It rides along with every answer so the plan can offer "does it fit?" —
+     and it is never an image. */
+  var context = null;
+  try {
+    context = JSON.parse(root.getAttribute('data-planner-context') || 'null') || null;
+  } catch (error) {
+    context = null;
+  }
+
+  if (!context || !context.name) context = null;
+
+  function contextFields() {
+    if (!context) return {};
+
+    return {
+      product_id: context.id || 0,
+      product_name: context.name || '',
+      product_text: context.text || '',
+      product_category: context.category || '',
+      product_url: context.url || ''
+    };
   }
 
   /* ---------- small helpers ---------- */
@@ -96,13 +132,26 @@
     toastTimer = window.setTimeout(function () { toast.classList.remove('is-on'); }, 5200);
   }
 
+  /* the newest bubble, always in view: the page scrolls, the panel scrolls */
   function scrollToBoard() {
     if (!boardPlan || !boardPlan.firstChild) return;
+
+    if (typeof boardPlan.scrollIntoView === 'function') {
+      boardPlan.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      return;
+    }
 
     var narrow = window.matchMedia && window.matchMedia('(max-width: 1000px)').matches;
     var top = boardPlan.getBoundingClientRect().top + window.pageYOffset - (narrow ? 16 : 90);
 
     window.scrollTo({ top: top, behavior: 'smooth' });
+  }
+
+  function scrollLog() {
+    if (!isChat) return;
+
+    var body = root.querySelector('[data-aichat-body]');
+    if (body) body.scrollTop = body.scrollHeight;
   }
 
   /* ---------- the waiting line: never the same sentence twice ---------- */
@@ -205,6 +254,9 @@
       l: state.l || ''
     };
 
+    var product = contextFields();
+    Object.keys(product).forEach(function (key) { body[key] = product[key]; });
+
     if (extra) {
       Object.keys(extra).forEach(function (key) { body[key] = extra[key]; });
     }
@@ -260,6 +312,8 @@
         questions.appendChild(botBubble(data.intro.text));
       }
 
+      if (data.html) scrollLog();
+
       if (data.plan_html && boardPlan) {
         boardPlan.innerHTML = data.plan_html;
         if (boardEmpty) boardEmpty.hidden = true;
@@ -286,6 +340,39 @@
         root.setAttribute('data-planner-answered', '');
         root.__plannerState = {};
         window.location.reload();
+      });
+    }
+
+    /* "does this product fit my plan?" — one small call, text only */
+    var fitButton = boardPlan.querySelector('[data-planner-fit]');
+    var fitOut = boardPlan.querySelector('[data-planner-fit-out]');
+    if (fitButton && fitOut) {
+      fitButton.addEventListener('click', function () {
+        if (fitButton.disabled) return;
+
+        fitButton.disabled = true;
+        fitButton.classList.add('is-busy');
+        fitOut.hidden = false;
+        fitOut.classList.add('is-loading');
+        fitOut.textContent = fitWait || '';
+        startWaiting();
+
+        post(root.getAttribute('data-planner-fit-endpoint'), payload({})).then(function (json) {
+          stopWaiting();
+          fitButton.disabled = false;
+          fitButton.classList.remove('is-busy');
+          fitOut.classList.remove('is-loading');
+
+          var data = json.data || {};
+
+          if (!json.success) {
+            fitOut.textContent = json.message || '';
+            return;
+          }
+
+          fitOut.textContent = data.text || '';
+          fitOut.classList.add('is-ready');
+        });
       });
     }
 
@@ -356,6 +443,145 @@
           state.textContent = json.message || '';
           state.classList.toggle('is-ok', !!json.success);
         });
+      });
+    }
+  }
+
+  /* ---------- the floating chat ---------- */
+
+  /*
+   * A bubble in the corner of every page. Tapping it opens the same chat as
+   * /planner in a panel that can be expanded or dragged to any size; the size
+   * the visitor chose is remembered, because a chat should not have to be
+   * resized twice.
+   */
+  if (isChat) {
+    var toggle = root.querySelector('[data-aichat-toggle]');
+    var closeButton = root.querySelector('[data-aichat-close]');
+    var growButton = root.querySelector('[data-aichat-grow]');
+    var grip = root.querySelector('[data-aichat-resize]');
+    var SIZE_KEY = 'lufly-chat-size';
+    var size = null;
+
+    function saveSize() {
+      if (!size) return;
+
+      try {
+        window.localStorage.setItem(SIZE_KEY, JSON.stringify(size));
+      } catch (error) { /* private mode */ }
+    }
+
+    function applySize() {
+      if (!size) return;
+
+      root.classList.toggle('is-wide', !!size.wide);
+
+      if (size.wide) {
+        panel.style.removeProperty('--aichat-w');
+        panel.style.removeProperty('--aichat-h');
+        return;
+      }
+
+      panel.style.setProperty('--aichat-w', size.w + 'px');
+      panel.style.setProperty('--aichat-h', size.h + 'px');
+    }
+
+    function rememberSize() {
+      try {
+        var stored = JSON.parse(window.localStorage.getItem(SIZE_KEY) || 'null');
+        if (stored && (stored.wide || (stored.w > 0 && stored.h > 0))) {
+          size = { w: stored.w || 0, h: stored.h || 0, wide: !!stored.wide };
+        }
+      } catch (error) {
+        size = null;
+      }
+    }
+
+    function openPanel(open) {
+      root.classList.toggle('is-open', open);
+      panel.hidden = !open;
+      if (toggle) toggle.setAttribute('aria-expanded', open ? 'true' : 'false');
+
+      if (!open) return;
+
+      applySize();
+      if (closeButton) closeButton.focus();
+      window.requestAnimationFrame(scrollLog);
+    }
+
+    rememberSize();
+    applySize();
+
+    if (toggle) {
+      toggle.addEventListener('click', function () {
+        openPanel(panel.hidden);
+      });
+    }
+
+    if (closeButton) {
+      closeButton.addEventListener('click', function () {
+        openPanel(false);
+        if (toggle) toggle.focus();
+      });
+    }
+
+    if (growButton) {
+      growButton.addEventListener('click', function () {
+        size = { w: (size && size.w) || 0, h: (size && size.h) || 0, wide: !(size && size.wide) };
+        applySize();
+        saveSize();
+        growButton.setAttribute('aria-pressed', size.wide ? 'true' : 'false');
+      });
+    }
+
+    document.addEventListener('keydown', function (event) {
+      if (event.key === 'Escape' && !panel.hidden) openPanel(false);
+    });
+
+    /* drag the top corner: the panel is anchored to the other one */
+    if (grip) {
+      grip.addEventListener('pointerdown', function (event) {
+        if (window.matchMedia && window.matchMedia('(max-width: 720px)').matches) return;
+        if (event.button !== undefined && event.button !== 0) return;
+
+        event.preventDefault();
+        grip.setPointerCapture(event.pointerId);
+
+        var rect = panel.getBoundingClientRect();
+        var rtl = window.getComputedStyle(panel).direction === 'rtl';
+        var dragging = true;
+
+        root.classList.add('is-resizing');
+        if (document.body) document.body.classList.add('is-chat-resizing');
+
+        function move(moveEvent) {
+          if (!dragging) return;
+
+          var w = rtl ? (moveEvent.clientX - rect.left) : (rect.right - moveEvent.clientX);
+          var h = rect.bottom - moveEvent.clientY;
+
+          size = {
+            w: Math.round(Math.max(320, Math.min(w, window.innerWidth - 32))),
+            h: Math.round(Math.max(360, Math.min(h, window.innerHeight - 110))),
+            wide: false
+          };
+
+          applySize();
+        }
+
+        function stop() {
+          dragging = false;
+          grip.removeEventListener('pointermove', move);
+          grip.removeEventListener('pointerup', stop);
+          grip.removeEventListener('pointercancel', stop);
+          root.classList.remove('is-resizing');
+          if (document.body) document.body.classList.remove('is-chat-resizing');
+          saveSize();
+        }
+
+        grip.addEventListener('pointermove', move);
+        grip.addEventListener('pointerup', stop);
+        grip.addEventListener('pointercancel', stop);
       });
     }
   }

@@ -87,7 +87,22 @@ return [
     'print' => 'Print the plan',
     'scale' => 'Scale',
 
+
+    /* the floating chat: the bubble in the corner of every page */
+    'chat_open' => 'Plan my bathroom',
+    'chat_open_hint' => '3 taps · free',
+    'chat_subtitle' => 'Three quick questions, one plan',
+    'chat_close' => 'Close the chat',
+    'chat_grow' => 'Make the window bigger',
+    'chat_resize' => 'Drag to resize the window',
+    'chat_about' => 'Asking about',
+    'chat_foot' => 'Free · no account needed',
+    'chat_full' => 'Open the full planner',
+
     /* the picture */
+    /* the free image quota is not there yet: promised, not offered */
+    'render_soon_pill' => 'Coming soon',
+    'render_soon_hint' => 'A picture of this bathroom with these exact pieces is on its way. The plan and the scaled drawing above are ready to use today.',
     'render_cta' => 'Show me the finished bathroom',
     'render_hint' => 'Optional — takes about half a minute and uses one picture from today\'s allowance.',
     'render_title' => 'The finished bathroom',
@@ -95,6 +110,18 @@ return [
     'render_off' => 'The picture option is switched off right now.',
     'render_limit' => 'Today\'s picture allowance is used up — please try again tomorrow.',
     'render_failed' => 'The picture could not be drawn this time. Your plan is safe and complete anyway.',
+
+    /* "does it fit?" — answered from the product's own words, never a picture */
+    'fit_title' => 'Does it fit my bathroom?',
+    'fit_hint' => 'One tap: we compare this piece with the plan above. No photos involved — the description and the sizes are enough.',
+    'fit_cta' => 'Check it against my plan',
+    'fit_about' => 'About: :name',
+    'fit_wait' => 'Comparing this piece with your plan…',
+    'fit_in_plan' => 'Your plan already has a :item on the :zone, recommended size :size. This piece takes that same spot while it stays within that size; anything bigger and we would move it to another wall instead.',
+    'fit_not_in_plan' => 'Your :area m² plan does not include a :item — the room keeps only what leaves the door free. This piece could still replace one of the others: send its code with the plan and our team checks it against the drawing.',
+    'fit_other' => 'This piece is not one of the fittings your plan builds on, so it does not change it. Send its code with the plan and our team checks it against your :w × :l cm room.',
+    'fit_mail_line' => 'Looking at: :name',
+    'err_fit' => 'We could not check this piece just now. Your plan is complete anyway — send it to our team and they will confirm.',
 
     /* handoff */
     'handoff_title' => 'Source these for me',

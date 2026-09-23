@@ -423,6 +423,7 @@
 
 .planner-board {
   min-height: 320px;
+  scroll-margin-top: 96px;
 }
 
 .planner-board-empty {
@@ -900,6 +901,443 @@
   text-anchor: end;
 }
 
+/* ---------- the picture: promised, not offered (free quota) ---------- */
+
+.planp-pill {
+  display: inline-block;
+  margin-inline-start: 8px;
+  padding: 4px 10px;
+  border: 1px solid var(--ds-primary-line);
+  border-radius: var(--radius-full);
+  background: var(--ds-primary-soft);
+  color: var(--ds-primary);
+  font-size: 10.5px;
+  font-weight: 600;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  vertical-align: middle;
+}
+
+.planp-render.is-soon .planp-note {
+  max-width: 60ch;
+}
+
+/* ---------- "does it fit my bathroom?" ---------- */
+
+.planp-fit {
+  display: grid;
+  gap: var(--space-3);
+  justify-items: start;
+  padding: var(--space-5);
+  border: 1px solid var(--ds-primary-line);
+  border-radius: var(--radius-lg);
+  background:
+    radial-gradient(120% 100% at 0% 0%, var(--ds-primary-tint), transparent 62%),
+    var(--ds-surface-alt);
+}
+
+.planp-fit .planp-note {
+  max-width: 62ch;
+}
+
+.planp-fit-about {
+  margin: 0;
+  font-size: 13px;
+  color: var(--ds-text-muted);
+}
+
+.planp-fit-about strong {
+  color: var(--ds-text);
+  font-weight: 600;
+}
+
+.planp-fit-out {
+  margin: 0;
+  padding: var(--space-4) var(--space-5);
+  border: 1px solid var(--ds-border);
+  border-radius: var(--radius-lg);
+  border-top-left-radius: var(--radius-xs);
+  background: var(--ds-surface);
+  font-size: 15px;
+  line-height: 1.65;
+  white-space: pre-line;
+}
+
+.planp-fit-out.is-loading {
+  color: var(--ds-text-muted);
+}
+
+/* ==========================================================================
+   the floating chat — the planner in the corner of every page
+   --------------------------------------------------------------------------
+   A bubble opens the same conversation as /planner inside a panel that can be
+   expanded or dragged to any size, remembered per browser.
+   ========================================================================== */
+
+.aichat {
+  --aichat-w: 396px;
+  --aichat-h: min(620px, calc(100vh - 148px));
+}
+
+.aichat-fab {
+  position: fixed;
+  inset-block-end: 24px;
+  inset-inline-end: 24px;
+  z-index: 92;
+  display: inline-flex;
+  align-items: center;
+  gap: 12px;
+  padding: 8px 20px 8px 10px;
+  border: 1px solid var(--ds-border);
+  border-radius: var(--radius-full);
+  background: var(--ds-glass-bg-strong);
+  backdrop-filter: var(--ds-glass-blur);
+  color: var(--ds-text);
+  box-shadow: var(--shadow-2);
+  cursor: pointer;
+  transition: transform 240ms cubic-bezier(0.16, 1, 0.3, 1), box-shadow 240ms ease, border-color 200ms ease, opacity 200ms ease;
+}
+
+.aichat-fab:hover {
+  transform: translateY(-2px);
+  border-color: var(--ds-primary-line);
+  box-shadow: var(--shadow-3, var(--shadow-2));
+}
+
+.aichat-fab:focus-visible {
+  outline: 2px solid var(--ds-primary);
+  outline-offset: 3px;
+}
+
+.aichat-fab-icon {
+  display: grid;
+  place-items: center;
+  flex: 0 0 auto;
+  width: 38px;
+  height: 38px;
+  border-radius: var(--radius-full);
+  background: var(--ds-primary);
+  color: var(--ds-primary-text);
+}
+
+.aichat-fab-icon svg {
+  width: 20px;
+  height: 20px;
+}
+
+.aichat-fab-text {
+  display: grid;
+  text-align: start;
+  line-height: 1.25;
+}
+
+.aichat-fab-text strong {
+  font-size: 14px;
+  font-weight: 600;
+  letter-spacing: -0.01em;
+}
+
+.aichat-fab-text em {
+  font-size: 11.5px;
+  font-style: normal;
+  color: var(--ds-text-muted);
+}
+
+.aichat-fab-dot {
+  flex: 0 0 auto;
+  width: 8px;
+  height: 8px;
+  border-radius: var(--radius-full);
+  background: var(--ds-success);
+  animation: aichat-ping 2.8s ease-out infinite;
+}
+
+@keyframes aichat-ping {
+  0%, 62%, 100% { box-shadow: 0 0 0 0 transparent; opacity: 1; }
+  22% { box-shadow: 0 0 0 6px color-mix(in srgb, var(--ds-success) 22%, transparent); }
+}
+
+.aichat.is-open .aichat-fab {
+  border-color: var(--ds-primary-line);
+}
+
+/* the "mail it to me" sheet lives in the same corner: give it the floor */
+body.has-favmail .aichat-fab {
+  opacity: 0;
+  pointer-events: none;
+  transform: translateY(10px);
+}
+
+.aichat-panel {
+  position: fixed;
+  inset-block-end: 92px;
+  inset-inline-end: 24px;
+  z-index: 94;
+  display: flex;
+  flex-direction: column;
+  width: var(--aichat-w);
+  max-width: calc(100vw - 40px);
+  height: var(--aichat-h);
+  max-height: calc(100vh - 124px);
+  border: 1px solid var(--ds-border);
+  border-radius: var(--radius-xl);
+  background: var(--ds-surface);
+  box-shadow: var(--shadow-3, var(--shadow-2));
+  overflow: hidden;
+  animation: aichat-in 260ms cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
+.aichat-panel[hidden] {
+  display: none;
+}
+
+@keyframes aichat-in {
+  from { opacity: 0; transform: translateY(14px) scale(0.985); }
+  to { opacity: 1; transform: none; }
+}
+
+.aichat.is-wide .aichat-panel {
+  width: min(1020px, calc(100vw - 48px));
+  height: min(720px, calc(100vh - 124px));
+}
+
+.aichat.is-resizing .aichat-panel {
+  animation: none;
+  transition: none;
+}
+
+body.is-chat-resizing {
+  cursor: nwse-resize;
+}
+
+.aichat-grip {
+  position: absolute;
+  inset-block-start: 6px;
+  inset-inline-start: 6px;
+  z-index: 2;
+  width: 26px;
+  height: 26px;
+  border-start-start-radius: var(--radius-lg);
+  cursor: nwse-resize;
+  opacity: 0.5;
+  transition: opacity 200ms ease;
+}
+
+.aichat-grip::before {
+  content: '';
+  position: absolute;
+  inset-block-start: 9px;
+  inset-inline-start: 9px;
+  width: 10px;
+  height: 10px;
+  border-block-start: 1.5px solid var(--ds-text-muted);
+  border-inline-start: 1.5px solid var(--ds-text-muted);
+  border-start-start-radius: 4px;
+}
+
+.aichat-grip:hover {
+  opacity: 1;
+}
+
+.aichat-head {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  padding: 12px 12px 12px 44px;
+  border-block-end: 1px solid var(--ds-border);
+  background: var(--ds-glass-bg-strong);
+  backdrop-filter: var(--ds-glass-blur);
+}
+
+.aichat-mark {
+  display: grid;
+  place-items: center;
+  flex: 0 0 auto;
+  width: 34px;
+  height: 34px;
+  border-radius: var(--radius-full);
+  background: var(--ds-primary-soft);
+  color: var(--ds-primary);
+}
+
+.aichat-mark svg {
+  width: 18px;
+  height: 18px;
+}
+
+.aichat-head-text {
+  display: grid;
+  flex: 1;
+  min-width: 0;
+  line-height: 1.25;
+}
+
+.aichat-head-text strong {
+  font-size: 14px;
+  font-weight: 600;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.aichat-head-text em {
+  font-size: 11.5px;
+  font-style: normal;
+  color: var(--ds-text-muted);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.aichat-icon-btn {
+  display: grid;
+  place-items: center;
+  flex: 0 0 auto;
+  width: 32px;
+  height: 32px;
+  border: 1px solid transparent;
+  border-radius: var(--radius-md, 12px);
+  background: transparent;
+  color: var(--ds-text-muted);
+  cursor: pointer;
+  transition: color 180ms ease, border-color 180ms ease, background-color 180ms ease;
+}
+
+.aichat-icon-btn svg {
+  width: 16px;
+  height: 16px;
+}
+
+.aichat-icon-btn:hover {
+  border-color: var(--ds-border);
+  background: var(--ds-surface-alt);
+  color: var(--ds-text);
+}
+
+.aichat-icon-btn:focus-visible {
+  outline: 2px solid var(--ds-primary);
+  outline-offset: 1px;
+}
+
+.aichat-about {
+  display: flex;
+  align-items: baseline;
+  gap: 8px;
+  margin: 0;
+  padding: 9px var(--space-5);
+  border-block-end: 1px solid var(--ds-border);
+  background: var(--ds-primary-tint);
+  font-size: 12.5px;
+  color: var(--ds-text-muted);
+}
+
+.aichat-about-label {
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  font-size: 10.5px;
+}
+
+.aichat-about strong {
+  color: var(--ds-text);
+  font-weight: 600;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.aichat-body {
+  flex: 1;
+  min-height: 0;
+  padding: var(--space-5);
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  scrollbar-width: thin;
+}
+
+.aichat .planner-grid.is-chat {
+  grid-template-columns: minmax(0, 1fr);
+  gap: var(--space-5);
+}
+
+.aichat.is-wide .planner-grid.is-chat {
+  grid-template-columns: minmax(0, 400px) minmax(0, 1fr);
+  align-items: start;
+}
+
+/* inside the panel the chat is the panel, not a card of its own */
+.aichat .planner-chat {
+  position: static;
+  padding: 0;
+  border: 0;
+  border-radius: 0;
+  background: none;
+  box-shadow: none;
+}
+
+.aichat .planner-log {
+  max-height: none;
+  overflow: visible;
+}
+
+.aichat .planner-board {
+  min-height: 0;
+}
+
+.aichat .planner-board-empty {
+  padding: var(--space-10) var(--space-5);
+  border-radius: var(--radius-lg);
+}
+
+.aichat .planner-board-icon svg {
+  width: 34px;
+  height: 34px;
+}
+
+.aichat .planp {
+  gap: var(--space-5);
+  padding: var(--space-5);
+  border-radius: var(--radius-lg);
+  box-shadow: none;
+}
+
+.aichat .planp-facts {
+  grid-template-columns: minmax(0, 1fr);
+}
+
+.aichat .planp-handoff-actions {
+  grid-template-columns: minmax(0, 1fr);
+}
+
+.aichat .plan-svg {
+  max-width: 100%;
+}
+
+.aichat .planner-toast {
+  z-index: 96;
+}
+
+.aichat-foot {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-3);
+  padding: 10px var(--space-5);
+  border-block-start: 1px solid var(--ds-border);
+  background: var(--ds-surface-alt);
+  font-size: 11.5px;
+  color: var(--ds-text-muted);
+}
+
+.aichat-foot-link {
+  color: var(--ds-primary);
+  text-decoration: none;
+  white-space: nowrap;
+}
+
+.aichat-foot-link:hover {
+  text-decoration: underline;
+}
+
 /* ---------- wider phones hold two columns ---------- */
 
 @media (max-width: 1000px) {
@@ -914,6 +1352,57 @@
   .planner-hero {
     grid-template-columns: minmax(0, 1fr);
     align-items: start;
+  }
+}
+
+/* ---------- phones: the chat takes the screen ---------- */
+
+@media (max-width: 720px) {
+  .aichat-fab {
+    inset-block-end: 18px;
+    inset-inline-end: 18px;
+    gap: 0;
+    padding: 8px;
+  }
+
+  .aichat-fab-text,
+  .aichat-fab-dot {
+    display: none;
+  }
+
+  .aichat-panel,
+  .aichat.is-wide .aichat-panel {
+    inset: 0;
+    inset-block-end: 0;
+    inset-inline-end: 0;
+    width: 100%;
+    height: 100%;
+    max-width: none;
+    max-height: none;
+    border: 0;
+    border-radius: 0;
+  }
+
+  .aichat-grip {
+    display: none;
+  }
+
+  .aichat-head {
+    padding-inline-start: var(--space-4);
+    padding-block-start: max(12px, env(safe-area-inset-top));
+  }
+
+  .aichat .planner-grid.is-chat,
+  .aichat.is-wide .planner-grid.is-chat {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .aichat-body {
+    padding: var(--space-4);
+  }
+
+  .aichat-foot {
+    padding-block-end: max(10px, env(safe-area-inset-bottom));
   }
 }
 
@@ -960,9 +1449,38 @@
   .planner-board-empty,
   .planp-render,
   .planp-handoff,
+  .planp-fit,
   .planp-restart,
-  .favbtn {
+  .favbtn,
+  .aichat-fab,
+  .aichat-head,
+  .aichat-foot,
+  .aichat-grip {
     display: none !important;
+  }
+
+  /* a closed panel has nothing to print */
+  .aichat-panel[hidden] {
+    display: none !important;
+  }
+
+  /* printing from the floating chat prints the plan, not the panel */
+  .aichat,
+  .aichat-panel,
+  .aichat-body {
+    position: static !important;
+    display: block !important;
+    width: 100% !important;
+    height: auto !important;
+    max-height: none !important;
+    border: 0 !important;
+    box-shadow: none !important;
+    overflow: visible !important;
+    animation: none !important;
+  }
+
+  .aichat .planner-grid.is-chat {
+    display: block;
   }
 
   .planner,

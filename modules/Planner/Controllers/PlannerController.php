@@ -20,6 +20,7 @@ use Modules\Planner\Services\PlannerService;
  *
  * GET  /{locale}/planner          the chat
  * POST /{locale}/planner/step     one answer: size, wet area or look
+ * POST /{locale}/planner/fit      "does the product I was looking at fit?"
  * POST /{locale}/planner/picture  the optional picture of the finished room
  * POST /{locale}/planner/send     hand the plan to the LUFLY team
  *
@@ -52,9 +53,10 @@ class PlannerController extends Controller
             'title' => trans('planner.title'),
             'locale' => $locale,
             'answers' => $this->planner->answers([]),
-            'waiting' => $this->waitingMessages(),
+            'waiting' => $this->planner->waitingMessages($locale),
             'endpoints' => [
                 'step' => route('planner.step'),
+                'fit' => route('planner.fit'),
                 'render' => route('planner.render'),
                 'send' => route('planner.send'),
             ],
@@ -93,7 +95,7 @@ class PlannerController extends Controller
             'step' => $next,
             'echo' => $this->echoLine($step, $answers, $locale),
             'html' => $next === 'plan' ? '' : $this->question($next, $answers, $locale, $this->progress($answered, $next)),
-            'waiting' => $this->waitingMessages(),
+            'waiting' => $this->planner->waitingMessages($locale),
             'progress' => $this->progress($answered, $next),
             'plan_html' => '',
         ];
@@ -102,12 +104,50 @@ class PlannerController extends Controller
             $plan = $this->planner->plan($answers, $locale);
             $intro = $this->planner->intro($answers, $plan, $locale);
 
-            $data['plan_html'] = $this->fragment('planner::partials.plan', $this->planData($plan, $locale));
+            $data['plan_html'] = $this->fragment(
+                'planner::partials.plan',
+                $this->planData($plan, $locale, $this->contextFrom($request)),
+            );
             $data['intro'] = $intro;
             $data['plan_text'] = (string) $plan['plan_text'];
         }
 
         return ApiResponse::success($data);
+    }
+
+    /**
+     * "Does the piece I was looking at fit my plan?" — the floating chat asks
+     * this on a product page.
+     *
+     * The product arrives as text (name, description, category), so the model
+     * is never handed an image and never has to read the catalogue. Nothing is
+     * stored: the same request answers the same question from the cache.
+     */
+    public function fit(Request $request): JsonResponse
+    {
+        $locale = $this->translator->getLocale();
+        $context = $this->contextFrom($request);
+
+        if ($context === null) {
+            return ApiResponse::error(trans('planner.err_fit'), [], 422);
+        }
+
+        $answers = $this->planner->answers($request->all());
+        $plan = $this->planner->plan($answers, $locale);
+        $result = $this->planner->fit($plan, $context, $locale);
+        $text = trim((string) ($result['text'] ?? ''));
+
+        if ($text === '') {
+            return ApiResponse::error(trans('planner.err_fit'), [], 503);
+        }
+
+        return ApiResponse::success([
+            'text' => $text,
+            'source' => (string) ($result['source'] ?? 'local'),
+            'product' => $context['name'],
+            'fit' => (string) ($result['fit'] ?? ''),
+            'state' => (string) ($result['state'] ?? ''),
+        ]);
     }
 
     /** The optional picture: one image generation, only when asked for. */
@@ -156,6 +196,18 @@ class PlannerController extends Controller
             'email' => $email,
             'plan' => (string) $plan['plan_text'],
         ]);
+
+        /* the chat on a product page is asked "does this fit?" — support should
+           know which piece the visitor meant, in words they can search for */
+        $context = $this->contextFrom($request);
+
+        if ($context !== null) {
+            $looking = $context['url'] !== ''
+                ? $context['name'] . ' — ' . $context['url']
+                : $context['name'];
+
+            $body .= "\n\n" . trans('planner.fit_mail_line', ['name' => $looking]);
+        }
 
         try {
             $sent = $this->mail->send(
@@ -241,44 +293,85 @@ class PlannerController extends Controller
     }
 
     /**
+     * Everything the plan fragment needs. `renderSoon` is what the free Google
+     * accounts can do today: the picture is announced, not offered.
+     *
      * @param array<string, mixed> $plan
+     * @param array{id: int, name: string, text: string, category: string, url: string}|null $context
      * @return array<string, mixed>
      */
-    private function planData(array $plan, string $locale): array
+    private function planData(array $plan, string $locale, ?array $context = null): array
     {
         $answers = (array) $plan['answers'];
+        $renderOn = (bool) feature('render', true)
+            && (bool) config('planner.render.enabled', true)
+            && trim((string) config('ai.image_model', '')) !== '';
 
         return [
             'plan' => $plan,
             'answers' => $answers,
             'handoff' => $this->planner->handoff($plan, $locale),
-            'renderEnabled' => (bool) feature('render', true)
-                && (bool) config('planner.render.enabled', true)
-                && trim((string) config('ai.image_model', '')) !== '',
+            'renderEnabled' => $renderOn && !(bool) config('planner.render.soon', true),
+            'renderSoon' => $renderOn && (bool) config('planner.render.soon', true),
+            'fit' => $this->fitSection($context),
             'locale' => $locale,
         ];
     }
 
     /**
-     * The lines the chat rotates while the assistant is thinking. Varied on
-     * purpose: a visitor should never stare at one frozen sentence.
+     * The "does it fit?" block: only when the chat was opened on a product page
+     * and only while the feature is on. Everything it shows is text.
      *
-     * @return array<int, string>
+     * @param array{id: int, name: string, text: string, category: string, url: string}|null $context
+     * @return array{name: string, hint: string}|null
      */
-    private function waitingMessages(): array
+    private function fitSection(?array $context): ?array
     {
-        $messages = [trans('planner.thinking')];
-
-        for ($i = 1; $i <= 6; $i++) {
-            $key = 'planner.wait_' . $i;
-            $value = trans($key);
-
-            if ($value !== $key && $value !== '') {
-                $messages[] = $value;
-            }
+        if ($context === null || !(bool) config('planner.fit.enabled', true)) {
+            return null;
         }
 
-        return $messages;
+        return [
+            'name' => (string) $context['name'],
+            'hint' => (string) trans('planner.fit_hint'),
+        ];
+    }
+
+    /**
+     * The product the visitor was looking at, as *text*: name, description,
+     * category, link. Pictures never travel with it — a few hundred characters
+     * answer the question, an image neither adds an answer nor survives the
+     * cost of sending the catalogue.
+     *
+     * @return array{id: int, name: string, text: string, category: string, url: string}|null
+     */
+    private function contextFrom(Request $request): ?array
+    {
+        $name = $this->cleanText($request->input('product_name', ''), 120);
+
+        /* no product on this page (the chat also floats over every other page) */
+        if ($name === '') {
+            return null;
+        }
+
+        return [
+            'id' => max(0, (int) $request->input('product_id', 0)),
+            'name' => $name,
+            'text' => $this->cleanText(
+                $request->input('product_text', ''),
+                (int) config('planner.fit.text_chars', 600),
+            ),
+            'category' => $this->cleanText($request->input('product_category', ''), 60),
+            'url' => $this->cleanText($request->input('product_url', ''), 300),
+        ];
+    }
+
+    /** One line of product text, safe to hand to a model and to echo back. */
+    private function cleanText(mixed $value, int $limit): string
+    {
+        $value = (string) preg_replace('/\s+/u', ' ', strip_tags((string) $value)) ?? '';
+
+        return mb_substr(trim($value), 0, max(1, $limit));
     }
 
     /**
