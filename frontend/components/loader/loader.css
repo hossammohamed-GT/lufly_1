@@ -17,7 +17,12 @@ body.ld-loading {
 }
 
 body.ready {
-  overflow: auto;
+  /* the design system clips horizontal overflow globally; a bare
+     `overflow: auto` here undid that for the whole site once the loader
+     exited (any too-wide element then scrolled the page sideways) */
+  overflow-y: auto;
+  overflow-x: clip;
+  overflow-x: hidden; /* fallback for browsers without `clip` */
 }
 
 /* Last-resort safety net, pure CSS so it works even if the script dies.

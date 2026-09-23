@@ -12,9 +12,12 @@
   if (!root) return;
 
   var AUTOPLAY_MS = 6500;
+  var HERO_PHONE_QUERY = '(max-width: 760px)';
   var reduceMotion = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-  var isMobile = window.matchMedia && window.matchMedia('(max-width: 760px)').matches;
   var finePointer = window.matchMedia && window.matchMedia('(pointer: fine)').matches;
+  var phoneQuery = window.matchMedia ? window.matchMedia(HERO_PHONE_QUERY) : null;
+  var portraitQuery = window.matchMedia ? window.matchMedia('(orientation: portrait)') : null;
+  var isMobile = phoneQuery ? phoneQuery.matches : false;
 
   root.style.setProperty('--lfc-dur', AUTOPLAY_MS + 'ms');
   if (reduceMotion) root.classList.add('lfc-reduced');
@@ -32,34 +35,179 @@
   /* ---- Exact first-screen height (pixel-precise) ----
      The CSS calc() approximation can leave a few-px strip of the next
      section visible below the hero (sub-pixel navbar/borders, scrollbar
-     quirks). Measure once here: the hero is whatever space is left in the
-     viewport below its own top edge. Re-measured on resize. */
+     quirks). Measure here instead: the hero is whatever space is left in
+     the viewport below its own top edge.
+
+     Three rules keep that measurement honest - without them the hero grows
+     without bound on phones, and every extra pixel of height zooms the
+     `cover` background further:
+
+       1. `top` is read in DOCUMENT space (rect.top + scrollY). Reading the
+          raw client rect made the hero grow by the scroll offset every time
+          the browser fired `resize` - which mobile browsers do on almost
+          every scroll, when the URL bar slides away.
+       2. the viewport height is the SMALL viewport (`svh`, measured through
+          a probe element). `window.innerHeight` changes when the URL bar
+          hides, so the hero used to grow ~100px mid-scroll for no reason.
+       3. the result is clamped: never taller than the space that is really
+          left, never taller than the copy needs, and on portrait phones
+          never taller than ~1.35x the screen width (past that the landscape
+          artwork is cropped into an unreadable close-up).
+     Everything below re-measures on resize, rotation, breakpoint change and
+     whenever the chrome above the hero (announcement bar, navbar) changes
+     height. */
+
+  var probe = document.createElement('div');
+  probe.setAttribute('aria-hidden', 'true');
+  probe.style.cssText = 'position:absolute;top:0;left:-9999px;width:0;height:100svh;visibility:hidden;pointer-events:none;';
+  (document.body || document.documentElement).appendChild(probe);
+
+  /* 100svh = the viewport with the browser toolbars showing: it does not
+     jump when they slide away.
+
+     Browsers without svh (old iOS) report 0, so the fallback remembers the
+     SMALLEST window.innerHeight seen so far - which is the value measured
+     with the toolbars visible, i.e. the same thing svh gives us. */
+  var smallestViewport = Infinity;
+
+  function viewportHeight() {
+    var small = probe.offsetHeight || probe.getBoundingClientRect().height || 0;
+    if (small > 0) {
+      return small;
+    }
+
+    var current = window.innerHeight;
+    if (current > 0 && current < smallestViewport) {
+      smallestViewport = current;
+    }
+
+    return Math.min(smallestViewport, current);
+  }
+
+  /* Top of the hero in document space: immune to scrolling. */
+  function heroTop() {
+    var rect = root.getBoundingClientRect();
+    var scroll = window.pageYOffset || document.documentElement.scrollTop || 0;
+    return Math.max(0, rect.top + scroll);
+  }
+
+  /* What the tallest slide needs to render without clipping a CTA. Every
+     panel is measured, not just the visible one: the height must hold for
+     all of them, otherwise switching slides would make the hero jump. */
+  function contentHeight() {
+    var needed = 0;
+
+    for (var i = 0; i < panels.length; i++) {
+      var inner = panels[i].querySelector('.lfc-inner');
+      if (!inner) continue;
+      var cs = window.getComputedStyle(panels[i]);
+      var pad = (parseFloat(cs.paddingTop) || 0) + (parseFloat(cs.paddingBottom) || 0);
+      needed = Math.max(needed, inner.offsetHeight + pad);
+    }
+
+    return Math.round(needed);
+  }
+
+  var fittedHeight = 0;
+
   function fitToScreen() {
-    var top = root.getBoundingClientRect().top;
-    var space = window.innerHeight - top;
+    isMobile = phoneQuery ? phoneQuery.matches : false;
+
+    var space = Math.round(viewportHeight() - heroTop());
+    if (space < 200) return; /* hidden tab, print view, ... */
+
+    var portraitPhone = isMobile && (!portraitQuery || portraitQuery.matches);
     /* On phones a full-viewport hero feels endless - settle at 80% so the
        first content below starts to greet the eye instead. */
-    var h = Math.round(isMobile ? space * 0.8 : space);
-    if (h >= 320) root.style.height = h + 'px';
+    var target = portraitPhone ? Math.round(space * 0.8) : space;
+
+    /* never clip the copy ... */
+    var needed = contentHeight();
+    if (needed > 0 && needed > target) target = Math.min(space, Math.max(target, needed));
+
+    /* ... and never crop the artwork into a close-up */
+    if (portraitPhone) {
+      var width = window.innerWidth || space;
+      var artworkCap = Math.round(Math.max(width * 1.35, needed, 320));
+      if (target > artworkCap) target = artworkCap;
+    }
+
+    target = Math.max(200, Math.min(target, space));
+
+    if (Math.abs(target - fittedHeight) < 1) return; /* nothing to do */
+    fittedHeight = target;
+    root.style.height = target + 'px';
   }
+
+  var fitFrame = null;
+  function scheduleFit() {
+    if (fitFrame !== null) return;
+    var run = function () {
+      fitFrame = null;
+      fitToScreen();
+    };
+    fitFrame = window.requestAnimationFrame ? window.requestAnimationFrame(run) : setTimeout(run, 16);
+  }
+
   fitToScreen();
-  window.addEventListener('resize', fitToScreen, { passive: true });
-  window.addEventListener('orientationchange', fitToScreen, { passive: true });
+
+  window.addEventListener('resize', scheduleFit, { passive: true });
+  window.addEventListener('orientationchange', function () {
+    scheduleFit();
+    setTimeout(scheduleFit, 260); /* the UA settles its chrome afterwards */
+  }, { passive: true });
+  window.addEventListener('load', scheduleFit, { passive: true });
+
+  if (window.visualViewport) {
+    window.visualViewport.addEventListener('resize', scheduleFit, { passive: true });
+  }
+  if (phoneQuery && phoneQuery.addEventListener) {
+    phoneQuery.addEventListener('change', function () { scheduleFit(); applyBackgrounds(false); });
+  }
+  if (portraitQuery && portraitQuery.addEventListener) {
+    portraitQuery.addEventListener('change', scheduleFit);
+  }
+  if (document.fonts && document.fonts.ready && typeof document.fonts.ready.then === 'function') {
+    document.fonts.ready.then(scheduleFit);
+  }
+
+  /* The announcement bar and the navbar are the only things above the hero.
+     When either changes height (message dismissed, bar removed, custom
+     property swapped) the hero re-fits immediately instead of waiting for a
+     resize that may never come. */
+  if (window.ResizeObserver) {
+    var chromeObserver = new ResizeObserver(scheduleFit);
+    ['.lufly-announcements', '.mnav'].forEach(function (selector) {
+      var node = document.querySelector(selector);
+      if (node) chromeObserver.observe(node);
+    });
+  }
 
   /* ---- Theme-aware responsive backgrounds ----
      Dark theme keeps the original cinematic shots; light theme swaps in the
-     dedicated high-key variants (data-img-light[-m]). Watching data-theme
-     on <html> makes hero photos follow the switcher instantly. */
+     dedicated high-key variants. Three shapes per theme:
+
+       -p   portrait phones   4:3.55 crop - the artwork is framed for the tall
+                              box instead of being zoomed into a close-up
+       -m   small landscape   tablet / narrow window crop
+       ""   desktop           full landscape frame
+
+     data-theme on <html> is watched, so the photos follow the switcher
+     instantly, and the phone breakpoint is watched too, so rotating the
+     device swaps artwork instead of waiting for a reload. */
   function themeIsLight() {
     return document.documentElement.getAttribute('data-theme') === 'light';
   }
+
+  function portraitPhone() {
+    return isMobile && (!portraitQuery || portraitQuery.matches);
+  }
+
   function sceneUrl(sc) {
     var light = themeIsLight();
-    if (isMobile) {
-      return sc.getAttribute(light ? 'data-img-light-m' : 'data-img-m')
-          || sc.getAttribute(light ? 'data-img-light' : 'data-img');
-    }
-    return sc.getAttribute(light ? 'data-img-light' : 'data-img');
+    var suffix = portraitPhone() ? '-p' : (isMobile ? '-m' : '');
+    return sc.getAttribute('data-img' + (light ? '-light' : '') + suffix)
+        || sc.getAttribute(light ? 'data-img-light' : 'data-img');
   }
   function applyBackgrounds(lazyOthers) {
     scenes.forEach(function (sc, idx) {
@@ -77,16 +225,20 @@
   }
   applyBackgrounds(true);
 
-  /* Re-apply instantly when the theme flips. */
+  /* React instantly to <html> changes: the theme flips the artwork, and
+     dismissing the announcement bar clears --luann-h - which moves the hero
+     up the page, so its height has to be re-measured right away. */
   if (window.MutationObserver) {
     new MutationObserver(function (muts) {
       for (var i = 0; i < muts.length; i++) {
-        if (muts[i].attributeName === 'data-theme') {
+        var attr = muts[i].attributeName;
+        if (attr === 'data-theme') {
           applyBackgrounds(false);
-          break;
+        } else if (attr === 'class') {
+          scheduleFit();
         }
       }
-    }).observe(document.documentElement, { attributes: true, attributeFilter: ['data-theme'] });
+    }).observe(document.documentElement, { attributes: true, attributeFilter: ['data-theme', 'class'] });
   }
 
   /* Lazy-load subsequent backgrounds on idle */
@@ -213,6 +365,22 @@
       }
     }
   }
+
+  /* Small hook used by the responsive lab (tools/frontend_audit) and handy
+     when debugging a live page: read what the hero measured, or force a
+     re-fit after changing the page by hand. */
+  window.LUFLYHero = {
+    refit: function () {
+      fittedHeight = 0;
+      fitToScreen();
+      return fittedHeight;
+    },
+    height: function () { return Math.round(root.getBoundingClientRect().height); },
+    top: heroTop,
+    viewport: viewportHeight,
+    needed: contentHeight,
+    index: function () { return cur; }
+  };
 
   go(0);
 })();

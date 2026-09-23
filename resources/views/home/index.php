@@ -9,7 +9,12 @@ $component = static fn (string $name, array $data = []): string => $view->render
 <?= $component('hero-cinema') ?>
 <?= $component('trust-bar') ?>
 <?= $component('finishes') ?>
-<?= $component('categories') ?>
+<?php
+/* The mosaic is data driven: without this hand-off the component sees no
+   categories and returns early, which silently dropped the whole
+   "Architectural Suites" band from the home page. */
+?>
+<?= $component('categories', ['categories' => $categories ?? []]) ?>
 <?= $component('inspiration') ?>
 <?= $component('rituals') ?>
 <?= $component('masterpieces', ['featuredProducts' => $featuredProducts]) ?>

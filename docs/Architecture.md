@@ -87,6 +87,64 @@ is referenced from a view** — there is no build step and no unused-asset folde
 Home page = 8 sections rendered in order by `resources/views/home/index.php`:
 `hero-cinema · trust-bar · finishes · categories · inspiration · rituals · masterpieces · corporate`
 
+Each component renders whatever it can from the data it is handed **and returns
+early when a list is empty** — so a section that needs controller data has to
+receive it at the call site:
+
+```php
+<?= $component('categories', ['categories' => $categories ?? []]) ?>
+```
+
+Without the hand-off the band disappears silently (that is how the category
+mosaic went missing); with `APP_DEBUG=true` the component leaves a
+`<!-- home.categories: no categories passed -->` comment instead.
+
+## The home hero (one screen, always)
+
+`frontend/home/hero-cinema/hero-cinema.js` sizes the hero so the headline fits the
+first screen at every breakpoint. When touching it, keep these invariants:
+
+- **Measure in document space.** `rect.top + scrollY`, never the raw client rect:
+  a client rect goes negative while scrolling and re-fitting then grows the hero
+  by the scroll offset (each resize event = one more jump).
+- **Never trust `window.innerHeight`.** It grows when mobile browsers hide their
+  toolbars, so a mid-scroll resize inflates the hero (and the `cover` artwork zoom
+  with it). Read the `100svh` probe instead; the fallback remembers the smallest
+  `innerHeight` seen so far.
+- **Clamp the result**: to the space the first screen actually leaves
+  (`viewport − announcements − nav − gap`), to the height the copy needs, to the
+  landscape ceiling, and - on portrait phones - to a portrait artwork cap
+  (`1.35 × width`), so a tall crop is never blown up into a close-up. Blur
+  (WebKit `filter`) also needs a taller minimum than a flat colour: that is the
+  `max(1.5 × width, …)` term.
+- **Debounce with `requestAnimationFrame`** and re-fit on `resize`,
+  `orientationchange`, `visualViewport`, `fonts.ready`, breakpoint/orientation
+  media queries, and `<html>` attribute changes (the announcement bar resizes
+  `--luann-h`; the theme flips the artwork).
+
+Artwork: `heroc-<n>{,-m,-p}.webp` (dark) and `heroc-<n>-light{,-m,-p}.jpg` (light),
+where `""` is desktop landscape, `-m` is a ≤760px landscape phone and `-p` is a
+≤760px portrait phone crop. All 30 files must exist - the URL is chosen at runtime
+from the viewport and the theme, so a missing file is an invisible broken image.
+`hero-cinema.php` preloads the variant that matches the current orientation via
+`media` queries.
+
+Verify changes without a browser:
+
+```bash
+node tools/frontend_audit/hero_fit_test.mjs              # 9 simulated devices, exit 1 on regression
+node tools/frontend_audit/hero_fit_test.mjs --legacy-viewport
+node tools/frontend_audit/hero_report.mjs                # storage/reports/hero-fit.html
+node tools/frontend_audit/css_audit.mjs                  # cascade/layout sweep
+```
+
+Other home-page invariants worth keeping: the announcement bar exposes its height
+as `--luann-h` and every sticky/oversized element subtracts it; the mobile
+rail/drawer use `100dvh` (not `100vh`, which ends under the browser toolbar);
+`body.ready` must not re-enable horizontal scrolling (`overflow-y: auto` only);
+and `content-visibility: auto` sections need a `contain-intrinsic-size` close to
+their real height, otherwise the document grows section by section while scrolling.
+
 ## Database access
 
 - `Core\Database\DatabaseManager` → `Connection` (PDO, driver chosen by `DB_CONNECTION`: `mysql` | `sqlite`).

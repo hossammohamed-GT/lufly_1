@@ -12,10 +12,13 @@
   --lfc-dur: 6500ms;
 
   /* Fill the first screen exactly: small viewport minus the announcement bar
-     (--luann-h) and the navbar slab (--mnav-row1). Pure CSS - no JS measuring. */
+     (--luann-h) and the navbar slab (--mnav-row1). Pure CSS fallback - the
+     script then measures the same space and pins the height in px. */
   height: calc(100vh - var(--luann-h, 0px) - var(--mnav-row1, 64px));
   height: calc(100svh - var(--luann-h, 0px) - var(--mnav-row1, 64px));
-  min-height: 480px;  overflow: hidden;
+  min-height: 480px;
+  min-height: min(480px, 78svh);
+  overflow: hidden;
   background: var(--lu-ink-900, #2c2b28);
   color: var(--lfc-ink);
   font-family: var(--font-body, "Inter", "Segoe UI", system-ui, sans-serif);
@@ -25,10 +28,21 @@
 
 /* Phone: the JS measures precisely, but default to a shorter hero so there
    is no full-viewport flash before the script runs. */
+/* Landscape phones: the hero takes the whole first screen (the copy is short
+   there - the max-height rule at the bottom hides the sub line), so the
+   pre-script height must not be the portrait 80%. */
+@media (max-width: 760px) and (orientation: landscape) {
+  .lfc { height: calc(100svh - var(--luann-h, 0px)); }
+}
+
 @media (max-width: 760px) {
   .lfc {
     height: calc(80svh - var(--luann-h, 0px));
+    /* never taller than the screen it has to fit - a fixed 420px floor made
+       the hero taller than the viewport (and the photo hugely zoomed) on
+       landscape phones */
     min-height: 420px;
+    min-height: min(420px, 66svh);
   }
 }
 
@@ -44,6 +58,7 @@
 
 .lfc-scene {
   position: absolute;
+  /* the bleed hides the parallax edges */
   inset: -3.5%;
   background-size: cover;
   background-position: center;
@@ -63,6 +78,13 @@
 @keyframes lfcKb2 { from { transform: scale(1.11) translate3d(0, 0, 0); }     to { transform: scale(1.03) translate3d(0.8%, 0.6%, 0); } }
 @keyframes lfcKb3 { from { transform: scale(1.07) translate3d(-1.2%, 0, 0); } to { transform: scale(1.07) translate3d(1.2%, 0.4%, 0); } }
 @keyframes lfcKb4 { from { transform: scale(1.02) translate3d(0.5%, 0.8%, 0); } to { transform: scale(1.10) translate3d(-0.5%, -0.5%, 0); } }
+
+/* Cap the bleed on browsers that can do it: an uncapped percentage turns
+   into hundreds of px on a tall hero, and the extra box scales the cover
+   artwork (and its crop) right up with it. */
+@supports (inset: min(1px, 2px)) {
+  .lfc-scene { inset: calc(min(3.5%, 44px) * -1); }
+}
 
 /* ---------- 2. shade & atmosphere ---------- */
 
@@ -311,6 +333,20 @@
 .lfc-reduced .lfc-grain { animation: none !important; }
 .lfc-reduced .lfc-panel.is-on * { animation-duration: 0.01s !important; animation-delay: 0s !important; }
 
+/* Phone: the box is portrait while the artwork is landscape, so `cover`
+   already crops hard. Keep the drift, drop the extra zoom. */
+@media (max-width: 760px) {
+  .lfc-scene.is-on.kb1 { animation-name: lfcKbM1; }
+  .lfc-scene.is-on.kb2 { animation-name: lfcKbM2; }
+  .lfc-scene.is-on.kb3 { animation-name: lfcKbM3; }
+  .lfc-scene.is-on.kb4 { animation-name: lfcKbM4; }
+}
+
+@keyframes lfcKbM1 { from { transform: scale(1.005) translate3d(0, 0, 0); }      to { transform: scale(1.035) translate3d(-1%, -0.7%, 0); } }
+@keyframes lfcKbM2 { from { transform: scale(1.035) translate3d(0, 0, 0); }      to { transform: scale(1.005) translate3d(0.8%, 0.6%, 0); } }
+@keyframes lfcKbM3 { from { transform: scale(1.02) translate3d(-1.2%, 0, 0); }   to { transform: scale(1.02) translate3d(1.2%, 0.4%, 0); } }
+@keyframes lfcKbM4 { from { transform: scale(1.005) translate3d(0.5%, 0.8%, 0); } to { transform: scale(1.03) translate3d(-0.5%, -0.5%, 0); } }
+
 @media (max-width: 760px) {
   .lfc-progress { display: none; }
   .lfc-arrows { inset-inline-end: 14px; bottom: 16px; }
@@ -346,8 +382,31 @@
   .lfc-grain { background-size: 32px 32px; }
 }
 
+/* Compact screens: a 568px-tall phone cannot hold the desktop rhythm, so the
+   panel tightens (smaller gaps and buttons, smaller logo) instead of pushing
+   the CTAs out of the hero. Declared after the phone block on purpose - it has
+   to win over it. */
+@media (max-height: 700px) {
+  .lfc-panel { padding-top: 16px; padding-bottom: 72px; }
+  .lfc-kicker { margin-bottom: 12px; }
+  .lfc-title { font-size: clamp(28px, min(9vw, 7vh), 44px); }
+  .lfc-rule { margin: 12px 0 10px; }
+  .lfc-sub { font-size: 13px; line-height: 1.6; }
+  .lfc-ctas { margin-top: 18px; gap: 10px; }
+  .lfc-cta { padding: 11px 20px; }
+  .lfc-logoBox { width: min(300px, 52vw); margin-bottom: 14px; }
+  .lfc-tag { margin-bottom: 12px; }
+}
+
+/* Very short (landscape phones): drop the paragraph and the strapline so the
+   two CTAs always stay visible inside the first screen. */
+@media (max-height: 640px) {
+  .lfc-sub { display: none; }
+}
+
 /* short screens (landscape phones, small laptops) stay on one screen */
 @media (max-height: 560px) {
+  .lfc { min-height: 200px; }
   .lfc-panel { padding-top: 10px; padding-bottom: 66px; }
   .lfc-title { font-size: clamp(26px, 7.5vh, 40px); }
   .lfc-kicker { margin-bottom: 10px; }

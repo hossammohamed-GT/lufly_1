@@ -15,6 +15,13 @@ $view->pushStyle('frontend/home/categories/categories.css');
 $items = array_slice(is_array($categories ?? null) ? $categories : [], 0, 5);
 
 if ($items === []) {
+    /* Nothing to show only when the catalogue really has no active category -
+       index.php hands the list over; a missing hand-off is a bug, and the
+       debug line makes that obvious instead of rendering a silent gap. */
+    if (config('app.debug', false)) {
+        echo '<!-- home.categories: no categories passed to the component -->';
+    }
+
     return;
 }
 
