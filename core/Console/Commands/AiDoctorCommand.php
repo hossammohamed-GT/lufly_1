@@ -46,7 +46,7 @@ final class AiDoctorCommand extends Command
         $this->line('');
 
         if ($client->keyCount() === 0) {
-            $this->error('No keys found. Add AI_KEY_1 … AI_KEY_5 (or AI_KEYS=…) to .env and run `php cli config:clear` if the app caches config.');
+            $this->error('No keys found. Add AI_KEY_1 … AI_KEY_5 (or AI_KEYS=…) to .env — the file is read on every request, nothing to clear.');
 
             return 1;
         }
