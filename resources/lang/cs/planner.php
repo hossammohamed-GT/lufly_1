@@ -144,4 +144,12 @@ return [
     'err_custom' => 'Napište prosím šířku a hloubku mezi 100 a 600 cm.',
     'err_email' => 'Zadejte prosím platnou e-mailovou adresu.',
     'err_send' => 'Zprávu se teď nepodařilo odeslat. Použijte WhatsApp nebo to zkuste za chvíli znovu.',
+
+    /* the promise: the planner is not open yet */
+    'soon_pill' => 'Již brzy',
+    'soon_title' => 'Plánovač koupelny je na cestě',
+    'soon_text' => 'Zadáte rozměr místnosti a máte celý plán: co instalovat, v jaké velikosti, na kterou stěnu, a výkres pro instalatéra.',
+    'soon_note' => 'Stále na něm pracujeme, proto ještě není otevřený. Zbytek je připraven: popište výrobek ve vyhledávači a hned ho porovnáme s naším katalogem.',
+    'soon_waiting' => 'Plán a výkres v měřítku se tu objeví, jakmile se plánovač otevře.',
+    'soon_finder' => 'Zatím najít výrobek',
 ];

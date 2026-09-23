@@ -20,4 +20,7 @@ return [
     'planner.fit' => 'planovac-koupelny/vejde-se',
     'planner.render' => 'planovac-koupelny/obrazek',
     'planner.send' => 'planovac-koupelny/odeslat',
+
+    /* vyhledávač výrobků */
+    'assistant.ask' => 'asistent/najdi',
 ];

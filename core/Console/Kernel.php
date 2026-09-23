@@ -22,6 +22,7 @@ class Kernel
         'key:generate' => Commands\KeyGenerateCommand::class,
         'backup:db' => Commands\BackupDbCommand::class,
         'ai:doctor' => Commands\AiDoctorCommand::class,
+        'assistant:find' => Commands\AssistantFindCommand::class,
         'list' => Commands\ListCommand::class,
     ];
 

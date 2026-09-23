@@ -20,4 +20,7 @@ return [
     'planner.fit' => 'banyo-planlayici/uyar-mi',
     'planner.render' => 'banyo-planlayici/gorsel',
     'planner.send' => 'banyo-planlayici/gonder',
+
+    /* ürün bulucu */
+    'assistant.ask' => 'asistan/ara',
 ];

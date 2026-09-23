@@ -144,4 +144,12 @@ return [
     'err_custom' => 'Lütfen 100 ile 600 cm arasında bir genişlik ve derinlik yazın.',
     'err_email' => 'Lütfen geçerli bir e-posta adresi girin.',
     'err_send' => 'Mesaj şu anda gönderilemedi. WhatsApp\'ı kullanın ya da birazdan tekrar deneyin.',
+
+    /* the promise: the planner is not open yet */
+    'soon_pill' => 'Çok yakında',
+    'soon_title' => 'Banyo planlayıcı yolda',
+    'soon_text' => 'Oda ölçüsünü girin, plan hazır olsun: ne kurulacak, hangi ölçüde, hangi duvara, ve tesisatçınıza verebileceğiniz bir çizim.',
+    'soon_note' => 'Hâlâ üzerinde çalışıyoruz, bu yüzden henüz açık değil. Gerisi hazır: ihtiyacınız olan parçayı ürün bulucuda anlatın, hemen kataloğumuzla eşleştirelim.',
+    'soon_waiting' => 'Planlayıcı açıldığında plan ve ölçekli çizim burada görünecek.',
+    'soon_finder' => 'Bu arada bir ürün bulun',
 ];

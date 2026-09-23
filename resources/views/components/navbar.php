@@ -42,7 +42,10 @@ $isActive = static function (string $target) use ($currentPath, $currentQuery): 
 /* Saved-products list: the badge shows how many products this visitor saved.
    Without the cookie the service answers 0 without touching the database. */
 $favoritesOn = feature('favorites', true) && class_exists(\Modules\Favorites\Services\FavoriteService::class);
-$plannerOn = feature('planner', true) && class_exists(\Modules\Planner\Services\PlannerService::class);
+/* the planner only gets a place in the menu once it is actually open */
+$plannerOn = feature('planner', true)
+    && !(bool) config('planner.coming_soon', true)
+    && class_exists(\Modules\Planner\Services\PlannerService::class);
 $savedCount = 0;
 if ($favoritesOn) {
     $savedCount = app(\Modules\Favorites\Services\FavoriteService::class)->count();

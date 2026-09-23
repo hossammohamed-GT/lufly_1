@@ -11,6 +11,7 @@ return [
         'Products',
         'Favorites',
         'Planner',
+        'Assistant',
         'Media',
         'Settings',
         'SEO',

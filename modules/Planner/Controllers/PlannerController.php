@@ -45,6 +45,20 @@ class PlannerController extends Controller
     {
         $locale = $this->translator->getLocale();
 
+        /* promised, not delivered yet: the page says so and points at the finder */
+        if ((bool) config('planner.coming_soon', true)) {
+            $this->seo->setTitle(trans('planner.soon_title'));
+            $this->seo->setDescription(trans('planner.soon_text'));
+            $this->seo->setCanonical(route('planner.index'));
+
+            return $this->view('planner::soon', [
+                'title' => trans('planner.soon_title'),
+                'locale' => $locale,
+                /* ?chat=1 opens the finder panel the moment the page loads */
+                'finderUrl' => route('products.index', ['chat' => 1]),
+            ]);
+        }
+
         $this->seo->setTitle(trans('planner.title'));
         $this->seo->setDescription(trans('planner.meta_description'));
         $this->seo->setCanonical(route('planner.index'));

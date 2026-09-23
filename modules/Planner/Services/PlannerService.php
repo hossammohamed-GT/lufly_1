@@ -739,16 +739,17 @@ class PlannerService
         ];
     }
 
+    /** The product page a plan card links to, built by the router. */
     private function productUrl(array $product, string $locale): string
     {
-        $slug = rawurlencode((string) ($product['slug'] ?? ''));
-        $segments = config('app.locales.routes.' . $locale . '.products');
+        /* the router is the one place that knows both the translated segment
+           (`produkty`, `urunler`, …) and the folder the shop sits in — and the
+           planner is always rendered in the request's own locale */
+        unset($locale);
 
-        if (is_string($segments) && $segments !== '') {
-            return rtrim($segments, '/') . '/' . $slug;
-        }
+        $slug = (string) ($product['slug'] ?? '');
 
-        return ($locale === 'en' ? 'en/products/' : $locale . '/urunler/') . $slug;
+        return $slug !== '' ? route('products.show', ['slug' => $slug]) : '';
     }
 
     /** The first catalogue pictures, handed to the image model as references. */

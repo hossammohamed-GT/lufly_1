@@ -142,6 +142,16 @@ return [
         'enabled' => (bool) env('PLANNER_CHAT', true),
     ],
 
+    /*
+     * The planner is not offered yet: the chat's second tab says "coming soon"
+     * and /planner answers with the same promise instead of the flow.
+     *
+     * Nothing is deleted — the whole flow, the drawing and the picture are
+     * still here and still tested, and PLANNER_COMING_SOON=false puts the page
+     * back exactly as it was.
+     */
+    'coming_soon' => (bool) env('PLANNER_COMING_SOON', true),
+
     /* where a visitor's plan goes when they ask us to source the pieces */
     'handoff' => [
         'email' => (string) env('PLANNER_HANDOFF_EMAIL', 'info@lufly.tr'),

@@ -1,0 +1,628 @@
+/* ==========================================================================
+   the finder — what the floating chat adds to the shared shell
+   --------------------------------------------------------------------------
+   The shell itself (bubble, panel, head, grip, foot) lives in
+   frontend/planner/planner.css and is loaded next to this file: it is the same
+   window the planner uses. Everything below belongs to the finder alone — the
+   two tabs, the chips, the bubbles, the bank of product cards, the photo picker
+   and the promise of the planner.
+   ========================================================================== */
+
+/* the panel is a column of its own: header, tabs, body, compose, foot */
+.aichat[data-assistant] .aichat-panel {
+  --aichat-w: 412px;
+  --aichat-h: min(640px, calc(100vh - 148px));
+}
+
+/* ---------- the two tabs ---------- */
+
+.aichat-tabs {
+  display: flex;
+  align-items: stretch;
+  gap: var(--space-1, 4px);
+  padding: 8px 12px 0;
+  border-block-end: 1px solid var(--ds-border);
+  background: var(--ds-surface);
+}
+
+.aichat-tab {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 10px 12px 12px;
+  border: 0;
+  border-block-end: 2px solid transparent;
+  background: transparent;
+  color: var(--ds-text-muted);
+  font: inherit;
+  font-size: 12.5px;
+  font-weight: 600;
+  letter-spacing: 0.01em;
+  cursor: pointer;
+  transition: color 160ms ease, border-color 160ms ease;
+}
+
+.aichat-tab:hover {
+  color: var(--ds-text);
+}
+
+.aichat-tab.is-active {
+  border-block-end-color: var(--ds-primary);
+  color: var(--ds-text);
+}
+
+.aichat-tab:focus-visible {
+  outline: 2px solid var(--ds-primary);
+  outline-offset: -2px;
+  border-radius: var(--radius-sm, 8px);
+}
+
+.aichat-tab-badge {
+  padding: 2px 6px;
+  border-radius: var(--radius-full);
+  background: var(--ds-primary-soft);
+  color: var(--ds-primary);
+  font-size: 9.5px;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+
+.aichat-pane[hidden] {
+  display: none;
+}
+
+.aichat-pane {
+  display: block;
+}
+
+/* ---------- the welcome: one sentence, then chips ---------- */
+
+.aichat-welcome[hidden] {
+  display: none;
+}
+
+.aichat-hello {
+  margin: 0 0 var(--space-4, 16px);
+  font-size: 13.5px;
+  line-height: 1.6;
+  color: var(--ds-text-muted);
+}
+
+.aichat-chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-bottom: var(--space-4, 16px);
+}
+
+.aichat-chip {
+  padding: 8px 12px;
+  border: 1px solid var(--ds-border);
+  border-radius: var(--radius-full);
+  background: var(--ds-surface-alt);
+  color: var(--ds-text);
+  font: inherit;
+  font-size: 12px;
+  text-align: start;
+  cursor: pointer;
+  transition: border-color 160ms ease, transform 160ms ease, background 160ms ease;
+}
+
+.aichat-chip:hover {
+  border-color: var(--ds-primary-line);
+  transform: translateY(-1px);
+}
+
+.aichat-chip.is-strong {
+  border-color: var(--ds-primary-line);
+  background: var(--ds-primary-soft);
+  color: var(--ds-primary);
+  font-weight: 600;
+}
+
+/* ---------- the address, asked once ---------- */
+
+.aichat-gate[hidden] {
+  display: none;
+}
+
+.aichat-gate {
+  display: grid;
+  gap: 8px;
+  padding: var(--space-4, 16px);
+  border: 1px solid var(--ds-primary-line);
+  border-radius: var(--radius-lg);
+  background: var(--ds-primary-soft);
+}
+
+.aichat-gate-label {
+  font-size: 11.5px;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: var(--ds-primary);
+}
+
+.aichat-gate-row {
+  display: flex;
+  gap: 8px;
+}
+
+.aichat-gate-row input {
+  flex: 1;
+  min-width: 0;
+  padding: 10px 12px;
+  border: 1px solid var(--ds-border);
+  border-radius: var(--radius-md, 12px);
+  background: var(--ds-surface);
+  color: var(--ds-text);
+  font: inherit;
+  font-size: 13.5px;
+}
+
+.aichat-gate-go {
+  padding: 10px 16px;
+  border: 0;
+  border-radius: var(--radius-md, 12px);
+  background: var(--ds-primary);
+  color: #fff;
+  font: inherit;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.aichat-gate-skip {
+  justify-self: start;
+  padding: 0;
+  border: 0;
+  background: none;
+  color: var(--ds-text-muted);
+  font: inherit;
+  font-size: 11.5px;
+  text-decoration: underline;
+  cursor: pointer;
+}
+
+/* ---------- the conversation ---------- */
+
+.aichat-log-list {
+  display: grid;
+  gap: var(--space-4, 16px);
+}
+
+.aichat-say {
+  display: grid;
+  gap: 10px;
+  max-width: 100%;
+}
+
+.aichat-say p {
+  margin: 0;
+  font-size: 13.5px;
+  line-height: 1.62;
+  white-space: pre-line;
+}
+
+.aichat-say.is-me {
+  justify-items: end;
+}
+
+.aichat-say.is-me p {
+  max-width: 88%;
+  padding: 10px 14px;
+  border-radius: var(--radius-lg) var(--radius-lg) 4px var(--radius-lg);
+  background: var(--ds-primary);
+  color: #fff;
+}
+
+.aichat-say.is-bot p {
+  color: var(--ds-text);
+}
+
+.aichat-say.is-waiting p {
+  color: var(--ds-text-muted);
+  animation: aichat-breathe 2.6s ease-in-out infinite;
+}
+
+@keyframes aichat-breathe {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.55; }
+}
+
+.aichat-say-shot {
+  display: block;
+  max-width: 62%;
+}
+
+.aichat-say-shot img {
+  display: block;
+  width: 100%;
+  height: auto;
+  border-radius: var(--radius-md, 12px);
+  border: 1px solid var(--ds-border);
+}
+
+/* ---------- the bank: the closest pieces ---------- */
+
+.aichat-bank {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 10px;
+}
+
+.aichat-card {
+  display: grid;
+  grid-template-rows: auto 1fr;
+  border: 1px solid var(--ds-border);
+  border-radius: var(--radius-lg);
+  background: var(--ds-surface);
+  overflow: hidden;
+  text-decoration: none;
+  color: inherit;
+  transition: border-color 180ms ease, transform 180ms ease, box-shadow 180ms ease;
+}
+
+.aichat-card:hover {
+  border-color: var(--ds-primary-line);
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-2);
+}
+
+.aichat-card-media {
+  display: block;
+  aspect-ratio: 4 / 3;
+  background: var(--ds-surface-alt);
+  overflow: hidden;
+}
+
+.aichat-card-media img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+}
+
+.aichat-card-body {
+  display: grid;
+  gap: 3px;
+  padding: 9px 10px 11px;
+}
+
+.aichat-card-name {
+  font-size: 12px;
+  font-weight: 600;
+  line-height: 1.4;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.aichat-card-code {
+  font-size: 10.5px;
+  font-style: normal;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  color: var(--ds-text-muted);
+}
+
+.aichat-card-size {
+  font-size: 10.5px;
+  color: var(--ds-text-muted);
+}
+
+/* ---------- notes and the way to the team ---------- */
+
+.aichat-note {
+  margin: 0;
+  padding: 9px 12px;
+  border-inline-start: 2px solid var(--ds-primary-line);
+  background: var(--ds-surface-alt);
+  border-radius: 0 var(--radius-md, 12px) var(--radius-md, 12px) 0;
+  font-size: 12px;
+  line-height: 1.55;
+  color: var(--ds-text-muted);
+}
+
+.aichat-links {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.aichat-link {
+  padding: 7px 11px;
+  border: 1px solid var(--ds-border);
+  border-radius: var(--radius-full);
+  background: var(--ds-surface);
+  color: var(--ds-text);
+  font-size: 11.5px;
+  font-weight: 600;
+  text-decoration: none;
+  transition: border-color 160ms ease, color 160ms ease;
+}
+
+.aichat-link:hover {
+  border-color: var(--ds-primary-line);
+  color: var(--ds-primary);
+}
+
+/* ---------- composing ---------- */
+
+.aichat-compose[hidden] {
+  display: none;
+}
+
+.aichat-compose {
+  display: flex;
+  align-items: flex-end;
+  gap: 8px;
+  padding: 10px var(--space-5) 12px;
+  border-block-start: 1px solid var(--ds-border);
+  background: var(--ds-surface);
+}
+
+.aichat-field {
+  position: relative;
+  flex: 1;
+  min-width: 0;
+  display: grid;
+  gap: 8px;
+}
+
+.aichat-attach {
+  display: grid;
+  place-items: center;
+  flex: 0 0 auto;
+  width: 38px;
+  height: 38px;
+  border: 1px solid var(--ds-border);
+  border-radius: var(--radius-md, 12px);
+  background: var(--ds-surface-alt);
+  color: var(--ds-text-muted);
+  cursor: pointer;
+  transition: border-color 160ms ease, color 160ms ease;
+}
+
+.aichat-attach:hover {
+  border-color: var(--ds-primary-line);
+  color: var(--ds-primary);
+}
+
+.aichat-attach svg {
+  width: 18px;
+  height: 18px;
+}
+
+.aichat-attach input {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  opacity: 0;
+  pointer-events: none;
+}
+
+.aichat-shot {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 6px 8px;
+  border: 1px solid var(--ds-border);
+  border-radius: var(--radius-md, 12px);
+  background: var(--ds-surface-alt);
+}
+
+.aichat-shot[hidden] {
+  display: none;
+}
+
+.aichat-shot img {
+  width: 34px;
+  height: 34px;
+  object-fit: cover;
+  border-radius: var(--radius-sm, 8px);
+}
+
+.aichat-shot-name {
+  flex: 1;
+  min-width: 0;
+  font-size: 11.5px;
+  color: var(--ds-text-muted);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.aichat-shot-x {
+  display: grid;
+  place-items: center;
+  width: 22px;
+  height: 22px;
+  border: 0;
+  border-radius: var(--radius-full);
+  background: transparent;
+  color: var(--ds-text-muted);
+  cursor: pointer;
+}
+
+.aichat-shot-x svg {
+  width: 12px;
+  height: 12px;
+}
+
+.aichat-input {
+  width: 100%;
+  min-height: 38px;
+  max-height: 132px;
+  padding: 9px 12px;
+  border: 1px solid var(--ds-border);
+  border-radius: var(--radius-md, 12px);
+  background: var(--ds-surface-alt);
+  color: var(--ds-text);
+  font: inherit;
+  font-size: 13.5px;
+  line-height: 1.5;
+  resize: none;
+  field-sizing: content;
+}
+
+.aichat-input:focus {
+  outline: none;
+  border-color: var(--ds-primary-line);
+  background: var(--ds-surface);
+}
+
+.aichat-send {
+  display: grid;
+  place-items: center;
+  flex: 0 0 auto;
+  width: 38px;
+  height: 38px;
+  border: 0;
+  border-radius: var(--radius-md, 12px);
+  background: var(--ds-primary);
+  color: #fff;
+  cursor: pointer;
+  transition: transform 160ms ease, opacity 160ms ease;
+}
+
+.aichat-send:hover {
+  transform: translateY(-1px);
+}
+
+.aichat-send:disabled {
+  opacity: 0.55;
+  cursor: progress;
+}
+
+.aichat-send svg {
+  width: 18px;
+  height: 18px;
+}
+
+/* ---------- the planner tab: a promise, not a form ---------- */
+
+.aichat-soon {
+  display: grid;
+  gap: 12px;
+  padding: var(--space-5);
+  border: 1px dashed var(--ds-border);
+  border-radius: var(--radius-lg);
+  background: var(--ds-surface-alt);
+}
+
+.aichat-soon-pill {
+  justify-self: start;
+  padding: 4px 10px;
+  border-radius: var(--radius-full);
+  background: var(--ds-primary-soft);
+  color: var(--ds-primary);
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.aichat-soon-title {
+  margin: 0;
+  font-size: 16px;
+  font-weight: 700;
+  line-height: 1.35;
+}
+
+.aichat-soon-text,
+.aichat-soon-note {
+  margin: 0;
+  font-size: 13px;
+  line-height: 1.62;
+  color: var(--ds-text-muted);
+}
+
+.aichat-soon-note {
+  padding-block-start: 4px;
+  border-block-start: 1px solid var(--ds-border);
+}
+
+.aichat-soon-link {
+  justify-self: start;
+  padding: 9px 14px;
+  border-radius: var(--radius-full);
+  background: var(--ds-primary);
+  color: #fff;
+  font-size: 12.5px;
+  font-weight: 600;
+  text-decoration: none;
+}
+
+/* ---------- the promise on its own page (/planner) ---------- */
+
+.planner-soon .planner-grid {
+  align-items: start;
+}
+
+.planner-soon-pill {
+  display: inline-block;
+  margin-bottom: var(--space-4, 16px);
+  padding: 5px 12px;
+  border-radius: var(--radius-full);
+  background: var(--ds-primary-soft);
+  color: var(--ds-primary);
+  font-size: 10.5px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.planner-soon .planner-go {
+  display: inline-block;
+  margin-top: var(--space-4, 16px);
+  padding: 11px 18px;
+  border-radius: var(--radius-full);
+  background: var(--ds-primary);
+  color: #fff;
+  font-weight: 600;
+  text-decoration: none;
+}
+
+/* ---------- small screens ---------- */
+
+@media (max-width: 720px) {
+  .aichat-tabs {
+    padding-inline: 10px;
+  }
+
+  .aichat-compose {
+    padding-inline: var(--space-4, 16px);
+  }
+
+  .aichat-bank {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .aichat-say.is-me p {
+    max-width: 94%;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .aichat-card:hover,
+  .aichat-chip:hover,
+  .aichat-send:hover {
+    transform: none;
+  }
+
+  .aichat-say.is-waiting p {
+    animation: none;
+  }
+}
+
+/* the plan is what gets printed, not the chat */
+@media print {
+  .aichat,
+  .aichat-panel {
+    display: none !important;
+  }
+}

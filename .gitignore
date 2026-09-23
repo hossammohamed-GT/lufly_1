@@ -14,6 +14,10 @@ Thumbs.db
 .vercel
 .env*
 
+# photos visitors send the finder: they belong to the shop, not to git
+/public/uploads/assistant/*
+!/public/uploads/assistant/.gitkeep
+
 # Python bytecode from the import tooling
 __pycache__/
 *.py[cod]

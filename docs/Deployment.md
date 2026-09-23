@@ -68,13 +68,67 @@ paste-ready MySQL patch next to the migration:
 |---|---|
 | `database/sql/2026_01_01_000018_favorites_mysql.sql` | saved products (`favorites`, `favorite_items`) |
 | `database/sql/2026_01_01_000019_ai_mysql.sql` | AI foundation: cached answers + usage counters (`ai_cache`, `ai_usage`) |
+| `database/sql/2026_01_01_000020_assistant_mysql.sql` | Finder: the customers the chat collects (`assistant_leads`) |
 
 phpMyAdmin → select the database → **SQL** tab → paste the file → Go. The patch
 is safe to run twice, and it records the migration so a later `php cli migrate`
 does not try to create the tables again. With terminal access, `php cli migrate`
 does exactly the same.
 
+## Product finder (the chat)
+
+The bubble in the corner of every storefront page. A description in any language
+(or a photo) comes back as cards from our own catalogue. It needs one table:
+
+```dotenv
+FEATURE_AI=true
+ASSISTANT_ENABLED=true
+ASSISTANT_CHAT=true             # the bubble on every page
+ASSISTANT_AI=true               # false = local word matching only, zero calls
+ASSISTANT_VISION=true           # read a photo with the model
+ASSISTANT_LIMIT=6               # cards per answer
+ASSISTANT_GOOD_SCORE=24         # a local answer this good skips the model
+ASSISTANT_DAILY=20              # answers per visitor per day
+ASSISTANT_PHOTO=true
+ASSISTANT_PHOTO_KB=4096
+ASSISTANT_ASK_EMAIL=true        # ask for the address before the first answer
+ASSISTANT_LEAD_MAIL=hossam545mohamed@gmail.com
+ASSISTANT_LEAD_DEFAULT=hossam545mohamed@gmail.com
+ASSISTANT_CACHE_HOURS=168
+```
+
+- **The catalogue is never sent to the assistant.** The words are matched against
+  the products locally (one portable query per word: model code, translated name,
+  short description, search keywords, spec values). The model is asked *only* when
+  that pass found nothing good, and only for a handful of search words.
+- **A photo is one small vision call**, shrunk in the browser to 1280 px first.
+  The picture is written to `public/uploads/assistant/` — that folder must be
+  writable by PHP, and `ASSISTANT_PHOTO=false` switches the whole photo path off.
+- **The shop's mail** goes to `ASSISTANT_LEAD_MAIL` with the visitor in `Reply-To`,
+  the picture inline and its public link. It is sent by the normal mail transport
+  (`MAIL_TRANSPORT`, `MAIL_HOST`, …): with `MAIL_TRANSPORT=log` nothing leaves the
+  server and you can read the message in `storage/logs/mail.log` first.
+- **Every request with an address or a photo** is a row in `assistant_leads`; a
+  visitor who skips the field is stored with `ASSISTANT_LEAD_DEFAULT` so the team
+  always has somewhere to answer. Photos are mailed every time (a human has to
+  look at them), text questions once per visitor per day.
+- Test after deploying: send a description in each language, send a photo, then
+  check the inbox and the row in `assistant_leads`. From a terminal,
+  `php cli assistant:find "a wall hung toilet"` prints the words it kept and
+  the cards the chat would have shown — the fastest way to see what a strange
+  answer was made of, with no model and no network involved.
+
 ## Bathroom planner
+
+The planner is **promised, not offered yet** (`PLANNER_COMING_SOON=true` by
+default): the chat's second tab says so, `/{locale}/planner` says the same, and
+the menu does not link to it. Nothing was deleted — the whole flow, the drawing
+and the picture still work, and `PLANNER_COMING_SOON=false` puts the page back.
+
+The planner needs no new tables of its own: it caches plans in `ai_cache` and
+counts calls in `ai_usage` (migration 19 / the patch file above).
+
+
 
 The planner needs no new tables: it caches plans in `ai_cache` and counts calls
 in `ai_usage` (migration 19 / the patch file above).
@@ -82,7 +136,8 @@ in `ai_usage` (migration 19 / the patch file above).
 ```dotenv
 FEATURE_PLANNER=true
 PLANNER_AI=true                 # false = built-in wording, zero AI calls
-PLANNER_CHAT=true               # the chat floats in the corner of every page
+PLANNER_COMING_SOON=true        # the planner is promised, not offered yet
+PLANNER_CHAT=true               # the chat on /planner (the finder owns the bubble)
 PLANNER_FIT=true                # "does this piece fit my plan?" on a product page
 PLANNER_FIT_DAILY=8
 FEATURE_PLANNER_RENDER=true     # the optional picture; needs AI_IMAGE_MODEL
@@ -99,10 +154,10 @@ PLANNER_HANDOFF_PHONE="+90 850 3040 817"
   `PLANNER_CACHE_HOURS`), the "does it fit?" answer (the visitor's own product,
   as text, cached per product and room) and the optional picture (capped per
   visitor per day). `PLANNER_AI=false` turns all of them off.
-- The chat floats over the storefront: the bubble opens the same conversation as
-  `/{locale}/planner` in a resizable panel. It is hidden on `/planner` itself and
-  steps aside while the saved-list mail sheet is open. Turning `PLANNER_CHAT=false`
-  keeps it on `/planner` only.
+- The chat in the corner is the **product finder** (above) and the planner is its
+  second tab, promised until `PLANNER_COMING_SOON=false`. On `/{locale}/planner`
+  the chat is the page, so the bubble stays away, and `PLANNER_CHAT=false` removes
+  the bubble everywhere.
 - On a product page the plan adds one question — *does this piece fit?* — answered
   from the product's **text** (name, description, category) compared with the
   plan the visitor just made. No catalogue sweep, no images; the verdict is
@@ -111,10 +166,10 @@ PLANNER_HANDOFF_PHONE="+90 850 3040 817"
   with the visitor in `Reply-To` (and, on a product page, the piece they were
   looking at); WhatsApp opens `wa.me/<PLANNER_WHATSAPP>` with the whole plan
   already typed in.
-- Test after deploying: open `/{locale}/planner`, answer the three questions,
-  check the drawing prints, then send a plan to yourself. Then open any product
-  page, run the same three answers in the floating chat and tap *Check it against
-  my plan*.
+- Test after deploying (with `PLANNER_COMING_SOON=false`): open `/{locale}/planner`,
+  answer the three questions, check the drawing prints, then send a plan to
+  yourself. Then open any product page, run the same three answers in the floating
+  chat and tap *Check it against my plan*.
 
 ## AI (Gemini key pool)
 

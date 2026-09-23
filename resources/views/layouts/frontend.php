@@ -23,14 +23,16 @@ $announcement = $translator !== null
     ? $view->renderFile($view->resolvePath('components.announcement'), ['translator' => $translator])
     : '';
 
-/* The bathroom planner travels as a floating chat on every storefront page
-   (it bows out on /planner, where the chat *is* the page). Rendered before the
-   assets are collected because it brings its own stylesheet and script. */
-$plannerChat = $translator !== null
-    && feature('planner', true)
-    && (bool) config('planner.enabled', true)
-    && $view->exists('planner::partials.widget')
-    ? $view->renderFile($view->resolvePath('planner::partials.widget'), [])
+/* The finder travels as a floating chat on every storefront page: an item
+   described in words or sent as a photo comes back as cards from our own
+   catalogue. Its second tab promises the bathroom planner instead of faking it.
+   Rendered before the assets are collected because it brings its own
+   stylesheet and script (and it bows out where the chat *is* the page). */
+$assistantChat = $translator !== null
+    && feature('ai', true)
+    && (bool) config('assistant.enabled', true)
+    && $view->exists('assistant::partials.widget')
+    ? $view->renderFile($view->resolvePath('assistant::partials.widget'), [])
     : '';
 
 $styles = $view->styles();
@@ -125,7 +127,7 @@ $clarity = trim((string) ($analytics['clarity'] ?? ''));
 <?= $view->renderFile($view->resolvePath('components.footer'), []) ?>
 <?php endif; ?>
 <?= $view->renderFile($view->resolvePath('components.favorite-mail-prompt'), []) ?>
-<?= $plannerChat ?>
+<?= $assistantChat ?>
 <script defer src="<?= e(asset('frontend/js/app.js')) ?>"></script>
 <?php foreach ($scripts as $script): ?>
 <script defer src="<?= e(asset($script)) ?>"></script>

@@ -142,6 +142,61 @@ question costs nothing and a visitor cannot burn the quota. The `ai_cache` and
 `ai_usage` tables come with migration 19; on a live MySQL database paste
 `database/sql/2026_01_01_000019_ai_mysql.sql` instead of re-importing the dump.
 
+## Product finder (the chat)
+
+`/{locale}/assistant/find` (tr: `asistan/ara`, cs: `asistent/najdi`) — and the
+bubble in the corner of **every** page, which is how visitors actually meet it.
+The visitor describes a piece in their own words (any language) or sends a
+photo, and gets back the **closest pieces from our own catalogue** as cards:
+picture, code, size, and a link to the product page.
+
+It is built to cost nothing until it has to:
+
+1. **the description is matched locally.** Every word is weighted against what a
+   product actually carries — its model code, its translated name (all three
+   languages, so a Turkish "duş bataryası" finds the shower mixers on the
+   English site), the short description, the search keywords the shop already
+   maintains, its technical values. One portable query per word (MySQL and
+   SQLite alike), and products that answer several words rise to the top.
+2. **the model is asked only when that found nothing good** — and only for a
+   handful of search words (`{"terms":[…],"category":"…"}`), never for the
+   catalogue, never for prices, never for a card. A good local answer is
+   answered locally, so a question that costs nothing costs no tokens at all.
+3. **a photo is one small vision call.** The browser shrinks it to 1280 px
+   first; the model says what the piece is and returns search words. The photo
+   itself is kept in `public/uploads/assistant/`, so the link in the shop's mail
+   opens it straight from the inbox.
+4. **nothing is ever answered with nothing.** If not one word matched, the
+   visitor gets the pieces the shop is known for, a plain sentence that this is
+   not a match, and the honest promise: a piece like that is very probably in
+   the warehouse but not on the site yet — talk to the team, or leave an address
+   and the team will find it.
+
+Every request that carries an address or a photo becomes a row in
+`assistant_leads` (the customer data: the words, the photo and its public link,
+the address the visitor wants to be answered on), and the shop gets a mail with
+the picture inline and the direct link. `ASSISTANT_ASK_EMAIL=true` asks for the
+address before the first answer — once, and continuing without it is one tap.
+
+```dotenv
+FEATURE_AI=true
+ASSISTANT_ENABLED=true
+ASSISTANT_CHAT=true             # the bubble on every storefront page
+ASSISTANT_AI=true               # false = local word matching only, zero calls
+ASSISTANT_VISION=true           # read the photo with the model
+ASSISTANT_LIMIT=6               # cards per answer
+ASSISTANT_GOOD_SCORE=24         # above this, the model is not even asked
+ASSISTANT_DAILY=20              # answers per visitor per day
+ASSISTANT_PHOTO=true
+ASSISTANT_ASK_EMAIL=true        # ask for the address before the first answer
+ASSISTANT_LEAD_MAIL=hossam545mohamed@gmail.com
+ASSISTANT_LEAD_DEFAULT=hossam545mohamed@gmail.com
+```
+
+The second tab of the chat is the bathroom planner — **promised, not offered**
+(`PLANNER_COMING_SOON=true`): the chat says it is coming, `/planner` says the
+same thing, and the menu does not link to a page that only promises.
+
 ## Bathroom planner
 
 `/{locale}/planner` (tr: `banyo-planlayici`, cs: `planovac-koupelny`) — the visitor
@@ -160,9 +215,9 @@ answers three questions (room size, shower or bathtub, look) and gets a plan:
   generation in the flow (`gemini-2.5-flash-image`). While the free image quota
   cannot answer, `PLANNER_RENDER_SOON=true` (the default) shows it as *coming
   soon* instead of offering a button that would only fail;
-- **the chat floats on every page** — a bubble in the corner opens the same
-  conversation in a panel that can be expanded or dragged to any size, and the
-  visitor's size is remembered. On `/planner` the chat is the page, so the
+- **the chat belongs to the finder now** — the bubble in the corner is the
+  product finder above, and the planner is its second tab, promised until
+  `PLANNER_COMING_SOON=false`. On `/planner` the chat is the page, so the
   bubble stays away;
 - **"does this piece fit my plan?"** — on a product page the plan offers one
   extra question, answered from **the product's own words** (name, description,
@@ -178,7 +233,8 @@ and a failed answer is only remembered for five minutes.
 ```dotenv
 FEATURE_PLANNER=true
 PLANNER_AI=true                 # the assistant writes the welcome sentence
-PLANNER_CHAT=true               # the floating chat on every page
+PLANNER_COMING_SOON=true        # the planner is promised, not offered yet
+PLANNER_CHAT=true               # the chat on /planner (the finder owns the bubble)
 PLANNER_FIT=true                # "does this piece fit my plan?" (text only)
 FEATURE_PLANNER_RENDER=true     # the optional picture (uses AI_IMAGE_MODEL)
 PLANNER_RENDER_SOON=true        # announce the picture as "coming soon"
@@ -189,7 +245,9 @@ PLANNER_WHATSAPP=908503040817
 
 The plan ends with a hand-off: one tap sends the whole plan (room, items, sizes,
 clearance) to the LUFLY team on WhatsApp, or an e-mail the shop sends with the
-visitor in `Reply-To`. Nothing extra to migrate — the planner uses the AI tables.
+visitor in `Reply-To`. The planner needs no table of its own — it uses the AI
+tables (`ai_cache`, `ai_usage`) — and nothing was deleted when it was promised:
+`PLANNER_COMING_SOON=false` brings the page back exactly as it was.
 
 ## CLI (no artisan — it's `php cli …`)
 
@@ -203,6 +261,8 @@ visitor in `Reply-To`. Nothing extra to migrate — the planner uses the AI tabl
 | `php cli schema:dump` | Regenerate `database/schema/schema.sql` |
 | `php cli erd` | Regenerate the ER diagram |
 | `php cli key:generate` | New `APP_KEY` |
+| `php cli ai:doctor [--image]` | Check the Gemini keys (and the picture model) |
+| `php cli assistant:find "…"` | Search the catalogue exactly like the chat does — no AI, no tokens |
 | `php cli docs:api` | Regenerate API documentation from routes |
 
 ## Documentation

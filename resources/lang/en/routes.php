@@ -20,4 +20,7 @@ return [
     'planner.fit' => 'planner/fit',
     'planner.render' => 'planner/picture',
     'planner.send' => 'planner/send',
+
+    /* the finder: "I am looking for something like this" */
+    'assistant.ask' => 'assistant/find',
 ];

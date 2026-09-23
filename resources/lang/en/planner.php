@@ -144,4 +144,12 @@ return [
     'err_custom' => 'Please type a width and a depth between 100 and 600 cm.',
     'err_email' => 'Please enter a valid e-mail address.',
     'err_send' => 'The message could not be sent just now. Please use WhatsApp, or try again in a moment.',
+
+    /* the promise: the planner is not open yet */
+    'soon_pill' => 'Coming soon',
+    'soon_title' => 'The bathroom planner is on its way',
+    'soon_text' => 'Room size in, a whole plan out: what to install, in which size, where each piece goes, and a drawing you can hand to your plumber.',
+    'soon_note' => 'We are still building it, so it is not open yet. Everything else is ready: describe the piece you need in the finder and we match it against our catalogue right away.',
+    'soon_waiting' => 'The plan and the scaled drawing will appear here as soon as the planner opens.',
+    'soon_finder' => 'Find a piece in the meantime',
 ];
