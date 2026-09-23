@@ -180,7 +180,14 @@ final class AssistantService
 
         $vision = $photo !== null && $this->visionAllowed();
 
-        if (!$fromProduct && !$forced && ($vision || ($signal && !$enough && $this->aiAllowed()))) {
+        /* A sentence that asks something, with no piece named in it, is talk and
+           not a search — even when a word in it grazed the catalogue ("who won
+           the world cup?" once ended in a shelf of washbasins). It goes to the
+           chat, which may still hand back search words of its own, and then the
+           catalogue is searched after all. */
+        $talk = !$fromProduct && !$forced && !$vision && $topic === '' && $this->conversation->asks($question);
+
+        if (!$fromProduct && !$forced && ($vision || (!$talk && $signal && !$enough && $this->aiAllowed()))) {
             $facets = $this->facets($question, $photo, $locale, $vision);
 
             if ($facets !== null && ((array) $facets['terms'] !== [] || (string) $facets['category'] !== '')) {
@@ -198,11 +205,13 @@ final class AssistantService
             }
 
             $summary = (string) ($facets['summary'] ?? '');
-        } elseif (!$fromProduct && !$forced && !$signal && !$vision && $this->aiAllowed()) {
-            /* nothing at all was recognised, and this is a conversation rather
-               than a search: one small, cached answer — never the catalogue */
+        } elseif (!$fromProduct && !$forced && !$vision && ($talk || !$signal) && $this->aiAllowed()) {
+            /* nothing at all was recognised, or the visitor asked a question
+               instead of describing a piece: one small, cached answer — never
+               the catalogue */
             $chat = $this->chatAnswer($question, $locale);
             $say = (string) $chat['say'];
+            $searched = false;
 
             if ((array) $chat['terms'] !== []) {
                 $merged = $this->merge($terms, (array) $chat['terms']);
@@ -213,7 +222,18 @@ final class AssistantService
                     $terms = $merged;
                     $source = 'ai';
                     $signal = true;
+                    $searched = true;
                 }
+            }
+
+            /* A question the catalogue cannot answer: the words it grazed by
+               accident are not a shelf to put in front of the visitor — he gets
+               the answer and the few things worth doing next. When the model did
+               hand back search words, the shelf is a real answer and stays. */
+            if ($talk && !$searched) {
+                $cards = [];
+                $terms = [];
+                $signal = false;
             }
         }
 

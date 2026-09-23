@@ -587,7 +587,10 @@
     if (waiting.length === 0) return;
 
     waitingIndex = 0;
-    waitingBubble = say('bot is-waiting', waiting[0]);
+    /* the rotating line is scenery, not conversation: it must not end up in
+       the saved thread, or the visitor would come back to a stale
+       "reading your words…" on the next page */
+    waitingBubble = say('bot is-waiting', waiting[0], null, false);
 
     waitingTimer = window.setInterval(function () {
       waitingIndex = (waitingIndex + 1) % waiting.length;

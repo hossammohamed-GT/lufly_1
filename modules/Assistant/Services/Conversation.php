@@ -58,6 +58,19 @@ final class Conversation
         'انهي', 'أنهي', 'مين احسن', 'مين أفضل', 'انصحني', 'انصحنى',
     ];
 
+    /**
+     * Openings that make a sentence a question. Kept short on purpose: everything
+     * here is a word that cannot begin a description of a piece.
+     */
+    private const QUESTION_OPENERS = [
+        'what', 'which', 'why', 'when', 'where', 'who', 'whom', 'whose', 'how',
+        'can', 'could', 'do', 'does', 'did', 'is', 'are', 'was', 'were', 'will',
+        'would', 'should', 'may', 'might', 'am', 'have', 'has',
+        'ne', 'nedir', 'nasil', 'nasıl', 'neden', 'hangi', 'kac', 'kaç', 'misin', 'mısın', 'musun', 'müsün',
+        'co', 'co je', 'jaky', 'jaký', 'jaka', 'jaká', 'jake', 'jaké', 'proc', 'proč', 'kde', 'kdy', 'kdo', 'kolik', 'muzu', 'můžu', 'mate', 'máte',
+        'ايه', 'إيه', 'ايوه', 'هل', 'مين', 'ليه', 'ازاي', 'إزاي', 'فين', 'امتى', 'امتي', 'كام', 'كم', 'ممكن', 'بتتكلم', 'تتكلم', 'عندكم', 'بتعملوا', 'بتعملو', 'محتاج اسال',
+    ];
+
     /** "I am doing the whole bathroom" — no single piece named yet. */
     private const WIDE = [
         'bathroom', 'toilet room', 'renovation', 'renovate', 'building', 'new bathroom', 'my bathroom',
@@ -170,6 +183,35 @@ final class Conversation
         }
 
         return '';
+    }
+
+    /**
+     * A sentence that asks something, rather than describing a piece.
+     *
+     * "who won the world cup?" must be talked through, not answered with the
+     * nearest shelf: it opens with a question word, or it ends with a question
+     * mark. A description ("a small white basin for the guest bathroom") is left
+     * alone — that one belongs to the catalogue search.
+     */
+    public function asks(string $question): bool
+    {
+        $text = $this->normalize($question);
+
+        if ($text === '') {
+            return false;
+        }
+
+        if ($this->hasQuestionMark($question)) {
+            return true;
+        }
+
+        foreach (self::QUESTION_OPENERS as $opener) {
+            if (str_starts_with($text, $opener . ' ')) {
+                return true;
+            }
+        }
+
+        return false;
     }
 
     /** The piece they named, if it is one of the topics — '' when it is not. */
