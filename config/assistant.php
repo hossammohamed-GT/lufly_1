@@ -65,6 +65,16 @@ return [
         'ask_email' => (bool) env('ASSISTANT_ASK_EMAIL', true),
     ],
 
+    /*
+     * The version of the chat itself.
+     *
+     * It is printed in the widget's markup (right-click the page, "view source",
+     * search for assistant-build) and by `php cli ai:doctor`, so a shop can tell
+     * in one look whether the copy it is serving is the one that was just
+     * deployed — instead of wondering why a fix does not show.
+     */
+    'build' => (string) env('ASSISTANT_BUILD', '2026-09-24.3'),
+
     'ai' => [
         'enabled' => (bool) env('ASSISTANT_AI', true),
         /* reading a photo needs a key that can see — switch it off to save quota */

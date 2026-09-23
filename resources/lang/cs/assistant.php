@@ -73,8 +73,8 @@ return [
     'mail_subject' => 'Nová poptávka z vyhledávače #:n',
 
     /* ---- the guided conversation: the chat talks before it lists ---- */
-    'chat_hello' => 'Dobrý den! Jsem vyhledávač LUFLY — můžeme si o tom popovídat.',
-    'chat_hello_2' => 'Napište, co hledáte, nebo pošlete fotografii kusu, který jste viděli — porovnám ji s naším katalogem.',
+    'chat_hello' => 'Dobrý den! Jsem asistent LUFLY.',
+    'chat_hello_2' => 'Napište, co potřebujete, vlastními slovy a v jakémkoli jazyce — nebo pošlete fotografii; najdu to, nebo to potvrdí tým.',
     'chat_talk' => 'Samozřejmě, proberme to — řekněte, co hledáte, a společně to zúžíme.',
     'chat_thanks' => 'Kdykoli — jsem tu právě proto.',
     'chat_menu' => 'Co vybíráte?',

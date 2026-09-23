@@ -94,8 +94,8 @@ return [
     'mail_subject' => 'New finder request #:n',
 
     /* ---- the guided conversation: the chat talks before it lists ---- */
-    'chat_hello' => 'Hello! I am the LUFLY finder — we can talk it through.',
-    'chat_hello_2' => 'Tell me what you are looking for, or send a photo of a piece you have seen, and I will match it against our own catalogue.',
+    'chat_hello' => 'Hello! I am the LUFLY assistant.',
+    'chat_hello_2' => 'Tell me what you need — in your own words, in any language — or send a photo, and I will find it or get the team to confirm it.',
     'chat_talk' => 'Of course, let us talk it through — tell me what you are looking for and I will narrow it down with you.',
     'chat_thanks' => 'Any time — that is what I am here for.',
     'chat_menu' => 'What are you choosing for?',

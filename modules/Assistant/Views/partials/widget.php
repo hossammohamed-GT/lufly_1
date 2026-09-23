@@ -70,7 +70,14 @@ if ($boxOn) {
     $view->pushScript('frontend/box/box.js');
 }
 ?>
+<?php
+/* The chat says its own version, quietly: a shop can open the page source, search
+   for "assistant build", and know whether the file it uploaded is the file being
+   served — instead of wondering why a fix does not show. */
+?>
+<!-- assistant build <?= e((string) config('assistant.build', 'unknown')) ?> · answers in the visitor's own language -->
 <div class="aichat" data-aichat data-assistant
+     data-assistant-build="<?= e((string) config('assistant.build', '')) ?>"
      data-assistant-endpoint="<?= e(route('assistant.ask')) ?>"
      data-assistant-waiting="<?= e((string) json_encode($waiting, JSON_UNESCAPED_UNICODE)) ?>"
      data-assistant-context="<?= e((string) json_encode($context, JSON_UNESCAPED_UNICODE)) ?>"

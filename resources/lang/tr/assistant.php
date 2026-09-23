@@ -73,8 +73,8 @@ return [
     'mail_subject' => 'Yeni ürün arama talebi #:n',
 
     /* ---- the guided conversation: the chat talks before it lists ---- */
-    'chat_hello' => 'Merhaba! Ben LUFLY arama asistanı — birlikte konuşarak bulalım.',
-    'chat_hello_2' => 'Aradığınızı yazın ya da gördüğünüz bir parçanın fotoğrafını gönderin; kendi kataloğumuzdan eşleştireyim.',
+    'chat_hello' => 'Merhaba! Ben LUFLY asistanı.',
+    'chat_hello_2' => 'Ne aradığınızı kendi kelimelerinizle, istediğiniz dilde yazın — ya da fotoğraf gönderin; bulurum ya da ekibe teyit ettiririm.',
     'chat_talk' => 'Elbette, konuşalım — ne aradığınızı söyleyin, birlikte daraltalım.',
     'chat_thanks' => 'Her zaman — bunun için buradayım.',
     'chat_menu' => 'Ne için seçim yapıyorsunuz?',
