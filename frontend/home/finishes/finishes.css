@@ -13,32 +13,29 @@
   border-bottom: 1px solid var(--ds-band-hairline);
 }
 
-/* finish-workshop backdrop; the veil follows the theme */
-/* The workshop photo is back, and it is fixed: the band scrolls over a
-   still image instead of dragging it along. */
+/* NO PHOTOGRAPH IN THIS BAND. It used to borrow
+   images/lifestyle/finish-workshop.jpg, which made two neighbouring bands
+   read as photo bands and left this one without the ink surface it is
+   designed around. The photograph now lives on the category mosaic directly
+   below ("categories-backdrop.jpg"); here only the glow is left, exactly as
+   the note at the top of this file describes. */
 .finishes-backdrop {
   position: absolute;
   inset: 0;
   background:
-    radial-gradient(120% 90% at 80% 0%, color-mix(in srgb, var(--lu-teal-500) 13%, transparent), transparent 58%),
-    radial-gradient(95% 75% at 8% 100%, color-mix(in srgb, var(--lu-deep-teal) 42%, transparent), transparent 66%),
-    linear-gradient(180deg, color-mix(in srgb, var(--lu-ink-900) 60%, transparent), color-mix(in srgb, var(--lu-ink-900) 46%, transparent)),
-    url('../../../images/lifestyle/finish-workshop.jpg') center / cover fixed;
+    radial-gradient(120% 90% at 80% 0%, color-mix(in srgb, var(--lu-teal-500) 17%, transparent), transparent 58%),
+    radial-gradient(95% 75% at 8% 100%, color-mix(in srgb, var(--lu-deep-teal) 46%, transparent), transparent 66%),
+    linear-gradient(180deg, color-mix(in srgb, var(--lu-ink-900) 62%, transparent), color-mix(in srgb, var(--lu-ink-900) 48%, transparent));
 }
 
-/* light theme: let far more of the workshop photo through. The veil sits at
-   ~40% instead of ~70%, and the teal wash is kept subtle. */
+/* light theme keeps the pale version of the band: the same teal glow over an
+   opaque light surface instead of the light workshop photo, so the ink text
+   and the light cards tuned further down stay readable as they are. */
 [data-theme="light"] .finishes-backdrop {
   background:
-    radial-gradient(120% 90% at 80% 0%, color-mix(in srgb, var(--lu-teal-500) 8%, transparent), transparent 58%),
-    linear-gradient(180deg, color-mix(in srgb, var(--lu-neutral-50) 44%, transparent), color-mix(in srgb, var(--lu-neutral-50) 32%, transparent)),
-    url('../../../images/lifestyle/finish-workshop-light.jpg') center / cover fixed;
-}
-
-/* iOS ignores background-attachment: fixed and would jitter, so fall back */
-@media (hover: none) {
-  .finishes-backdrop,
-  [data-theme="light"] .finishes-backdrop { background-attachment: scroll; }
+    radial-gradient(120% 90% at 80% 0%, color-mix(in srgb, var(--lu-teal-500) 10%, transparent), transparent 58%),
+    radial-gradient(95% 75% at 8% 100%, color-mix(in srgb, var(--lu-mint) 13%, transparent), transparent 66%),
+    linear-gradient(180deg, var(--lu-neutral-50), var(--lu-neutral-100));
 }
 
 /* light theme: the band text flips dark so it stays readable over the

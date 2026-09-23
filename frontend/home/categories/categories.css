@@ -3,9 +3,61 @@
    frames and a primary frame on hover. */
 
 .categories-section {
+  position: relative;
   padding: var(--space-16) 0;
   border-bottom: 1px solid var(--ds-border);
   background: var(--ds-bg);
+}
+
+/* ---- fixed architectural backdrop, veiled per theme so the heading and the
+   mosaic stay readable (the same concept as the rituals and corporate bands).
+   The finishes band directly above is deliberately photo-free - one of the
+   two neighbouring bands carries the photograph, and it is this one. ---- */
+.categories-section::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+  background: url('../../../images/lifestyle/categories-backdrop.jpg') center / cover fixed;
+}
+
+/* veil lives on its own layer so the per-theme brightness tuning applies to
+   the photograph only - filtering a combined layer also lightens the veil
+   and cancels itself out. Stronger at the top: the heading sits over the
+   lit cove strip of the photo. */
+.categories-section::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+  background: linear-gradient(180deg,
+    color-mix(in srgb, var(--ds-bg) 58%, transparent) 0%,
+    color-mix(in srgb, var(--ds-bg) 30%, transparent) 46%,
+    color-mix(in srgb, var(--ds-bg) 24%, transparent) 100%);
+}
+
+[data-theme="light"] .categories-section::before {
+  /* the source photo is dark; lift it so it reads on a pale page without
+     blowing out the detail (the veil above is light, so a gentle lift is
+     enough) */
+  filter: brightness(1.55) contrast(0.92) saturate(0.85);
+}
+
+[data-theme="light"] .categories-section::after {
+  background: linear-gradient(180deg,
+    color-mix(in srgb, var(--ds-bg) 46%, transparent) 0%,
+    color-mix(in srgb, var(--ds-bg) 24%, transparent) 46%,
+    color-mix(in srgb, var(--ds-bg) 18%, transparent) 100%);
+}
+
+.categories-section > .container { position: relative; z-index: 1; }
+
+/* iOS ignores background-attachment: fixed and would jitter, so fall back */
+@media (hover: none) {
+  .categories-section::before,
+  [data-theme="light"] .categories-section::before { background-attachment: scroll; }
 }
 
 .category-mosaic {

@@ -169,8 +169,9 @@ fallback height subtracts both `--luann-h` and `--mnav-row1`, so it fits the sam
 space the script measures.
 
 Artwork: `heroc-<n>{,-m,-p}.webp` (dark) and `heroc-<n>-light{,-m,-p}.jpg` (light),
-where `""` is desktop landscape, `-m` is a ≤760px landscape phone and `-p` is a
-≤760px portrait phone crop. All 30 files must exist - the URL is chosen at runtime
+where `""` is desktop landscape, `-m` is a ≤760px landscape phone and `-p` is the
+portrait crop - served for any portrait box up to 900px wide (phones, tablets and
+narrow desktop windows). All 30 files must exist - the URL is chosen at runtime
 from the viewport and the theme, so a missing file is an invisible broken image.
 `hero-cinema.php` preloads the variant that matches the current orientation via
 `media` queries.
@@ -198,6 +199,61 @@ rail/drawer use `100dvh` (not `100vh`, which ends under the browser toolbar);
 `body.ready` must not re-enable horizontal scrolling (`overflow-y: auto` only);
 and `content-visibility: auto` sections need a `contain-intrinsic-size` close to
 their real height, otherwise the document grows section by section while scrolling.
+
+## The home bands (photo / plain)
+
+The eight home bands alternate: a band either carries a photograph behind its
+content or it is a flat surface. **Do not let two neighbouring bands both read as
+photo bands** - that is exactly what happened when the category mosaic came back
+and the finishes band above it was still borrowing `finish-workshop.jpg`.
+
+| band | background |
+| --- | --- |
+| hero-cinema | photograph (the hero) |
+| trust-bar | plain, `--ds-bg` behind a vertical veil - deliberately photo-free |
+| finishes | plain: deep ink + the teal/mint glow (`.finishes-backdrop`, no `url()`) |
+| categories | photograph: `images/lifestyle/categories-backdrop.jpg` |
+| inspiration | plain, `--ds-surface` |
+| rituals | photograph: `images/lifestyle/rituals-backdrop.jpg` |
+| masterpieces | plain, `--ds-surface` + a soft radial |
+| corporate | photograph: `images/lifestyle/corporate-backdrop.jpg` |
+
+How a photo band is built - copy this shape, do not invent another one:
+
+```css
+.band-section { position: relative; background: var(--ds-bg); }
+.band-section::before {            /* the photograph, pinned to the viewport */
+  content: ""; position: absolute; inset: 0; z-index: 0; pointer-events: none;
+  background: url('../../../images/lifestyle/<name>.jpg') center / cover fixed;
+}
+.band-section::after {             /* the veil, themed through --ds-bg */
+  content: ""; position: absolute; inset: 0; z-index: 0; pointer-events: none;
+  background: linear-gradient(180deg,
+    color-mix(in srgb, var(--ds-bg) 34%, transparent),
+    color-mix(in srgb, var(--ds-bg) 22%, transparent));
+}
+[data-theme="light"] .band-section::before { filter: brightness(1.55) contrast(0.92) saturate(0.85); }
+.band-section > .container { position: relative; z-index: 1; }
+@media (hover: none) { .band-section::before { background-attachment: scroll; } }
+```
+
+- The veil **must** be its own layer: brightness/contrast tuning on a combined layer
+  lightens the veil as well and cancels itself out.
+- The veil is built from `--ds-bg` (theme-aware), while band *tokens* are theme-fixed,
+  so a photo band keeps its own text colours in both themes without extra rules.
+- The categories band is the one exception: its veil is stronger across the top,
+  because the heading sits over the lit cove strip of the artwork.
+- `background-attachment: fixed` is the parallax (the band scrolls over a still
+  image); iOS ignores it, which the fallback above degrades gracefully.
+- Anything between the veils and the content needs `position: relative; z-index: 1`,
+  otherwise the veil swallows it - that is why the mosaic keeps its cards on top.
+- Backdrops live in `images/lifestyle/` as 1584x672 (2.36:1) or 1408x768 JPEGs,
+  ~85-200 KB each, and are named `<band>-backdrop.jpg`.
+
+`node tools/frontend_audit/band_audit.mjs` checks all of the above against the
+render order read from `home/index.php`: a plain band that starts painting a
+photograph, a photo band whose backdrop stops resolving, a missing veil layer or
+lifted container, and two neighbouring photo bands all fail it.
 
 ## Database access
 

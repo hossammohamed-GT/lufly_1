@@ -75,6 +75,49 @@ rule that applies at the tested viewport: fixed `width` / `min-width` /
 horizontal padding (the classic 100vw + gutter scrollbar). Tall art that only
 fills the screen *below* the fold is reported as a note, not as a defect.
 
+## `band_audit.mjs` — the home bands: photo or plain
+
+```bash
+node tools/frontend_audit/band_audit.mjs          # exits 1 on drift
+node tools/frontend_audit/band_audit.mjs --json
+```
+
+The home page alternates photographic bands with flat ones, and the order is read
+from `resources/views/home/index.php` rather than hardcoded. Each band's own
+stylesheet is then checked against the intended background:
+
+| band | background |
+| --- | --- |
+| hero-cinema | photograph (`heroc-*`, chosen at runtime) |
+| trust-bar | plain |
+| finishes | plain (ink + glow, no `url()`) |
+| categories | photograph (`categories-backdrop.jpg`) |
+| inspiration | plain |
+| rituals | photograph (`rituals-backdrop.jpg`) |
+| masterpieces | plain |
+| corporate | photograph (`corporate-backdrop.jpg`) |
+
+It fails when a "plain" band starts painting a photograph, when a photo band's
+backdrop stops resolving to a real file (`images/` is a symlink to
+`public/images/`, both spellings are checked), when a photo band loses its
+`::before` layer, its lifted container (`z-index: 1`) or the iOS
+`background-attachment` fallback, and when two **neighbouring** bands are both
+photographic — the page then reads as one long image.
+
+## `static_preview.mjs` — the home page in a browser, no PHP
+
+```bash
+# snapshot first (sandbox only): node /tmp/phpwasm/run/render_home.mjs
+node tools/frontend_audit/static_preview.mjs --render storage/reports/_home-render.html --port 4173
+```
+
+Serves a server-rendered home snapshot at `/` together with the real `frontend/`
+CSS + JS and `images/`, so the page can be reviewed live (theme toggle, hero
+crossfade and hover states all run; only PHP routes and the search API 404). The
+snapshot's `http://localhost` URLs are turned into root-relative paths, so the
+browser talks to the preview host and never to localhost. Every missing file is
+logged as a 404.
+
 ## `phone_preview.mjs` — device preview in a real browser
 
 ```bash
