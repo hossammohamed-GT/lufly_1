@@ -13,6 +13,7 @@
 
   var AUTOPLAY_MS = 6500;
   var HERO_PHONE_QUERY = '(max-width: 760px)';
+  var PORTRAIT_FRAME_MAX = 900; /* wider than this the portrait crop would be upscaled */
   var reduceMotion = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
   var finePointer = window.matchMedia && window.matchMedia('(pointer: fine)').matches;
   var phoneQuery = window.matchMedia ? window.matchMedia(HERO_PHONE_QUERY) : null;
@@ -121,9 +122,10 @@
   }
 
   var fittedHeight = 0;
+  var appliedVariant = null;
 
   function fitToScreen() {
-    isMobile = phoneQuery ? phoneQuery.matches : false;
+    isMobile = phoneNow();
 
     /* While the page is scrolled the hero must not chase the browser toolbar:
        growing it would push down everything the user is reading (the toolbars
@@ -156,6 +158,15 @@
 
     target = Math.max(200, Math.round(target));
 
+    /* The artwork follows the viewport, not just the height: every path that
+       re-measures (resize, rotation, visualViewport, the chrome observers)
+       also re-checks which crop file this viewport should be using. */
+    var key = variantKey();
+    if (key !== appliedVariant) {
+      appliedVariant = key;
+      applyBackgrounds(false);
+    }
+
     if (Math.abs(target - fittedHeight) < 1) return; /* nothing to do */
     fittedHeight = target;
     root.style.height = target + 'px';
@@ -171,6 +182,11 @@
     fitFrame = window.requestAnimationFrame ? window.requestAnimationFrame(run) : setTimeout(run, 16);
   }
 
+  /* the artwork first, so the initial fit sees the variant already applied
+     (and the lazy preload stays lazy: only the opening scene is fetched now) */
+  applyBackgrounds(true);
+  appliedVariant = variantKey();
+
   fitToScreen();
 
   window.addEventListener('resize', scheduleFit, { passive: true });
@@ -184,7 +200,9 @@
     window.visualViewport.addEventListener('resize', scheduleFit, { passive: true });
   }
   if (phoneQuery && phoneQuery.addEventListener) {
-    phoneQuery.addEventListener('change', function () { scheduleFit(); applyBackgrounds(false); });
+    /* scheduleFit() re-reads the breakpoint and re-applies the artwork when it
+       changed - see the variant check inside fitToScreen() */
+    phoneQuery.addEventListener('change', scheduleFit);
   }
   if (portraitQuery && portraitQuery.addEventListener) {
     portraitQuery.addEventListener('change', scheduleFit);
@@ -221,15 +239,46 @@
     return document.documentElement.getAttribute('data-theme') === 'light';
   }
 
+  /* The breakpoint is read live, never from a cached flag: a cached one made
+     the artwork lag a breakpoint behind (shrink the window and the desktop
+     photo was kept in the phone box - a quarter of the frame, i.e. "zoomed";
+     grow it back and the portrait crop was stretched over the wide hero). */
+  function phoneNow() {
+    return phoneQuery ? phoneQuery.matches : false;
+  }
+
+  function isPortrait() {
+    return !portraitQuery || portraitQuery.matches;
+  }
+
+  /* Any tall box wants the portrait crop - phones, but also tablets and narrow
+     desktop windows in portrait, where a landscape frame would otherwise be
+     cropped to about 40% of its width. Up to ~900px wide the 800px artwork is
+     still not stretched noticeably. */
+  function portraitFrame() {
+    if (!isPortrait()) return false;
+    var width = window.innerWidth || 0;
+    return phoneNow() || (width > 0 && width <= PORTRAIT_FRAME_MAX);
+  }
+
   function portraitPhone() {
-    return isMobile && (!portraitQuery || portraitQuery.matches);
+    return phoneNow() && isPortrait();
   }
 
   function sceneUrl(sc) {
     var light = themeIsLight();
-    var suffix = portraitPhone() ? '-p' : (isMobile ? '-m' : '');
+    var suffix = portraitFrame() ? '-p' : (phoneNow() ? '-m' : '');
     return sc.getAttribute('data-img' + (light ? '-light' : '') + suffix)
         || sc.getAttribute(light ? 'data-img-light' : 'data-img');
+  }
+
+  /* which artwork shape the current viewport wants - theme + breakpoint +
+     orientation. When this changes, every scene is re-pointed at the right
+     file; otherwise a stale crop stays on screen until a reload. */
+  function variantKey() {
+    return (themeIsLight() ? 'light' : 'dark') + (
+      portraitFrame() ? '-p' : (phoneNow() ? '-m' : '-d')
+    );
   }
   function applyBackgrounds(lazyOthers) {
     scenes.forEach(function (sc, idx) {
@@ -245,7 +294,6 @@
       }
     });
   }
-  applyBackgrounds(true);
 
   /* React instantly to <html> changes: the theme flips the artwork, and
      dismissing the announcement bar clears --luann-h - which moves the hero

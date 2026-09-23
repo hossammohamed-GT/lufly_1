@@ -11,10 +11,11 @@ $view->pushScript('frontend/home/hero-cinema/hero-cinema.js');
 
 /* The first slide is the largest paint: preload for instant LCP.
    Three shapes, matching exactly what the script picks at runtime:
-     -p      portrait phones (4:3.55 crop, so a narrow screen never has to
+     -p      portrait phones AND portrait tablets / narrow portrait windows
+             (the crop is framed for a tall box, so the screen never has to
              zoom a landscape shot into an unreadable close-up)
-     -m      tablets / small landscape windows
-     plain   desktop */
+     -m      small landscape windows
+     plain   desktop / landscape */
 $view->pushPreload(asset('images/lifestyle/heroc-1.webp'), [
     'as' => 'image',
     'type' => 'image/webp',
@@ -24,7 +25,7 @@ $view->pushPreload(asset('images/lifestyle/heroc-1.webp'), [
 $view->pushPreload(asset('images/lifestyle/heroc-1-p.webp'), [
     'as' => 'image',
     'type' => 'image/webp',
-    'media' => '(max-width: 760px) and (orientation: portrait)',
+    'media' => '(max-width: 900px) and (orientation: portrait)',
     'fetchpriority' => 'high',
 ]);
 $view->pushPreload(asset('images/lifestyle/heroc-1-m.webp'), [

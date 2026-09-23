@@ -39,6 +39,12 @@ replays the browser behaviour that used to break the hero:
   much of the portrait artwork (800x1072 dark / 768x1290 light, built by
   `tools/media_audit/hero_portrait_crops.py`) a phone box actually shows and fails
   under 65%.
+- **window round trips** — the simulated window can be resized (`m.resizeTo(w, h)`
+  moves the viewport, the media queries and fires `resize`), and four round trips
+  assert that the *applied* background follows the breakpoint both ways: a phone
+  window must get `-p`, a desktop width must get the landscape master, in any order.
+  That is the "the picture is suddenly zoomed after I go back to the big screen"
+  bug, and it is caught by reading `background-image` off the scenes.
 - the result must fit the first screen, cover what the copy needs, and stay under
   the portrait artwork cap (`1.35 × width`) that keeps a phone photo from being
   zoomed into a close-up.

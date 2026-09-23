@@ -144,10 +144,28 @@ function makeElement(tag, opts = {}) {
   return el;
 }
 
-function runScene(device, scenario) {
+function runScene(profile, scenario) {
+  /* never mutate the caller's device profile: the round trip test resizes the
+     simulated window, and the same profile object is reused by other checks */
+  const device = { ...profile };
   const listeners = {};
   const timers = [];
+  const mediaListeners = {};
+  const media = {
+    phone: device.width <= 760,
+    portrait: device.port,
+    landscape: !device.port,
+    fine: !device.mobile,
+  };
   let frame = null;
+
+  function matchesFor(query) {
+    if (query.includes('max-width: 760px')) return media.phone;
+    if (query.includes('pointer: fine')) return media.fine;
+    if (query.includes('orientation: portrait')) return media.portrait;
+    if (query.includes('orientation: landscape')) return media.landscape;
+    return false;
+  }
 
   const metricsForDevice = panelMetrics(device);
   const pad = metricsForDevice.pad;
@@ -172,6 +190,9 @@ function runScene(device, scenario) {
     scene.attrs['data-img'] = `heroc-${i + 1}.webp`;
     scene.attrs['data-img-m'] = `heroc-${i + 1}-m.webp`;
     scene.attrs['data-img-p'] = `heroc-${i + 1}-p.webp`;
+    scene.attrs['data-img-light'] = `heroc-${i + 1}-light.jpg`;
+    scene.attrs['data-img-light-m'] = `heroc-${i + 1}-light-m.jpg`;
+    scene.attrs['data-img-light-p'] = `heroc-${i + 1}-light-p.jpg`;
     scene.attrs['data-img-light'] = `heroc-${i + 1}-light.jpg`;
     scene.attrs['data-img-light-m'] = `heroc-${i + 1}-light-m.jpg`;
     scene.attrs['data-img-light-p'] = `heroc-${i + 1}-light-p.jpg`;
@@ -212,7 +233,13 @@ function runScene(device, scenario) {
         get: () => el._css || '',
         set: (value) => {
           el._css = String(value);
-          if (el._css.includes('100svh')) el.offsetHeight = legacyViewport ? 0 : state.svh;
+          if (el._css.includes('100svh')) {
+            /* the probe measures the viewport, so it has to move with it */
+            Object.defineProperty(el, 'offsetHeight', {
+              get: () => (legacyViewport ? 0 : state.svh),
+              configurable: true,
+            });
+          }
         },
       });
       return el;
@@ -231,15 +258,17 @@ function runScene(device, scenario) {
     get pageYOffset() { return state.scrollY; },
     scrollY: 0,
     document: documentStub,
-    matchMedia: (query) => {
-      let matches = false;
-      if (query.includes('max-width: 760px')) matches = device.width <= 760;
-      else if (query.includes('pointer: fine')) matches = !device.mobile;
-      else if (query.includes('orientation: portrait')) matches = device.port;
-      else if (query.includes('orientation: landscape')) matches = !device.port;
-      else if (query.includes('reduced-motion')) matches = false;
-      return { matches, media: query, addEventListener() {}, removeEventListener() {} };
-    },
+    matchMedia: (query) => ({
+      get matches() {
+        return matchesFor(query);
+      },
+      media: query,
+      addEventListener(type, fn) {
+        if (type !== 'change') return;
+        (mediaListeners[query] = mediaListeners[query] || []).push(fn);
+      },
+      removeEventListener() {},
+    }),
     requestAnimationFrame: (fn) => { frame = fn; return 1; },
     cancelAnimationFrame: () => { frame = null; },
     setTimeout: (fn, ms) => { timers.push({ fn, ms }); return timers.length; },
@@ -288,6 +317,50 @@ function runScene(device, scenario) {
         t.fn();
       }
       if (frame) { const f = frame; frame = null; f(); }
+    },
+    /* Resize the simulated window the way the browser does: the viewport, the
+       media queries and a resize event, all together. */
+    resizeTo(width, height) {
+      const wasPhone = media.phone;
+      const wasPortrait = media.portrait;
+
+      device.width = width;
+      device.height = height;
+      state.svh = height;
+      state.innerHeight = height;
+      win.innerHeight = height;
+      media.phone = width <= 760;
+      media.portrait = height >= width;
+      media.landscape = width > height;
+
+      root.getBoundingClientRect = () => ({
+        top: device.chrome - state.scrollY,
+        bottom: device.chrome - state.scrollY + (metrics.heroHeight || 0),
+        left: 0,
+        right: width,
+        width,
+        height: metrics.heroHeight || 0,
+      });
+
+      Object.keys(mediaListeners).forEach((query) => {
+        const changed =
+          (query.includes('max-width: 760px') && wasPhone !== media.phone) ||
+          (query.includes('orientation: portrait') && wasPortrait !== media.portrait) ||
+          (query.includes('orientation: landscape') && wasPortrait !== media.portrait);
+        if (changed) mediaListeners[query].forEach((fn) => fn({ matches: matchesFor(query), media: query }));
+      });
+
+      (listeners['resize'] || []).forEach((fn) => fn({}));
+      if (frame) {
+        const f = frame;
+        frame = null;
+        f();
+      }
+    },
+    get backgrounds() {
+      /* scenes other than the visible one may still be queued (the script
+         preloads them lazily), so the pending URL counts as applied */
+      return scenes.map((sc) => sc.style.backgroundImage || sc._bgUrl || '');
     },
     state,
     device,
@@ -351,15 +424,6 @@ function checkDevice(device) {
     if (copyNeed > capOneScreen + 1) {
       issues.push(`the copy is taller than the screen (${copyNeed} > ${capOneScreen})`);
     }
-
-    /* the portrait artwork is what keeps the crop comfortable */
-    const dark = artFraction(device.width, start);
-    const light = artFraction(device.width, start, PHONE_ART_LIGHT);
-    if (Math.min(dark.width, light.width) < 0.65) {
-      issues.push(
-        `the phone shows only ${Math.round(Math.min(dark.width, light.width) * 100)}% of the artwork width - cramped crop`,
-      );
-    }
   } else {
     if (start > capOneScreen + 1) {
       issues.push(`taller than the first screen (${start} > ${capOneScreen})`);
@@ -371,6 +435,19 @@ function checkDevice(device) {
     }
     if (start > m.state.svh) {
       issues.push(`taller than the small viewport (${start} > ${m.state.svh})`);
+    }
+  }
+
+  /* whenever the box is tall the portrait artwork is what keeps the crop
+     comfortable - measured for phones and for portrait tablets / narrow
+     portrait windows, which get the same crop */
+  const tallBox = device.height >= device.width && device.width <= 900;
+  if (tallBox) {
+    const dark = artFraction(device.width, start);
+    const light = artFraction(device.width, start, PHONE_ART_LIGHT);
+    const worst = Math.min(dark.width, light.width);
+    if (worst < 0.65) {
+      issues.push(`the box shows only ${Math.round(worst * 100)}% of the artwork width - cramped crop`);
     }
   }
 
@@ -465,8 +542,60 @@ function checkDevice(device) {
   return { device, height: start, settled: heights[heights.length - 1], issues, tight, needed };
 }
 
+/* The reported bug: the artwork lagged one breakpoint behind, because the
+   cached `isMobile` flag was read by the background swap while the re-fit was
+   still queued. Shrink the window and the desktop shot stayed in a tall box (a
+   quarter of the frame - "the picture is zoomed"); grow it back and the
+   portrait crop was stretched over the wide hero. Both directions, from a
+   phone and from a desktop window, are checked here. */
+function checkRoundTrip(profile, other) {
+  const phone = profile.mobile && profile.port;
+  const m = runScene(profile, phone
+    ? { content: phoneCopyNeed(profile), exact: true }
+    : { content: panelMetrics(profile).content });
+  const issues = [];
+  let lastWidth = profile.width;
+
+  const isPhoneWidth = (width) => width <= 760;
+  const check = (when) => {
+    const urls = m.backgrounds;
+    const wide = !isPhoneWidth(lastWidth);
+    const wrong = urls.filter((url) => (wide
+      ? /-(p|m)\.(webp|jpg)/.test(url)     /* a phone crop on a wide window */
+      : !/-p\.(webp|jpg)/.test(url)));      /* no portrait crop on a phone box */
+    if (wrong.length) {
+      issues.push(`${when}: wrong artwork - ${wrong[0]}${wide ? ' (phone crop on a desktop width)' : ' (desktop art in a phone box)'}`);
+    }
+
+    const space = m.state.svh - m.device.chrome;
+    if (m.heroHeight !== null && m.heroHeight > space + 1) {
+      issues.push(`${when}: the hero is taller than the screen (${m.heroHeight} > ${space})`);
+    }
+  };
+
+  check(`starting at ${profile.width}x${profile.height}`);
+  lastWidth = other.width;
+  m.resizeTo(other.width, other.height);
+  m.flushTimers();
+  check(`after resizing to ${other.width}x${other.height}`);
+  lastWidth = profile.width;
+  m.resizeTo(profile.width, profile.height);
+  m.flushTimers();
+  check(`back at ${profile.width}x${profile.height}`);
+
+  return { name: `${profile.name} ↔ ${other.width}x${other.height}`, issues };
+}
+
+const byName = (prefix) => DEVICES.find((d) => d.name.startsWith(prefix));
+const roundTrips = [
+  checkRoundTrip(byName('iPhone 12 390'), { width: 1280, height: 720 }),
+  checkRoundTrip(byName('Galaxy Fold'), { width: 1600, height: 900 }),
+  checkRoundTrip(byName('laptop 1280'), { width: 390, height: 844 }),
+  checkRoundTrip(byName('desktop 1600'), { width: 320, height: 568 }),
+];
+
 const results = DEVICES.map(checkDevice);
-const failed = results.filter((r) => r.issues.length);
+const failed = results.filter((r) => r.issues.length).concat(roundTrips.filter((r) => r.issues.length));
 const tight = results.filter((r) => !r.issues.length && r.tight);
 
 /* one row per device with everything a report needs, so the table and the
@@ -477,8 +606,9 @@ const rows = results.map((r) => {
   const copyNeed = phone ? phoneCopyNeed(device) : panelMetrics(device).content;
   const m = runScene(device, phone ? { content: copyNeed, exact: true } : { content: copyNeed });
 
-  const crop = phone ? artFraction(device.width, r.height || m.space) : null;
-  const cropLight = phone ? artFraction(device.width, r.height || m.space, PHONE_ART_LIGHT) : null;
+  const tallBox = device.height >= device.width && device.width <= 900;
+  const crop = tallBox ? artFraction(device.width, r.height || m.space) : null;
+  const cropLight = tallBox ? artFraction(device.width, r.height || m.space, PHONE_ART_LIGHT) : null;
 
   return {
     name: device.name,
@@ -498,13 +628,26 @@ const rows = results.map((r) => {
 });
 
 if (args.includes('--json')) {
-  console.log(JSON.stringify({ script: path.relative(ROOT, scriptPath), legacyViewport, rows }, null, 2));
+  console.log(JSON.stringify({
+    script: path.relative(ROOT, scriptPath),
+    legacyViewport,
+    rows,
+    roundTrips,
+    failed: failed.length,
+  }, null, 2));
   process.exit(failed.length ? 1 : 0);
 }
 
 const width = (value, size) => String(value).padEnd(size);
 console.log(`hero script: ${path.relative(ROOT, scriptPath)}${legacyViewport ? '  (no svh support: smallest-observed fallback)' : ''}`);
 console.log('');
+
+for (const trip of roundTrips) {
+  if (trip.issues.length) console.log(`FAIL ${trip.name}: ${trip.issues.join('; ')}`);
+}
+for (const trip of roundTrips) {
+  if (!trip.issues.length) console.log(`round trip ok  ${trip.name}`);
+}
 
 console.log('');
 console.log(
@@ -525,8 +668,9 @@ for (const row of rows) {
 console.log('');
 console.log(
   failed.length
-    ? `${failed.length} of ${results.length} device(s) failed`
-    : `all ${results.length} devices fill the open screen with the photo edge to edge`
+    ? `${failed.length} of ${results.length + roundTrips.length} check(s) failed`
+    : `all ${results.length} devices fill the open screen with the photo edge to edge, ` +
+      `and the artwork follows the breakpoint both ways`
 );
 if (tight.length) {
   console.log(

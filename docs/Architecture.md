@@ -122,6 +122,14 @@ user is actually looking at. When touching it, keep these invariants:
   (viewport − announcements − navbar), and - on a screen too small for the copy -
   to `min(needed, 1.2 × space)`, so a very short phone scrolls a little instead of
   clipping the buttons.
+- **Never cache the breakpoint.** The artwork shape is derived from
+  `matchMedia` at the moment it is applied (`phoneNow()` / `isPortrait()`), and
+  `variantKey()` is re-checked inside every fit. A cached flag made the artwork lag
+  one breakpoint behind: shrinking the window kept the landscape photo in a tall box
+  (about a quarter of the frame - "the picture is zoomed"), and growing it back
+  stretched the portrait crop over the wide hero until a reload. The harness runs
+  four window round trips (`phone ↔ desktop`, `desktop ↔ phone`) against the applied
+  `background-image` to keep it that way.
 - **Debounce with `requestAnimationFrame`** and re-fit on `resize`,
   `orientationchange`, `visualViewport`, `fonts.ready`, breakpoint/orientation
   media queries, and `<html>` attribute changes (the announcement bar resizes
@@ -140,9 +148,10 @@ it is solved in the artwork:
   window is picked per photo - where the frame is brightest (the lit product) when
   that is right, centred otherwise - and a contact sheet is written to
   `storage/reports/hero_portrait-crops.png` to eyeball the choice;
-- `hero-cinema.js` serves `-p` on portrait phones, `-m` on landscape phones and the
-  landscape master on larger screens; `hero-cinema.php` preloads the variant that
-  matches the orientation;
+- `hero-cinema.js` picks the shape from the **live** media state: `-p` for any
+  portrait box up to 900px wide (phones, tablets, narrow desktop windows), `-m` for
+  small landscape windows, the landscape master otherwise. `hero-cinema.php`
+  preloads the variant that matches the orientation;
 - the copy fits inside the full-height hero because the phone block carries a compact
   type scale: smaller kicker/brand box, `clamp(27px, 8.4vw, 44px)` title, a
   three-line paragraph, CTAs that may wrap, and the paragraph drops entirely at
