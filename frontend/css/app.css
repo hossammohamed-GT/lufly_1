@@ -1,18 +1,34 @@
 /* App shell: ambient stage + mega footer. Header, navigation and search
    live in frontend/components/navbar/navbar.css. */
 
-/* ---------- Performance & Rendering Directives ---------- */
+/* ---------- Performance & Rendering Directives ----------
+   content-visibility skips the sections that are still off-screen. The
+   placeholder height matters though: while a section is skipped the browser
+   lays it out with contain-intrinsic-size, and a placeholder that is far too
+   short makes the document grow section by section while the visitor scrolls
+   (on phones that drags the sliding URL bar with it, i.e. a viewport resize
+   mid-scroll). The values below follow the real heights of each band, and the
+   phone column re-states them for the single-column layouts. `auto` keeps the
+   measured height after the first paint, so these are first-paint hints only. */
 
-.trust-bar,
-.finishes-section,
-.categories-section,
-.inspiration-section,
-.rituals-section,
-.masterpieces-section,
-.corporate-section,
-.lufly-mega-footer {
-  content-visibility: auto;
-  contain-intrinsic-size: auto 500px;
+.trust-bar { content-visibility: auto; contain-intrinsic-size: auto 620px; }
+.finishes-section { content-visibility: auto; contain-intrinsic-size: auto 720px; }
+.categories-section { content-visibility: auto; contain-intrinsic-size: auto 760px; }
+.inspiration-section { content-visibility: auto; contain-intrinsic-size: auto 920px; }
+.rituals-section { content-visibility: auto; contain-intrinsic-size: auto 720px; }
+.masterpieces-section { content-visibility: auto; contain-intrinsic-size: auto 820px; }
+.corporate-section { content-visibility: auto; contain-intrinsic-size: auto 660px; }
+.lufly-mega-footer { content-visibility: auto; contain-intrinsic-size: auto 640px; }
+
+@media (max-width: 760px) {
+  .trust-bar { contain-intrinsic-size: auto 610px; }
+  .finishes-section { contain-intrinsic-size: auto 980px; }
+  .categories-section { contain-intrinsic-size: auto 1850px; }
+  .inspiration-section { contain-intrinsic-size: auto 1420px; }
+  .rituals-section { contain-intrinsic-size: auto 1180px; }
+  .masterpieces-section { contain-intrinsic-size: auto 1520px; }
+  .corporate-section { contain-intrinsic-size: auto 800px; }
+  .lufly-mega-footer { contain-intrinsic-size: auto 900px; }
 }
 
 /* ---------- Section scrolling ----------
@@ -87,6 +103,18 @@
   border-top: var(--border-hairline) solid var(--ds-border);
   color: var(--ds-text-muted);
   font-size: var(--text-xs);
+}
+
+/* ---------- Phone typography & rhythm ----------
+   The shared display scale bottoms out at 36px, which turns every band
+   heading ("Masterful Sanitary Suites") into three heavy lines on a 320px
+   screen, and the header keeps its 48px gap. Both are desktop numbers. */
+
+@media (max-width: 640px) {
+  .section-title { font-size: clamp(23px, 7.2vw, 33px); }
+  .section-header-center { margin-bottom: var(--space-8); }
+  .section-subtitle { font-size: var(--text-sm); }
+  .band { padding-block: var(--space-12); }
 }
 
 /* ---------- Responsive chrome ---------- */

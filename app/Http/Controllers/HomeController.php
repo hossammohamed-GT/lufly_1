@@ -40,6 +40,48 @@ class HomeController extends Controller
             [$locale, $fallback]
         );
 
+        /* Category tiles lead with a real product from their own category.
+           Only photographs qualify (main / gallery media) - the technical
+           drawings stay in the product page - and one shot per product, so a
+           tile never fills up with three angles of the same fixture. The list
+           is shuffled per request, which is what makes the mosaic change from
+           visit to visit instead of always showing the same picture. */
+        $shotRows = $connection->select(
+            "SELECT p.category_id, m.path
+               FROM products p
+               JOIN product_media pm ON pm.product_id = p.id
+               JOIN media m ON m.id = pm.media_id
+              WHERE p.status = 'active' AND p.deleted_at IS NULL
+                AND m.deleted_at IS NULL AND m.status = 'active'
+                AND m.mime_type LIKE 'image/%'
+                AND pm.type IN ('main', 'gallery')
+              ORDER BY p.category_id ASC, (pm.type = 'main') DESC,
+                       pm.is_primary DESC, pm.sort_order ASC, pm.id ASC",
+        );
+
+        $shotsByCategory = [];
+        foreach ($shotRows as $row) {
+            $categoryId = (int) $row['category_id'];
+            $path = trim((string) $row['path']);
+            if ($path !== '' && !isset($shotsByCategory[$categoryId][$path])) {
+                $shotsByCategory[$categoryId][$path] = true;
+            }
+        }
+
+        $shotsPerTile = 3;
+        foreach ($categories as &$category) {
+            /* eight candidates is plenty to draw three from */
+            $shots = array_slice(array_keys($shotsByCategory[(int) $category['id']] ?? []), 0, 8);
+            shuffle($shots);
+            $shots = array_slice($shots, 0, $shotsPerTile);
+            if ($shots === []) {
+                $own = trim((string) ($category['image'] ?? ''));
+                $shots = $own !== '' ? [$own] : [];
+            }
+            $category['shots'] = $shots;
+        }
+        unset($category);
+
         /* Rotating showcase: every visit picks ONE random product per
            category, then keeps 4 for the grid - so each reload shows a
            different mix that always spans distinct categories. Curated

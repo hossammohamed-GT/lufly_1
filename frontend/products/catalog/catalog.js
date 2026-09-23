@@ -28,7 +28,11 @@
 })();
 
 /* ============================================================
-   Product card: cycle through the product photos on hover.
+   Product card: cycle through every image of the product on
+   hover - photos first, then the technical drawings, then the
+   installed shots. Each slide names its section (see
+   data-pcard-kind on the slide and the label map on the card),
+   so a drawing that rotates in is never mistaken for a photo.
    Delegated from the grid so cards injected by live search work too.
    ============================================================ */
 
@@ -53,6 +57,16 @@
     imgs.forEach(function (img, n) { img.classList.toggle('is-on', n === index); });
     dots.forEach(function (dot, n) { dot.classList.toggle('is-on', n === index); });
     media.setAttribute('data-pcard-index', String(index));
+
+    /* the badge only speaks up for drawings / installed shots: the label
+       map lives on the card ("data-pcard-kind-drawing" and friends) */
+    var badge = media.querySelector('[data-pcard-kind-label]');
+    if (badge) {
+      var kind = imgs[index].getAttribute('data-pcard-kind') || '';
+      var label = kind && kind !== 'photo' ? (media.getAttribute('data-pcard-kind-' + kind) || '') : '';
+      badge.textContent = label;
+      badge.hidden = label === '';
+    }
   }
 
   function advance(media) {

@@ -141,37 +141,44 @@ $fallbackImg = '/images/products/prod_146_1620-111-a.jpg';
                     $item = $product->translate($locale);
                     $img = (string) ($item['image'] ?? '') !== '' ? (string) $item['image'] : $fallbackImg;
 
-                    /* hover cycles through every real photo of the product:
-                       the catalog shots first, then the installed views.
-                       Drawings stay out of the card. */
-                    $cardImgs = is_array($item['gallery'] ?? null) ? array_values($item['gallery']) : [];
-                    foreach ((is_array($item['situ_images'] ?? null) ? $item['situ_images'] : []) as $s) {
-                        $cardImgs[] = $s;
+                    /* hover cycles through every image of the product: the
+                       photos first (main shot on top), then the technical
+                       drawings, then the installed shots */
+                    $cardSlides = [];
+                    foreach ((array) ($item['card_slides'] ?? []) as $slide) {
+                        $slidePath = (string) ($slide['path'] ?? '');
+                        if ($slidePath !== '') {
+                            $cardSlides[] = ['path' => $slidePath, 'kind' => (string) ($slide['kind'] ?? 'photo')];
+                        }
                     }
-                    $cardImgs = array_values(array_unique(array_filter($cardImgs, static fn ($v) => (string) $v !== '')));
-                    if ($cardImgs === []) {
-                        $cardImgs = [$img];
+                    if ($cardSlides === []) {
+                        $cardSlides = [['path' => $img, 'kind' => 'photo']];
                     }
+                    $cardKinds = ['drawing' => trans('products.view_drawing'), 'situ' => trans('products.view_situ')];
+                    $cardName = (string) ($item['name'] ?? '');
                     $cardCode = (string) ($item['sku'] ?? $item['model_code'] ?? '');
                     $cardNo = (int) (($paginator->page() - 1) * $paginator->perPage() + $index + 1);
                 ?>
                     <article class="pcard" style="--pcard-delay: <?= e((string) (0.04 * (int) (($index % 6) + 1))) ?>s">
                         <a class="pcard-media" href="<?= e(route('products.show', ['slug' => $product->slug])) ?>"
-                           <?= count($cardImgs) > 1 ? 'data-pcard-cycle' : '' ?>>
-                            <?php foreach ($cardImgs as $ci => $cSrc): ?>
-                                <img src="<?= e(asset($cSrc)) ?>"
-                                     alt="<?= $ci === 0 ? e($item['name'] ?? '') : '' ?>"
+                           <?= count($cardSlides) > 1 ? 'data-pcard-cycle data-pcard-kind-drawing="' . e($cardKinds['drawing']) . '" data-pcard-kind-situ="' . e($cardKinds['situ']) . '"' : '' ?>>
+                            <?php foreach ($cardSlides as $ci => $slide): ?>
+                                <?php $slideKind = (string) $slide['kind']; ?>
+                                <img src="<?= e(asset($slide['path'])) ?>"
+                                     alt="<?= $ci === 0 ? e($cardName) : ($slideKind === 'photo' ? '' : e($cardKinds[$slideKind] ?? '') . ' — ' . e($cardName)) ?>"
                                      class="pcard-img<?= $ci === 0 ? ' is-on' : '' ?>"
                                      data-pcard-slide="<?= (int) $ci ?>"
+                                     data-pcard-kind="<?= e($slideKind) ?>"
                                      loading="lazy" decoding="async" width="420" height="320"
                                      onerror="this.onerror=null; this.remove();">
                             <?php endforeach; ?>
-                            <?php if (count($cardImgs) > 1): ?>
+                            <?php if (count($cardSlides) > 1): ?>
                                 <span class="pcard-dots" aria-hidden="true">
-                                    <?php foreach ($cardImgs as $ci => $unusedDot): ?>
+                                    <?php foreach ($cardSlides as $ci => $unusedDot): ?>
                                         <i class="pcard-dot<?= $ci === 0 ? ' is-on' : '' ?>" data-pcard-dot="<?= (int) $ci ?>"></i>
                                     <?php endforeach; ?>
                                 </span>
+                                <span class="pcard-kind" data-pcard-kind-label aria-hidden="true" hidden></span>
                             <?php endif; ?>
                             <span class="pcard-hint" aria-hidden="true">
                                 <svg viewBox="0 0 20 20" fill="currentColor" width="13" height="13"><path fill-rule="evenodd" d="M10.293 3.293a1 1 0 011.414 0l6 6a1 1 0 010 1.414l-6 6a1 1 0 01-1.414-1.414L14.586 11H3a1 1 0 110-2h11.586l-4.293-4.293a1 1 0 010-1.414z" clip-rule="evenodd"/></svg>

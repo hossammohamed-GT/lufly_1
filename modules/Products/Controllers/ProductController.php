@@ -12,12 +12,14 @@ use Core\Http\Response;
 use Core\Localization\Translator;
 use Modules\Products\Requests\StoreProductRequest;
 use Modules\Products\Requests\UpdateProductRequest;
+use Modules\Products\Services\ProductMediaService;
 use Modules\Products\Services\ProductService;
 
 class ProductController extends Controller
 {
     public function __construct(
         private readonly ProductService $products,
+        private readonly ProductMediaService $media,
         private readonly SEOService $seo,
         private readonly Translator $translator,
     ) {
@@ -211,7 +213,7 @@ class ProductController extends Controller
         return $this->view('products::Admin.form', [
             'title' => trans('common.create_product'),
             'product' => null,
-            'primaryImage' => null,
+            'mediaSections' => [],
             'translations' => [],
         ]);
     }
@@ -236,13 +238,11 @@ class ProductController extends Controller
     public function adminEdit(int $id): Response
     {
         $product = $this->products->find($id);
-        $translated = $product !== null ? $product->translate($this->translator->getLocale()) : [];
-        $primaryImage = !empty($translated['image']) ? (string) $translated['image'] : null;
 
         return $this->view('products::Admin.form', [
             'title' => trans('common.edit_product'),
             'product' => $product,
-            'primaryImage' => $primaryImage,
+            'mediaSections' => $product !== null ? $product->mediaBySection() : [],
             'translations' => $product !== null ? $product->translations() : [],
         ]);
     }
@@ -314,29 +314,13 @@ class ProductController extends Controller
     }
 
     /**
+     * Upload coming from the single-image field of the product form: it lands
+     * in the photos section and becomes the main image.
+     *
      * @param array<string, mixed> $file
      */
     private function attachPrimaryImage(int $productId, array $file): void
     {
-        /** @var \App\Services\MediaService $mediaService */
-        $mediaService = app(\App\Services\MediaService::class);
-        $media = $mediaService->storeFromUpload($file, 'products', auth()->id());
-
-        $connection = \Modules\Products\Models\Product::query()->connection();
-        $connection->affect(
-            'UPDATE product_media SET is_primary = 0 WHERE product_id = ?',
-            [$productId]
-        );
-
-        $connection->insert('product_media', [
-            'product_id' => $productId,
-            'variant_id' => null,
-            'media_id' => (int) $media->id,
-            'type' => 'main',
-            'sort_order' => 1,
-            'is_primary' => 1,
-            'created_at' => date('Y-m-d H:i:s'),
-            'updated_at' => date('Y-m-d H:i:s'),
-        ]);
+        $this->media->upload($productId, $file, 'photos', true);
     }
 }

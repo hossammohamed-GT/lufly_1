@@ -95,8 +95,14 @@ $finishes = [
             <div class="finishes-heading-note"><?= e(trans('home.finishes_note_1')) ?><br><?= e(trans('home.finishes_note_2')) ?><br><?= e(trans('home.finishes_note_3')) ?><br><?= e(trans('home.finishes_note_4')) ?><span></span></div>
         </div>
 
-        <div class="finishes-swatch-grid scroll-reveal" data-delay="1">
+        <!-- The nine finishes as a named index: a 96px texture chip, the name and
+             the process. Wide screens get one column of rows beside the showcase;
+             everything narrower gets a single scrollable row of pills. The old
+             nine picture tiles collapsed into a 2x5 block of squares on a phone,
+             which made this the tallest band on the page. -->
+        <div class="finishes-picker scroll-reveal" data-delay="1">
             <?php foreach ($finishes as $i => $finish): ?>
+                <?php $chip = str_replace('/swatch-', '/chip-', (string) $finish['img']); ?>
                 <button type="button"
                         class="finish-swatch-btn <?= $i === 0 ? 'is-active' : '' ?>"
                         data-finish="<?= e($finish['key']) ?>"
@@ -104,9 +110,9 @@ $finishes = [
                         data-title="<?= e($finish['title']) ?>"
                         data-desc="<?= e($finish['desc']) ?>"
                         aria-pressed="<?= $i === 0 ? 'true' : 'false' ?>">
-                    <img src="<?= e(asset($finish['img'])) ?>" alt="<?= e($finish['label']) ?> finish" loading="lazy" decoding="async">
-                    <span class="swatch-label"><?= e($finish['label']) ?></span>
-                    <small><?= e($finish['tech']) ?></small>
+                    <img class="finish-row-chip" src="<?= e(asset($chip)) ?>" alt="" width="34" height="34" loading="lazy" decoding="async">
+                    <span class="finish-row-name"><?= e($finish['label']) ?></span>
+                    <small class="finish-row-tech"><?= e($finish['tech']) ?></small>
                 </button>
             <?php endforeach; ?>
         </div>

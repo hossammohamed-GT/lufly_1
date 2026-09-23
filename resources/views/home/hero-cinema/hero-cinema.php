@@ -9,17 +9,29 @@
 $view->pushStyle('frontend/home/hero-cinema/hero-cinema.css');
 $view->pushScript('frontend/home/hero-cinema/hero-cinema.js');
 
-/* The first slide is the largest paint: preload for instant LCP */
+/* The first slide is the largest paint: preload for instant LCP.
+   Three shapes, matching exactly what the script picks at runtime:
+     -p      portrait phones AND portrait tablets / narrow portrait windows
+             (the crop is framed for a tall box, so the screen never has to
+             zoom a landscape shot into an unreadable close-up)
+     -m      small landscape windows
+     plain   desktop / landscape */
 $view->pushPreload(asset('images/lifestyle/heroc-1.webp'), [
     'as' => 'image',
     'type' => 'image/webp',
-    'media' => '(min-width: 761px)',
+    'media' => '(min-width: 761px) and (orientation: landscape)',
+    'fetchpriority' => 'high',
+]);
+$view->pushPreload(asset('images/lifestyle/heroc-1-p.webp'), [
+    'as' => 'image',
+    'type' => 'image/webp',
+    'media' => '(max-width: 900px) and (orientation: portrait)',
     'fetchpriority' => 'high',
 ]);
 $view->pushPreload(asset('images/lifestyle/heroc-1-m.webp'), [
     'as' => 'image',
     'type' => 'image/webp',
-    'media' => '(max-width: 760px)',
+    'media' => '(max-width: 760px) and (orientation: landscape)',
     'fetchpriority' => 'high',
 ]);
 
@@ -52,8 +64,10 @@ $slides = [
                  role="img" aria-label="<?= e($s['alt']) ?>"
                  data-img="<?= e(asset("images/lifestyle/{$s['img']}.webp")) ?>"
                  data-img-m="<?= e(asset("images/lifestyle/{$s['img']}-m.webp")) ?>"
+                 data-img-p="<?= e(asset("images/lifestyle/{$s['img']}-p.webp")) ?>"
                  data-img-light="<?= e(asset("images/lifestyle/{$s['img']}-light.jpg")) ?>"
-                 data-img-light-m="<?= e(asset("images/lifestyle/{$s['img']}-light-m.jpg")) ?>"></div>
+                 data-img-light-m="<?= e(asset("images/lifestyle/{$s['img']}-light-m.jpg")) ?>"
+                 data-img-light-p="<?= e(asset("images/lifestyle/{$s['img']}-light-p.jpg")) ?>"></div>
         <?php endforeach; ?>
     </div>
 
