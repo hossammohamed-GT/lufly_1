@@ -21,6 +21,11 @@ if (!feature('planner', true) || !(bool) config('planner.enabled', true)) {
     return;
 }
 
+/* PLANNER_CHAT=false keeps the planner on its own page and nothing else */
+if (!(bool) config('planner.chat.enabled', true)) {
+    return;
+}
+
 $service = app(\Modules\Planner\Services\PlannerService::class);
 $locale = (string) ($translator instanceof \Core\Localization\Translator ? $translator->getLocale() : 'en');
 $context = is_array($plannerContext ?? null) && ($plannerContext['name'] ?? '') !== '' ? $plannerContext : null;
