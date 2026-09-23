@@ -43,6 +43,7 @@ $countKey = $count === 1 ? 'box.list_count_one' : 'box.list_count_many';
       data-box-page
       data-box-endpoint="<?= e($addEndpoint) ?>"
       data-box-remove-endpoint="<?= e($removeEndpoint) ?>"
+      data-box-token="<?= e((string) ($box->token ?? '')) ?>"
       data-box-max="<?= $maxItems ?>"
       data-box-err="<?= e(trans('box.err')) ?>">
     <div class="favs-inner">

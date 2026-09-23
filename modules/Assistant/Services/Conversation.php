@@ -112,22 +112,22 @@ final class Conversation
      */
     private const TOPIC_WORDS = [
         'basin' => [
-            'basin', 'washbasin', 'wash basin', 'sink', 'lavatory', 'hand basin', 'lavabo', 'lavabosu',
+            'basin', 'basins', 'washbasin', 'washbasins', 'wash basin', 'sink', 'sinks', 'lavatory', 'hand basin', 'lavabo', 'lavabosu',
             'umyvadlo', 'umyvadla', 'umyvadlem', 'umyvadlo',
             'حوض', 'حوضي', 'أحواض', 'احواض', 'مغسلة', 'مغسله', 'حوض الحمام', 'حوض الوجه', 'بانيو صغير',
         ],
         'toilet' => [
-            'toilet', 'wc', 'water closet', 'klozet', 'klozety', 'tuvalet', 'toaleta', 'toalety',
+            'toilet', 'toilets', 'wc', 'wcs', 'water closet', 'klozet', 'klozety', 'tuvalet', 'tuvaletler', 'toaleta', 'toalety',
             'zachod', 'záchod', 'misa', 'mísa', 'wca',
             'قاعدة حمام', 'قاعدة الحمام', 'مرحاض', 'تواليت', 'كوليت', 'بيت الراحه', 'بيت الراحة', 'قاعده',
         ],
         'shower' => [
-            'shower', 'shower set', 'dus', 'duş', 'duşu', 'dusakabin', 'sprcha', 'sprchovy', 'sprchový',
+            'shower', 'showers', 'shower set', 'dus', 'duş', 'duşu', 'dusakabin', 'sprcha', 'sprchy', 'sprchovy', 'sprchový',
             'sprchova', 'sprchová', 'sprchovy set',
             'دش', 'الدش', 'شاور', 'دوشه', 'دوشة', 'كابينه دش', 'كابينة دش',
         ],
         'tap' => [
-            'tap', 'taps', 'mixer', 'faucet', 'battery', 'batarya', 'bataryasi', 'bataryası',
+            'tap', 'taps', 'mixer', 'mixers', 'faucet', 'faucets', 'battery', 'batarya', 'bataryasi', 'bataryası',
             'baterie', 'baterii', 'kohoutek', 'kohoutky',
             'خلاط', 'خلاطات', 'خلاط الحمام', 'حنفيه', 'حنفية', 'صنبور', 'صنابير',
         ],
@@ -143,7 +143,7 @@ final class Conversation
             'اطفال', 'أطفال', 'طفل', 'عيال', 'ولاد', 'صغار', 'مدرسه', 'مدرسة', 'حضانه', 'حضانة',
         ],
         'bath' => [
-            'bathtub', 'bath tub', 'bath', 'kuvet', 'küvet', 'kupelna vana', 'koupelnová vana', 'vana',
+            'bathtub', 'bathtubs', 'bath tub', 'bath', 'baths', 'kuvet', 'kuveti', 'küvet', 'kupelna vana', 'koupelnová vana', 'vana', 'vany',
             'banyo', 'banyosu', 'banyo kuveti',
             'بانيو', 'البانيو', 'حوض استحمام', 'حوض الاستحمام', 'بانيو كبير', 'بانيو صغير',
         ],
@@ -332,7 +332,7 @@ final class Conversation
         return $topics;
     }
 
-    private function words(string $text): int
+    public function words(string $text): int
     {
         return count(array_filter(explode(' ', $text), static fn (string $word): bool => $word !== ''));
     }
@@ -365,7 +365,10 @@ final class Conversation
                 continue;
             }
 
-            if (preg_match('/(^| )' . preg_quote($needle, '/') . '/u', $text) === 1) {
+            /* the whole word, not the start of one: "bathroom" is not a bathtub,
+               and "or" must not fire inside "floor". The lists carry the plural
+               and the suffixed forms each language actually uses. */
+            if (preg_match('/(?<![\p{L}\p{N}])' . preg_quote($needle, '/') . '(?![\p{L}\p{N}])/u', $text) === 1) {
                 return true;
             }
         }

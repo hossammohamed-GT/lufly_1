@@ -29,6 +29,9 @@ class BoxService
     ) {
     }
 
+    /** Where one visitor's box token is remembered besides his cookie. */
+    private const SESSION_KEY = 'lufly_box_token';
+
     public function enabled(): bool
     {
         return (bool) config('box.enabled', true);
@@ -52,11 +55,20 @@ class BoxService
 
         $token = (string) request()->cookie($this->cookieName(), '');
 
-        if ($token !== '') {
-            $this->box = $this->boxes->findByToken($token);
+        /* One visitor, one box. Three things can carry it, and any one of them is
+           enough: the cookie, the token a page handed to the browser, and — for a
+           browser that drops cookies but keeps the session — the token the
+           session remembers. Only when none of them has a box does a new one
+           begin. */
+        foreach ([$token, (string) session(self::SESSION_KEY, '')] as $remembered) {
+            if ($remembered === '') {
+                continue;
+            }
 
-            if ($this->box !== null) {
-                return $this->box;
+            $found = $this->boxes->findByToken($remembered);
+
+            if ($found !== null) {
+                return $this->box = $found;
             }
         }
 
@@ -69,11 +81,32 @@ class BoxService
         $this->resolved = true;
         $this->box = $box;
 
+        /* opening the link from the team's mail makes this browser the visitor's
+           browser: the box is remembered here too, so the next piece he saves
+           joins this list and not a fresh one */
+        session()->set(self::SESSION_KEY, (string) $box->token);
+
         if ($box->claimed_at === null) {
             $box->update(['claimed_at' => date('Y-m-d H:i:s')]);
         }
 
         return $box;
+    }
+
+    /** Remember a box the browser handed back by token. */
+    public function remember(string $token): ?Box
+    {
+        $box = $this->boxes->findByToken($token);
+
+        if ($box === null) {
+            return null;
+        }
+
+        session()->set(self::SESSION_KEY, (string) $box->token);
+
+        session()->set(self::SESSION_KEY, (string) $box->token);
+
+        return $this->box = $box;
     }
 
     public function findByToken(string $token): ?Box

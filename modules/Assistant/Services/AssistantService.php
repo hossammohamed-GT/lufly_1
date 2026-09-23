@@ -35,6 +35,7 @@ final class AssistantService
         private readonly AiGuard $guard,
         private readonly CatalogFinder $finder,
         private readonly Conversation $conversation,
+        private readonly Talk $talk,
         private readonly MailService $mail,
         private readonly View $view,
     ) {
@@ -237,6 +238,25 @@ final class AssistantService
             }
         }
 
+        /* A description that never touched the catalogue is still a request: the
+           shop shows what it is known for and says plainly that the piece is
+           probably in the warehouse but not on the website yet, with a way to
+           reach the team. (A question is different — that one is answered with
+           words, see above.) */
+        if (!$talk && $cards === [] && trim($question) !== '' && !$vision) {
+            $signal = true;
+        }
+
+        /* A question the visitor asked is a conversation, not a search: when the
+           sentence names no piece, only a search that really landed beats words.
+           (Without this, a stray word in "who won the world cup?" was enough to
+           put a fallback shelf of washbasins in front of him.) */
+        if ($talk && ($cards === [] || $this->bestScore($cards) < $good)) {
+            $cards = [];
+            $terms = [];
+            $signal = false;
+        }
+
         /* ---- 3. never answer with nothing --------------------------------- */
 
         $exact = $cards !== [] && $this->bestScore($cards) >= (int) config('assistant.find.min_score', 3);
@@ -253,11 +273,20 @@ final class AssistantService
 
         /* nothing at all — no catalogue word, no topic, no model: talk */
         if ($cards === []) {
+            /* What the visitor said is answered here even with no model to ask:
+               hello, thanks, "do you speak Arabic?", shipping, prices, or a
+               question that has nothing to do with the shop. */
+            $local = $this->talk->reply($question, $locale, $talk);
+            $language = (string) ($local['language'] ?? $locale);
+            $fallback = (string) ($local['say'] ?? '') !== '' ? (string) $local['say'] : trans('assistant.chat_vague');
+            $note = (string) ($local['note'] ?? '') !== '' ? (string) $local['note'] : trans('assistant.chat_menu_note');
+
             return $this->chatBack([
-                'text' => $say !== '' ? $say : trans('assistant.chat_vague'),
-                'note' => trans('assistant.chat_menu_note'),
-                'source' => $say !== '' ? 'ai' : 'chat',
-                'choices' => $this->menuChoices($locale),
+                'text' => $this->converse($question, $fallback, '', $locale),
+                'note' => $note,
+                'source' => $say !== '' ? 'ai' : ($local !== null ? 'talk' : 'chat'),
+                'choices' => $this->talk->chips($language, $this->conversation->topicList())
+                    ?? $this->menuChoices($locale),
             ], $locale);
         }
 
@@ -319,6 +348,21 @@ final class AssistantService
         $topic = $this->conversation->topic($question);
         $intent = $this->conversation->intent($question);
 
+        /* "how much is a washbasin?", "do you deliver?", "can you speak Arabic?",
+           "who are you?" — questions about the shop, answered before anything
+           else, whatever piece the sentence happens to mention */
+        $service = $this->talk->service($question, $locale);
+
+        /* a greeting that also names a piece ("hello, I need a washbasin") is a
+           search with a hello in front of it — the piece wins */
+        if ($service !== null && in_array($service['intent'], ['greet', 'thanks'], true) && $topic !== '') {
+            $service = null;
+        }
+
+        if ($service !== null) {
+            return $this->menu($locale, $this->converse($question, (string) $service['say'], '', $locale), $service);
+        }
+
         /* a piece we know is named in the message — that is what the visitor is
            asking about, whatever else the sentence says */
         if ($topic !== '') {
@@ -344,18 +388,33 @@ final class AssistantService
             return $this->conversation->specific($question) ? null : $this->askAbout($topic, $locale);
         }
 
+        /* An announcement ("I am renovating the bathroom") is talked through. A
+           long sentence that happens to mention the room is not an announcement,
+           it is a description — that one belongs to the search, which shows the
+           shop and says the piece is probably not uploaded yet. */
+        if ($intent === 'wide' && $this->conversation->words($question) > 6) {
+            return null;
+        }
+
         if (in_array($intent, ['greet', 'thanks', 'talk', 'wide'], true)) {
-            $text = match ($intent) {
+            $shop = match ($intent) {
                 'thanks' => trans('assistant.chat_thanks'),
                 'talk' => trans('assistant.chat_talk'),
                 'wide' => trans('assistant.chat_talk'),
                 default => trans('assistant.chat_hello') . ' ' . trans('assistant.chat_hello_2'),
             };
 
-            /* the visitor said something that is not a search: the model answers
-               it in their own language — the shop's own words are the fallback
-               for when there is no model to ask */
-            return $this->menu($locale, $this->converse($question, $text, $topic, $locale));
+            /* The visitor said something that is not a search. The model answers
+               it in their own language when there is a model to ask; without one
+               the shop still answers — hello and thanks are not a reason to show
+               an error, or to answer a visitor who wrote Arabic in English. */
+            $local = $this->talk->reply($question, $locale);
+
+            return $this->menu(
+                $locale,
+                $this->converse($question, (string) ($local['say'] ?? $shop), $topic, $locale),
+                $local,
+            );
         }
 
         return null;
@@ -374,13 +433,21 @@ final class AssistantService
     }
 
     /** The small set of things the chat can help with. */
-    private function menu(string $locale, string $text): array
+    /**
+     * The chat's opening answer: a line, a note, and the few pieces worth offering.
+     *
+     * @param array{say?:string,note?:string,language?:string,intent?:string}|null $local
+     */
+    private function menu(string $locale, string $text, ?array $local = null): array
     {
+        $note = trim((string) ($local['note'] ?? ''));
+
         return [
             'text' => $text !== '' ? $text : trans('assistant.chat_menu'),
-            'note' => trans('assistant.chat_menu_note'),
+            'note' => $note !== '' ? $note : trans('assistant.chat_menu_note'),
             'source' => 'chat',
-            'choices' => $this->menuChoices($locale),
+            'choices' => $this->talk->chips((string) ($local['language'] ?? ''), $this->conversation->topicList())
+                ?? $this->menuChoices($locale),
             'thread' => [],
         ];
     }
@@ -599,6 +666,9 @@ final class AssistantService
 
     private function chatPrompt(string $question, string $locale, string $topic = ''): string
     {
+        $language = $this->talk->language($question, $locale);
+        $languageName = ['en' => 'English', 'tr' => 'Turkish', 'cs' => 'Czech', 'ar' => 'Arabic'][$language] ?? 'English';
+
         $lines = [
             'You are the assistant of LUFLY, a factory of sanitary ware (washbasins, toilets,',
             'showers, baths, taps, accessories) that sells online.',
@@ -607,6 +677,10 @@ final class AssistantService
             'actually said, in their language — if they wrote Arabic, answer in Arabic, if they',
             'wrote Turkish, answer in Turkish. Two or three short sentences at most, warm,',
             'concrete, and never a lecture.',
+            '',
+            /* the shop's own reading of the visitor's letters: the model is told which
+               language it is answering in, instead of guessing from a short sentence */
+            "The visitor's message is in " . $languageName . ' — answer in ' . $languageName . '.',
             '',
             'You may talk about anything connected to a bathroom, a kitchen, a renovation or',
             'this shop, including hello, thanks, who you are, what the shop does, sizes,',

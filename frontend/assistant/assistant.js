@@ -45,6 +45,10 @@
   var labels = parseJSON(root.getAttribute('data-assistant-labels')) || {};
   var EMAIL_KEY = 'lufly-chat-email';
   var SIZE_KEY = 'lufly-chat-size';
+  /* the box's token, written by frontend/box/box.js: the piece the visitor puts
+     in the box from a chat card joins the very same list as the one he tapped on
+     a product page, even in a browser that keeps no cookies */
+  var BOX_TOKEN_KEY = 'lufly-box-token';
   /* the conversation follows the visitor from page to page: the widget is on
      every screen, so what was said on the home page is still there on a product
      page — same browser, same shop, one chat */
@@ -788,6 +792,35 @@
     return meta ? meta.getAttribute('content') || '' : '';
   }
 
+  function boxToken() {
+    try {
+      return window.localStorage.getItem(BOX_TOKEN_KEY) || '';
+    } catch (error) {
+      return '';
+    }
+  }
+
+  /* wherever the chat points at the box, it points at *his* box: the token in the
+     address opens the same list in any browser, cookie or no cookie */
+  function boxHref(base) {
+    var token = boxToken();
+
+    if (!base) return base;
+    if (!token || base.indexOf('t=') !== -1) return base;
+
+    return base + (base.indexOf('?') === -1 ? '?' : '&') + 't=' + encodeURIComponent(token);
+  }
+
+  function paintBoxLinks() {
+    var links = document.querySelectorAll('[data-box-page-link]');
+
+    Array.prototype.forEach.call(links, function (link) {
+      var href = boxHref(link.getAttribute('data-assistant-box-base') || link.getAttribute('href') || boxPage);
+
+      if (href) link.setAttribute('href', href);
+    });
+  }
+
   /* ---------- the chips, and the choices the chat offers back ---------- */
 
   Array.prototype.forEach.call(root.querySelectorAll('[data-assistant-chip]'), function (chip) {
@@ -818,6 +851,11 @@
   });
 
   restore();
+  paintBoxLinks();
+
+  /* a piece saved anywhere on the page: the link to the box follows the token
+     that save produced */
+  document.addEventListener('box:changed', paintBoxLinks);
 
   /* a piece landing in the box is worth a line in the conversation */
   document.addEventListener('box:changed', function (event) {

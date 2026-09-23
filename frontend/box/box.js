@@ -39,6 +39,26 @@
     return meta ? meta.getAttribute('content') : '';
   }
 
+  /* The page the visitor is looking at knows which box it is: the box page prints
+     its token, and a link the team mailed (?t=… or /box/TOKEN) already put that
+     box on the server's side. Learning it here means the next piece he saves goes
+     into this list instead of quietly starting another one. */
+  function learnPageToken() {
+    var page = document.querySelector('[data-box-page][data-box-token]');
+    var printed = page ? (page.getAttribute('data-box-token') || '') : '';
+
+    if (printed) {
+      keepToken(printed);
+      return;
+    }
+
+    /* the token may also be in the address itself */
+    var match = /[?&]t=([A-Za-z0-9]{16,64})/.exec(window.location.search)
+      || /\/([A-Za-z0-9]{32,64})\/?(?:\?|#|$)/.exec(window.location.pathname);
+
+    if (match) keepToken(match[1]);
+  }
+
   function addEndpoint() {
     var page = document.querySelector('[data-box-page]');
     var button = document.querySelector('[data-box-add]');
@@ -295,6 +315,10 @@
       });
     });
   }
+
+  /* which box is this browser looking at? the page knows — remember it before
+     anything is added, so the second piece joins the first list */
+  learnPageToken();
 
   /* the storefront may render after this script (the chat adds cards) — the
      delegated handlers above cover those, so nothing else is needed here */

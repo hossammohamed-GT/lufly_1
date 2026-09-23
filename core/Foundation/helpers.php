@@ -108,9 +108,38 @@ if (!function_exists('url')) {
 }
 
 if (!function_exists('asset')) {
+    /**
+     * A URL for a file the web server hands out itself (stylesheets, scripts,
+     * images).
+     *
+     * The URL carries the file's own timestamp, so a browser never runs
+     * yesterday's script against today's page: change the file and every page
+     * that points at it fetches the new one, no cache to explain away. Files
+     * that live outside the application folder (a CDN, a remote image) are left
+     * exactly as they are.
+     */
     function asset(string $path): string
     {
-        return app(Router::class)->baseUrl(ltrim($path, '/'));
+        $url = app(Router::class)->baseUrl(ltrim($path, '/'));
+
+        static $stamps = [];
+
+        $clean = ltrim($path, '/');
+
+        if ($clean === '' || str_contains($clean, '://')) {
+            return $url;
+        }
+
+        if (!array_key_exists($clean, $stamps)) {
+            $file = base_path($clean);
+            $stamps[$clean] = is_file($file) ? (int) filemtime($file) : 0;
+        }
+
+        if ($stamps[$clean] === 0) {
+            return $url;
+        }
+
+        return $url . (str_contains($url, '?') ? '&' : '?') . 'v=' . $stamps[$clean];
     }
 }
 
