@@ -3,6 +3,7 @@
 $view->layout('layouts.admin');
 /** @var \Modules\Products\Models\Product|null $product */
 /** @var array<string, array<string, mixed>> $translations */
+/** @var array<string, array<int, array<string, mixed>>> $mediaSections */
 $action = $product === null ? route('admin.products.store') : route('admin.products.update', ['id' => $product->id]);
 $locales = $translator->locales();
 $fallbackLocale = (string) config('localization.fallback', 'en');
@@ -26,20 +27,32 @@ $categoryId = (string) ($product->category_id ?? '');
 $collectionId = (string) ($product->collection_id ?? '');
 $brandId = (string) ($product->brand_id ?? '');
 $isFeatured = $product === null ? 0 : (int) $product->is_featured;
+
+/* ------------------------------------------------------------------ images
+   Three independent sections, exactly as the product page shows them:
+   photos (main gallery), technical drawings, installed shots. */
+$mediaSections = $mediaSections ?? [];
+$imageSections = [
+    'photos' => [
+        'label' => trans('products.section_photos'),
+        'hint' => trans('products.section_photos_hint'),
+        'badge' => trans('products.tab_photos'),
+    ],
+    'drawings' => [
+        'label' => trans('products.section_drawings'),
+        'hint' => trans('products.section_drawings_hint'),
+        'badge' => trans('products.tab_drawings'),
+    ],
+    'situ' => [
+        'label' => trans('products.section_situ'),
+        'hint' => trans('products.section_situ_hint'),
+        'badge' => trans('products.tab_situ'),
+    ],
+];
+$productId = $product === null ? 0 : (int) $product->id;
 ?>
 <form method="post" action="<?= e($action) ?>" enctype="multipart/form-data" class="stack admin-form">
     <?= csrf_field() ?>
-
-    <div class="field">
-        <label class="field-label" for="image"><?= e(trans('common.image') ?? 'Image') ?></label>
-        <?php if (!empty($primaryImage)): ?>
-            <div class="product-thumb-box" style="margin-bottom: 8px;">
-                <img src="<?= asset($primaryImage) ?>" alt="Product preview" class="product-form-preview" style="max-width: 120px; max-height: 120px; object-fit: contain; border-radius: 6px; border: 1px solid var(--ds-border, #e2e8f0); padding: 4px; background: var(--ds-surface, #fff);">
-            </div>
-        <?php endif; ?>
-        <input class="input" type="file" id="image" name="image" accept="image/*">
-        <span class="field-help" style="display: block; margin-top: 4px; font-size: 0.82rem; color: var(--ds-text-muted, #64748b);"><?= !empty($primaryImage) ? 'Upload a new image to replace current primary image' : 'Upload primary product image (JPG, PNG, WebP)' ?></span>
-    </div>
 
     <div class="grid grid-2">
         <?= $view->component('input', ['name' => 'model_code', 'label' => trans('common.model_code'), 'value' => $product->model_code ?? '', 'required' => true]) ?>
@@ -120,3 +133,104 @@ $isFeatured = $product === null ? 0 : (int) $product->is_featured;
         <?= $view->component('button', ['label' => trans('common.cancel'), 'variant' => 'ghost', 'href' => route('admin.products.index')]) ?>
     </div>
 </form>
+
+<h2 class="media-manager-title"><?= e(trans('products.images_title')) ?></h2>
+
+<?php if ($product === null): ?>
+    <p class="field-help"><?= e(trans('products.images_after_create')) ?></p>
+<?php else: ?>
+    <p class="field-help"><?= e(trans('products.images_intro')) ?></p>
+
+    <div class="media-manager">
+        <?php foreach ($imageSections as $sectionKey => $sectionMeta): ?>
+            <?php $items = $mediaSections[$sectionKey] ?? []; ?>
+            <section class="media-section" id="media-<?= e($sectionKey) ?>">
+                <header class="media-section-head">
+                    <h3>
+                        <?= e($sectionMeta['label']) ?>
+                        <span class="badge badge-ghost"><?= count($items) ?></span>
+                    </h3>
+                    <p class="field-help"><?= e($sectionMeta['hint']) ?></p>
+                </header>
+
+                <?php if ($items === []): ?>
+                    <p class="media-empty"><?= e(trans('products.media_empty')) ?></p>
+                <?php else: ?>
+                    <div class="media-grid">
+                        <?php foreach ($items as $index => $item): ?>
+                            <?php
+                            $attachmentId = (int) ($item['attachment_id'] ?? 0);
+                            $isPrimary = (int) ($item['is_primary'] ?? 0) === 1 && $sectionKey === 'photos';
+                            $isMissing = (string) ($item['status'] ?? '') === 'missing';
+                            $fileName = (string) ($item['filename'] ?? $item['original_name'] ?? '');
+                            $moveTargets = array_diff(array_keys($imageSections), [$sectionKey]);
+                            ?>
+                            <figure class="media-card<?= $isPrimary ? ' is-primary' : '' ?><?= $isMissing ? ' is-missing' : '' ?>">
+                                <div class="media-card-media">
+                                    <a href="<?= e(asset((string) $item['path'])) ?>" target="_blank" rel="noopener">
+                                        <img src="<?= e(asset((string) $item['path'])) ?>" alt="<?= e((string) ($item['original_name'] ?? '')) ?>" loading="lazy" decoding="async"
+                                             onerror="this.onerror=null; this.closest('.media-card').classList.add('is-missing');">
+                                    </a>
+                                    <?php if ($isPrimary): ?>
+                                        <span class="media-card-flag"><?= e(trans('products.media_main')) ?></span>
+                                    <?php endif; ?>
+                                    <?php if ($isMissing): ?>
+                                        <span class="media-card-flag is-warning"><?= e(trans('products.media_missing')) ?></span>
+                                    <?php endif; ?>
+                                </div>
+
+                                <figcaption class="media-card-name" title="<?= e($fileName) ?>"><?= e($fileName) ?></figcaption>
+
+                                <div class="media-card-actions">
+                                    <?php if ($sectionKey === 'photos' && !$isPrimary): ?>
+                                        <form method="post" action="<?= e(route('admin.products.media.primary', ['id' => $productId, 'attachmentId' => $attachmentId])) ?>" class="inline-form">
+                                            <?= csrf_field() ?>
+                                            <button type="submit" class="btn btn-sm btn-secondary" title="<?= e(trans('products.media_set_main')) ?>">&#9733;</button>
+                                        </form>
+                                    <?php endif; ?>
+
+                                    <form method="post" action="<?= e(route('admin.products.media.order', ['id' => $productId, 'attachmentId' => $attachmentId])) ?>" class="inline-form">
+                                        <?= csrf_field() ?>
+                                        <input type="hidden" name="direction" value="up">
+                                        <button type="submit" class="btn btn-sm btn-ghost" title="<?= e(trans('products.media_up')) ?>"<?= $index === 0 ? ' disabled' : '' ?>>&uarr;</button>
+                                    </form>
+
+                                    <form method="post" action="<?= e(route('admin.products.media.order', ['id' => $productId, 'attachmentId' => $attachmentId])) ?>" class="inline-form">
+                                        <?= csrf_field() ?>
+                                        <input type="hidden" name="direction" value="down">
+                                        <button type="submit" class="btn btn-sm btn-ghost" title="<?= e(trans('products.media_down')) ?>"<?= $index === count($items) - 1 ? ' disabled' : '' ?>>&darr;</button>
+                                    </form>
+
+                                    <form method="post" action="<?= e(route('admin.products.media.move', ['id' => $productId, 'attachmentId' => $attachmentId])) ?>" class="media-card-move">
+                                        <?= csrf_field() ?>
+                                        <select name="section" class="input input-sm" aria-label="<?= e(trans('products.media_move_to')) ?>">
+                                            <?php foreach ($moveTargets as $target): ?>
+                                                <option value="<?= e($target) ?>"><?= e($imageSections[$target]['badge']) ?></option>
+                                            <?php endforeach; ?>
+                                        </select>
+                                        <button type="submit" class="btn btn-sm btn-secondary" title="<?= e(trans('products.media_move_to')) ?>">&rarr;</button>
+                                    </form>
+
+                                    <form method="post" action="<?= e(route('admin.products.media.destroy', ['id' => $productId, 'attachmentId' => $attachmentId])) ?>" class="inline-form"
+                                          onsubmit="return confirm('<?= e(trans('products.media_remove_confirm')) ?>');">
+                                        <?= csrf_field() ?>
+                                        <button type="submit" class="btn btn-sm btn-danger" title="<?= e(trans('products.media_remove')) ?>">&times;</button>
+                                    </form>
+                                </div>
+                            </figure>
+                        <?php endforeach; ?>
+                    </div>
+                <?php endif; ?>
+
+                <form method="post" action="<?= e(route('admin.products.media.store', ['id' => $productId])) ?>" enctype="multipart/form-data" class="media-upload">
+                    <?= csrf_field() ?>
+                    <input type="hidden" name="section" value="<?= e($sectionKey) ?>">
+                    <input class="input" type="file" name="images[]" accept="image/*" multiple required>
+                    <button type="submit" class="btn btn-secondary"><?= e(trans('products.media_upload_to')) ?> <?= e($sectionMeta['badge']) ?></button>
+                </form>
+            </section>
+        <?php endforeach; ?>
+    </div>
+
+    <p class="field-help"><?= e(trans('products.media_library_note')) ?></p>
+<?php endif; ?>

@@ -26,7 +26,11 @@ $situImages = is_array($product['situ_images'] ?? null) ? array_values($product[
 if ($situImages === [] && $situImg !== '') {
     $situImages = [$situImg];
 }
-if ($gallery === [] && $img !== '') {
+/* the cover image doubles as the single "Product" view only when the product
+   has no image of its own at all - otherwise a technical drawing (which is
+   what the cover falls back to for the three drawing-only products) would
+   leak into the photo tab */
+if ($gallery === [] && $drawings === [] && $img !== '') {
     $gallery = [$img];
 }
 

@@ -9,6 +9,8 @@
 Thumbs.db
 /storage/backups/*
 !/storage/backups/.gitkeep
+/storage/reports/*
+!/storage/reports/.gitkeep
 .vercel
 .env*
 

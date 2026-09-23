@@ -5,6 +5,7 @@ declare(strict_types=1);
 use Core\Http\Router;
 use Modules\Products\Controllers\Api\ProductApiController;
 use Modules\Products\Controllers\ProductController;
+use Modules\Products\Controllers\ProductMediaController;
 
 return function (Router $router): void {
     // Localized public storefront routes: /en/products, /tr/urunler, /cs/produkty ...
@@ -49,6 +50,36 @@ return function (Router $router): void {
             ->middleware('permission:products.manage')
             ->where('id', '\d+')
             ->name('destroy');
+
+        /* product images: photos / technical drawings / installed shots */
+        $router->post('/{id}/media', [ProductMediaController::class, 'store'])
+            ->middleware('permission:products.manage')
+            ->where('id', '\d+')
+            ->name('media.store');
+
+        $router->post('/{id}/media/{attachmentId}/section', [ProductMediaController::class, 'move'])
+            ->middleware('permission:products.manage')
+            ->where('id', '\d+')
+            ->where('attachmentId', '\d+')
+            ->name('media.move');
+
+        $router->post('/{id}/media/{attachmentId}/primary', [ProductMediaController::class, 'primary'])
+            ->middleware('permission:products.manage')
+            ->where('id', '\d+')
+            ->where('attachmentId', '\d+')
+            ->name('media.primary');
+
+        $router->post('/{id}/media/{attachmentId}/order', [ProductMediaController::class, 'order'])
+            ->middleware('permission:products.manage')
+            ->where('id', '\d+')
+            ->where('attachmentId', '\d+')
+            ->name('media.order');
+
+        $router->post('/{id}/media/{attachmentId}/delete', [ProductMediaController::class, 'destroy'])
+            ->middleware('permission:products.manage')
+            ->where('id', '\d+')
+            ->where('attachmentId', '\d+')
+            ->name('media.destroy');
     });
 
     // Public + protected REST API.
