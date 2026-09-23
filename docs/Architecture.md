@@ -99,36 +99,62 @@ Without the hand-off the band disappears silently (that is how the category
 mosaic went missing); with `APP_DEBUG=true` the component leaves a
 `<!-- home.categories: no categories passed -->` comment instead.
 
-## The home hero (one screen, always)
+## The home hero (fills the open screen)
 
-`frontend/home/hero-cinema/hero-cinema.js` sizes the hero so the headline fits the
-first screen at every breakpoint. When touching it, keep these invariants:
+`frontend/home/hero-cinema/hero-cinema.js` sizes the hero so it fills the screen the
+user is actually looking at. When touching it, keep these invariants:
 
 - **Measure in document space.** `rect.top + scrollY`, never the raw client rect:
   a client rect goes negative while scrolling and re-fitting then grows the hero
   by the scroll offset (each resize event = one more jump).
-- **Never trust `window.innerHeight`.** It grows when mobile browsers hide their
-  toolbars, so a mid-scroll resize inflates the hero (and the `cover` artwork zoom
-  with it). Read the `100svh` probe instead; the fallback remembers the smallest
-  `innerHeight` seen so far.
-- **Clamp the result**: to the space the first screen actually leaves
-  (`viewport − announcements − nav − gap`), to the height the copy needs, to the
-  landscape ceiling, and - on portrait phones - to a portrait artwork cap
-  (`1.35 × width`), so a tall crop is never blown up into a close-up. Blur
-  (WebKit `filter`) also needs a taller minimum than a flat colour: that is the
-  `max(1.5 × width, …)` term.
+- **Two viewport heights.** `svhHeight()` is the `100svh` probe - the viewport with
+  the browser toolbars showing, stable while scrolling. `viewportHeight()` is the
+  viewport visible *right now* (`window.innerHeight`, i.e. the OPEN screen) and is
+  what the hero is sized against, so it fills the screen when the toolbars retract.
+  The old bug was never `innerHeight` itself but the client rect it was combined
+  with.
+- **Chase the toolbar only at the top.** While `scrollY > 4` the height is pinned
+  to `svhHeight()`, because growing the hero above the reader pushes the page down
+  (the toolbars retract exactly when you scroll). At the top the hero expands into
+  the open screen. Browsers without svh (old iOS) stay on the smallest
+  `innerHeight` ever observed - the toolbar state cannot be trusted there.
+- **Clamp the result**: to the space the first screen leaves
+  (viewport − announcements − navbar), and - on phones, where the copy can outgrow
+  a tiny screen - to `needed + band` capped at `1.2 × space`.
 - **Debounce with `requestAnimationFrame`** and re-fit on `resize`,
   `orientationchange`, `visualViewport`, `fonts.ready`, breakpoint/orientation
   media queries, and `<html>` attribute changes (the announcement bar resizes
   `--luann-h`; the theme flips the artwork).
 
+### Portrait phones: the stacked hero
+
+A full-height hero on a phone squeezes a landscape photo into a ~0.5 aspect box,
+which shows only about a quarter of the frame - that is what made the artwork look
+zoomed in. So on portrait phones the hero stacks: the artwork keeps a wide band at
+the top and the copy lives underneath it on the hero's own background.
+
+- the band height is **measured by the script** from what the copy needs
+  (`--lfc-band` = `space − copy`, clamped to `[140px, min(55% of space, 320px)]`),
+  so a longer headline or a larger font pushes the photo up instead of clipping the
+  CTAs;
+- `.lfc-scenes` and `.lfc-atmo` are resized to the band and clip their own bleed
+  (the scenes bleed `-3.5%` on every side), and a gradient joins the photo to the
+  copy;
+- `.lfc-panel` starts at `top: min(var(--lfc-band, 48%), 58%)` with a CSS fallback
+  band for the first paint, and the rules in that block are written as
+  `.lfc .lfc-…` so the generic phone block further down the file (which also styles
+  these elements) cannot win on source order alone;
+- the phone type scale lives there too: kicker, brand box, `clamp(27px, 8.4vw, 44px)`
+  title, a three-line paragraph, and CTAs that may wrap.
+
 The hero clips its overflow (`.lfc { overflow: hidden }`), so whatever does not fit
 the panel simply disappears - which is why the short-screen blocks exist: at
 `max-height: 700` the type and paddings shrink, at `640` the paragraph goes, and at
 `560` the kicker, the tag and the rule go as well while the brand box and the CTAs
-shrink (a 568x320 landscape phone gets ~176px of copy inside a 224px panel). The
-landscape-phone fallback height subtracts both `--luann-h` and `--mnav-row1`, so it
-fits the same space the script measures.
+shrink (a 568x320 landscape phone gets ~176px of copy inside a 224px panel), and at
+`max-width: 340` (Galaxy Fold closed) the paragraph goes too. The landscape-phone
+fallback height subtracts both `--luann-h` and `--mnav-row1`, so it fits the same
+space the script measures.
 
 Artwork: `heroc-<n>{,-m,-p}.webp` (dark) and `heroc-<n>-light{,-m,-p}.jpg` (light),
 where `""` is desktop landscape, `-m` is a ≤760px landscape phone and `-p` is a
@@ -140,11 +166,18 @@ from the viewport and the theme, so a missing file is an invisible broken image.
 Verify changes without a browser:
 
 ```bash
-node tools/frontend_audit/hero_fit_test.mjs              # 9 simulated devices, exit 1 on regression
+node tools/frontend_audit/hero_fit_test.mjs              # 12 simulated devices, exit 1 on regression
 node tools/frontend_audit/hero_fit_test.mjs --legacy-viewport
 node tools/frontend_audit/hero_report.mjs                # storage/reports/hero-fit.html
-node tools/frontend_audit/css_audit.mjs                  # cascade/layout sweep
+node tools/frontend_audit/css_audit.mjs                  # cascade + overflow sweep
+node tools/frontend_audit/phone_preview.mjs --render storage/reports/_home-render.html
+                                                         # storage/reports/hero-phones.html
 ```
+
+The last one builds a device preview (real iframes at device sizes, running the real
+CSS and JS) from a server-rendered snapshot, which is how a change can be reviewed
+visually without a browser in the sandbox: render the page with php-wasm first, then
+open `storage/reports/hero-phones.html`.
 
 Other home-page invariants worth keeping: the announcement bar exposes its height
 as `--luann-h` and every sticky/oversized element subtracts it; the mobile

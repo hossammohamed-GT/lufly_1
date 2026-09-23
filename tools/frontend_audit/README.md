@@ -25,10 +25,17 @@ replays the browser behaviour that used to break the hero:
 - **a burst of twelve resizes** while the viewport height wobbles (mobile URL bar)
   — the height must settle on one value.
 - **`orientationchange` / hidden window** — no bogus height.
+- **the open screen** — at the top of the page with the browser toolbars retracted
+  the hero must fill the newly visible strip, but while scrolled it must hold the
+  small-viewport height so nothing under the reader shifts.
 - **rotation** — every portrait phone is also measured flipped to landscape, where
   the viewport is suddenly much shorter (and the landscape-phone CSS block applies):
   the hero must be re-measured, not carried over, and if the script hands the very
   short viewports (<200px of space) to the CSS fallback, that fallback has to fit.
+- **the phone copy** — on portrait phones the hero stacks (artwork band on top,
+  copy underneath). The model reproduces the band the script has to choose, checks
+  the copy still fits under it, and checks the photo keeps at least 55% of its width
+  visible - the "the picture looks zoomed in" guard.
 - the result must fit the first screen, cover what the copy needs, and stay under
   the portrait artwork cap (`1.35 × width`) that keeps a phone photo from being
   zoomed into a close-up.
@@ -58,6 +65,23 @@ rule that applies at the tested viewport: fixed `width` / `min-width` /
 `inline-size` / `flex-basis` values larger than the screen, and `100vw` next to
 horizontal padding (the classic 100vw + gutter scrollbar). Tall art that only
 fills the screen *below* the fold is reported as a note, not as a defect.
+
+## `phone_preview.mjs` — device preview in a real browser
+
+```bash
+# needs a server-rendered snapshot first (sandbox only):
+#   php-wasm run/render_home.php > storage/reports/_home-render.html
+node tools/frontend_audit/phone_preview.mjs --render storage/reports/_home-render.html \
+     --out storage/reports/hero-phones.html
+```
+
+Builds one real `<iframe>` per device (Galaxy Fold, iPhone SE, iPhone 12, iPhone 15
+Pro Max and a landscape phone), each holding the real page: the stylesheets are
+inlined, the scripts are loaded, and the frames are sized to the device viewport, so
+the media queries and the hero script run for real. The captions come from
+`hero_fit_test.mjs --json`, so the sheet and the checks always agree. Use it when
+someone has to *see* the result - it is the only view this sandbox cannot produce
+itself.
 
 ## `hero_report.mjs` — the visual sheet
 

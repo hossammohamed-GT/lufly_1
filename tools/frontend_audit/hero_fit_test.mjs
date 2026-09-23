@@ -46,6 +46,27 @@ const DEVICES = [
   { name: 'desktop 1600x900', width: 1600, height: 900, port: false, mobile: false, chrome: 44 + 64, base: 340, para: 110, sub: 0 }
 ];
 
+/* What the phone copy needs, modelling the portrait-phone rules in
+   frontend/home/hero-cinema/hero-cinema.css: the kicker, the brand box (or
+   the two-line title), a three-line paragraph and the two CTAs, plus the
+   panel padding. Worst case (branded slide, paragraph visible, CTA row
+   wrapped). */
+function phoneCopyNeed(device) {
+  const w = device.width;
+  const h = device.height;
+
+  const kicker = 20;
+  const logoBox = Math.min(190, Math.round(w * 0.46)) * (274 / 430) + 8;
+  const title = 2 * Math.min(Math.max(27, w * 0.084), 44) * 1.06 + 8;
+  const subVisible = h > 640 && w > 340;
+  const sub = subVisible ? 3 * 13.5 * 1.62 + 8 : 0;
+  const rows = w >= 380 ? 1 : 2;
+  const ctas = 12 + rows * (12 + 12 + 13);
+  const pad = 10 + 54;
+
+  return Math.round(Math.max(kicker + logoBox, kicker + title) + sub + ctas + pad);
+}
+
 /* panel metrics per stylesheet breakpoint - the stub has to agree with
    frontend/home/hero-cinema/hero-cinema.css or the numbers are fiction:
      max-height 560  -> decorative lines gone, compact padding + type + CTAs
@@ -130,7 +151,9 @@ function runScene(device, scenario) {
 
   const metricsForDevice = panelMetrics(device);
   const pad = metricsForDevice.pad;
-  const content = Math.round(scenario.content * (metricsForDevice.content / Math.max(1, device.base + (metricsForDevice.showSub ? device.para : 0))));
+  const content = scenario.exact
+    ? scenario.content - pad.top - pad.bottom
+    : Math.round(scenario.content * (metricsForDevice.content / Math.max(1, device.base + (metricsForDevice.showSub ? device.para : 0))));
 
   const doc = makeElement('html');
   doc.attrs['data-theme'] = 'light';
@@ -287,10 +310,29 @@ function runScene(device, scenario) {
 /* ------------------------------------------------------------------ *
  * scenarios
  * ------------------------------------------------------------------ */
+/* the -p artwork the phone receives, and how much of its width a box of the
+   given aspect actually shows under `background-size: cover` */
+const PHONE_ART = { width: 1080, height: 959 };
+function artFraction(boxWidth, boxHeight) {
+  const scale = Math.max(boxWidth / PHONE_ART.width, boxHeight / PHONE_ART.height);
+  return (boxWidth / scale) / PHONE_ART.width;
+}
+
+const BAND_MIN = 140;
+const BAND_MAX = 320;
+const BAND_SHARE = 0.55;
+
+/* what the script's updateBand() should have produced */
+function bandFor(space, copyNeed) {
+  const cap = Math.min(Math.round(space * BAND_SHARE), BAND_MAX);
+  return Math.min(Math.max(space - copyNeed, BAND_MIN), cap);
+}
+
 function checkDevice(device) {
-  const scenario = { content: panelMetrics(device).content };
+  const phone = device.mobile && device.port;
+  const copyNeed = phone ? phoneCopyNeed(device) : panelMetrics(device).content;
   const issues = [];
-  const m = runScene(device, scenario);
+  const m = runScene(device, phone ? { content: copyNeed, exact: true } : { content: copyNeed });
 
   const start = m.heroHeight;
   if (start === null) {
@@ -298,44 +340,78 @@ function checkDevice(device) {
   }
 
   const capOneScreen = m.space;
-  const needed = m.needed;
+  let needed = m.needed;
 
-  if (start > capOneScreen + 1) {
-    issues.push(`taller than the first screen (${start} > ${capOneScreen})`);
-  }
-  /* the hero must show the copy whenever the screen has room for it */
-  const expectedMin = Math.min(needed, capOneScreen);
-  if (start < expectedMin - 1) {
-    issues.push(`shorter than the copy needs (${start} < ${expectedMin})`);
-  }
-  if (device.mobile && device.port) {
-    /* the portrait artwork cap can only be broken when the copy itself is
-       taller than the cap - otherwise the photo gets zoomed for nothing */
-    const artworkCap = Math.max(Math.round(device.width * 1.35), needed);
-    if (start > artworkCap + 1) {
-      issues.push(`phone hero past the artwork cap (${start} > ${artworkCap}) → photo zoomed in`);
+  if (phone) {
+    /* the hero fills the open screen, and the copy sits under the artwork
+       band instead of fighting the photo for the same box */
+    const band = bandFor(capOneScreen, copyNeed);
+    const copyArea = capOneScreen - band;
+    needed = copyArea;
+
+    if (Math.abs(start - capOneScreen) > 1) {
+      issues.push(`the hero does not fill the screen (${start} vs ${capOneScreen})`);
     }
-  }
-  if (start > m.state.svh) {
-    issues.push(`taller than the small viewport (${start} > ${m.state.svh})`);
+    if (copyNeed > copyArea + 1) {
+      issues.push(`the copy does not fit under the artwork band (${copyNeed} > ${copyArea})`);
+    }
+
+    /* the whole point of the band: the photo keeps a wide crop */
+    const fraction = artFraction(device.width, band);
+    if (fraction < 0.55) {
+      issues.push(`the phone shows only ${Math.round(fraction * 100)}% of the photo width - cramped crop`);
+    }
+  } else {
+    if (start > capOneScreen + 1) {
+      issues.push(`taller than the first screen (${start} > ${capOneScreen})`);
+    }
+    /* the hero must show the copy whenever the screen has room for it */
+    const expectedMin = Math.min(needed, capOneScreen);
+    if (start < expectedMin - 1) {
+      issues.push(`shorter than the copy needs (${start} < ${expectedMin})`);
+    }
+    if (start > m.state.svh) {
+      issues.push(`taller than the small viewport (${start} > ${m.state.svh})`);
+    }
   }
 
   const tight = needed > capOneScreen + 1;
 
-  /* 1. the reported bug: scrolling used to re-fit with a client rect, so the
-        hero grew by the scroll offset every time a resize fired */
-  m.scrollTo(240, device.height + 96);
+  const expanded = device.height + 96;   /* toolbars retracted */
+  const expandedSpace = expanded - device.chrome;
+  const svhSpace = m.state.svh - device.chrome;
+
+  /* 1a. at the top, with the browser toolbars away, the hero fills the whole
+         OPEN screen - that is the requested behaviour */
+  m.scrollTo(0, expanded);
+  m.fire('resize');
+  m.flushTimers();
+  const atTopExpanded = m.heroHeight;
+  /* without svh support (old iOS) the viewport is pinned to the smallest value
+     ever seen - the safe choice there is the small viewport, not the expanded
+     one, because the toolbar state cannot be trusted */
+  const topExpectation = legacyViewport ? m.state.svh - device.chrome : expandedSpace;
+  if (Math.abs(atTopExpanded - topExpectation) > 1) {
+    issues.push(`at the top with the toolbars away the hero should fill the open screen (${atTopExpanded} vs ${topExpectation})`);
+  }
+
+  /* 1b. scrolled - and this is the old bug: the hero used to add the scroll
+         offset on every resize and run away. It must now hold the small
+         viewport height, so nothing under the reader shifts. */
+  m.scrollTo(240, expanded);
   m.fire('resize');
   m.flushTimers();
   const afterScroll = m.heroHeight;
-  if (afterScroll > capOneScreen + 1) {
-    issues.push(`grew while scrolling: ${start} → ${afterScroll}`);
+
+  if (afterScroll > expandedSpace + 1) {
+    issues.push(`the scroll offset was added again: ${start} → ${afterScroll} (ceiling ${expandedSpace})`);
   }
-  if (Math.abs(afterScroll - start) > 1) {
-    issues.push(`height changed on scroll (${start} → ${afterScroll})`);
+  if (Math.abs(afterScroll - svhSpace) > 1) {
+    issues.push(`while scrolled the height must stay put (${afterScroll} vs ${svhSpace})`);
   }
 
-  /* 2. a burst of resize events (iOS fires them constantly) must settle */
+  /* 2. a burst of resize events (iOS fires them constantly) may only alternate
+        between the two legitimate viewport heights - it must never creep */
   const heights = [];
   for (let i = 0; i < 12; i++) {
     m.scrollTo(120 + i * 40, device.height + (i % 2 ? 96 : 0));
@@ -345,11 +421,16 @@ function checkDevice(device) {
   }
   const max = Math.max(...heights);
   const min = Math.min(...heights);
-  if (max - min > 1) {
-    issues.push(`unstable across resizes (${min}…${max})`);
+  const allowed = [svhSpace, expandedSpace];
+  const rogue = heights.find((h) => allowed.every((a) => Math.abs(h - a) > 1));
+  if (rogue !== undefined) {
+    issues.push(`unstable across resizes: saw ${rogue}px, expected ${allowed.join('px or ')}px`);
   }
-  if (max > capOneScreen + 1) {
-    issues.push(`resize burst pushed it past the first screen (${max} > ${capOneScreen})`);
+  if (max - min > 97) {
+    issues.push(`the height creeps across resizes (${min}…${max})`);
+  }
+  if (max > expandedSpace + 1) {
+    issues.push(`resize burst pushed it past the visible screen (${max} > ${expandedSpace})`);
   }
 
   /* 3. an empty tab / hidden window must not produce a bogus height */
@@ -363,7 +444,8 @@ function checkDevice(device) {
         in this orientation). */
   if (device.port && device.mobile) {
     const rotated = { ...device, name: `${device.name} (rotated)`, width: device.height, height: device.width, port: false };
-    const rm = runScene(rotated, { content: panelMetrics(rotated).content });
+    const rotatedCopy = panelMetrics(rotated).content;
+    const rm = runScene(rotated, { content: rotatedCopy });
     if (rm.heroHeight === null) {
       /* the script leaves very short viewports (<200px of space) to the CSS
          fallback, which has to fit the same space */
@@ -391,22 +473,28 @@ const tight = results.filter((r) => !r.issues.length && r.tight);
 /* one row per device with everything a report needs, so the table and the
    JSON view can never disagree */
 const rows = results.map((r) => {
-  const m = runScene(r.device, { content: panelMetrics(r.device).content });
-  const portraitPhone = r.device.mobile && r.device.port;
-  const max = portraitPhone
-    ? Math.min(m.space, Math.max(Math.round(r.device.width * 1.35), m.needed))
-    : m.space;
+  const device = r.device;
+  const phone = device.mobile && device.port;
+  const copyNeed = phone ? phoneCopyNeed(device) : panelMetrics(device).content;
+  const m = runScene(device, phone ? { content: copyNeed, exact: true } : { content: copyNeed });
+
+  const band = phone ? bandFor(m.space, copyNeed) : null;
+  const cropFraction = phone ? artFraction(device.width, band) : null;
 
   return {
-    name: r.device.name,
-    width: r.device.width,
-    height: r.device.height,
-    portraitPhone,
+    name: device.name,
+    width: device.width,
+    height: device.height,
+    portraitPhone: phone,
     hero: r.height,
-    needs: m.needed,
-    max,
+    needs: phone ? m.space - band : m.needed,
+    max: m.space,
+    band,
+    cropFraction,
     tight: r.tight,
     issues: r.issues,
+    svh: m.state.svh,
+    innerExpanded: m.state.innerHeight,
   };
 });
 
@@ -418,23 +506,30 @@ if (args.includes('--json')) {
 const width = (value, size) => String(value).padEnd(size);
 console.log(`hero script: ${path.relative(ROOT, scriptPath)}${legacyViewport ? '  (no svh support: smallest-observed fallback)' : ''}`);
 console.log('');
+
+console.log('');
 console.log(
   width('device', 24) + width('viewport', 12) + width('hero', 8) +
-  width('needs', 8) + width('max', 8) + 'notes'
+  width('art band', 10) + width('copy area', 11) + width('crop', 8) + 'notes'
 );
-console.log('-'.repeat(100));
+console.log('-'.repeat(104));
 for (const row of rows) {
   console.log(
     width(row.name, 24) +
     width(`${row.width}x${row.height}`, 12) +
     width(row.hero === null ? '-' : `${row.hero}px`, 8) +
-    width(`${row.needs}px`, 8) +
-    width(`${row.max}px`, 8) +
+    width(row.band === null ? '—' : `${row.band}px`, 10) +
+    width(`${row.needs}px`, 11) +
+    width(row.cropFraction === null ? '—' : `${Math.round(row.cropFraction * 100)}%`, 8) +
     (row.issues.length ? 'FAIL: ' + row.issues.join('; ') : 'ok')
   );
 }
 console.log('');
-console.log(failed.length ? `${failed.length} of ${results.length} device(s) failed` : `all ${results.length} devices fit the first screen`);
+console.log(
+  failed.length
+    ? `${failed.length} of ${results.length} device(s) failed`
+    : `all ${results.length} devices fill the open screen, with the copy fitting under the artwork`
+);
 if (tight.length) {
   console.log(
     'note: copy taller than the screen on ' +

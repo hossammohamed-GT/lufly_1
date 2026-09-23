@@ -62,23 +62,35 @@
   probe.style.cssText = 'position:absolute;top:0;left:-9999px;width:0;height:100svh;visibility:hidden;pointer-events:none;';
   (document.body || document.documentElement).appendChild(probe);
 
-  /* 100svh = the viewport with the browser toolbars showing: it does not
-     jump when they slide away.
+  /* Two heights matter:
 
-     Browsers without svh (old iOS) report 0, so the fallback remembers the
-     SMALLEST window.innerHeight seen so far - which is the value measured
-     with the toolbars visible, i.e. the same thing svh gives us. */
+       - `svhHeight()` - 100svh, the viewport with the browser toolbars
+         showing. It does not change while the page scrolls.
+       - `viewportHeight()` - the viewport that is visible RIGHT NOW
+         (window.innerHeight, i.e. the OPEN screen once the toolbars have
+         slid away). The hero is sized against this one, so it always fills
+         whatever the user can actually see.
+
+     Reading `window.innerHeight` is safe here because the height is measured
+     in document space (see heroTop) - the old bug was the client rect, not
+     the viewport value. `svhHeight` stays as the floor for browsers that
+     report a bogus innerHeight (keyboard open, page zoom) and as the
+     fallback for old iOS, which has no svh at all. */
   var smallestViewport = Infinity;
 
-  function viewportHeight() {
+  function svhHeight() {
     var small = probe.offsetHeight || probe.getBoundingClientRect().height || 0;
-    if (small > 0) {
-      return small;
-    }
+    return small > 0 ? small : 0;
+  }
 
-    var current = window.innerHeight;
-    if (current > 0 && current < smallestViewport) {
-      smallestViewport = current;
+  function viewportHeight() {
+    var small = svhHeight();
+    var current = window.innerHeight || 0;
+
+    if (current > 0 && current < smallestViewport) smallestViewport = current;
+
+    if (small > 0) {
+      return Math.max(current, Math.min(small, smallestViewport));
     }
 
     return Math.min(smallestViewport, current);
@@ -109,30 +121,67 @@
   }
 
   var fittedHeight = 0;
+  var lastBand = 0;
+
+  /* On phones the hero stacks: the artwork keeps a comfortable, wide crop in
+     a band at the top and the copy gets the space underneath it. The band is
+     measured from what the copy actually needs, so a longer headline or a
+     bigger font pushes the photo up instead of clipping the CTAs - and it is
+     capped at ~half the screen so the hero still reads as a photo. */
+  var BAND_MIN = 140;
+  var BAND_MAX = 320;
+  var BAND_SHARE = 0.55;
+
+  function updateBand(space, copyNeed) {
+    var cap = Math.min(Math.round(space * BAND_SHARE), BAND_MAX);
+    var band = Math.round(space - copyNeed);
+    if (band > cap) band = cap;
+    if (band < BAND_MIN) band = BAND_MIN;
+
+    if (band !== lastBand) {
+      lastBand = band;
+      root.style.setProperty('--lfc-band', band + 'px');
+    }
+  }
 
   function fitToScreen() {
     isMobile = phoneQuery ? phoneQuery.matches : false;
 
-    var space = Math.round(viewportHeight() - heroTop());
+    /* While the page is scrolled the hero must not chase the browser toolbar:
+       growing it would push down everything the user is reading (the toolbars
+       retract exactly when you scroll). The growth to the OPEN screen happens
+       at the top, which is where it is the whole point. */
+    var scrollY = window.pageYOffset || document.documentElement.scrollTop || 0;
+    var viewport = viewportHeight();
+    if (scrollY > 4) {
+      var small = svhHeight();
+      if (small > 0) viewport = Math.min(viewport, small);
+    }
+
+    var space = Math.round(viewport - heroTop());
     if (space < 200) return; /* hidden tab, print view, ... */
 
     var portraitPhone = isMobile && (!portraitQuery || portraitQuery.matches);
-    /* On phones a full-viewport hero feels endless - settle at 80% so the
-       first content below starts to greet the eye instead. */
-    var target = portraitPhone ? Math.round(space * 0.8) : space;
-
-    /* never clip the copy ... */
     var needed = contentHeight();
-    if (needed > 0 && needed > target) target = Math.min(space, Math.max(target, needed));
 
-    /* ... and never crop the artwork into a close-up */
+    /* The hero takes the whole visible screen: with the browser toolbars in
+       place that is exactly the space below the navbar, and when they slide
+       away the newly visible strip is filled as well. */
+    var target = space;
+
     if (portraitPhone) {
-      var width = window.innerWidth || space;
-      var artworkCap = Math.round(Math.max(width * 1.35, needed, 320));
-      if (target > artworkCap) target = artworkCap;
+      updateBand(space, needed);
+      /* on very small phones (or with a very large font) the copy may still
+         not fit above the band floor - let the hero run slightly over the
+         fold instead of clipping the CTAs */
+      if (needed > 0) {
+        target = Math.max(space, Math.min(needed + BAND_MIN, Math.round(space * 1.2)));
+      }
+    } else if (needed > space) {
+      target = Math.min(needed, Math.round(space * 1.2));
     }
 
-    target = Math.max(200, Math.min(target, space));
+    target = Math.max(200, Math.round(target));
 
     if (Math.abs(target - fittedHeight) < 1) return; /* nothing to do */
     fittedHeight = target;

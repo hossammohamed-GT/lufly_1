@@ -71,7 +71,8 @@ const TARGETS = [
   ['masterpieces grid', '.masterpieces-grid', ['grid-template-columns']],
   ['footer grid', '.footer-grid', ['grid-template-columns']],
   ['main region', '.ds-main', ['margin-inline-start', 'padding-inline-start']],
-  ['hero panel', '.lfc-panel', ['padding-top', 'padding-bottom']],
+  ['hero art band', '.lfc-scenes', ['height', 'inline-size']],
+  ['hero copy top', '.lfc-panel', ['top']],
   ['hero logo box', '.lfc-logoBox', ['width', 'margin-bottom', 'display']],
   ['hero kicker', '.lfc-kicker', ['display']],
   ['hero tag', '.lfc-tag', ['display']],
@@ -109,7 +110,7 @@ function parseRules(css, conditions = [], rules = []) {
         parseRules(body, name === 'media' ? conditions.concat(condition) : conditions, rules);
       }
     } else if (prelude && !prelude.startsWith('@keyframes') && !prelude.includes('%')) {
-      rules.push({ conditions, selector: prelude, body });
+      rules.push({ conditions, selector: prelude, body, order: rules.length });
     }
 
     i = close + 1;
@@ -199,6 +200,30 @@ const shortProp = (prop) => prop
   .replace('padding-', 'pad-')
   .replace('margin-inline-start', 'margin-start');
 
+/* Rough specificity: ids beat classes beat elements. The checks have to model
+   the cascade, not just "last rule wins" - a scoped rule like
+   `.lfc .lfc-panel` beats the generic `.lfc-panel` even when it appears
+   earlier in the file. */
+function specificity(selector) {
+  const id = (selector.match(/#[\w-]+/g) || []).length;
+  const cls = (selector.match(/\.[\w-]+|\[[^\]]+\]|:(?!:)[\w-]+/g) || []).length;
+  const el = (selector.replace(/[.#\[][^\s>+~]*/g, '').match(/[a-zA-Z][\w-]*/g) || []).length;
+  return id * 100 + cls * 10 + el;
+}
+
+function selectorSpecificity(ruleSelector, target) {
+  const targetClass = target.replace(/^\./, '');
+  const exact = new RegExp('\\.' + targetClass + '(?![-\\w])');
+  let best = 0;
+
+  for (const part of ruleSelector.split(',')) {
+    const last = part.trim().split(/[\s>+~]+/).filter(Boolean).pop() || '';
+    if (exact.test(last)) best = Math.max(best, specificity(part));
+  }
+
+  return best;
+}
+
 function resolve(rules, selector, properties, ctx) {
   const wanted = new Set(properties);
   const out = {};
@@ -207,12 +232,21 @@ function resolve(rules, selector, properties, ctx) {
     if (!selectorMatches(rule.selector, selector)) continue;
     if (!rule.conditions.every((condition) => mediaMatches(condition, ctx))) continue;
 
+    const score = selectorSpecificity(rule.selector, selector);
+
     for (const [prop, { value }] of declarations(rule.body)) {
-      if (wanted.has(prop)) out[prop] = value;
+      if (!wanted.has(prop)) continue;
+      const current = out[prop];
+      if (!current || score > current.score || (score === current.score && rule.order >= current.order)) {
+        out[prop] = { value, score, order: rule.order ?? 0 };
+      }
     }
   }
 
-  return out;
+  const flat = {};
+  for (const [prop, entry] of Object.entries(out)) flat[prop] = entry.value;
+
+  return flat;
 }
 
 /* selectors in this project are single-class or element+class chains; a rule
