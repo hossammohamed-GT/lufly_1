@@ -71,6 +71,10 @@ php cli db:export-mysql                   # refresh the MySQL export afterwards
   photo, `drawing` = technical drawing, `situ` = installed shot).
 - Which tab an image fills, and how the legacy import was sorted into photos vs drawings:
   `docs/Media-Taxonomy.md` (+ audit tool `tools/media_audit/`).
+- Cards (catalogue grid, home *featured* row, live-search results) rotate through **every**
+  image of the product on hover — photos, then drawings, then installed shots — via
+  `Product::cardSlides()` / the `card_slides` API key; the card labels the section for
+  non-photo slides.
 - The product-card fallback image is `images/favicon.png` (used by the live-search UI when a
   product has no image — keep that file).
 

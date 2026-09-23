@@ -86,6 +86,42 @@
   .pcard-dots { opacity: 1; }
 }
 
+/* the hover cycle mixes photos with technical drawings; this pill says which
+   section the slide on screen comes from (it stays quiet for plain photos) */
+.pcard-kind {
+  position: absolute;
+  display: inline-block;
+  inset-inline-start: 10px;
+  bottom: 10px;
+  padding: 5px 10px;
+  border-radius: 999px;
+  border: 1px solid var(--ds-border);
+  font-family: var(--font-mono);
+  font-size: 8.5px;
+  font-weight: 700;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--ds-text);
+  background: color-mix(in srgb, var(--ds-surface) 90%, transparent);
+  opacity: 0;
+  transform: translateY(6px);
+  transition: opacity 0.25s ease, transform 0.25s ease;
+  pointer-events: none;
+}
+
+.pcard:hover .pcard-kind,
+.pcard:focus-within .pcard-kind {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+@media (hover: none) {
+  .pcard-kind {
+    opacity: 1;
+    transform: none;
+  }
+}
+
 .pcard-hint {
   position: absolute;
   inset-inline-end: 10px;

@@ -226,6 +226,10 @@ class Product extends Model
             'drawings' => $this->drawings(),
             'situ_images' => $this->situImages(),
 
+            /* every image of the product as the cards rotate them on hover,
+               each one labelled with the section it came from */
+            'card_slides' => $this->cardSlides(),
+
             /* full related data */
             'variants' => $variants,
             'dimensions' => $dimensions,
@@ -398,6 +402,42 @@ class Product extends Model
             static fn (array $row): string => (string) $row['path'],
             $this->media('drawing'),
         );
+    }
+
+    /**
+     * Every image of the product in the order a catalogue card offers it while
+     * the pointer hovers the card: the photos first (main shot on top), then
+     * the technical drawings, then the installed shots. Each slide carries the
+     * section it belongs to so the card can name what is on screen; a file
+     * attached twice in different sections is only shown once.
+     *
+     * @return array<int, array{path: string, kind: string}> kind: photo|drawing|situ
+     */
+    public function cardSlides(): array
+    {
+        $groups = [
+            'photo' => $this->gallery(),
+            'drawing' => $this->drawings(),
+            'situ' => $this->situImages(),
+        ];
+
+        $slides = [];
+        $seen = [];
+
+        foreach ($groups as $kind => $rows) {
+            foreach ($rows as $row) {
+                $path = is_array($row) ? (string) ($row['path'] ?? '') : (string) $row;
+
+                if ($path === '' || isset($seen[$path])) {
+                    continue;
+                }
+
+                $seen[$path] = true;
+                $slides[] = ['path' => $path, 'kind' => $kind];
+            }
+        }
+
+        return $slides;
     }
 
     /**

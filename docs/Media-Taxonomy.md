@@ -7,9 +7,20 @@ decides where an image shows up:
 | `product_media.type` | Section in Admin | Where it appears |
 |---|---|---|
 | `main` | Product photos | cover of the product card, search / share image, first image of the **Photo** tab |
-| `gallery` | Product photos | the other images of the **Photo** tab (and hover cycle on cards) |
+| `gallery` | Product photos | the other images of the **Photo** tab |
 | `drawing` | Technical drawings | **Drawing** tab of the product page |
-| `situ` | Installed / on site | **Installed** tab, and hover cycle on cards |
+| `situ` | Installed / on site | **Installed** tab |
+
+**Cards rotate through all of it.** While the pointer (or keyboard focus) rests on
+a product card, the image cycles through every attachment of that product in
+section order — photos first, then the technical drawings, then the installed
+shots — and a small pill names the section whenever a non-photo slide is on
+screen. `Product::cardSlides()` builds that list (de-duplicated, photos first)
+and hands it to the grid, the home *featured* row, live-search results and the
+JSON API (`card_slides`), so every card renderer shares one order.
+`frontend/products/catalog/catalog.js` owns the rotation: `data-pcard-slide`
+per image, `data-pcard-kind` carrying the section, `data-pcard-kind-*` on the
+card holding the localized labels.
 
 Invariants enforced by `Modules\Products\Services\ProductMediaService`:
 
