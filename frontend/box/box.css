@@ -1,22 +1,24 @@
 /* ==========================================================================
-   The quotation box
-   --------------------------------------------------------------------------
-   1. .boxbtn  — "put it in the box", on any card the finder shows
-   2. .boxs    — the box page: it borrows the saved-list layout (.favs-*) and
-                 only adds what is different — the request panel, the link row
-                 and the toast
+   The quotation box.
+
+   1. .boxbtn  — the companion of the heart: "put this piece in the box"
+   2. the box page — the few things the saved-list styling does not already
+      cover (the waiting-for-a-price line, the note field, the leaving card)
+
+   Same design-system tokens as the rest of the storefront, so the heart and the
+   box button sit next to each other in light and dark without a second palette.
    ========================================================================== */
 
 /* --------------------------------------------------------------------------
-   1. the box button
+   1. the box button (the heart's sibling)
    -------------------------------------------------------------------------- */
 
 .boxbtn {
-  --box-size: 34px;
+  --box-size: 36px;
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  gap: 7px;
+  gap: 8px;
   padding: 0;
   width: var(--box-size);
   height: var(--box-size);
@@ -25,9 +27,12 @@
   background: var(--ds-glass-bg-strong, var(--ds-surface));
   color: var(--ds-text-muted);
   cursor: pointer;
+  transition: color var(--ds-nav-base) var(--ds-nav-ease),
+              border-color var(--ds-nav-base) var(--ds-nav-ease),
+              background-color var(--ds-nav-base) var(--ds-nav-ease),
+              transform var(--ds-nav-base) var(--ds-nav-ease),
+              box-shadow var(--ds-nav-base) var(--ds-nav-ease);
   -webkit-tap-highlight-color: transparent;
-  transition: color 160ms ease, border-color 160ms ease, background-color 160ms ease,
-              transform 160ms cubic-bezier(0.16, 1, 0.3, 1), box-shadow 160ms ease;
 }
 
 .boxbtn:hover {
@@ -42,77 +47,125 @@
   outline-offset: 2px;
 }
 
-.boxbtn.is-on {
-  color: var(--ds-primary);
-  border-color: var(--ds-primary-line);
-  background: color-mix(in srgb, var(--ds-primary) 12%, transparent);
+.boxbtn-icon {
+  position: relative;
+  display: inline-flex;
+  width: 18px;
+  height: 18px;
 }
 
-.boxbtn svg {
-  width: 17px;
-  height: 17px;
+.boxbtn-icon > svg {
+  width: 18px;
+  height: 18px;
+}
+
+.boxbtn.is-on {
+  color: var(--ds-primary);
+  border-color: color-mix(in srgb, var(--ds-primary) 46%, var(--ds-border));
+  background: color-mix(in srgb, var(--ds-primary) 12%, var(--ds-surface));
+}
+
+/* the piece dropping into the box: the lid lifts, then closes */
+.boxbtn.is-on .boxbtn-icon {
+  animation: boxDrop 420ms cubic-bezier(0.16, 1, 0.3, 1);
 }
 
 .boxbtn.is-busy {
-  opacity: 0.6;
+  opacity: .55;
+  pointer-events: none;
 }
+
+@keyframes boxDrop {
+  0% { transform: translateY(-3px) scale(.94); }
+  60% { transform: translateY(1px) scale(1.04); }
+  100% { transform: translateY(0) scale(1); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .boxbtn,
+  .boxbtn-icon { transition: none; animation: none; }
+}
+
+/* on a catalogue card it sits in the same corner as the heart, one step over */
+.boxbtn-card {
+  position: absolute;
+  top: 10px;
+  inset-inline-end: 52px;
+  z-index: 3;
+  --box-size: 34px;
+  background: color-mix(in srgb, var(--lu-neutral-0) 88%, transparent);
+  backdrop-filter: blur(10px);
+}
+
+.boxbtn-card:hover { background: var(--lu-neutral-0); }
+
+[data-theme="dark"] .boxbtn-card {
+  background: color-mix(in srgb, var(--lu-ink-950) 62%, transparent);
+}
+
+[data-theme="dark"] .boxbtn-card:hover {
+  background: color-mix(in srgb, var(--lu-ink-950) 82%, transparent);
+}
+
+/* on the product page it is a pill, next to the save button */
+.boxbtn-pill {
+  --box-size: auto;
+  width: auto;
+  padding: 13px 20px;
+  height: auto;
+  gap: 9px;
+  border-radius: var(--radius-full);
+  font-size: 11.5px;
+  font-weight: 800;
+  letter-spacing: 0.13em;
+  text-transform: uppercase;
+}
+
+.boxbtn-pill .boxbtn-label { white-space: nowrap; }
 
 /* --------------------------------------------------------------------------
    2. the box page
    -------------------------------------------------------------------------- */
 
-.boxs .favs-beam {
-  background: linear-gradient(90deg, transparent, var(--ds-primary), transparent);
+/* the count in the header keeps its seat even at nothing */
+.box .favs-stat-value[data-box-count]:empty::after { content: '0'; }
+
+.box-limit-note {
+  margin: 20px 0 0;
+  font-size: 12.5px;
+  line-height: 1.65;
+  color: var(--ds-text-muted);
 }
 
-.boxs .favs-panel-mail.is-box {
-  border-color: var(--ds-primary-line);
-  box-shadow: var(--shadow-2);
+.box-card-wait {
+  font-family: var(--font-mono);
+  font-size: 10.5px;
+  letter-spacing: .1em;
+  text-transform: uppercase;
+  color: var(--ds-text-muted);
 }
 
-.boxs .favs-mail-field.is-note {
-  padding-block: 8px;
+.box .fav-card.is-leaving {
+  opacity: 0;
+  transform: translateY(8px);
+  transition: opacity 200ms ease, transform 200ms ease;
 }
 
-.boxs .favs-mail-field textarea {
+.box .favs-mail textarea {
   width: 100%;
-  border: 0;
-  background: transparent;
+  min-height: 78px;
+  padding: 11px 13px;
+  border: 1px solid var(--ds-border);
+  border-radius: var(--radius-md, 10px);
+  background: var(--ds-surface);
   color: inherit;
   font: inherit;
+  font-size: 14px;
+  line-height: 1.55;
   resize: vertical;
-  min-height: 64px;
-  outline: none;
 }
 
-.boxs .favs-mail-field.is-note {
-  align-items: flex-start;
-  border: 1px solid var(--ds-border);
-  border-radius: var(--radius-lg, 14px);
-  padding: 10px 12px;
-  background: var(--ds-surface);
-}
-
-.box-toast {
-  position: fixed;
-  left: 50%;
-  bottom: 26px;
-  z-index: 90;
-  transform: translate(-50%, 18px);
-  max-width: min(90vw, 460px);
-  padding: 12px 18px;
-  border-radius: var(--radius-full);
-  border: 1px solid var(--ds-border);
-  background: var(--ds-glass-bg-strong, var(--ds-surface));
-  color: var(--ds-text);
-  font-size: var(--text-sm, 14px);
-  box-shadow: var(--shadow-2);
-  opacity: 0;
-  pointer-events: none;
-  transition: opacity 220ms ease, transform 220ms cubic-bezier(0.16, 1, 0.3, 1);
-}
-
-.box-toast.is-on {
-  opacity: 1;
-  transform: translate(-50%, 0);
+.box .favs-mail textarea:focus-visible {
+  outline: 2px solid var(--ds-focus-color);
+  outline-offset: 1px;
 }

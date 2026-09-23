@@ -51,6 +51,14 @@ if ($favoritesOn) {
     $savedCount = app(\Modules\Favorites\Services\FavoriteService::class)->count();
 }
 
+/* Quotation box: the list the visitor fills to ask for every price at once.
+   Like the saved list, it answers 0 without a cookie and without a query. */
+$boxOn = feature('box', true) && class_exists(\Modules\Box\Services\BoxService::class);
+$boxCount = 0;
+if ($boxOn) {
+    $boxCount = app(\Modules\Box\Services\BoxService::class)->count();
+}
+
 $indexLinks = [
     ['key' => 'bathroom', 'url' => route('products.index', ['category' => 'bathroom-ceramics'])],
     ['key' => 'kitchen', 'url' => route('products.index', ['category' => 'sink-mixers'])],
@@ -74,8 +82,16 @@ if ($favoritesOn) {
     ]]);
 }
 
+if ($boxOn) {
+    /* the box follows the saved list: the pieces to be priced */
+    array_splice($indexLinks, count($indexLinks) - 1, 0, [[
+        'key' => 'box',
+        'url' => route('box.index'),
+    ]]);
+}
+
 if ($plannerOn) {
-    /* the planner follows the saved list: plan a room, then save what fits */
+    /* the planner follows the box: plan a room, then collect what fits */
     array_splice($indexLinks, count($indexLinks) - 1, 0, [[
         'key' => 'planner',
         'url' => route('planner.index'),
@@ -95,6 +111,7 @@ $getSectionIcon = static function (string $key): string {
         'inspirations' => '<svg class="icon mnav-cat-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10"></circle><polygon points="16.24 7.76 14.12 14.12 7.76 16.24 9.88 9.88 16.24 7.76"></polygon></svg>',
         'news' => '<svg class="icon mnav-cat-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 22h16a2 2 0 0 0 2-2V4a2 2 0 0 0-2-2H8a2 2 0 0 0-2 2v16a2 2 0 0 1-2 2Zm0 0a2 2 0 0 1-2-2v-9c0-1.1.9-2 2-2h2"></path><path d="M18 14h-8"></path><path d="M15 18h-5"></path><path d="M10 6h8v4h-8V6Z"></path></svg>',
         'favorites' => '<svg class="icon mnav-cat-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 20.6 4.2 12.8a5.1 5.1 0 0 1 0-7.2 5.1 5.1 0 0 1 7.2 0l.6.6.6-.6a5.1 5.1 0 0 1 7.2 0 5.1 5.1 0 0 1 0 7.2Z"></path></svg>',
+        'box' => '<svg class="icon mnav-cat-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 8.5 5 4h14l2 4.5"></path><path d="M3 8.5h18V19a1.5 1.5 0 0 1-1.5 1.5h-15A1.5 1.5 0 0 1 3 19Z"></path><path d="M12 8.5V20.5"></path></svg>',
         'planner' => '<svg class="icon mnav-cat-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="4" width="18" height="16" rx="2"></rect><path d="M3 10h18M10 4v16"></path></svg>',
         'contact' => '<svg class="icon mnav-cat-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path></svg>',
         default => '<svg class="icon mnav-cat-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="4"></circle></svg>'
@@ -228,6 +245,20 @@ src="<?= e(asset('images/logo.png')) ?>"
                             <rect x="3" y="4" width="18" height="16" rx="2"></rect>
                             <path d="M3 10h18M10 4v16"></path>
                         </svg>
+                    </a>
+                <?php endif; ?>
+
+                <?php if ($boxOn): ?>
+                    <a href="<?= e(route('box.index')) ?>"
+                       class="mnav-icon-btn mnav-box<?= $boxCount > 0 ? ' has-items' : '' ?>"
+                       title="<?= e(trans("nav.box", [], $currentLocale)) ?>"
+                       aria-label="<?= e(trans("nav.box", [], $currentLocale)) ?>">
+                        <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                             stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                            <path d="M4 8h16l-1.2 11.2a2 2 0 0 1-2 1.8H7.2a2 2 0 0 1-2-1.8Z"></path>
+                            <path d="M9 8V6a3 3 0 0 1 6 0v2"></path>
+                        </svg>
+                        <span class="mnav-fav-badge" data-box-count><?= $boxCount > 0 ? (int) $boxCount : '' ?></span>
                     </a>
                 <?php endif; ?>
 

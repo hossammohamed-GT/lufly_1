@@ -45,6 +45,11 @@
   var labels = parseJSON(root.getAttribute('data-assistant-labels')) || {};
   var EMAIL_KEY = 'lufly-chat-email';
   var SIZE_KEY = 'lufly-chat-size';
+  /* the conversation follows the visitor from page to page: the widget is on
+     every screen, so what was said on the home page is still there on a product
+     page — same browser, same shop, one chat */
+  var HISTORY_KEY = 'lufly-chat-history';
+  var HISTORY_MAX = 24;
   var photo = null;
   var busy = false;
   /* what the chat asked and what the visitor chose: a tiny bit of state that
@@ -52,6 +57,46 @@
   var thread = null;
 
   if (!panel || !log || !form) return;
+
+  function loadHistory() {
+    try {
+      var raw = window.localStorage.getItem(HISTORY_KEY);
+      if (!raw) return null;
+
+      var saved = JSON.parse(raw);
+      if (!saved || !saved.entries || !saved.entries.length) return null;
+      /* a conversation older than a day is a different visit */
+      if (Date.now() - (saved.time || 0) > 86400000) {
+        window.localStorage.removeItem(HISTORY_KEY);
+        return null;
+      }
+
+      thread = saved.thread && saved.thread.topic ? saved.thread : null;
+      return saved.entries;
+    } catch (error) {
+      return null;
+    }
+  }
+
+  function saveHistory() {
+    try {
+      window.localStorage.setItem(HISTORY_KEY, JSON.stringify({
+        time: Date.now(),
+        thread: thread,
+        entries: history
+      }));
+    } catch (error) { /* private mode: the chat simply starts fresh on the next page */ }
+  }
+
+  function remember(entry) {
+    history.push(entry);
+
+    while (history.length > HISTORY_MAX) history.shift();
+
+    saveHistory();
+  }
+
+  var history = [];
 
   function parseJSON(raw) {
     try {
@@ -384,7 +429,7 @@
 
   /* ---------- the conversation ---------- */
 
-  function say(who, text, list) {
+  function say(who, text, list, rememberIt) {
     var bubble = el('div', 'aichat-say is-' + who);
     bubble.appendChild(el('p', null, text));
 
@@ -392,6 +437,8 @@
 
     log.appendChild(bubble);
     scrollLog();
+
+    if (rememberIt !== false) remember({ who: who, text: text });
 
     return bubble;
   }
@@ -668,7 +715,7 @@
   }
 
   function answer(data) {
-    var bubble = say('bot', data.text || '');
+    var bubble = say('bot', data.text || '', null, false);
 
     if (data.cards && data.cards.length > 0) bubble.appendChild(bank(data.cards));
 
@@ -688,6 +735,44 @@
 
     /* the chat keeps the little bit of state it needs for the next turn */
     thread = data.thread && data.thread.topic ? data.thread : null;
+
+    remember({
+      who: 'bot',
+      text: data.text || '',
+      note: data.note || '',
+      cards: (data.cards || []).map(function (card) {
+        return {
+          id: card.id, name: card.name, code: card.code, size: card.size,
+          image: card.image, url: card.url, fav: card.fav, box: card.box
+        };
+      }),
+      choices: (data.choices || []).map(function (choice) {
+        return { id: choice.id, label: choice.label, kind: choice.kind };
+      })
+    });
+
+    if (welcome && welcome.parentNode) welcome.hidden = true;
+
+    scrollLog();
+  }
+
+  /* what was said on the previous page, put back the way it was */
+  function restore() {
+    var entries = loadHistory();
+
+    if (!entries) return;
+
+    entries.forEach(function (entry) {
+      var bubble = say(entry.who === 'me' ? 'me' : 'bot', entry.text || '', null, false);
+
+      if (entry.cards && entry.cards.length > 0) bubble.appendChild(bank(entry.cards));
+      if (entry.note) bubble.appendChild(el('p', 'aichat-note', entry.note));
+
+      var answers = choices(entry.choices || []);
+      if (answers) bubble.appendChild(answers);
+
+      history.push(entry);
+    });
 
     if (welcome && welcome.parentNode) welcome.hidden = true;
 
@@ -728,6 +813,8 @@
     button.classList.add('is-picked');
     send('', 0, { id: button.getAttribute('data-assistant-choice') || '', label: button.textContent.trim() });
   });
+
+  restore();
 
   /* a piece landing in the box is worth a line in the conversation */
   document.addEventListener('box:changed', function (event) {

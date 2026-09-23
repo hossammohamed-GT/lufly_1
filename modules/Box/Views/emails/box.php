@@ -67,33 +67,25 @@ $fallback = rtrim((string) ($site ?? ''), '/') . '/images/logo.png';
                             <?php foreach ($items as $index => $item): ?>
                                 <?php
                                 $name = (string) ($item['name'] ?? '');
-                                $url = (string) ($item['box_url'] ?? '#');
-                                $image = (string) ($item['image'] ?? '');
-                                $code = (string) ($item['model_code'] ?? $item['sku'] ?? '');
                                 $size = trim((string) ($item['size'] ?? ''));
+                                $url = (string) ($item['box_url'] ?? '');
+                                $code = (string) ($item['code'] ?? '');
                                 ?>
                                 <tr>
-                                    <td style="padding:12px 0;border-bottom:1px solid #f0ebe2;">
+                                    <td style="padding:12px 0;border-bottom:1px solid #f0ece4;">
                                         <table role="presentation" width="100%" cellpadding="0" cellspacing="0">
                                             <tr>
-                                                <td width="86" valign="top" style="padding-right:14px;">
-                                                    <img src="<?= e($image !== '' ? asset($image) : $fallback) ?>" alt=""
-                                                         width="86" height="62"
-                                                         style="display:block;width:86px;height:62px;object-fit:cover;border-radius:10px;border:1px solid #eee7dc;">
+                                                <td width="46" valign="top" style="font-family:'SFMono-Regular',Consolas,monospace;font-size:12px;color:#a2988a;">
+                                                    <?= e(sprintf('%02d', (int) $index + 1)) ?>
                                                 </td>
                                                 <td valign="top">
-                                                    <div style="font-size:11px;letter-spacing:.08em;text-transform:uppercase;color:#9a8f7c;">
-                                                        <?= str_pad((string) ((int) $index + 1), 2, '0', STR_PAD_LEFT) ?>
-                                                        <?php if ($code !== ''): ?>
-                                                            · <?= e($code) ?>
-                                                        <?php endif; ?>
+                                                    <a href="<?= e($url) ?>" style="color:#1f2421;font-size:15px;font-weight:600;text-decoration:none;"><?= e($name) ?></a>
+                                                    <div style="margin-top:4px;font-size:12.5px;color:#8c8478;">
+                                                        <?= e($code) ?><?= $size !== '' ? ' · ' . e($size) : '' ?>
                                                     </div>
-                                                    <a href="<?= e($url) ?>" style="display:block;margin-top:4px;font-size:15px;font-weight:600;color:#1f2421;text-decoration:none;">
-                                                        <?= e($name) ?>
-                                                    </a>
-                                                    <?php if ($size !== ''): ?>
-                                                        <div style="margin-top:4px;font-size:13px;color:#7a7264;"><?= e($size) ?></div>
-                                                    <?php endif; ?>
+                                                </td>
+                                                <td valign="top" align="right" width="120">
+                                                    <a href="<?= e($url) ?>" style="display:inline-block;padding:8px 12px;border:1px solid #ded7cb;border-radius:9px;font-size:12.5px;color:#3d3730;text-decoration:none;"><?= e(trans('box.open_product')) ?></a>
                                                 </td>
                                             </tr>
                                         </table>
@@ -105,24 +97,33 @@ $fallback = rtrim((string) ($site ?? ''), '/') . '/images/logo.png';
                 </tr>
 
                 <tr>
-                    <td style="padding:20px 28px 8px;">
-                        <a href="<?= e($boxUrl) ?>"
-                           style="display:inline-block;padding:13px 22px;border-radius:999px;background:#1f2421;color:#ffffff;font-size:14px;font-weight:600;text-decoration:none;">
-                            <?= e(trans('box.mail_open')) ?>
-                        </a>
-                        <p style="margin:12px 0 0;font-size:13px;line-height:1.6;color:#7a7264;">
-                            <?= e(trans('box.mail_link_hint')) ?>
-                        </p>
-                        <p style="margin:6px 0 0;font-size:12px;word-break:break-all;color:#9a8f7c;"><?= e($boxUrl) ?></p>
+                    <td style="padding:10px 28px 24px;">
+                        <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="background:#faf7f2;border-radius:12px;">
+                            <tr>
+                                <td style="padding:16px 18px;">
+                                    <div style="font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:#9a8f7c;"><?= e(trans('box.link_eyebrow')) ?></div>
+                                    <p style="margin:8px 0 10px;font-size:13.5px;line-height:1.6;color:#5d564b;"><?= e(trans('box.mail_link_hint')) ?></p>
+                                    <a href="<?= e($boxUrl) ?>" style="display:inline-block;padding:11px 18px;background:#1f2421;border-radius:10px;color:#ffffff;font-size:13.5px;font-weight:600;text-decoration:none;"><?= e(trans('box.mail_open')) ?></a>
+                                    <div style="margin-top:10px;font-size:12px;color:#8c8478;word-break:break-all;"><?= e($boxUrl) ?></div>
+                                </td>
+                            </tr>
+                        </table>
                     </td>
                 </tr>
 
                 <tr>
-                    <td style="padding:18px 28px 26px;border-top:1px solid #eee7dc;">
-                        <p style="margin:0;font-size:12px;line-height:1.6;color:#9a8f7c;">
-                            <?= e(trans('box.mail_foot')) ?> ·
-                            <a href="<?= e($site) ?>" style="color:#9a8f7c;"><?= e(parse_url((string) $site, PHP_URL_HOST) ?: $site) ?></a>
-                        </p>
+                    <td style="padding:0 28px 26px;">
+                        <table role="presentation" width="100%" cellpadding="0" cellspacing="0">
+                            <tr>
+                                <td align="left" valign="middle" style="font-size:11.5px;color:#a2988a;">
+                                    <img src="<?= e($fallback) ?>" alt="" width="64" style="display:inline-block;vertical-align:middle;opacity:.75;">
+                                    <span style="display:inline-block;vertical-align:middle;margin-left:8px;"><?= e(trans('box.mail_foot')) ?></span>
+                                </td>
+                                <td align="right" valign="middle" style="font-size:12px;color:#8c8478;">
+                                    <a href="<?= e(rtrim((string) ($site ?? ''), '/')) ?>" style="color:#3d3730;text-decoration:none;"><?= e(preg_replace('#^https?://#', '', rtrim((string) ($site ?? ''), '/'))) ?></a>
+                                </td>
+                            </tr>
+                        </table>
                     </td>
                 </tr>
             </table>

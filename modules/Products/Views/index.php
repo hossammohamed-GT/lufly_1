@@ -56,6 +56,12 @@ $savedIds = [];
 if (feature('favorites', true) && class_exists(\Modules\Favorites\Services\FavoriteService::class)) {
     $savedIds = array_flip(app(\Modules\Favorites\Services\FavoriteService::class)->productIds());
 }
+
+/* and the pieces already in the quotation box */
+$boxIds = [];
+if (feature('box', true) && class_exists(\Modules\Box\Services\BoxService::class)) {
+    $boxIds = array_flip(app(\Modules\Box\Services\BoxService::class)->productIds());
+}
 ?>
 <main class="catalog" id="main">
     <div class="catalog-inner">
@@ -200,6 +206,12 @@ if (feature('favorites', true) && class_exists(\Modules\Favorites\Services\Favor
                             'name' => $cardName,
                             'variant' => 'card',
                             'on' => isset($savedIds[(int) $product->getKey()]),
+                        ]) ?>
+                        <?= $view->component('box-button', [
+                            'product_id' => (int) $product->getKey(),
+                            'name' => $cardName,
+                            'variant' => 'card',
+                            'on' => isset($boxIds[(int) $product->getKey()]),
                         ]) ?>
                         <div class="pcard-body">
                             <div class="pcard-top">

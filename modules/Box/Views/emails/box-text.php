@@ -1,6 +1,6 @@
 <?php
 /**
- * The plain-text half of the box e-mail (see box.php).
+ * The box, in plain text — the same message for the team and for the visitor.
  *
  * @var string $audience  'admin' (it was sent) | 'saved' (still being filled) | 'visitor'
  * @var array<int, array<string, mixed>> $items

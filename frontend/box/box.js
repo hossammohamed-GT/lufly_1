@@ -1,194 +1,201 @@
 /*
- * The quotation box — the list a visitor fills with the pieces he wants priced.
+ * The quotation box, in the browser.
  *
- * One script, two places:
+ *   1. any [data-box-add] button (the chat's cards, a product page) puts a piece
+ *      in or takes it out again - one endpoint, one state, everywhere,
+ *   2. the box page's send step posts the list and shows what the team answered,
+ *   3. every [data-box-count] badge on the page follows along, and the chat
+ *      hears about the change through a "box:changed" event.
  *
- *   * the box page   — the list, the "send it to the team" form, the permanent
- *                      link and the button that empties it
- *   * anywhere else  — the little box button on every card the finder shows
- *
- * Every button is wired by delegation on the document, so a card that the chat
- * draws a second later works exactly like one that was in the page from the
- * start. The count in the chat's footer follows along, and a `box:changed`
- * event is raised so the chat can say what just happened.
+ * The endpoints come from data attributes and the CSRF token from the <head>,
+ * so nothing here depends on where the button happens to live.
  */
 (function () {
   'use strict';
 
-  var page = document.querySelector('[data-box-page]');
-  var token = '';
+  var root = document.documentElement;
+  /* the box's own token, kept next to the chat's history: a browser that drops
+     the cookie still keeps the same box */
+  var TOKEN_KEY = 'lufly-box-token';
+
+  function token() {
+    try {
+      return window.localStorage.getItem(TOKEN_KEY) || '';
+    } catch (error) {
+      return '';
+    }
+  }
+
+  function keepToken(value) {
+    if (!value) return;
+
+    try {
+      window.localStorage.setItem(TOKEN_KEY, String(value));
+    } catch (error) { /* private mode */ }
+  }
 
   function csrf() {
     var meta = document.querySelector('meta[name="csrf-token"]');
-    if (meta) token = meta.getAttribute('content') || '';
-    return token;
+    return meta ? meta.getAttribute('content') : '';
   }
 
-  function endpoint(node) {
-    if (node && node.getAttribute('data-box-endpoint')) return node.getAttribute('data-box-endpoint');
+  function addEndpoint() {
+    var page = document.querySelector('[data-box-page]');
+    var button = document.querySelector('[data-box-add]');
+    if (button && button.getAttribute('data-box-endpoint')) return button.getAttribute('data-box-endpoint');
     if (page) return page.getAttribute('data-box-endpoint') || '';
     return '';
   }
 
-  function fromPage(key) {
-    return page ? (page.getAttribute('data-' + key) || '') : '';
+  function removeEndpoint(node) {
+    var page = document.querySelector('[data-box-page]');
+    if (node && node.getAttribute('data-box-endpoint')) return node.getAttribute('data-box-endpoint');
+    if (page) return page.getAttribute('data-box-remove-endpoint') || '';
+    return '';
   }
 
   function post(url, payload) {
-    var body = new URLSearchParams();
-    body.set('_token', csrf());
-    Object.keys(payload || {}).forEach(function (key) { body.set(key, payload[key]); });
+    /* the browser's copy of the token rides along, so the same box answers even
+       when the cookie did not survive */
+    var boxToken = token();
+    if (boxToken && !payload.token) payload.token = boxToken;
 
     return fetch(url, {
       method: 'POST',
       credentials: 'same-origin',
       headers: {
-        'X-CSRF-TOKEN': token,
+        'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8',
         'X-Requested-With': 'XMLHttpRequest',
         'Accept': 'application/json',
-        'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8'
+        'X-CSRF-TOKEN': csrf()
       },
-      body: body.toString()
+      body: new URLSearchParams(payload).toString()
     }).then(function (response) {
-      return response.json().catch(function () { return {}; }).then(function (json) {
-        json = json || {};
-        json.status = response.status;
-        return json;
+      return response.json().catch(function () { return {}; }).then(function (data) {
+        var body = data && data.data ? data.data : {};
+        if (data && data.message) body.message = data.message;
+        body.ok = !!(data && data.success);
+        body.status = response.status;
+        return body;
       });
     });
   }
 
-  function say(message) {
-    if (!message) return;
-
-    var host = document.querySelector('[data-box-status]');
-
-    if (!host) {
-      host = document.createElement('div');
-      host.className = 'box-toast';
-      host.setAttribute('data-box-status', '');
-      host.setAttribute('role', 'status');
-      host.setAttribute('aria-live', 'polite');
-      document.body.appendChild(host);
-    }
-
-    host.textContent = message;
-    host.classList.remove('is-on');
-    void host.offsetWidth;
-    host.classList.add('is-on');
-
-    window.clearTimeout(say.timer);
-    say.timer = window.setTimeout(function () { host.classList.remove('is-on'); }, 3800);
-  }
-
   function paintCount(count) {
-    if (typeof count !== 'number') return;
-
     var nodes = document.querySelectorAll('[data-box-count]');
-
     for (var i = 0; i < nodes.length; i++) {
-      nodes[i].textContent = String(count);
+      nodes[i].textContent = count > 0 ? String(count) : '';
+      var holder = nodes[i].closest('.mnav-box, .aichat-foot-link');
+      if (holder) {
+        if (count > 0) holder.classList.add('has-items');
+        else holder.classList.remove('has-items');
+      }
     }
   }
 
-  function paintProduct(productId, on) {
+  function paintButtons(productId, added, labelOn, labelOff) {
     var buttons = document.querySelectorAll('[data-box-add][data-box-product="' + productId + '"]');
-
     for (var i = 0; i < buttons.length; i++) {
+      buttons[i].classList.toggle('is-on', !!added);
+      buttons[i].setAttribute('aria-pressed', added ? 'true' : 'false');
       var label = buttons[i].querySelector('[data-box-label]');
-
-      paint(buttons[i], on);
-      if (label) label.textContent = on ? (buttons[i].dataset.boxLabelOn || label.textContent) : (buttons[i].dataset.boxLabelOff || label.textContent);
+      if (label && labelOn && labelOff) label.textContent = added ? labelOn : labelOff;
     }
-  }
-
-  function paint(button, on) {
-    button.classList.toggle('is-on', on);
-    button.setAttribute('aria-pressed', on ? 'true' : 'false');
-    button.setAttribute('title', on ? (button.dataset.boxLabelOn || '') : (button.dataset.boxLabelOff || ''));
   }
 
   function announce(detail) {
     document.dispatchEvent(new CustomEvent('box:changed', { detail: detail }));
   }
 
-  /* ---------- add / take out ---------- */
+  /* the message the chat or the toast shows: whatever the server answered */
+  function say(node, message, state) {
+    if (!node) return;
+    node.textContent = message || '';
+    node.setAttribute('data-state', state || '');
+    if (!message) return;
+    window.clearTimeout(node.__boxTimer);
+    node.__boxTimer = window.setTimeout(function () {
+      node.textContent = '';
+      node.removeAttribute('data-state');
+    }, 4200);
+  }
+
+  /* ---- 1. add / remove one piece ---------------------------------------- */
 
   document.addEventListener('click', function (event) {
-    var add = event.target.closest ? event.target.closest('[data-box-add]') : null;
-
-    if (add) {
-      event.preventDefault();
-      event.stopPropagation();
-
-      if (add.classList.contains('is-busy')) return;
-
-      var productId = add.getAttribute('data-box-product');
-      var url = endpoint(add);
-
-      if (!productId || !url) return;
-
-      add.classList.add('is-busy');
-      add.disabled = true;
-
-      post(url, { product_id: productId }).then(function (json) {
-        add.classList.remove('is-busy');
-        add.disabled = false;
-
-        var data = json.data || {};
-
-        if (!json.success) {
-          say(json.message || fromPage('box-removed'));
-          return;
-        }
-
-        paintProduct(productId, !!data.added);
-        paintCount(data.count);
-        say(data.message);
-        announce({ productId: Number(productId), added: !!data.added, count: data.count, message: data.message });
-      }).catch(function () {
-        add.classList.remove('is-busy');
-        add.disabled = false;
-      });
-
-      return;
-    }
-
-    var remove = event.target.closest ? event.target.closest('[data-box-remove]') : null;
-
-    if (!remove) return;
+    var button = event.target.closest ? event.target.closest('[data-box-add]') : null;
+    if (!button) return;
 
     event.preventDefault();
 
-    var removeId = remove.getAttribute('data-box-product');
-    var removeUrl = remove.getAttribute('data-box-endpoint') || (page ? page.getAttribute('data-box-endpoint') : '');
+    var productId = button.getAttribute('data-box-product');
+    var url = button.getAttribute('data-box-endpoint') || addEndpoint();
+    if (!productId || !url || button.classList.contains('is-busy')) return;
 
-    if (!removeId || !removeUrl) return;
+    button.classList.add('is-busy');
 
-    remove.disabled = true;
+    post(url, { product_id: productId }).then(function (data) {
+      button.classList.remove('is-busy');
 
-    post(removeUrl, { product_id: removeId }).then(function (json) {
-      if (!json.success) {
-        remove.disabled = false;
-        say(json.message);
+      if (!data.ok && data.status === 422 && data.errors && data.errors.product_id) {
+        say(document.querySelector('[data-box-status]'), data.errors.product_id[0], 'error');
+        announce({ productId: productId, added: false, failed: true, message: data.errors.product_id[0] });
         return;
       }
 
-      var data = json.data || {};
-      var card = document.querySelector('[data-box-card="' + removeId + '"]');
-
-      if (card && card.parentNode) card.parentNode.removeChild(card);
-
-      paintCount(data.count);
-      announce({ productId: Number(removeId), added: false, count: data.count, message: data.message });
-
-      if (data.count === 0) {
-        window.location.reload();
+      if (!data.ok) {
+        say(document.querySelector('[data-box-status]'), button.getAttribute('data-box-error') || '', 'error');
+        announce({ productId: productId, added: false, failed: true });
+        return;
       }
+
+      keepToken(data.token);
+      paintCount(data.count);
+      paintButtons(productId, data.added, button.getAttribute('data-box-label-on'), button.getAttribute('data-box-label-off'));
+      say(document.querySelector('[data-box-status]'), data.message, 'ok');
+      announce({ productId: productId, added: data.added, count: data.count, message: data.message });
+    }).catch(function () {
+      button.classList.remove('is-busy');
+      announce({ productId: productId, added: false, failed: true });
     });
   });
 
-  /* ---------- the send form ---------- */
+  /* ---- 2. take one out from the box page -------------------------------- */
+
+  document.addEventListener('click', function (event) {
+    var button = event.target.closest ? event.target.closest('[data-box-remove]') : null;
+    if (!button) return;
+
+    event.preventDefault();
+
+    var productId = button.getAttribute('data-box-product');
+    var url = removeEndpoint(button);
+    if (!productId || !url || button.classList.contains('is-busy')) return;
+
+    button.classList.add('is-busy');
+
+    post(url, { product_id: productId }).then(function (data) {
+      if (!data.ok) {
+        button.classList.remove('is-busy');
+        return;
+      }
+
+      var card = document.querySelector('[data-box-card="' + productId + '"]');
+      if (card) {
+        card.classList.add('is-leaving');
+        window.setTimeout(function () {
+          card.remove();
+          if (!document.querySelector('[data-box-card]')) window.location.reload();
+        }, 220);
+      }
+
+      keepToken(data.token);
+      paintCount(data.count);
+      announce({ productId: productId, added: false, count: data.count, message: data.message });
+    });
+  });
+
+  /* ---- 3. the send step -------------------------------------------------- */
 
   var sendForm = document.querySelector('[data-box-send-form]');
 
@@ -198,67 +205,68 @@
 
       var button = sendForm.querySelector('[data-box-send-submit]');
       var label = sendForm.querySelector('[data-box-send-label]');
-      var status = sendForm.querySelector('[data-box-send-status]');
-      var original = label ? label.textContent : '';
-      var fields = new FormData(sendForm);
+      var status = sendForm.querySelector('[data-box-status]');
+      var email = sendForm.querySelector('input[name="email"]');
+      var note = sendForm.querySelector('textarea[name="note"]');
+      var idle = label ? label.textContent : '';
 
       if (button) button.disabled = true;
-      if (label) label.textContent = status ? (status.dataset.sending || original) : original;
+      if (label && status) label.textContent = status.getAttribute('data-box-sending') || idle;
 
       post(sendForm.getAttribute('action'), {
-        email: String(fields.get('email') || ''),
-        note: String(fields.get('note') || '')
-      }).then(function (json) {
+        email: email ? email.value : '',
+        note: note ? note.value : ''
+      }).then(function (data) {
         if (button) button.disabled = false;
-        if (label) label.textContent = original;
+        if (label) label.textContent = idle;
 
-        var message = (json && json.message) || '';
-
-        if (json && json.success) {
-          if (status) status.textContent = message;
-          say(message);
+        if (data.ok) {
+          keepToken(data.token ? data.token : token());
+          say(status, data.message, 'ok');
+          sendForm.classList.add('is-sent');
+          announce({ sent: true, count: data.count, message: data.message });
           return;
         }
 
-        if (status) status.textContent = message;
+        var message = data.message || '';
+        if (data.errors && data.errors.email) message = data.errors.email[0];
+        say(status, message, 'error');
       }).catch(function () {
         if (button) button.disabled = false;
-        if (label) label.textContent = original;
+        if (label) label.textContent = idle;
+        say(status, '', 'error');
       });
     });
   }
 
-  /* ---------- the permanent link ---------- */
+  /* ---- 4. copy the one link --------------------------------------------- */
 
   var copy = document.querySelector('[data-box-copy]');
 
   if (copy) {
     copy.addEventListener('click', function () {
       var field = document.querySelector('[data-box-link]');
-      var original = copy.textContent;
+      var label = copy.querySelector('[data-box-copy-label]') || copy;
+      if (!field) return;
 
       var done = function (ok) {
-        copy.textContent = ok ? (copy.dataset.copied || original) : (copy.dataset.copyError || original);
-        window.setTimeout(function () { copy.textContent = original; }, 2000);
+        var original = copy.getAttribute('data-box-label') || label.textContent;
+        copy.setAttribute('data-box-label', original);
+        label.textContent = ok ? copy.getAttribute('data-box-copied') : copy.getAttribute('data-box-copy-failed');
+        window.setTimeout(function () { label.textContent = original; }, 2400);
       };
 
-      if (field) {
-        field.removeAttribute('readonly');
-        field.select();
-        field.setSelectionRange(0, 99999);
-
-        if (navigator.clipboard && navigator.clipboard.writeText) {
-          navigator.clipboard.writeText(field.value).then(function () { done(true); }, function () { done(document.execCommand('copy')); });
-        } else {
-          done(document.execCommand('copy'));
-        }
-
-        field.setAttribute('readonly', 'readonly');
+      if (navigator.clipboard && navigator.clipboard.writeText) {
+        navigator.clipboard.writeText(field.value).then(function () { done(true); }, function () { done(false); });
+        return;
       }
+
+      field.select();
+      try { done(document.execCommand('copy')); } catch (error) { done(false); }
     });
   }
 
-  /* ---------- empty the box ---------- */
+  /* ---- 5. empty it -------------------------------------------------------- */
 
   var clearForm = document.querySelector('[data-box-clear-form]');
 
@@ -266,18 +274,29 @@
     clearForm.addEventListener('submit', function (event) {
       event.preventDefault();
 
-      var button = clearForm.querySelector('button');
+      var confirmText = clearForm.getAttribute('data-box-confirm');
+      if (confirmText && !window.confirm(confirmText)) return;
 
-      if (button && button.dataset.confirm && !window.confirm(button.dataset.confirm)) return;
+      var button = clearForm.querySelector('button[type="submit"]');
+      if (button) button.disabled = true;
 
-      post(clearForm.getAttribute('action'), {}).then(function (json) {
-        if (json && json.success) {
+      post(clearForm.getAttribute('action'), {}).then(function (data) {
+        if (data.ok) {
+          try { window.localStorage.removeItem(TOKEN_KEY); } catch (error) { /* private mode */ }
+          paintCount(0);
+          announce({ productId: 0, added: false, count: 0, message: data.message });
           window.location.reload();
           return;
         }
 
-        say(json && json.message);
+        if (button) button.disabled = false;
+      }).catch(function () {
+        if (button) button.disabled = false;
       });
     });
   }
-})();
+
+  /* the storefront may render after this script (the chat adds cards) — the
+     delegated handlers above cover those, so nothing else is needed here */
+  if (root) root.setAttribute('data-box-ready', '1');
+}());

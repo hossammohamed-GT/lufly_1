@@ -16,6 +16,7 @@ return [
     'search_placeholder' => 'Search architectural fixtures, magnetic, silia...',
     'planner' => 'Bathroom planner',
     'favorites' => 'Saved list',
+    'box' => 'Box',
     'account' => 'Account / Portal',
     'download_catalog' => '2026 Catalog (PDF)',
     'tender_pack' => 'BIM / Tender Pack',

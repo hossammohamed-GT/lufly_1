@@ -16,6 +16,7 @@ return [
     'search_placeholder' => 'Hledat sanitární techniku, magnetic, silia...',
     'planner' => 'Plánovač koupelny',
     'favorites' => 'Uložený seznam',
+    'box' => 'Krabice',
     'account' => 'Účet / Portál',
     'download_catalog' => 'Katalog 2026 (PDF)',
     'tender_pack' => 'BIM / Dokumentace',

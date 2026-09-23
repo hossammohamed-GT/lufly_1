@@ -42,7 +42,9 @@ class FavoriteService
     public function current(bool $create = false): ?Favorite
     {
         if ($this->resolved) {
-            return $this->favorite;
+            /* the same request may have looked first (the header's counter) and
+               asked for a list only afterwards */
+            return $this->favorite === null && $create ? $this->create() : $this->favorite;
         }
 
         $this->resolved = true;
@@ -237,13 +239,20 @@ class FavoriteService
         );
     }
 
+    /**
+     * A Secure cookie is only sent over https — and a browser on plain http
+     * silently throws it away, which is what makes a visitor's list (or his box)
+     * start from nothing on every click. So the flag follows the request, not
+     * APP_ENV: a shop on localhost over http keeps its cookie, and a shop behind
+     * a proxy gets it from X-Forwarded-Proto.
+     */
     private function isSecure(): bool
     {
         $server = (array) ($_SERVER ?? []);
 
         return (!empty($server['HTTPS']) && $server['HTTPS'] !== 'off')
             || (($server['HTTP_X_FORWARDED_PROTO'] ?? '') === 'https')
-            || (string) config('app.env', 'production') === 'production';
+            || (int) ($server['SERVER_PORT'] ?? 0) === 443;
     }
 
     private function create(): Favorite

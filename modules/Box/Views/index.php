@@ -1,42 +1,50 @@
 <?php
 /**
- * The quotation box page.
+ * The quotation box, on the site.
  *
- * Same editorial language as the saved list, with one difference that is the
- * whole point of the box: the side panel does not mail the list to the visitor —
- * it sends the list to the team as a request for prices, and hands out the one
- * link that opens this exact box anywhere.
+ * The same editorial shape as the saved list — coded header, a card grid, a
+ * sticky side column — because it is the same kind of page: a list of pieces the
+ * visitor collected. What differs is what it is for: every piece is waiting for a
+ * price, the list has one link that opens it anywhere, and the last step sends
+ * the whole box to the team, once, with the visitor's address on it.
  *
  * @var Core\View\View $view
  * @var string $locale
  * @var array<int, array<string, mixed>> $items
  * @var int $count
+ * @var \Modules\Box\Models\Box|null $box
  * @var string $shareUrl
  * @var int $maxItems
  * @var string $shopMail
  */
 $view->layout('layouts.frontend');
+/* the box reuses the saved-list styling and adds its own button/panel touches */
 $view->pushStyle('frontend/favorites/favorites.css');
 $view->pushStyle('frontend/box/box.css');
 $view->pushScript('frontend/box/box.js');
 
 $items = $items ?? [];
 $count = (int) ($count ?? count($items));
+$locale = (string) ($locale ?? 'en');
 $shareUrl = (string) ($shareUrl ?? '');
+$maxItems = (int) ($maxItems ?? 40);
+$shopMail = (string) ($shopMail ?? 'info@lufly.tr');
 $fallbackImg = asset('/images/products/prod_146_1620-111-a.jpg');
+$savedEmail = (string) ($box->email ?? '');
+$savedNote = (string) ($box->note ?? '');
+
 $addEndpoint = route('box.add');
+$removeEndpoint = route('box.remove');
 $sendEndpoint = route('box.send');
 $clearEndpoint = route('box.clear');
+$countKey = $count === 1 ? 'box.list_count_one' : 'box.list_count_many';
 ?>
-<main class="boxs" id="main"
+<main class="favs box" id="main"
       data-box-page
       data-box-endpoint="<?= e($addEndpoint) ?>"
-      data-box-send-endpoint="<?= e($sendEndpoint) ?>"
-      data-box-clear-endpoint="<?= e($clearEndpoint) ?>"
-      data-box-copied="<?= e(trans('box.copied')) ?>"
-      data-box-copy-failed="<?= e(trans('box.copy_failed')) ?>"
-      data-box-removed="<?= e(trans('box.removed')) ?>"
-      data-box-empty="<?= e(trans('box.empty_title')) ?>">
+      data-box-remove-endpoint="<?= e($removeEndpoint) ?>"
+      data-box-max="<?= $maxItems ?>"
+      data-box-err="<?= e(trans('box.err')) ?>">
     <div class="favs-inner">
         <header class="favs-hero">
             <span class="favs-beam" aria-hidden="true"></span>
@@ -48,7 +56,7 @@ $clearEndpoint = route('box.clear');
             <dl class="favs-stats">
                 <div class="favs-stat">
                     <dt class="favs-stat-label"><?= e(trans('box.stat_items')) ?></dt>
-                    <dd class="favs-stat-value" data-box-count><?= (int) $count ?></dd>
+                    <dd class="favs-stat-value" data-box-count><?= $count ?></dd>
                 </div>
                 <div class="favs-stat">
                     <dt class="favs-stat-label"><?= e(trans('box.stat_language')) ?></dt>
@@ -62,13 +70,12 @@ $clearEndpoint = route('box.clear');
         </header>
 
         <?php if ($items === []): ?>
-            <section class="favs-empty">
+            <section class="favs-empty" data-box-empty>
                 <span class="favs-empty-icon" aria-hidden="true">
                     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4"
                          stroke-linecap="round" stroke-linejoin="round">
-                        <path d="M4 8.5 6 4h12l2 4.5"/>
-                        <path d="M4 8.5h16V19a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1V8.5Z"/>
-                        <path d="M9.5 13h5"/>
+                        <path d="M4 8h16l-1.2 11.2a2 2 0 0 1-2 1.8H7.2a2 2 0 0 1-2-1.8Z"/>
+                        <path d="M9 8V6a3 3 0 0 1 6 0v2"/>
                     </svg>
                 </span>
                 <h2 class="favs-empty-title"><?= e(trans('box.empty_title')) ?></h2>
@@ -102,7 +109,7 @@ $clearEndpoint = route('box.clear');
                     <div class="favs-list-head">
                         <h2 class="favs-block-title"><?= e(trans('box.list_title')) ?></h2>
                         <span class="favs-list-count">
-                            <?= e(count($items) === 1 ? trans('box.list_count_one') : trans('box.list_count_many', ['n' => (string) count($items)])) ?>
+                            <?= e(trans($countKey, ['n' => (string) $count])) ?>
                         </span>
                     </div>
 
@@ -114,24 +121,23 @@ $clearEndpoint = route('box.clear');
                             $image = (string) ($item['image'] ?? '');
                             $code = (string) ($item['model_code'] ?? $item['sku'] ?? '');
                             $desc = trim((string) ($item['short_description'] ?? ''));
+                            $name = (string) ($item['name'] ?? '');
                             ?>
                             <article class="fav-card" data-box-card="<?= $productId ?>"
                                      style="--fav-delay: <?= e((string) (0.05 * (int) (($index % 6) + 1))) ?>s">
                                 <a class="fav-card-media" href="<?= e($productUrl) ?>" tabindex="-1" aria-hidden="true">
                                     <img src="<?= e($image !== '' ? asset($image) : $fallbackImg) ?>"
-                                         alt="" loading="<?= $index < 3 ? 'eager' : 'lazy' ?>" decoding="async"
-                                         width="420" height="300"
+                                         alt="" loading="<?= $index < 3 ? 'eager' : 'lazy' ?>"
+                                         width="420" height="300" decoding="async"
                                          onerror="this.onerror=null; this.src='<?= e($fallbackImg) ?>';">
                                     <span class="fav-card-index"><?= str_pad((string) ((int) $index + 1), 2, '0', STR_PAD_LEFT) ?></span>
                                 </a>
                                 <div class="fav-card-body">
                                     <span class="fav-card-code"><?= e(trans('common.sku')) ?> <?= e($code) ?></span>
                                     <h3 class="fav-card-title">
-                                        <a href="<?= e($productUrl) ?>"><?= e($item['name'] ?? '') ?></a>
+                                        <a href="<?= e($productUrl) ?>"><?= e($name) ?></a>
                                     </h3>
-                                    <?php if ($desc !== ''): ?>
-                                        <p class="fav-card-desc"><?= e($desc) ?></p>
-                                    <?php endif; ?>
+                                    <p class="fav-card-desc box-card-wait"><?= e(trans('box.waiting_price')) ?></p>
                                     <div class="fav-card-actions">
                                         <a class="fav-card-open" href="<?= e($productUrl) ?>">
                                             <span><?= e(trans('box.open_product')) ?></span>
@@ -140,8 +146,11 @@ $clearEndpoint = route('box.clear');
                                         <button type="button" class="fav-card-remove"
                                                 data-box-remove
                                                 data-box-product="<?= $productId ?>"
-                                                data-box-endpoint="<?= e($addEndpoint) ?>"
-                                                aria-label="<?= e(trans('box.remove')) ?> — <?= e($item['name'] ?? '') ?>">
+                                                data-box-endpoint="<?= e($removeEndpoint) ?>"
+                                                data-box-removed="<?= e(trans('box.removed_named', ['name' => $name])) ?>"
+                                                data-box-label-off="<?= e(trans('box.add')) ?>"
+                                                data-box-label-on="<?= e(trans('box.added')) ?>"
+                                                aria-label="<?= e(trans('box.remove')) ?> — <?= e($name) ?>">
                                             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
                                                  stroke-linecap="round" aria-hidden="true">
                                                 <line x1="6" y1="6" x2="18" y2="18"/>
@@ -154,73 +163,76 @@ $clearEndpoint = route('box.clear');
                             </article>
                         <?php endforeach; ?>
                     </div>
+
+                    <p class="box-limit-note">
+                        <?= e(trans('box.limit_reached', ['n' => (string) $maxItems])) ?>
+                    </p>
                 </section>
 
                 <aside class="favs-side">
-                    <section class="favs-panel favs-panel-mail is-box">
+                    <section class="favs-panel favs-panel-mail">
                         <span class="favs-panel-eyebrow"><?= e(trans('box.send_eyebrow')) ?></span>
                         <h2 class="favs-panel-title"><?= e(trans('box.send_title')) ?></h2>
                         <p class="favs-panel-text">
-                            <?= e(count($items) === 1 ? trans('box.send_text_one') : trans('box.send_text_many', ['n' => (string) count($items)])) ?>
+                            <?= e(trans($count === 1 ? 'box.send_text_one' : 'box.send_text_many', ['n' => (string) $count])) ?>
                         </p>
 
                         <form class="favs-mail" method="post" action="<?= e($sendEndpoint) ?>" data-box-send-form>
                             <?= csrf_field() ?>
                             <label class="favs-mail-field">
-                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"
-                                     stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-                                    <rect x="3" y="5" width="18" height="14" rx="2.5"/>
-                                    <path d="m4 7 8 6 8-6"/>
-                                </svg>
-                                <input type="email" name="email" required
-                                       value="<?= e($box !== null ? (string) ($box->email ?? '') : '') ?>"
-                                       placeholder="<?= e(trans('box.send_placeholder')) ?>"
-                                       aria-label="<?= e(trans('box.send_placeholder')) ?>"
-                                       autocomplete="email" inputmode="email">
+                                <span><?= e(trans('assistant.ask_label')) ?></span>
+                                <input type="email" name="email" required autocomplete="email"
+                                       value="<?= e($savedEmail) ?>"
+                                       placeholder="<?= e(trans('box.send_placeholder')) ?>">
                             </label>
-
-                            <label class="favs-mail-field is-note">
-                                <textarea name="note" rows="3" maxlength="<?= (int) config('box.max_note', 600) ?>"
-                                          placeholder="<?= e(trans('box.note_placeholder')) ?>"
-                                          aria-label="<?= e(trans('box.note_label')) ?>"><?= e((string) ($box?->note ?? '')) ?></textarea>
+                            <label class="favs-mail-field">
+                                <span><?= e(trans('box.note_label')) ?></span>
+                                <textarea name="note" rows="3" maxlength="600"
+                                          placeholder="<?= e(trans('box.note_placeholder')) ?>"><?= e($savedNote) ?></textarea>
                             </label>
-
                             <button type="submit" class="favs-mail-btn" data-box-send-submit>
                                 <span data-box-send-label><?= e(trans('box.send_button')) ?></span>
-                                <svg viewBox="0 0 20 20" fill="currentColor" width="15" height="15" aria-hidden="true"><path fill-rule="evenodd" d="M10.293 3.293a1 1 0 011.414 0l6 6a1 1 0 010 1.414l-6 6a1 1 0 01-1.414-1.414L14.586 11H3a1 1 0 110-2h11.586l-4.293-4.293a1 1 0 010-1.414z" clip-rule="evenodd"/></svg>
                             </button>
-                            <p class="favs-mail-status" data-box-send-status role="status" aria-live="polite"
-                               data-sending="<?= e(trans('box.send_sending')) ?>"></p>
+                            <p class="favs-mail-status" data-box-status role="status" aria-live="polite"
+                               data-box-sending="<?= e(trans('box.send_sending')) ?>"></p>
                         </form>
 
-                        <p class="favs-notify-hint"><?= e(trans('box.send_hint')) ?></p>
+                        <p class="favs-notify-hint"><?= e(trans('box.send_foot')) ?></p>
+
+                        <ul class="favs-points">
+                            <li><?= e(trans('box.step_1_text')) ?></li>
+                            <li><?= e(trans('box.step_3_text')) ?></li>
+                        </ul>
                     </section>
 
-                    <?php if ($shareUrl !== ''): ?>
-                        <section class="favs-panel favs-panel-link">
-                            <span class="favs-panel-eyebrow"><?= e(trans('box.link_eyebrow')) ?></span>
-                            <h2 class="favs-panel-title"><?= e(trans('box.link_title')) ?></h2>
-                            <p class="favs-panel-text"><?= e(trans('box.link_text')) ?></p>
+                    <section class="favs-panel favs-panel-link">
+                        <h2 class="favs-panel-title is-small"><?= e(trans('box.link_title')) ?></h2>
+                        <p class="favs-panel-text"><?= e(trans('box.link_text')) ?></p>
+                        <div class="favs-linkrow">
+                            <input class="favs-linkinput" type="text" readonly value="<?= e($shareUrl) ?>"
+                                   aria-label="<?= e(trans('box.link_title')) ?>" data-box-link>
+                            <button type="button" class="favs-copy" data-box-copy
+                                    data-box-copied="<?= e(trans('box.copied')) ?>"
+                                    data-box-copy-failed="<?= e(trans('box.copy_failed')) ?>">
+                                <span data-box-copy-label><?= e(trans('box.copy_button')) ?></span>
+                            </button>
+                        </div>
+                    </section>
 
-                            <div class="favs-link">
-                                <input type="text" readonly value="<?= e($shareUrl) ?>" data-box-link
-                                       aria-label="<?= e(trans('box.link_title')) ?>">
-                                <button type="button" class="favs-link-btn" data-box-copy
-                                        data-copied="<?= e(trans('box.copied')) ?>"
-                                        data-copy-error="<?= e(trans('box.copy_failed')) ?>">
-                                    <?= e(trans('box.copy_button')) ?>
-                                </button>
-                            </div>
+                    <section class="favs-panel favs-panel-foot">
+                        <form method="post" action="<?= e($clearEndpoint) ?>" data-box-clear-form
+                              data-box-confirm="<?= e(trans('box.clear_confirm')) ?>">
+                            <?= csrf_field() ?>
+                            <button type="submit" class="favs-clear">
+                                <span><?= e(trans('box.clear')) ?></span>
+                            </button>
+                        </form>
 
-                            <form method="post" action="<?= e($clearEndpoint) ?>" data-box-clear-form>
-                                <?= csrf_field() ?>
-                                <button type="submit" class="favs-clear"
-                                        data-confirm="<?= e(trans('box.clear_confirm')) ?>">
-                                    <?= e(trans('box.clear')) ?>
-                                </button>
-                            </form>
-                        </section>
-                    <?php endif; ?>
+                        <div class="favs-help">
+                            <p><?= e(trans('box.send_foot')) ?></p>
+                            <a href="mailto:<?= e($shopMail) ?>"><?= e($shopMail) ?></a>
+                        </div>
+                    </section>
                 </aside>
             </div>
         <?php endif; ?>

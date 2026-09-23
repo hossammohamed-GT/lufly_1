@@ -14,6 +14,14 @@ return [
     'favorites.email' => 'favoriler/e-posta',
     'favorites.clear' => 'favoriler/temizle',
 
+    /* quotation box */
+    'box.index' => 'kutu',
+    'box.claim' => 'kutu/{token}',
+    'box.add' => 'kutu/ekle',
+    'box.remove' => 'kutu/cikar',
+    'box.clear' => 'kutu/bosalt',
+    'box.send' => 'kutu/gonder',
+
     /* bathroom planner */
     /* quotation box */
     'box.index' => 'kutu',

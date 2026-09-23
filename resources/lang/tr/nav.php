@@ -16,6 +16,7 @@ return [
     'search_placeholder' => 'Mimari armatür, magnetic, silia ara...',
     'planner' => 'Banyo planlayıcı',
     'favorites' => 'Kayıtlı liste',
+    'box' => 'Kutu',
     'account' => 'Hesap / Portal',
     'download_catalog' => '2026 Kataloğu (PDF)',
     'tender_pack' => 'BIM / İhale Paketi',

@@ -52,6 +52,9 @@ $categorySlug = (string) ($product['category_slug'] ?? '');
 $isSaved = feature('favorites', true)
     && class_exists(\Modules\Favorites\Services\FavoriteService::class)
     && app(\Modules\Favorites\Services\FavoriteService::class)->has((int) ($product['id'] ?? 0));
+$inBox = feature('box', true)
+    && class_exists(\Modules\Box\Services\BoxService::class)
+    && app(\Modules\Box\Services\BoxService::class)->has((int) ($product['id'] ?? 0));
 $productUrl = route('products.show', ['slug' => $product['slug'] ?? $slug]);
 
 /* dimensions in millimetres, shown in the spec table when the factory has
@@ -274,6 +277,13 @@ if (feature('planner', true) && (bool) config('planner.enabled', true)) {
                         'variant' => 'pill',
                         'on' => $isSaved,
                         'label' => trans('favorites.save_to_list'),
+                    ]) ?>
+                    <?= $view->component('box-button', [
+                        'product_id' => (int) ($product['id'] ?? 0),
+                        'name' => (string) ($product['name'] ?? ''),
+                        'variant' => 'pill',
+                        'on' => $inBox,
+                        'label' => trans('box.add'),
                     ]) ?>
                     <a href="<?= e(route('products.index')) ?>" class="pdp-back">&larr; <?= e(trans('products.title')) ?></a>
                 </div>

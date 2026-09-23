@@ -43,7 +43,9 @@ class BoxService
     public function current(bool $create = false): ?Box
     {
         if ($this->resolved) {
-            return $this->box;
+            /* an earlier call in this same request asked only to look — and there
+               was nothing. A caller that needs a box now still gets one. */
+            return $this->box === null && $create ? $this->create() : $this->box;
         }
 
         $this->resolved = true;
@@ -77,6 +79,14 @@ class BoxService
     public function findByToken(string $token): ?Box
     {
         return $this->boxes->findByToken($token);
+    }
+
+    /** The token of the visitor's box, or '' when there is none yet. */
+    public function token(): string
+    {
+        $box = $this->current();
+
+        return $box === null ? '' : (string) $box->token;
     }
 
     public function count(): int
@@ -204,13 +214,20 @@ class BoxService
         );
     }
 
+    /**
+     * A Secure cookie is only sent over https — and a browser on plain http
+     * silently throws it away, which is what makes a visitor's list (or his box)
+     * start from nothing on every click. So the flag follows the request, not
+     * APP_ENV: a shop on localhost over http keeps its cookie, and a shop behind
+     * a proxy gets it from X-Forwarded-Proto.
+     */
     private function isSecure(): bool
     {
         $server = (array) ($_SERVER ?? []);
 
         return (!empty($server['HTTPS']) && $server['HTTPS'] !== 'off')
             || (($server['HTTP_X_FORWARDED_PROTO'] ?? '') === 'https')
-            || (string) config('app.env', 'production') === 'production';
+            || (int) ($server['SERVER_PORT'] ?? 0) === 443;
     }
 
     private function create(): Box

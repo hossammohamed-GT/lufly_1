@@ -403,15 +403,19 @@
 
 .mnav-search-open { display: none; }
 
-/* ---------- saved products ("favorites") ---------- */
+/* ---------- saved products ("favorites") and the quotation box ---------- */
 
-.mnav-fav { position: relative; }
+.mnav-fav,
+.mnav-box { position: relative; }
 
-.mnav-fav .icon { transition: color var(--ds-nav-base) var(--ds-nav-ease), transform var(--ds-nav-base) var(--ds-nav-ease); }
+.mnav-fav .icon,
+.mnav-box .icon { transition: color var(--ds-nav-base) var(--ds-nav-ease), transform var(--ds-nav-base) var(--ds-nav-ease); }
 
-.mnav-fav:hover .icon { transform: translateY(-1px); }
+.mnav-fav:hover .icon,
+.mnav-box:hover .icon { transform: translateY(-1px); }
 
-.mnav-fav.has-items { color: var(--ds-primary); }
+.mnav-fav.has-items,
+.mnav-box.has-items { color: var(--ds-primary); }
 
 .mnav-fav-badge {
   position: absolute;
@@ -445,6 +449,7 @@
 
 @media (prefers-reduced-motion: reduce) {
   .mnav-fav .icon,
+  .mnav-box .icon,
   .mnav-fav-badge { transition: none; }
   .mnav-fav-badge.is-bump { animation: none; }
 }

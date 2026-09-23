@@ -70,6 +70,8 @@ class BoxController extends Controller
 
     public function add(Request $request): Response
     {
+        $this->adoptToken($request);
+
         $product = $this->product($request);
 
         if ($product === null) {
@@ -102,6 +104,7 @@ class BoxController extends Controller
             'product_id' => (int) $product->getKey(),
             'added' => $result['added'],
             'count' => $result['count'],
+            'token' => $this->box->token(),
             'message' => $message,
             'notified' => $notified,
         ], $message);
@@ -111,6 +114,8 @@ class BoxController extends Controller
 
     public function remove(Request $request): Response
     {
+        $this->adoptToken($request);
+
         $productId = (int) $request->input('product_id', 0);
 
         if ($productId <= 0) {
@@ -120,17 +125,23 @@ class BoxController extends Controller
         $count = $this->box->remove($productId);
         $message = trans('box.removed');
 
-        $response = ApiResponse::success(['count' => $count, 'message' => $message], $message);
+        $response = ApiResponse::success([
+            'count' => $count,
+            'token' => $this->box->token(),
+            'message' => $message,
+        ], $message);
 
         return $this->box->attachCookie($response);
     }
 
     public function clear(Request $request): Response
     {
+        $this->adoptToken($request);
+
         $this->box->clear();
 
         $message = trans('box.cleared');
-        $response = ApiResponse::success(['count' => 0, 'message' => $message], $message);
+        $response = ApiResponse::success(['count' => 0, 'token' => '', 'message' => $message], $message);
 
         return $this->box->attachCookie($response);
     }
@@ -138,6 +149,8 @@ class BoxController extends Controller
     /** Send the list to the shop: this is the whole reason the box exists. */
     public function send(Request $request): Response
     {
+        $this->adoptToken($request);
+
         $email = mb_strtolower(trim((string) $request->input('email', '')));
         $note = trim((string) preg_replace('/\s+/u', ' ', (string) $request->input('note', '')));
         $note = mb_substr($note, 0, max(60, (int) config('box.max_note', 600)));
@@ -183,6 +196,7 @@ class BoxController extends Controller
             'copy' => $result['copy'],
             'count' => count($items),
             'email' => $email,
+            'token' => (string) $box->token,
             'message' => $message,
         ], $message);
 
@@ -224,6 +238,30 @@ class BoxController extends Controller
         /* the repository is reached through the service the visitor's cookie
            already resolved, so the page and the API never disagree */
         return $this->box->items($locale);
+    }
+
+    /**
+     * A browser that keeps no cookies (private mode, strict settings) still gets
+     * to keep its box: it carries the token in the page, and every call may hand
+     * it back. The cookie stays the first choice — this is only the net under it.
+     */
+    private function adoptToken(Request $request): void
+    {
+        if ($this->box->current() !== null) {
+            return;
+        }
+
+        $token = trim((string) $request->input('token', ''));
+
+        if ($token === '' || !preg_match('/^[A-Za-z0-9]{16,64}$/', $token)) {
+            return;
+        }
+
+        $box = $this->box->findByToken($token);
+
+        if ($box !== null) {
+            $this->box->adopt($box);
+        }
     }
 
     /** The product a request points at, when it is one we actually sell. */

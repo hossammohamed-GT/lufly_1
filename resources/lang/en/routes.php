@@ -14,6 +14,14 @@ return [
     'favorites.email' => 'favorites/email',
     'favorites.clear' => 'favorites/clear',
 
+    /* quotation box */
+    'box.index' => 'box',
+    'box.claim' => 'box/{token}',
+    'box.add' => 'box/add',
+    'box.remove' => 'box/remove',
+    'box.clear' => 'box/clear',
+    'box.send' => 'box/send',
+
     /* bathroom planner */
     /* quotation box */
     'box.index' => 'box',
