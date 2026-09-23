@@ -54,6 +54,7 @@ const DEVICES = [
 function phoneCopyNeed(device) {
   const w = device.width;
   const h = device.height;
+  const pad = panelMetrics(device).pad;
 
   const kicker = 20;
   const logoBox = Math.min(190, Math.round(w * 0.46)) * (274 / 430) + 8;
@@ -62,9 +63,8 @@ function phoneCopyNeed(device) {
   const sub = subVisible ? 3 * 13.5 * 1.62 + 8 : 0;
   const rows = w >= 380 ? 1 : 2;
   const ctas = 12 + rows * (12 + 12 + 13);
-  const pad = 10 + 54;
 
-  return Math.round(Math.max(kicker + logoBox, kicker + title) + sub + ctas + pad);
+  return Math.round(Math.max(kicker + logoBox, kicker + title) + sub + ctas + pad.top + pad.bottom);
 }
 
 /* panel metrics per stylesheet breakpoint - the stub has to agree with
@@ -310,22 +310,22 @@ function runScene(device, scenario) {
 /* ------------------------------------------------------------------ *
  * scenarios
  * ------------------------------------------------------------------ */
-/* the -p artwork the phone receives, and how much of its width a box of the
-   given aspect actually shows under `background-size: cover` */
-const PHONE_ART = { width: 1080, height: 959 };
-function artFraction(boxWidth, boxHeight) {
-  const scale = Math.max(boxWidth / PHONE_ART.width, boxHeight / PHONE_ART.height);
-  return (boxWidth / scale) / PHONE_ART.width;
-}
+/* the portrait artwork the phone receives (tools/media_audit/hero_portrait_crops.py)
+   and how much of it a box of the given aspect shows under
+   `background-size: cover` - a full-height phone hero crops a landscape shot
+   down to about a quarter of its width, which is what used to feel cramped. */
+const PHONE_ART = { width: 800, height: 1072 };      /* heroc-<n>-p.webp */
+const PHONE_ART_LIGHT = { width: 768, height: 1290 }; /* heroc-<n>-light-p.jpg */
 
-const BAND_MIN = 140;
-const BAND_MAX = 320;
-const BAND_SHARE = 0.55;
-
-/* what the script's updateBand() should have produced */
-function bandFor(space, copyNeed) {
-  const cap = Math.min(Math.round(space * BAND_SHARE), BAND_MAX);
-  return Math.min(Math.max(space - copyNeed, BAND_MIN), cap);
+function artFraction(boxWidth, boxHeight, art = PHONE_ART) {
+  const scale = Math.max(boxWidth / art.width, boxHeight / art.height);
+  const visibleWidth = boxWidth / scale;
+  const visibleHeight = boxHeight / scale;
+  return {
+    width: visibleWidth / art.width,
+    height: visibleHeight / art.height,
+    area: (visibleWidth * visibleHeight) / (art.width * art.height),
+  };
 }
 
 function checkDevice(device) {
@@ -343,23 +343,22 @@ function checkDevice(device) {
   let needed = m.needed;
 
   if (phone) {
-    /* the hero fills the open screen, and the copy sits under the artwork
-       band instead of fighting the photo for the same box */
-    const band = bandFor(capOneScreen, copyNeed);
-    const copyArea = capOneScreen - band;
-    needed = copyArea;
-
+    /* the hero fills the open screen, with the photo edge to edge - the copy
+       has to fit inside that same box */
     if (Math.abs(start - capOneScreen) > 1) {
       issues.push(`the hero does not fill the screen (${start} vs ${capOneScreen})`);
     }
-    if (copyNeed > copyArea + 1) {
-      issues.push(`the copy does not fit under the artwork band (${copyNeed} > ${copyArea})`);
+    if (copyNeed > capOneScreen + 1) {
+      issues.push(`the copy is taller than the screen (${copyNeed} > ${capOneScreen})`);
     }
 
-    /* the whole point of the band: the photo keeps a wide crop */
-    const fraction = artFraction(device.width, band);
-    if (fraction < 0.55) {
-      issues.push(`the phone shows only ${Math.round(fraction * 100)}% of the photo width - cramped crop`);
+    /* the portrait artwork is what keeps the crop comfortable */
+    const dark = artFraction(device.width, start);
+    const light = artFraction(device.width, start, PHONE_ART_LIGHT);
+    if (Math.min(dark.width, light.width) < 0.65) {
+      issues.push(
+        `the phone shows only ${Math.round(Math.min(dark.width, light.width) * 100)}% of the artwork width - cramped crop`,
+      );
     }
   } else {
     if (start > capOneScreen + 1) {
@@ -478,8 +477,8 @@ const rows = results.map((r) => {
   const copyNeed = phone ? phoneCopyNeed(device) : panelMetrics(device).content;
   const m = runScene(device, phone ? { content: copyNeed, exact: true } : { content: copyNeed });
 
-  const band = phone ? bandFor(m.space, copyNeed) : null;
-  const cropFraction = phone ? artFraction(device.width, band) : null;
+  const crop = phone ? artFraction(device.width, r.height || m.space) : null;
+  const cropLight = phone ? artFraction(device.width, r.height || m.space, PHONE_ART_LIGHT) : null;
 
   return {
     name: device.name,
@@ -487,10 +486,10 @@ const rows = results.map((r) => {
     height: device.height,
     portraitPhone: phone,
     hero: r.height,
-    needs: phone ? m.space - band : m.needed,
+    needs: m.needed,
     max: m.space,
-    band,
-    cropFraction,
+    cropFraction: crop ? Math.min(crop.width, cropLight.width) : null,
+    cropArea: crop ? crop.area : null,
     tight: r.tight,
     issues: r.issues,
     svh: m.state.svh,
@@ -510,7 +509,7 @@ console.log('');
 console.log('');
 console.log(
   width('device', 24) + width('viewport', 12) + width('hero', 8) +
-  width('art band', 10) + width('copy area', 11) + width('crop', 8) + 'notes'
+  width('needs', 9) + width('photo', 8) + 'notes'
 );
 console.log('-'.repeat(104));
 for (const row of rows) {
@@ -518,8 +517,7 @@ for (const row of rows) {
     width(row.name, 24) +
     width(`${row.width}x${row.height}`, 12) +
     width(row.hero === null ? '-' : `${row.hero}px`, 8) +
-    width(row.band === null ? '—' : `${row.band}px`, 10) +
-    width(`${row.needs}px`, 11) +
+    width(`${row.needs}px`, 9) +
     width(row.cropFraction === null ? '—' : `${Math.round(row.cropFraction * 100)}%`, 8) +
     (row.issues.length ? 'FAIL: ' + row.issues.join('; ') : 'ok')
   );
@@ -528,7 +526,7 @@ console.log('');
 console.log(
   failed.length
     ? `${failed.length} of ${results.length} device(s) failed`
-    : `all ${results.length} devices fill the open screen, with the copy fitting under the artwork`
+    : `all ${results.length} devices fill the open screen with the photo edge to edge`
 );
 if (tight.length) {
   console.log(

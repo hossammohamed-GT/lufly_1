@@ -32,10 +32,13 @@ replays the browser behaviour that used to break the hero:
   the viewport is suddenly much shorter (and the landscape-phone CSS block applies):
   the hero must be re-measured, not carried over, and if the script hands the very
   short viewports (<200px of space) to the CSS fallback, that fallback has to fit.
-- **the phone copy** — on portrait phones the hero stacks (artwork band on top,
-  copy underneath). The model reproduces the band the script has to choose, checks
-  the copy still fits under it, and checks the photo keeps at least 55% of its width
-  visible - the "the picture looks zoomed in" guard.
+- **the phone copy** — the model reproduces the compact phone type scale and checks
+  the copy still fits inside the full-height hero.
+- **the phone artwork** — the photo fills the hero edge to edge, so the box is tall
+  and the crop is what decides whether it looks cramped. The harness measures how
+  much of the portrait artwork (800x1072 dark / 768x1290 light, built by
+  `tools/media_audit/hero_portrait_crops.py`) a phone box actually shows and fails
+  under 65%.
 - the result must fit the first screen, cover what the copy needs, and stay under
   the portrait artwork cap (`1.35 × width`) that keeps a phone photo from being
   zoomed into a close-up.

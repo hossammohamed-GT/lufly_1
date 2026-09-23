@@ -121,28 +121,6 @@
   }
 
   var fittedHeight = 0;
-  var lastBand = 0;
-
-  /* On phones the hero stacks: the artwork keeps a comfortable, wide crop in
-     a band at the top and the copy gets the space underneath it. The band is
-     measured from what the copy actually needs, so a longer headline or a
-     bigger font pushes the photo up instead of clipping the CTAs - and it is
-     capped at ~half the screen so the hero still reads as a photo. */
-  var BAND_MIN = 140;
-  var BAND_MAX = 320;
-  var BAND_SHARE = 0.55;
-
-  function updateBand(space, copyNeed) {
-    var cap = Math.min(Math.round(space * BAND_SHARE), BAND_MAX);
-    var band = Math.round(space - copyNeed);
-    if (band > cap) band = cap;
-    if (band < BAND_MIN) band = BAND_MIN;
-
-    if (band !== lastBand) {
-      lastBand = band;
-      root.style.setProperty('--lfc-band', band + 'px');
-    }
-  }
 
   function fitToScreen() {
     isMobile = phoneQuery ? phoneQuery.matches : false;
@@ -161,23 +139,18 @@
     var space = Math.round(viewport - heroTop());
     if (space < 200) return; /* hidden tab, print view, ... */
 
-    var portraitPhone = isMobile && (!portraitQuery || portraitQuery.matches);
     var needed = contentHeight();
 
-    /* The hero takes the whole visible screen: with the browser toolbars in
-       place that is exactly the space below the navbar, and when they slide
-       away the newly visible strip is filled as well. */
+    /* The hero takes the whole visible screen - the artwork fills it edge to
+       edge, exactly like on the desktop: with the browser toolbars in place
+       that is the space below the navbar, and when they slide away the newly
+       visible strip is filled as well. */
     var target = space;
 
-    if (portraitPhone) {
-      updateBand(space, needed);
-      /* on very small phones (or with a very large font) the copy may still
-         not fit above the band floor - let the hero run slightly over the
-         fold instead of clipping the CTAs */
-      if (needed > 0) {
-        target = Math.max(space, Math.min(needed + BAND_MIN, Math.round(space * 1.2)));
-      }
-    } else if (needed > space) {
+    /* ... unless the copy is taller than the screen (very small phones, or a
+       very large font): let the hero run slightly over the fold rather than
+       clip the buttons */
+    if (needed > space) {
       target = Math.min(needed, Math.round(space * 1.2));
     }
 

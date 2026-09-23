@@ -39,58 +39,11 @@
   .lfc { height: calc(100svh - var(--luann-h, 0px) - var(--mnav-row1, 56px)); }
 }
 
-/* ---------- portrait phones: the stacked hero ----------
-   A full-height hero would squeeze a landscape photo into a ~0.5 aspect box,
-   which crops it down to about a quarter of the frame - that is what made the
-   artwork feel cramped. Instead the artwork keeps a wide, comfortable crop in
-   a band at the top and the copy lives underneath it, on the hero's own dark
-   background. The band height comes from the script (`--lfc-band`, measured
-   from the copy), with a CSS-only fallback for the first paint. */
-@media (max-width: 760px) and (orientation: portrait) {
-  /* `.lfc ` in front of each selector: the generic max-width block further
-     down the file also styles these elements and would otherwise win the
-     cascade on source order alone */
-  .lfc .lfc-scenes {
-    inset: 0 0 auto 0;
-    height: min(var(--lfc-band, 48%), 58%);
-    /* the scenes bleed past their box on every side - the band owns the
-       artwork, so it clips its own bleed instead of painting over the copy */
-    overflow: hidden;
-  }
-
-  /* the atmosphere layer follows the band, so the shade/glow sit on the
-     photo and not on the text underneath it */
-  .lfc .lfc-atmo { inset: 0 0 auto 0; height: min(var(--lfc-band, 48%), 58%); }
-  .lfc .lfc-beam { display: none; }
-
-  .lfc .lfc-panel {
-    top: min(var(--lfc-band, 48%), 58%);
-    padding-top: 10px;
-    padding-bottom: 54px;
-    background: linear-gradient(
-      180deg,
-      color-mix(in srgb, var(--lu-ink-900, #2c2b28) 92%, transparent),
-      var(--lu-ink-900, #2c2b28) 30%
-    );
-  }
-
-  /* the seam between the photo and the copy reads as a fade, not a cut */
-  .lfc .lfc-scenes::after {
-    content: "";
-    position: absolute;
-    inset-inline: 0;
-    bottom: 0;
-    height: min(90px, 34%);
-    background: linear-gradient(180deg, transparent, var(--lu-ink-900, #2c2b28));
-    z-index: 4;
-    pointer-events: none;
-  }
-}
-
 @media (max-width: 760px) {
   .lfc {
-    /* portrait: the script pins the exact height; landscape keeps the
-       full-height fallback below */
+    /* the script pins the exact height; this is the pre-script fallback and
+       the same screen the script measures - below the announcement bar and
+       the navbar, never taller than what is left */
     height: calc(100svh - var(--luann-h, 0px) - var(--mnav-row1, 56px));
     min-height: 320px;
     min-height: min(320px, 58svh);

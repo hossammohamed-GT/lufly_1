@@ -119,33 +119,36 @@ user is actually looking at. When touching it, keep these invariants:
   the open screen. Browsers without svh (old iOS) stay on the smallest
   `innerHeight` ever observed - the toolbar state cannot be trusted there.
 - **Clamp the result**: to the space the first screen leaves
-  (viewport − announcements − navbar), and - on phones, where the copy can outgrow
-  a tiny screen - to `needed + band` capped at `1.2 × space`.
+  (viewport − announcements − navbar), and - on a screen too small for the copy -
+  to `min(needed, 1.2 × space)`, so a very short phone scrolls a little instead of
+  clipping the buttons.
 - **Debounce with `requestAnimationFrame`** and re-fit on `resize`,
   `orientationchange`, `visualViewport`, `fonts.ready`, breakpoint/orientation
   media queries, and `<html>` attribute changes (the announcement bar resizes
   `--luann-h`; the theme flips the artwork).
 
-### Portrait phones: the stacked hero
+### Portrait phones
 
-A full-height hero on a phone squeezes a landscape photo into a ~0.5 aspect box,
-which shows only about a quarter of the frame - that is what made the artwork look
-zoomed in. So on portrait phones the hero stacks: the artwork keeps a wide band at
-the top and the copy lives underneath it on the hero's own background.
+The photo stays full bleed on phones - it covers the whole hero, like on the desktop
+- but a full-height phone box is ~0.5 aspect, and cropping a landscape shot into it
+shows about a quarter of the frame. That is a framing problem, not a layout one, so
+it is solved in the artwork:
 
-- the band height is **measured by the script** from what the copy needs
-  (`--lfc-band` = `space − copy`, clamped to `[140px, min(55% of space, 320px)]`),
-  so a longer headline or a larger font pushes the photo up instead of clipping the
-  CTAs;
-- `.lfc-scenes` and `.lfc-atmo` are resized to the band and clip their own bleed
-  (the scenes bleed `-3.5%` on every side), and a gradient joins the photo to the
-  copy;
-- `.lfc-panel` starts at `top: min(var(--lfc-band, 48%), 58%)` with a CSS fallback
-  band for the first paint, and the rules in that block are written as
-  `.lfc .lfc-…` so the generic phone block further down the file (which also styles
-  these elements) cannot win on source order alone;
-- the phone type scale lives there too: kicker, brand box, `clamp(27px, 8.4vw, 44px)`
-  title, a three-line paragraph, and CTAs that may wrap.
+- `tools/media_audit/hero_portrait_crops.py` builds `heroc-<n>-p.webp` (800x1072,
+  the tallest slice the 1920x1072 masters allow, never upscaled) and
+  `heroc-<n>-light-p.jpg` (768x1290, from the portrait light masters). The crop
+  window is picked per photo - where the frame is brightest (the lit product) when
+  that is right, centred otherwise - and a contact sheet is written to
+  `storage/reports/hero_portrait-crops.png` to eyeball the choice;
+- `hero-cinema.js` serves `-p` on portrait phones, `-m` on landscape phones and the
+  landscape master on larger screens; `hero-cinema.php` preloads the variant that
+  matches the orientation;
+- the copy fits inside the full-height hero because the phone block carries a compact
+  type scale: smaller kicker/brand box, `clamp(27px, 8.4vw, 44px)` title, a
+  three-line paragraph, CTAs that may wrap, and the paragraph drops entirely at
+  `max-width: 340px` (Galaxy Fold closed). Those rules are written `.lfc .lfc-…` so
+  the generic phone block further down the file (which also styles these elements)
+  cannot win on source order alone.
 
 The hero clips its overflow (`.lfc { overflow: hidden }`), so whatever does not fit
 the panel simply disappears - which is why the short-screen blocks exist: at
@@ -177,7 +180,8 @@ node tools/frontend_audit/phone_preview.mjs --render storage/reports/_home-rende
 The last one builds a device preview (real iframes at device sizes, running the real
 CSS and JS) from a server-rendered snapshot, which is how a change can be reviewed
 visually without a browser in the sandbox: render the page with php-wasm first, then
-open `storage/reports/hero-phones.html`.
+open `storage/reports/hero-phones.html`. The artwork itself is reviewed through
+`python3 tools/media_audit/hero_portrait_crops.py --sheet`.
 
 Other home-page invariants worth keeping: the announcement bar exposes its height
 as `--luann-h` and every sticky/oversized element subtracts it; the mobile
