@@ -94,6 +94,7 @@ return [
     'chat_subtitle' => 'Three quick questions, one plan',
     'chat_close' => 'Close the chat',
     'chat_grow' => 'Make the window bigger',
+    'chat_shrink' => 'Back to the small window',
     'chat_resize' => 'Drag to resize the window',
     'chat_about' => 'Asking about',
     'chat_foot' => 'Free · no account needed',

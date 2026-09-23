@@ -94,6 +94,7 @@ return [
     'chat_subtitle' => 'Üç kısa soru, tek plan',
     'chat_close' => 'Sohbeti kapat',
     'chat_grow' => 'Pencereyi büyüt',
+    'chat_shrink' => 'Küçük pencereye dön',
     'chat_resize' => 'Pencereyi boyutlandırmak için sürükleyin',
     'chat_about' => 'Sorulan ürün',
     'chat_foot' => 'Ücretsiz · hesap gerekmez',

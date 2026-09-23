@@ -460,6 +460,7 @@
     var closeButton = root.querySelector('[data-aichat-close]');
     var growButton = root.querySelector('[data-aichat-grow]');
     var grip = root.querySelector('[data-aichat-resize]');
+    var growText = root.querySelector('[data-aichat-grow-text]');
     var SIZE_KEY = 'lufly-chat-size';
     var size = null;
 
@@ -497,6 +498,21 @@
       }
     }
 
+    /* one button, two jobs: expand the window or hand it back its corner */
+    function labelGrow() {
+      if (!growButton) return;
+
+      var wide = !!(size && size.wide);
+      var text = wide
+        ? (growButton.getAttribute('data-aichat-shrink-label') || '')
+        : (growButton.getAttribute('data-aichat-grow-label') || '');
+
+      growButton.setAttribute('aria-pressed', wide ? 'true' : 'false');
+      growButton.setAttribute('title', text);
+
+      if (growText) growText.textContent = text;
+    }
+
     function openPanel(open) {
       root.classList.toggle('is-open', open);
       panel.hidden = !open;
@@ -511,6 +527,7 @@
 
     rememberSize();
     applySize();
+    labelGrow();
 
     if (toggle) {
       toggle.addEventListener('click', function () {
@@ -530,7 +547,7 @@
         size = { w: (size && size.w) || 0, h: (size && size.h) || 0, wide: !(size && size.wide) };
         applySize();
         saveSize();
-        growButton.setAttribute('aria-pressed', size.wide ? 'true' : 'false');
+        labelGrow();
       });
     }
 

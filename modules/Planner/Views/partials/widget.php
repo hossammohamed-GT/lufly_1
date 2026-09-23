@@ -67,7 +67,8 @@ if (feature('favorites', true)) {
 
     <section class="aichat-panel" id="lufly-chat-panel" data-aichat-panel hidden
              role="dialog" aria-modal="false" aria-labelledby="lufly-chat-title">
-        <span class="aichat-grip" data-aichat-resize role="separator" aria-label="<?= e(trans('planner.chat_resize')) ?>"></span>
+        <span class="aichat-grip" data-aichat-resize aria-hidden="true"
+              title="<?= e(trans('planner.chat_resize')) ?>"></span>
 
         <header class="aichat-head">
             <span class="aichat-mark" aria-hidden="true">
@@ -82,8 +83,10 @@ if (feature('favorites', true)) {
                 <em><?= e(trans('planner.chat_subtitle')) ?></em>
             </span>
             <button type="button" class="aichat-icon-btn" data-aichat-grow
-                    aria-pressed="false" title="<?= e(trans('planner.chat_grow')) ?>">
-                <span class="visually-hidden"><?= e(trans('planner.chat_grow')) ?></span>
+                    aria-pressed="false" title="<?= e(trans('planner.chat_grow')) ?>"
+                    data-aichat-grow-label="<?= e(trans('planner.chat_grow')) ?>"
+                    data-aichat-shrink-label="<?= e(trans('planner.chat_shrink')) ?>">
+                <span class="visually-hidden" data-aichat-grow-text><?= e(trans('planner.chat_grow')) ?></span>
                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"
                      stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
                     <path d="M4 10V4h6M20 14v6h-6M4 4l6 6M20 20l-6-6"/>

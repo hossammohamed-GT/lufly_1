@@ -94,6 +94,7 @@ return [
     'chat_subtitle' => 'Tři krátké otázky, jeden plán',
     'chat_close' => 'Zavřít chat',
     'chat_grow' => 'Zvětšit okno',
+    'chat_shrink' => 'Zpět na malé okno',
     'chat_resize' => 'Tažením změníte velikost okna',
     'chat_about' => 'Dotaz na',
     'chat_foot' => 'Zdarma · bez registrace',
