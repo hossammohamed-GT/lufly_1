@@ -601,6 +601,7 @@
   top: var(--mnav-row1);
   bottom: 0;
   height: calc(100vh - var(--mnav-row1));
+  height: calc(100dvh - var(--mnav-row1));
   inset-inline-start: 0;
   z-index: var(--z-header);
   display: flex;
@@ -1500,6 +1501,8 @@
   .mnav-btn-menu { display: none; }
   .mnav-dropdown-bar { display: none !important; }
   .mnav { --mnav-row1: 58px; }
+  /* the hero subtracts this on :root, so it has to follow the real slab */
+  :root { --mnav-row1: 58px; }
 
   .mnav-grain { opacity: 0.35; }
 
@@ -1577,6 +1580,7 @@
 
 @media (max-width: 767px) {
   .mnav { --mnav-row1: 56px; }
+  :root { --mnav-row1: 56px; }
 
   .mnav-top { gap: var(--space-2); padding-block: var(--space-1); }
 
@@ -1814,7 +1818,10 @@
   top: 0;
   bottom: 0;
   inset-inline-start: 0;
+  /* dvh: on phones 100vh includes the browser toolbar, which pushed the last
+     drawer entries below the visible area */
   height: 100vh;
+  height: 100dvh;
   z-index: 101;
   inline-size: min(440px, 90vw);
   overflow-y: auto;

@@ -89,6 +89,8 @@
           empty: 'No architectural fixtures found matching ":q"',
           hint: 'Tip: try a model code like 1620 or a name like "wall-hung"',
           details: 'View details',
+          kindDrawing: 'Drawing',
+          kindSitu: 'Installed',
           share: 'Copy link',
           copied: 'Link copied',
           clear: 'Clear search',
@@ -103,6 +105,8 @@
           empty: '":q" ile eşleşen ürün bulunamadı',
           hint: 'İpucu: 1620 gibi bir model kodu ya da "asma klozet" deneyin',
           details: 'Detayları gör',
+          kindDrawing: 'Teknik çizim',
+          kindSitu: 'Montajlı',
           share: 'Bağlantıyı kopyala',
           copied: 'Bağlantı kopyalandı',
           clear: 'Aramayı temizle',
@@ -117,6 +121,8 @@
           empty: 'Nebyly nalezeny žádné produkty odpovídající ":q"',
           hint: 'Tip: zkuste kód modelu jako 1620 nebo název "závěsné WC"',
           details: 'Zobrazit detail',
+          kindDrawing: 'Výkres',
+          kindSitu: 'Instalace',
           share: 'Kopírovat odkaz',
           copied: 'Odkaz zkopírován',
           clear: 'Vymazat hledání',
@@ -330,31 +336,53 @@
           var shortDesc = esc(String(product.short_description || '').trim());
           var slug = encodeURIComponent(product.slug || product.id || '');
           var href = base + '/' + encodeURIComponent(locale) + '/products/' + slug;
-          /* hover cycles through every real photo: catalog shots then
-             installed views. Drawings never appear on a card. */
-          var photos = [];
-          (product.gallery || []).forEach(function (p) { if (p) photos.push(img(p)); });
-          (product.situ_images || []).forEach(function (p) { if (p) photos.push(img(p)); });
-          if (product.situ_image && photos.indexOf(img(product.situ_image)) === -1) {
-            photos.push(img(product.situ_image));
+          /* hover cycles through every image of the product: the photos
+             first (main shot on top), then the technical drawings, then the
+             installed shots. Each slide keeps the section it came from so
+             the card can name it. */
+          var slides = [];
+          (product.card_slides || []).forEach(function (slide) {
+            if (!slide || !slide.path) return;
+            var src = img(slide.path);
+            var dup = slides.some(function (s) { return s.src === src; });
+            if (!dup) slides.push({ src: src, kind: slide.kind || 'photo' });
+          });
+          if (slides.length === 0) {
+            /* payload without the slide list: fall back to the plain groups */
+            [['gallery', 'photo'], ['drawings', 'drawing'], ['situ_images', 'situ']].forEach(function (group) {
+              (product[group[0]] || []).forEach(function (p) {
+                if (!p) return;
+                var src = img(p);
+                var dup = slides.some(function (s) { return s.src === src; });
+                if (!dup) slides.push({ src: src, kind: group[1] });
+              });
+            });
           }
-          photos = photos.filter(function (p, i) { return p && photos.indexOf(p) === i; });
-          if (photos.length === 0) photos = [img(product.image)];
+          if (slides.length === 0) slides = [{ src: img(product.image), kind: 'photo' }];
+          var kindLabel = function (kind) {
+            return kind === 'drawing' ? g.kindDrawing : kind === 'situ' ? g.kindSitu : '';
+          };
 
           var no = ('00' + (index + 1)).slice(-3);
           var delay = (0.05 + 0.05 * (index % 6)).toFixed(2);
 
           return '<article class="pcard" style="--pcard-delay:' + delay + 's">' +
-            '<a class="pcard-media" href="' + href + '"' + (photos.length > 1 ? ' data-pcard-cycle' : '') + '>' +
-            photos.map(function (src, n) {
+            '<a class="pcard-media" href="' + href + '"' + (slides.length > 1
+              ? ' data-pcard-cycle data-pcard-kind-drawing="' + esc(g.kindDrawing) + '" data-pcard-kind-situ="' + esc(g.kindSitu) + '"'
+              : '') + '>' +
+            slides.map(function (slide, n) {
+              var label = kindLabel(slide.kind);
+              var alt = n === 0 ? name : (label ? label + ' — ' + name : '');
               return '<img class="pcard-img' + (n === 0 ? ' is-on' : '') + '" data-pcard-slide="' + n + '"' +
-                ' src="' + esc(src) + '" alt="' + (n === 0 ? name : '') + '" loading="lazy" decoding="async" width="420" height="320"' +
+                ' data-pcard-kind="' + esc(slide.kind) + '"' +
+                ' src="' + esc(slide.src) + '" alt="' + alt + '" loading="lazy" decoding="async" width="420" height="320"' +
                 ' onerror="this.onerror=null;this.remove();">';
             }).join('') +
-            (photos.length > 1
-              ? '<span class="pcard-dots" aria-hidden="true">' + photos.map(function (u, n) {
+            (slides.length > 1
+              ? '<span class="pcard-dots" aria-hidden="true">' + slides.map(function (u, n) {
                   return '<i class="pcard-dot' + (n === 0 ? ' is-on' : '') + '" data-pcard-dot="' + n + '"></i>';
-                }).join('') + '</span>'
+                }).join('') + '</span>' +
+                '<span class="pcard-kind" data-pcard-kind-label aria-hidden="true" hidden></span>'
               : '') +
             '<span class="pcard-hint" aria-hidden="true">' + arrow + esc(g.details) + '</span>' +
             '</a>' +

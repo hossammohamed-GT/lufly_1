@@ -15,7 +15,9 @@
   padding-block: var(--trust-pad-block);
   color: var(--ds-text);
   font-family: var(--font-body);
-  /* deliberately photo-free: this band sits between two image bands */
+  /* deliberately photo-free: the hero above it carries the photograph, and the
+     photo bands below alternate with plain ones - see
+     docs/Architecture.md, "The home bands (photo / plain)" */
   background-color: var(--ds-bg);
   background-image:
     linear-gradient(180deg,

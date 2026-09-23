@@ -143,7 +143,7 @@ class Product extends Model
 
         if (in_array('media', $relations, true)) {
             $mRows = $conn->select(
-                "SELECT pm.product_id, pm.type, pm.is_primary, pm.sort_order, m.*
+                "SELECT pm.product_id, pm.id AS attachment_id, pm.type, pm.is_primary, pm.sort_order, m.*
                  FROM product_media pm
                  INNER JOIN media m ON m.id = pm.media_id
                  WHERE pm.product_id IN ({$placeholders}) AND (pm.variant_id IS NULL)
@@ -217,13 +217,18 @@ class Product extends Model
             'specs' => $specs,
 
             /* three independent image groups, each holding any number of
-               images: product photos, technical drawings, installed shots */
+               images: product photos (type main/gallery), technical drawings
+               (type drawing), installed shots (type situ) */
             'gallery' => array_map(
                 static fn (array $row): string => (string) $row['path'],
                 $this->gallery(),
             ),
             'drawings' => $this->drawings(),
             'situ_images' => $this->situImages(),
+
+            /* every image of the product as the cards rotate them on hover,
+               each one labelled with the section it came from */
+            'card_slides' => $this->cardSlides(),
 
             /* full related data */
             'variants' => $variants,
@@ -290,7 +295,12 @@ class Product extends Model
     }
 
     /**
-     * Gallery + drawings from the media library, ordered.
+     * Raw attachments from the media library, ordered (primary first).
+     *
+     * `product_media.type` is the switch that fills the three tabs of the
+     * product page: "main"/"gallery" are photos, "drawing" is the technical
+     * drawing sheet, "situ" is the installed-on-location shot. See
+     * docs/Media-Taxonomy.md.
      *
      * Media rows imported from the legacy system whose file was never
      * exported carry status "missing"; they are skipped by default so the
@@ -302,7 +312,7 @@ class Product extends Model
         if ($this->preloadedMedia !== null) {
             $rows = $this->preloadedMedia;
         } else {
-            $sql = 'SELECT pm.type, pm.is_primary, pm.sort_order, m.*
+            $sql = 'SELECT pm.id AS attachment_id, pm.type, pm.is_primary, pm.sort_order, m.*
                     FROM product_media pm
                     INNER JOIN media m ON m.id = pm.media_id
                     WHERE pm.product_id = ? AND (pm.variant_id IS NULL)
@@ -340,6 +350,35 @@ class Product extends Model
     }
 
     /**
+     * Attachments grouped the way the admin panel and the product page show
+     * them: photos, technical drawings, installed shots. Order is preserved
+     * inside every group.
+     *
+     * @return array{photos: array<int, array<string, mixed>>, drawings: array<int, array<string, mixed>>, situ: array<int, array<string, mixed>>}
+     */
+    public function mediaBySection(): array
+    {
+        /* the admin also sees attachments whose file is still missing on disk,
+           so a broken import stays fixable instead of silently disappearing */
+        $rows = $this->media(null, true);
+
+        return [
+            'photos' => array_values(array_filter(
+                $rows,
+                static fn (array $row): bool => !in_array((string) $row['type'], ['drawing', 'situ'], true),
+            )),
+            'drawings' => array_values(array_filter(
+                $rows,
+                static fn (array $row): bool => (string) $row['type'] === 'drawing',
+            )),
+            'situ' => array_values(array_filter(
+                $rows,
+                static fn (array $row): bool => (string) $row['type'] === 'situ',
+            )),
+        ];
+    }
+
+    /**
      * Installed / in-situ photos (the product mounted on location).
      *
      * @return array<int, string>
@@ -365,7 +404,47 @@ class Product extends Model
         );
     }
 
-    /** Primary image URL (the flagged primary first, then any photo). */
+    /**
+     * Every image of the product in the order a catalogue card offers it while
+     * the pointer hovers the card: the photos first (main shot on top), then
+     * the technical drawings, then the installed shots. Each slide carries the
+     * section it belongs to so the card can name what is on screen; a file
+     * attached twice in different sections is only shown once.
+     *
+     * @return array<int, array{path: string, kind: string}> kind: photo|drawing|situ
+     */
+    public function cardSlides(): array
+    {
+        $groups = [
+            'photo' => $this->gallery(),
+            'drawing' => $this->drawings(),
+            'situ' => $this->situImages(),
+        ];
+
+        $slides = [];
+        $seen = [];
+
+        foreach ($groups as $kind => $rows) {
+            foreach ($rows as $row) {
+                $path = is_array($row) ? (string) ($row['path'] ?? '') : (string) $row;
+
+                if ($path === '' || isset($seen[$path])) {
+                    continue;
+                }
+
+                $seen[$path] = true;
+                $slides[] = ['path' => $path, 'kind' => $kind];
+            }
+        }
+
+        return $slides;
+    }
+
+    /**
+     * Cover image URL: the flagged photo first, then any photo, and only when
+     * the product has no photo at all its first technical drawing - so cards,
+     * search results and share images never render blank.
+     */
     private function primaryImageUrl(): string
     {
         $rows = $this->gallery();
@@ -376,7 +455,14 @@ class Product extends Model
             }
         }
 
-        return (string) ($rows[0]['path'] ?? '');
+        $photo = (string) ($rows[0]['path'] ?? '');
+        if ($photo !== '') {
+            return $photo;
+        }
+
+        $drawings = $this->drawings();
+
+        return (string) ($drawings[0] ?? '');
     }
 
     /** First "situ" (installed on location) image URL, empty string when none. */

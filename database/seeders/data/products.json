@@ -25,7 +25,7 @@
             {
                 "type": "gallery",
                 "path": "/images/products/prod_146_1620-111-b.jpg",
-                "available": false,
+                "available": true,
                 "legacy_file": "2023/10/1620-111-b.jpg",
                 "legacy_attachment_id": 1987
             }
@@ -57,9 +57,9 @@
                 "legacy_attachment_id": 2034
             },
             {
-                "type": "gallery",
+                "type": "drawing",
                 "path": "/images/products/prod_156_1620-111-a-2.jpg",
-                "available": false,
+                "available": true,
                 "legacy_file": "2023/10/1620-111-a-2.jpg",
                 "legacy_attachment_id": 2041
             }
@@ -93,7 +93,7 @@
             {
                 "type": "gallery",
                 "path": "/images/products/prod_167_1650-081-a.jpg",
-                "available": false,
+                "available": true,
                 "legacy_file": "2023/10/1650-081-a.jpg",
                 "legacy_attachment_id": 1984
             }
@@ -196,7 +196,7 @@
             {
                 "type": "gallery",
                 "path": "/images/products/prod_204_1610-242-a.jpg",
-                "available": false,
+                "available": true,
                 "legacy_file": "2023/10/1610-242-a.jpg",
                 "legacy_attachment_id": 1966
             }
@@ -475,7 +475,7 @@
             {
                 "type": "drawing",
                 "path": "/images/products/prod_268_1695-209-bdrawing.jpg",
-                "available": false,
+                "available": true,
                 "legacy_file": "2023/10/1695-209-bdrawing.jpg",
                 "legacy_attachment_id": 1925
             }
@@ -509,7 +509,7 @@
             {
                 "type": "drawing",
                 "path": "/images/products/prod_269_1695-209-drawing-1.jpg",
-                "available": false,
+                "available": true,
                 "legacy_file": "2023/10/1695-209-drawing-1.jpg",
                 "legacy_attachment_id": 1923
             }
@@ -543,7 +543,7 @@
             {
                 "type": "drawing",
                 "path": "/images/products/prod_270_1695-209-drawing.jpg",
-                "available": false,
+                "available": true,
                 "legacy_file": "2023/10/1695-209-drawing.jpg",
                 "legacy_attachment_id": 1916
             }
@@ -580,9 +580,9 @@
                 "legacy_attachment_id": 2024
             },
             {
-                "type": "gallery",
+                "type": "drawing",
                 "path": "/images/products/prod_2028_1610-242-b.jpg",
-                "available": false,
+                "available": true,
                 "legacy_file": "2023/10/1610-242-b.jpg",
                 "legacy_attachment_id": 2025
             }
@@ -616,7 +616,7 @@
             {
                 "type": "drawing",
                 "path": "/images/products/prod_2050_1690-000-Drawing.jpg",
-                "available": false,
+                "available": true,
                 "legacy_file": "2024/11/1690-000-Drawing.jpg",
                 "legacy_attachment_id": 2053
             }
@@ -655,7 +655,7 @@
             {
                 "type": "drawing",
                 "path": "/images/products/prod_2054_1660-140-Drawing.jpg",
-                "available": false,
+                "available": true,
                 "legacy_file": "2024/11/1660-140-Drawing.jpg",
                 "legacy_attachment_id": 2057
             }
@@ -689,28 +689,28 @@
             {
                 "type": "gallery",
                 "path": "/images/products/prod_2059_1685-242-b.jpg",
-                "available": false,
+                "available": true,
                 "legacy_file": "2024/11/1685-242-b.jpg",
                 "legacy_attachment_id": 2062
             },
             {
-                "type": "gallery",
+                "type": "drawing",
                 "path": "/images/products/prod_2059_1685-242-c.jpg",
-                "available": false,
+                "available": true,
                 "legacy_file": "2024/11/1685-242-c.jpg",
                 "legacy_attachment_id": 2063
             },
             {
-                "type": "gallery",
+                "type": "drawing",
                 "path": "/images/products/prod_2059_1685-242-d.jpg",
-                "available": false,
+                "available": true,
                 "legacy_file": "2024/11/1685-242-d.jpg",
                 "legacy_attachment_id": 2066
             },
             {
-                "type": "gallery",
+                "type": "drawing",
                 "path": "/images/products/prod_2059_1685-242-e.jpg",
-                "available": false,
+                "available": true,
                 "legacy_file": "2024/11/1685-242-e.jpg",
                 "legacy_attachment_id": 2067
             }
@@ -742,16 +742,16 @@
                 "legacy_attachment_id": 2069
             },
             {
-                "type": "gallery",
+                "type": "drawing",
                 "path": "/images/products/prod_2068_1685-111-b.jpg",
-                "available": false,
+                "available": true,
                 "legacy_file": "2024/11/1685-111-b.jpg",
                 "legacy_attachment_id": 2072
             },
             {
-                "type": "gallery",
+                "type": "drawing",
                 "path": "/images/products/prod_2068_1685-111-c.jpg",
-                "available": false,
+                "available": true,
                 "legacy_file": "2024/11/1685-111-c.jpg",
                 "legacy_attachment_id": 2073
             }
@@ -783,9 +783,9 @@
                 "legacy_attachment_id": 2075
             },
             {
-                "type": "gallery",
+                "type": "drawing",
                 "path": "/images/products/prod_2074_1685-081-b.jpg",
-                "available": false,
+                "available": true,
                 "legacy_file": "2024/11/1685-081-b.jpg",
                 "legacy_attachment_id": 2076
             }
@@ -817,16 +817,16 @@
                 "legacy_attachment_id": 2080
             },
             {
-                "type": "gallery",
+                "type": "drawing",
                 "path": "/images/products/prod_2079_1685-140-b.jpg",
-                "available": false,
+                "available": true,
                 "legacy_file": "2024/11/1685-140-b.jpg",
                 "legacy_attachment_id": 2082
             },
             {
-                "type": "gallery",
+                "type": "drawing",
                 "path": "/images/products/prod_2079_1685-140-c.jpg",
-                "available": false,
+                "available": true,
                 "legacy_file": "2024/11/1685-140-c.jpg",
                 "legacy_attachment_id": 2083
             }
@@ -858,9 +858,9 @@
                 "legacy_attachment_id": 2085
             },
             {
-                "type": "gallery",
+                "type": "drawing",
                 "path": "/images/products/prod_2084_1685-204-a.jpg",
-                "available": false,
+                "available": true,
                 "legacy_file": "2024/11/1685-204-a.jpg",
                 "legacy_attachment_id": 2087
             }
@@ -978,7 +978,7 @@
             {
                 "type": "drawing",
                 "path": "/images/products/prod_2109_1654-001-drawing.jpg",
-                "available": false,
+                "available": true,
                 "legacy_file": "2024/12/1654-001-drawing.jpg",
                 "legacy_attachment_id": 2120
             }
@@ -1012,7 +1012,7 @@
             {
                 "type": "drawing",
                 "path": "/images/products/prod_2115_1654-002-drawing.jpg",
-                "available": false,
+                "available": true,
                 "legacy_file": "2024/12/1654-002-drawing.jpg",
                 "legacy_attachment_id": 2121
             }
@@ -1046,7 +1046,7 @@
             {
                 "type": "drawing",
                 "path": "/images/products/prod_2122_1654-003-Drawing.jpg",
-                "available": false,
+                "available": true,
                 "legacy_file": "2024/12/1654-003-Drawing.jpg",
                 "legacy_attachment_id": 2124
             }
@@ -1113,7 +1113,7 @@
             {
                 "type": "drawing",
                 "path": "/images/products/prod_2128_1654-004-Drawing.jpg",
-                "available": false,
+                "available": true,
                 "legacy_file": "2024/12/1654-004-Drawing.jpg",
                 "legacy_attachment_id": 2134
             }
@@ -1220,7 +1220,7 @@
             {
                 "type": "drawing",
                 "path": "/images/products/prod_2135_1654-005-Drawing.jpg",
-                "available": false,
+                "available": true,
                 "legacy_file": "2024/12/1654-005-Drawing.jpg",
                 "legacy_attachment_id": 2137
             }
@@ -1254,7 +1254,7 @@
             {
                 "type": "drawing",
                 "path": "/images/products/prod_2142_1654-006-Drawing.jpg",
-                "available": false,
+                "available": true,
                 "legacy_file": "2024/12/1654-006-Drawing.jpg",
                 "legacy_attachment_id": 2144
             }
@@ -1288,7 +1288,7 @@
             {
                 "type": "drawing",
                 "path": "/images/products/prod_2147_1654-007-Drawing.jpg",
-                "available": false,
+                "available": true,
                 "legacy_file": "2024/12/1654-007-Drawing.jpg",
                 "legacy_attachment_id": 2149
             }
@@ -1322,7 +1322,7 @@
             {
                 "type": "drawing",
                 "path": "/images/products/prod_2151_1654-008-Drawing.jpg",
-                "available": false,
+                "available": true,
                 "legacy_file": "2024/12/1654-008-Drawing.jpg",
                 "legacy_attachment_id": 2154
             }
@@ -1356,7 +1356,7 @@
             {
                 "type": "drawing",
                 "path": "/images/products/prod_2157_1654-009-Drawing.jpg",
-                "available": false,
+                "available": true,
                 "legacy_file": "2024/12/1654-009-Drawing.jpg",
                 "legacy_attachment_id": 2160
             }
@@ -1390,7 +1390,7 @@
             {
                 "type": "drawing",
                 "path": "/images/products/prod_2162_1654-0010-Drawing.jpg",
-                "available": false,
+                "available": true,
                 "legacy_file": "2024/12/1654-0010-Drawing.jpg",
                 "legacy_attachment_id": 2166
             }
@@ -1424,7 +1424,7 @@
             {
                 "type": "drawing",
                 "path": "/images/products/prod_2167_1654-0011-Drawing.jpg",
-                "available": false,
+                "available": true,
                 "legacy_file": "2024/12/1654-0011-Drawing.jpg",
                 "legacy_attachment_id": 2170
             }
@@ -1458,7 +1458,7 @@
             {
                 "type": "drawing",
                 "path": "/images/products/prod_2172_1654-0012-Drawing.jpg",
-                "available": false,
+                "available": true,
                 "legacy_file": "2024/12/1654-0012-Drawing.jpg",
                 "legacy_attachment_id": 2174
             }
@@ -1492,7 +1492,7 @@
             {
                 "type": "drawing",
                 "path": "/images/products/prod_2179_1654-0013-Drawing.jpg",
-                "available": false,
+                "available": true,
                 "legacy_file": "2024/12/1654-0013-Drawing.jpg",
                 "legacy_attachment_id": 2183
             }
@@ -1526,7 +1526,7 @@
             {
                 "type": "drawing",
                 "path": "/images/products/prod_2184_1654-0014-Drawing.jpg",
-                "available": false,
+                "available": true,
                 "legacy_file": "2024/12/1654-0014-Drawing.jpg",
                 "legacy_attachment_id": 2186
             }
@@ -1560,7 +1560,7 @@
             {
                 "type": "drawing",
                 "path": "/images/products/prod_2189_1623-001-Drawing.jpg",
-                "available": false,
+                "available": true,
                 "legacy_file": "2024/12/1623-001-Drawing.jpg",
                 "legacy_attachment_id": 2192
             }
@@ -1607,7 +1607,7 @@
             {
                 "type": "drawing",
                 "path": "/images/products/prod_2194_1623-002-Drawing.jpg",
-                "available": false,
+                "available": true,
                 "legacy_file": "2024/12/1623-002-Drawing.jpg",
                 "legacy_attachment_id": 2197
             }
@@ -1639,9 +1639,9 @@
                 "legacy_attachment_id": 2216
             },
             {
-                "type": "gallery",
+                "type": "drawing",
                 "path": "/images/products/prod_2213_hand-dryer.jpeg",
-                "available": false,
+                "available": true,
                 "legacy_file": "2025/06/hand-dryer.jpeg",
                 "legacy_attachment_id": 2218
             }
@@ -1673,9 +1673,9 @@
                 "legacy_attachment_id": 2224
             },
             {
-                "type": "gallery",
+                "type": "drawing",
                 "path": "/images/products/prod_2223_Screenshot-2025-06-16-124921.png",
-                "available": false,
+                "available": true,
                 "legacy_file": "2025/06/Screenshot-2025-06-16-124921.png",
                 "legacy_attachment_id": 2225
             }
@@ -1716,9 +1716,9 @@
                 "legacy_attachment_id": 2242
             },
             {
-                "type": "gallery",
+                "type": "drawing",
                 "path": "/images/products/prod_2241_1501_1-scaled.jpg",
-                "available": false,
+                "available": true,
                 "legacy_file": "2025/08/1501_1-scaled.jpg",
                 "legacy_attachment_id": 2243
             }
@@ -1763,9 +1763,9 @@
                 "legacy_attachment_id": 2246
             },
             {
-                "type": "gallery",
+                "type": "drawing",
                 "path": "/images/products/prod_2245_1501H_1-scaled.jpg",
-                "available": false,
+                "available": true,
                 "legacy_file": "2025/08/1501H_1-scaled.jpg",
                 "legacy_attachment_id": 2247
             }
@@ -1797,9 +1797,9 @@
                 "legacy_attachment_id": 2250
             },
             {
-                "type": "gallery",
+                "type": "drawing",
                 "path": "/images/products/prod_2249_1652-scaled.jpg",
-                "available": false,
+                "available": true,
                 "legacy_file": "2025/08/1652-scaled.jpg",
                 "legacy_attachment_id": 2257
             }
@@ -1831,9 +1831,9 @@
                 "legacy_attachment_id": 2251
             },
             {
-                "type": "gallery",
+                "type": "drawing",
                 "path": "/images/products/prod_2262_1503.png",
-                "available": false,
+                "available": true,
                 "legacy_file": "2025/08/1503.png",
                 "legacy_attachment_id": 2252
             }
@@ -1865,9 +1865,9 @@
                 "legacy_attachment_id": 2253
             },
             {
-                "type": "gallery",
+                "type": "drawing",
                 "path": "/images/products/prod_2264_1651_1-scaled.jpg",
-                "available": false,
+                "available": true,
                 "legacy_file": "2025/08/1651_1-scaled.jpg",
                 "legacy_attachment_id": 2254
             }
@@ -1899,9 +1899,9 @@
                 "legacy_attachment_id": 2255
             },
             {
-                "type": "gallery",
+                "type": "drawing",
                 "path": "/images/products/prod_2266_1651H-scaled.jpg",
-                "available": false,
+                "available": true,
                 "legacy_file": "2025/08/1651H-scaled.jpg",
                 "legacy_attachment_id": 2256
             }
@@ -1933,9 +1933,9 @@
                 "legacy_attachment_id": 2258
             },
             {
-                "type": "gallery",
+                "type": "drawing",
                 "path": "/images/products/prod_2268_1653_1-scaled.jpg",
-                "available": false,
+                "available": true,
                 "legacy_file": "2025/08/1653_1-scaled.jpg",
                 "legacy_attachment_id": 2259
             }
@@ -1967,9 +1967,9 @@
                 "legacy_attachment_id": 2260
             },
             {
-                "type": "gallery",
+                "type": "drawing",
                 "path": "/images/products/prod_2270_1654_1-scaled.jpg",
-                "available": false,
+                "available": true,
                 "legacy_file": "2025/08/1654_1-scaled.jpg",
                 "legacy_attachment_id": 2271
             }
@@ -2014,9 +2014,9 @@
                 "legacy_attachment_id": 2274
             },
             {
-                "type": "gallery",
+                "type": "drawing",
                 "path": "/images/products/prod_2273_1659_1-scaled.jpg",
-                "available": false,
+                "available": true,
                 "legacy_file": "2025/08/1659_1-scaled.jpg",
                 "legacy_attachment_id": 2275
             }
@@ -2057,9 +2057,9 @@
                 "legacy_attachment_id": 2278
             },
             {
-                "type": "gallery",
+                "type": "drawing",
                 "path": "/images/products/prod_2277_4311-2_1-scaled.jpg",
-                "available": false,
+                "available": true,
                 "legacy_file": "2025/08/4311-2_1-scaled.jpg",
                 "legacy_attachment_id": 2279
             }
@@ -2100,9 +2100,9 @@
                 "legacy_attachment_id": 2282
             },
             {
-                "type": "gallery",
+                "type": "drawing",
                 "path": "/images/products/prod_2281_4311-2_1-scaled.jpg",
-                "available": false,
+                "available": true,
                 "legacy_file": "2025/08/4311-2_1-scaled.jpg",
                 "legacy_attachment_id": 2279
             }
@@ -2143,9 +2143,9 @@
                 "legacy_attachment_id": 2286
             },
             {
-                "type": "gallery",
+                "type": "drawing",
                 "path": "/images/products/prod_2284_4311-2H_1-scaled.jpg",
-                "available": false,
+                "available": true,
                 "legacy_file": "2025/08/4311-2H_1-scaled.jpg",
                 "legacy_attachment_id": 2287
             }
@@ -2186,9 +2186,9 @@
                 "legacy_attachment_id": 2285
             },
             {
-                "type": "gallery",
+                "type": "drawing",
                 "path": "/images/products/prod_2290_4311-2H_1-scaled.jpg",
-                "available": false,
+                "available": true,
                 "legacy_file": "2025/08/4311-2H_1-scaled.jpg",
                 "legacy_attachment_id": 2287
             }
@@ -2225,16 +2225,16 @@
                 "legacy_attachment_id": 2309
             },
             {
-                "type": "gallery",
+                "type": "drawing",
                 "path": "/images/products/prod_2313_Image_20251010190212.jpg",
-                "available": false,
+                "available": true,
                 "legacy_file": "2025/10/Image_20251010190212.jpg",
                 "legacy_attachment_id": 2314
             },
             {
-                "type": "gallery",
+                "type": "drawing",
                 "path": "/images/products/prod_2313_Image_20251010190236.png",
-                "available": false,
+                "available": true,
                 "legacy_file": "2025/10/Image_20251010190236.png",
                 "legacy_attachment_id": 2315
             }
@@ -2271,9 +2271,9 @@
                 "legacy_attachment_id": 2310
             },
             {
-                "type": "gallery",
+                "type": "drawing",
                 "path": "/images/products/prod_2317_Image_20251010190212.jpg",
-                "available": false,
+                "available": true,
                 "legacy_file": "2025/10/Image_20251010190212.jpg",
                 "legacy_attachment_id": 2314
             }
@@ -2305,9 +2305,9 @@
                 "legacy_attachment_id": 2321
             },
             {
-                "type": "gallery",
+                "type": "drawing",
                 "path": "/images/products/prod_2320_Image_20250702134810.png",
-                "available": false,
+                "available": true,
                 "legacy_file": "2025/10/Image_20250702134810.png",
                 "legacy_attachment_id": 2322
             }
@@ -2339,9 +2339,9 @@
                 "legacy_attachment_id": 2326
             },
             {
-                "type": "gallery",
+                "type": "drawing",
                 "path": "/images/products/prod_2324_Image_20250702134810-1.png",
-                "available": false,
+                "available": true,
                 "legacy_file": "2025/10/Image_20250702134810-1.png",
                 "legacy_attachment_id": 2325
             }
@@ -2373,9 +2373,9 @@
                 "legacy_attachment_id": 2329
             },
             {
-                "type": "gallery",
+                "type": "drawing",
                 "path": "/images/products/prod_2328_Image_20250702134810-1.png",
-                "available": false,
+                "available": true,
                 "legacy_file": "2025/10/Image_20250702134810-1.png",
                 "legacy_attachment_id": 2325
             }
@@ -2416,9 +2416,9 @@
                 "legacy_attachment_id": 2333
             },
             {
-                "type": "gallery",
+                "type": "drawing",
                 "path": "/images/products/prod_2332_Image_20250702134756.png",
-                "available": false,
+                "available": true,
                 "legacy_file": "2025/10/Image_20250702134756.png",
                 "legacy_attachment_id": 2334
             }
@@ -2459,9 +2459,9 @@
                 "legacy_attachment_id": 2337
             },
             {
-                "type": "gallery",
+                "type": "drawing",
                 "path": "/images/products/prod_2336_Image_20250702134756.png",
-                "available": false,
+                "available": true,
                 "legacy_file": "2025/10/Image_20250702134756.png",
                 "legacy_attachment_id": 2334
             }
@@ -2502,9 +2502,9 @@
                 "legacy_attachment_id": 2338
             },
             {
-                "type": "gallery",
+                "type": "drawing",
                 "path": "/images/products/prod_2340_Image_20250702134756.png",
-                "available": false,
+                "available": true,
                 "legacy_file": "2025/10/Image_20250702134756.png",
                 "legacy_attachment_id": 2334
             }
@@ -2536,9 +2536,9 @@
                 "legacy_attachment_id": 2343
             },
             {
-                "type": "gallery",
+                "type": "drawing",
                 "path": "/images/products/prod_2342_Image_20250702134751.png",
-                "available": false,
+                "available": true,
                 "legacy_file": "2025/10/Image_20250702134751.png",
                 "legacy_attachment_id": 2346
             }
@@ -2570,9 +2570,9 @@
                 "legacy_attachment_id": 2344
             },
             {
-                "type": "gallery",
+                "type": "drawing",
                 "path": "/images/products/prod_2348_Image_20250702134751.png",
-                "available": false,
+                "available": true,
                 "legacy_file": "2025/10/Image_20250702134751.png",
                 "legacy_attachment_id": 2346
             }
@@ -2604,9 +2604,9 @@
                 "legacy_attachment_id": 2345
             },
             {
-                "type": "gallery",
+                "type": "drawing",
                 "path": "/images/products/prod_2350_Image_20250702134751.png",
-                "available": false,
+                "available": true,
                 "legacy_file": "2025/10/Image_20250702134751.png",
                 "legacy_attachment_id": 2346
             }
@@ -2638,9 +2638,9 @@
                 "legacy_attachment_id": 2353
             },
             {
-                "type": "gallery",
+                "type": "drawing",
                 "path": "/images/products/prod_2352_Image_20250702134746.png",
-                "available": false,
+                "available": true,
                 "legacy_file": "2025/10/Image_20250702134746.png",
                 "legacy_attachment_id": 2356
             }
@@ -2672,9 +2672,9 @@
                 "legacy_attachment_id": 2354
             },
             {
-                "type": "gallery",
+                "type": "drawing",
                 "path": "/images/products/prod_2358_Image_20250702134746.png",
-                "available": false,
+                "available": true,
                 "legacy_file": "2025/10/Image_20250702134746.png",
                 "legacy_attachment_id": 2356
             }
@@ -2706,9 +2706,9 @@
                 "legacy_attachment_id": 2355
             },
             {
-                "type": "gallery",
+                "type": "drawing",
                 "path": "/images/products/prod_2361_Image_20250702134746.png",
-                "available": false,
+                "available": true,
                 "legacy_file": "2025/10/Image_20250702134746.png",
                 "legacy_attachment_id": 2356
             }
@@ -2740,9 +2740,9 @@
                 "legacy_attachment_id": 2364
             },
             {
-                "type": "gallery",
+                "type": "drawing",
                 "path": "/images/products/prod_2363_Image_20251011125146.png",
-                "available": false,
+                "available": true,
                 "legacy_file": "2025/10/Image_20251011125146.png",
                 "legacy_attachment_id": 2367
             }
@@ -2774,9 +2774,9 @@
                 "legacy_attachment_id": 2365
             },
             {
-                "type": "gallery",
+                "type": "drawing",
                 "path": "/images/products/prod_2369_Image_20251011125146.png",
-                "available": false,
+                "available": true,
                 "legacy_file": "2025/10/Image_20251011125146.png",
                 "legacy_attachment_id": 2367
             }
@@ -2808,9 +2808,9 @@
                 "legacy_attachment_id": 2366
             },
             {
-                "type": "gallery",
+                "type": "drawing",
                 "path": "/images/products/prod_2371_Image_20251011125146.png",
-                "available": false,
+                "available": true,
                 "legacy_file": "2025/10/Image_20251011125146.png",
                 "legacy_attachment_id": 2367
             }
@@ -2847,9 +2847,9 @@
                 "legacy_attachment_id": 2375
             },
             {
-                "type": "gallery",
+                "type": "drawing",
                 "path": "/images/products/prod_2374_Image_20250702134722.png",
-                "available": false,
+                "available": true,
                 "legacy_file": "2025/10/Image_20250702134722.png",
                 "legacy_attachment_id": 2382
             }
@@ -2886,9 +2886,9 @@
                 "legacy_attachment_id": 2376
             },
             {
-                "type": "gallery",
+                "type": "drawing",
                 "path": "/images/products/prod_2384_Image_20250702134722.png",
-                "available": false,
+                "available": true,
                 "legacy_file": "2025/10/Image_20250702134722.png",
                 "legacy_attachment_id": 2382
             }
@@ -2925,9 +2925,9 @@
                 "legacy_attachment_id": 2377
             },
             {
-                "type": "gallery",
+                "type": "drawing",
                 "path": "/images/products/prod_2386_Image_20250702134722.png",
-                "available": false,
+                "available": true,
                 "legacy_file": "2025/10/Image_20250702134722.png",
                 "legacy_attachment_id": 2382
             }
@@ -2964,9 +2964,9 @@
                 "legacy_attachment_id": 2378
             },
             {
-                "type": "gallery",
+                "type": "drawing",
                 "path": "/images/products/prod_2389_Image_20250702134717.png",
-                "available": false,
+                "available": true,
                 "legacy_file": "2025/10/Image_20250702134717.png",
                 "legacy_attachment_id": 2381
             }
@@ -3003,9 +3003,9 @@
                 "legacy_attachment_id": 2379
             },
             {
-                "type": "gallery",
+                "type": "drawing",
                 "path": "/images/products/prod_2391_Image_20250702134717.png",
-                "available": false,
+                "available": true,
                 "legacy_file": "2025/10/Image_20250702134717.png",
                 "legacy_attachment_id": 2381
             }
@@ -3042,9 +3042,9 @@
                 "legacy_attachment_id": 2380
             },
             {
-                "type": "gallery",
+                "type": "drawing",
                 "path": "/images/products/prod_2393_Image_20250702134717.png",
-                "available": false,
+                "available": true,
                 "legacy_file": "2025/10/Image_20250702134717.png",
                 "legacy_attachment_id": 2381
             }
@@ -3076,9 +3076,9 @@
                 "legacy_attachment_id": 2399
             },
             {
-                "type": "gallery",
+                "type": "drawing",
                 "path": "/images/products/prod_2395_Image_20250702134707.png",
-                "available": false,
+                "available": true,
                 "legacy_file": "2025/10/Image_20250702134707.png",
                 "legacy_attachment_id": 2402
             }
@@ -3110,9 +3110,9 @@
                 "legacy_attachment_id": 2400
             },
             {
-                "type": "gallery",
+                "type": "drawing",
                 "path": "/images/products/prod_2405_Image_20250702134707.png",
-                "available": false,
+                "available": true,
                 "legacy_file": "2025/10/Image_20250702134707.png",
                 "legacy_attachment_id": 2402
             }
@@ -3144,9 +3144,9 @@
                 "legacy_attachment_id": 2401
             },
             {
-                "type": "gallery",
+                "type": "drawing",
                 "path": "/images/products/prod_2407_Image_20250702134707.png",
-                "available": false,
+                "available": true,
                 "legacy_file": "2025/10/Image_20250702134707.png",
                 "legacy_attachment_id": 2402
             }
@@ -3178,9 +3178,9 @@
                 "legacy_attachment_id": 2412
             },
             {
-                "type": "gallery",
+                "type": "drawing",
                 "path": "/images/products/prod_2411_Screenshot-2025-06-15-153331.png",
-                "available": false,
+                "available": true,
                 "legacy_file": "2025/10/Screenshot-2025-06-15-153331.png",
                 "legacy_attachment_id": 2413
             }
@@ -3212,9 +3212,9 @@
                 "legacy_attachment_id": 2416
             },
             {
-                "type": "gallery",
+                "type": "drawing",
                 "path": "/images/products/prod_2415_Screenshot-2025-06-15-153652.png",
-                "available": false,
+                "available": true,
                 "legacy_file": "2025/10/Screenshot-2025-06-15-153652.png",
                 "legacy_attachment_id": 2417
             }
@@ -3259,9 +3259,9 @@
                 "legacy_attachment_id": 2420
             },
             {
-                "type": "gallery",
+                "type": "drawing",
                 "path": "/images/products/prod_2419_Screenshot-2025-06-15-153801.png",
-                "available": false,
+                "available": true,
                 "legacy_file": "2025/10/Screenshot-2025-06-15-153801.png",
                 "legacy_attachment_id": 2421
             }
@@ -3293,9 +3293,9 @@
                 "legacy_attachment_id": 2422
             },
             {
-                "type": "gallery",
+                "type": "drawing",
                 "path": "/images/products/prod_2425_Screenshot-2025-06-15-154217.png",
-                "available": false,
+                "available": true,
                 "legacy_file": "2025/10/Screenshot-2025-06-15-154217.png",
                 "legacy_attachment_id": 2423
             }
@@ -3340,9 +3340,9 @@
                 "legacy_attachment_id": 2428
             },
             {
-                "type": "gallery",
+                "type": "drawing",
                 "path": "/images/products/prod_2427_Screenshot-2025-06-15-154309.png",
-                "available": false,
+                "available": true,
                 "legacy_file": "2025/10/Screenshot-2025-06-15-154309.png",
                 "legacy_attachment_id": 2429
             }
@@ -3387,9 +3387,9 @@
                 "legacy_attachment_id": 2432
             },
             {
-                "type": "gallery",
+                "type": "drawing",
                 "path": "/images/products/prod_2433_Screenshot-2025-10-15-113042.png",
-                "available": false,
+                "available": true,
                 "legacy_file": "2025/10/Screenshot-2025-10-15-113042.png",
                 "legacy_attachment_id": 2434
             }
@@ -3430,9 +3430,9 @@
                 "legacy_attachment_id": 2437
             },
             {
-                "type": "gallery",
+                "type": "drawing",
                 "path": "/images/products/prod_2436_Screenshot-2025-10-15-113852.png",
-                "available": false,
+                "available": true,
                 "legacy_file": "2025/10/Screenshot-2025-10-15-113852.png",
                 "legacy_attachment_id": 2438
             }
@@ -3481,9 +3481,9 @@
                 "legacy_attachment_id": 2441
             },
             {
-                "type": "gallery",
+                "type": "drawing",
                 "path": "/images/products/prod_2440_Screenshot-2025-10-15-114141.png",
-                "available": false,
+                "available": true,
                 "legacy_file": "2025/10/Screenshot-2025-10-15-114141.png",
                 "legacy_attachment_id": 2442
             }
@@ -3532,9 +3532,9 @@
                 "legacy_attachment_id": 2441
             },
             {
-                "type": "gallery",
+                "type": "drawing",
                 "path": "/images/products/prod_2445_Screenshot-2025-10-15-114141.png",
-                "available": false,
+                "available": true,
                 "legacy_file": "2025/10/Screenshot-2025-10-15-114141.png",
                 "legacy_attachment_id": 2442
             }
@@ -3566,9 +3566,9 @@
                 "legacy_attachment_id": 2449
             },
             {
-                "type": "gallery",
+                "type": "drawing",
                 "path": "/images/products/prod_2448_Screenshot-2025-10-15-115029.png",
-                "available": false,
+                "available": true,
                 "legacy_file": "2025/10/Screenshot-2025-10-15-115029.png",
                 "legacy_attachment_id": 2450
             }
@@ -3613,9 +3613,9 @@
                 "legacy_attachment_id": 2458
             },
             {
-                "type": "gallery",
+                "type": "drawing",
                 "path": "/images/products/prod_2452_Screenshot-2025-10-15-114141.png",
-                "available": false,
+                "available": true,
                 "legacy_file": "2025/10/Screenshot-2025-10-15-114141.png",
                 "legacy_attachment_id": 2442
             }
@@ -3660,9 +3660,9 @@
                 "legacy_attachment_id": 2459
             },
             {
-                "type": "gallery",
+                "type": "drawing",
                 "path": "/images/products/prod_2460_Screenshot-2025-10-15-114141.png",
-                "available": false,
+                "available": true,
                 "legacy_file": "2025/10/Screenshot-2025-10-15-114141.png",
                 "legacy_attachment_id": 2442
             }
@@ -3707,9 +3707,9 @@
                 "legacy_attachment_id": 2463
             },
             {
-                "type": "gallery",
+                "type": "drawing",
                 "path": "/images/products/prod_2462_Screenshot-2025-10-15-114141.png",
-                "available": false,
+                "available": true,
                 "legacy_file": "2025/10/Screenshot-2025-10-15-114141.png",
                 "legacy_attachment_id": 2442
             }
@@ -3754,9 +3754,9 @@
                 "legacy_attachment_id": 2464
             },
             {
-                "type": "gallery",
+                "type": "drawing",
                 "path": "/images/products/prod_2467_Screenshot-2025-10-15-114141.png",
-                "available": false,
+                "available": true,
                 "legacy_file": "2025/10/Screenshot-2025-10-15-114141.png",
                 "legacy_attachment_id": 2442
             }
@@ -3793,9 +3793,9 @@
                 "legacy_attachment_id": 2453
             },
             {
-                "type": "gallery",
+                "type": "drawing",
                 "path": "/images/products/prod_2470_Screenshot-2025-10-15-113852.png",
-                "available": false,
+                "available": true,
                 "legacy_file": "2025/10/Screenshot-2025-10-15-113852.png",
                 "legacy_attachment_id": 2438
             }
@@ -3832,9 +3832,9 @@
                 "legacy_attachment_id": 2454
             },
             {
-                "type": "gallery",
+                "type": "drawing",
                 "path": "/images/products/prod_2472_Screenshot-2025-10-15-113852.png",
-                "available": false,
+                "available": true,
                 "legacy_file": "2025/10/Screenshot-2025-10-15-113852.png",
                 "legacy_attachment_id": 2438
             }
@@ -3871,9 +3871,9 @@
                 "legacy_attachment_id": 2455
             },
             {
-                "type": "gallery",
+                "type": "drawing",
                 "path": "/images/products/prod_2474_Screenshot-2025-10-15-113852.png",
-                "available": false,
+                "available": true,
                 "legacy_file": "2025/10/Screenshot-2025-10-15-113852.png",
                 "legacy_attachment_id": 2438
             }
@@ -3910,9 +3910,9 @@
                 "legacy_attachment_id": 2476
             },
             {
-                "type": "gallery",
+                "type": "drawing",
                 "path": "/images/products/prod_2478_Screenshot-2025-10-15-113852.png",
-                "available": false,
+                "available": true,
                 "legacy_file": "2025/10/Screenshot-2025-10-15-113852.png",
                 "legacy_attachment_id": 2438
             }
@@ -3944,9 +3944,9 @@
                 "legacy_attachment_id": 2488
             },
             {
-                "type": "gallery",
+                "type": "drawing",
                 "path": "/images/products/prod_2483_Image_20250702134643.png",
-                "available": false,
+                "available": true,
                 "legacy_file": "2025/11/Image_20250702134643.png",
                 "legacy_attachment_id": 2484
             }
@@ -3978,9 +3978,9 @@
                 "legacy_attachment_id": 2489
             },
             {
-                "type": "gallery",
+                "type": "drawing",
                 "path": "/images/products/prod_2501_Image_20250702134643.png",
-                "available": false,
+                "available": true,
                 "legacy_file": "2025/11/Image_20250702134643.png",
                 "legacy_attachment_id": 2484
             }
@@ -4012,9 +4012,9 @@
                 "legacy_attachment_id": 2490
             },
             {
-                "type": "gallery",
+                "type": "drawing",
                 "path": "/images/products/prod_2508_Image_20250702134643.png",
-                "available": false,
+                "available": true,
                 "legacy_file": "2025/11/Image_20250702134643.png",
                 "legacy_attachment_id": 2484
             }
@@ -4059,9 +4059,9 @@
                 "legacy_attachment_id": 2491
             },
             {
-                "type": "gallery",
+                "type": "drawing",
                 "path": "/images/products/prod_2510_Image_20250702134654.png",
-                "available": false,
+                "available": true,
                 "legacy_file": "2025/11/Image_20250702134654.png",
                 "legacy_attachment_id": 2486
             }
@@ -4106,9 +4106,9 @@
                 "legacy_attachment_id": 2492
             },
             {
-                "type": "gallery",
+                "type": "drawing",
                 "path": "/images/products/prod_2512_Image_20250702134654.png",
-                "available": false,
+                "available": true,
                 "legacy_file": "2025/11/Image_20250702134654.png",
                 "legacy_attachment_id": 2486
             }
@@ -4153,9 +4153,9 @@
                 "legacy_attachment_id": 2493
             },
             {
-                "type": "gallery",
+                "type": "drawing",
                 "path": "/images/products/prod_2514_Image_20250702134654.png",
-                "available": false,
+                "available": true,
                 "legacy_file": "2025/11/Image_20250702134654.png",
                 "legacy_attachment_id": 2486
             }
@@ -4200,9 +4200,9 @@
                 "legacy_attachment_id": 2494
             },
             {
-                "type": "gallery",
+                "type": "drawing",
                 "path": "/images/products/prod_2518_Image_20250702134649.png",
-                "available": false,
+                "available": true,
                 "legacy_file": "2025/11/Image_20250702134649.png",
                 "legacy_attachment_id": 2485
             }
@@ -4247,9 +4247,9 @@
                 "legacy_attachment_id": 2495
             },
             {
-                "type": "gallery",
+                "type": "drawing",
                 "path": "/images/products/prod_2521_Image_20250702134649.png",
-                "available": false,
+                "available": true,
                 "legacy_file": "2025/11/Image_20250702134649.png",
                 "legacy_attachment_id": 2485
             }
@@ -4294,9 +4294,9 @@
                 "legacy_attachment_id": 2496
             },
             {
-                "type": "gallery",
+                "type": "drawing",
                 "path": "/images/products/prod_2523_Image_20250702134649.png",
-                "available": false,
+                "available": true,
                 "legacy_file": "2025/11/Image_20250702134649.png",
                 "legacy_attachment_id": 2485
             }
@@ -4334,16 +4334,16 @@
         "status": "active",
         "images": [
             {
-                "type": "main",
+                "type": "drawing",
                 "path": "/images/products/prod_2527_DL-08120-CP.jpg",
                 "available": true,
                 "legacy_file": "2025/11/DL-08120-CP-scaled.jpg",
                 "legacy_attachment_id": 2528
             },
             {
-                "type": "gallery",
+                "type": "drawing",
                 "path": "/images/products/prod_2527_Image_20250702134634.png",
-                "available": false,
+                "available": true,
                 "legacy_file": "2025/11/Image_20250702134634.png",
                 "legacy_attachment_id": 2532
             }
@@ -4388,9 +4388,9 @@
                 "legacy_attachment_id": 2529
             },
             {
-                "type": "gallery",
+                "type": "drawing",
                 "path": "/images/products/prod_2534_Image_20250702134634.png",
-                "available": false,
+                "available": true,
                 "legacy_file": "2025/11/Image_20250702134634.png",
                 "legacy_attachment_id": 2532
             }
@@ -4435,9 +4435,9 @@
                 "legacy_attachment_id": 2530
             },
             {
-                "type": "gallery",
+                "type": "drawing",
                 "path": "/images/products/prod_2536_Image_20250702134634.png",
-                "available": false,
+                "available": true,
                 "legacy_file": "2025/11/Image_20250702134634.png",
                 "legacy_attachment_id": 2532
             }
@@ -4467,16 +4467,16 @@
         "status": "active",
         "images": [
             {
-                "type": "main",
+                "type": "drawing",
                 "path": "/images/products/prod_2540_DL-08273-CP.jpg",
                 "available": true,
                 "legacy_file": "2025/11/DL-08273-CP-scaled.jpg",
                 "legacy_attachment_id": 2541
             },
             {
-                "type": "gallery",
+                "type": "drawing",
                 "path": "/images/products/prod_2540_Image_20250702134627.png",
-                "available": false,
+                "available": true,
                 "legacy_file": "2025/11/Image_20250702134627.png",
                 "legacy_attachment_id": 2550
             }
@@ -4513,9 +4513,9 @@
                 "legacy_attachment_id": 2542
             },
             {
-                "type": "gallery",
+                "type": "drawing",
                 "path": "/images/products/prod_2552_Image_20250702134627.png",
-                "available": false,
+                "available": true,
                 "legacy_file": "2025/11/Image_20250702134627.png",
                 "legacy_attachment_id": 2550
             }
@@ -4552,9 +4552,9 @@
                 "legacy_attachment_id": 2543
             },
             {
-                "type": "gallery",
+                "type": "drawing",
                 "path": "/images/products/prod_2554_Image_20250702134627.png",
-                "available": false,
+                "available": true,
                 "legacy_file": "2025/11/Image_20250702134627.png",
                 "legacy_attachment_id": 2550
             }
@@ -4591,9 +4591,9 @@
                 "legacy_attachment_id": 2544
             },
             {
-                "type": "gallery",
+                "type": "drawing",
                 "path": "/images/products/prod_2556_Image_20250702134621.png",
-                "available": false,
+                "available": true,
                 "legacy_file": "2025/11/Image_20250702134621.png",
                 "legacy_attachment_id": 2557
             }
@@ -4630,9 +4630,9 @@
                 "legacy_attachment_id": 2545
             },
             {
-                "type": "gallery",
+                "type": "drawing",
                 "path": "/images/products/prod_2559_Image_20250702134621.png",
-                "available": false,
+                "available": true,
                 "legacy_file": "2025/11/Image_20250702134621.png",
                 "legacy_attachment_id": 2557
             }
@@ -4669,9 +4669,9 @@
                 "legacy_attachment_id": 2546
             },
             {
-                "type": "gallery",
+                "type": "drawing",
                 "path": "/images/products/prod_2561_Image_20250702134621.png",
-                "available": false,
+                "available": true,
                 "legacy_file": "2025/11/Image_20250702134621.png",
                 "legacy_attachment_id": 2557
             }
@@ -4712,9 +4712,9 @@
                 "legacy_attachment_id": 2547
             },
             {
-                "type": "gallery",
+                "type": "drawing",
                 "path": "/images/products/prod_2563_Image_20250702134615.png",
-                "available": false,
+                "available": true,
                 "legacy_file": "2025/11/Image_20250702134615.png",
                 "legacy_attachment_id": 2549
             }
@@ -4755,9 +4755,9 @@
                 "legacy_attachment_id": 2548
             },
             {
-                "type": "gallery",
+                "type": "drawing",
                 "path": "/images/products/prod_2565_Image_20250702134615.png",
-                "available": false,
+                "available": true,
                 "legacy_file": "2025/11/Image_20250702134615.png",
                 "legacy_attachment_id": 2549
             }
@@ -4789,9 +4789,9 @@
                 "legacy_attachment_id": 2573
             },
             {
-                "type": "gallery",
+                "type": "drawing",
                 "path": "/images/products/prod_2570_Screenshot-2025-12-02-162219.png",
-                "available": false,
+                "available": true,
                 "legacy_file": "2025/12/Screenshot-2025-12-02-162219.png",
                 "legacy_attachment_id": 2578
             }
@@ -4823,9 +4823,9 @@
                 "legacy_attachment_id": 2572
             },
             {
-                "type": "gallery",
+                "type": "drawing",
                 "path": "/images/products/prod_2583_Screenshot-2025-12-02-162139.png",
-                "available": false,
+                "available": true,
                 "legacy_file": "2025/12/Screenshot-2025-12-02-162139.png",
                 "legacy_attachment_id": 2577
             }
@@ -4857,9 +4857,9 @@
                 "legacy_attachment_id": 2571
             },
             {
-                "type": "gallery",
+                "type": "drawing",
                 "path": "/images/products/prod_2586_Screenshot-2025-12-02-162054.png",
-                "available": false,
+                "available": true,
                 "legacy_file": "2025/12/Screenshot-2025-12-02-162054.png",
                 "legacy_attachment_id": 2576
             }
@@ -4891,9 +4891,9 @@
                 "legacy_attachment_id": 2574
             },
             {
-                "type": "gallery",
+                "type": "drawing",
                 "path": "/images/products/prod_2588_Screenshot-2025-12-02-162256.png",
-                "available": false,
+                "available": true,
                 "legacy_file": "2025/12/Screenshot-2025-12-02-162256.png",
                 "legacy_attachment_id": 2579
             }
@@ -4925,9 +4925,9 @@
                 "legacy_attachment_id": 2591
             },
             {
-                "type": "gallery",
+                "type": "drawing",
                 "path": "/images/products/prod_2590_Screenshot-2025-12-02-162417.png",
-                "available": false,
+                "available": true,
                 "legacy_file": "2025/12/Screenshot-2025-12-02-162417.png",
                 "legacy_attachment_id": 2595
             }
@@ -4959,9 +4959,9 @@
                 "legacy_attachment_id": 2575
             },
             {
-                "type": "gallery",
+                "type": "drawing",
                 "path": "/images/products/prod_2600_Screenshot-2025-12-02-162343.png",
-                "available": false,
+                "available": true,
                 "legacy_file": "2025/12/Screenshot-2025-12-02-162343.png",
                 "legacy_attachment_id": 2580
             }
@@ -4993,9 +4993,9 @@
                 "legacy_attachment_id": 2603
             },
             {
-                "type": "gallery",
+                "type": "drawing",
                 "path": "/images/products/prod_2602_Screenshot-2025-12-02-162024.png",
-                "available": false,
+                "available": true,
                 "legacy_file": "2025/12/Screenshot-2025-12-02-162024.png",
                 "legacy_attachment_id": 2604
             }
@@ -5027,9 +5027,9 @@
                 "legacy_attachment_id": 2594
             },
             {
-                "type": "gallery",
+                "type": "drawing",
                 "path": "/images/products/prod_2606_Screenshot-2025-12-02-162531.png",
-                "available": false,
+                "available": true,
                 "legacy_file": "2025/12/Screenshot-2025-12-02-162531.png",
                 "legacy_attachment_id": 2598
             }
@@ -5061,9 +5061,9 @@
                 "legacy_attachment_id": 2593
             },
             {
-                "type": "gallery",
+                "type": "drawing",
                 "path": "/images/products/prod_2608_Screenshot-2025-12-02-162509.png",
-                "available": false,
+                "available": true,
                 "legacy_file": "2025/12/Screenshot-2025-12-02-162509.png",
                 "legacy_attachment_id": 2597
             }
@@ -5095,9 +5095,9 @@
                 "legacy_attachment_id": 2592
             },
             {
-                "type": "gallery",
+                "type": "drawing",
                 "path": "/images/products/prod_2610_Screenshot-2025-12-02-162447.png",
-                "available": false,
+                "available": true,
                 "legacy_file": "2025/12/Screenshot-2025-12-02-162447.png",
                 "legacy_attachment_id": 2596
             }
@@ -5129,9 +5129,9 @@
                 "legacy_attachment_id": 2616
             },
             {
-                "type": "gallery",
+                "type": "drawing",
                 "path": "/images/products/prod_2613_Screenshot-2025-12-02-161923.png",
-                "available": false,
+                "available": true,
                 "legacy_file": "2025/12/Screenshot-2025-12-02-161923.png",
                 "legacy_attachment_id": 2621
             }
@@ -5163,9 +5163,9 @@
                 "legacy_attachment_id": 2614
             },
             {
-                "type": "gallery",
+                "type": "drawing",
                 "path": "/images/products/prod_2623_Screenshot-2025-12-02-161538.png",
-                "available": false,
+                "available": true,
                 "legacy_file": "2025/12/Screenshot-2025-12-02-161538.png",
                 "legacy_attachment_id": 2618
             }
@@ -5214,9 +5214,9 @@
                 "legacy_attachment_id": 2617
             },
             {
-                "type": "gallery",
+                "type": "drawing",
                 "path": "/images/products/prod_2625_Screenshot-2025-12-02-161726.png",
-                "available": false,
+                "available": true,
                 "legacy_file": "2025/12/Screenshot-2025-12-02-161726.png",
                 "legacy_attachment_id": 2619
             }
@@ -5248,9 +5248,9 @@
                 "legacy_attachment_id": 2628
             },
             {
-                "type": "gallery",
+                "type": "drawing",
                 "path": "/images/products/prod_2627_Screenshot-2025-12-02-161821-1.png",
-                "available": false,
+                "available": true,
                 "legacy_file": "2025/12/Screenshot-2025-12-02-161821-1.png",
                 "legacy_attachment_id": 2629
             }
@@ -5295,9 +5295,9 @@
                 "legacy_attachment_id": 2638
             },
             {
-                "type": "gallery",
+                "type": "drawing",
                 "path": "/images/products/prod_2637_Screenshot-2025-12-22-151442.png",
-                "available": false,
+                "available": true,
                 "legacy_file": "2025/12/Screenshot-2025-12-22-151442.png",
                 "legacy_attachment_id": 2639
             }
@@ -5334,9 +5334,9 @@
                 "legacy_attachment_id": 2642
             },
             {
-                "type": "gallery",
+                "type": "drawing",
                 "path": "/images/products/prod_2641_Screenshot-2025-12-22-151747.png",
-                "available": false,
+                "available": true,
                 "legacy_file": "2025/12/Screenshot-2025-12-22-151747.png",
                 "legacy_attachment_id": 2643
             }
@@ -5373,9 +5373,9 @@
                 "legacy_attachment_id": 2652
             },
             {
-                "type": "gallery",
+                "type": "drawing",
                 "path": "/images/products/prod_2649_Screenshot-2025-12-23-070531.png",
-                "available": false,
+                "available": true,
                 "legacy_file": "2025/12/Screenshot-2025-12-23-070531.png",
                 "legacy_attachment_id": 2651
             }
@@ -5407,9 +5407,9 @@
                 "legacy_attachment_id": 2656
             },
             {
-                "type": "gallery",
+                "type": "drawing",
                 "path": "/images/products/prod_2655_Screenshot-2025-12-23-071710.png",
-                "available": false,
+                "available": true,
                 "legacy_file": "2025/12/Screenshot-2025-12-23-071710.png",
                 "legacy_attachment_id": 2657
             }
@@ -5450,9 +5450,9 @@
                 "legacy_attachment_id": 2660
             },
             {
-                "type": "gallery",
+                "type": "drawing",
                 "path": "/images/products/prod_2659_Screenshot-2025-12-23-072509.png",
-                "available": false,
+                "available": true,
                 "legacy_file": "2025/12/Screenshot-2025-12-23-072509.png",
                 "legacy_attachment_id": 2661
             }
@@ -5493,9 +5493,9 @@
                 "legacy_attachment_id": 2665
             },
             {
-                "type": "gallery",
+                "type": "drawing",
                 "path": "/images/products/prod_2664_Screenshot-2025-12-23-072951.png",
-                "available": false,
+                "available": true,
                 "legacy_file": "2025/12/Screenshot-2025-12-23-072951.png",
                 "legacy_attachment_id": 2666
             }
@@ -5527,9 +5527,9 @@
                 "legacy_attachment_id": 2671
             },
             {
-                "type": "gallery",
+                "type": "drawing",
                 "path": "/images/products/prod_2670_Screenshot-2025-12-24-072409.png",
-                "available": false,
+                "available": true,
                 "legacy_file": "2025/12/Screenshot-2025-12-24-072409.png",
                 "legacy_attachment_id": 2672
             }
@@ -5561,9 +5561,9 @@
                 "legacy_attachment_id": 2675
             },
             {
-                "type": "gallery",
+                "type": "drawing",
                 "path": "/images/products/prod_2674_Screenshot-2025-12-24-072835.png",
-                "available": false,
+                "available": true,
                 "legacy_file": "2025/12/Screenshot-2025-12-24-072835.png",
                 "legacy_attachment_id": 2676
             }
@@ -5608,9 +5608,9 @@
                 "legacy_attachment_id": 2679
             },
             {
-                "type": "gallery",
+                "type": "drawing",
                 "path": "/images/products/prod_2678_Screenshot-2025-12-24-073148.png",
-                "available": false,
+                "available": true,
                 "legacy_file": "2025/12/Screenshot-2025-12-24-073148.png",
                 "legacy_attachment_id": 2680
             }
@@ -5655,9 +5655,9 @@
                 "legacy_attachment_id": 2683
             },
             {
-                "type": "gallery",
+                "type": "drawing",
                 "path": "/images/products/prod_2682_Screenshot-2025-12-24-074034.png",
-                "available": false,
+                "available": true,
                 "legacy_file": "2025/12/Screenshot-2025-12-24-074034.png",
                 "legacy_attachment_id": 2684
             }
@@ -5689,9 +5689,9 @@
                 "legacy_attachment_id": 2687
             },
             {
-                "type": "gallery",
+                "type": "drawing",
                 "path": "/images/products/prod_2686_Screenshot-2025-12-24-074334.png",
-                "available": false,
+                "available": true,
                 "legacy_file": "2025/12/Screenshot-2025-12-24-074334.png",
                 "legacy_attachment_id": 2688
             }
@@ -5740,9 +5740,9 @@
                 "legacy_attachment_id": 2691
             },
             {
-                "type": "gallery",
+                "type": "drawing",
                 "path": "/images/products/prod_2690_Screenshot-2025-12-24-074618.png",
-                "available": false,
+                "available": true,
                 "legacy_file": "2025/12/Screenshot-2025-12-24-074618.png",
                 "legacy_attachment_id": 2692
             }
@@ -5791,9 +5791,9 @@
                 "legacy_attachment_id": 2695
             },
             {
-                "type": "gallery",
+                "type": "drawing",
                 "path": "/images/products/prod_2694_Screenshot-2025-12-24-074953.png",
-                "available": false,
+                "available": true,
                 "legacy_file": "2025/12/Screenshot-2025-12-24-074953.png",
                 "legacy_attachment_id": 2696
             }
@@ -5838,9 +5838,9 @@
                 "legacy_attachment_id": 2717
             },
             {
-                "type": "gallery",
+                "type": "drawing",
                 "path": "/images/products/prod_2716_Screenshot-2026-07-16-140038.png",
-                "available": false,
+                "available": true,
                 "legacy_file": "2026/07/Screenshot-2026-07-16-140038.png",
                 "legacy_attachment_id": 2718
             }
@@ -5885,9 +5885,9 @@
                 "legacy_attachment_id": 2721
             },
             {
-                "type": "gallery",
+                "type": "drawing",
                 "path": "/images/products/prod_2720_Screenshot-2026-07-16-140038.png",
-                "available": false,
+                "available": true,
                 "legacy_file": "2026/07/Screenshot-2026-07-16-140038.png",
                 "legacy_attachment_id": 2718
             }
@@ -5932,9 +5932,9 @@
                 "legacy_attachment_id": 2724
             },
             {
-                "type": "gallery",
+                "type": "drawing",
                 "path": "/images/products/prod_2723_Screenshot-2026-07-16-140038.png",
-                "available": false,
+                "available": true,
                 "legacy_file": "2026/07/Screenshot-2026-07-16-140038.png",
                 "legacy_attachment_id": 2718
             }
@@ -5979,9 +5979,9 @@
                 "legacy_attachment_id": 2727
             },
             {
-                "type": "gallery",
+                "type": "drawing",
                 "path": "/images/products/prod_2726_Screenshot-2026-07-16-141328.png",
-                "available": false,
+                "available": true,
                 "legacy_file": "2026/07/Screenshot-2026-07-16-141328.png",
                 "legacy_attachment_id": 2728
             }
@@ -6026,9 +6026,9 @@
                 "legacy_attachment_id": 2731
             },
             {
-                "type": "gallery",
+                "type": "drawing",
                 "path": "/images/products/prod_2730_Screenshot-2026-07-16-141328.png",
-                "available": false,
+                "available": true,
                 "legacy_file": "2026/07/Screenshot-2026-07-16-141328.png",
                 "legacy_attachment_id": 2728
             }
@@ -6073,9 +6073,9 @@
                 "legacy_attachment_id": 2734
             },
             {
-                "type": "gallery",
+                "type": "drawing",
                 "path": "/images/products/prod_2733_Screenshot-2026-07-16-141328.png",
-                "available": false,
+                "available": true,
                 "legacy_file": "2026/07/Screenshot-2026-07-16-141328.png",
                 "legacy_attachment_id": 2728
             }
@@ -6120,9 +6120,9 @@
                 "legacy_attachment_id": 2737
             },
             {
-                "type": "gallery",
+                "type": "drawing",
                 "path": "/images/products/prod_2736_Screenshot-2026-07-16-142200.png",
-                "available": false,
+                "available": true,
                 "legacy_file": "2026/07/Screenshot-2026-07-16-142200.png",
                 "legacy_attachment_id": 2738
             }
@@ -6167,9 +6167,9 @@
                 "legacy_attachment_id": 2741
             },
             {
-                "type": "gallery",
+                "type": "drawing",
                 "path": "/images/products/prod_2740_Screenshot-2026-07-16-142200.png",
-                "available": false,
+                "available": true,
                 "legacy_file": "2026/07/Screenshot-2026-07-16-142200.png",
                 "legacy_attachment_id": 2738
             }
@@ -6214,9 +6214,9 @@
                 "legacy_attachment_id": 2744
             },
             {
-                "type": "gallery",
+                "type": "drawing",
                 "path": "/images/products/prod_2743_Screenshot-2026-07-16-142200.png",
-                "available": false,
+                "available": true,
                 "legacy_file": "2026/07/Screenshot-2026-07-16-142200.png",
                 "legacy_attachment_id": 2738
             }
@@ -6261,9 +6261,9 @@
                 "legacy_attachment_id": 2747
             },
             {
-                "type": "gallery",
+                "type": "drawing",
                 "path": "/images/products/prod_2746_Screenshot-2026-07-16-142200.png",
-                "available": false,
+                "available": true,
                 "legacy_file": "2026/07/Screenshot-2026-07-16-142200.png",
                 "legacy_attachment_id": 2738
             }
@@ -6308,9 +6308,9 @@
                 "legacy_attachment_id": 2750
             },
             {
-                "type": "gallery",
+                "type": "drawing",
                 "path": "/images/products/prod_2749_Screenshot-2026-07-16-142200.png",
-                "available": false,
+                "available": true,
                 "legacy_file": "2026/07/Screenshot-2026-07-16-142200.png",
                 "legacy_attachment_id": 2738
             }
@@ -6355,9 +6355,9 @@
                 "legacy_attachment_id": 2753
             },
             {
-                "type": "gallery",
+                "type": "drawing",
                 "path": "/images/products/prod_2752_Screenshot-2026-07-16-143435.png",
-                "available": false,
+                "available": true,
                 "legacy_file": "2026/07/Screenshot-2026-07-16-143435.png",
                 "legacy_attachment_id": 2754
             }
@@ -6402,9 +6402,9 @@
                 "legacy_attachment_id": 2757
             },
             {
-                "type": "gallery",
+                "type": "drawing",
                 "path": "/images/products/prod_2756_Screenshot-2026-07-16-143435.png",
-                "available": false,
+                "available": true,
                 "legacy_file": "2026/07/Screenshot-2026-07-16-143435.png",
                 "legacy_attachment_id": 2754
             }
@@ -6449,9 +6449,9 @@
                 "legacy_attachment_id": 2760
             },
             {
-                "type": "gallery",
+                "type": "drawing",
                 "path": "/images/products/prod_2759_Screenshot-2026-07-16-143435.png",
-                "available": false,
+                "available": true,
                 "legacy_file": "2026/07/Screenshot-2026-07-16-143435.png",
                 "legacy_attachment_id": 2754
             }
@@ -6496,9 +6496,9 @@
                 "legacy_attachment_id": 2763
             },
             {
-                "type": "gallery",
+                "type": "drawing",
                 "path": "/images/products/prod_2762_Screenshot-2026-07-16-143435.png",
-                "available": false,
+                "available": true,
                 "legacy_file": "2026/07/Screenshot-2026-07-16-143435.png",
                 "legacy_attachment_id": 2754
             }
@@ -6547,9 +6547,9 @@
                 "legacy_attachment_id": 2766
             },
             {
-                "type": "gallery",
+                "type": "drawing",
                 "path": "/images/products/prod_2765_Screenshot-2026-07-16-143435.png",
-                "available": false,
+                "available": true,
                 "legacy_file": "2026/07/Screenshot-2026-07-16-143435.png",
                 "legacy_attachment_id": 2754
             }
@@ -6586,9 +6586,9 @@
                 "legacy_attachment_id": 2769
             },
             {
-                "type": "gallery",
+                "type": "drawing",
                 "path": "/images/products/prod_2768_Screenshot-2026-07-16-144953.png",
-                "available": false,
+                "available": true,
                 "legacy_file": "2026/07/Screenshot-2026-07-16-144953.png",
                 "legacy_attachment_id": 2770
             }
@@ -6625,9 +6625,9 @@
                 "legacy_attachment_id": 2773
             },
             {
-                "type": "gallery",
+                "type": "drawing",
                 "path": "/images/products/prod_2772_Screenshot-2026-07-16-144953.png",
-                "available": false,
+                "available": true,
                 "legacy_file": "2026/07/Screenshot-2026-07-16-144953.png",
                 "legacy_attachment_id": 2770
             }
@@ -6664,9 +6664,9 @@
                 "legacy_attachment_id": 2776
             },
             {
-                "type": "gallery",
+                "type": "drawing",
                 "path": "/images/products/prod_2775_Screenshot-2026-07-16-144953.png",
-                "available": false,
+                "available": true,
                 "legacy_file": "2026/07/Screenshot-2026-07-16-144953.png",
                 "legacy_attachment_id": 2770
             }
@@ -6707,9 +6707,9 @@
                 "legacy_attachment_id": 2779
             },
             {
-                "type": "gallery",
+                "type": "drawing",
                 "path": "/images/products/prod_2778_Screenshot-2026-07-16-145725.png",
-                "available": false,
+                "available": true,
                 "legacy_file": "2026/07/Screenshot-2026-07-16-145725.png",
                 "legacy_attachment_id": 2780
             }
@@ -6750,9 +6750,9 @@
                 "legacy_attachment_id": 2783
             },
             {
-                "type": "gallery",
+                "type": "drawing",
                 "path": "/images/products/prod_2782_Screenshot-2026-07-16-145725.png",
-                "available": false,
+                "available": true,
                 "legacy_file": "2026/07/Screenshot-2026-07-16-145725.png",
                 "legacy_attachment_id": 2780
             }
@@ -6793,9 +6793,9 @@
                 "legacy_attachment_id": 2786
             },
             {
-                "type": "gallery",
+                "type": "drawing",
                 "path": "/images/products/prod_2785_Screenshot-2026-07-16-150220.png",
-                "available": false,
+                "available": true,
                 "legacy_file": "2026/07/Screenshot-2026-07-16-150220.png",
                 "legacy_attachment_id": 2787
             }
@@ -6836,9 +6836,9 @@
                 "legacy_attachment_id": 2790
             },
             {
-                "type": "gallery",
+                "type": "drawing",
                 "path": "/images/products/prod_2789_Screenshot-2026-07-16-150220.png",
-                "available": false,
+                "available": true,
                 "legacy_file": "2026/07/Screenshot-2026-07-16-150220.png",
                 "legacy_attachment_id": 2787
             }
@@ -6879,9 +6879,9 @@
                 "legacy_attachment_id": 2793
             },
             {
-                "type": "gallery",
+                "type": "drawing",
                 "path": "/images/products/prod_2792_Screenshot-2026-07-16-150220.png",
-                "available": false,
+                "available": true,
                 "legacy_file": "2026/07/Screenshot-2026-07-16-150220.png",
                 "legacy_attachment_id": 2787
             }
@@ -6922,9 +6922,9 @@
                 "legacy_attachment_id": 2796
             },
             {
-                "type": "gallery",
+                "type": "drawing",
                 "path": "/images/products/prod_2795_Screenshot-2026-07-16-150220.png",
-                "available": false,
+                "available": true,
                 "legacy_file": "2026/07/Screenshot-2026-07-16-150220.png",
                 "legacy_attachment_id": 2787
             }
@@ -6965,9 +6965,9 @@
                 "legacy_attachment_id": 2799
             },
             {
-                "type": "gallery",
+                "type": "drawing",
                 "path": "/images/products/prod_2798_Screenshot-2026-07-16-150220.png",
-                "available": false,
+                "available": true,
                 "legacy_file": "2026/07/Screenshot-2026-07-16-150220.png",
                 "legacy_attachment_id": 2787
             }
@@ -7008,9 +7008,9 @@
                 "legacy_attachment_id": 2802
             },
             {
-                "type": "gallery",
+                "type": "drawing",
                 "path": "/images/products/prod_2801_Screenshot-2026-07-16-151641.png",
-                "available": false,
+                "available": true,
                 "legacy_file": "2026/07/Screenshot-2026-07-16-151641.png",
                 "legacy_attachment_id": 2803
             }
@@ -7051,9 +7051,9 @@
                 "legacy_attachment_id": 2806
             },
             {
-                "type": "gallery",
+                "type": "drawing",
                 "path": "/images/products/prod_2805_Screenshot-2026-07-16-151641.png",
-                "available": false,
+                "available": true,
                 "legacy_file": "2026/07/Screenshot-2026-07-16-151641.png",
                 "legacy_attachment_id": 2803
             }
@@ -7094,9 +7094,9 @@
                 "legacy_attachment_id": 2809
             },
             {
-                "type": "gallery",
+                "type": "drawing",
                 "path": "/images/products/prod_2808_Screenshot-2026-07-16-151641.png",
-                "available": false,
+                "available": true,
                 "legacy_file": "2026/07/Screenshot-2026-07-16-151641.png",
                 "legacy_attachment_id": 2803
             }
@@ -7153,9 +7153,9 @@
                 "legacy_attachment_id": 2815
             },
             {
-                "type": "gallery",
+                "type": "drawing",
                 "path": "/images/products/prod_2814_Screenshot-2026-07-16-153128.png",
-                "available": false,
+                "available": true,
                 "legacy_file": "2026/07/Screenshot-2026-07-16-153128.png",
                 "legacy_attachment_id": 2816
             }
@@ -7212,9 +7212,9 @@
                 "legacy_attachment_id": 2819
             },
             {
-                "type": "gallery",
+                "type": "drawing",
                 "path": "/images/products/prod_2818_Screenshot-2026-07-16-153326.png",
-                "available": false,
+                "available": true,
                 "legacy_file": "2026/07/Screenshot-2026-07-16-153326.png",
                 "legacy_attachment_id": 2820
             }
@@ -7271,9 +7271,9 @@
                 "legacy_attachment_id": 2823
             },
             {
-                "type": "gallery",
+                "type": "drawing",
                 "path": "/images/products/prod_2822_Screenshot-2026-07-16-153547.png",
-                "available": false,
+                "available": true,
                 "legacy_file": "2026/07/Screenshot-2026-07-16-153547.png",
                 "legacy_attachment_id": 2824
             }
@@ -7330,9 +7330,9 @@
                 "legacy_attachment_id": 2827
             },
             {
-                "type": "gallery",
+                "type": "drawing",
                 "path": "/images/products/prod_2826_Screenshot-2026-07-16-153817.png",
-                "available": false,
+                "available": true,
                 "legacy_file": "2026/07/Screenshot-2026-07-16-153817.png",
                 "legacy_attachment_id": 2828
             }
@@ -7369,9 +7369,9 @@
                 "legacy_attachment_id": 2831
             },
             {
-                "type": "gallery",
+                "type": "drawing",
                 "path": "/images/products/prod_2830_Screenshot-2026-07-16-154043.png",
-                "available": false,
+                "available": true,
                 "legacy_file": "2026/07/Screenshot-2026-07-16-154043.png",
                 "legacy_attachment_id": 2832
             }
@@ -7408,9 +7408,9 @@
                 "legacy_attachment_id": 2835
             },
             {
-                "type": "gallery",
+                "type": "drawing",
                 "path": "/images/products/prod_2834_Screenshot-2026-07-16-154256.png",
-                "available": false,
+                "available": true,
                 "legacy_file": "2026/07/Screenshot-2026-07-16-154256.png",
                 "legacy_attachment_id": 2836
             }
@@ -7447,9 +7447,9 @@
                 "legacy_attachment_id": 2839
             },
             {
-                "type": "gallery",
+                "type": "drawing",
                 "path": "/images/products/prod_2838_Screenshot-2026-07-16-154541.png",
-                "available": false,
+                "available": true,
                 "legacy_file": "2026/07/Screenshot-2026-07-16-154541.png",
                 "legacy_attachment_id": 2840
             }
@@ -7486,9 +7486,9 @@
                 "legacy_attachment_id": 2843
             },
             {
-                "type": "gallery",
+                "type": "drawing",
                 "path": "/images/products/prod_2842_Screenshot-2026-07-16-154854.png",
-                "available": false,
+                "available": true,
                 "legacy_file": "2026/07/Screenshot-2026-07-16-154854.png",
                 "legacy_attachment_id": 2844
             }
@@ -7525,9 +7525,9 @@
                 "legacy_attachment_id": 2847
             },
             {
-                "type": "gallery",
+                "type": "drawing",
                 "path": "/images/products/prod_2846_Screenshot-2026-07-16-155208.png",
-                "available": false,
+                "available": true,
                 "legacy_file": "2026/07/Screenshot-2026-07-16-155208.png",
                 "legacy_attachment_id": 2848
             }
@@ -7570,14 +7570,14 @@
             {
                 "type": "gallery",
                 "path": "/images/products/prod_2853_Screenshot-2026-07-17-162929.png",
-                "available": false,
+                "available": true,
                 "legacy_file": "2026/07/Screenshot-2026-07-17-162929.png",
                 "legacy_attachment_id": 2855
             },
             {
-                "type": "gallery",
+                "type": "drawing",
                 "path": "/images/products/prod_2853_Screenshot-2026-07-17-163037.png",
-                "available": false,
+                "available": true,
                 "legacy_file": "2026/07/Screenshot-2026-07-17-163037.png",
                 "legacy_attachment_id": 2856
             }
@@ -7618,9 +7618,9 @@
                 "legacy_attachment_id": 2859
             },
             {
-                "type": "gallery",
+                "type": "drawing",
                 "path": "/images/products/prod_2858_Screenshot-2026-07-17-163037.png",
-                "available": false,
+                "available": true,
                 "legacy_file": "2026/07/Screenshot-2026-07-17-163037.png",
                 "legacy_attachment_id": 2856
             }
@@ -7663,14 +7663,14 @@
             {
                 "type": "gallery",
                 "path": "/images/products/prod_2861_Screenshot-2026-07-17-163509.png",
-                "available": false,
+                "available": true,
                 "legacy_file": "2026/07/Screenshot-2026-07-17-163509.png",
                 "legacy_attachment_id": 2864
             },
             {
-                "type": "gallery",
+                "type": "drawing",
                 "path": "/images/products/prod_2861_Screenshot-2026-07-17-163540.png",
-                "available": false,
+                "available": true,
                 "legacy_file": "2026/07/Screenshot-2026-07-17-163540.png",
                 "legacy_attachment_id": 2863
             }
@@ -7711,9 +7711,9 @@
                 "legacy_attachment_id": 2867
             },
             {
-                "type": "gallery",
+                "type": "drawing",
                 "path": "/images/products/prod_2866_Screenshot-2026-07-17-163914.png",
-                "available": false,
+                "available": true,
                 "legacy_file": "2026/07/Screenshot-2026-07-17-163914.png",
                 "legacy_attachment_id": 2868
             }
@@ -7754,9 +7754,9 @@
                 "legacy_attachment_id": 2871
             },
             {
-                "type": "gallery",
+                "type": "drawing",
                 "path": "/images/products/prod_2870_Screenshot-2026-07-17-163914.png",
-                "available": false,
+                "available": true,
                 "legacy_file": "2026/07/Screenshot-2026-07-17-163914.png",
                 "legacy_attachment_id": 2868
             }
@@ -7797,9 +7797,9 @@
                 "legacy_attachment_id": 2874
             },
             {
-                "type": "gallery",
+                "type": "drawing",
                 "path": "/images/products/prod_2873_Screenshot-2026-07-17-163914.png",
-                "available": false,
+                "available": true,
                 "legacy_file": "2026/07/Screenshot-2026-07-17-163914.png",
                 "legacy_attachment_id": 2868
             }
@@ -7840,9 +7840,9 @@
                 "legacy_attachment_id": 2877
             },
             {
-                "type": "gallery",
+                "type": "drawing",
                 "path": "/images/products/prod_2876_Screenshot-2026-07-17-164614.png",
-                "available": false,
+                "available": true,
                 "legacy_file": "2026/07/Screenshot-2026-07-17-164614.png",
                 "legacy_attachment_id": 2878
             }
@@ -7883,9 +7883,9 @@
                 "legacy_attachment_id": 2881
             },
             {
-                "type": "gallery",
+                "type": "drawing",
                 "path": "/images/products/prod_2880_Screenshot-2026-07-17-164830.png",
-                "available": false,
+                "available": true,
                 "legacy_file": "2026/07/Screenshot-2026-07-17-164830.png",
                 "legacy_attachment_id": 2882
             }
@@ -7926,9 +7926,9 @@
                 "legacy_attachment_id": 2885
             },
             {
-                "type": "gallery",
+                "type": "drawing",
                 "path": "/images/products/prod_2884_Screenshot-2026-07-17-165112.png",
-                "available": false,
+                "available": true,
                 "legacy_file": "2026/07/Screenshot-2026-07-17-165112.png",
                 "legacy_attachment_id": 2886
             }
@@ -7969,9 +7969,9 @@
                 "legacy_attachment_id": 2889
             },
             {
-                "type": "gallery",
+                "type": "drawing",
                 "path": "/images/products/prod_2888_Screenshot-2026-07-17-165435.png",
-                "available": false,
+                "available": true,
                 "legacy_file": "2026/07/Screenshot-2026-07-17-165435.png",
                 "legacy_attachment_id": 2890
             }
@@ -8012,9 +8012,9 @@
                 "legacy_attachment_id": 2894
             },
             {
-                "type": "gallery",
+                "type": "drawing",
                 "path": "/images/products/prod_2893_Screenshot-2026-07-17-165732.png",
-                "available": false,
+                "available": true,
                 "legacy_file": "2026/07/Screenshot-2026-07-17-165732.png",
                 "legacy_attachment_id": 2895
             }
@@ -8055,9 +8055,9 @@
                 "legacy_attachment_id": 2898
             },
             {
-                "type": "gallery",
+                "type": "drawing",
                 "path": "/images/products/prod_2897_Screenshot-2026-07-17-165732.png",
-                "available": false,
+                "available": true,
                 "legacy_file": "2026/07/Screenshot-2026-07-17-165732.png",
                 "legacy_attachment_id": 2895
             }
@@ -8094,9 +8094,9 @@
                 "legacy_attachment_id": 2901
             },
             {
-                "type": "gallery",
+                "type": "drawing",
                 "path": "/images/products/prod_2900_Screenshot-2026-07-17-170118.png",
-                "available": false,
+                "available": true,
                 "legacy_file": "2026/07/Screenshot-2026-07-17-170118.png",
                 "legacy_attachment_id": 2902
             }
@@ -8133,9 +8133,9 @@
                 "legacy_attachment_id": 2909
             },
             {
-                "type": "gallery",
+                "type": "drawing",
                 "path": "/images/products/prod_2908_Screenshot-2026-07-22-162655.png",
-                "available": false,
+                "available": true,
                 "legacy_file": "2026/07/Screenshot-2026-07-22-162655.png",
                 "legacy_attachment_id": 2910
             }
@@ -8167,9 +8167,9 @@
                 "legacy_attachment_id": 2913
             },
             {
-                "type": "gallery",
+                "type": "drawing",
                 "path": "/images/products/prod_2912_Screenshot-2026-07-22-162920.png",
-                "available": false,
+                "available": true,
                 "legacy_file": "2026/07/Screenshot-2026-07-22-162920.png",
                 "legacy_attachment_id": 2914
             }
@@ -8201,9 +8201,9 @@
                 "legacy_attachment_id": 2917
             },
             {
-                "type": "gallery",
+                "type": "drawing",
                 "path": "/images/products/prod_2916_Screenshot-2026-07-22-163220.png",
-                "available": false,
+                "available": true,
                 "legacy_file": "2026/07/Screenshot-2026-07-22-163220.png",
                 "legacy_attachment_id": 2918
             }
@@ -8240,9 +8240,9 @@
                 "legacy_attachment_id": 2921
             },
             {
-                "type": "gallery",
+                "type": "drawing",
                 "path": "/images/products/prod_2920_Screenshot-2026-07-22-163501.png",
-                "available": false,
+                "available": true,
                 "legacy_file": "2026/07/Screenshot-2026-07-22-163501.png",
                 "legacy_attachment_id": 2922
             }
@@ -8279,9 +8279,9 @@
                 "legacy_attachment_id": 2921
             },
             {
-                "type": "gallery",
+                "type": "drawing",
                 "path": "/images/products/prod_2924_Screenshot-2026-07-22-163501.png",
-                "available": false,
+                "available": true,
                 "legacy_file": "2026/07/Screenshot-2026-07-22-163501.png",
                 "legacy_attachment_id": 2922
             }
@@ -8334,9 +8334,9 @@
                 "legacy_attachment_id": 2928
             },
             {
-                "type": "gallery",
+                "type": "drawing",
                 "path": "/images/products/prod_2927_Screenshot-2026-07-22-163905.png",
-                "available": false,
+                "available": true,
                 "legacy_file": "2026/07/Screenshot-2026-07-22-163905.png",
                 "legacy_attachment_id": 2929
             }
@@ -8373,9 +8373,9 @@
                 "legacy_attachment_id": 2932
             },
             {
-                "type": "gallery",
+                "type": "drawing",
                 "path": "/images/products/prod_2931_Screenshot-2026-07-22-164130.png",
-                "available": false,
+                "available": true,
                 "legacy_file": "2026/07/Screenshot-2026-07-22-164130.png",
                 "legacy_attachment_id": 2933
             }
@@ -8407,9 +8407,9 @@
                 "legacy_attachment_id": 2936
             },
             {
-                "type": "gallery",
+                "type": "drawing",
                 "path": "/images/products/prod_2935_Screenshot-2026-07-22-164321.png",
-                "available": false,
+                "available": true,
                 "legacy_file": "2026/07/Screenshot-2026-07-22-164321.png",
                 "legacy_attachment_id": 2937
             }
@@ -8446,9 +8446,9 @@
                 "legacy_attachment_id": 2940
             },
             {
-                "type": "gallery",
+                "type": "drawing",
                 "path": "/images/products/prod_2939_Screenshot-2026-07-22-164540.png",
-                "available": false,
+                "available": true,
                 "legacy_file": "2026/07/Screenshot-2026-07-22-164540.png",
                 "legacy_attachment_id": 2941
             }
@@ -8480,9 +8480,9 @@
                 "legacy_attachment_id": 2944
             },
             {
-                "type": "gallery",
+                "type": "drawing",
                 "path": "/images/products/prod_2943_Screenshot-2026-07-22-165157.png",
-                "available": false,
+                "available": true,
                 "legacy_file": "2026/07/Screenshot-2026-07-22-165157.png",
                 "legacy_attachment_id": 2945
             }
@@ -8527,9 +8527,9 @@
                 "legacy_attachment_id": 2948
             },
             {
-                "type": "gallery",
+                "type": "drawing",
                 "path": "/images/products/prod_2947_Screenshot-2026-07-22-165653.png",
-                "available": false,
+                "available": true,
                 "legacy_file": "2026/07/Screenshot-2026-07-22-165653.png",
                 "legacy_attachment_id": 2949
             }
@@ -8578,9 +8578,9 @@
                 "legacy_attachment_id": 2953
             },
             {
-                "type": "gallery",
+                "type": "drawing",
                 "path": "/images/products/prod_2952_Screenshot-2026-07-22-170303.png",
-                "available": false,
+                "available": true,
                 "legacy_file": "2026/07/Screenshot-2026-07-22-170303.png",
                 "legacy_attachment_id": 2954
             }
@@ -8612,9 +8612,9 @@
                 "legacy_attachment_id": 2959
             },
             {
-                "type": "gallery",
+                "type": "drawing",
                 "path": "/images/products/prod_2956_Screenshot-2026-07-22-170510.png",
-                "available": false,
+                "available": true,
                 "legacy_file": "2026/07/Screenshot-2026-07-22-170510.png",
                 "legacy_attachment_id": 2958
             }
@@ -8667,9 +8667,9 @@
                 "legacy_attachment_id": 2962
             },
             {
-                "type": "gallery",
+                "type": "drawing",
                 "path": "/images/products/prod_2961_Screenshot-2026-07-22-170931.png",
-                "available": false,
+                "available": true,
                 "legacy_file": "2026/07/Screenshot-2026-07-22-170931.png",
                 "legacy_attachment_id": 2963
             }
@@ -8701,9 +8701,9 @@
                 "legacy_attachment_id": 2966
             },
             {
-                "type": "gallery",
+                "type": "drawing",
                 "path": "/images/products/prod_2965_Screenshot-2026-07-22-171134.png",
-                "available": false,
+                "available": true,
                 "legacy_file": "2026/07/Screenshot-2026-07-22-171134.png",
                 "legacy_attachment_id": 2967
             }
@@ -8749,7 +8749,7 @@
         "status": "active",
         "images": [
             {
-                "type": "main",
+                "type": "drawing",
                 "path": "/images/products/prod_2969_Screenshot-2026-07-22-171323.png",
                 "available": true,
                 "legacy_file": "2026/07/Screenshot-2026-07-22-171323.png",
@@ -8834,14 +8834,14 @@
             {
                 "type": "gallery",
                 "path": "/images/products/prod_2976_Screenshot-2026-07-22-171737.png",
-                "available": false,
+                "available": true,
                 "legacy_file": "2026/07/Screenshot-2026-07-22-171737.png",
                 "legacy_attachment_id": 2979
             },
             {
-                "type": "gallery",
+                "type": "drawing",
                 "path": "/images/products/prod_2976_Screenshot-2026-07-22-171713.png",
-                "available": false,
+                "available": true,
                 "legacy_file": "2026/07/Screenshot-2026-07-22-171713.png",
                 "legacy_attachment_id": 2978
             }
@@ -8890,9 +8890,9 @@
                 "legacy_attachment_id": 2982
             },
             {
-                "type": "gallery",
+                "type": "drawing",
                 "path": "/images/products/prod_2981_Screenshot-2026-07-22-172001.png",
-                "available": false,
+                "available": true,
                 "legacy_file": "2026/07/Screenshot-2026-07-22-172001.png",
                 "legacy_attachment_id": 2983
             }
@@ -8937,9 +8937,9 @@
                 "legacy_attachment_id": 2986
             },
             {
-                "type": "gallery",
+                "type": "drawing",
                 "path": "/images/products/prod_2985_Screenshot-2026-07-22-172200.png",
-                "available": false,
+                "available": true,
                 "legacy_file": "2026/07/Screenshot-2026-07-22-172200.png",
                 "legacy_attachment_id": 2987
             }
@@ -8976,9 +8976,9 @@
                 "legacy_attachment_id": 2990
             },
             {
-                "type": "gallery",
+                "type": "drawing",
                 "path": "/images/products/prod_2989_Screenshot-2026-07-22-172355.png",
-                "available": false,
+                "available": true,
                 "legacy_file": "2026/07/Screenshot-2026-07-22-172355.png",
                 "legacy_attachment_id": 2991
             }
@@ -9015,9 +9015,9 @@
                 "legacy_attachment_id": 2994
             },
             {
-                "type": "gallery",
+                "type": "drawing",
                 "path": "/images/products/prod_2993_Screenshot-2026-07-22-172630.png",
-                "available": false,
+                "available": true,
                 "legacy_file": "2026/07/Screenshot-2026-07-22-172630.png",
                 "legacy_attachment_id": 2995
             }
@@ -9062,9 +9062,9 @@
                 "legacy_attachment_id": 2998
             },
             {
-                "type": "gallery",
+                "type": "drawing",
                 "path": "/images/products/prod_2997_Screenshot-2026-07-22-172845.png",
-                "available": false,
+                "available": true,
                 "legacy_file": "2026/07/Screenshot-2026-07-22-172845.png",
                 "legacy_attachment_id": 2999
             }
@@ -9113,9 +9113,9 @@
                 "legacy_attachment_id": 3002
             },
             {
-                "type": "gallery",
+                "type": "drawing",
                 "path": "/images/products/prod_3001_Screenshot-2026-07-22-173040.png",
-                "available": false,
+                "available": true,
                 "legacy_file": "2026/07/Screenshot-2026-07-22-173040.png",
                 "legacy_attachment_id": 3003
             }
@@ -9160,9 +9160,9 @@
                 "legacy_attachment_id": 3006
             },
             {
-                "type": "gallery",
+                "type": "drawing",
                 "path": "/images/products/prod_3005_Screenshot-2026-07-22-173304.png",
-                "available": false,
+                "available": true,
                 "legacy_file": "2026/07/Screenshot-2026-07-22-173304.png",
                 "legacy_attachment_id": 3007
             }
@@ -9207,9 +9207,9 @@
                 "legacy_attachment_id": 3010
             },
             {
-                "type": "gallery",
+                "type": "drawing",
                 "path": "/images/products/prod_3009_Screenshot-2026-07-22-173514.png",
-                "available": false,
+                "available": true,
                 "legacy_file": "2026/07/Screenshot-2026-07-22-173514.png",
                 "legacy_attachment_id": 3011
             }
@@ -9254,9 +9254,9 @@
                 "legacy_attachment_id": 3014
             },
             {
-                "type": "gallery",
+                "type": "drawing",
                 "path": "/images/products/prod_3013_Screenshot-2026-07-22-173720.png",
-                "available": false,
+                "available": true,
                 "legacy_file": "2026/07/Screenshot-2026-07-22-173720.png",
                 "legacy_attachment_id": 3015
             }
@@ -9301,9 +9301,9 @@
                 "legacy_attachment_id": 3019
             },
             {
-                "type": "gallery",
+                "type": "drawing",
                 "path": "/images/products/prod_3017_Screenshot-2026-07-22-173936.png",
-                "available": false,
+                "available": true,
                 "legacy_file": "2026/07/Screenshot-2026-07-22-173936.png",
                 "legacy_attachment_id": 3020
             }
@@ -9352,9 +9352,9 @@
                 "legacy_attachment_id": 3023
             },
             {
-                "type": "gallery",
+                "type": "drawing",
                 "path": "/images/products/prod_3022_Screenshot-2026-07-22-174129.png",
-                "available": false,
+                "available": true,
                 "legacy_file": "2026/07/Screenshot-2026-07-22-174129.png",
                 "legacy_attachment_id": 3024
             }
@@ -9403,9 +9403,9 @@
                 "legacy_attachment_id": 3027
             },
             {
-                "type": "gallery",
+                "type": "drawing",
                 "path": "/images/products/prod_3026_Screenshot-2026-07-22-174343.png",
-                "available": false,
+                "available": true,
                 "legacy_file": "2026/07/Screenshot-2026-07-22-174343.png",
                 "legacy_attachment_id": 3028
             }
@@ -9450,9 +9450,9 @@
                 "legacy_attachment_id": 3031
             },
             {
-                "type": "gallery",
+                "type": "drawing",
                 "path": "/images/products/prod_3030_Screenshot-2026-07-22-174536.png",
-                "available": false,
+                "available": true,
                 "legacy_file": "2026/07/Screenshot-2026-07-22-174536.png",
                 "legacy_attachment_id": 3032
             }
@@ -9493,9 +9493,9 @@
                 "legacy_attachment_id": 3035
             },
             {
-                "type": "gallery",
+                "type": "drawing",
                 "path": "/images/products/prod_3034_Screenshot-2026-07-22-174809.png",
-                "available": false,
+                "available": true,
                 "legacy_file": "2026/07/Screenshot-2026-07-22-174809.png",
                 "legacy_attachment_id": 3036
             }
@@ -9536,9 +9536,9 @@
                 "legacy_attachment_id": 3039
             },
             {
-                "type": "gallery",
+                "type": "drawing",
                 "path": "/images/products/prod_3038_Screenshot-2026-07-22-175001.png",
-                "available": false,
+                "available": true,
                 "legacy_file": "2026/07/Screenshot-2026-07-22-175001.png",
                 "legacy_attachment_id": 3040
             }
@@ -9575,9 +9575,9 @@
                 "legacy_attachment_id": 3043
             },
             {
-                "type": "gallery",
+                "type": "drawing",
                 "path": "/images/products/prod_3042_Screenshot-2026-07-22-175158.png",
-                "available": false,
+                "available": true,
                 "legacy_file": "2026/07/Screenshot-2026-07-22-175158.png",
                 "legacy_attachment_id": 3044
             }
@@ -9614,23 +9614,23 @@
                 "legacy_attachment_id": 3047
             },
             {
-                "type": "gallery",
+                "type": "drawing",
                 "path": "/images/products/prod_3046_Screenshot-2026-07-22-175440.png",
-                "available": false,
+                "available": true,
                 "legacy_file": "2026/07/Screenshot-2026-07-22-175440.png",
                 "legacy_attachment_id": 3050
             },
             {
-                "type": "gallery",
+                "type": "drawing",
                 "path": "/images/products/prod_3046_Screenshot-2026-07-22-175401.png",
-                "available": false,
+                "available": true,
                 "legacy_file": "2026/07/Screenshot-2026-07-22-175401.png",
                 "legacy_attachment_id": 3048
             },
             {
-                "type": "gallery",
+                "type": "drawing",
                 "path": "/images/products/prod_3046_Screenshot-2026-07-22-175422.png",
-                "available": false,
+                "available": true,
                 "legacy_file": "2026/07/Screenshot-2026-07-22-175422.png",
                 "legacy_attachment_id": 3049
             }
@@ -9687,9 +9687,9 @@
                 "legacy_attachment_id": 3053
             },
             {
-                "type": "gallery",
+                "type": "drawing",
                 "path": "/images/products/prod_3052_Screenshot-2026-07-22-175723.png",
-                "available": false,
+                "available": true,
                 "legacy_file": "2026/07/Screenshot-2026-07-22-175723.png",
                 "legacy_attachment_id": 3054
             }
@@ -9734,9 +9734,9 @@
                 "legacy_attachment_id": 3057
             },
             {
-                "type": "gallery",
+                "type": "drawing",
                 "path": "/images/products/prod_3056_Screenshot-2026-07-22-175852.png",
-                "available": false,
+                "available": true,
                 "legacy_file": "2026/07/Screenshot-2026-07-22-175852.png",
                 "legacy_attachment_id": 3058
             }
@@ -9785,23 +9785,23 @@
                 "legacy_attachment_id": 3061
             },
             {
-                "type": "gallery",
+                "type": "drawing",
                 "path": "/images/products/prod_3060_Screenshot-2026-07-22-180137.png",
-                "available": false,
+                "available": true,
                 "legacy_file": "2026/07/Screenshot-2026-07-22-180137.png",
                 "legacy_attachment_id": 3062
             },
             {
-                "type": "gallery",
+                "type": "drawing",
                 "path": "/images/products/prod_3060_Screenshot-2026-07-22-180154.png",
-                "available": false,
+                "available": true,
                 "legacy_file": "2026/07/Screenshot-2026-07-22-180154.png",
                 "legacy_attachment_id": 3063
             },
             {
-                "type": "gallery",
+                "type": "drawing",
                 "path": "/images/products/prod_3060_Screenshot-2026-07-22-180211.png",
-                "available": false,
+                "available": true,
                 "legacy_file": "2026/07/Screenshot-2026-07-22-180211.png",
                 "legacy_attachment_id": 3064
             }
@@ -9850,16 +9850,16 @@
                 "legacy_attachment_id": 3067
             },
             {
-                "type": "gallery",
+                "type": "drawing",
                 "path": "/images/products/prod_3066_Screenshot-2026-07-22-180415.png",
-                "available": false,
+                "available": true,
                 "legacy_file": "2026/07/Screenshot-2026-07-22-180415.png",
                 "legacy_attachment_id": 3068
             },
             {
-                "type": "gallery",
+                "type": "drawing",
                 "path": "/images/products/prod_3066_Screenshot-2026-07-22-180432.png",
-                "available": false,
+                "available": true,
                 "legacy_file": "2026/07/Screenshot-2026-07-22-180432.png",
                 "legacy_attachment_id": 3069
             }
@@ -9908,16 +9908,16 @@
                 "legacy_attachment_id": 3072
             },
             {
-                "type": "gallery",
+                "type": "drawing",
                 "path": "/images/products/prod_3071_Screenshot-2026-07-22-180631.png",
-                "available": false,
+                "available": true,
                 "legacy_file": "2026/07/Screenshot-2026-07-22-180631.png",
                 "legacy_attachment_id": 3073
             },
             {
-                "type": "gallery",
+                "type": "drawing",
                 "path": "/images/products/prod_3071_Screenshot-2026-07-22-180646.png",
-                "available": false,
+                "available": true,
                 "legacy_file": "2026/07/Screenshot-2026-07-22-180646.png",
                 "legacy_attachment_id": 3074
             }
@@ -9949,9 +9949,9 @@
                 "legacy_attachment_id": 3077
             },
             {
-                "type": "gallery",
+                "type": "drawing",
                 "path": "/images/products/prod_3076_Screenshot-2026-07-22-180905.png",
-                "available": false,
+                "available": true,
                 "legacy_file": "2026/07/Screenshot-2026-07-22-180905.png",
                 "legacy_attachment_id": 3078
             }
@@ -9988,9 +9988,9 @@
                 "legacy_attachment_id": 3093
             },
             {
-                "type": "gallery",
+                "type": "drawing",
                 "path": "/images/products/prod_3091_Screenshot-2026-08-05-120735.png",
-                "available": false,
+                "available": true,
                 "legacy_file": "2026/08/Screenshot-2026-08-05-120735.png",
                 "legacy_attachment_id": 3092
             }
@@ -10027,9 +10027,9 @@
                 "legacy_attachment_id": 3096
             },
             {
-                "type": "gallery",
+                "type": "drawing",
                 "path": "/images/products/prod_3098_Screenshot-2026-08-05-120735.png",
-                "available": false,
+                "available": true,
                 "legacy_file": "2026/08/Screenshot-2026-08-05-120735.png",
                 "legacy_attachment_id": 3092
             }
@@ -10066,9 +10066,9 @@
                 "legacy_attachment_id": 3101
             },
             {
-                "type": "gallery",
+                "type": "drawing",
                 "path": "/images/products/prod_3100_Screenshot-2026-08-05-120735.png",
-                "available": false,
+                "available": true,
                 "legacy_file": "2026/08/Screenshot-2026-08-05-120735.png",
                 "legacy_attachment_id": 3092
             }
@@ -10105,9 +10105,9 @@
                 "legacy_attachment_id": 3104
             },
             {
-                "type": "gallery",
+                "type": "drawing",
                 "path": "/images/products/prod_3103_Screenshot-2026-08-05-120735.png",
-                "available": false,
+                "available": true,
                 "legacy_file": "2026/08/Screenshot-2026-08-05-120735.png",
                 "legacy_attachment_id": 3092
             }
@@ -10144,9 +10144,9 @@
                 "legacy_attachment_id": 3107
             },
             {
-                "type": "gallery",
+                "type": "drawing",
                 "path": "/images/products/prod_3106_Screenshot-2026-08-05-124414.png",
-                "available": false,
+                "available": true,
                 "legacy_file": "2026/08/Screenshot-2026-08-05-124414.png",
                 "legacy_attachment_id": 3108
             }
@@ -10183,9 +10183,9 @@
                 "legacy_attachment_id": 3112
             },
             {
-                "type": "gallery",
+                "type": "drawing",
                 "path": "/images/products/prod_3111_Screenshot-2026-08-05-124414.png",
-                "available": false,
+                "available": true,
                 "legacy_file": "2026/08/Screenshot-2026-08-05-124414.png",
                 "legacy_attachment_id": 3108
             }
@@ -10222,9 +10222,9 @@
                 "legacy_attachment_id": 3115
             },
             {
-                "type": "gallery",
+                "type": "drawing",
                 "path": "/images/products/prod_3114_Screenshot-2026-08-05-124414.png",
-                "available": false,
+                "available": true,
                 "legacy_file": "2026/08/Screenshot-2026-08-05-124414.png",
                 "legacy_attachment_id": 3108
             }
@@ -10261,9 +10261,9 @@
                 "legacy_attachment_id": 3118
             },
             {
-                "type": "gallery",
+                "type": "drawing",
                 "path": "/images/products/prod_3117_Screenshot-2026-08-05-124414.png",
-                "available": false,
+                "available": true,
                 "legacy_file": "2026/08/Screenshot-2026-08-05-124414.png",
                 "legacy_attachment_id": 3108
             }
@@ -10304,9 +10304,9 @@
                 "legacy_attachment_id": 3121
             },
             {
-                "type": "gallery",
+                "type": "drawing",
                 "path": "/images/products/prod_3120_Screenshot-2026-08-05-140320.png",
-                "available": false,
+                "available": true,
                 "legacy_file": "2026/08/Screenshot-2026-08-05-140320.png",
                 "legacy_attachment_id": 3122
             }
@@ -10347,9 +10347,9 @@
                 "legacy_attachment_id": 3125
             },
             {
-                "type": "gallery",
+                "type": "drawing",
                 "path": "/images/products/prod_3124_Screenshot-2026-08-05-140320.png",
-                "available": false,
+                "available": true,
                 "legacy_file": "2026/08/Screenshot-2026-08-05-140320.png",
                 "legacy_attachment_id": 3122
             }
@@ -10390,9 +10390,9 @@
                 "legacy_attachment_id": 3128
             },
             {
-                "type": "gallery",
+                "type": "drawing",
                 "path": "/images/products/prod_3127_Screenshot-2026-08-05-140320.png",
-                "available": false,
+                "available": true,
                 "legacy_file": "2026/08/Screenshot-2026-08-05-140320.png",
                 "legacy_attachment_id": 3122
             }
@@ -10433,9 +10433,9 @@
                 "legacy_attachment_id": 3131
             },
             {
-                "type": "gallery",
+                "type": "drawing",
                 "path": "/images/products/prod_3130_Screenshot-2026-08-05-140320.png",
-                "available": false,
+                "available": true,
                 "legacy_file": "2026/08/Screenshot-2026-08-05-140320.png",
                 "legacy_attachment_id": 3122
             }
@@ -10472,9 +10472,9 @@
                 "legacy_attachment_id": 3134
             },
             {
-                "type": "gallery",
+                "type": "drawing",
                 "path": "/images/products/prod_3133_Screenshot-2026-08-05-141741.png",
-                "available": false,
+                "available": true,
                 "legacy_file": "2026/08/Screenshot-2026-08-05-141741.png",
                 "legacy_attachment_id": 3135
             }
@@ -10511,9 +10511,9 @@
                 "legacy_attachment_id": 3138
             },
             {
-                "type": "gallery",
+                "type": "drawing",
                 "path": "/images/products/prod_3137_Screenshot-2026-08-05-141741.png",
-                "available": false,
+                "available": true,
                 "legacy_file": "2026/08/Screenshot-2026-08-05-141741.png",
                 "legacy_attachment_id": 3135
             }
@@ -10550,9 +10550,9 @@
                 "legacy_attachment_id": 3141
             },
             {
-                "type": "gallery",
+                "type": "drawing",
                 "path": "/images/products/prod_3140_Screenshot-2026-08-05-141741.png",
-                "available": false,
+                "available": true,
                 "legacy_file": "2026/08/Screenshot-2026-08-05-141741.png",
                 "legacy_attachment_id": 3135
             }
@@ -10589,9 +10589,9 @@
                 "legacy_attachment_id": 3145
             },
             {
-                "type": "gallery",
+                "type": "drawing",
                 "path": "/images/products/prod_3143_Screenshot-2026-08-05-141741.png",
-                "available": false,
+                "available": true,
                 "legacy_file": "2026/08/Screenshot-2026-08-05-141741.png",
                 "legacy_attachment_id": 3135
             }
@@ -10623,9 +10623,9 @@
                 "legacy_attachment_id": 3148
             },
             {
-                "type": "gallery",
+                "type": "drawing",
                 "path": "/images/products/prod_3147_Screenshot-2026-08-05-142619.png",
-                "available": false,
+                "available": true,
                 "legacy_file": "2026/08/Screenshot-2026-08-05-142619.png",
                 "legacy_attachment_id": 3149
             }
@@ -10657,9 +10657,9 @@
                 "legacy_attachment_id": 3152
             },
             {
-                "type": "gallery",
+                "type": "drawing",
                 "path": "/images/products/prod_3151_Screenshot-2026-08-05-142619.png",
-                "available": false,
+                "available": true,
                 "legacy_file": "2026/08/Screenshot-2026-08-05-142619.png",
                 "legacy_attachment_id": 3149
             }
@@ -10691,9 +10691,9 @@
                 "legacy_attachment_id": 3155
             },
             {
-                "type": "gallery",
+                "type": "drawing",
                 "path": "/images/products/prod_3154_Screenshot-2026-08-05-142619.png",
-                "available": false,
+                "available": true,
                 "legacy_file": "2026/08/Screenshot-2026-08-05-142619.png",
                 "legacy_attachment_id": 3149
             }
@@ -10725,9 +10725,9 @@
                 "legacy_attachment_id": 3158
             },
             {
-                "type": "gallery",
+                "type": "drawing",
                 "path": "/images/products/prod_3157_Screenshot-2026-08-05-142619.png",
-                "available": false,
+                "available": true,
                 "legacy_file": "2026/08/Screenshot-2026-08-05-142619.png",
                 "legacy_attachment_id": 3149
             }
@@ -10764,9 +10764,9 @@
                 "legacy_attachment_id": 3161
             },
             {
-                "type": "gallery",
+                "type": "drawing",
                 "path": "/images/products/prod_3160_Screenshot-2026-08-05-143202.png",
-                "available": false,
+                "available": true,
                 "legacy_file": "2026/08/Screenshot-2026-08-05-143202.png",
                 "legacy_attachment_id": 3162
             }
@@ -10803,9 +10803,9 @@
                 "legacy_attachment_id": 3165
             },
             {
-                "type": "gallery",
+                "type": "drawing",
                 "path": "/images/products/prod_3164_Screenshot-2026-08-05-143202.png",
-                "available": false,
+                "available": true,
                 "legacy_file": "2026/08/Screenshot-2026-08-05-143202.png",
                 "legacy_attachment_id": 3162
             }
@@ -10842,9 +10842,9 @@
                 "legacy_attachment_id": 3168
             },
             {
-                "type": "gallery",
+                "type": "drawing",
                 "path": "/images/products/prod_3167_Screenshot-2026-08-05-143202.png",
-                "available": false,
+                "available": true,
                 "legacy_file": "2026/08/Screenshot-2026-08-05-143202.png",
                 "legacy_attachment_id": 3162
             }
@@ -10881,9 +10881,9 @@
                 "legacy_attachment_id": 3171
             },
             {
-                "type": "gallery",
+                "type": "drawing",
                 "path": "/images/products/prod_3170_Screenshot-2026-08-05-143202.png",
-                "available": false,
+                "available": true,
                 "legacy_file": "2026/08/Screenshot-2026-08-05-143202.png",
                 "legacy_attachment_id": 3162
             }
@@ -10924,9 +10924,9 @@
                 "legacy_attachment_id": 3192
             },
             {
-                "type": "gallery",
+                "type": "drawing",
                 "path": "/images/products/prod_3189_Screenshot-2026-08-13-123621.png",
-                "available": false,
+                "available": true,
                 "legacy_file": "2026/08/Screenshot-2026-08-13-123621.png",
                 "legacy_attachment_id": 3190
             }
@@ -10967,9 +10967,9 @@
                 "legacy_attachment_id": 3195
             },
             {
-                "type": "gallery",
+                "type": "drawing",
                 "path": "/images/products/prod_3194_Screenshot-2026-08-13-124357.png",
-                "available": false,
+                "available": true,
                 "legacy_file": "2026/08/Screenshot-2026-08-13-124357.png",
                 "legacy_attachment_id": 3196
             }
@@ -11010,9 +11010,9 @@
                 "legacy_attachment_id": 3199
             },
             {
-                "type": "gallery",
+                "type": "drawing",
                 "path": "/images/products/prod_3198_Screenshot-2026-08-13-125800.png",
-                "available": false,
+                "available": true,
                 "legacy_file": "2026/08/Screenshot-2026-08-13-125800.png",
                 "legacy_attachment_id": 3200
             }
@@ -11053,9 +11053,9 @@
                 "legacy_attachment_id": 3203
             },
             {
-                "type": "gallery",
+                "type": "drawing",
                 "path": "/images/products/prod_3202_Screenshot-2026-08-13-130013.png",
-                "available": false,
+                "available": true,
                 "legacy_file": "2026/08/Screenshot-2026-08-13-130013.png",
                 "legacy_attachment_id": 3204
             }
@@ -11096,9 +11096,9 @@
                 "legacy_attachment_id": 3209
             },
             {
-                "type": "gallery",
+                "type": "drawing",
                 "path": "/images/products/prod_3208_Screenshot-2026-08-14-170958.png",
-                "available": false,
+                "available": true,
                 "legacy_file": "2026/08/Screenshot-2026-08-14-170958.png",
                 "legacy_attachment_id": 3210
             }
@@ -11139,9 +11139,9 @@
                 "legacy_attachment_id": 3213
             },
             {
-                "type": "gallery",
+                "type": "drawing",
                 "path": "/images/products/prod_3212_Screenshot-2026-08-14-171223.png",
-                "available": false,
+                "available": true,
                 "legacy_file": "2026/08/Screenshot-2026-08-14-171223.png",
                 "legacy_attachment_id": 3214
             }
@@ -11182,9 +11182,9 @@
                 "legacy_attachment_id": 3217
             },
             {
-                "type": "gallery",
+                "type": "drawing",
                 "path": "/images/products/prod_3216_Screenshot-2026-08-14-171517.png",
-                "available": false,
+                "available": true,
                 "legacy_file": "2026/08/Screenshot-2026-08-14-171517.png",
                 "legacy_attachment_id": 3218
             }
@@ -11225,9 +11225,9 @@
                 "legacy_attachment_id": 3221
             },
             {
-                "type": "gallery",
+                "type": "drawing",
                 "path": "/images/products/prod_3220_Screenshot-2026-08-14-171753.png",
-                "available": false,
+                "available": true,
                 "legacy_file": "2026/08/Screenshot-2026-08-14-171753.png",
                 "legacy_attachment_id": 3222
             }
@@ -11259,9 +11259,9 @@
                 "legacy_attachment_id": 3263
             },
             {
-                "type": "gallery",
+                "type": "drawing",
                 "path": "/images/products/prod_3262_Screenshot-2026-09-11-173928.png",
-                "available": false,
+                "available": true,
                 "legacy_file": "2026/09/Screenshot-2026-09-11-173928.png",
                 "legacy_attachment_id": 3264
             }
@@ -11298,9 +11298,9 @@
                 "legacy_attachment_id": 3267
             },
             {
-                "type": "gallery",
+                "type": "drawing",
                 "path": "/images/products/prod_3266_Screenshot-2026-09-11-174155.png",
-                "available": false,
+                "available": true,
                 "legacy_file": "2026/09/Screenshot-2026-09-11-174155.png",
                 "legacy_attachment_id": 3268
             }
@@ -11341,9 +11341,9 @@
                 "legacy_attachment_id": 3271
             },
             {
-                "type": "gallery",
+                "type": "drawing",
                 "path": "/images/products/prod_3270_Screenshot-2026-09-11-174652.png",
-                "available": false,
+                "available": true,
                 "legacy_file": "2026/09/Screenshot-2026-09-11-174652.png",
                 "legacy_attachment_id": 3272
             }
@@ -11375,9 +11375,9 @@
                 "legacy_attachment_id": 3275
             },
             {
-                "type": "gallery",
+                "type": "drawing",
                 "path": "/images/products/prod_3274_Screenshot-2026-09-11-174902.png",
-                "available": false,
+                "available": true,
                 "legacy_file": "2026/09/Screenshot-2026-09-11-174902.png",
                 "legacy_attachment_id": 3276
             }
@@ -11430,16 +11430,16 @@
                 "legacy_attachment_id": 3279
             },
             {
-                "type": "gallery",
+                "type": "drawing",
                 "path": "/images/products/prod_3278_Screenshot-2026-09-11-175146.png",
-                "available": false,
+                "available": true,
                 "legacy_file": "2026/09/Screenshot-2026-09-11-175146.png",
                 "legacy_attachment_id": 3281
             },
             {
-                "type": "gallery",
+                "type": "drawing",
                 "path": "/images/products/prod_3278_Screenshot-2026-09-11-175209.png",
-                "available": false,
+                "available": true,
                 "legacy_file": "2026/09/Screenshot-2026-09-11-175209.png",
                 "legacy_attachment_id": 3282
             }
