@@ -2697,6 +2697,11 @@
                 "available": true,
                 "legacy_file": "2025/10/Image_20250702134756.png",
                 "legacy_attachment_id": 2334
+            },
+            {
+                "type": "situ",
+                "path": "/images/products/prod_2340-situ-1.jpg",
+                "available": true
             }
         ],
         "created_at": "2025-10-11 08:26:38",
@@ -2731,6 +2736,11 @@
                 "available": true,
                 "legacy_file": "2025/10/Image_20250702134751.png",
                 "legacy_attachment_id": 2346
+            },
+            {
+                "type": "situ",
+                "path": "/images/products/prod_2342-situ-1.jpg",
+                "available": true
             }
         ],
         "created_at": "2025-10-11 08:32:58",
@@ -2765,6 +2775,11 @@
                 "available": true,
                 "legacy_file": "2025/10/Image_20250702134751.png",
                 "legacy_attachment_id": 2346
+            },
+            {
+                "type": "situ",
+                "path": "/images/products/prod_2348-situ-1.jpg",
+                "available": true
             }
         ],
         "created_at": "2025-10-11 08:34:32",
@@ -2799,6 +2814,11 @@
                 "available": true,
                 "legacy_file": "2025/10/Image_20250702134751.png",
                 "legacy_attachment_id": 2346
+            },
+            {
+                "type": "situ",
+                "path": "/images/products/prod_2350-situ-1.jpg",
+                "available": true
             }
         ],
         "created_at": "2025-10-11 08:36:40",
@@ -2833,6 +2853,11 @@
                 "available": true,
                 "legacy_file": "2025/10/Image_20250702134746.png",
                 "legacy_attachment_id": 2356
+            },
+            {
+                "type": "situ",
+                "path": "/images/products/prod_2352-situ-1.jpg",
+                "available": true
             }
         ],
         "created_at": "2025-10-11 08:40:12",
@@ -2867,6 +2892,11 @@
                 "available": true,
                 "legacy_file": "2025/10/Image_20250702134746.png",
                 "legacy_attachment_id": 2356
+            },
+            {
+                "type": "situ",
+                "path": "/images/products/prod_2358-situ-1.jpg",
+                "available": true
             }
         ],
         "created_at": "2025-10-11 08:42:57",
@@ -2901,6 +2931,11 @@
                 "available": true,
                 "legacy_file": "2025/10/Image_20250702134746.png",
                 "legacy_attachment_id": 2356
+            },
+            {
+                "type": "situ",
+                "path": "/images/products/prod_2361-situ-1.jpg",
+                "available": true
             }
         ],
         "created_at": "2025-10-11 08:44:43",
@@ -2935,6 +2970,11 @@
                 "available": true,
                 "legacy_file": "2025/10/Image_20251011125146.png",
                 "legacy_attachment_id": 2367
+            },
+            {
+                "type": "situ",
+                "path": "/images/products/prod_2363-situ-1.jpg",
+                "available": true
             }
         ],
         "created_at": "2025-10-11 08:52:40",
@@ -2969,6 +3009,11 @@
                 "available": true,
                 "legacy_file": "2025/10/Image_20251011125146.png",
                 "legacy_attachment_id": 2367
+            },
+            {
+                "type": "situ",
+                "path": "/images/products/prod_2369-situ-1.jpg",
+                "available": true
             }
         ],
         "created_at": "2025-10-11 08:53:48",
@@ -3003,6 +3048,11 @@
                 "available": true,
                 "legacy_file": "2025/10/Image_20251011125146.png",
                 "legacy_attachment_id": 2367
+            },
+            {
+                "type": "situ",
+                "path": "/images/products/prod_2371-situ-1.jpg",
+                "available": true
             }
         ],
         "created_at": "2025-10-11 08:54:57",
