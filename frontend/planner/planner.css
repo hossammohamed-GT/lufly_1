@@ -999,11 +999,13 @@
   color: var(--ds-text);
   box-shadow: var(--shadow-2);
   cursor: pointer;
-  /* the width is part of the motion: the button stretches out to the width of
-     the panel it is about to become */
-  width: auto;
-  transition: width 420ms cubic-bezier(0.22, 1, 0.36, 1), transform 240ms cubic-bezier(0.16, 1, 0.3, 1),
-              box-shadow 240ms ease, border-color 200ms ease, opacity 200ms ease;
+  /* Keep a real numeric start width: animating from `auto` makes the launcher
+     snap instead of easing. The label remains readable while the bar gently
+     grows toward the chat panel on hover. */
+  width: 220px;
+  max-width: calc(100vw - 40px);
+  transition: width 560ms cubic-bezier(0.16, 1, 0.3, 1), transform 360ms cubic-bezier(0.16, 1, 0.3, 1),
+              box-shadow 360ms ease, border-color 280ms ease, opacity 240ms ease;
 }
 
 /* Pointing at it is enough to show what it becomes. Mouse only: a touch screen
@@ -1013,6 +1015,10 @@
     width: var(--aichat-fab-w, var(--aichat-w));
     max-width: calc(100vw - 40px);
   }
+}
+
+@media (max-width: 560px) {
+  .aichat-fab { width: min(220px, calc(100vw - 40px)); }
 }
 
 /* and it stays that wide for as long as the chat is open — the panel grows out
@@ -1116,7 +1122,8 @@ body.has-favmail .aichat-fab {
      own width, and the panel's bottom edge is where the bar is, so revealing it
      from that edge upward reads as the chat being formed out of the button.
      Nothing inside is scaled, so no text is ever squashed on the way in. */
-  animation: aichat-in 460ms cubic-bezier(0.16, 1, 0.3, 1) both;
+  transform-origin: bottom right;
+  animation: aichat-in 560ms cubic-bezier(0.16, 1, 0.3, 1) both;
 }
 
 .aichat-panel[hidden] {
@@ -1126,13 +1133,13 @@ body.has-favmail .aichat-fab {
 @keyframes aichat-in {
   0% {
     clip-path: inset(100% 0 0 0 round var(--radius-xl));
-    transform: translateY(10px);
-    opacity: 0.5;
+    transform: translateY(18px) scale(.965);
+    opacity: 0;
   }
   45% { opacity: 1; }
   100% {
     clip-path: inset(0 0 0 0 round var(--radius-xl));
-    transform: translateY(0);
+    transform: translateY(0) scale(1);
     opacity: 1;
   }
 }
@@ -1154,8 +1161,8 @@ body.has-favmail .aichat-fab {
   }
   100% {
     clip-path: inset(100% 0 0 0 round var(--radius-xl));
-    transform: translateY(8px);
-    opacity: 0.75;
+    transform: translateY(14px) scale(.965);
+    opacity: 0;
   }
 }
 
