@@ -7,16 +7,6 @@ namespace Database\Schema;
 use Core\Database\Schema\Blueprint;
 use Core\Database\Schema\SchemaDefinition;
 
-/**
- * Media attached to products or variants. The same media library row can be
- * reused in many places.
- *
- * Types drive the storefront sections:
- *   main | gallery  -> "Photos" section (exactly one row is flagged is_primary
- *                      per product, normally the single 'main' photo)
- *   drawing         -> "Drawing" section (technical / dimensional drawings)
- *   situ            -> "Installed" section (photo of the product on site)
- */
 class ProductMediaSchema extends SchemaDefinition
 {
     protected string $table = 'product_media';

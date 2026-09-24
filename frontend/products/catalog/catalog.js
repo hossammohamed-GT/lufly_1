@@ -1,8 +1,3 @@
-/* ============================================================
-   Catalog: the sort select re-renders live search results
-   instantly; without an active live search it submits the form.
-   ============================================================ */
-
 (function () {
   'use strict';
 
@@ -12,7 +7,6 @@
 
     select.addEventListener('change', function () {
       if (select.form.classList.contains('is-live')) {
-        /* live search owns the grid: re-sort in place, no reload */
         select.form.dispatchEvent(new CustomEvent('livesearch:rerender'));
         return;
       }
@@ -27,20 +21,9 @@
   }
 })();
 
-/* ============================================================
-   Product card: cycle through every image of the product on
-   hover - photos first, then the technical drawings, then the
-   installed shots. Each slide names its section (see
-   data-pcard-kind on the slide and the label map on the card),
-   so a drawing that rotates in is never mistaken for a photo.
-   Delegated from the grid so cards injected by live search work too.
-   ============================================================ */
-
 (function () {
   'use strict';
 
-  /* hovering advances to the next photo straight away, then each
-     following photo is held for HOLD ms before moving on */
   var HOLD = 3000;
   var timers = new WeakMap();
 
@@ -58,8 +41,6 @@
     dots.forEach(function (dot, n) { dot.classList.toggle('is-on', n === index); });
     media.setAttribute('data-pcard-index', String(index));
 
-    /* the badge only speaks up for drawings / installed shots: the label
-       map lives on the card ("data-pcard-kind-drawing" and friends) */
     var badge = media.querySelector('[data-pcard-kind-label]');
     if (badge) {
       var kind = imgs[index].getAttribute('data-pcard-kind') || '';
@@ -78,7 +59,6 @@
     if (slides(media).length < 2) return;
     if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
 
-    /* immediate first step, so the hover feels responsive */
     advance(media);
 
     var timer = setInterval(function () { advance(media); }, HOLD);
@@ -105,7 +85,6 @@
       if (media) stop(media);
     }, true);
 
-    /* keyboard users get the same preview when the card link is focused */
     document.addEventListener('focusin', function (e) {
       var media = e.target.closest ? e.target.closest('[data-pcard-cycle]') : null;
       if (media) start(media);

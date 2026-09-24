@@ -1,23 +1,7 @@
-/* ==========================================================================
-   the finder — what the floating chat adds to the shared shell
-   --------------------------------------------------------------------------
-   The shell itself (bubble, panel, head, grip, foot) lives in
-   frontend/planner/planner.css and is loaded next to this file: it is the same
-   window the planner uses. Everything below belongs to the finder alone — the
-   two tabs, the chips, the bubbles, the bank of product cards, the photo picker
-   and the promise of the planner.
-   ========================================================================== */
-
-/* The panel is a column of its own: header, tabs, body, compose, foot.
-   The size lives on the chat itself, not on the panel, because the launcher
-   below it reads the same numbers — it stretches to the panel's width, and two
-   sources for one width is one mismatch waiting to happen. */
 .aichat[data-assistant] {
   --aichat-w: 412px;
   --aichat-h: min(640px, calc(100vh - 148px));
 }
-
-/* ---------- the two tabs ---------- */
 
 .aichat-tabs {
   display: flex;
@@ -80,13 +64,9 @@
   display: block;
 }
 
-/* The conversation scrolls to its end, and the end must clear the composer:
-   without this the last thing the chat said sits half under the input. */
 .aichat-pane {
   padding-block-end: 14px;
 }
-
-/* ---------- the welcome: one sentence, then chips ---------- */
 
 .aichat-welcome[hidden] {
   display: none;
@@ -130,8 +110,6 @@
   color: var(--ds-primary);
   font-weight: 600;
 }
-
-/* ---------- the address, asked once ---------- */
 
 .aichat-gate[hidden] {
   display: none;
@@ -195,8 +173,6 @@
   cursor: pointer;
 }
 
-/* ---------- the conversation ---------- */
-
 .aichat-log-list {
   display: grid;
   gap: var(--space-4, 16px);
@@ -231,27 +207,16 @@
   color: var(--ds-text);
 }
 
-/* ---------- while the answer is being written ------------------------------- */
-
-/* The visitor watches this bubble for a second or two, so it may as well be
-   worth watching: an iridescent orb turning slowly, a scan of rings over it,
-   and a gloss sweeping across — the look of a fingerprint reader. The words
-   stay on top of the glow. Everything below moves with transform/opacity only,
-   so a phone does not heat up while it waits. */
-
 .aichat-say.is-waiting {
   position: relative;
   isolation: isolate;
   display: flex;
   align-items: center;
   overflow: hidden;
-  /* room for the light to move in: a strip as tall as the words would cut the
-     orb in half */
   min-height: 76px;
   padding: 16px 18px;
   border: 1px solid var(--ds-border);
   border-radius: var(--radius-lg);
-  /* frosted glass over the colour, the way the card in the reference reads */
   background: color-mix(in srgb, var(--ds-surface) 74%, transparent);
   box-shadow: inset 0 1px 0 color-mix(in srgb, #ffffff 70%, transparent);
 }
@@ -281,9 +246,6 @@
   overflow: hidden;
 }
 
-/* The colour: a conic holo gradient turned until it is light rather than shape,
-   with a violet rim and a white core, so it reads as a sphere behind glass and
-   not as a smear of paint. */
 .aichat-aura-orb {
   inset: -78% -22%;
   border-radius: 50%;
@@ -291,7 +253,7 @@
     radial-gradient(58% 58% at 32% 42%, color-mix(in srgb, #ffffff 92%, transparent) 0%, transparent 62%),
     radial-gradient(105% 118% at 34% 46%, transparent 52%, color-mix(in srgb, #6b3ad6 46%, transparent) 78%, transparent 90%),
     conic-gradient(from 205deg,
-      #ff6fd8, #a86bff, #59c9ff, #63ffd5, #ffe27a, #ff6fd8);
+
   filter: blur(22px) saturate(180%);
   opacity: 0.78;
   animation: aichat-orb 11s linear infinite;
@@ -303,7 +265,6 @@
   to   { transform: rotate(1turn) scale(1.05); }
 }
 
-/* the scan: rings of a reader, breathing over the colour */
 .aichat-aura-rings {
   background: repeating-radial-gradient(circle at 30% 50%,
       transparent 0 6px,
@@ -319,7 +280,6 @@
   50% { transform: scale(1.09); opacity: 0.42; }
 }
 
-/* the gloss that crosses the bubble, like the shine on the card */
 .aichat-aura-sheen {
   inset: -80% auto;
   inset-inline-start: 0;
@@ -362,8 +322,6 @@
   border: 1px solid var(--ds-border);
 }
 
-/* ---------- the bank: the closest pieces ---------- */
-
 .aichat-bank {
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
@@ -393,8 +351,6 @@
   color: inherit;
 }
 
-/* what the visitor can do with a piece he likes: save it, or put it in the box
-   he will send to the team */
 .aichat-card-tools {
   display: flex;
   align-items: center;
@@ -455,8 +411,6 @@
   color: var(--ds-text-muted);
 }
 
-/* ---------- the answers the chat offers back ---------- */
-
 .aichat-choices {
   display: flex;
   flex-wrap: wrap;
@@ -501,8 +455,6 @@
   pointer-events: none;
 }
 
-/* ---------- notes and the way to the team ---------- */
-
 .aichat-note {
   margin: 0;
   padding: 9px 12px;
@@ -536,8 +488,6 @@
   border-color: var(--ds-primary-line);
   color: var(--ds-primary);
 }
-
-/* ---------- composing ---------- */
 
 .aichat-compose[hidden] {
   display: none;
@@ -690,8 +640,6 @@
   height: 18px;
 }
 
-/* ---------- the planner tab: a promise, not a form ---------- */
-
 .aichat-soon {
   display: grid;
   gap: 12px;
@@ -744,8 +692,6 @@
   text-decoration: none;
 }
 
-/* ---------- the promise on its own page (/planner) ---------- */
-
 .planner-soon .planner-grid {
   align-items: start;
 }
@@ -773,8 +719,6 @@
   font-weight: 600;
   text-decoration: none;
 }
-
-/* ---------- small screens ---------- */
 
 @media (max-width: 720px) {
   .aichat-tabs {
@@ -806,7 +750,6 @@
   }
 }
 
-/* the plan is what gets printed, not the chat */
 @media print {
   .aichat,
   .aichat-panel {

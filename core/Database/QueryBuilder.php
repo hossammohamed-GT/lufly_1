@@ -8,20 +8,16 @@ class QueryBuilder
 {
     private string $table = '';
 
-    /** @var string[] */
     private array $columns = ['*'];
 
-    /** @var array<int, array{clause: string, bindings: array<int, mixed>}> */
     private array $wheres = [];
 
-    /** @var array<int, string> */
     private array $orders = [];
 
     private ?int $limit = null;
 
     private ?int $offset = null;
 
-    /** @var (callable(array<string, mixed>): object)|null */
     private $hydrator = null;
 
     public function __construct(private readonly Connection $connection, ?string $table = null)
@@ -52,7 +48,7 @@ class QueryBuilder
     public function where(string $column, mixed $operator, mixed $value = null): static
     {
         if ($value === null && !in_array($operator, [null], true) && !is_string($operator)) {
-            // where('col', value) shorthand.
+
             $value = $operator;
             $operator = '=';
         } elseif ($value === null) {
@@ -64,7 +60,6 @@ class QueryBuilder
         return $this;
     }
 
-    /** @param array<int, mixed> $values */
     public function whereIn(string $column, array $values): static
     {
         if ($values === []) {
@@ -119,14 +114,12 @@ class QueryBuilder
         return $this;
     }
 
-    /** @param callable(array<string, mixed>): object $hydrator */
     public function hydrateWith(callable $hydrator): static
     {
         $this->hydrator = $hydrator;
         return $this;
     }
 
-    /** @return array<int, mixed> */
     public function get(): array
     {
         $sql = $this->toSql();
@@ -171,7 +164,6 @@ class QueryBuilder
         return $row->{$column} ?? null;
     }
 
-    /** @return array<int, mixed> */
     public function pluck(string $column): array
     {
         return array_map(
@@ -185,13 +177,11 @@ class QueryBuilder
         return $this->count() > 0;
     }
 
-    /** @param array<string, mixed> $values */
     public function insert(array $values): int|string
     {
         return $this->connection->insert($this->table, $values);
     }
 
-    /** @param array<string, mixed> $values */
     public function update(array $values): int
     {
         $sets = implode(', ', array_map(fn ($c) => $this->column((string) $c) . ' = ?', array_keys($values)));
@@ -239,7 +229,6 @@ class QueryBuilder
         return $sql;
     }
 
-    /** @return array<int, mixed> */
     public function bindings(): array
     {
         $bindings = [];
@@ -269,7 +258,6 @@ class QueryBuilder
         return in_array($operator, $allowed, true) ? $operator : '=';
     }
 
-    /** Quote a column identifier unless it contains expressions. */
     private function column(string $column): string
     {
         if ($column === '*' || str_contains($column, '(') || str_contains($column, ' ') || str_contains($column, '"') || str_contains($column, '`')) {

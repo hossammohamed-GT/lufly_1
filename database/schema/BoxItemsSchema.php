@@ -7,10 +7,6 @@ namespace Database\Schema;
 use Core\Database\Schema\Blueprint;
 use Core\Database\Schema\SchemaDefinition;
 
-/**
- * One piece inside a quotation box. A plain join row: deleting the product
- * removes it from every box automatically (CASCADE).
- */
 class BoxItemsSchema extends SchemaDefinition
 {
     protected string $table = 'box_items';

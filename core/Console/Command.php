@@ -26,10 +26,6 @@ abstract class Command
         return $this->description;
     }
 
-    /**
-     * @param string[] $args positional arguments
-     * @param array<string, string|bool> $options --key=value pairs
-     */
     abstract public function handle(array $args, array $options): int;
 
     protected function line(string $text = ''): void
@@ -52,7 +48,6 @@ abstract class Command
         $this->line("\033[36m" . $text . "\033[0m");
     }
 
-    /** @param array<string, string|bool> $options */
     protected function option(array $options, string $key, string|bool $default = false): string|bool
     {
         return $options[$key] ?? $default;

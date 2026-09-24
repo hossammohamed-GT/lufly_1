@@ -15,10 +15,8 @@ class MediaRepository extends Repository
 
     protected string $auditEntity = 'media';
 
-    /** @return Media[] */
     public function byCollection(string $collection): array
     {
-        /** @var Media[] $items */
         $items = Media::query()->where('collection', $collection)->latest()->get();
 
         return $items;

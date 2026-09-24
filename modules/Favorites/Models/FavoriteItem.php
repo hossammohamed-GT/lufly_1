@@ -6,10 +6,6 @@ namespace Modules\Favorites\Models;
 
 use Core\Database\Model;
 
-/**
- * A saved product inside a list. A plain join row (no soft delete: removing the
- * row is the removal, and deleting a product pulls it out of every list).
- */
 class FavoriteItem extends Model
 {
     protected static string $table = 'favorite_items';

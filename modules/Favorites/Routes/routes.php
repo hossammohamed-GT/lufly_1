@@ -10,13 +10,10 @@ return function (Router $router): void {
         return;
     }
 
-    /* Localized storefront routes:
-       /en/favorites · /tr/favoriler · /cs/oblibene (see resources/lang/<locale>/routes.php) */
     $router->group(['middleware' => 'web'], function (Router $router): void {
         $router->localized('GET', 'favorites.index', [FavoriteController::class, 'index'])
             ->name('favorites.index');
 
-        /* the link printed in the e-mailed copy of the list */
         $router->localized('GET', 'favorites.claim', [FavoriteController::class, 'claim'])
             ->where('token', '[A-Za-z0-9]{16,64}')
             ->name('favorites.claim');

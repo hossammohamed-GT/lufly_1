@@ -1,15 +1,4 @@
 <?php
-/**
- * Put-this-piece-in-the-box toggle — the heart's sibling.
- *
- * Rendered wherever a product appears (catalogue card, product page, the chat's
- * cards are built in JavaScript from the same contract). The markup carries the
- * correct state server-side, so the button is right even before the script runs;
- * frontend/box/box.js posts the click and paints every copy for that product.
- *
- * @var Core\View\View $view
- * @var array{product_id?: int|string, name?: string, variant?: string, on?: bool, label?: string} $props
- */
 if (!feature('box', true) || !(bool) config('box.enabled', true)) {
     return;
 }

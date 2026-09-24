@@ -1,7 +1,4 @@
 <?php
-/**
- * Props: label, variant (primary|secondary|ghost|danger), type, href, size (sm|md|lg)
- */
 $label = $props['label'] ?? '';
 $variant = $props['variant'] ?? 'primary';
 $type = $props['type'] ?? 'button';

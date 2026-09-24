@@ -162,7 +162,6 @@ return [
     'finish_gun_gray_title' => 'Gun Gray (PVD)',
     'finish_gun_gray_desc' => 'Minimalist mimari için tasarlanmış, yansıma yapmayan sakin saten gri metalik ton.',
 
-    /* HERO CINEMA */
     'cinema1_kicker' => 'Mimari Vitrifiye ve Armatür',
     'cinema1_tag' => 'Mükemmellikle Şekillenen Banyo Kültürü',
     'cinema1_desc' => 'Monolitik estetiğin Alman ve İsviçre mühendisliğiyle buluştuğu üst düzey bataryalar, duş sistemleri ve akıllı su armatürleri.',

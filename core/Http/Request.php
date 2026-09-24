@@ -9,20 +9,12 @@ use Core\Validation\Validator;
 
 class Request
 {
-    /** @var array<string, string> */
     private array $routeParams = [];
 
     private string $locale = '';
 
     private ?Route $route = null;
 
-    /**
-     * @param array<string, mixed> $query
-     * @param array<string, mixed> $post
-     * @param array<string, mixed> $cookies
-     * @param array<string, mixed> $files
-     * @param array<string, mixed> $server
-     */
     public function __construct(
         private readonly array $query = [],
         private readonly array $post = [],
@@ -70,7 +62,6 @@ class Request
         return '/' . ltrim($path, '/');
     }
 
-    /** @return string[] */
     public function segments(): array
     {
         return array_values(array_filter(explode('/', trim($this->path(), '/'))));
@@ -121,7 +112,6 @@ class Request
         return $this->wantsJson();
     }
 
-    /** @return array<string, mixed> */
     public function all(): array
     {
         $input = array_merge($this->query, $this->post);
@@ -130,7 +120,6 @@ class Request
         return is_array($json) ? array_merge($input, $json) : $input;
     }
 
-    /** @return array<string, mixed>|null */
     public function jsonPayload(): ?array
     {
         $contentType = (string) ($this->server('HTTP_CONTENT_TYPE') ?? $this->server('CONTENT_TYPE') ?? '');
@@ -181,13 +170,11 @@ class Request
         return $value !== null && $value !== '';
     }
 
-    /** @param string[] $keys */
     public function only(array $keys): array
     {
         return array_intersect_key($this->all(), array_flip($keys));
     }
 
-    /** @return array<string, mixed>|null */
     public function file(string $key): ?array
     {
         $file = $this->files[$key] ?? null;
@@ -202,7 +189,6 @@ class Request
         return $file !== null && $file['error'] !== UPLOAD_ERR_NO_FILE;
     }
 
-    /** @return array<string, mixed> */
     public function allFiles(): array
     {
         return $this->files;
@@ -221,7 +207,6 @@ class Request
         return $scheme . '://' . $host . $this->path();
     }
 
-    /** @param array<string, string> $params */
     public function setRouteParams(array $params): void
     {
         $this->routeParams = $params;
@@ -232,7 +217,6 @@ class Request
         return $this->routeParams[$key] ?? $default;
     }
 
-    /** @return array<string, string> */
     public function params(): array
     {
         return $this->routeParams;
@@ -258,12 +242,6 @@ class Request
         return $this->locale !== '' ? $this->locale : (string) config('localization.default', 'en');
     }
 
-    /**
-     * Validate request input; throws ValidationException on failure.
-     *
-     * @param array<string, string> $rules
-     * @return array<string, mixed> validated input
-     */
     public function validate(array $rules): array
     {
         $validator = new Validator($this->all(), $rules, $this->allFiles());

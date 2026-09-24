@@ -1,5 +1,4 @@
 <?php
-/** @var Core\View\View $view */
 $view->pushStyle('frontend/home/trust-bar/trust-bar.css');
 
 $contactUrl = route('contact');
@@ -23,8 +22,7 @@ $contactUrl = route('contact');
         </div>
 
         <div class="trust-grid">
-            <!-- 01. Warranty & Structural Load -->
-            <article class="trust-item">
+<article class="trust-item">
                 <div class="trust-item-top">
                     <span class="trust-icon" aria-hidden="true">
                         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3 20 6.2v5.3c0 4.9-3.4 8.6-8 10.5-4.6-1.9-8-5.6-8-10.5V6.2L12 3Z"/><path d="m8.8 12 2.2 2.2 4.2-4.7"/></svg>
@@ -37,9 +35,7 @@ $contactUrl = route('contact');
                 <h3><?= e(trans('home.trust_guarantee_title')) ?></h3>
                 <p><?= e(trans('home.trust_guarantee_desc')) ?></p>
             </article>
-
-            <!-- 02. Factory Direct & Water Economy -->
-            <article class="trust-item">
+<article class="trust-item">
                 <div class="trust-item-top">
                     <span class="trust-icon" aria-hidden="true">
                         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3c-2.4 3.2-6.5 7-6.5 11a6.5 6.5 0 0 0 13 0C18.5 10 14.4 6.2 12 3Z"/><path d="M9.5 14.5c-.4-1.6.3-3.2 1.6-4.2"/></svg>
@@ -52,9 +48,7 @@ $contactUrl = route('contact');
                 <h3><?= e(trans('home.trust_water_title')) ?></h3>
                 <p><?= e(trans('home.trust_water_desc')) ?></p>
             </article>
-
-            <!-- 03. Vitreous Ceramic & Nano Glaze -->
-            <article class="trust-item">
+<article class="trust-item">
                 <div class="trust-item-top">
                     <span class="trust-icon" aria-hidden="true">
                         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3c1 3-4 5.2-4 9.6a4 4 0 0 0 8 0c0-1.8-.8-3.1-1.6-4.4-.6 1-1.4 1.6-2.4 2 .6-2.4.6-5 0-7.2Z"/><path d="M12 20.5c3.6 0 6.5-.6 6.5-1.4 0-.6-1.6-1.1-4-1.3M12 20.5c-3.6 0-6.5-.6-6.5-1.4 0-.6 1.6-1.1 4-1.3"/></svg>
@@ -67,9 +61,7 @@ $contactUrl = route('contact');
                 <h3><?= e(trans('home.trust_ceramic_title')) ?></h3>
                 <p><?= e(trans('home.trust_ceramic_desc')) ?></p>
             </article>
-
-            <!-- 04. Logistics & Global Supply -->
-            <article class="trust-item">
+<article class="trust-item">
                 <div class="trust-item-top">
                     <span class="trust-icon" aria-hidden="true">
                         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="8.5"/><path d="M3.5 12h17M12 3.5c2.6 2.4 3.9 5.2 3.9 8.5s-1.3 6.1-3.9 8.5c-2.6-2.4-3.9-5.2-3.9-8.5s1.3-6.1 3.9-8.5Z"/><path d="M5.5 7.5h13M5.5 16.5h13"/></svg>

@@ -1,17 +1,4 @@
 <?php
-/**
- * The e-mailed copy of a saved list (visitor's own copy).
- *
- * Table based layout with inline styles on purpose: that is what mail clients
- * render reliably. The message has to stay readable with images blocked, so the
- * product name, its model code and the button carry the meaning — the small
- * thumbnail is decorative.
- *
- * @var array<int, array<string, mixed>> $items
- * @var int $count
- * @var string $listUrl
- * @var string $locale
- */
 $brand = '#0c4347';
 $teal = '#1c8b8b';
 $tealDark = '#147174';
@@ -33,8 +20,6 @@ $fallbackImg = asset('/images/products/prod_146_1620-111-a.jpg');
 <title><?= e(trans('favorites.mail_title')) ?></title>
 </head>
 <body style="margin:0; padding:0; background:<?= e($page) ?>; font-family:-apple-system,'Segoe UI',Roboto,Helvetica,Arial,sans-serif; color:<?= e($ink) ?>;">
-
-<!-- preheader: shows next to the subject in the inbox list -->
 <div style="display:none; max-height:0; overflow:hidden; opacity:0;">
     <?= e(\Modules\Favorites\Support\Text::count('favorites.mail_preheader', $count)) ?>
 </div>
@@ -44,9 +29,7 @@ $fallbackImg = asset('/images/products/prod_146_1620-111-a.jpg');
         <td align="center">
             <table role="presentation" width="620" cellpadding="0" cellspacing="0" border="0"
                    style="width:620px; max-width:100%; background:<?= e($surface) ?>; border:1px solid <?= e($line) ?>; border-radius:16px; overflow:hidden;">
-
-                <!-- brand band -->
-                <tr>
+<tr>
                     <td style="background:<?= e($brand) ?>; padding:26px 30px;">
                         <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0">
                             <tr>
@@ -58,9 +41,7 @@ $fallbackImg = asset('/images/products/prod_146_1620-111-a.jpg');
                         </table>
                     </td>
                 </tr>
-
-                <!-- title -->
-                <tr>
+<tr>
                     <td style="padding:30px 30px 6px;">
                         <h1 style="margin:0 0 8px; font-size:26px; line-height:1.2; color:<?= e($ink) ?>;">
                             <?= e(trans('favorites.mail_title')) ?>
@@ -70,9 +51,7 @@ $fallbackImg = asset('/images/products/prod_146_1620-111-a.jpg');
                         </p>
                     </td>
                 </tr>
-
-                <!-- items -->
-                <tr>
+<tr>
                     <td style="padding:18px 30px 4px;">
                         <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="border-collapse:collapse;">
                             <?php foreach ($items as $index => $item): ?>
@@ -119,9 +98,7 @@ $fallbackImg = asset('/images/products/prod_146_1620-111-a.jpg');
                         </table>
                     </td>
                 </tr>
-
-                <!-- list link -->
-                <tr>
+<tr>
                     <td style="padding:8px 30px 30px;">
                         <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0"
                                style="background:#f3f7f5; border:1px solid <?= e($line) ?>; border-radius:12px;">
@@ -140,9 +117,7 @@ $fallbackImg = asset('/images/products/prod_146_1620-111-a.jpg');
                         </table>
                     </td>
                 </tr>
-
-                <!-- footer -->
-                <tr>
+<tr>
                     <td style="background:#f3f7f5; border-top:1px solid <?= e($line) ?>; padding:22px 30px;">
                         <p style="margin:0 0 10px; font-size:13px; line-height:1.6; color:<?= e($muted) ?>;">
                             <?= e(trans('favorites.mail_why')) ?>

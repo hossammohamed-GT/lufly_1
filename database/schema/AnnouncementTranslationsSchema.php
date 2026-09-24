@@ -7,9 +7,6 @@ namespace Database\Schema;
 use Core\Database\Schema\Blueprint;
 use Core\Database\Schema\SchemaDefinition;
 
-/**
- * Announcement message per locale (the admin writes one entry per language).
- */
 class AnnouncementTranslationsSchema extends SchemaDefinition
 {
     protected string $table = 'announcement_translations';

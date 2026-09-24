@@ -1,7 +1,4 @@
 <?php
-/** @var Core\View\View $view */
-/** @var string $content */
-/** @var string $title */
 $translator = $translator ?? null;
 $locale = $translator instanceof \Core\Localization\Translator ? $translator->getLocale() : (string) config('localization.default', 'en');
 $basePath = rtrim((string) parse_url(url('/'), PHP_URL_PATH), '/');
@@ -15,12 +12,11 @@ $direction = in_array($locale, ['ar', 'he', 'fa', 'ur'], true) ? 'rtl' : 'ltr';
 <title>Lufly</title>
 <link rel="icon" type="image/png" href="<?= e(asset('images/logo.png')) ?>">
 <script>
-/* theme before first paint */
 try {
     var stored = localStorage.getItem('lufly-theme');
     var dark = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
     document.documentElement.setAttribute('data-theme', stored || (dark ? 'dark' : 'light'));
-} catch (error) { /* storage unavailable */ }
+} catch (error) { }
 </script>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>

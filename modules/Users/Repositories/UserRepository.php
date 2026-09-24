@@ -18,7 +18,6 @@ class UserRepository extends Repository implements UserProviderInterface
 
     public function findByEmail(string $email): ?object
     {
-        /** @var User|null $user */
         $user = User::query()->where('email', $email)->first();
 
         return $user;
@@ -42,7 +41,6 @@ class UserRepository extends Repository implements UserProviderInterface
         return array_column($rows, 'key');
     }
 
-    /** @param string[] $roleIds */
     public function syncRoles(int|string $userId, array $roleIds): void
     {
         $connection = User::query()->connection();

@@ -1,10 +1,3 @@
-/* ==========================================================================
-   Storefront catalog - machined editorial identity
-   Coded header, blueprint toolbar, category rail with counts, editorial
-   product cards (situ crossfade on hover), machined pagination.
-   Entrance animations run once on load; no scroll engines.
-   ========================================================================== */
-
 .catalog {
   padding-block: 26px clamp(56px, 8vw, 96px);
   color: var(--ds-text);
@@ -18,8 +11,6 @@
   margin-inline: auto;
   padding-inline: var(--container-pad, 24px);
 }
-
-/* ---------- header ---------- */
 
 .catalog-head {
   display: flex;
@@ -75,8 +66,6 @@
   white-space: nowrap;
 }
 
-/* ---------- toolbar: expanding search + sort + guide panel ---------- */
-
 .catalog-toolbar {
   display: grid;
   gap: 0;
@@ -96,7 +85,6 @@
   transition: border-color 220ms ease, box-shadow 220ms ease;
 }
 
-/* the search box grows and owns the whole bar while the user is in it */
 .catalog-searchform.is-searching {
   border-color: color-mix(in srgb, var(--ds-primary) 55%, var(--ds-border));
   box-shadow: 0 0 0 3px var(--ds-primary-soft), var(--shadow-2);
@@ -169,7 +157,6 @@
 
 .catalog-go:hover { background: var(--ds-primary-hover); }
 
-/* while searching, the submit button folds away and the sort stays visible */
 .catalog-searchform.is-searching .catalog-go {
   flex-basis: 0;
   opacity: 0;
@@ -218,8 +205,6 @@
   border-color: color-mix(in srgb, var(--ds-primary) 55%, var(--ds-border));
 }
 
-/* ---------- guidance panel: colored, clearly instructional ---------- */
-
 .catalog-guide { display: none; }
 
 .catalog-guide.is-open {
@@ -228,7 +213,6 @@
   animation: catUp 0.28s cubic-bezier(0.16, 1, 0.3, 1) both;
 }
 
-/* scope row: search in this category or the whole catalog */
 .catalog-scope {
   display: flex;
   align-items: center;
@@ -277,7 +261,6 @@
 
 .catalog-scope-btn + .livesearch-share { margin-inline-start: auto; }
 
-/* copy-link button (appears with results) */
 .livesearch-share {
   display: inline-flex;
   align-items: center;
@@ -343,8 +326,6 @@
   font-size: 10.5px;
 }
 
-/* ---------- category rail ---------- */
-
 .catalog-rail {
   display: flex;
   flex-wrap: wrap;
@@ -395,8 +376,6 @@
 }
 
 
-/* ---------- empty state ---------- */
-
 .catalog-empty {
   display: grid;
   justify-items: center;
@@ -441,8 +420,6 @@
   background: var(--ds-primary-hover);
   color: var(--ds-primary-text);
 }
-
-/* ---------- pagination ---------- */
 
 .catpag {
   display: flex;
@@ -492,8 +469,6 @@
   background: none;
 }
 
-/* ---------- responsive ---------- */
-
 @media (max-width: 1000px) {
   .catalog-grid { grid-template-columns: repeat(2, 1fr); }
 }
@@ -516,8 +491,6 @@
   .catalog-empty,
   .catpag { animation: none; }
 }
-
-/* ---------- entrance ---------- */
 
 @keyframes catUp {
   from { opacity: 0; transform: translateY(16px); }

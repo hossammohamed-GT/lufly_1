@@ -1,11 +1,3 @@
-/* ==========================================================================
-   Shared editorial product card (catalog grid + home featured grid)
-   Main shot with a situ crossfade on hover, mono SKU + running number,
-   hairline divider. Part of the machined identity kit.
-   ========================================================================== */
-
-/* ---------- product cards ---------- */
-
 .catalog-grid {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
@@ -34,8 +26,6 @@
   display: block;
   aspect-ratio: 7 / 5;
   overflow: hidden;
-  /* product shots are cut out on pure white; matching the stage to that
-     white makes the letterboxing around a contain-fit image disappear */
   background: #ffffff;
 }
 
@@ -49,7 +39,6 @@
   transition: opacity 0.35s ease, transform 0.45s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
-/* a card can carry several photos; hover cycles through them */
 .pcard-img { opacity: 0; }
 .pcard-img.is-on { opacity: 1; }
 
@@ -69,8 +58,6 @@
 
 .pcard:hover .pcard-dots { opacity: 1; }
 
-/* the dots sit on the white shot stage, so they are neutral too - the active
-   one is simply darker, no teal */
 .pcard-dot {
   width: 5px;
   height: 5px;
@@ -88,8 +75,6 @@
   .pcard-dots { opacity: 1; }
 }
 
-/* the hover cycle mixes photos with technical drawings; this pill says which
-   section the slide on screen comes from (it stays quiet for plain photos) */
 .pcard-kind {
   position: absolute;
   display: inline-block;
@@ -124,8 +109,6 @@
   }
 }
 
-/* Neutral, not teal: the pill sits on the white shot stage, and the teal fill
-   read as a blue button stapled to the bottom of the card. */
 .pcard-hint {
   position: absolute;
   inset-inline-end: 10px;
@@ -211,9 +194,6 @@
   overflow: hidden;
 }
 
-/* responsive handled by the grids that host the cards */
-
-/* Phone: ONE card per row (readable) with a notably larger photo. */
 @media (max-width: 620px) {
   .catalog-grid { grid-template-columns: 1fr; gap: 14px; }
   .pcard-media { aspect-ratio: 4 / 3; }

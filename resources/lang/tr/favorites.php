@@ -3,7 +3,6 @@
 declare(strict_types=1);
 
 return [
-    /* page */
     'eyebrow' => 'LUFLY · kayıtlı ürünler',
     'title' => 'Kayıtlı listeniz',
     'lede' => 'İşaretlediğiniz her ürün tek bir yerde. Listeyi kendinize e-posta ile gönderin, ürünü doğrudan mesajdan açın ya da bu sayfaya istediğiniz zaman geri dönün.',
@@ -26,7 +25,6 @@ return [
     'removed_named' => ':name kayıtlı listenizden çıkarıldı.',
     'cleared' => 'Kayıtlı listeniz boş.',
 
-    /* empty state */
     'empty_title' => 'Henüz kayıt yok',
     'empty_text' => 'Kataloğa göz atın ve beğendiğiniz üründe kalbe dokunun. Burada kalır — dilerseniz tüm listeyi size e-posta ile göndeririz.',
     'empty_cta' => 'Kataloğa göz atın',
@@ -37,7 +35,6 @@ return [
     'step_3_title' => 'E-posta gönderin',
     'step_3_text' => 'Listeyi kendinize gönderin — her ürün kendi sayfasına doğrudan bağlantı taşır.',
 
-    /* mail panel */
     'mail_eyebrow' => 'Listeyi gönder',
     'mail_title' => 'Bu listeyi bana e-posta ile gönder',
     'mail_text_one' => 'Kaydettiğiniz ürünü ve ürün sayfasına doğrudan bağlantıyı içeren tek bir mesaj.',
@@ -52,7 +49,6 @@ return [
     'mail_point_2' => 'Liste her cihazda yeniden açılır',
     'mail_point_3' => 'Üyelik yok, şifre yok',
 
-    /* save-to-mail prompt */
     'prompt_title' => 'Bu ürünü kendinize e-posta ile gönderin',
     'prompt_text' => 'Kaydettiğiniz her şeye doğrudan bağlantı içeren tek bir mesaj; gelen kutunuzda her cihazdan açmaya hazır.',
     'prompt_button' => 'Bana gönder',
@@ -60,7 +56,6 @@ return [
     'prompt_note' => 'Hesap gerekmez — bu adresi yalnızca bu liste için kullanıyoruz.',
     'prompt_close' => 'Kapat',
 
-    /* permanent link */
     'link_title' => 'Kalıcı bağlantınız',
     'link_text' => 'Bu adres her zaman bu listeyi açar — yer imlerinize ekleyin veya bir iş ortağınıza gönderin.',
     'copy' => 'Bağlantıyı kopyala',
@@ -74,7 +69,6 @@ return [
     'help_text' => 'Listeyi bize gönderin, proje fiyat teklifiyle dönelim.',
     'help_cta' => 'Fabrikayla konuşun',
 
-    /* errors */
     'err_email' => 'Lütfen geçerli bir e-posta adresi girin.',
     'err_empty' => 'Listeyi göndermeden önce bir ürün kaydedin.',
     'err_product' => 'Bu ürün artık mevcut değil.',
@@ -86,7 +80,6 @@ return [
 
     'not_found' => 'Bu kayıtlı liste bulunamadı.',
 
-    /* e-mail */
     'mail_subject_one' => 'LUFLY kayıtlı listeniz — 1 ürün',
     'mail_subject_many' => 'LUFLY kayıtlı listeniz — :n ürün',
     'mail_admin_subject_one' => ':email adresinden kayıtlı liste (1 ürün)',

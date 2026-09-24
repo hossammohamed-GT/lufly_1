@@ -16,18 +16,8 @@ use Modules\Favorites\Services\FavoriteMailer;
 use Modules\Favorites\Services\FavoriteService;
 use Modules\Products\Models\Product;
 
-/**
- * The storefront side of the saved-products list.
- *
- * GET  /{locale}/favorites            the list (own cookie)
- * GET  /{locale}/favorites/{token}    the same list from an e-mailed link
- * POST /{locale}/favorites/toggle     add / remove one product   (JSON or redirect)
- * POST /{locale}/favorites/email      mail the list to the visitor
- * POST /{locale}/favorites/clear      empty the list
- */
 class FavoriteController extends Controller
 {
-    /** Seconds between two automatic copies of the list while saving products. */
     private const AUTO_MAIL_COOLDOWN = 20;
 
     public function __construct(
@@ -40,7 +30,6 @@ class FavoriteController extends Controller
 
     public function index(Request $request): Response
     {
-        /* ?t=<token> on the clean URL behaves like the shared link */
         $token = trim((string) $request->query('t', ''));
         if ($token !== '') {
             $favorite = $this->favorites->findByToken($token);
@@ -52,7 +41,6 @@ class FavoriteController extends Controller
         return $this->page($request, $this->favorites->current());
     }
 
-    /** Shared / e-mailed link: opens the list on any device. */
     public function claim(Request $request, string $token): Response
     {
         $favorite = $this->favorites->findByToken($token);
@@ -95,10 +83,6 @@ class FavoriteController extends Controller
             ? trans('favorites.added_named', ['name' => $name])
             : trans('favorites.removed_named', ['name' => $name]);
 
-        /* Saving with the option on mails the updated list straight away: the
-           visitor asked for exactly this ("send me what I save"). A failure here
-           must never spoil the save, so it is silent — the next visit to the
-           list page offers the panel again. */
         $mailed = $result['added'] ? $this->autoMail($locale) : '';
 
         $data = [
@@ -149,8 +133,6 @@ class FavoriteController extends Controller
             );
         }
 
-        /* The checkbox travels with the form: null means the panel did not ask,
-           so whatever the visitor decided earlier stays. */
         $notify = $request->input('notify');
         $this->stamp($favorite, $email, $locale, $notify !== null ? (bool) (int) $notify : null);
 
@@ -180,8 +162,6 @@ class FavoriteController extends Controller
         return $response;
     }
 
-    /* ------------------------------------------------------------- helpers */
-
     private function page(Request $request, ?Favorite $favorite): Response
     {
         $locale = $this->translator->getLocale();
@@ -193,7 +173,6 @@ class FavoriteController extends Controller
         $this->seo->setTitle($title);
         $this->seo->setDescription(trans('favorites.meta_description'));
         $this->seo->setCanonical(route('favorites.index'));
-        /* A personal list has nothing to do in a search index. */
         $this->seo->setRobots('noindex, nofollow');
 
         $response = $this->view('favorites::index', [
@@ -205,7 +184,6 @@ class FavoriteController extends Controller
             'shareUrl' => $favorite !== null ? $this->favorites->shareUrl($favorite) : '',
             'savedIds' => array_map(static fn (array $item): int => (int) ($item['id'] ?? 0), $items),
             'maxItems' => max(1, (int) config('favorites.max_items', 60)),
-            /* null = never asked, so the panel shows the box ticked */
             'notifyChoice' => $favorite?->notify,
             'seo' => $this->seo,
         ]);
@@ -213,10 +191,6 @@ class FavoriteController extends Controller
         return $this->favorites->attachCookie($response, $favorite);
     }
 
-    /**
-     * Mail the list because a product was just saved (the visitor's own
-     * preference). Returns the confirmation line, or '' when nothing was sent.
-     */
     private function autoMail(string $locale): string
     {
         $favorite = $this->favorites->current();
@@ -229,9 +203,6 @@ class FavoriteController extends Controller
             return '';
         }
 
-        /* Saves can follow each other quickly (a visitor browsing a category),
-           so an automatic copy waits only a few seconds — the daily cap is what
-           keeps a mailbox from filling up. */
         if ($this->throttle($favorite, self::AUTO_MAIL_COOLDOWN) !== null) {
             return '';
         }
@@ -258,7 +229,6 @@ class FavoriteController extends Controller
         return trans('favorites.mail_sent', ['email' => $email]);
     }
 
-    /** Record one send on the list (and the visitor's update preference). */
     private function stamp(Favorite $favorite, string $email, string $locale, ?bool $notify = null): void
     {
         if ($notify !== null) {
@@ -279,12 +249,6 @@ class FavoriteController extends Controller
         ]);
     }
 
-    /**
-     * Cooldown / daily cap on the public "mail me my list" endpoint.
-     *
-     * $cooldown overrides the configured pause (the automatic copies sent while
-     * saving use a shorter one).
-     */
     private function throttle(Favorite $favorite, ?int $cooldown = null): ?string
     {
         $cooldown ??= max(0, (int) config('favorites.email_cooldown', 60));
@@ -306,11 +270,6 @@ class FavoriteController extends Controller
         return null;
     }
 
-    /**
-     * JSON for the storefront script, a flashed redirect for a plain form post.
-     *
-     * @param array<string, string[]> $errors
-     */
     private function fail(Request $request, string $message, int $status, array $errors = []): Response
     {
         if ($request->wantsJson()) {

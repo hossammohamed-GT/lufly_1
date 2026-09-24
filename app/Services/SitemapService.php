@@ -6,27 +6,18 @@ namespace App\Services;
 
 use App\Services\Seo\UrlLocalizer;
 
-/**
- * Dynamic XML sitemap generation. Every public URL is derived from the
- * routing + translation layer, so the sitemap can never advertise a URL
- * that 404s, and hreflang pairs always point at real translated paths.
- */
 class SitemapService
 {
     public function __construct(private readonly UrlLocalizer $urls)
     {
     }
 
-    /** Static storefront pages in crawl-priority order. */
     private const STATIC_PAGES = [
         ['key' => 'home',            'priority' => '1.0', 'changefreq' => 'daily'],
         ['key' => 'products.index',  'priority' => '0.9', 'changefreq' => 'daily'],
         ['key' => 'contact',         'priority' => '0.7', 'changefreq' => 'monthly'],
     ];
 
-    /* ------------------------------------------------ urls ---------- */
-
-    /** @return list<array<string, mixed>> */
     public function pageEntries(): array
     {
         $lastmod = (string) config('seo.sitemap_static_lastmod', date('Y-m-d'));
@@ -48,12 +39,6 @@ class SitemapService
         return $entries;
     }
 
-    /**
-     * Streams product entries in bounded chunks to avoid loading large catalogs and all media into memory at once.
-     *
-     * @param int $chunkSize
-     * @return \Generator<int, array<string, mixed>>
-     */
     public function productEntriesGenerator(int $chunkSize = 250): \Generator
     {
         $connection = \Modules\Products\Models\Product::query()->connection();
@@ -113,14 +98,11 @@ class SitemapService
         }
     }
 
-    /** @return list<array<string, mixed>> */
     public function productEntries(): array
     {
         return iterator_to_array($this->productEntriesGenerator());
     }
 
-    /** Every locale renders one <url> block; carried separately so images can repeat per URL without re-querying. */
-    /** @return array<string, string> */
     private function buildProductLocs(string $slug): array
     {
         $locs = [];
@@ -130,9 +112,6 @@ class SitemapService
         return $locs;
     }
 
-    /* ------------------------------------------------ xml ----------- */
-
-    /** Sitemap index referencing the sub-sitemaps. */
     public function renderIndex(): string
     {
         $lastmod = date('Y-m-d');
@@ -153,8 +132,6 @@ class SitemapService
         return $xml . '</sitemapindex>';
     }
 
-    /** urlset from entries (see pageEntries/productEntries). */
-    /** @param iterable<array<string, mixed>> $entries */
     public function renderUrlset(iterable $entries, bool $withImages = true): string
     {
         $xml = '<?xml version="1.0" encoding="UTF-8"?>' . "\n";
@@ -201,8 +178,6 @@ class SitemapService
         return $xml . '</urlset>';
     }
 
-    /** Dedicated image sitemap: one <url> per product carrying all its media. */
-    /** @param iterable<array<string, mixed>> $entries */
     public function renderImageSitemap(iterable $entries): string
     {
         return $this->renderUrlset($entries, true);

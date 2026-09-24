@@ -13,7 +13,6 @@ class NotificationService
     {
     }
 
-    /** @param array<string, mixed> $data */
     public function notify(int|string $userId, string $title, string $body, string $type = 'info', array $data = []): int|string
     {
         $id = $this->db->connection()->insert('notifications', [
@@ -32,7 +31,6 @@ class NotificationService
         return $id;
     }
 
-    /** @return array<int, array<string, mixed>> */
     public function unreadFor(int|string $userId): array
     {
         return $this->db->connection()->select(

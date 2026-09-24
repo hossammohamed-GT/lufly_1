@@ -6,19 +6,6 @@ namespace Database\Seeders;
 
 use Core\Database\Seeding\Seeder;
 
-/**
- * Imports the REAL LUFLY catalog extracted from the legacy WordPress /
- * WooCommerce database (delete_files/lufly_new.sql) into the new product
- * architecture.
- *
- * Source of truth : database/seeders/data/products.json
- * Produced by     : tools/import/extract_legacy.py
- *
- * Every field written here exists in the legacy system. Nothing is invented:
- * if the legacy record had no description, specification, or translation,
- * the corresponding row is simply not created. Missing locales (tr) and
- * extra gallery images are filled in later from Admin.
- */
 class ProductSeeder extends Seeder
 {
     public function run(): void
@@ -68,12 +55,6 @@ class ProductSeeder extends Seeder
                 'updated_at' => $this->stamp($item['updated_at'] ?? null),
             ]);
 
-            /* ---- translations ----
-               The legacy record carries exactly one language (en or cs). It is
-               written under its own locale, plus copied verbatim under the
-               fallback locale (en) so listings and search never show a blank
-               product. Nothing is machine translated or invented: the fallback
-               row holds the original legacy text until a translator edits it. */
             $locale = (string) ($item['locale'] ?? 'en');
             $fallback = (string) config('localization.fallback', 'en');
             $locales = $locale === $fallback ? [$locale] : [$locale, $fallback];
@@ -88,7 +69,6 @@ class ProductSeeder extends Seeder
                 ]);
             }
 
-            /* ---- default variant: the legacy SKU, no invented price ---- */
             $sku = trim((string) ($item['sku'] ?? '')) ?: $modelCode;
             if ($sku !== '') {
                 $unique = $sku;
@@ -112,7 +92,6 @@ class ProductSeeder extends Seeder
                 ]);
             }
 
-            /* ---- specifications parsed out of the legacy product copy ---- */
             $specs = is_array($item['specifications'] ?? null) ? $item['specifications'] : [];
             foreach (array_values($specs) as $index => $spec) {
                 $key = trim((string) ($spec['key'] ?? ''));
@@ -131,13 +110,6 @@ class ProductSeeder extends Seeder
                 ]);
             }
 
-            /* ---- media ----
-               Every image the legacy product references, in its original
-               order: the featured shot first, then the gallery, with the
-               technical drawings flagged as type "drawing". Files that were
-               never exported off the old server are recorded as status
-               "missing" so the storefront can skip them and the gap stays
-               visible (see tools/import/missing-images.csv). */
             $images = is_array($item['images'] ?? null) ? $item['images'] : [];
             $sortOrder = 0;
             $hasPrimary = false;
@@ -158,7 +130,6 @@ class ProductSeeder extends Seeder
                 $extension = strtolower(pathinfo($filename, PATHINFO_EXTENSION) ?: 'jpg');
                 $sortOrder++;
 
-                /* the primary flag only ever goes to a real photo on disk */
                 $isPrimary = !$hasPrimary && $available && $type !== 'drawing';
                 if ($isPrimary) {
                     $hasPrimary = true;
@@ -196,7 +167,6 @@ class ProductSeeder extends Seeder
                 ]);
             }
 
-            /* ---- seo meta built from the product's own title/copy ---- */
             $this->db->insert('seo_meta', [
                 'product_id' => $productId,
                 'locale' => $locale,
@@ -213,7 +183,6 @@ class ProductSeeder extends Seeder
                 'updated_at' => date('Y-m-d H:i:s'),
             ]);
 
-            /* ---- search keywords derived from real name + model code ---- */
             $keywords = ['lufly'];
             if ($modelCode !== '') {
                 $keywords[] = mb_strtolower($modelCode);
@@ -234,7 +203,6 @@ class ProductSeeder extends Seeder
                 ]);
             }
 
-            /* ---- import log (provenance back to the legacy post id) ---- */
             $this->db->insert('product_import_logs', [
                 'product_id' => $productId,
                 'source_file' => 'delete_files/lufly_new.sql',
@@ -264,7 +232,6 @@ class ProductSeeder extends Seeder
         return $value;
     }
 
-    /** RFC 4122-ish v4 uuid without OpenSSL dependency. */
     private function uuid4(): string
     {
         $bytes = random_bytes(16);

@@ -7,11 +7,6 @@ namespace Database\Schema;
 use Core\Database\Schema\Blueprint;
 use Core\Database\Schema\SchemaDefinition;
 
-/**
- * Flexible technical specifications.
- * Any new spec (Water Consumption, Flush Type, Operating Pressure, ...) is a
- * row here - the database never needs altering to add specifications.
- */
 class ProductSpecificationsSchema extends SchemaDefinition
 {
     protected string $table = 'product_specifications';

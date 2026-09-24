@@ -1,5 +1,4 @@
 <?php
-/** @var Core\View\View $view */
 $view->layout('layouts.frontend');
 $view->pushStyle('frontend/errors/errors.css');
 ?>

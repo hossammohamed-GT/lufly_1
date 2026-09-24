@@ -7,9 +7,6 @@ namespace Database\Schema;
 use Core\Database\Schema\Blueprint;
 use Core\Database\Schema\SchemaDefinition;
 
-/**
- * Dimensions and weights per product or variant (mm / kg).
- */
 class ProductDimensionsSchema extends SchemaDefinition
 {
     protected string $table = 'product_dimensions';

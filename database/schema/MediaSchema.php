@@ -7,10 +7,6 @@ namespace Database\Schema;
 use Core\Database\Schema\Blueprint;
 use Core\Database\Schema\SchemaDefinition;
 
-/**
- * Central media library - every uploaded image/video/file registers here
- * first and is then attached through product_media / product_documents.
- */
 class MediaSchema extends SchemaDefinition
 {
     protected string $table = 'media';

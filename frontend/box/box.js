@@ -1,21 +1,7 @@
-/*
- * The quotation box, in the browser.
- *
- *   1. any [data-box-add] button (the chat's cards, a product page) puts a piece
- *      in or takes it out again - one endpoint, one state, everywhere,
- *   2. the box page's send step posts the list and shows what the team answered,
- *   3. every [data-box-count] badge on the page follows along, and the chat
- *      hears about the change through a "box:changed" event.
- *
- * The endpoints come from data attributes and the CSRF token from the <head>,
- * so nothing here depends on where the button happens to live.
- */
 (function () {
   'use strict';
 
   var root = document.documentElement;
-  /* the box's own token, kept next to the chat's history: a browser that drops
-     the cookie still keeps the same box */
   var TOKEN_KEY = 'lufly-box-token';
 
   function token() {
@@ -31,7 +17,7 @@
 
     try {
       window.localStorage.setItem(TOKEN_KEY, String(value));
-    } catch (error) { /* private mode */ }
+    } catch (error) { }
   }
 
   function csrf() {
@@ -39,10 +25,6 @@
     return meta ? meta.getAttribute('content') : '';
   }
 
-  /* The page the visitor is looking at knows which box it is: the box page prints
-     its token, and a link the team mailed (?t=… or /box/TOKEN) already put that
-     box on the server's side. Learning it here means the next piece he saves goes
-     into this list instead of quietly starting another one. */
   function learnPageToken() {
     var page = document.querySelector('[data-box-page][data-box-token]');
     var printed = page ? (page.getAttribute('data-box-token') || '') : '';
@@ -52,7 +34,6 @@
       return;
     }
 
-    /* the token may also be in the address itself */
     var match = /[?&]t=([A-Za-z0-9]{16,64})/.exec(window.location.search)
       || /\/([A-Za-z0-9]{32,64})\/?(?:\?|#|$)/.exec(window.location.pathname);
 
@@ -75,8 +56,6 @@
   }
 
   function post(url, payload) {
-    /* the browser's copy of the token rides along, so the same box answers even
-       when the cookie did not survive */
     var boxToken = token();
     if (boxToken && !payload.token) payload.token = boxToken;
 
@@ -100,7 +79,7 @@
       });
     });
   }
-// s
+
   function paintCount(count) {
     var nodes = document.querySelectorAll('[data-box-count]');
     for (var i = 0; i < nodes.length; i++) {
@@ -127,7 +106,6 @@
     document.dispatchEvent(new CustomEvent('box:changed', { detail: detail }));
   }
 
-  /* the message the chat or the toast shows: whatever the server answered */
   function say(node, message, state) {
     if (!node) return;
     node.textContent = message || '';
@@ -140,8 +118,6 @@
     }, 4200);
   }
 
-  /* ---- 1. add / remove one piece ---------------------------------------- */
-
   document.addEventListener('click', function (event) {
     var button = event.target.closest ? event.target.closest('[data-box-add]') : null;
     if (!button) return;
@@ -152,11 +128,6 @@
     var url = button.getAttribute('data-box-endpoint') || addEndpoint();
     if (!productId || !url || button.classList.contains('is-busy')) return;
 
-    /* The tap is answered at once: the piece is in the box from the visitor's
-       point of view the moment he presses, and the server's answer only confirms
-       it (or puts it back when it could not). A round trip that has to reach a
-       database — and, on a real host, the shop's own mail — must never be
-       something the visitor waits behind. */
     var wasOn = button.classList.contains('is-on');
     var before = currentCount();
     var wanted = !wasOn;
@@ -182,7 +153,6 @@
         return;
       }
 
-      /* the server is the truth: it knows whether the piece went in or came out */
       keepToken(data.token);
       paintCount(data.count);
       paintButtons(productId, data.added, button.getAttribute('data-box-label-on'), button.getAttribute('data-box-label-off'));
@@ -195,7 +165,6 @@
     });
   });
 
-  /** The badge's number right now (the optimistic paint needs a starting point). */
   function currentCount() {
     var node = document.querySelector('[data-box-count]');
     var value = node ? parseInt(node.textContent, 10) : 0;
@@ -203,13 +172,10 @@
     return isNaN(value) ? 0 : value;
   }
 
-  /** The server said no: put the button and the badge back where they were. */
   function undo(productId, wasOn, before) {
     paintButtons(productId, wasOn, null, null);
     paintCount(before);
   }
-
-  /* ---- 2. take one out from the box page -------------------------------- */
 
   document.addEventListener('click', function (event) {
     var button = event.target.closest ? event.target.closest('[data-box-remove]') : null;
@@ -243,8 +209,6 @@
       announce({ productId: productId, added: false, count: data.count, message: data.message });
     });
   });
-
-  /* ---- 3. the send step -------------------------------------------------- */
 
   var sendForm = document.querySelector('[data-box-send-form]');
 
@@ -288,8 +252,6 @@
     });
   }
 
-  /* ---- 4. copy the one link --------------------------------------------- */
-
   var copy = document.querySelector('[data-box-copy]');
 
   if (copy) {
@@ -315,8 +277,6 @@
     });
   }
 
-  /* ---- 5. empty it -------------------------------------------------------- */
-
   var clearForm = document.querySelector('[data-box-clear-form]');
 
   if (clearForm) {
@@ -331,7 +291,7 @@
 
       post(clearForm.getAttribute('action'), {}).then(function (data) {
         if (data.ok) {
-          try { window.localStorage.removeItem(TOKEN_KEY); } catch (error) { /* private mode */ }
+          try { window.localStorage.removeItem(TOKEN_KEY); } catch (error) { }
           paintCount(0);
           announce({ productId: 0, added: false, count: 0, message: data.message });
           window.location.reload();
@@ -345,11 +305,7 @@
     });
   }
 
-  /* which box is this browser looking at? the page knows — remember it before
-     anything is added, so the second piece joins the first list */
   learnPageToken();
 
-  /* the storefront may render after this script (the chat adds cards) — the
-     delegated handlers above cover those, so nothing else is needed here */
   if (root) root.setAttribute('data-box-ready', '1');
 }());

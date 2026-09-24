@@ -12,7 +12,6 @@ class SchemaBuilder
     {
     }
 
-    /** @param callable(Blueprint): void $callback */
     public function create(string $table, callable $callback): void
     {
         $blueprint = new Blueprint($table);
@@ -49,7 +48,6 @@ class SchemaBuilder
         return $row !== null;
     }
 
-    /** @return string[] */
     public function listTables(): array
     {
         if ($this->connection->driver() === 'sqlite') {

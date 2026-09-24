@@ -1,5 +1,4 @@
 <?php
-/** @var Core\View\View $view */
 $view->pushStyle('frontend/home/rituals/rituals.css');
 ?>
 <section class="rituals-section scroll-section" id="rituals">

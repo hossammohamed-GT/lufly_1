@@ -9,20 +9,6 @@ use Core\Localization\Translator;
 use Core\View\View;
 use Modules\Favorites\Models\Favorite;
 
-/**
- * The e-mailed copy of a saved list.
- *
- * Two messages leave the store every time a visitor asks for their list:
- *
- *   1. the visitor's own copy — one row per saved product with a button that
- *      opens that exact product page, plus the permanent link back to the list
- *   2. the store inbox copy (config favorites.notify_admin) — the same list with
- *      the visitor's address as Reply-To, so the message can be answered as a
- *      quotation request
- *
- * Both are rendered from the module's e-mail views, so the wording lives in the
- * translation files next to the rest of the UI text.
- */
 class FavoriteMailer
 {
     public function __construct(
@@ -32,10 +18,6 @@ class FavoriteMailer
     ) {
     }
 
-    /**
-     * @param array<int, array<string, mixed>> $items translated products (see FavoriteService::items)
-     * @return array{sent: bool, admin_sent: bool, error: ?string}
-     */
     public function send(Favorite $favorite, array $items, string $locale, string $email): array
     {
         $shareUrl = route('favorites.claim', ['token' => (string) $favorite->token]);
@@ -67,7 +49,7 @@ class FavoriteMailer
             $visitorHtml,
             $visitorText,
             [
-                // "Simply reply to this e-mail" — the reply has to reach the store
+
                 'Reply-To' => $adminAddress,
                 'X-LUFLY-Message' => 'favorites-list',
                 'List-Unsubscribe' => '<mailto:' . $adminAddress . '?subject=unsubscribe>',

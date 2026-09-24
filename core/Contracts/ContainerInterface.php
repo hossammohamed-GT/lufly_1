@@ -4,9 +4,6 @@ declare(strict_types=1);
 
 namespace Core\Contracts;
 
-/**
- * PSR-11 inspired service container contract.
- */
 interface ContainerInterface
 {
     public function get(string $id): mixed;

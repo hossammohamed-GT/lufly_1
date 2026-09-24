@@ -4,26 +4,20 @@ declare(strict_types=1);
 
 namespace Core\Database;
 
-/**
- * Lightweight active-record base. Modules extend this per entity.
- */
 abstract class Model
 {
     protected static string $table = '';
 
     protected static string $primaryKey = 'id';
 
-    /** @var string[] empty = everything fillable */
     protected static array $fillable = [];
 
-    /** @var array<string, string> column => cast (int|bool|json|datetime) */
     protected static array $casts = [];
 
     protected static bool $timestamps = true;
 
     protected static bool $softDelete = true;
 
-    /** @var array<string, mixed> */
     protected array $attributes = [];
 
     public function __construct(array $attributes = [])
@@ -64,7 +58,6 @@ abstract class Model
             ->hydrateWith(fn (array $row): object => static::fromRow($row));
     }
 
-    /** @param array<string, mixed> $row */
     public static function fromRow(array $row): static
     {
         $model = new static();
@@ -75,13 +68,11 @@ abstract class Model
 
     public static function find(int|string $id): ?static
     {
-        /** @var static|null $model */
         $model = static::query()->where(static::$primaryKey, $id)->first();
 
         return $model;
     }
 
-    /** @return static[] */
     public static function all(array $orderBy = ['id' => 'desc'], int $limit = 0): array
     {
         $builder = static::query();
@@ -92,13 +83,11 @@ abstract class Model
             $builder->limit($limit);
         }
 
-        /** @var static[] $items */
         $items = $builder->get();
 
         return $items;
     }
 
-    /** @param array<string, mixed> $data */
     public static function create(array $data): static
     {
         $model = new static($data);
@@ -107,7 +96,6 @@ abstract class Model
         return $model;
     }
 
-    /** @param array<string, mixed> $data */
     public function fill(array $data): static
     {
         $fillable = static::$fillable;
@@ -132,7 +120,6 @@ abstract class Model
         $this->attributes[$key] = $this->castForWrite($key, $value);
     }
 
-    /** @return array<string, mixed> */
     public function attributes(): array
     {
         $out = [];
@@ -183,7 +170,6 @@ abstract class Model
         return true;
     }
 
-    /** @param array<string, mixed> $data */
     public function update(array $data): bool
     {
         $this->fill($data);
@@ -219,7 +205,6 @@ abstract class Model
             ->update(['deleted_at' => null]) > 0;
     }
 
-    /** @return array<string, mixed> */
     protected function attributesForWrite(): array
     {
         $values = [];

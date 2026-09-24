@@ -1,11 +1,4 @@
 <?php
-/**
- * Where the plan lands: the empty shelf that explains what is about to happen,
- * and the host the finished plan is injected into.
- *
- * @var Core\View\View $view
- * @var string $variant   'page' (the planner page) or 'chat' (the floating panel)
- */
 $variant = (string) ($variant ?? 'page');
 ?>
 <aside class="planner-board is-<?= e($variant) ?>" data-planner-board aria-live="polite">

@@ -6,13 +6,8 @@ namespace Core\Http;
 
 use Core\Database\Paginator;
 
-/**
- * Standard API envelope:
- * { success: bool, message: string, data: mixed }
- */
 final class ApiResponse
 {
-    /** @param array<string|int, mixed>|null $data */
     public static function success(?array $data = null, string $message = '', int $status = 200, array $extra = []): JsonResponse
     {
         return new JsonResponse(array_merge([
@@ -22,7 +17,6 @@ final class ApiResponse
         ], $extra), $status);
     }
 
-    /** @param array<string, mixed> $errors */
     public static function error(string $message = '', array $errors = [], int $status = 400, string $errorCode = ''): JsonResponse
     {
         return new JsonResponse([
@@ -32,7 +26,6 @@ final class ApiResponse
         ] + ($errorCode !== '' ? ['error_code' => $errorCode] : []), $status);
     }
 
-    /** @param array<int, mixed> $items */
     public static function paginated(array $items, Paginator $paginator, string $message = ''): JsonResponse
     {
         return new JsonResponse([

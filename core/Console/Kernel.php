@@ -9,7 +9,6 @@ use Throwable;
 
 class Kernel
 {
-    /** @var array<string, class-string<Command>> */
     private array $commands = [
         'migrate' => Commands\MigrateCommand::class,
         'rollback' => Commands\RollbackCommand::class,
@@ -30,7 +29,6 @@ class Kernel
     {
     }
 
-    /** @param string[] $argv */
     public function run(array $argv): int
     {
         $name = $argv[1] ?? 'list';
@@ -54,10 +52,6 @@ class Kernel
         }
     }
 
-    /**
-     * @param string[] $argv
-     * @return array{0: string[], 1: array<string, string|bool>}
-     */
     private function parse(array $argv): array
     {
         $args = [];
@@ -76,7 +70,6 @@ class Kernel
         return [$args, $options];
     }
 
-    /** @return array<string, class-string<Command>> */
     public function commands(): array
     {
         return $this->commands;

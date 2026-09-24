@@ -28,7 +28,6 @@ final class SeedCommand extends Command
             return 1;
         }
 
-        /** @var Seeder $seeder */
         $seeder = new $fqcn();
         $seeder->setContext($this->app->get(DatabaseManager::class)->connection(), $this->app);
         $seeder->run();

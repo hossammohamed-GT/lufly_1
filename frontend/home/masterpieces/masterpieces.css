@@ -1,7 +1,3 @@
-/* Home component: featured products ("masterpieces") on the machined grid.
-   The cards themselves are the shared editorial product card
-   (frontend/css/product-card.css); this file only frames the section. */
-
 .masterpieces-section {
   padding: var(--space-16) 0;
   border-block: 1px solid var(--ds-border);
@@ -45,7 +41,6 @@
 
 [dir="rtl"] .masterpieces-all svg { transform: scaleX(-1); }
 
-/* host grid for the shared cards */
 .masterpieces-grid {
   display: grid;
   grid-template-columns: repeat(4, 1fr);

@@ -9,6 +9,5 @@ use Core\Http\Response;
 
 interface MiddlewareInterface
 {
-    /** @param callable(Request): Response $next */
     public function handle(Request $request, callable $next): Response;
 }

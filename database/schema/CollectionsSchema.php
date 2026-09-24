@@ -7,10 +7,6 @@ namespace Database\Schema;
 use Core\Database\Schema\Blueprint;
 use Core\Database\Schema\SchemaDefinition;
 
-/**
- * Product catalog - collections (marketing product lines).
- * Example: Milano Collection, Elite Collection, Luxury Collection.
- */
 class CollectionsSchema extends SchemaDefinition
 {
     protected string $table = 'collections';

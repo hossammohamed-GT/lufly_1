@@ -70,13 +70,7 @@ class CacheService
 
     public function flush(): void
     {
-        foreach ((array) glob($this->app->storagePath('cache/*.cache')) as $file) {
-            @unlink($file);
-        }
-    }
-
-    /** @return array{expires: int, value: mixed}|null */
-    private function read(string $key): ?array
+        foreach ((array) glob($this->app->storagePath('cacheprivate function read(string $key): ?array
     {
         $path = $this->path($key);
         if (!is_file($path)) {
@@ -94,10 +88,9 @@ class CacheService
                 return $data;
             }
         } catch (\JsonException) {
-            // Not JSON formatted; fall back to safe restricted unserialize
+
         }
 
-        // Prevent arbitrary PHP object instantiation and gadget chain execution
         $payload = @unserialize($raw, ['allowed_classes' => false]);
 
         if (is_array($payload) && array_key_exists('value', $payload) && !is_object($payload['value'])) {

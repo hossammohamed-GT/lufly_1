@@ -4,26 +4,8 @@ declare(strict_types=1);
 
 namespace Modules\Assistant\Services;
 
-/**
- * The part of the finder that talks instead of searching.
- *
- * A visitor who writes "hello", or "I am not sure what to put in the bathroom",
- * or "which is better, a big basin or a small one?" is not naming a product —
- * answering with six cards is both annoying and wrong. This class reads that
- * kind of message locally (no model, no tokens) and turns it into one of three
- * things:
- *
- *   ask   — one question with a small set of answers (the guided choices)
- *   advice — a short, useful comparison of the two things they are weighing up
- *   topic — the piece they named is recognised, but not yet specific enough
- *
- * Everything it needs to *recognise* a topic — in English, Turkish, Czech and
- * Arabic — lives here; every sentence the visitor reads lives in the translation
- * files, and the catalogue words behind each choice live in config/assistant.php.
- */
 final class Conversation
 {
-    /** Words that mean the visitor is greeting us, not naming a piece. */
     private const GREETINGS = [
         'hello', 'hi', 'hey', 'hallo', 'hej', 'yo', 'good morning', 'good evening',
         'merhaba', 'selam', 'gunaydin', 'günaydın', 'iyi aksamlar', 'iyi akşamlar',
@@ -33,13 +15,11 @@ final class Conversation
         'how are you', 'how r u', 'howdy', 'nice to meet you',
     ];
 
-    /** Words that close a conversation. */
     private const THANKS = [
         'thanks', 'thank you', 'thx', 'ty', 'shukran', 'tesekkurler', 'teşekkürler', 'sagol', 'sağol',
         'diky', 'díky', 'dekuji', 'děkuji', 'شكرا', 'شكرًا', 'متشكر', 'تسلم', 'جزاك الله',
     ];
 
-    /** The visitor wants a conversation, a recommendation, or is weighing two things up. */
     private const TALK = [
         'talk', 'chat', 'ask', 'question', 'advice', 'advise', 'recommend', 'suggest', 'help me',
         'not sure', 'no idea', 'confused', 'tell me', 'explain',
@@ -49,7 +29,6 @@ final class Conversation
         'مش عارف', 'معرفش', 'رايك', 'رأيك', 'ايه رايك', 'إيه رأيك', 'قولي',
     ];
 
-    /** "Which is better, X or Y?" — the visitor is choosing between two things. */
     private const CHOOSING = [
         'better', 'best', 'worse', 'vs', 'versus', 'or', 'prefer', 'difference', 'instead', 'worth',
         'daha iyi', 'hangisi', 'yoksa', 'fark', 'mi ', 'mu ',
@@ -58,10 +37,6 @@ final class Conversation
         'انهي', 'أنهي', 'مين احسن', 'مين أفضل', 'انصحني', 'انصحنى',
     ];
 
-    /**
-     * Openings that make a sentence a question. Kept short on purpose: everything
-     * here is a word that cannot begin a description of a piece.
-     */
     private const QUESTION_OPENERS = [
         'what', 'which', 'why', 'when', 'where', 'who', 'whom', 'whose', 'how',
         'can', 'could', 'do', 'does', 'did', 'is', 'are', 'was', 'were', 'will',
@@ -71,7 +46,6 @@ final class Conversation
         'ايه', 'إيه', 'ايوه', 'هل', 'مين', 'ليه', 'ازاي', 'إزاي', 'فين', 'امتى', 'امتي', 'كام', 'كم', 'ممكن', 'بتتكلم', 'تتكلم', 'عندكم', 'بتعملوا', 'بتعملو', 'محتاج اسال',
     ];
 
-    /** "I am doing the whole bathroom" — no single piece named yet. */
     private const WIDE = [
         'bathroom', 'toilet room', 'renovation', 'renovate', 'building', 'new bathroom', 'my bathroom',
         'banyo', 'tuvalet', 'yenileme', 'tadilat',
@@ -80,11 +54,6 @@ final class Conversation
         'اجيب ايه', 'أجيب إيه', 'هجيب ايه', 'ايه اللي اجيبه', 'إيه اللي أجيبه',
     ];
 
-    /**
-     * The words that make a request *specific*: a size, a finish, an
-     * installation. With one of these the chat searches straight away; without
-     * one it asks its one question first.
-     */
     private const DETAILS = [
         'small', 'big', 'large', 'wide', 'narrow', 'short', 'tall', 'deep', 'low', 'high', 'slim',
         'wall', 'hung', 'floor', 'standing', 'counter', 'desk', 'built', 'free', 'concealed', 'hidden',
@@ -104,12 +73,6 @@ final class Conversation
         'اطفال', 'أطفال', 'طفل', 'عيال', 'ولاد', 'مدارس',
     ];
 
-    /**
-     * Topic words, in the languages a visitor may write in. The keys are the
-     * topics configured in config/assistant.php.
-     *
-     * @var array<string, array<int, string>>
-     */
     private const TOPIC_WORDS = [
         'basin' => [
             'basin', 'basins', 'washbasin', 'washbasins', 'wash basin', 'sink', 'sinks', 'lavatory', 'hand basin', 'lavabo', 'lavabosu',
@@ -149,10 +112,6 @@ final class Conversation
         ],
     ];
 
-    /**
-     * What the visitor seems to want. One of:
-     * 'greet', 'thanks', 'choosing', 'talk', 'wide', or '' (nothing — just describe it).
-     */
     public function intent(string $question): string
     {
         $text = $this->normalize($question);
@@ -169,7 +128,6 @@ final class Conversation
             return 'thanks';
         }
 
-        /* "which is better …?" is a choice, not a search: two things are weighed */
         if ($this->holds($text, self::CHOOSING) && ($this->holds($text, self::TALK) || $this->hasQuestionMark($question) || $this->words($text) <= 8)) {
             return 'choosing';
         }
@@ -185,14 +143,6 @@ final class Conversation
         return '';
     }
 
-    /**
-     * A sentence that asks something, rather than describing a piece.
-     *
-     * "who won the world cup?" must be talked through, not answered with the
-     * nearest shelf: it opens with a question word, or it ends with a question
-     * mark. A description ("a small white basin for the guest bathroom") is left
-     * alone — that one belongs to the catalogue search.
-     */
     public function asks(string $question): bool
     {
         $text = $this->normalize($question);
@@ -214,7 +164,6 @@ final class Conversation
         return false;
     }
 
-    /** The piece they named, if it is one of the topics — '' when it is not. */
     public function topic(string $question): string
     {
         $text = $this->normalize($question);
@@ -235,7 +184,6 @@ final class Conversation
 
             foreach ($words as $word) {
                 if ($this->holds($text, [$word])) {
-                    /* a longer word is a better signal ("washbasin" beats "basin") */
                     $hit += 1 + (int) (mb_strlen($word) / 8);
                 }
             }
@@ -249,7 +197,6 @@ final class Conversation
         return $best;
     }
 
-    /** Is the request specific enough to search right away? */
     public function specific(string $question): bool
     {
         $text = $this->normalize($question);
@@ -265,7 +212,6 @@ final class Conversation
         return $this->holds($text, self::DETAILS);
     }
 
-    /** @return array<string, mixed> the topic's config, or an empty array */
     public function topicConfig(string $topic): array
     {
         $topics = $this->topics();
@@ -273,7 +219,6 @@ final class Conversation
         return isset($topics[$topic]) && is_array($topics[$topic]) ? $topics[$topic] : [];
     }
 
-    /** @return array<int, string> the catalogue words the topic means */
     public function topicTerms(string $topic): array
     {
         $config = $this->topicConfig($topic);
@@ -288,7 +233,6 @@ final class Conversation
         return (string) ($config['category'] ?? '');
     }
 
-    /** The answers offered for one topic, as ids ("small", "show"…). @return array<int, string> */
     public function options(string $topic): array
     {
         $options = (array) config('assistant.guide.options.' . $topic, []);
@@ -296,7 +240,6 @@ final class Conversation
         return array_values(array_filter(array_map('strval', array_keys($options))));
     }
 
-    /** The catalogue words behind one answer. @return array<int, string> */
     public function optionTerms(string $topic, string $option): array
     {
         $terms = (array) config('assistant.guide.options.' . $topic . '.' . $option . '.terms', []);
@@ -304,7 +247,6 @@ final class Conversation
         return array_values(array_filter(array_map('strval', $terms)));
     }
 
-    /** @return array<int, string> the topics a visitor can be offered */
     public function topicList(): array
     {
         return array_values(array_filter(array_map('strval', array_keys($this->topics())), static function (string $topic): bool {
@@ -312,10 +254,6 @@ final class Conversation
         }));
     }
 
-    /**
-     * The label of one choice, translated. A missing translation falls back to a
-     * readable form of the key rather than to "assistant.guide_o_basin_small".
-     */
     public function label(string $key): string
     {
         $translated = trans('assistant.' . $key);
@@ -324,7 +262,6 @@ final class Conversation
         return $translated === $full ? str_replace('_', ' ', $key) : $translated;
     }
 
-    /** @return array<string, mixed> */
     private function topics(): array
     {
         $topics = (array) config('assistant.guide.topics', []);
@@ -342,12 +279,6 @@ final class Conversation
         return str_contains($question, '?') || str_contains($question, '؟');
     }
 
-    /**
-     * Does the text hold one of the words? Whole words only — "or" must not fire
-     * inside "floor", and Turkish/Arabic suffixes are handled by trimming.
-     *
-     * @param array<int, string> $words
-     */
     private function holds(string $text, array $words): bool
     {
         foreach ($words as $word) {
@@ -365,9 +296,6 @@ final class Conversation
                 continue;
             }
 
-            /* the whole word, not the start of one: "bathroom" is not a bathtub,
-               and "or" must not fire inside "floor". The lists carry the plural
-               and the suffixed forms each language actually uses. */
             if (preg_match('/(?<![\p{L}\p{N}])' . preg_quote($needle, '/') . '(?![\p{L}\p{N}])/u', $text) === 1) {
                 return true;
             }
@@ -376,18 +304,12 @@ final class Conversation
         return false;
     }
 
-    /** Lower case, no punctuation, no Arabic vowel marks — one shape to match on. */
     private function normalize(string $text): string
     {
         $text = mb_strtolower(trim($text), 'UTF-8');
-        /* Arabic: drop the short vowels so "أحْوَاض" matches "أحواض" */
         $text = (string) preg_replace('/[\x{064B}-\x{065F}\x{0670}\x{06D6}-\x{06ED}]/u', '', $text);
-        /* Arabic letters that are written differently but read the same */
         $text = str_replace(['أ', 'إ', 'آ', 'ى', 'ئ', 'ؤ', 'ة'], ['ا', 'ا', 'ا', 'ي', 'ي', 'و', 'ه'], $text);
         $text = (string) preg_replace('/[^\p{L}\p{N}]+/u', ' ', $text);
-        /* the Arabic article is glued to the front of the word and changes nothing:
-           "الحوض" is the same piece as "حوض", and a visitor writing it must be
-           understood without us listing every form of every word */
         $text = (string) preg_replace('/(^| )ال(?=\p{L}{3})/u', '$1', $text);
 
         return trim((string) preg_replace('/\s+/u', ' ', $text));

@@ -6,13 +6,10 @@ namespace Core\Http;
 
 final class Route
 {
-    /** @var string[] */
     public array $middlewares = [];
 
-    /** @var array<string, string> */
     public array $wheres = [];
 
-    /** @var array<string, mixed> */
     public array $meta = [];
 
     public ?string $name = null;
@@ -25,10 +22,6 @@ final class Route
 
     public ?string $compiledPattern = null;
 
-    /**
-     * @param string[] $methods
-     * @param callable|string|array $handler
-     */
     public function __construct(
         public readonly array $methods,
         public readonly string $uri,
@@ -42,7 +35,6 @@ final class Route
         return $this;
     }
 
-    /** @param string|string[] $middlewares */
     public function middleware(string|array $middlewares): self
     {
         $this->middlewares = array_merge($this->middlewares, (array) $middlewares);
@@ -55,18 +47,12 @@ final class Route
         return $this;
     }
 
-    /** @param array<string, mixed> $meta */
     public function meta(array $meta): self
     {
         $this->meta = array_merge($this->meta, $meta);
         return $this;
     }
 
-    /**
-     * API documentation metadata consumed by `php cli docs:api`.
-     *
-     * @param array<string, string> $validationRules
-     */
     public function doc(string $summary, array $validationRules = [], array $responseExample = []): self
     {
         $this->meta['doc'] = [

@@ -33,7 +33,6 @@ class Migrator
         });
     }
 
-    /** @return string[] applied migration file names */
     public function applied(): array
     {
         $this->ensureTable();
@@ -44,7 +43,6 @@ class Migrator
         );
     }
 
-    /** @return string[] pending files in order */
     public function pending(): array
     {
         $applied = $this->applied();
@@ -55,7 +53,6 @@ class Migrator
         ));
     }
 
-    /** @return string[] executed migration names */
     public function migrate(): array
     {
         $pending = $this->pending();
@@ -77,7 +74,6 @@ class Migrator
         return $pending;
     }
 
-    /** @return string[] rolled back migration names */
     public function rollback(int $steps = 1): array
     {
         $this->ensureTable();
@@ -102,7 +98,6 @@ class Migrator
         return $rolledBack;
     }
 
-    /** @return string[] */
     public function fresh(): array
     {
         $this->schema->dropAllTables();
@@ -110,7 +105,6 @@ class Migrator
         return $this->migrate();
     }
 
-    /** @return string[] */
     private function files(): array
     {
         if (!is_dir($this->path)) {

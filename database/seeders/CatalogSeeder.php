@@ -6,15 +6,6 @@ namespace Database\Seeders;
 
 use Core\Database\Seeding\Seeder;
 
-/**
- * Catalog foundations that are factually verifiable from the legacy system:
- * the LUFLY brand record only.
- *
- * Marketing collections (Signature / Elite / Luxury) and the attribute
- * dictionary were placeholder content and have been removed: the legacy
- * database carries no such records. Collections and attributes are created
- * from Admin once the real data is supplied.
- */
 class CatalogSeeder extends Seeder
 {
     public function run(): void

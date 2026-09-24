@@ -162,7 +162,6 @@ return [
     'finish_gun_gray_title' => 'Gun Gray (PVD)',
     'finish_gun_gray_desc' => 'A calm satin gray metallic tone engineered for minimalist, low-glare architecture.',
 
-    /* HERO CINEMA */
     'cinema1_kicker' => 'Architectural Sanitary Ware',
     'cinema1_tag' => 'Bathroom Culture Sculpted with Perfection',
     'cinema1_desc' => 'High-end faucets, shower systems, and smart water fixtures where monolithic aesthetics unite with advanced German and Swiss engineering.',

@@ -7,11 +7,6 @@ namespace Database\Schema;
 use Core\Database\Schema\Blueprint;
 use Core\Database\Schema\SchemaDefinition;
 
-/**
- * Site announcements ("the word") - short marketing messages the admin
- * publishes on the storefront, e.g. "50% discount today".
- * The message text per language lives in announcement_translations.
- */
 class AnnouncementsSchema extends SchemaDefinition
 {
     protected string $table = 'announcements';

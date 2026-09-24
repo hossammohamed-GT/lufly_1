@@ -12,10 +12,8 @@ class Translator
 
     private string $fallback;
 
-    /** @var array<string, array<string, mixed>> "locale:file" => entries */
     private array $loaded = [];
 
-    /** @var array<string, string> locale => native name */
     private array $supported;
 
     public function __construct(private readonly Application $app)
@@ -25,7 +23,6 @@ class Translator
         $this->fallback = (string) config('localization.fallback', 'en');
     }
 
-    /** @param array<string, mixed> $params */
     public function trans(string $key, array $params = [], ?string $locale = null): string
     {
         $locale ??= $this->locale;
@@ -65,7 +62,6 @@ class Translator
         return is_string($value) ? $value : null;
     }
 
-    /** @return array{0: string, 1: string|null} file, remaining key path */
     private function splitKey(string $key): array
     {
         if (!str_contains($key, '.')) {
@@ -77,7 +73,6 @@ class Translator
         return [$file, $path];
     }
 
-    /** @return array<string, mixed> */
     private function loadFile(string $locale, string $file): array
     {
         $cacheKey = $locale . ':' . $file;
@@ -113,13 +108,11 @@ class Translator
         return isset($this->supported[$locale]);
     }
 
-    /** @return array<string, string> */
     public function supported(): array
     {
         return $this->supported;
     }
 
-    /** @return string[] */
     public function locales(): array
     {
         return array_keys($this->supported);

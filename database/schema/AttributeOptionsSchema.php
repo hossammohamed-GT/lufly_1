@@ -7,10 +7,6 @@ namespace Database\Schema;
 use Core\Database\Schema\Blueprint;
 use Core\Database\Schema\SchemaDefinition;
 
-/**
- * Predefined option values per attribute.
- * Example: Color -> White / Black / Gold.
- */
 class AttributeOptionsSchema extends SchemaDefinition
 {
     protected string $table = 'attribute_options';

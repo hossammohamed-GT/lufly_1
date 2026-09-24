@@ -1,13 +1,3 @@
-/* ==========================================================================
-   Trust bar - flat editorial edition
-   The blueprint photo stays FIXED while the page scrolls over it (pure CSS
-   parallax via background-attachment: fixed; iOS lets it scroll, which is an
-   acceptable graceful fallback). The veil over the photo is built from
-   semantic tokens (--ds-bg / --ds-surface / --ds-text), so it flips with the
-   light/dark theme automatically. No glass, no blur: solid cards, number
-   first, words underneath.
-   ========================================================================== */
-
 .trust-bar {
   --trust-pad-block: clamp(56px, 7vw, 84px);
 
@@ -15,9 +5,6 @@
   padding-block: var(--trust-pad-block);
   color: var(--ds-text);
   font-family: var(--font-body);
-  /* deliberately photo-free: the hero above it carries the photograph, and the
-     photo bands below alternate with plain ones - see
-     docs/Architecture.md, "The home bands (photo / plain)" */
   background-color: var(--ds-bg);
   background-image:
     linear-gradient(180deg,
@@ -34,8 +21,6 @@
   display: grid;
   gap: clamp(30px, 4vw, 46px);
 }
-
-/* ---------- header row: heading + small contact link ---------- */
 
 .trust-head {
   display: flex;
@@ -111,8 +96,6 @@
 
 [dir="rtl"] .trust-contact-link svg { transform: scaleX(-1); }
 
-/* ---------- plain stat columns: no cards, just type on the veil ---------- */
-
 .trust-grid {
   display: grid;
   grid-template-columns: repeat(4, 1fr);
@@ -132,7 +115,6 @@
   border-top-color: var(--ds-primary);
 }
 
-/* top row: glowing icon badge on the start edge, mono index on the end edge */
 .trust-item-top {
   display: flex;
   align-items: center;
@@ -234,8 +216,6 @@
   -webkit-box-orient: vertical;
   overflow: hidden;
 }
-
-/* ---------- responsive ---------- */
 
 @media (max-width: 1120px) {
   .trust-grid { grid-template-columns: repeat(2, 1fr); }

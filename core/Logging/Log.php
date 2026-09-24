@@ -4,12 +4,8 @@ declare(strict_types=1);
 
 namespace Core\Logging;
 
-/**
- * Static log facade. Log::info() / Log::channel('security')->error().
- */
 final class Log
 {
-    /** @var array<string, Logger> */
     private static array $loggers = [];
 
     public static function channel(string $channel): Logger

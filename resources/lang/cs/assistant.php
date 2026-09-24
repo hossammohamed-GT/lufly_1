@@ -67,12 +67,10 @@ return [
     'soon_text' => 'Zadáte rozměr místnosti a máte celý plán: co instalovat, v jaké velikosti, na kterou stěnu, a výkres pro instalatéra. Zatím na něm pracujeme.',
     'soon_note' => 'Než bude hotový, popište, co potřebujete, výše nebo pošlete fotku — hned to porovnáme s naším katalogem.',
 
-    /* the same tab once the planner really opens */
     'plan_open_title' => 'Naplánujte si koupelnu',
     'plan_open_text' => 'Tři krátké otázky a máte plán, který předáte instalatérovi: co, v jaké velikosti a kam.',
     'mail_subject' => 'Nová poptávka z vyhledávače #:n',
 
-    /* ---- the guided conversation: the chat talks before it lists ---- */
     'chat_hello' => 'Dobrý den! Jsem asistent LUFLY.',
     'chat_hello_2' => 'Napište, co potřebujete, vlastními slovy a v jakémkoli jazyce — nebo pošlete fotografii; najdu to, nebo to potvrdí tým.',
     'chat_talk' => 'Samozřejmě, proberme to — řekněte, co hledáte, a společně to zúžíme.',

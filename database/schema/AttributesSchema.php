@@ -7,11 +7,6 @@ namespace Database\Schema;
 use Core\Database\Schema\Blueprint;
 use Core\Database\Schema\SchemaDefinition;
 
-/**
- * Attribute definitions used across the catalog.
- * Example: Color, Material, Shape, Installation Type, Finish.
- * New attributes need no schema change - just a new row here.
- */
 class AttributesSchema extends SchemaDefinition
 {
     protected string $table = 'attributes';

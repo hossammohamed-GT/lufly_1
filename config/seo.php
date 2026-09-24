@@ -33,8 +33,6 @@ return [
         'website' => true,
     ],
 
-    /* Legal entity facts, emitted as Organization + LocalBusiness schema and
-       used for NAP consistency (Google Business Profile must match this). */
     'business' => [
         'legal_name' => 'LUFLY İNŞAAT SANAYİ VE TİCARET LİMİTED ŞİRKETİ',
         'brand_name' => 'LUFLY',
@@ -51,24 +49,16 @@ return [
         'same_as' => array_values(array_filter(array_map('trim', explode(',', (string) env('SEO_SOCIAL_PROFILES', ''))))),
     ],
 
-    /* Production host canonicalisation: when SEO_ENFORCE_HOST=true every
-       request is 308-redirected to the canonical scheme+host taken from
-       APP_URL (HTTPS + your chosen www/non-www form). Keep false locally. */
     'enforce_host' => (bool) env('SEO_ENFORCE_HOST', false),
 
-    /* Search-engine verification tokens + analytics. Anything left empty
-       simply renders nothing — no orphaned snippets. */
     'verification' => [
         'google' => (string) env('GOOGLE_SITE_VERIFICATION', ''),
         'bing' => (string) env('BING_SITE_VERIFICATION', ''),
     ],
 
     'analytics' => [
-        'ga4' => (string) env('GA4_MEASUREMENT_ID', ''),     /* e.g. G-XXXXXXX */
-        'gtm' => (string) env('GTM_CONTAINER_ID', ''),       /* e.g. GTM-XXXX */
-        'clarity' => (string) env('CLARITY_PROJECT_ID', ''),
+        'ga4' => (string) env('GA4_MEASUREMENT_ID', ''),     'gtm' => (string) env('GTM_CONTAINER_ID', ''),       'clarity' => (string) env('CLARITY_PROJECT_ID', ''),
     ],
 
-    /* Sitemap tuning */
     'sitemap_static_lastmod' => (string) env('SEO_STATIC_LASTMOD', date('Y-m-d')),
 ];

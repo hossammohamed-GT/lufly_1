@@ -1,26 +1,15 @@
 <?php
-/**
- * Storefront product page - "machined editorial" identity.
- * Three essential views per product: main shot, live technical drawing
- * (dimension lines from product_dimensions when present), in-situ shot.
- *
- * @var Core\View\View $view
- */
 $view->layout('layouts.frontend');
 $view->pushStyle('frontend/products/detail/detail.css');
 $view->pushScript('frontend/products/detail/detail.js');
 $view->pushStyle('frontend/favorites/favorites.css');
 $view->pushScript('frontend/favorites/favorites.js');
-/** @var array<string, mixed> $product */
-/** @var string $locale */
-
 $fallbackImg = '/images/products/prod_146_1620-111-a.jpg';
 $img = (string) ($product['image'] ?? '') !== '' ? (string) $product['image'] : $fallbackImg;
 $situImg = (string) ($product['situ_image'] ?? '');
 $modelCode = (string) ($product['model_code'] ?? $product['sku'] ?? '');
 $variants = is_array($product['variants'] ?? null) ? $product['variants'] : [];
 $specs = is_array($product['specs'] ?? null) ? $product['specs'] : [];
-/* three independent image groups; each may hold any number of images */
 $gallery = is_array($product['gallery'] ?? null) ? array_values($product['gallery']) : [];
 $drawings = is_array($product['drawings'] ?? null) ? array_values($product['drawings']) : [];
 $situImages = is_array($product['situ_images'] ?? null) ? array_values($product['situ_images']) : [];
@@ -28,15 +17,10 @@ $situImages = is_array($product['situ_images'] ?? null) ? array_values($product[
 if ($situImages === [] && $situImg !== '') {
     $situImages = [$situImg];
 }
-/* the cover image doubles as the single "Product" view only when the product
-   has no image of its own at all - otherwise a technical drawing (which is
-   what the cover falls back to for the three drawing-only products) would
-   leak into the photo tab */
 if ($gallery === [] && $drawings === [] && $img !== '') {
     $gallery = [$img];
 }
 
-/* a tab only exists when that group actually has images */
 $views = [];
 if ($gallery !== []) {
     $views[] = ['key' => 'main', 'label' => trans('products.view_main'), 'images' => $gallery];
@@ -57,8 +41,6 @@ $inBox = feature('box', true)
     && app(\Modules\Box\Services\BoxService::class)->has((int) ($product['id'] ?? 0));
 $productUrl = route('products.show', ['slug' => $product['slug'] ?? $slug]);
 
-/* dimensions in millimetres, shown in the spec table when the factory has
-   entered them */
 $dims = [
     'w' => isset($dimensions['width_mm']) ? (float) $dimensions['width_mm'] : 0.0,
     'h' => isset($dimensions['height_mm']) ? (float) $dimensions['height_mm'] : 0.0,
@@ -67,13 +49,6 @@ $dims = [
 $hasDims = $dims['w'] > 0 && $dims['h'] > 0;
 $fmt = static fn (float $v): string => rtrim(rtrim(number_format($v, 0, '.', ''), '0'), '.');
 
-/*
- * What the floating planner chat should know about this page.
- *
- * Text only, and very little of it: the product's own words plus its
- * dimensions. No image and no catalogue ever travels with it — that is what
- * makes "does this fit my bathroom?" cost almost nothing to answer.
- */
 if (feature('planner', true) && (bool) config('planner.enabled', true)) {
     $plannerText = trim((string) preg_replace(
         '/\s+/u',
@@ -112,8 +87,7 @@ if (feature('planner', true) && (bool) config('planner.enabled', true)) {
         </nav>
 
         <div class="pdp-grid">
-            <!-- ================= media stage: 3 essential views ================= -->
-            <section class="pdp-stage" aria-label="<?= e(trans('products.sheet_title')) ?>">
+<section class="pdp-stage" aria-label="<?= e(trans('products.sheet_title')) ?>">
                 <span class="pdp-stage-beam" aria-hidden="true"></span>
 
                 <?php foreach ($views as $vIndex => $v): ?>
@@ -133,9 +107,7 @@ if (feature('planner', true) && (bool) config('planner.enabled', true)) {
                             <?php endforeach; ?>
 
                             <?php if ($v['key'] === 'drawing'): ?>
-                                <!-- blueprint title block: keeps the drawing reading
-                                     as a technical document, not a photo -->
-                                <span class="pdp-plate-tick" aria-hidden="true"></span>
+<span class="pdp-plate-tick" aria-hidden="true"></span>
                                 <div class="pdp-plate-block">
                                     <span class="pdp-plate-model">MODEL <?= e($modelCode) ?></span>
                                     <span class="pdp-plate-std">EN 997 &middot; CE</span>
@@ -155,9 +127,7 @@ if (feature('planner', true) && (bool) config('planner.enabled', true)) {
                         <?php endif; ?>
 
                         <?php if (count($v['images']) > 1): ?>
-                            <!-- thumbnail strip: makes it obvious at a glance that the
-                                 product has more pictures, and jumps straight to one -->
-                            <div class="pdp-thumbs" role="tablist" aria-label="<?= e($v['label']) ?>">
+<div class="pdp-thumbs" role="tablist" aria-label="<?= e($v['label']) ?>">
                                 <?php foreach ($v['images'] as $dIndex => $thumb): ?>
                                     <button type="button"
                                             class="pdp-thumb<?= $dIndex === 0 ? ' is-on' : '' ?>"
@@ -200,9 +170,7 @@ if (feature('planner', true) && (bool) config('planner.enabled', true)) {
                     <?php endforeach; ?>
                 </div>
             </section>
-
-            <!-- ================= info panel ================= -->
-            <aside class="pdp-info">
+<aside class="pdp-info">
                 <span class="pdp-eyebrow"><?= e(trans('common.factory_direct')) ?></span>
                 <h1 class="pdp-title"><?= e($product['name'] ?? '') ?></h1>
 

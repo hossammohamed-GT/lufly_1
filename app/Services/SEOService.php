@@ -8,13 +8,10 @@ use App\Services\Seo\UrlLocalizer;
 
 class SEOService
 {
-    /** @var array<string, mixed> */
     private array $meta = [];
 
-    /** @var array<string, string> */
     private array $alternates = [];
 
-    /** @var array<int, array{type: string, data: array<string, mixed>}> */
     private array $structured = [];
 
     public function __construct(private readonly UrlLocalizer $urls)
@@ -36,7 +33,6 @@ class SEOService
         return $this;
     }
 
-    /** @param string[]|string $keywords */
     public function setKeywords(array|string $keywords): self
     {
         $this->meta['keywords'] = is_array($keywords) ? $keywords : array_map('trim', explode(',', $keywords));
@@ -79,29 +75,18 @@ class SEOService
         return $this;
     }
 
-    /**
-     * Register the correct translated URL of a route for every supported
-     * locale. Never hand-build alternates by swapping the locale prefix —
-     * slugs differ per language (/en/products vs /tr/urunler).
-     *
-     * @param array<string, string> $params
-     */
     public function setAlternatesFor(string $routeKey, array $params = []): self
     {
         $this->alternates = $this->urls->alternates($routeKey, $params);
         return $this;
     }
 
-    /** One x-default entry: the default-locale variant. */
     public function xDefaultUrl(string $routeKey, array $params = []): string
     {
         $default = (string) config('localization.default', 'en');
         return $this->urls->localizedUrl($routeKey, $default, $params);
     }
 
-    /* ------------------------------------------------ schema builders */
-
-    /** @param list<array{name: string, url: string}> $items */
     public function addBreadcrumb(array $items): self
     {
         $elements = [];
@@ -116,12 +101,6 @@ class SEOService
         return $this->addStructuredData('BreadcrumbList', ['itemListElement' => $elements]);
     }
 
-    /**
-     * Product rich-result schema. Deliberately no offers/price: this is a
-     * B2B catalogue, and price-less offers trigger merchant warnings.
-     *
-     * @param array<string, mixed> $product translated product payload
-     */
     public function addProductSchema(array $product, string $canonicalUrl): self
     {
         $images = [];
@@ -159,7 +138,6 @@ class SEOService
         ]);
     }
 
-    /** @param list<array{url: string, name: string, image?: string}> $items */
     public function addItemListSchema(array $items, string $name): self
     {
         $elements = [];
@@ -178,7 +156,6 @@ class SEOService
         return $this->addStructuredData('ItemList', ['name' => $name, 'itemListElement' => $elements]);
     }
 
-    /** @param list<array{q: string, a: string}> $faqs */
     public function addFaqSchema(array $faqs): self
     {
         $entities = [];
@@ -192,7 +169,6 @@ class SEOService
         return $this->addStructuredData('FAQPage', ['mainEntity' => $entities]);
     }
 
-    /** @param array{name?: string, description?: string, url: string, inLanguage?: string, type?: string} $data */
     public function addWebPageSchema(array $data): self
     {
         $type = (string) ($data['type'] ?? 'WebPage');
@@ -203,7 +179,6 @@ class SEOService
         ]);
     }
 
-    /** @param array<string, mixed> $entity entity data merged into structured data */
     public function setFromEntity(array $entity): self
     {
         if (isset($entity['seo']) && is_array($entity['seo'])) {
@@ -232,14 +207,12 @@ class SEOService
         return $this;
     }
 
-    /** @param array<string, mixed> $data */
     public function addStructuredData(string $type, array $data): self
     {
         $this->structured[] = ['type' => $type, 'data' => $data];
         return $this;
     }
 
-    /** @return array<string, mixed> */
     public function toArray(): array
     {
         $meta = $this->meta;
@@ -253,13 +226,11 @@ class SEOService
         return $meta;
     }
 
-    /** @return array<string, string> */
     public function alternates(): array
     {
         return $this->alternates;
     }
 
-    /** @return array<int, array{type: string, data: array<string, mixed>}> */
     public function structuredData(): array
     {
         return $this->structured;

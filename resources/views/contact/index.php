@@ -1,19 +1,4 @@
 <?php
-/**
- * Contact page.
- *
- * Structure, top to bottom:
- *   hero        - who you are talking to + trust badge + WhatsApp panel
- *   channels    - WhatsApp / email / phone / factory, every one icon-led
- *   form        - project enquiry, composed into a WhatsApp message
- *   why         - four reassurance points
- *   quick       - one-tap request lines
- *   faq         - the questions the sales desk answers every day
- *
- * Every block is icon-led so the page has a readable structure at a glance.
- *
- * @var Core\View\View $view
- */
 $view->layout('layouts.frontend');
 $view->pushStyle('frontend/pages/contact.css');
 $view->pushScript('frontend/pages/contact.js');
@@ -21,7 +6,6 @@ $view->pushScript('frontend/pages/contact.js');
 $waNumber = '908503040817';
 $wa = static fn (string $message): string => 'https://wa.me/' . $waNumber . '?text=' . rawurlencode($message);
 
-/* inline icon helper: keeps the markup readable and the set consistent */
 $icon = static function (string $name, int $size = 20): string {
     $paths = [
         'whatsapp' => '<path d="M12.04 2C6.58 2 2.13 6.45 2.13 11.91C2.13 13.66 2.59 15.36 3.45 16.86L2.05 22L7.3 20.62C8.75 21.41 10.38 21.83 12.04 21.83C17.5 21.83 21.95 17.38 21.95 11.92C21.95 9.27 20.92 6.78 19.05 4.91C17.18 3.03 14.69 2 12.04 2ZM12.05 20.15C10.56 20.15 9.11 19.76 7.85 19.01L7.55 18.83L4.43 19.65L5.26 16.61L5.06 16.29C4.24 14.99 3.81 13.47 3.81 11.91C3.81 7.37 7.5 3.68 12.04 3.68C14.25 3.68 16.31 4.54 17.87 6.1C19.42 7.66 20.28 9.72 20.28 11.92C20.28 16.46 16.59 20.15 12.05 20.15ZM16.57 14.43C16.32 14.3 15.1 13.71 14.88 13.62C14.65 13.54 14.48 13.5 14.32 13.75C14.15 14 13.67 14.57 13.52 14.74C13.38 14.9 13.23 14.92 12.98 14.8C12.73 14.67 11.94 14.41 11 13.57C10.27 12.91 9.78 12.1 9.63 11.85C9.48 11.6 9.61 11.47 9.74 11.34C9.85 11.23 9.99 11.05 10.12 10.9C10.24 10.75 10.28 10.64 10.36 10.48C10.44 10.31 10.4 10.17 10.34 10.05C10.28 9.92 9.78 8.7 9.58 8.19C9.38 7.69 9.18 7.76 9.03 7.75C8.89 7.74 8.72 7.74 8.56 7.74C8.39 7.74 8.12 7.8 7.89 8.05C7.67 8.3 7.03 8.9 7.03 10.12C7.03 11.34 7.92 12.52 8.04 12.68C8.17 12.85 9.78 15.33 12.26 16.4C12.85 16.65 13.31 16.81 13.67 16.92C14.26 17.11 14.8 17.08 15.22 17.02C15.7 16.95 16.67 16.43 16.88 15.86C17.08 15.29 17.08 14.8 17.02 14.7C16.96 14.6 16.81 14.55 16.57 14.43Z" fill="currentColor" stroke="none"/>',
@@ -79,9 +63,7 @@ $mapUrl = 'https://www.google.com/maps/search/?api=1&query=Gaziantep%2C%20T%C3%B
 ?>
 <main class="cpage" id="main">
     <div class="cpage-inner">
-
-        <!-- ============ hero ============ -->
-        <section class="cpage-hero">
+<section class="cpage-hero">
             <div class="cpage-intro">
                 <p class="cpage-kicker">
                     <?= $icon('pin', 14) ?>
@@ -95,9 +77,7 @@ $mapUrl = 'https://www.google.com/maps/search/?api=1&query=Gaziantep%2C%20T%C3%B
                     <?= e(trans('contact.response_badge')) ?>
                 </p>
             </div>
-
-            <!-- signature WhatsApp panel -->
-            <aside class="cpage-wa" aria-label="<?= e(trans('contact.whatsapp_title')) ?>">
+<aside class="cpage-wa" aria-label="<?= e(trans('contact.whatsapp_title')) ?>">
                 <span class="cpage-wa-shimmer" aria-hidden="true"></span>
                 <span class="cpage-wa-grain" aria-hidden="true"></span>
                 <span class="cpage-wa-beam" aria-hidden="true"></span>
@@ -113,9 +93,7 @@ $mapUrl = 'https://www.google.com/maps/search/?api=1&query=Gaziantep%2C%20T%C3%B
                 </a>
             </aside>
         </section>
-
-        <!-- ============ channels ============ -->
-        <div class="cpage-grid">
+<div class="cpage-grid">
             <article class="cpage-card">
                 <span class="cpage-card-icon" aria-hidden="true"><?= $icon('mail', 21) ?></span>
                 <h2><?= e(trans('contact.email_title')) ?></h2>
@@ -148,9 +126,7 @@ $mapUrl = 'https://www.google.com/maps/search/?api=1&query=Gaziantep%2C%20T%C3%B
                 </a>
             </article>
         </div>
-
-        <!-- ============ enquiry form ============ -->
-        <section class="cpage-form-wrap" aria-labelledby="cform-title">
+<section class="cpage-form-wrap" aria-labelledby="cform-title">
             <div class="cpage-form-head">
                 <span class="cpage-card-icon" aria-hidden="true"><?= $icon('chat', 21) ?></span>
                 <div>
@@ -206,9 +182,7 @@ $mapUrl = 'https://www.google.com/maps/search/?api=1&query=Gaziantep%2C%20T%C3%B
                 </div>
             </form>
         </section>
-
-        <!-- ============ reassurance ============ -->
-        <section class="cpage-why" aria-labelledby="cwhy-title">
+<section class="cpage-why" aria-labelledby="cwhy-title">
             <h2 class="cpage-section-title" id="cwhy-title">
                 <?= $icon('shield', 18) ?>
                 <?= e(trans('contact.why_title')) ?>
@@ -223,9 +197,7 @@ $mapUrl = 'https://www.google.com/maps/search/?api=1&query=Gaziantep%2C%20T%C3%B
                 <?php endforeach; ?>
             </div>
         </section>
-
-        <!-- ============ quick request lines ============ -->
-        <section class="cpage-quick" aria-labelledby="cquick-title">
+<section class="cpage-quick" aria-labelledby="cquick-title">
             <h2 class="cpage-section-title" id="cquick-title">
                 <?= $icon('bolt', 18) ?>
                 <?= e(trans('contact.quick_title')) ?>
@@ -241,9 +213,7 @@ $mapUrl = 'https://www.google.com/maps/search/?api=1&query=Gaziantep%2C%20T%C3%B
                 <?php endforeach; ?>
             </div>
         </section>
-
-        <!-- ============ faq ============ -->
-        <section class="cpage-faq" aria-labelledby="cfaq-title">
+<section class="cpage-faq" aria-labelledby="cfaq-title">
             <h2 class="cpage-section-title" id="cfaq-title">
                 <?= $icon('chat', 18) ?>
                 <?= e(trans('contact.faq_title')) ?>

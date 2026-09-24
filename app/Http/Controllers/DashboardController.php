@@ -22,7 +22,6 @@ class DashboardController extends Controller
         ]);
     }
 
-    /** @return array<string, int> */
     private function stats(): array
     {
         $stats = [];

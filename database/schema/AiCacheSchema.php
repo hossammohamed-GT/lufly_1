@@ -7,13 +7,6 @@ namespace Database\Schema;
 use Core\Database\Schema\Blueprint;
 use Core\Database\Schema\SchemaDefinition;
 
-/**
- * Stored AI answers ("never ask the same question twice").
- *
- * scope + fingerprint is the lookup key: the scope names the feature
- * (planner, product-finder, label), the fingerprint hashes the exact question
- * and its inputs (including the bytes of an uploaded picture).
- */
 class AiCacheSchema extends SchemaDefinition
 {
     protected string $table = 'ai_cache';

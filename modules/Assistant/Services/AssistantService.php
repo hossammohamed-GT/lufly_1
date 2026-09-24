@@ -12,21 +12,6 @@ use Core\View\View;
 use Modules\Assistant\Models\AssistantLead;
 use Throwable;
 
-/**
- * The finder, end to end: a description (any language) or a photo in, a bank of
- * matching pieces out.
- *
- * The order of work is what keeps it cheap:
- *
- *   1. the words are searched in our own catalogue — no model, no tokens;
- *   2. the model is asked *only* when that first pass found nothing good, and
- *      only for a handful of search words (never the catalogue, never a price);
- *   3. a photo is one small vision call (the browser sends it already shrunk),
- *      cached, so the same picture is described once.
- *
- * Whatever happens — no key, no network, a 429 — the visitor still gets the
- * closest pieces we have, plus the promise that the team will look at it.
- */
 final class AssistantService
 {
     public function __construct(
@@ -51,12 +36,6 @@ final class AssistantService
         return (bool) config('assistant.photo.enabled', true) && $this->enabled();
     }
 
-    /**
-     * What the chat says while it works — several short lines, so a slow answer
-     * does not look like a frozen one.
-     *
-     * @return array<int, string>
-     */
     public function waiting(string $locale): array
     {
         $messages = [];
@@ -73,12 +52,6 @@ final class AssistantService
         return $messages;
     }
 
-    /**
-     * One question: text, a photo, or both.
-     *
-     * @param array{q?:string,email?:string,photo?:array{name?:string,mime?:string,data?:string},product_id?:int} $input
-     * @return array<string, mixed>
-     */
     public function ask(array $input, string $locale): array
     {
         $limit = (int) config('assistant.chat.daily_per_ip', 20);
@@ -94,8 +67,6 @@ final class AssistantService
 
         $question = $this->clamp((string) ($input['q'] ?? ''));
         $photo = $this->photo($input['photo'] ?? null);
-        /* a picture that came back empty (too big, or not a picture at all) is
-           said out loud instead of quietly ignored */
         $photoRejected = $photo === null
             && is_array($input['photo'] ?? null)
             && trim((string) ($input['photo']['data'] ?? '')) !== '';
@@ -106,8 +77,6 @@ final class AssistantService
         if ($question === '' && $photo === null && $productId === 0 && $choice === '') {
             return ['ok' => false, 'reason' => 'empty', 'text' => trans('assistant.need_words'), 'cards' => []];
         }
-
-        /* ---- 0. one tap on a choice the chat offered ---------------------- */
 
         $pick = $choice !== '' ? $this->pick($choice) : null;
 
@@ -121,15 +90,10 @@ final class AssistantService
 
         $fromProduct = $question === '' && $photo === null && $productId > 0;
 
-        /* A plain sentence — a greeting, a question, the whole bathroom, a piece
-           named without any detail — is talked about first: six products are not
-           an answer to "hello", and asking one short question costs nothing. */
         if ($pick === null && $photo === null && !$fromProduct) {
             $guided = $this->guided($question, $thread, $locale);
 
             if ($guided !== null) {
-                /* the shop's own opinion may come with pieces under it — an answer
-                   plus what to look at, never a bare list */
                 if (($guided['mode'] ?? 'chat') === 'cards') {
                     $guided['lead'] = $this->keep(
                         $input,
@@ -149,8 +113,6 @@ final class AssistantService
                 return $this->chatBack($guided, $locale);
             }
         }
-
-        /* ---- 1. what we already know how to look for --------------------- */
 
         $forced = $pick !== null && $pick['kind'] === 'option';
         $carried = !$forced && trim((string) ($thread['topic'] ?? '')) !== ''
@@ -190,20 +152,10 @@ final class AssistantService
         $good = (int) config('assistant.find.good_score', 24);
         $enough = $cards !== [] && $best >= $good;
 
-        /* is there anything at all in the request? a topic we know, a catalogue
-           word that landed, a choice the visitor tapped — or a photo, which is a
-           search of its own even when the model that reads it is not reached */
         $signal = $forced || $topic !== '' || $best > 0 || $photo !== null;
-
-        /* ---- 2. the model, only when the local pass was not enough ------- */
 
         $vision = $photo !== null && $this->visionAllowed();
 
-        /* A sentence that asks something, with no piece named in it, is talk and
-           not a search — even when a word in it grazed the catalogue ("who won
-           the world cup?" once ended in a shelf of washbasins). It goes to the
-           chat, which may still hand back search words of its own, and then the
-           catalogue is searched after all. */
         $talk = !$fromProduct && !$forced && !$vision && $topic === '' && $this->conversation->asks($question);
 
         if (!$fromProduct && !$forced && ($vision || (!$talk && $signal && !$enough && $this->aiAllowed()))) {
@@ -214,7 +166,6 @@ final class AssistantService
                 $wanted = (string) ($facets['category'] ?? '') !== '' ? (string) $facets['category'] : $category;
                 $withAi = $this->finder->find($merged, $locale, null, $wanted);
 
-                /* the model only ever improves the answer — never shrinks it */
                 if ($this->bestScore($withAi) >= $best) {
                     $cards = $withAi;
                     $terms = $merged;
@@ -225,9 +176,6 @@ final class AssistantService
 
             $summary = (string) ($facets['summary'] ?? '');
         } elseif (!$fromProduct && !$forced && !$vision && ($talk || !$signal) && $this->aiAllowed()) {
-            /* nothing at all was recognised, or the visitor asked a question
-               instead of describing a piece: one small, cached answer — never
-               the catalogue */
             $chat = $this->chatAnswer($question, $locale);
             $say = (string) $chat['say'];
             $searched = false;
@@ -245,10 +193,6 @@ final class AssistantService
                 }
             }
 
-            /* A question the catalogue cannot answer: the words it grazed by
-               accident are not a shelf to put in front of the visitor — he gets
-               the answer and the few things worth doing next. When the model did
-               hand back search words, the shelf is a real answer and stays. */
             if ($talk && !$searched) {
                 $cards = [];
                 $terms = [];
@@ -256,44 +200,26 @@ final class AssistantService
             }
         }
 
-        /* A description that never touched the catalogue is still a request: the
-           shop shows what it is known for and says plainly that the piece is
-           probably in the warehouse but not on the website yet, with a way to
-           reach the team. (A question is different — that one is answered with
-           words, see above.) */
         if (!$talk && $cards === [] && trim($question) !== '' && !$vision) {
             $signal = true;
         }
 
-        /* A question the visitor asked is a conversation, not a search: when the
-           sentence names no piece, only a search that really landed beats words.
-           (Without this, a stray word in "who won the world cup?" was enough to
-           put a fallback shelf of washbasins in front of him.) */
         if ($talk && ($cards === [] || $this->bestScore($cards) < $good)) {
             $cards = [];
             $terms = [];
             $signal = false;
         }
 
-        /* ---- 3. never answer with nothing --------------------------------- */
-
         $exact = $cards !== [] && $this->bestScore($cards) >= (int) config('assistant.find.min_score', 3);
 
         $fallback = false;
 
         if ($cards === [] && $signal) {
-            /* something was asked for (a topic, a word, a tap) and nothing
-               answered it: show what the shop is known for, and say plainly that
-               it is not a match */
             $cards = $this->finder->featured($locale, null, $category);
             $fallback = true;
         }
 
-        /* nothing at all — no catalogue word, no topic, no model: talk */
         if ($cards === []) {
-            /* What the visitor said is answered here even with no model to ask:
-               hello, thanks, "do you speak Arabic?", shipping, prices, or a
-               question that has nothing to do with the shop. */
             $local = $this->talk->reply($question, $locale, $talk);
             $language = (string) ($local['language'] ?? $locale);
             $fallback = (string) ($local['say'] ?? '') !== '' ? (string) $local['say'] : trans('assistant.chat_vague');
@@ -309,8 +235,6 @@ final class AssistantService
         }
 
         $cards = array_slice($cards, 0, max(1, (int) config('assistant.find.limit', 6)));
-
-        /* ---- 4. the visitor's address, the team's mail --------------------- */
 
         $lead = $this->keep($input, $question, $photo, $locale, $terms, $category, $summary, count($cards), $fromProduct ? $productId : 0);
 
@@ -337,51 +261,31 @@ final class AssistantService
         return $reply;
     }
 
-    /* ------------------------------------------------------- the conversation */
-
-    /** Is the guided conversation switched on? */
     private function guideOn(): bool
     {
         return (bool) config('assistant.guide.enabled', true);
     }
 
-    /**
-     * What to say back when the visitor is talking rather than searching.
-     *
-     * @param array{topic:string,await:bool} $thread
-     * @return array<string, mixed>|null the reply fields, or null to search
-     */
     private function guided(string $question, array $thread, string $locale): ?array
     {
         if (!$this->guideOn() || $question === '') {
             return null;
         }
 
-        /* the visitor is answering the question the chat just asked, in their own
-           words — those words go into the search, not into another question */
         if (($thread['await'] ?? false) && trim((string) ($thread['topic'] ?? '')) !== '') {
             return null;
         }
 
         $topic = $this->conversation->topic($question);
 
-        /* "is a bath practical?", "what do you think of central vacuum?", "its
-           pros and cons?" — the visitor wants the shop's opinion. That is the
-           question this chat exists for: the model answers it, on our side, in
-           his language, and the pieces come next. */
         if ($this->talk->asksAdvice($question)) {
             return $this->consult($question, $topic, $locale);
         }
 
         $intent = $this->conversation->intent($question);
 
-        /* "how much is a washbasin?", "do you deliver?", "can you speak Arabic?",
-           "who are you?" — questions about the shop, answered before anything
-           else, whatever piece the sentence happens to mention */
         $service = $this->talk->service($question, $locale);
 
-        /* a greeting that also names a piece ("hello, I need a washbasin") is a
-           search with a hello in front of it — the piece wins */
         if ($service !== null && in_array($service['intent'], ['greet', 'thanks'], true) && $topic !== '') {
             $service = null;
         }
@@ -390,11 +294,7 @@ final class AssistantService
             return $this->menu($locale, $this->converse($question, (string) $service['say'], '', $locale), $service);
         }
 
-        /* a piece we know is named in the message — that is what the visitor is
-           asking about, whatever else the sentence says */
         if ($topic !== '') {
-            /* "is a big one better than a small one?" is a question about the
-               piece, so it gets an answer, not a search */
             if ($intent === 'choosing') {
                 return [
                     'text' => $this->converse(
@@ -410,15 +310,9 @@ final class AssistantService
                 ];
             }
 
-            /* named without a size, a finish or an installation: one short
-               question with a few answers beats six products */
             return $this->conversation->specific($question) ? null : $this->askAbout($topic, $locale);
         }
 
-        /* An announcement ("I am renovating the bathroom") is talked through. A
-           long sentence that happens to mention the room is not an announcement,
-           it is a description — that one belongs to the search, which shows the
-           shop and says the piece is probably not uploaded yet. */
         if ($intent === 'wide' && $this->conversation->words($question) > 6) {
             return null;
         }
@@ -431,10 +325,6 @@ final class AssistantService
                 default => trans('assistant.chat_hello') . ' ' . trans('assistant.chat_hello_2'),
             };
 
-            /* The visitor said something that is not a search. The model answers
-               it in their own language when there is a model to ask; without one
-               the shop still answers — hello and thanks are not a reason to show
-               an error, or to answer a visitor who wrote Arabic in English. */
             $local = $this->talk->reply($question, $locale);
 
             return $this->menu(
@@ -447,7 +337,6 @@ final class AssistantService
         return null;
     }
 
-    /** The one question a topic asks, with its few answers. */
     private function askAbout(string $topic, string $locale): array
     {
         return [
@@ -459,18 +348,6 @@ final class AssistantService
         ];
     }
 
-    /** The small set of things the chat can help with. */
-    /**
-     * The shop's opinion on a piece, or on anything else the visitor asks about.
-     *
-     * The model is the consultant — it can talk about things the shop does not
-     * sell at all, which is exactly why the chat is wired to it. Without a model,
-     * the shop still gives its own read of the pieces it knows (Talk::consult),
-     * and the visitor is offered the concrete choices that decide the piece, so
-     * the conversation keeps moving towards picking one.
-     *
-     * @return array<string, mixed>
-     */
     private function consult(string $question, string $topic, string $locale): array
     {
         $local = $this->talk->consult($question, $locale, $topic);
@@ -480,8 +357,6 @@ final class AssistantService
         $say = trim((string) ($answer['say'] ?? ''));
         $terms = (array) ($answer['terms'] ?? []);
 
-        /* the model may hand back the words to search with: the opinion on top, the
-           pieces under it — which is what a visitor asking for advice wants next */
         if ($terms !== []) {
             $cards = $this->finder->find($this->merge([], $terms), $locale, null, '');
 
@@ -513,13 +388,6 @@ final class AssistantService
         ];
     }
 
-    /**
-     * The model as a shopkeeper: asked for an opinion, it gives a real one — what
-     * the thing is good for, what to know before deciding, and what suits this
-     * visitor — and it stays on the shop's side without ever being untrue.
-     *
-     * @return array{say:string,terms:array<int,string>}
-     */
     private function adviceAnswer(string $question, string $locale, string $topic = ''): array
     {
         if (!$this->aiAllowed() || trim($question) === '') {
@@ -582,13 +450,6 @@ final class AssistantService
         ];
     }
 
-    /**
-     * The prompt that turns the model into the shop's consultant.
-     *
-     * Two rules pull against each other on purpose, and both have to hold: the
-     * answer must never be untrue (a visitor who finds out later trusts nothing),
-     * and it must always leave the shop better off than it found it.
-     */
     private function advicePrompt(string $question, string $locale, string $topic = ''): string
     {
         $language = $this->talk->language($question, $locale);
@@ -644,11 +505,6 @@ final class AssistantService
         return implode("\n", $lines);
     }
 
-    /**
-     * The chat's opening answer: a line, a note, and the few pieces worth offering.
-     *
-     * @param array{say?:string,note?:string,language?:string,intent?:string}|null $local
-     */
     private function menu(string $locale, string $text, ?array $local = null): array
     {
         $note = trim((string) ($local['note'] ?? ''));
@@ -663,7 +519,6 @@ final class AssistantService
         ];
     }
 
-    /** @return array<int, array{id:string,label:string,kind:string}> */
     private function menuChoices(string $locale): array
     {
         $choices = [];
@@ -679,7 +534,6 @@ final class AssistantService
         return $choices;
     }
 
-    /** @return array<int, array{id:string,label:string,kind:string}> */
     private function topicChoices(string $topic, string $locale): array
     {
         $choices = [];
@@ -705,7 +559,6 @@ final class AssistantService
         return $choices;
     }
 
-    /** One chip under a bank of cards: "something else?". */
     private function moreChoices(string $locale): array
     {
         unset($locale);
@@ -717,7 +570,6 @@ final class AssistantService
         ]];
     }
 
-    /** Read one choice id ("topic:basin", "option:basin:small", "menu:start"). */
     private function pick(string $choice): ?array
     {
         $parts = explode(':', $choice);
@@ -750,7 +602,6 @@ final class AssistantService
         return null;
     }
 
-    /** What the visitor tapped, as a sentence (it becomes the question stored). */
     private function pickLabel(array $pick): string
     {
         $topic = (string) $pick['topic'];
@@ -759,7 +610,6 @@ final class AssistantService
         return $this->conversation->label($option === 'show' ? 'guide_o_show' : 'guide_o_' . $topic . '_' . $option);
     }
 
-    /** The catalogue group a question points at, or '' when it names none. */
     private function categoryFor(string $question, string $topic, string $locale): string
     {
         $slug = $this->finder->categorySlug($question);
@@ -771,12 +621,6 @@ final class AssistantService
         return $topic !== '' ? $this->conversation->topicCategory($topic) : '';
     }
 
-    /**
-     * The state the browser carries between two turns of the chat.
-     *
-     * @param mixed $raw
-     * @return array{topic:string,await:bool}
-     */
     private function thread(mixed $raw): array
     {
         $data = is_array($raw) ? $raw : [];
@@ -790,12 +634,6 @@ final class AssistantService
         return ['topic' => $topic, 'await' => (bool) ($data['await'] ?? false)];
     }
 
-    /**
-     * A conversational answer for a message that names no piece: a few short
-     * sentences, cached, and never a catalogue.
-     *
-     * @return array{say:string,terms:array<int,string>}
-     */
     private function chatAnswer(string $question, string $locale, string $topic = ''): array
     {
         if (!$this->aiAllowed() || trim($question) === '') {
@@ -858,15 +696,6 @@ final class AssistantService
         ];
     }
 
-    /**
-     * What the chat says back to a sentence that is not a search.
-     *
-     * The model gets the visitor's words, the language to answer in and the
-     * shop's own shelf of words — never a product, never a price, never the
-     * catalogue. A cheap call, cached by question and language, and the caller's
-     * own wording is what happens when there is no model to ask (no key, over the
-     * daily limit, a slow network).
-     */
     private function converse(string $question, string $fallback, string $topic, string $locale): string
     {
         $answer = $this->chatAnswer($question, $locale, $topic);
@@ -889,8 +718,6 @@ final class AssistantService
             'wrote Turkish, answer in Turkish. Two or three short sentences at most, warm,',
             'concrete, and never a lecture.',
             '',
-            /* the shop's own reading of the visitor's letters: the model is told which
-               language it is answering in, instead of guessing from a short sentence */
             "The visitor's message is in " . $languageName . ' — answer in ' . $languageName . '.',
             '',
             'You may talk about anything connected to a bathroom, a kitchen, a renovation or',
@@ -926,13 +753,6 @@ final class AssistantService
         return implode("\n", $lines);
     }
 
-    /**
-     * Mark every card with what this visitor already did with that piece, so the
-     * heart and the box button are right the moment the bank is drawn.
-     *
-     * @param array<int, array<string, mixed>> $cards
-     * @return array<int, array<string, mixed>>
-     */
     private function flags(array $cards, string $locale): array
     {
         unset($locale);
@@ -969,7 +789,6 @@ final class AssistantService
         return $cards;
     }
 
-    /** @return array<string, string> the addresses the visitor may write to */
     private function support(): array
     {
         return [
@@ -978,12 +797,6 @@ final class AssistantService
         ];
     }
 
-    /**
-     * The shape every answer has, whether it is a bank of cards or a sentence.
-     *
-     * @param array<string, mixed> $fields
-     * @return array<string, mixed>
-     */
     private function assemble(array $fields, string $locale): array
     {
         $cards = array_values((array) ($fields['cards'] ?? []));
@@ -1009,13 +822,6 @@ final class AssistantService
         ];
     }
 
-    /**
-     * A conversational answer: a sentence and a few choices, no cards, and —
-     * unless there was a photo — nothing written down about the visitor.
-     *
-     * @param array<string, mixed> $fields
-     * @return array<string, mixed>
-     */
     private function chatBack(array $fields, string $locale): array
     {
         $fields['mode'] = 'chat';
@@ -1027,14 +833,6 @@ final class AssistantService
         return $this->assemble($fields, $locale);
     }
 
-    /* ------------------------------------------------------------------ the model */
-
-    /**
-     * A handful of search words for a sentence, or for a picture.
-     *
-     * @param array{name:string,mime:string,base64:string,kb:int,path:string,url:string}|null $photo
-     * @return array{ok:bool,terms:array<int,string>,category:string,summary:string,model:string}|null
-     */
     private function facets(string $question, ?array $photo, string $locale, bool $vision): ?array
     {
         if (!$this->aiAllowed() && !$vision) {
@@ -1150,15 +948,6 @@ final class AssistantService
         return implode('; ', $out);
     }
 
-    /* ------------------------------------------------------------------ the photo */
-
-    /**
-     * The photo the browser sent: base64, already shrunk, in a field — not a
-     * multipart upload, so it works the same behind every proxy.
-     *
-     * @param mixed $input
-     * @return array{name:string,mime:string,base64:string,kb:int,path:string,url:string}|null
-     */
     private function photo(mixed $input): ?array
     {
         if (!is_array($input) || !$this->photosEnabled()) {
@@ -1225,7 +1014,6 @@ final class AssistantService
         ];
     }
 
-    /** The image type is read from the bytes, never from what a browser claims. */
     private function sniff(string $binary): string
     {
         return match (true) {
@@ -1236,19 +1024,6 @@ final class AssistantService
         };
     }
 
-    /* ------------------------------------------------------------------ the lead */
-
-    /**
-     * Keep the request and tell the shop about it.
-     *
-     * A photo always reaches the team (a human has to look at it). Text reaches
-     * them once per visitor per day, so a chatty visitor is one mail, not ten.
-     *
-     * @param array<string, mixed> $input
-     * @param array{name:string,mime:string,base64:string,kb:int,path:string,url:string}|null $photo
-     * @param array<int, string> $terms
-     * @return array{stored:bool,notified:bool,email:string}
-     */
     private function keep(
         array $input,
         string $question,
@@ -1297,7 +1072,6 @@ final class AssistantService
         return ['stored' => true, 'notified' => $notified, 'email' => $email];
     }
 
-    /** The mail the team reads: who asked, what they asked, and the picture. */
     private function notify(AssistantLead $lead, bool $withPhoto, string $visitorEmail): bool
     {
         $to = trim((string) config('assistant.lead.email', ''));
@@ -1306,12 +1080,6 @@ final class AssistantService
             return false;
         }
 
-        /* A typed question is answered in the chat and mailed to nobody: the
-           visitor did not ask for a human, so the shop does not write to one.
-           (It is still stored as a lead, so the team can read it in the admin.)
-           A photo is the visitor asking us to look, so that one goes out — and
-           only once per visitor per day for the typed ones when the switch is
-           on. */
         if (!$withPhoto && (!(bool) config('assistant.lead.notify_text', false) || $this->alreadyTold())) {
             return false;
         }
@@ -1378,9 +1146,6 @@ final class AssistantService
         }
     }
 
-    /* ------------------------------------------------------------------ wording */
-
-    /** @param array<int, array<string, mixed>> $cards */
     private function wording(string $question, ?array $photo, array $cards, bool $exact, string $locale, bool $likeThis = false, bool $fallback = false): string
     {
         $count = count($cards);
@@ -1394,8 +1159,6 @@ final class AssistantService
             return trans('assistant.found_like', ['n' => (string) $count]);
         }
 
-        /* not one word of the question was in the catalogue: these are not
-           matches, they are what the shop is known for — say so */
         if ($fallback) {
             return trans($pick === 0 ? 'assistant.popular_1' : 'assistant.popular_2');
         }
@@ -1413,7 +1176,6 @@ final class AssistantService
         return trans('assistant.found_' . ($pick + 1), ['n' => (string) $count]);
     }
 
-    /** The one extra line under the cards — where the request went, or may go. */
     private function note(?array $photo, array $lead, bool $exact, string $locale): string
     {
         if ($lead['stored'] && $lead['notified']) {
@@ -1438,9 +1200,6 @@ final class AssistantService
         return $query === '' ? route('products.index') : route('products.index', ['q' => $query]);
     }
 
-    /* ------------------------------------------------------------------ helpers */
-
-    /** @param array<int, array<string, mixed>> $cards */
     private function bestScore(array $cards): int
     {
         $best = 0;
@@ -1452,16 +1211,10 @@ final class AssistantService
         return $best;
     }
 
-    /**
-     * @param array<int, string> $a
-     * @param array<int, string> $b
-     * @return array<int, string>
-     */
     private function merge(array $a, array $b): array
     {
         $out = [];
 
-        /* the visitor's own words come first: they know what they want */
         foreach (array_merge($a, $b) as $term) {
             $term = trim((string) $term);
 
@@ -1493,7 +1246,6 @@ final class AssistantService
         return $this->aiAllowed() && (bool) config('assistant.ai.vision', true);
     }
 
-    /** @param array<string, mixed> $result */
     private function record(string $scope, array $result): void
     {
         $usage = (array) ($result['raw']['usageMetadata'] ?? []);

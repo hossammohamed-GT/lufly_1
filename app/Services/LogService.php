@@ -6,9 +6,6 @@ namespace App\Services;
 
 use Core\Logging\Log;
 
-/**
- * Aggregates structured logging concerns behind one entry point.
- */
 class LogService
 {
     public function __construct(
@@ -33,13 +30,11 @@ class LogService
         return $this->security;
     }
 
-    /** @param array<string, mixed> $context */
     public function info(string $message, array $context = [], string $channel = 'app'): void
     {
         Log::channel($channel)->info($message, $context);
     }
 
-    /** @param array<string, mixed> $context */
     public function error(string $message, array $context = [], string $channel = 'error'): void
     {
         Log::channel($channel)->error($message, $context);

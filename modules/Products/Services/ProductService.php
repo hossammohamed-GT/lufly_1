@@ -22,13 +22,11 @@ class ProductService
     ) {
     }
 
-    /** @param array{status?: string, search?: string, locale?: string} $filters */
     public function paginate(array $filters = [], int $page = 1, int $perPage = 12): Paginator
     {
         return $this->products->search($filters, $page, $perPage);
     }
 
-    /** @return array<int, array<string, mixed>> */
     public function quickSearch(string $query, string $locale = 'en', int $limit = 8, ?string $categorySlug = null): array
     {
         $term = trim($query);
@@ -49,7 +47,6 @@ class ProductService
         );
     }
 
-    /** @return array<string, mixed> */
     public function findTranslatedBySlug(string $slug, string $locale): array
     {
         $product = $this->products->findBySlug($slug);
@@ -67,7 +64,6 @@ class ProductService
             throw new NotFoundException(trans('errors.product_not_found'));
         }
 
-        /** @var Product $product */
         return $product;
     }
 
@@ -81,10 +77,6 @@ class ProductService
         return $product;
     }
 
-    /**
-     * @param array<string, mixed> $data core fields
-     * @param array<string, array<string, mixed>> $translations locale => fields
-     */
     public function create(array $data, array $translations): Product
     {
         return Product::query()->connection()->transaction(function () use ($data, $translations): Product {
@@ -97,7 +89,6 @@ class ProductService
 
             $data['is_featured'] = (int) (($data['is_featured'] ?? '0') === '1');
 
-            /** @var Product $product */
             $product = $this->products->create($data);
             $this->localization->syncTranslations('product', $product->id, $translations);
 
@@ -110,10 +101,6 @@ class ProductService
         });
     }
 
-    /**
-     * @param array<string, mixed> $data
-     * @param array<string, array<string, mixed>> $translations
-     */
     public function update(int $id, array $data, array $translations = []): Product
     {
         return Product::query()->connection()->transaction(function () use ($id, $data, $translations): Product {
@@ -164,11 +151,6 @@ class ProductService
         });
     }
 
-    /**
-     * Keep a single canonical default variant in sync so storefront pricing/SKU
-     * stays coherent even before multi-variant features are managed directly
-     * from their own screens as the catalog grows.
-     */
     private function syncDefaultVariant(int $productId, string $modelCode, ?float $price = null): void
     {
         $connection = Product::query()->connection();
@@ -207,7 +189,6 @@ class ProductService
         $connection->table('product_variants')->where('id', (int) $variant['id'])->update($updates);
     }
 
-    /** @param array<string, mixed> $data */
     private function syncSeoMeta(int $productId, array $data): void
     {
         $metaTitle = trim((string) ($data['meta_title'] ?? ''));

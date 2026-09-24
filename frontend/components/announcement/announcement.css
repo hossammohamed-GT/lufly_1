@@ -1,21 +1,3 @@
-/* ==========================================================================
-   LUFLY - Component: announcement bar ("The Word")
-   --------------------------------------------------------------------------
-   The marketing strip the admin writes from the panel (one message per
-   language). Sits above the glass navbar. Machined deep-teal surface with
-   a slow glass sheen, a fixed icon chip, a scrolling message separated by
-   mint diamonds and a solid CTA pill.
-
-   House rules:
-   * every colour resolves through a token from design-system/style.css
-   * only transform / opacity are animated (sheen + marquee are CSS only)
-   * the marquee moves only when the message overflows, pauses on hover,
-     and goes fully static under prefers-reduced-motion
-   ========================================================================== */
-
-/* Bar height is a global variable so the hero can subtract it and always
-   fill the first screen exactly. html.luann-dismissed clears it when the
-   visitor closes the bar. */
 :root {
   --luann-h: 44px;
 }
@@ -50,7 +32,6 @@ html.luann-dismissed {
   -webkit-tap-highlight-color: transparent;
 }
 
-/* style variants - all rooted in the brand palette */
 .luann-info {
   --luann-accent: var(--lu-info-dark);
   --luann-fade: color-mix(in srgb, var(--lu-ink-950) 68%, transparent);
@@ -95,8 +76,6 @@ html.luann-dismissed {
   display: none;
 }
 
-/* ---------- glass sheen sweep (decorative) ---------- */
-
 .luann-shimmer {
   position: absolute;
   inset: 0;
@@ -132,8 +111,6 @@ html.luann-dismissed {
   42%, 100% { transform: translateX(-220%) skewX(18deg); }
 }
 
-/* ---------- fixed icon chip ---------- */
-
 .luann-chip {
   position: relative;
   z-index: 2;
@@ -156,8 +133,6 @@ html.luann-dismissed {
   height: 14px;
 }
 
-/* ---------- marquee ---------- */
-
 .luann-track {
   position: relative;
   z-index: 1;
@@ -168,7 +143,6 @@ html.luann-dismissed {
   justify-content: center;
 }
 
-/* edge fades in both directions, tinted per variant */
 .luann-track::before,
 .luann-track::after {
   content: "";
@@ -206,7 +180,6 @@ html.luann-dismissed {
   to   { transform: translate3d(-50%, 0, 0); }
 }
 
-/* RTL pages read the opposite direction */
 [dir="rtl"] .luann-marquee {
   animation-name: luann-scroll-rtl;
 }
@@ -229,7 +202,6 @@ html.luann-dismissed {
   text-shadow: none;
 }
 
-/* mint diamond between marquee repeats */
 .luann-text::after {
   content: "";
   flex: none;
@@ -239,8 +211,6 @@ html.luann-dismissed {
   rotate: 45deg;
   background: color-mix(in srgb, var(--luann-accent) 78%, transparent);
 }
-
-/* ---------- fixed CTA pill ---------- */
 
 .luann-cta {
   position: relative;
@@ -289,7 +259,6 @@ a.luann-cta:active {
   color: var(--lu-warning);
 }
 
-/* message-as-link (when the admin set a link but no button label) */
 .luann-link {
   color: inherit;
   text-decoration: none;
@@ -301,8 +270,6 @@ a.luann-cta:active {
   border-bottom-style: solid;
   border-color: var(--luann-accent);
 }
-
-/* ---------- controls ---------- */
 
 .luann-close {
   position: absolute;
@@ -384,8 +351,6 @@ a.luann-cta:active {
   border-color: var(--lu-ink-950);
 }
 
-/* ---------- static (short message) state ---------- */
-
 .luann-item.is-static .luann-marquee {
   animation: none;
   justify-content: center;
@@ -398,8 +363,6 @@ a.luann-cta:active {
 .luann-item.is-static .luann-text::after {
   display: none;
 }
-
-/* ---------- responsive + motion safety ---------- */
 
 @media (max-width: 640px) {
   :root {

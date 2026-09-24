@@ -10,23 +10,8 @@ use Core\Exceptions\NotFoundException;
 use Core\Exceptions\ValidationException;
 use Modules\Products\Models\Product;
 
-/**
- * Keeps `product_media` organised in the three sections the catalogue uses:
- *
- *   photos   -> type "main" (exactly one per product) + type "gallery"
- *   drawings -> type "drawing"
- *   situ     -> type "situ"   (product photographed in place)
- *
- * The storefront turns those rows into the tabs of the product page and into
- * the card images, so the invariants below are enforced on every write:
- *   - at most one is_primary row per product, and only inside `photos`;
- *   - the first photo is always type "main" and flagged primary;
- *   - products that only have drawings keep no primary row (their cover comes
- *     from Product::primaryImageUrl()).
- */
 class ProductMediaService
 {
-    /** Section => the media type new uploads get in it. */
     public const SECTION_TYPES = [
         'photos' => 'gallery',
         'drawings' => 'drawing',
@@ -39,29 +24,16 @@ class ProductMediaService
     ) {
     }
 
-    /** @return string[] */
     public static function sections(): array
     {
         return array_keys(self::SECTION_TYPES);
     }
 
-    /**
-     * Attachments of a product grouped per section, in display order.
-     *
-     * @return array<string, array<int, array<string, mixed>>>
-     */
     public function grouped(Product $product): array
     {
         return $product->mediaBySection();
     }
 
-    /**
-     * Store one uploaded file straight into a section. With $asPrimary the new
-     * image also becomes the product's main photo (legacy "replace image"
-     * behaviour of the product form).
-     *
-     * @param array<string, mixed> $file $_FILES entry
-     */
     public function upload(int $productId, array $file, string $section, bool $asPrimary = false): int
     {
         $type = $this->sectionType($section);
@@ -77,12 +49,6 @@ class ProductMediaService
         return $attachmentId;
     }
 
-    /**
-     * Attach an existing media-library file to a product (idempotent: the same
-     * file is never linked twice inside the same section).
-     *
-     * @return int the product_media row id (0 when it could not be attached)
-     */
     public function attach(int $mediaId, int $productId, string $type): int
     {
         $connection = Product::query()->connection();
@@ -113,7 +79,6 @@ class ProductMediaService
         return $attachmentId;
     }
 
-    /** Move an attachment into another section (photos / drawings / situ). */
     public function move(int $attachmentId, string $section): void
     {
         $type = $this->sectionType($section);
@@ -137,7 +102,6 @@ class ProductMediaService
         ]);
     }
 
-    /** Flag one photo as the product's main image. */
     public function makePrimary(int $attachmentId): void
     {
         $row = $this->attachment($attachmentId);
@@ -151,7 +115,6 @@ class ProductMediaService
 
         $connection = Product::query()->connection();
 
-        /* clear first: the product may only ever carry one primary row */
         $connection->affect(
             'UPDATE product_media SET is_primary = 0 WHERE product_id = ?',
             [$productId],
@@ -167,7 +130,6 @@ class ProductMediaService
         $this->activity->updated('product', (int) $row['product_id'], ['primary_media' => (int) $row['media_id']]);
     }
 
-    /** Move an attachment one position up or down inside its section. */
     public function reorder(int $attachmentId, string $direction): void
     {
         $row = $this->attachment($attachmentId);
@@ -202,10 +164,6 @@ class ProductMediaService
         $this->normalise($productId);
     }
 
-    /**
-     * Detach an image from the product. The file itself stays in the media
-     * library (Admin -> Media) so it can be re-used on another product.
-     */
     public function remove(int $attachmentId): void
     {
         $row = $this->attachment($attachmentId);
@@ -217,11 +175,8 @@ class ProductMediaService
         $this->activity->updated('product', $productId, ['detached_media' => (int) $row['media_id']]);
     }
 
-    /* ---------------------------------------------------------------- internals */
-
     private function product(int $productId): Product
     {
-        /** @var Product|null $product */
         $product = Product::find($productId);
         if ($product === null) {
             throw new NotFoundException(trans('errors.product_not_found'));
@@ -230,7 +185,6 @@ class ProductMediaService
         return $product;
     }
 
-    /** @return array<string, mixed> */
     private function attachment(int $attachmentId): array
     {
         $row = Product::query()->connection()->selectOne(
@@ -265,7 +219,6 @@ class ProductMediaService
         };
     }
 
-    /** @return array<int, array<string, mixed>> */
     private function sectionRows(int $productId, string $section): array
     {
         $sql = 'SELECT id, type, sort_order FROM product_media
@@ -289,10 +242,6 @@ class ProductMediaService
         return count($rows) + 1;
     }
 
-    /**
-     * Re-apply the section invariants and renumber every section so the order
-     * stays dense (1..n) after moves, uploads and deletions.
-     */
     private function normalise(int $productId): void
     {
         $connection = Product::query()->connection();
@@ -339,7 +288,6 @@ class ProductMediaService
         }
     }
 
-    /** Uploads of a product land in its category collection, like the seed data. */
     private function collection(int $productId): string
     {
         $row = Product::query()->connection()->selectOne(

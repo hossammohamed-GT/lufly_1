@@ -10,17 +10,6 @@ use Modules\Favorites\Models\Favorite;
 use Modules\Favorites\Repositories\FavoriteRepository;
 use Modules\Products\Models\Product;
 
-/**
- * The visitor's saved-products list.
- *
- * Identity: a visitor is anonymous, so the list is found through the cookie
- * holding its token. Nothing is created until the first product is saved, which
- * keeps the storefront free of pointless rows (and pointless queries: count()
- * answers 0 without touching the database when no cookie is present).
- *
- * The same token is printed in the e-mailed copy of the list, so the visitor can
- * open it later — on another device, months later — and land on the same list.
- */
 class FavoriteService
 {
     private ?Favorite $favorite = null;
@@ -38,12 +27,9 @@ class FavoriteService
         return (string) config('favorites.cookie', 'lufly_favorites');
     }
 
-    /** The visitor's list, or null. Creates one when $create is true. */
     public function current(bool $create = false): ?Favorite
     {
         if ($this->resolved) {
-            /* the same request may have looked first (the header's counter) and
-               asked for a list only afterwards */
             return $this->favorite === null && $create ? $this->create() : $this->favorite;
         }
 
@@ -53,7 +39,6 @@ class FavoriteService
         if ($token !== '') {
             $this->favorite = $this->favorites->findByToken($token);
 
-            /* A cookie pointing at a deleted list is simply replaced. */
             if ($this->favorite !== null) {
                 return $this->favorite;
             }
@@ -62,7 +47,6 @@ class FavoriteService
         return $create ? $this->create() : null;
     }
 
-    /** Adopt a list opened from an e-mailed / shared link. */
     public function adopt(Favorite $favorite): Favorite
     {
         $this->resolved = true;
@@ -87,7 +71,6 @@ class FavoriteService
         return $favorite === null ? 0 : $this->favorites->countItems($favorite);
     }
 
-    /** @return int[] saved product ids (newest first) */
     public function productIds(): array
     {
         $favorite = $this->current();
@@ -102,11 +85,6 @@ class FavoriteService
         return $favorite !== null && $this->favorites->has($favorite, $productId);
     }
 
-    /**
-     * Add or remove one product.
-     *
-     * @return array{added: bool, count: int, limit_reached: bool}
-     */
     public function toggle(int $productId): array
     {
         $favorite = $this->current(true);
@@ -150,12 +128,6 @@ class FavoriteService
         }
     }
 
-    /**
-     * Saved products translated for a locale, in the order they were saved
-     * (newest first). Products that are no longer on sale drop out of the list.
-     *
-     * @return array<int, array<string, mixed>>
-     */
     public function items(string $locale): array
     {
         $ids = $this->productIds();
@@ -163,7 +135,6 @@ class FavoriteService
             return [];
         }
 
-        /** @var Product[] $models */
         $models = Product::query()
             ->whereIn('id', $ids)
             ->where('status', 'active')
@@ -198,16 +169,11 @@ class FavoriteService
         return $items;
     }
 
-    /** Public link that opens the list anywhere (used in the e-mail). */
     public function shareUrl(Favorite $favorite): string
     {
         return route('favorites.claim', ['token' => (string) $favorite->token]);
     }
 
-    /**
-     * Stamp the visitor's cookie on a response so the list follows the browser.
-     * Called by every action that may have created (or adopted) a list.
-     */
     public function attachCookie(Response $response, ?Favorite $favorite = null): Response
     {
         $favorite ??= $this->current();
@@ -239,13 +205,6 @@ class FavoriteService
         );
     }
 
-    /**
-     * A Secure cookie is only sent over https — and a browser on plain http
-     * silently throws it away, which is what makes a visitor's list (or his box)
-     * start from nothing on every click. So the flag follows the request, not
-     * APP_ENV: a shop on localhost over http keeps its cookie, and a shop behind
-     * a proxy gets it from X-Forwarded-Proto.
-     */
     private function isSecure(): bool
     {
         $server = (array) ($_SERVER ?? []);
@@ -268,7 +227,6 @@ class FavoriteService
         return $this->favorite = $favorite;
     }
 
-    /** IP addresses are never stored in the clear. */
     private function ipHash(): string
     {
         $ip = request()->ip();

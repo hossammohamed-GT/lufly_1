@@ -1,12 +1,4 @@
-/* LUFLY Design System - Tidal Monolith (Direction 01 / 10) */
-/* Single source of truth for color, type, space and motion. */
-
-/* ============================================================
-   01 - Brand palette (fixed, never themed)
-   ============================================================ */
-
 :root {
-  /* LUFLY Teal ramp - primary signature #1C8B8B */
   --lu-teal-50: #e6f4f4;
   --lu-teal-100: #c9e8e8;
   --lu-teal-200: #9ad6d6;
@@ -18,11 +10,9 @@
   --lu-teal-800: #0c4347;
   --lu-teal-900: #082e32;
 
-  /* Deep teal - secondary personality */
   --lu-deep-teal: #143f43;
   --lu-mint: #7fe2d0;
 
-  /* Ink ramp - dark mode surfaces (warm neutral charcoal, low-glare) */
   --lu-ink-950: #141311;
   --lu-ink-900: #2c2b28;
   --lu-ink-800: #353430;
@@ -31,7 +21,6 @@
   --lu-ink-500: #aba79b;
   --lu-ink-100: #e9e6de;
 
-  /* Neutral ramp */
   --lu-neutral-0: #ffffff;
   --lu-neutral-50: #f3f7f5;
   --lu-neutral-100: #e9f1ee;
@@ -44,25 +33,18 @@
   --lu-neutral-800: #24312f;
   --lu-neutral-900: #102a2a;
 
-  /* Border reference */
   --lu-border-light: #c8d6d1;
 
-  /* Semantic hues - light mode values */
   --lu-success: #4d9077;
   --lu-warning: #c58a32;
   --lu-danger: #c64b4b;
   --lu-info: #3b7a9a;
 
-  /* Semantic hues - dark mode values */
   --lu-success-dark: #78ce9c;
   --lu-warning-dark: #e7b658;
   --lu-danger-dark: #f07b7b;
   --lu-info-dark: #8cc9ee;
 }
-
-/* ============================================================
-   02 - Semantic tokens: Light Mode
-   ============================================================ */
 
 :root,
 [data-theme="light"] {
@@ -113,10 +95,6 @@
   color-scheme: light;
 }
 
-/* ============================================================
-   03 - Semantic tokens: Dark Mode
-   ============================================================ */
-
 [data-theme="dark"] {
   --ds-bg: var(--lu-ink-900);
   --ds-surface: var(--lu-ink-800);
@@ -164,10 +142,6 @@
   color-scheme: dark;
 }
 
-/* ============================================================
-   04 - Band tokens (dark architectural surfaces, theme fixed)
-   ============================================================ */
-
 :root {
   --ds-band-bg: var(--lu-ink-900);
   --ds-band-surface: var(--lu-ink-800);
@@ -189,10 +163,6 @@
   --ds-band-shadow: color-mix(in srgb, var(--lu-ink-900) 45%, transparent);
 }
 
-/* ============================================================
-   05 - Media tokens (photo overlays and cinema chrome)
-   ============================================================ */
-
 :root {
   --ds-media-scrim: color-mix(in srgb, var(--lu-ink-900) 72%, transparent);
   --ds-media-scrim-soft: color-mix(in srgb, var(--lu-ink-900) 28%, transparent);
@@ -205,10 +175,6 @@
   --ds-media-accent: var(--lu-warning-dark);
   --ds-media-primary: var(--lu-mint);
 }
-
-/* ============================================================
-   06 - Typography roles (Arial Narrow display + Inter utility)
-   ============================================================ */
 
 :root {
   --font-display: "Arial Narrow", "Helvetica Neue", Helvetica, Arial, sans-serif;
@@ -248,10 +214,6 @@
   --weight-black: 800;
 }
 
-/* ============================================================
-   07 - Spacing scale (4px base unit)
-   ============================================================ */
-
 :root {
   --space-unit: 4px;
   --tap-target: 44px;
@@ -279,10 +241,6 @@
   --grid-gutter: var(--space-6);
 }
 
-/* ============================================================
-   08 - Radius and border tokens (supporting, not identity)
-   ============================================================ */
-
 :root {
   --radius-xs: 4px;
   --radius-sm: 8px;
@@ -296,10 +254,6 @@
   --focus-ring-width: 3px;
 }
 
-/* ============================================================
-   09 - Elevation tokens
-   ============================================================ */
-
 :root {
   --shadow-1: 0 2px 8px var(--ds-shadow-color-soft);
   --shadow-2: 0 8px 24px var(--ds-shadow-color);
@@ -309,10 +263,6 @@
   --focus-ring: 0 0 0 var(--focus-ring-width) var(--ds-focus-color);
 }
 
-/* ============================================================
-   09b - Stacking order
-   ============================================================ */
-
 :root {
   --z-base: 1;
   --z-header: 40;
@@ -320,10 +270,6 @@
   --z-modal: 60;
   --z-skip: 100;
 }
-
-/* ============================================================
-   10 - Motion tokens
-   ============================================================ */
 
 :root {
   --motion-pulse: 2s ease-in-out;
@@ -379,10 +325,6 @@
   to { opacity: 1; transform: scale(1); }
 }
 
-/* ============================================================
-   11 - Base and reset
-   ============================================================ */
-
 *,
 *::before,
 *::after { box-sizing: border-box; }
@@ -421,7 +363,6 @@ h5 { font-size: var(--text-sm); }
 p { margin: 0 0 var(--space-4); }
 img { max-width: 100%; display: block; }
 a { color: var(--ds-primary); text-decoration: none; }
-/* hover accent only for plain prose links: styled anchors keep their own colors */
 a:hover:not([class]) { color: var(--ds-primary-hover); }
 button { font-family: inherit; }
 code, kbd, samp { font-family: var(--font-mono); font-size: 0.92em; }
@@ -432,7 +373,6 @@ hr { border: 0; border-top: var(--border-hairline) solid var(--ds-border); }
   color: var(--ds-text);
 }
 
-/* Typography role helpers */
 .type-display { font-family: var(--font-display); font-size: var(--text-display-lg); font-weight: var(--weight-black); line-height: var(--leading-tight); }
 .type-h1 { font-family: var(--font-display); font-size: var(--text-display-md); font-weight: var(--weight-black); line-height: var(--leading-tight); }
 .type-h2 { font-family: var(--font-display); font-size: var(--text-3xl); font-weight: var(--weight-black); line-height: var(--leading-tight); }
@@ -441,10 +381,6 @@ hr { border: 0; border-top: var(--border-hairline) solid var(--ds-border); }
 .type-body { font-family: var(--font-body); font-size: var(--text-base); line-height: var(--leading-normal); }
 .type-small { font-family: var(--font-body); font-size: var(--text-sm); line-height: var(--leading-snug); }
 .type-caption { font-family: var(--font-body); font-size: var(--text-caption); letter-spacing: var(--tracking-wider); text-transform: uppercase; color: var(--ds-text-muted); }
-
-/* ============================================================
-   12 - Layout: container, grid, stack, section rhythm
-   ============================================================ */
 
 .container {
   width: 100%;
@@ -475,7 +411,6 @@ hr { border: 0; border-top: var(--border-hairline) solid var(--ds-border); }
 .section { padding-block: var(--section-gap); }
 .section-surface { background: var(--ds-surface); }
 
-/* Section heading rhythm */
 .page-header { margin-bottom: var(--space-6); }
 .page-title { font-size: var(--text-display-sm); margin: 0; }
 .page-subtitle { color: var(--ds-text-muted); margin: var(--space-2) 0 0; }
@@ -519,7 +454,6 @@ hr { border: 0; border-top: var(--border-hairline) solid var(--ds-border); }
 }
 .section-title em { font-style: normal; color: var(--ds-primary); }
 .section-subtitle { margin: 0; color: var(--ds-text-muted); font-size: var(--text-base); }
-/* Dark band context */
 .band { background: var(--ds-band-bg); color: var(--ds-band-text); }
 .band .section-tag { color: var(--ds-band-accent); }
 .band .section-title { color: var(--ds-band-text); }
@@ -530,10 +464,6 @@ hr { border: 0; border-top: var(--border-hairline) solid var(--ds-border); }
 .section-header-left { max-width: 620px; }
 .section-header-center { max-width: 680px; margin-inline: auto; margin-bottom: var(--space-12); text-align: center; }
 .separator { height: var(--border-hairline); background: var(--ds-border); border: 0; }
-
-/* ============================================================
-   13 - Icons
-   ============================================================ */
 
 .icon {
   width: var(--icon-md);
@@ -556,10 +486,6 @@ hr { border: 0; border-top: var(--border-hairline) solid var(--ds-border); }
 .icon-sm { width: var(--icon-sm); height: var(--icon-sm); }
 .icon-lg { width: var(--icon-lg); height: var(--icon-lg); }
 .icon-xl { width: var(--icon-xl); height: var(--icon-xl); }
-
-/* ============================================================
-   14 - Surfaces: glass, panels, cards
-   ============================================================ */
 
 .glass-panel {
   background: var(--ds-glass-bg);
@@ -594,10 +520,6 @@ hr { border: 0; border-top: var(--border-hairline) solid var(--ds-border); }
 .card-header + .card-body { padding-top: var(--space-3); }
 .card-footer { padding: 0 var(--space-6) var(--space-5); display: flex; gap: var(--space-2); }
 .empty-state { color: var(--ds-text-muted); text-align: center; }
-
-/* ============================================================
-   15 - Buttons
-   ============================================================ */
 
 .btn,
 .btn-primary-teal,
@@ -653,20 +575,14 @@ hr { border: 0; border-top: var(--border-hairline) solid var(--ds-border); }
 .btn-block { width: 100%; }
 .btn-icon { min-height: var(--tap-target); width: var(--tap-target); padding: 0; border-radius: var(--radius-full); }
 
-/* Variant aliases kept for existing markup */
 .btn-primary-teal { background: var(--ds-primary); color: var(--ds-primary-text); }
 .btn-primary-teal:hover { background: var(--ds-primary-hover); color: var(--ds-primary-text); }
 .btn-secondary-glass {
-  /* machined ghost: solid surface + hairline border, no blur */
   background: var(--ds-surface);
   border-color: var(--ds-border);
   color: var(--ds-text);
 }
 .btn-secondary-glass:hover { background: var(--ds-primary); border-color: var(--ds-primary); color: var(--ds-primary-text); }
-
-/* ============================================================
-   16 - Form controls
-   ============================================================ */
 
 .field { display: grid; gap: var(--space-1); }
 .field-label { font-size: var(--text-sm); font-weight: var(--weight-semibold); color: var(--ds-text-muted); }
@@ -688,7 +604,6 @@ hr { border: 0; border-top: var(--border-hairline) solid var(--ds-border); }
   cursor: pointer;
 }
 
-/* native dropdown lists (option popups) follow the theme */
 .select option,
 .select optgroup {
   background: var(--ds-surface);
@@ -711,7 +626,6 @@ hr { border: 0; border-top: var(--border-hairline) solid var(--ds-border); }
 .textarea { resize: vertical; min-height: 120px; }
 .check-row { display: flex; align-items: center; gap: var(--space-2); font-size: var(--text-sm); }
 
-/* Switch */
 .switch { display: inline-flex; align-items: center; gap: var(--space-3); cursor: pointer; min-height: var(--tap-target); }
 .switch-input {
   appearance: none;
@@ -742,7 +656,6 @@ hr { border: 0; border-top: var(--border-hairline) solid var(--ds-border); }
 .switch-label { font-size: var(--text-sm); font-weight: var(--weight-medium); }
 [dir="rtl"] .switch-input:checked::after { transform: translateX(-20px); }
 
-/* Pills and filter tabs */
 .pill-row { display: flex; flex-wrap: wrap; gap: var(--space-2); }
 .pill {
   display: inline-flex;
@@ -764,10 +677,6 @@ hr { border: 0; border-top: var(--border-hairline) solid var(--ds-border); }
   color: var(--ds-primary-text);
   box-shadow: var(--shadow-1);
 }
-
-/* ============================================================
-   17 - Feedback: alerts, badges, states
-   ============================================================ */
 
 .alert {
   padding: var(--space-3) var(--space-4);
@@ -796,7 +705,6 @@ hr { border: 0; border-top: var(--border-hairline) solid var(--ds-border); }
 .badge-primary { background: var(--ds-primary-soft); color: var(--ds-primary); }
 .badge-danger { background: var(--ds-danger-soft); color: var(--ds-danger); }
 
-/* Product badges (catalog + featured cards) */
 .product-sku-badge {
   position: absolute;
   top: var(--space-3);
@@ -821,7 +729,6 @@ hr { border: 0; border-top: var(--border-hairline) solid var(--ds-border); }
   font-weight: var(--weight-bold);
 }
 
-/* Semantic state surfaces */
 .state { display: grid; gap: var(--space-1); padding: var(--space-4); border-inline-start: var(--border-standard) solid var(--ds-border); background: var(--ds-surface); }
 .state-success { border-color: var(--ds-success); }
 .state-warning { border-color: var(--ds-warning); }
@@ -829,10 +736,6 @@ hr { border: 0; border-top: var(--border-hairline) solid var(--ds-border); }
 .state-info { border-color: var(--ds-info); }
 .state-title { font-weight: var(--weight-bold); }
 .state-text { color: var(--ds-text-muted); font-size: var(--text-sm); margin: 0; }
-
-/* ============================================================
-   18 - Data: tables, specs, pagination
-   ============================================================ */
 
 .table {
   width: 100%;
@@ -863,10 +766,6 @@ hr { border: 0; border-top: var(--border-hairline) solid var(--ds-border); }
 }
 .page-link:hover { border-color: var(--ds-primary); color: var(--ds-primary); }
 .page-link.is-active { background: var(--ds-primary); border-color: var(--ds-primary); color: var(--ds-primary-text); }
-
-/* ============================================================
-   19 - Overlays: modal, dropdown
-   ============================================================ */
 
 .modal-backdrop {
   position: fixed;
@@ -925,10 +824,6 @@ hr { border: 0; border-top: var(--border-hairline) solid var(--ds-border); }
 .dropdown-item:hover { background: var(--ds-primary-soft); color: var(--ds-text); }
 .dropdown-item.is-current { color: var(--ds-primary); font-weight: var(--weight-bold); }
 
-/* ============================================================
-   20 - Switchers (theme + language)
-   ============================================================ */
-
 .lang-switcher { display: inline-flex; border: var(--border-hairline) solid var(--ds-border); border-radius: var(--radius-full); overflow: hidden; }
 .lang-link { padding: var(--space-1) var(--space-3); color: var(--ds-text-muted); font-size: var(--text-sm); text-decoration: none; }
 .lang-link.is-active { background: var(--ds-primary); color: var(--ds-primary-text); }
@@ -956,10 +851,6 @@ hr { border: 0; border-top: var(--border-hairline) solid var(--ds-border); }
 [data-theme="dark"] .theme-icon-light,
 [data-theme="dark"] .icon-sun { display: none; }
 
-/* ============================================================
-   21 - Motion utilities
-   ============================================================ */
-
 .anim-fade { animation: ds-fade-in var(--duration-base) var(--ease-out) both; }
 .anim-slide-up { animation: ds-slide-up var(--duration-slow) var(--ease-out) both; }
 .anim-pulse { animation: ds-pulse var(--motion-pulse) infinite; }
@@ -967,16 +858,8 @@ hr { border: 0; border-top: var(--border-hairline) solid var(--ds-border); }
 .anim-signal { animation: ds-signal var(--motion-signal) infinite; }
 .anim-orbit { animation: ds-orbit var(--motion-orbit) infinite; }
 
-/* ============================================================
-   21b - Direction
-   ============================================================ */
-
 [dir="rtl"] { direction: rtl; text-align: right; }
 [dir="rtl"] .section-header-left { text-align: right; }
-
-/* ============================================================
-   22 - Accessibility
-   ============================================================ */
 
 :focus-visible { outline: var(--focus-ring-width) solid var(--ds-focus-color); outline-offset: 2px; }
 
@@ -1005,10 +888,6 @@ hr { border: 0; border-top: var(--border-hairline) solid var(--ds-border); }
 }
 .skip-link:focus { top: var(--space-4); }
 
-/* ============================================================
-   23 - Responsive rules
-   ============================================================ */
-
 @media (max-width: 1024px) {
   :root { --grid-columns: 8; }
 }
@@ -1029,10 +908,6 @@ hr { border: 0; border-top: var(--border-hairline) solid var(--ds-border); }
   .btn-icon, .btn-sm { width: auto; }
 }
 
-/* ============================================================
-   24 - Reduced motion
-   ============================================================ */
-
 @media (prefers-reduced-motion: reduce) {
   html { scroll-behavior: auto; }
 
@@ -1043,35 +918,23 @@ hr { border: 0; border-top: var(--border-hairline) solid var(--ds-border); }
   }
 }
 
-/* ============================================================
-   25 - Navigation chrome tokens ("Machined Glass")
-   Glass slab + machined-metal detail for the header, the
-   blueprint rail, the index drawer and the mobile bloom sheet.
-   Every value is derived from the brand palette.
-   ============================================================ */
-
 :root {
-  /* slab glass */
   --ds-nav-glass: color-mix(in srgb, var(--lu-neutral-0) 55%, transparent);
   --ds-nav-glass-dense: color-mix(in srgb, var(--lu-neutral-0) 90%, transparent);
   --ds-nav-field: color-mix(in srgb, var(--lu-neutral-100) 72%, transparent);
   --ds-nav-sheen: color-mix(in srgb, var(--lu-neutral-0) 55%, transparent);
   --ds-nav-edge: color-mix(in srgb, var(--lu-neutral-0) 46%, transparent);
-  /* machined detail */
   --ds-nav-groove: color-mix(in srgb, var(--lu-neutral-900) 10%, transparent);
   --ds-nav-hairline: color-mix(in srgb, var(--lu-neutral-900) 14%, transparent);
   --ds-nav-knurl: color-mix(in srgb, var(--lu-neutral-900) 20%, transparent);
   --ds-nav-etch: color-mix(in srgb, var(--lu-neutral-900) 46%, transparent);
-  /* signal / blueprint line */
   --ds-nav-line: color-mix(in srgb, var(--lu-teal-500) 62%, transparent);
   --ds-nav-line-soft: color-mix(in srgb, var(--lu-teal-500) 20%, transparent);
   --ds-nav-line-glow: color-mix(in srgb, var(--lu-teal-500) 24%, transparent);
-  /* overlays */
   --ds-nav-scrim: color-mix(in srgb, var(--lu-ink-900) 44%, transparent);
   --ds-nav-fade: color-mix(in srgb, var(--lu-neutral-900) 13%, transparent);
   --ds-nav-shadow: 0 16px 38px color-mix(in srgb, var(--lu-neutral-900) 13%, transparent);
   --ds-nav-blur: blur(18px) saturate(165%);
-  /* geometry + motion */
   --ds-nav-chamfer: 16px;
   --ds-nav-ease: cubic-bezier(0.22, 1, 0.36, 1);
   --ds-nav-out: cubic-bezier(0.65, 0, 0.35, 1);
@@ -1098,15 +961,6 @@ hr { border: 0; border-top: var(--border-hairline) solid var(--ds-border); }
   --ds-nav-shadow: 0 18px 44px color-mix(in srgb, var(--lu-ink-900) 62%, transparent);
 }
 
-/* ============================================================
-   26 - Scrollbar ("Machined Teal")
-   Site-branded scrollbars in both engines. The thumb uses the
-   LUFLY teal ramp, the track stays a near-invisible tint of the
-   surface so pages keep their calm. Component-level rules that
-   deliberately hide scrollbars (e.g. the navbar rails) still win
-   because they are more specific or set width/height to 0.
-   ============================================================ */
-
 :root {
   --ds-scrollbar-size: 12px;
   --ds-scrollbar-thumb: color-mix(in srgb, var(--lu-teal-500) 78%, var(--lu-deep-teal));
@@ -1124,7 +978,6 @@ hr { border: 0; border-top: var(--border-hairline) solid var(--ds-border); }
   --ds-scrollbar-border: color-mix(in srgb, var(--lu-ink-800) 92%, transparent);
 }
 
-/* Firefox */
 html {
   scrollbar-width: thin;
   scrollbar-color: var(--ds-scrollbar-thumb) var(--ds-scrollbar-track);
@@ -1135,7 +988,6 @@ html {
   scrollbar-color: var(--ds-scrollbar-thumb) transparent;
 }
 
-/* Chromium, Edge, Safari */
 ::-webkit-scrollbar {
   width: var(--ds-scrollbar-size);
   height: var(--ds-scrollbar-size);
@@ -1166,7 +1018,6 @@ html {
   background: transparent;
 }
 
-/* Keyboard focus rings still land on the viewport, keep them teal */
 html:focus-within {
   scroll-behavior: smooth;
 }

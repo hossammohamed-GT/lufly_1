@@ -1,19 +1,4 @@
 <?php
-/**
- * The box in an inbox — the team's copy and the visitor's copy.
- *
- * One template, two audiences: the shop reads "a visitor asked for prices on
- * these pieces" and can open the box on the site from the same link the visitor
- * has, the visitor reads his own list back with the same link.
- *
- * @var string $audience  'admin' (it was sent) | 'saved' (still being filled) | 'visitor'
- * @var array<int, array<string, mixed>> $items
- * @var int $count
- * @var string $boxUrl
- * @var string $email
- * @var string $note
- * @var string $site
- */
 $audience = (string) ($audience ?? 'admin');
 $admin = $audience !== 'visitor';
 $saved = $audience === 'saved';

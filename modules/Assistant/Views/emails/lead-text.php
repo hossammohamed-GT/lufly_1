@@ -1,14 +1,4 @@
 <?php
-/**
- * The plain-text half of the finder request mail.
- *
- * @var string $image
- * @var string $visitor
- * @var string $product_url
- * @var string $terms
- * @var string $site
- * @var \Modules\Assistant\Models\AssistantLead $lead
- */
 $lines = [
     trans('assistant.mail_subject', ['n' => (string) $lead->id]),
     str_repeat('-', 40),

@@ -7,10 +7,6 @@ namespace Database\Schema;
 use Core\Database\Schema\Blueprint;
 use Core\Database\Schema\SchemaDefinition;
 
-/**
- * Relations between products.
- * Types: accessory | replacement | alternative | spare_part | compatible
- */
 class ProductRelationsSchema extends SchemaDefinition
 {
     protected string $table = 'product_relations';

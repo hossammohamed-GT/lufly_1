@@ -40,12 +40,6 @@ class HomeController extends Controller
             [$locale, $fallback]
         );
 
-        /* Category tiles lead with a real product from their own category.
-           Only photographs qualify (main / gallery media) - the technical
-           drawings stay in the product page - and one shot per product, so a
-           tile never fills up with three angles of the same fixture. The list
-           is shuffled per request, which is what makes the mosaic change from
-           visit to visit instead of always showing the same picture. */
         $shotRows = $connection->select(
             "SELECT p.category_id, m.path
                FROM products p
@@ -70,7 +64,6 @@ class HomeController extends Controller
 
         $shotsPerTile = 3;
         foreach ($categories as &$category) {
-            /* eight candidates is plenty to draw three from */
             $shots = array_slice(array_keys($shotsByCategory[(int) $category['id']] ?? []), 0, 8);
             shuffle($shots);
             $shots = array_slice($shots, 0, $shotsPerTile);
@@ -82,10 +75,6 @@ class HomeController extends Controller
         }
         unset($category);
 
-        /* Rotating showcase: every visit picks ONE random product per
-           category, then keeps 4 for the grid - so each reload shows a
-           different mix that always spans distinct categories. Curated
-           (is_featured) products win within their category when any exist. */
         $pool = $connection->select(
             "SELECT id, category_id, is_featured
                FROM products
@@ -103,10 +92,7 @@ class HomeController extends Controller
             $bucket = $featuredOnly !== [] ? $featuredOnly : $list;
             $ids[] = (int) $bucket[array_rand($bucket)]['id'];
         }
-        shuffle($ids);                 /* random category order every time */
-        $ids = array_slice($ids, 0, 4); /* the grid renders 4 cards */
-
-        $rawFeatured = [];
+        shuffle($ids);                 $ids = array_slice($ids, 0, 4); $rawFeatured = [];
         if ($ids !== []) {
             $byId = [];
             foreach (\Modules\Products\Models\Product::query()->whereIn('id', $ids)->get() as $model) {
@@ -193,8 +179,6 @@ class HomeController extends Controller
             'inLanguage' => $locale,
         ]);
 
-        /* FAQ structured data mirrors exactly what the page renders, from the
-           same translation keys, so schema and content can never drift. */
         $faqs = [];
         for ($i = 1; $i <= 4; $i++) {
             $q = trans('contact.faq_' . $i . '_q');

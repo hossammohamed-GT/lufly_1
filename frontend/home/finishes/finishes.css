@@ -1,9 +1,3 @@
-/* Home component: finish selector - machined editorial edition.
-   Deep ink band with a soft metallic glow (no photo backdrop), real
-   texture swatches in a responsive grid, one showcase panel with a
-   clear divider between image and details. Selecting a swatch swaps
-   the showcase image and scrolls it into view on small screens. */
-
 .finishes-section {
   position: relative;
   overflow: hidden;
@@ -13,12 +7,6 @@
   border-bottom: 1px solid var(--ds-band-hairline);
 }
 
-/* NO PHOTOGRAPH IN THIS BAND. It used to borrow
-   images/lifestyle/finish-workshop.jpg, which made two neighbouring bands
-   read as photo bands and left this one without the ink surface it is
-   designed around. The photograph now lives on the category mosaic directly
-   below ("categories-backdrop.jpg"); here only the glow is left, exactly as
-   the note at the top of this file describes. */
 .finishes-backdrop {
   position: absolute;
   inset: 0;
@@ -28,9 +16,6 @@
     linear-gradient(180deg, color-mix(in srgb, var(--lu-ink-900) 62%, transparent), color-mix(in srgb, var(--lu-ink-900) 48%, transparent));
 }
 
-/* light theme keeps the pale version of the band: the same teal glow over an
-   opaque light surface instead of the light workshop photo, so the ink text
-   and the light cards tuned further down stay readable as they are. */
 [data-theme="light"] .finishes-backdrop {
   background:
     radial-gradient(120% 90% at 80% 0%, color-mix(in srgb, var(--lu-teal-500) 10%, transparent), transparent 58%),
@@ -38,8 +23,6 @@
     linear-gradient(180deg, var(--lu-neutral-50), var(--lu-neutral-100));
 }
 
-/* light theme: the band text flips dark so it stays readable over the
-   brighter veil (band tokens are theme-fixed, so scope them here) */
 [data-theme="light"] .finishes-section {
   --ds-band-text: var(--lu-ink-900);
   --ds-band-text-soft: color-mix(in srgb, var(--lu-ink-900) 76%, transparent);
@@ -73,8 +56,6 @@
   border-color: color-mix(in srgb, var(--lu-ink-900) 14%, transparent);
 }
 
-/* The heading spans both columns; the picker takes the narrow one beside the
-   showcase. Logical grid flow means RTL mirrors itself. */
 .finishes-container {
   position: relative;
   z-index: 1;
@@ -106,11 +87,6 @@
 }
 
 .finishes-heading-note span { display: block; width: 70px; height: 1px; margin-top: var(--space-4); background: var(--ds-band-line); }
-
-/* ---------- the picker: one named row per finish ----------
-   The texture is still shown (34px), but the name leads and the process tag
-   follows: nine of these rows are shorter than the nine tiles they replace, and
-   a phone gets one scrollable row of pills instead of a block of squares. */
 
 .finishes-picker { display: grid; gap: 4px; min-width: 0; }
 
@@ -176,8 +152,6 @@
   white-space: nowrap;
 }
 
-/* ---------- showcase split ---------- */
-
 .finish-showcase-box {
   min-width: 0;
   display: grid;
@@ -204,8 +178,6 @@
   display: block;
   width: 100%;
   height: 100%;
-  /* it was 460px: the picker beside it is ~430px tall now, and the band no
-     longer has to be taller than the two columns need */
   min-height: 340px;
   object-fit: cover;
   transition: opacity 0.25s ease;
@@ -304,7 +276,6 @@
 
 .finish-actions { display: flex; gap: var(--space-4); align-items: center; flex-wrap: wrap; }
 
-/* mint-on-teal machined CTA for this dark band */
 .finishes-section .btn-primary-teal {
   background: var(--lu-mint);
   color: var(--lu-deep-teal);
@@ -335,12 +306,7 @@
   color: var(--lu-mint);
 }
 
-/* ---------- responsive: grid collapses, nothing overflows ---------- */
-
 @media (max-width: 1080px) {
-  /* one column, and the picker becomes a single scrollable row of pills: the
-     tile grid that turned into a 2x5 block of squares here was the tallest
-     thing on the page */
   .finishes-container { grid-template-columns: minmax(0, 1fr); }
 
   .finishes-picker {
@@ -358,8 +324,7 @@
     display: inline-flex;
     align-items: center;
     gap: 9px;
-    min-height: 44px;            /* touch target */
-    padding: 4px 15px 4px 6px;
+    min-height: 44px;            padding: 4px 15px 4px 6px;
     border-radius: 999px;
     scroll-snap-align: start;
   }
@@ -379,11 +344,9 @@
 @media (max-width: 640px) {
   .finishes-section { padding: var(--space-10) 0; }
   .finishes-heading-row { flex-direction: column; gap: var(--space-4); margin-bottom: var(--space-2); }
-  /* the decorative four-line note keeps its words but loses its air */
   .finishes-heading-note { line-height: 1.7; }
   .finishes-heading-note span { width: 44px; margin-top: var(--space-3); }
   .finish-showcase-details { padding: var(--space-5) var(--space-2) var(--space-1); }
-  /* four spec rows become two columns of two - same data, half the height */
   .finish-tech-specs { grid-template-columns: 1fr 1fr; gap: var(--space-3) var(--space-4); }
   .finish-desc { margin-bottom: var(--space-4); }
   .finish-actions { gap: var(--space-3); }

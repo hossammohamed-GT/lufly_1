@@ -45,7 +45,7 @@ final class ApiLogger implements MiddlewareInterface
         try {
             \App\Models\ApiLog::create($entry);
         } catch (Throwable) {
-            // Persistence is best-effort; the file log is the source of truth.
+
         }
     }
 }

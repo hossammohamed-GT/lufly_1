@@ -12,13 +12,10 @@ use ReflectionParameter;
 
 class Container implements ContainerInterface
 {
-    /** @var array<string, array{concrete: callable|string|null, shared: bool}> */
     private array $bindings = [];
 
-    /** @var array<string, mixed> */
     private array $instances = [];
 
-    /** @var array<string, bool> */
     private array $resolving = [];
 
     public function bind(string $abstract, callable|string|null $concrete = null, bool $shared = false): void
@@ -57,7 +54,6 @@ class Container implements ContainerInterface
         return $this->resolve($abstract, $parameters);
     }
 
-    /** @param array<string, mixed> $parameters */
     private function resolve(string $abstract, array $parameters = []): mixed
     {
         if (isset($this->instances[$abstract])) {
@@ -96,7 +92,6 @@ class Container implements ContainerInterface
         return isset($this->instances[$id]) || isset($this->bindings[$id]) || class_exists($id) || interface_exists($id);
     }
 
-    /** @param array<string, mixed> $parameters */
     private function build(string $class, array $parameters = []): mixed
     {
         if (!class_exists($class)) {
@@ -121,7 +116,6 @@ class Container implements ContainerInterface
         return $reflector->newInstanceArgs($dependencies);
     }
 
-    /** @param array<string, mixed> $parameters */
     private function resolveParameter(ReflectionParameter $param, array $parameters): mixed
     {
         $name = $param->getName();
@@ -151,7 +145,6 @@ class Container implements ContainerInterface
         throw new ContainerException("Unresolvable dependency [\${$name}] in [{$param->getDeclaringClass()?->getName()}].");
     }
 
-    /** @param callable|string $callable */
     public function call(callable|string|array $callable, array $parameters = []): mixed
     {
         if (is_array($callable)) {
@@ -175,10 +168,6 @@ class Container implements ContainerInterface
             : $reflection->invokeArgs($instance, $args);
     }
 
-    /**
-     * Route parameters arrive as strings; coerce them to declared scalar types
-     * so strict-typed controller signatures keep working.
-     */
     private function coerceScalar(ReflectionParameter $param, mixed $value): mixed
     {
         if (!is_string($value)) {

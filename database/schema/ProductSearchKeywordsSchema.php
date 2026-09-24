@@ -7,9 +7,6 @@ namespace Database\Schema;
 use Core\Database\Schema\Blueprint;
 use Core\Database\Schema\SchemaDefinition;
 
-/**
- * Extra search keywords per product (WC, Toilet, Wall Hung, ...).
- */
 class ProductSearchKeywordsSchema extends SchemaDefinition
 {
     protected string $table = 'product_search_keywords';

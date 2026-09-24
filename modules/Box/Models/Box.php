@@ -6,10 +6,6 @@ namespace Modules\Box\Models;
 
 use Core\Database\Model;
 
-/**
- * One quotation box. `token` is the public handle: it lives in the visitor's
- * cookie and in the link that travels with the request to the shop.
- */
 class Box extends Model
 {
     protected static string $table = 'boxes';

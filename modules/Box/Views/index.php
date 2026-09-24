@@ -1,24 +1,5 @@
 <?php
-/**
- * The quotation box, on the site.
- *
- * The same editorial shape as the saved list — coded header, a card grid, a
- * sticky side column — because it is the same kind of page: a list of pieces the
- * visitor collected. What differs is what it is for: every piece is waiting for a
- * price, the list has one link that opens it anywhere, and the last step sends
- * the whole box to the team, once, with the visitor's address on it.
- *
- * @var Core\View\View $view
- * @var string $locale
- * @var array<int, array<string, mixed>> $items
- * @var int $count
- * @var \Modules\Box\Models\Box|null $box
- * @var string $shareUrl
- * @var int $maxItems
- * @var string $shopMail
- */
 $view->layout('layouts.frontend');
-/* the box reuses the saved-list styling and adds its own button/panel touches */
 $view->pushStyle('frontend/favorites/favorites.css');
 $view->pushStyle('frontend/box/box.css');
 $view->pushScript('frontend/box/box.js');

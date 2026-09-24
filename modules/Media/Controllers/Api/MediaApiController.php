@@ -27,7 +27,6 @@ class MediaApiController extends Controller
     {
         $request->validate(['file' => 'required|file']);
 
-        /** @var array<string, mixed> $file */
         $file = $request->file('file');
         $media = $this->media->storeFromUpload(
             $file,

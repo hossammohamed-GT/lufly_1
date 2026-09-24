@@ -6,9 +6,6 @@ namespace Modules\Products\Models;
 
 use Core\Database\Model;
 
-/**
- * One sellable copy of a product (finish / size / color).
- */
 class ProductVariant extends Model
 {
     protected static string $table = 'product_variants';

@@ -8,20 +8,6 @@ use App\Services\Mail\SmtpClient;
 use Core\Logging\Log;
 use Throwable;
 
-/**
- * Outgoing mail for the whole platform.
- *
- * Three transports (see config/mail.php):
- *   log  — nothing leaves the server; the full MIME message is written to
- *          storage/logs/mail.log so a mail flow can be verified without a mailbox
- *   mail — PHP mail(), i.e. the MTA of the hosting account (XAMPP, cPanel)
- *   smtp — authenticated SMTP with a real mailbox (info@lufly.tr on any host)
- *
- * Messages are always multipart/alternative: a plain-text part for clients that
- * do not render HTML plus the designed HTML part. Nothing here throws: a broken
- * mailbox must never break a page — the failure is logged and reported by
- * lastError().
- */
 class MailService
 {
     private ?string $lastError = null;
@@ -31,19 +17,11 @@ class MailService
         return $this->lastError;
     }
 
-    /**
-     * Send an HTML message (kept signature-compatible with the original API).
-     *
-     * @param array<string, string> $headers extra headers; "Reply-To" and "From" win over the config
-     */
     public function send(string $to, string $subject, string $body, array $headers = []): bool
     {
         return $this->sendHtml($to, $subject, $body, '', $headers);
     }
 
-    /**
-     * @param array<string, string> $headers extra headers ("Reply-To", "From", "X-…")
-     */
     public function sendHtml(string $to, string $subject, string $html, string $text = '', array $headers = []): bool
     {
         $this->lastError = null;
@@ -86,7 +64,6 @@ class MailService
         return $sent;
     }
 
-    /** @param string[] $recipients */
     public function sendToMany(array $recipients, string $subject, string $body): int
     {
         $count = 0;
@@ -99,9 +76,6 @@ class MailService
         return $count;
     }
 
-    /* ------------------------------------------------------------ transports */
-
-    /** @param array<string, mixed> $message */
     private function logTransport(array $message): bool
     {
         $file = storage_path('logs/mail.log');
@@ -109,9 +83,6 @@ class MailService
             @mkdir(dirname($file), 0775, true);
         }
 
-        /* The full header block goes into the log (From/To/Subject, Reply-To,
-           Message-ID, extra X- headers) so the file holds a complete, readable
-           MIME message that can be pasted into a mail client for review. */
         $headerLines = [];
         foreach ($message['headers'] as $name => $value) {
             $headerLines[] = $name . ': ' . $value;
@@ -129,10 +100,8 @@ class MailService
         return true;
     }
 
-    /** @param array<string, mixed> $message */
     private function mailTransport(array $message): bool
     {
-        /** @var array<string, string> $headers */
         $headers = $message['headers'];
         unset($headers['To'], $headers['Subject']);
 
@@ -159,7 +128,6 @@ class MailService
         return true;
     }
 
-    /** @param array<string, mixed> $message */
     private function smtpTransport(array $message): bool
     {
         $config = (array) config('mail.smtp', []);
@@ -171,12 +139,6 @@ class MailService
         return true;
     }
 
-    /* ------------------------------------------------------------- message */
-
-    /**
-     * @param array<string, string> $headers
-     * @return array{to: string, subject: string, body: string, headers: array<string, string>, raw_headers: array<string, string>, from: string, from_name: string}
-     */
     private function message(string $to, string $subject, string $html, string $text, array $headers): array
     {
         $fromAddress = $this->headerValue($headers, 'From') ?: (string) config('mail.from_address', 'no-reply@localhost');
@@ -237,7 +199,6 @@ class MailService
         ];
     }
 
-    /** @param array<string, string> $headers */
     private function headerValue(array $headers, string $name): string
     {
         foreach ($headers as $key => $value) {
@@ -274,7 +235,6 @@ class MailService
         return is_string($host) && $host !== '' ? $host : (gethostname() ?: 'lufly.local');
     }
 
-    /** Crude but readable text fallback for messages that only carry HTML. */
     private function plainFromHtml(string $html): string
     {
         $text = preg_replace('#<(script|style)[^>]*>.*?</\1>#is', '', $html) ?? $html;

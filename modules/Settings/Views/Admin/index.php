@@ -1,7 +1,5 @@
 <?php
-/** @var Core\View\View $view */
 $view->layout('layouts.admin');
-/** @var array<string, mixed> $settings */
 ?>
 <form method="post" action="<?= e(route('admin.settings.update')) ?>" class="stack admin-form">
     <?= csrf_field() ?>

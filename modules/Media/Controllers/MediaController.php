@@ -36,7 +36,6 @@ class MediaController extends Controller
     {
         $request->validate(['file' => 'required|file']);
 
-        /** @var array<string, mixed> $file */
         $file = $request->file('file');
 
         $selected = trim((string) $request->input('collection', 'general'));

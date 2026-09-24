@@ -6,12 +6,6 @@ namespace App\Services\Ai;
 
 use Core\Database\Model;
 
-/**
- * One AI call, kept for the guard rails: the daily limit per visitor and the
- * "how much quota is left today" overview in the admin.
- *
- * The IP is stored hashed — the same rule the favorites lists follow.
- */
 class AiUsageLog extends Model
 {
     protected static string $table = 'ai_usage';
@@ -21,7 +15,6 @@ class AiUsageLog extends Model
         'duration_ms', 'ok', 'day', 'error',
     ];
 
-    /* neither table carries deleted_at: the base model would filter rows out */
     protected static bool $softDelete = false;
 
     protected static array $casts = [

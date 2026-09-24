@@ -162,7 +162,6 @@ return [
     'finish_gun_gray_title' => 'Gun Gray (PVD)',
     'finish_gun_gray_desc' => 'Klidný saténově šedý metalický tón navržený pro minimalistickou architekturu bez odlesků.',
 
-    /* HERO CINEMA */
     'cinema1_kicker' => 'Architektonická sanitární technika',
     'cinema1_tag' => 'Koupelnová kultura tvořená k dokonalosti',
     'cinema1_desc' => 'Špičkové vodovodní baterie, sprchové systémy a chytré armatury spojující monolitickou estetiku s německým a švýcarským inženýrstvím.',

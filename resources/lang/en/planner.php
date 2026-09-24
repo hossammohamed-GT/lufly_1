@@ -3,7 +3,6 @@
 declare(strict_types=1);
 
 return [
-    /* page */
     'eyebrow' => 'LUFLY · bathroom planner',
     'title' => 'Bathroom planner',
     'lede' => 'Three quick taps and your bathroom is planned: what to install, in which size, where each piece goes, and a drawing you can print or hand to your plumber.',
@@ -15,7 +14,6 @@ return [
     'restart' => 'Start again',
     'step_of' => 'Step :n of 3',
 
-    /* the three questions */
     'q_size' => 'How big is the room?',
     'q_size_hint' => 'Width × depth in centimetres — pick the closest, or type your own numbers.',
     'size_compact' => 'Compact · 160 × 200 cm',
@@ -40,7 +38,6 @@ return [
     'look_minimal-steel' => 'Minimal · brushed steel',
     'look_hint' => 'One tap sets both the style and the metal finish of every fitting.',
 
-    /* waiting */
     'thinking' => 'Working out your plan…',
     'wait_1' => 'Sorry for the delay — putting your plan together.',
     'wait_2' => 'Wait a moment please, the last touches are going in.',
@@ -50,7 +47,6 @@ return [
     'wait_6' => 'Just a few more seconds, the plan is nearly ready.',
     'render_wait' => 'Drawing the picture — this one takes about half a minute.',
 
-    /* the plan */
     'plan_ready' => 'Here is your plan',
     'items' => 'What to install',
     'item_toilet' => 'Toilet',
@@ -88,7 +84,6 @@ return [
     'scale' => 'Scale',
 
 
-    /* the floating chat: the bubble in the corner of every page */
     'chat_open' => 'Plan my bathroom',
     'chat_open_hint' => '3 taps · free',
     'chat_subtitle' => 'Three quick questions, one plan',
@@ -100,8 +95,6 @@ return [
     'chat_foot' => 'Free · no account needed',
     'chat_full' => 'Open the full planner',
 
-    /* the picture */
-    /* the free image quota is not there yet: promised, not offered */
     'render_soon_pill' => 'Coming soon',
     'render_soon_hint' => 'A picture of this bathroom with these exact pieces is on its way. The plan and the scaled drawing above are ready to use today.',
     'render_cta' => 'Show me the finished bathroom',
@@ -112,7 +105,6 @@ return [
     'render_limit' => 'Today\'s picture allowance is used up — please try again tomorrow.',
     'render_failed' => 'The picture could not be drawn this time. Your plan is safe and complete anyway.',
 
-    /* "does it fit?" — answered from the product's own words, never a picture */
     'fit_title' => 'Does it fit my bathroom?',
     'fit_hint' => 'One tap: we compare this piece with the plan above. No photos involved — the description and the sizes are enough.',
     'fit_cta' => 'Check it against my plan',
@@ -124,7 +116,6 @@ return [
     'fit_mail_line' => 'Looking at: :name',
     'err_fit' => 'We could not check this piece just now. Your plan is complete anyway — send it to our team and they will confirm.',
 
-    /* handoff */
     'handoff_title' => 'Source these for me',
     'handoff_text' => 'Send the whole plan to the LUFLY team and we come back with the closest matching pieces and their prices.',
     'handoff_whatsapp' => 'Send on WhatsApp',
@@ -139,13 +130,11 @@ return [
     'email_label' => 'Your e-mail',
     'email_placeholder' => 'you@example.com',
 
-    /* errors */
     'err_size' => 'Please pick a room size first.',
     'err_custom' => 'Please type a width and a depth between 100 and 600 cm.',
     'err_email' => 'Please enter a valid e-mail address.',
     'err_send' => 'The message could not be sent just now. Please use WhatsApp, or try again in a moment.',
 
-    /* the promise: the planner is not open yet */
     'soon_pill' => 'Coming soon',
     'soon_title' => 'The bathroom planner is on its way',
     'soon_text' => 'Room size in, a whole plan out: what to install, in which size, where each piece goes, and a drawing you can hand to your plumber.',

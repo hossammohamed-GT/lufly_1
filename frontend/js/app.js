@@ -1,20 +1,8 @@
-/* ==========================================================================
-   LUFLY - Core App Bootstrap (High Performance Edition)
-   Plumbing for:
-     * Fast Theme switcher (instant paint + local sync)
-     * Accessible modal controller
-     * Smart Link & Asset Prefetcher (Instant 0ms Page Navigation)
-     * BFCache (Back/Forward Cache) Instant Restoration Handler
-   Sections scroll in the normal document flow - there are deliberately
-   no scroll-driven animation engines here (kept the site light).
-   ========================================================================== */
 (function () {
   'use strict';
 
   var root = document.documentElement;
   var STORAGE_KEY = 'lufly-theme';
-
-  /* ---------- 1. Theme Engine ---------- */
 
   function storedTheme() {
     try {
@@ -28,8 +16,7 @@
     try {
       localStorage.setItem(STORAGE_KEY, theme);
     } catch (error) {
-      /* storage unavailable */
-    }
+      }
   }
 
   function preferredTheme() {
@@ -58,8 +45,6 @@
     event.preventDefault();
     toggleTheme();
   });
-
-  /* ---------- 2. Modal Controller ---------- */
 
   function setModal(modal, open) {
     if (!modal) return;
@@ -91,8 +76,6 @@
     });
   });
 
-  /* ---------- 3. Smart Link Prefetching Engine (0ms Navigation) ---------- */
-
   var prefetched = new Set();
   var prefetchTimer = null;
   var isDataSaver = navigator.connection && (navigator.connection.saveData || /2g/.test(navigator.connection.effectiveType));
@@ -108,8 +91,7 @@
       link.as = 'document';
       document.head.appendChild(link);
     } catch (e) {
-      /* prefetch fallback */
-    }
+      }
   }
 
   function getTargetUrl(link) {
@@ -133,7 +115,6 @@
     }
   }
 
-  // Hover intent (60ms threshold to prevent wasteful prefetches on quick mouse movement)
   document.addEventListener('mouseover', function (event) {
     var link = event.target.closest('a');
     var url = getTargetUrl(link);
@@ -149,18 +130,15 @@
     clearTimeout(prefetchTimer);
   }, { passive: true });
 
-  // Touch start prefetch (instant 0ms trigger on mobile touch)
   document.addEventListener('touchstart', function (event) {
     var link = event.target.closest('a');
     var url = getTargetUrl(link);
     if (url) prefetchUrl(url);
   }, { passive: true });
 
-  /* ---------- 4. BFCache Restoration (Instant Back/Forward Response) ---------- */
-
   window.addEventListener('pageshow', function (event) {
     if (event.persisted) {
-      // Page was restored from back-forward cache: instantly dismiss any loader overlay
+
       if (window.LUFLYLoader && typeof window.LUFLYLoader.done === 'function') {
         window.LUFLYLoader.done();
       }

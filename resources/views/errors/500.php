@@ -1,8 +1,6 @@
 <?php
-/** @var Core\View\View $view */
 $view->layout('layouts.frontend');
 $view->pushStyle('frontend/errors/errors.css');
-/** @var array|null $debug */
 ?>
 <section class="container error-page">
     <p class="error-code"><?= (int) ($status ?? 500) ?></p>

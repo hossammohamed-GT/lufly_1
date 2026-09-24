@@ -1,23 +1,4 @@
 <?php
-/**
- * The finder as a floating chat — the bubble in the corner of every page.
- *
- * Two tabs, because the visitor arrives with one of two questions:
- *
- *   1. "find me a piece like this"  — the tab the chat opens on. A description
- *      in any language, or a photo, comes back as cards from our catalogue.
- *   2. "plan my bathroom"           — promised, not delivered yet: the tab says
- *      so instead of pretending (the planner itself is one flag away).
- *
- * Rendered from the layout *before* the asset lists are collected, which is why
- * it declares its own stylesheet and script here. The shell (bubble, panel,
- * grow, resize) is styled by the shared chat sheet; the finder adds its own.
- *
- * @var Core\View\View $view
- * @var Core\Localization\Translator|null $translator
- * @var array{id: int, name: string, text: string, category: string, url: string}|null $plannerContext
- * @var bool $plannerInline   true where the chat is the page itself
- */
 if (($plannerInline ?? false) === true) {
     return;
 }
@@ -32,9 +13,6 @@ $locale = (string) ($translator instanceof \Core\Localization\Translator ? $tran
 $photos = $assistant->photosEnabled();
 $context = is_array($plannerContext ?? null) && ($plannerContext['name'] ?? '') !== '' ? $plannerContext : null;
 
-/* The planner is the chat's second tab, but only when the chat is allowed to
-   talk about it at all (`PLANNER_CHAT`). While it is still on the way the tab
-   promises instead of pretending — and the promise is the whole pane. */
 $plannerTab = feature('planner', true)
     && (bool) config('planner.enabled', true)
     && (bool) config('planner.chat.enabled', true);
@@ -42,10 +20,6 @@ $plannerSoon = $plannerTab && (bool) config('planner.coming_soon', true);
 
 $waiting = $assistant->waiting($locale);
 
-/* The box is the one list the chat feeds: a card carries its box button only.
-   The heart lives on the catalogue and on product pages, where it belongs — on
-   a card inside the panel it floated over the header and covered the close
-   button, so the chat does not load the favourites assets at all. */
 $boxOn = feature('box', true) && class_exists(\Modules\Box\Services\BoxService::class);
 $boxCount = 0;
 
@@ -67,11 +41,7 @@ if ($boxOn) {
 }
 ?>
 <?php
-/* The chat says its own version, quietly: a shop can open the page source, search
-   for "assistant build", and know whether the file it uploaded is the file being
-   served — instead of wondering why a fix does not show. */
 ?>
-<!-- assistant build <?= e((string) config('assistant.build', 'unknown')) ?> · answers in the visitor's own language -->
 <div class="aichat" data-aichat data-assistant
      data-assistant-build="<?= e((string) config('assistant.build', '')) ?>"
      data-assistant-endpoint="<?= e(route('assistant.ask')) ?>"
@@ -99,9 +69,7 @@ if ($boxOn) {
 
     <button type="button" class="aichat-fab" data-aichat-toggle
             aria-expanded="false" aria-controls="lufly-chat-panel">
-        <!-- the words first, the mark last: the bar is anchored to the right, so
-             stretching it out to the panel's width leaves the mark where it is -->
-        <span class="aichat-fab-text">
+<span class="aichat-fab-text">
             <strong><?= e(trans('assistant.open')) ?></strong>
             <em><?= e(trans('assistant.open_hint')) ?></em>
         </span>

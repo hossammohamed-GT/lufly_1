@@ -1,16 +1,4 @@
 <?php
-/**
- * The mail the shop gets when a visitor asks the finder for a piece — with the
- * photo as a link, so the picture opens straight from the inbox.
- *
- * @var Core\View\View $view
- * @var \Modules\Assistant\Models\AssistantLead $lead
- * @var string $image      public link to the photo ('' when there is none)
- * @var string $visitor    the address the visitor typed ('' when skipped)
- * @var string $product_url the product page the question came from
- * @var string $terms
- * @var string $site
- */
 $rows = array_filter([
     'Request' => '#' . (int) $lead->id,
     'Name' => (string) $lead->email,

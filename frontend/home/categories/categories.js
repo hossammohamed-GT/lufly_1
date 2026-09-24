@@ -1,8 +1,3 @@
-/* Category mosaic: the stage cycles through shots of the same category.
-   The server picks three per tile for this visit and shuffles them, so the
-   mosaic already looks different on a reload; this only turns the tile over
-   while the visitor is looking at it. With a pointer that happens on hover,
-   on touch on a slow staggered timer - and only for tiles actually on screen. */
 (function () {
   'use strict';
 
@@ -33,7 +28,6 @@
       }
 
       if (pointer || reduce) {
-        /* hover / keyboard focus: one step per interaction, no timer */
         card.addEventListener('mouseenter', advance);
         card.addEventListener('focus', advance, true);
         return;
@@ -47,8 +41,7 @@
           if (!document.hidden) {
             advance();
           }
-        }, INTERVAL + index * 700);   /* staggered, so five tiles never blink together */
-      }
+        }, INTERVAL + index * 700);   }
 
       function stop() {
         if (timer) {

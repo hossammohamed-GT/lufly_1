@@ -20,11 +20,6 @@ class Session
             return;
         }
 
-        /* The Secure flag follows the request, not APP_ENV: a browser on plain
-           http throws a Secure cookie away, and a session that is never sent back
-           means the CSRF token, the flashes and the visitor's own box all start
-           from nothing on every click. A shop behind TLS (or a proxy that says
-           so) still gets it. SECURITY_SESSION_SECURE_COOKIE=true forces it on. */
         $secure = (bool) config('security.session_secure_cookie', false);
         if (!$secure && (
             (isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off')
@@ -78,7 +73,6 @@ class Session
         unset($_SESSION[$key]);
     }
 
-    /** @return array<string, mixed> */
     public function all(): array
     {
         $this->start();

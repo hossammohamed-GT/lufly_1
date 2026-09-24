@@ -1,26 +1,10 @@
 <?php
-/**
- * Saved-products page ("favorites").
- *
- * Editorial layout in the storefront identity: coded header with the count,
- * a card grid of everything the visitor saved (each card links straight to the
- * product page) and a sticky side column that mails the list, hands out the
- * permanent link and can empty it again.
- *
- * @var Core\View\View $view
- * @var string $locale
- * @var array<int, array<string, mixed>> $items
- * @var int $count
- * @var string $shareUrl
- * @var int $maxItems
- */
 $view->layout('layouts.frontend');
 $view->pushStyle('frontend/favorites/favorites.css');
 $view->pushScript('frontend/favorites/favorites.js');
 
 $items = $items ?? [];
 $count = (int) ($count ?? count($items));
-/* the visitor was never asked yet -> the box is ticked */
 $notify = $notifyChoice === null ? true : (bool) $notifyChoice;
 $shareUrl = (string) ($shareUrl ?? '');
 $fallbackImg = asset('/images/products/prod_146_1620-111-a.jpg');

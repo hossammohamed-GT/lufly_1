@@ -17,7 +17,6 @@ return [
     'weight' => 'Weight',
     'dimensions' => 'Dimensions',
 
-    /* storefront product page */
     'code_label' => 'Model code',
     'view_main' => 'Product',
     'view_drawing' => 'Drawing',
@@ -46,7 +45,6 @@ return [
     'scope_category' => 'This category',
     'scope_all' => 'All products',
 
-    /* admin - product image sections (photos / drawings / installed) */
     'images_title' => 'Product images',
     'images_intro' => 'Every image belongs to one of three sections, and those sections are the tabs of the product page. Order inside a section is the order visitors see.',
     'images_after_create' => 'Save the product first - photos, technical drawings and installed shots can be added right here afterwards.',

@@ -15,9 +15,6 @@ class MediaService
     ) {
     }
 
-    /**
-     * @param array<string, mixed> $file $_FILES entry
-     */
     public function storeFromUpload(array $file, string $collection = 'general', int|string|null $ownerId = null): Media
     {
         $cleanCollection = trim(preg_replace('/[^a-zA-Z0-9_\-]+/', '-', strtolower(trim($collection))), '-');
@@ -55,7 +52,6 @@ class MediaService
         return $media;
     }
 
-    /** @return Media[] */
     public function all(?string $collection = null): array
     {
         $query = Media::query()->orderBy('id', 'desc');
@@ -63,7 +59,6 @@ class MediaService
             $query->where('collection', $collection);
         }
 
-        /** @var Media[] $items */
         $items = $query->get();
 
         return $items;
@@ -88,9 +83,6 @@ class MediaService
         $this->activity->deleted('media', $id);
     }
 
-    /**
-     * @return array<int, array{collection: string, label: string, count: int}>
-     */
     public function collections(): array
     {
         $connection = Media::query()->connection();

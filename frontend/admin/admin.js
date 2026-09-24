@@ -1,4 +1,3 @@
-/* Admin panel interactions (confirmations, row selection). */
 (function () {
   'use strict';
 

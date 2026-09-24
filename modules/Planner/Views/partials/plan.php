@@ -1,21 +1,4 @@
 <?php
-/**
- * The finished plan: what to install, where each piece goes, the scaled
- * drawing, the optional picture and the way to hand the whole thing to the
- * LUFLY team.
- *
- * Rendered on the server the moment the last answer lands and injected into
- * the board on the right (the chat itself only carries the sentence).
- *
- * @var Core\View\View $view
- * @var array<string, mixed> $plan
- * @var array<string, mixed> $answers
- * @var array<string, string> $handoff
- * @var bool $renderEnabled   the picture button is live
- * @var bool $renderSoon      the picture is announced but not offered yet
- * @var array{name: string, hint: string}|null $fit   set on a product page
- * @var string $locale
- */
 $items = (array) ($plan['items'] ?? []);
 $room = (array) ($plan['room'] ?? []);
 $clearance = (int) ($plan['clearance'] ?? 0);
@@ -52,13 +35,11 @@ $fallbackImg = asset('/images/products/prod_146_1620-111-a.jpg');
             </div>
         <?php endif; ?>
     </dl>
-
-    <!-- what to install -->
-    <section class="planp-items">
+<section class="planp-items">
         <h3 class="planp-h3"><?= e(trans('planner.items')) ?></h3>
         <ol class="planp-list">
             <?php foreach ($items as $index => $item): ?>
-                <?php /** @var array<string, mixed> $item */ ?>
+                <?php ?>
                 <li class="planp-item">
                     <span class="planp-n"><?= e(str_pad((string) ((int) $index + 1), 2, '0', STR_PAD_LEFT)) ?></span>
                     <div class="planp-item-body">
@@ -105,9 +86,7 @@ $fallbackImg = asset('/images/products/prod_146_1620-111-a.jpg');
             <?php endforeach; ?>
         </ol>
     </section>
-
-    <!-- the drawing -->
-    <section class="planp-draw">
+<section class="planp-draw">
         <div class="planp-draw-head">
             <h3 class="planp-h3"><?= e(trans('planner.drawing_title')) ?></h3>
             <button type="button" class="planp-btn is-quiet" data-planner-print>
@@ -122,10 +101,7 @@ $fallbackImg = asset('/images/products/prod_146_1620-111-a.jpg');
     </section>
 
     <?php if ($renderSoon): ?>
-        <!-- the picture: promised, not offered. The free image quota is not
-             there yet (every call comes back 429), so the plan says "soon"
-             instead of showing a button that could only fail. -->
-        <section class="planp-render is-soon" data-planner-render-soon>
+<section class="planp-render is-soon" data-planner-render-soon>
             <h3 class="planp-h3">
                 <?= e(trans('planner.render_title')) ?>
                 <span class="planp-pill"><?= e(trans('planner.render_soon_pill')) ?></span>
@@ -134,8 +110,7 @@ $fallbackImg = asset('/images/products/prod_146_1620-111-a.jpg');
         </section>
 
     <?php elseif ($renderEnabled): ?>
-        <!-- the picture, only if the visitor asks for it -->
-        <section class="planp-render" data-planner-render-block>
+<section class="planp-render" data-planner-render-block>
             <h3 class="planp-h3"><?= e(trans('planner.render_title')) ?></h3>
             <p class="planp-note"><?= e(trans('planner.render_hint')) ?></p>
             <button type="button" class="planp-btn is-primary" data-planner-render>
@@ -146,10 +121,7 @@ $fallbackImg = asset('/images/products/prod_146_1620-111-a.jpg');
     <?php endif; ?>
 
     <?php if ($fit !== null): ?>
-        <!-- "does the piece I was looking at fit my plan?" — the question the
-             chat is asked on a product page, answered from the product's own
-             words: no catalogue sweep and not a single image -->
-        <section class="planp-fit" data-planner-fit-block>
+<section class="planp-fit" data-planner-fit-block>
             <h3 class="planp-h3"><?= e(trans('planner.fit_title')) ?></h3>
             <p class="planp-note"><?= e((string) $fit['hint']) ?></p>
             <button type="button" class="planp-btn is-primary" data-planner-fit>
@@ -159,9 +131,7 @@ $fallbackImg = asset('/images/products/prod_146_1620-111-a.jpg');
             <div class="planp-fit-out" data-planner-fit-out hidden></div>
         </section>
     <?php endif; ?>
-
-    <!-- hand the plan over -->
-    <section class="planp-handoff">
+<section class="planp-handoff">
         <h3 class="planp-h3"><?= e(trans('planner.handoff_title')) ?></h3>
         <p class="planp-note"><?= e(trans('planner.handoff_text')) ?></p>
 

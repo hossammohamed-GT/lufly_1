@@ -13,18 +13,14 @@ use Core\Localization\Translator;
 
 class Router
 {
-    /** @var Route[] */
     private array $routes = [];
 
-    /** @var array<string, Route> */
     private array $namedRoutes = [];
 
-    /** @var array<int, array<string, mixed>> */
     private array $groupStack = [];
 
     private ?Route $current = null;
 
-    /** @var string[] */
     private array $locales;
 
     public function __construct(
@@ -65,9 +61,6 @@ class Router
         return $this->addRoute(['GET', 'POST', 'PUT', 'PATCH', 'DELETE'], $uri, $handler);
     }
 
-    /**
-     * Register a route whose path is translated per locale via resources/lang/{locale}/routes.php.
-     */
     public function localized(array|string $methods, string $key, mixed $handler, ?string $name = null): Route
     {
         $methods = (array) $methods;
@@ -95,7 +88,6 @@ class Router
         return $route;
     }
 
-    /** @param array{prefix?: string, name?: string, middleware?: string|string[]} $attributes */
     public function group(array $attributes, callable $callback): void
     {
         $this->groupStack[] = $attributes;
@@ -142,7 +134,6 @@ class Router
         throw new NotFoundException();
     }
 
-    /** @return list<array{0: string, 1: string|null}> uri => [template, locale] */
     private function localizedVariants(Route $route, string $path): array
     {
         $segments = array_values(array_filter(explode('/', trim($path, '/'))));
@@ -177,9 +168,6 @@ class Router
         return '#^' . rtrim((string) $pattern, '/') . '/?$#u';
     }
 
-    /**
-     * @param array<string, string> $params
-     */
     private function run(Route $route, Request $request, array $params, ?string $locale): Response
     {
         $this->current = $route;
@@ -210,7 +198,6 @@ class Router
         return $response instanceof Response ? $response : Response::make((string) $response);
     }
 
-    /** @param string[] $definitions */
     private function resolveMiddlewares(array $definitions): array
     {
         $expanded = [];
@@ -229,7 +216,6 @@ class Router
         return $expanded;
     }
 
-    /** @return string[] */
     private function expandMiddlewareName(string $name): array
     {
         $groups = (array) config('app.middleware_groups', []);
@@ -261,7 +247,6 @@ class Router
         };
     }
 
-    /** @return array<string, Route> */
     private function namedIndex(): array
     {
         if ($this->namedRoutes === []) {
@@ -275,7 +260,6 @@ class Router
         return $this->namedRoutes;
     }
 
-    /** @param array<string, mixed> $params */
     public function url(string $name, array $params = [], bool $absolute = true): string
     {
         $route = $this->namedIndex()[$name] ?? null;
@@ -326,8 +310,7 @@ class Router
         $configuredHost = parse_url($base, PHP_URL_HOST);
         $requestHost = (string) ($_SERVER['HTTP_HOST'] ?? '');
 
-        // Keep local URLs on the current origin without dropping a subdirectory
-        // such as /lufly when the application is served from a project folder.
+
         if ($requestHost !== '' && in_array($configuredHost, ['localhost', '127.0.0.1'], true)) {
             $scheme = (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off') ? 'https' : 'http';
             $basePath = (string) (parse_url($base, PHP_URL_PATH) ?? '');
@@ -341,7 +324,6 @@ class Router
         return $base . '/' . ltrim($path, '/');
     }
 
-    /** @return Route[] */
     public function getRoutes(): array
     {
         return $this->routes;
@@ -352,7 +334,6 @@ class Router
         return $this->current;
     }
 
-    /** @return string[] */
     public function locales(): array
     {
         return $this->locales;
@@ -374,7 +355,6 @@ class Router
         return rtrim($prefix, '/') . '/' . ltrim($uri, '/');
     }
 
-    /** @return string[] */
     private function groupMiddlewares(): array
     {
         $middlewares = [];

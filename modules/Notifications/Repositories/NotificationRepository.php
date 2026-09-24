@@ -11,7 +11,6 @@ class NotificationRepository extends Repository
 {
     protected string $model = Notification::class;
 
-    /** @return Notification[] */
     public function forUser(int|string $userId, bool $unreadOnly = false): array
     {
         $query = Notification::query()
@@ -22,7 +21,6 @@ class NotificationRepository extends Repository
             $query->whereNull('read_at');
         }
 
-        /** @var Notification[] $items */
         $items = $query->get();
 
         return $items;

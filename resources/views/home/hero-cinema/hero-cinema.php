@@ -1,21 +1,7 @@
 <?php
-/**
- * @var Core\View\View $view
- *
- * HERO CINEMA "Living Monolith": cinematic WebP showcase.
- * Slide 1 is the brand panel (masked logo reveal + travelling shine).
- * Trans keys: home.cinema1_* ... cinema5_* (en / ar / tr / cs).
- */
 $view->pushStyle('frontend/home/hero-cinema/hero-cinema.css');
 $view->pushScript('frontend/home/hero-cinema/hero-cinema.js');
 
-/* The first slide is the largest paint: preload for instant LCP.
-   Three shapes, matching exactly what the script picks at runtime:
-     -p      portrait phones AND portrait tablets / narrow portrait windows
-             (the crop is framed for a tall box, so the screen never has to
-             zoom a landscape shot into an unreadable close-up)
-     -m      small landscape windows
-     plain   desktop / landscape */
 $view->pushPreload(asset('images/lifestyle/heroc-1.webp'), [
     'as' => 'image',
     'type' => 'image/webp',
@@ -56,9 +42,7 @@ $slides = [
 ];
 ?>
 <section class="lfc" id="lfc" aria-label="LUFLY hero showcase">
-
-    <!-- scene layer -->
-    <div class="lfc-scenes">
+<div class="lfc-scenes">
         <?php foreach ($slides as $i => $s): ?>
             <div class="lfc-scene"
                  role="img" aria-label="<?= e($s['alt']) ?>"
@@ -70,18 +54,14 @@ $slides = [
                  data-img-light-p="<?= e(asset("images/lifestyle/{$s['img']}-light-p.jpg")) ?>"></div>
         <?php endforeach; ?>
     </div>
-
-    <!-- atmosphere -->
-    <div class="lfc-atmo" aria-hidden="true">
+<div class="lfc-atmo" aria-hidden="true">
         <div class="lfc-shade"></div>
         <div class="lfc-glow"></div>
         <div class="lfc-vignette"></div>
         <div class="lfc-grain"></div>
         <div class="lfc-beam"></div>
     </div>
-
-    <!-- copy panels -->
-    <div class="lfc-stage">
+<div class="lfc-stage">
         <?php foreach ($slides as $i => $s): ?>
             <div class="lfc-panel<?= !empty($s['brand']) ? ' lfc-panel--brand' : '' ?>">
                 <div class="lfc-inner">
@@ -127,9 +107,7 @@ $slides = [
             </div>
         <?php endforeach; ?>
     </div>
-
-    <!-- progress ticks -->
-    <nav class="lfc-progress" aria-label="Slides">
+<nav class="lfc-progress" aria-label="Slides">
         <?php foreach ($slides as $i => $s): ?>
             <button type="button" class="lfc-tick" aria-label="Slide <?= $i + 1 ?>">
                 <span class="lfc-num">0<?= $i + 1 ?></span>
@@ -137,9 +115,7 @@ $slides = [
             </button>
         <?php endforeach; ?>
     </nav>
-
-    <!-- arrows -->
-    <div class="lfc-arrows">
+<div class="lfc-arrows">
         <button type="button" class="lfc-arrow" id="lfc-prev" aria-label="Previous slide">
             <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
                 <polyline points="15 18 9 12 15 6"></polyline>

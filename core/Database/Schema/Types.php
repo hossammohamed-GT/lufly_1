@@ -4,12 +4,6 @@ declare(strict_types=1);
 
 namespace Core\Database\Schema;
 
-/**
- * Reusable platform data types (single source of truth for column shapes).
- *
- * id | uuid | string_50 | string_100 | string_255 | email | phone | slug |
- * json | long_text | status | timestamps | soft_delete | seo
- */
 final class Types
 {
     public static function id(Blueprint $table, string $column = 'id'): ColumnDefinition

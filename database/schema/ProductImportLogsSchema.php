@@ -7,10 +7,6 @@ namespace Database\Schema;
 use Core\Database\Schema\Blueprint;
 use Core\Database\Schema\SchemaDefinition;
 
-/**
- * Import log - products ingested from external files
- * (PDF / Excel / CSV catalogs, AI extraction, ...).
- */
 class ProductImportLogsSchema extends SchemaDefinition
 {
     protected string $table = 'product_import_logs';

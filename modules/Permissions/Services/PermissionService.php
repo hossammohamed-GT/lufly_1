@@ -17,19 +17,16 @@ class PermissionService
     ) {
     }
 
-    /** @return string[] */
     public function permissionsForUser(int|string $userId): array
     {
         return $this->users->permissionsFor($userId);
     }
 
-    /** @param string[] $permissionIds */
     public function syncRolePermissions(int $roleId, array $permissionIds): void
     {
         $this->roles->syncPermissions($roleId, $permissionIds);
     }
 
-    /** @param string[] $roleIds */
     public function syncUserRoles(int $userId, array $roleIds): void
     {
         $this->users->syncRoles($userId, $roleIds);

@@ -10,18 +10,6 @@ use App\Services\Ai\AiClient;
 use Core\Console\Command;
 use Throwable;
 
-/**
- * Checks the Gemini key pool: one tiny request per key, so a broken account is
- * found before a visitor finds it.
- *
- *   php cli ai:doctor              # text answer per key
- *   php cli ai:doctor --image      # also tries one image (Nano Banana)
- *   php cli ai:doctor --json       # also asks for a JSON answer
- *   php cli ai:doctor --forget     # drop the stored chat answers first (after an update)
- *
- * Every key is reported with the model it uses, the latency and the exact
- * answer from Google (a 400 usually means the model name, a 403 the key).
- */
 final class AiDoctorCommand extends Command
 {
     protected string $name = 'ai:doctor';
@@ -31,12 +19,9 @@ final class AiDoctorCommand extends Command
     public function handle(array $args, array $options): int
     {
         $client = $this->app->get(AiClient::class);
-        /* the console parses --forget into the options as a bare key */
         $forget = $this->option($options, 'forget', false) !== false || in_array('--forget', $args, true);
 
         if ($forget) {
-            /* answers are cached against the question, so a fix to the wording or
-               the prompt would otherwise stay hidden behind an older answer */
             $this->app->get(AiCache::class)->purge('assistant.chat');
         }
 
@@ -49,14 +34,9 @@ final class AiDoctorCommand extends Command
         $this->line('text model   : ' . (string) config('ai.model', ''));
         $this->line('image model  : ' . ((string) config('ai.image_model', '') !== '' ? (string) config('ai.image_model') : 'disabled'));
         $this->line('timeout      : ' . (int) config('ai.timeout', 45) . 's');
-        /* which copy of the chat this host is serving: the one thing that tells a
-           shop whether the file it uploaded is the file being answered with */
         $this->line('chat build   : ' . (string) config('assistant.build', 'unknown'));
         $this->line('cached chats : ' . $this->cachedChats() . ($forget ? ' (cleared)' : '  — --forget clears them'));
 
-        /* A value that cannot be a model name (a comment pasted onto the same
-           line, a line that broke in two) never reaches Google: say which line
-           it was instead of letting a 400 blame the key. */
         $this->warnAboutModelValues();
 
         $this->line('');
@@ -131,11 +111,6 @@ final class AiDoctorCommand extends Command
         return 0;
     }
 
-    /**
-     * Is a model value in .env something that could never be a model name?
-     * Returns how many lines were flagged.
-     */
-    /** How many chat answers are stored right now. */
     private function cachedChats(): int
     {
         try {
@@ -153,7 +128,6 @@ final class AiDoctorCommand extends Command
         foreach ($keys as $key) {
             $raw = trim((string) env($key, ''));
 
-            /* empty is a legitimate answer: "use the default" / "switched off" */
             if ($raw === '' || preg_match('/^[A-Za-z0-9._-]+$/', $raw) === 1) {
                 continue;
             }
@@ -167,18 +141,11 @@ final class AiDoctorCommand extends Command
         return $flagged;
     }
 
-    /** Google's 429: the request was understood, the quota is what ran out. */
     private function looksLikeQuota(string $error): bool
     {
         return str_contains($error, '429') || stripos($error, 'quota') !== false;
     }
 
-    /**
-     * Ask one specific key, bypassing the rotation (that is the point of the
-     * doctor: every account is tested on its own).
-     *
-     * @return array{ok: bool, text: string, error: ?string}
-     */
     private function callWithKey(AiClient $client, int $slot, string $model): array
     {
         $reflection = new \ReflectionClass($client);

@@ -4,9 +4,6 @@ declare(strict_types=1);
 
 namespace Core\Database\Schema;
 
-/**
- * Declarative table description (Prisma-inspired). Lives in database/schema/.
- */
 abstract class SchemaDefinition
 {
     protected string $table = '';
@@ -26,7 +23,6 @@ abstract class SchemaDefinition
         return $blueprint;
     }
 
-    /** @return array<int, array{column: string, type: string, nullable: bool}> */
     public function describe(): array
     {
         $out = [];

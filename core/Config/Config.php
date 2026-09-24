@@ -6,17 +6,12 @@ namespace Core\Config;
 
 use Core\Support\Arr;
 
-/**
- * Configuration repository. Loads PHP files from config/ lazily.
- */
 final class Config
 {
     private static string $path = '';
 
-    /** @var array<string, mixed> */
     private static array $items = [];
 
-    /** @var array<string, bool> */
     private static array $loaded = [];
 
     public static function setPath(string $path): void
@@ -40,7 +35,6 @@ final class Config
         Arr::set(self::$items, $key, $value);
     }
 
-    /** @return array<string, mixed> */
     public static function all(string $file): array
     {
         self::loadFile($file);

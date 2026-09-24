@@ -15,10 +15,8 @@ class LanguageRepository extends Repository
 
     protected string $auditEntity = 'language';
 
-    /** @return Language[] */
     public function activeLanguages(): array
     {
-        /** @var Language[] $items */
         $items = Language::query()
             ->where('active', 1)
             ->orderBy('sort_order', 'asc')
@@ -29,7 +27,6 @@ class LanguageRepository extends Repository
 
     public function findByCode(string $code): ?Language
     {
-        /** @var Language|null $language */
         $language = Language::query()->where('code', $code)->first();
 
         return $language;

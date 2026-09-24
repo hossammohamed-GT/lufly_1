@@ -1,15 +1,4 @@
 <?php
-/**
- * "The bathroom planner is on its way."
- *
- * The plan, the drawing and the picture all work — the shop simply does not
- * offer them yet. Rather than showing a flow that will change, the page says
- * what is coming and hands the visitor to the finder, which is ready today.
- *
- * @var Core\View\View $view
- * @var string $locale
- * @var string $finderUrl
- */
 $view->layout('layouts.frontend');
 $view->pushStyle('frontend/planner/planner.css');
 $view->pushStyle('frontend/assistant/chat.css');

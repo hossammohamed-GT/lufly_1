@@ -9,19 +9,6 @@ use App\Services\Ai\AiClient;
 use App\Services\Ai\AiGuard;
 use Modules\Products\Repositories\ProductRepository;
 
-/**
- * Turns three taps into a bathroom plan.
- *
- * The flow is deliberately short and the assistant never has to guess:
- *   1. size     — a compact / standard / family room, or the visitor's own numbers
- *   2. wet area — shower or bathtub
- *   3. look     — one tap switches both the style and the metal finish
- *
- * From those answers the plan itself is computed locally (items, sizes,
- * placement, drawing), and the AI is only asked to write the friendly wording
- * around a plan that already exists. If the AI is off, slow or out of quota the
- * visitor still gets the complete plan, in every language.
- */
 class PlannerService
 {
     public function __construct(
@@ -38,14 +25,6 @@ class PlannerService
         return (bool) ($this->config()['enabled'] ?? true);
     }
 
-    /* ---------------------------------------------------------------------
-     * answers
-     * ------------------------------------------------------------------- */
-
-    /**
-     * The answers so far. Anything unknown or malformed falls back to the
-     * default, so a visitor can never reach a broken state.
-     */
     public function answers(array $input): array
     {
         $config = $this->config();
@@ -76,7 +55,6 @@ class PlannerService
             ? ['w' => $custom['w'], 'l' => $custom['l']]
             : ['w' => (int) $sizes[$size]['w'], 'l' => (int) $sizes[$size]['l']];
 
-        /* the door sits on the door wall; a window only fits a deeper room */
         $room['door'] = 'bottom';
         $room['window'] = $room['l'] >= 220 ? 'right' : '';
 
@@ -92,11 +70,6 @@ class PlannerService
         ];
     }
 
-    /**
-     * Which step the chat shows next.
-     *
-     * @param array<int, string> $answered steps already submitted
-     */
     public function step(array $answers, array $answered = []): string
     {
         if (!in_array('size', $answered, true)) {
@@ -118,13 +91,6 @@ class PlannerService
         return 'plan';
     }
 
-    /* ---------------------------------------------------------------------
-     * the plan itself — local, deterministic, cached
-     * ------------------------------------------------------------------- */
-
-    /**
-     * @return array<string, mixed>
-     */
     public function plan(array $answers, string $locale = 'en'): array
     {
         return $this->cache->remember(
@@ -135,12 +101,6 @@ class PlannerService
         );
     }
 
-    /**
-     * The plan without any AI in it — used for the instant answer, for the PDF
-     * sheets and as the fallback whenever the assistant is unavailable.
-     *
-     * @return array<string, mixed>
-     */
     public function build(array $answers, string $locale = 'en'): array
     {
         $blocks = $this->layout($answers);
@@ -178,28 +138,13 @@ class PlannerService
         ];
     }
 
-    /**
-     * Free floor left between the door wall and whatever stands against it: the
-     * one measurement a visitor should not have to guess. A plan that leaves a
-     * metre and more is comfortable; anything less gets a gentle warning.
-     *
-     * @param array<int, array<string, mixed>> $blocks
-     */
     public function clearance(array $blocks, int $length): int
     {
-        /* an 80 cm door needs 80 cm of free floor in front of it: whatever is
-           closer to the door wall than that is in the way of the swing */
         $nearest = min(array_map(static fn (array $block): int => (int) $block['y'], $blocks) ?: [$length]);
 
         return $nearest - 80;
     }
 
-    /**
-     * The plain-text plan: what gets cached, mailed and handed to the support
-     * team when the visitor asks us to source a similar item.
-     *
-     * @param array<int, array<string, mixed>> $items
-     */
     public function planText(array $answers, array $items, int $clearance, string $locale = 'en'): string
     {
         $room = $answers['room'];
@@ -227,7 +172,6 @@ class PlannerService
         return implode("\n", $lines);
     }
 
-    /** The one-line pitch under the chat. */
     private function summary(array $answers, array $items, string $locale): string
     {
         return $this->t('summary', $locale, [
@@ -237,16 +181,6 @@ class PlannerService
         ]);
     }
 
-    /* ---------------------------------------------------------------------
-     * wording — the one place the AI helps
-     * ------------------------------------------------------------------- */
-
-    /**
-     * A short, friendly introduction to a plan that is already complete.
-     * Never throws; the local wording is used if anything goes wrong.
-     *
-     * @return array{text: string, source: string}
-     */
     public function intro(array $answers, array $plan, string $locale = 'en'): array
     {
         $ai = $this->config()['ai'];
@@ -259,8 +193,6 @@ class PlannerService
             return ['text' => $fallback, 'source' => 'local'];
         }
 
-        /* the same room is asked about over and over — the wording is cached
-           next to the plan, so the second visitor of a size pays no tokens */
         $fingerprint = sha1($locale . '|' . $this->fingerprint($answers));
 
         return $this->cache->remember(
@@ -271,11 +203,6 @@ class PlannerService
         );
     }
 
-    /**
-     * One small request to the model: it writes the welcome, never the plan.
-     *
-     * @return array{text: string, source: string}
-     */
     private function writeIntro(array $answers, array $plan, string $locale, string $fallback): array
     {
         $ai = $this->config()['ai'];
@@ -284,8 +211,6 @@ class PlannerService
             return ['text' => $fallback, 'source' => 'local'];
         }
 
-        /* the model sees the answers and two words per item — never the
-           catalogue, never the visitor's words, never a long prompt */
         $outline = [];
         foreach ($plan['items'] as $item) {
             $outline[] = $item['label'] . ' (' . $item['size'] . ', ' . $item['zone'] . ')';
@@ -311,9 +236,6 @@ class PlannerService
 
         $this->record('planner.intro', $result);
 
-        /* `ok` also tells the cache how long to keep this: a local sentence
-           written because the assistant was away is retried in five minutes,
-           not remembered for a month */
         if (!($result['ok'] ?? false) || trim((string) ($result['text'] ?? '')) === '') {
             return [
                 'text' => $fallback,
@@ -331,20 +253,6 @@ class PlannerService
         ];
     }
 
-    /**
-     * "Does this piece fit the plan I just made?" — the only thing the chat
-     * says about a single product.
-     *
-     * Cheapest possible answer: the verdict is computed locally from the plan
-     * (which item the product would be, in which size, on which wall) and the
-     * AI is only asked to phrase it. What travels to the model is the product's
-     * *words* — name, description, category — never an image and never the
-     * catalogue. With the AI off, slow or out of quota the local wording stands.
-     *
-     * @param array<string, mixed> $plan
-     * @param array{id: int, name: string, text: string, category: string, url: string} $context
-     * @return array{text: string, source: string}
-     */
     public function fit(array $plan, array $context, string $locale = 'en'): array
     {
         $fit = $this->config()['fit'];
@@ -357,7 +265,6 @@ class PlannerService
             return ['text' => $fallback, 'source' => 'local', 'fit' => $facts['key'], 'state' => $facts['state']];
         }
 
-        /* the same product in the same room is asked about over and over */
         $fingerprint = sha1(implode('|', [
             $locale,
             $this->fingerprint((array) $plan['answers']),
@@ -374,15 +281,6 @@ class PlannerService
         );
     }
 
-    /**
-     * One small request: the model rephrases a verdict this class already
-     * reached. It may not invent a size, a fitting or a price.
-     *
-     * @param array<string, mixed> $plan
-     * @param array{id: int, name: string, text: string, category: string, url: string} $context
-     * @param array{text: string, state: string, key: string|null} $facts
-     * @return array{text: string, source: string}
-     */
     private function writeFit(array $plan, array $context, array $facts, string $locale, string $fallback): array
     {
         $fit = $this->config()['fit'];
@@ -447,15 +345,6 @@ class PlannerService
         ];
     }
 
-    /**
-     * The verdict, computed locally: which item of the plan this product would
-     * be, and what that means for the room. Zero tokens, never wrong about the
-     * plan, and the wording the AI gets to improve on.
-     *
-     * @param array<string, mixed> $plan
-     * @param array{id: int, name: string, text: string, category: string, url: string} $context
-     * @return array{text: string, state: string, key: string|null}
-     */
     public function fitFacts(array $plan, array $context, string $locale = 'en'): array
     {
         $answers = (array) $plan['answers'];
@@ -497,19 +386,6 @@ class PlannerService
         ];
     }
 
-    /**
-     * Which slot of the plan a product would fill, from its own words: how many
-     * of a slot's keywords the name and description mention, then how specific
-     * the longest of them is.
-     *
-     * "Toilet paper holder … with shelf" mentions `paper` and `holder` — more
-     * than the one `toilet` the toilet slot hears — so it lands on the holder,
-     * where it belongs. A category on its own is never enough: six slots share
-     * `bathroom-ceramics`, and guessing between a toilet and a bathtub helps
-     * nobody.
-     *
-     * @param array{name?: string, text?: string, category?: string} $context
-     */
     public function matchSlot(array $context): ?string
     {
         $slots = (array) ($this->config()['slots'] ?? []);
@@ -553,16 +429,11 @@ class PlannerService
             return null;
         }
 
-        /* stable in PHP 8: the order in config/planner.php breaks the last tie */
         usort($candidates, static fn (array $a, array $b): int => [$b['hits'], $b['longest'], $b['category']] <=> [$a['hits'], $a['longest'], $a['category']]);
 
         return $candidates[0]['key'];
     }
 
-    /**
-     * Does the text mention this word? Words of three letters or less ("wc",
-     * "bar") would otherwise match inside half the catalogue.
-     */
     private function mentions(string $haystack, string $word): bool
     {
         if (mb_strlen($word) <= 3) {
@@ -572,12 +443,6 @@ class PlannerService
         return str_contains($haystack, $word);
     }
 
-    /**
-     * The lines the chat rotates while the assistant is thinking. Varied on
-     * purpose: a visitor should never stare at one frozen sentence.
-     *
-     * @return array<int, string>
-     */
     public function waitingMessages(string $locale = 'en'): array
     {
         $messages = [$this->t('thinking', $locale)];
@@ -594,12 +459,6 @@ class PlannerService
         return $messages;
     }
 
-    /**
-     * The picture of the finished room: optional, on demand, and the only step
-     * in the whole flow that costs an image generation. The catalogue pictures
-     * of the suggested items travel with the request, so the render matches the
-     * things the visitor is actually looking at.
-     */
     public function render(array $answers, array $plan, string $locale = 'en'): array
     {
         $render = $this->config()['render'];
@@ -645,16 +504,6 @@ class PlannerService
         ];
     }
 
-    /* ---------------------------------------------------------------------
-     * catalogue suggestions — always our own database, never the AI
-     * ------------------------------------------------------------------- */
-
-    /**
-     * One or two products from the LUFLY catalogue for an item slot.
-     *
-     * @param array<string, mixed> $slot
-     * @return array<int, array<string, mixed>>
-     */
     public function picks(array $slot, string $finish, string $locale, ?int $limit = null): array
     {
         $limit = $limit ?? (int) ($this->config()['picks_per_slot'] ?? 2);
@@ -663,8 +512,6 @@ class PlannerService
         $seen = [];
         $picks = [];
 
-        /* first inside the slot's own category, then — only if that found
-           nothing — across the whole catalogue. Still one query per keyword. */
         foreach ([$category, ''] as $scope) {
             foreach ($keywords as $keyword) {
                 if (count($picks) >= $limit) {
@@ -693,7 +540,6 @@ class PlannerService
         return $picks;
     }
 
-    /** A product is a model from the repository or a plain array. */
     private function idOf(mixed $product): int
     {
         if (is_array($product)) {
@@ -707,11 +553,8 @@ class PlannerService
         return 0;
     }
 
-    /** The small card the chat shows under an item. */
     private function card(mixed $product, string $finish, string $locale): array
     {
-        /* the repository hands back models; a plain array is accepted too, so
-           the planner can be fed from a fixture or a cached payload */
         $row = $product;
 
         if (!is_array($row)) {
@@ -739,12 +582,8 @@ class PlannerService
         ];
     }
 
-    /** The product page a plan card links to, built by the router. */
     private function productUrl(array $product, string $locale): string
     {
-        /* the router is the one place that knows both the translated segment
-           (`produkty`, `urunler`, …) and the folder the shop sits in — and the
-           planner is always rendered in the request's own locale */
         unset($locale);
 
         $slug = (string) ($product['slug'] ?? '');
@@ -752,7 +591,6 @@ class PlannerService
         return $slug !== '' ? route('products.show', ['slug' => $slug]) : '';
     }
 
-    /** The first catalogue pictures, handed to the image model as references. */
     private function references(array $plan, int $limit): array
     {
         $references = [];
@@ -776,17 +614,6 @@ class PlannerService
         return $references;
     }
 
-    /* ---------------------------------------------------------------------
-     * handing the plan to the team
-     * ------------------------------------------------------------------- */
-
-    /**
-     * The two ways a plan leaves the shop: a WhatsApp message the visitor can
-     * send in one tap, and the e-mail the shop sends on their behalf.
-     *
-     * @param array<string, mixed> $plan
-     * @return array<string, string>
-     */
     public function handoff(array $plan, string $locale = 'en'): array
     {
         $config = (array) ($this->config()['handoff'] ?? []);
@@ -805,14 +632,6 @@ class PlannerService
         ];
     }
 
-    /* ---------------------------------------------------------------------
-     * placement
-     * ------------------------------------------------------------------- */
-
-    /**
-     * Which wall each item prefers. The wet area takes the back wall, the
-     * toilet the wall opposite the door, the basin the wall beside it.
-     */
     private const WALLS = [
         'shower' => ['back', 'left', 'right'],
         'bathtub' => ['back', 'left', 'right'],
@@ -823,24 +642,11 @@ class PlannerService
         'second_basin' => ['left', 'right', 'back'],
     ];
 
-    /** Wall-hung pieces: they stand where the piece they belong to stands. */
     private const ACCESSORIES = [
         'basin_mixer' => 'basin',
         'mirror' => 'basin',
     ];
 
-    /**
-     * Where every item goes, in centimetres, measured from the corner of the
-     * door wall (x to the right, y away from the door).
-     *
-     * Every piece is laid along a wall in the order a plumber would work: the
-     * wet area first, then whatever follows it on that wall. Nothing is ever
-     * stacked on top of something else — a wall that is full means the piece
-     * moves to the next wall, and a room that is full means the piece is left
-     * out rather than drawn over the door.
-     *
-     * @return array<int, array<string, mixed>>
-     */
     public function layout(array $answers): array
     {
         $slots = $this->config()['slots'];
@@ -848,10 +654,6 @@ class PlannerService
         $w = (int) $room['w'];
         $l = (int) $room['l'];
 
-        /* every wall is a line: `start` where the next piece may stand, `end`
-           where the wall runs out. A piece on one wall moves the start of the
-           walls beside it and the end of the wall opposite, which is how two
-           pieces can never share a corner. */
         $grid = [
             'back' => ['start' => 10, 'end' => $w - 10],
             'left' => ['start' => 10, 'end' => $l - 10],
@@ -862,8 +664,6 @@ class PlannerService
         $keys = array_keys($slots);
         $wet = array_values(array_filter($keys, static fn (string $key): bool => in_array($key, ['shower', 'bathtub'], true)));
 
-        /* the wet area goes first: it is the biggest piece and the one the
-           visitor asked for by name, so it gets the wall it wants */
         foreach (array_merge($wet, array_values(array_diff($keys, $wet))) as $key) {
             $this->put($key, $slots[$key], $answers, $grid, $blocks, $w, $l);
         }
@@ -871,14 +671,6 @@ class PlannerService
         return array_values($blocks);
     }
 
-    /**
-     * One slot: does it belong in this room, is it a wall-hung accessory, and
-     * where does it fit? Nothing is written if the answer is "nowhere".
-     *
-     * @param array<string, mixed> $slot
-     * @param array<string, array{start: int, end: int}> $grid
-     * @param array<string, array<string, mixed>> $blocks
-     */
     private function put(string $key, array $slot, array $answers, array &$grid, array &$blocks, int $w, int $l): void
     {
         if (!$this->applies((string) ($slot['when'] ?? 'always'), $answers)) {
@@ -887,7 +679,6 @@ class PlannerService
 
         [$along, $out] = $this->footprint($key);
 
-        /* a mirror or a mixer hangs where the piece it belongs to stands */
         $host = self::ACCESSORIES[$key] ?? null;
 
         if ($host !== null) {
@@ -932,13 +723,6 @@ class PlannerService
         $blocks[$key] = $this->attach($key, $wall, $offset, $along, $out, $w, $l);
     }
 
-    /**
-     * The first wall that still has room for the piece, in the order the piece
-     * would like them. Null means it does not fit anywhere — better to leave it
-     * out of the drawing than to draw it through the door.
-     *
-     * @param array<string, array{start: int, end: int}> $grid
-     */
     private function fitsOnWall(string $key, int $along, int $out, int $w, int $l, array $grid): ?string
     {
         foreach (self::WALLS[$key] ?? ['back', 'left', 'right'] as $wall) {
@@ -958,13 +742,6 @@ class PlannerService
         return null;
     }
 
-    /**
-     * One piece of furniture, placed along its wall: the offset walks away from
-     * the corner the wall shares with the door, and the plan is measured from
-     * that same corner (x to the right, y away from the door).
-     *
-     * @return array<string, mixed>
-     */
     private function attach(string $key, string $wall, int $offset, int $along, int $out, int $w, int $l): array
     {
         [$x, $y, $spanX, $spanY] = match ($wall) {
@@ -986,13 +763,6 @@ class PlannerService
         ];
     }
 
-    /**
-     * Real footprints in centimetres: `along` the wall, then `out` from it.
-     * They match the size each slot recommends, so the drawing and the item
-     * list can never disagree about how much floor a piece takes.
-     *
-     * @return array{0: int, 1: int}
-     */
     private function footprint(string $key): array
     {
         return match ($key) {
@@ -1025,10 +795,6 @@ class PlannerService
 
         return true;
     }
-
-    /* ---------------------------------------------------------------------
-     * wording helpers — translation files, so the assistant can add languages
-     * ------------------------------------------------------------------- */
 
     public function title(string $locale): string
     {
@@ -1071,32 +837,16 @@ class PlannerService
             return $this->t('clearance_ok', $locale);
         }
 
-        /* how much more floor the door needs, rounded up to the next 5 cm */
         $missing = (int) (ceil(abs($clearance) / 5) * 5);
 
         return $this->t('clearance_tight', $locale, ['cm' => (string) $missing]);
     }
 
-    /**
-     * @param array<string, string> $replace
-     */
     public function t(string $key, string $locale = 'en', array $replace = []): string
     {
-        /* answered in the language the visitor is reading, whatever the request
-           locale happens to be when the plan is built from a cached answer */
         return (string) trans('planner.' . $key, $replace, $locale !== '' ? $locale : null);
     }
 
-    /* ---------------------------------------------------------------------
-     * helpers
-     * ------------------------------------------------------------------- */
-
-    /**
-     * One row per call in `ai_usage`: the daily caps are read from that table,
-     * and the admin can see what the quota was spent on.
-     *
-     * @param array<string, mixed> $result what the client returned
-     */
     private function record(string $scope, array $result): void
     {
         $usage = (array) ($result['raw']['usageMetadata'] ?? []);
@@ -1111,7 +861,6 @@ class PlannerService
         ]);
     }
 
-    /** Four answers in, one short string out — the identity of a plan. */
     private function fingerprint(array $answers): string
     {
         return sha1((string) json_encode([
@@ -1122,7 +871,6 @@ class PlannerService
         ]));
     }
 
-    /** @return array<string, mixed> */
     private function config(): array
     {
         $config = config('planner');

@@ -1,17 +1,4 @@
 <?php
-/**
- * Navbar: "Machined Glass".
- *
- * Row 1: brand mark, instant search, utility actions.
- * Row 2: blueprint rail, the crooked machined line on the inline-start edge,
- *        quick links, knurled meta strip and a scroll progress line.
- * Getting close to the crooked line unfolds the geometric index drawer.
- * Below 1024px the rail becomes a small bloom button that opens a bottom sheet.
- *
- * @var Core\View\View $view
- * @var Core\Localization\Translator $translator
- */
-
 $view->pushStyle('frontend/components/navbar/navbar.css');
 $view->pushScript('frontend/components/navbar/navbar.js');
 
@@ -24,8 +11,6 @@ $currentUrl = (string) request()->url();
 $currentPath = rtrim((string) parse_url($currentUrl, PHP_URL_PATH), '/');
 $currentQuery = (string) (parse_url($currentUrl, PHP_URL_QUERY) ?? '');
 
-/* A link counts as current when its path matches - and, for catalogue links that
-   differ only by query string, when the query matches too. */
 $isActive = static function (string $target) use ($currentPath, $currentQuery): bool {
     $parts = parse_url($target) ?: [];
     $path = rtrim((string) ($parts['path'] ?? ''), '/');
@@ -39,10 +24,7 @@ $isActive = static function (string $target) use ($currentPath, $currentQuery): 
     return $query === '' || $query === $currentQuery;
 };
 
-/* Saved-products list: the badge shows how many products this visitor saved.
-   Without the cookie the service answers 0 without touching the database. */
 $favoritesOn = feature('favorites', true) && class_exists(\Modules\Favorites\Services\FavoriteService::class);
-/* the planner only gets a place in the menu once it is actually open */
 $plannerOn = feature('planner', true)
     && !(bool) config('planner.coming_soon', true)
     && class_exists(\Modules\Planner\Services\PlannerService::class);
@@ -51,8 +33,6 @@ if ($favoritesOn) {
     $savedCount = app(\Modules\Favorites\Services\FavoriteService::class)->count();
 }
 
-/* Quotation box: the list the visitor fills to ask for every price at once.
-   Like the saved list, it answers 0 without a cookie and without a query. */
 $boxOn = feature('box', true) && class_exists(\Modules\Box\Services\BoxService::class);
 $boxCount = 0;
 if ($boxOn) {
@@ -75,7 +55,6 @@ $indexLinks = [
 ];
 
 if ($favoritesOn) {
-    /* the saved list sits between the editorial sections and the contact page */
     array_splice($indexLinks, count($indexLinks) - 1, 0, [[
         'key' => 'favorites',
         'url' => route('favorites.index'),
@@ -83,7 +62,6 @@ if ($favoritesOn) {
 }
 
 if ($boxOn) {
-    /* the box follows the saved list: the pieces to be priced */
     array_splice($indexLinks, count($indexLinks) - 1, 0, [[
         'key' => 'box',
         'url' => route('box.index'),
@@ -91,7 +69,6 @@ if ($boxOn) {
 }
 
 if ($plannerOn) {
-    /* the planner follows the box: plan a room, then collect what fits */
     array_splice($indexLinks, count($indexLinks) - 1, 0, [[
         'key' => 'planner',
         'url' => route('planner.index'),
@@ -120,7 +97,6 @@ $getSectionIcon = static function (string $key): string {
 
 $catalogUrl = route('contact');
 
-/* Language targets keep the current route translated per locale. */
 $languageLinks = [];
 
 foreach ($supported as $code => $name) {
@@ -148,9 +124,7 @@ foreach ($supported as $code => $name) {
     <div class="mnav-slab">
         <span class="mnav-grain" aria-hidden="true"></span>
         <span class="mnav-beam" aria-hidden="true"></span>
-
-        <!-- Row 1: brand, search, utilities -->
-        <div class="container mnav-top">
+<div class="container mnav-top">
             <a class="mnav-brand" href="<?= e(route('home')) ?>" title="LUFLY Sanitary Architecture">
                 <img class="mnav-brand-img"
 src="<?= e(asset('images/logo.png')) ?>"
@@ -303,7 +277,7 @@ src="<?= e(asset('images/logo.png')) ?>"
                         <div class="mnav-lang-menu-title"><?= e(trans('nav.language', [], $currentLocale)) ?></div>
                         <?php foreach ($languageLinks as $code => $link): ?>
                             <?php if ($code === $currentLocale): ?>
-                                <?php /* Active locale renders as a non-clickable item. */ ?>
+                                <?php ?>
                                 <span class="mnav-lang-option is-current"
                                       role="menuitem"
                                       aria-current="true"
@@ -338,9 +312,7 @@ src="<?= e(asset('images/logo.png')) ?>"
                 </button>
             </div>
         </div>
-
-                <!-- Horizontal Full-Width Index Bar (Text Only, Ultra Fast) -->
-        <nav class="mnav-dropdown-bar" id="mnav-dropdown-bar" aria-label="<?= e(trans('nav.index', [], $currentLocale)) ?>">
+<nav class="mnav-dropdown-bar" id="mnav-dropdown-bar" aria-label="<?= e(trans('nav.index', [], $currentLocale)) ?>">
             <div class="container mnav-dropdown-inner">
                 <?php foreach ($indexLinks as $link): ?>
                     <a class="mnav-drop-link<?= $isActive($link['url']) ? ' is-active' : '' ?>"
@@ -357,9 +329,7 @@ src="<?= e(asset('images/logo.png')) ?>"
 
         <span class="mnav-progress" aria-hidden="true"><i data-nav-progress></i></span>
     </div>
-
-    <!-- Mobile bloom sheet -->
-    <div class="mnav-scrim" data-sheet-close aria-hidden="true"></div>
+<div class="mnav-scrim" data-sheet-close aria-hidden="true"></div>
 
     <section class="mnav-sheet"
              id="mnav-sheet"
@@ -396,7 +366,7 @@ src="<?= e(asset('images/logo.png')) ?>"
             <div class="mnav-sheet-utils">
                 <?php foreach ($languageLinks as $code => $link): ?>
                     <?php if ($code === $currentLocale): ?>
-                        <?php /* Active locale renders as a non-clickable item. */ ?>
+                        <?php ?>
                         <span class="mnav-util-link is-current"
                               aria-current="true"
                               lang="<?= e($code) ?>">

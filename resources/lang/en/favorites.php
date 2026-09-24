@@ -3,7 +3,6 @@
 declare(strict_types=1);
 
 return [
-    /* page */
     'eyebrow' => 'LUFLY · saved products',
     'title' => 'Your saved list',
     'lede' => 'Every fixture you marked, kept in one place. Mail the list to yourself, open a product straight from the message, or come back to this page whenever you like.',
@@ -26,7 +25,6 @@ return [
     'removed_named' => ':name removed from your saved list.',
     'cleared' => 'Your saved list is empty.',
 
-    /* empty state */
     'empty_title' => 'Nothing saved yet',
     'empty_text' => 'Browse the catalogue and tap the heart on any product. It stays here — and we can mail the whole list to you.',
     'empty_cta' => 'Browse the catalogue',
@@ -37,7 +35,6 @@ return [
     'step_3_title' => 'Mail it',
     'step_3_text' => 'Send yourself the list — every item carries a direct link to its product.',
 
-    /* mail panel */
     'mail_eyebrow' => 'Send the list',
     'mail_title' => 'Mail me this list',
     'mail_text_one' => 'One message with your saved product and a direct link to it.',
@@ -52,7 +49,6 @@ return [
     'mail_point_2' => 'Opens the list again on any device',
     'mail_point_3' => 'No account, no password',
 
-    /* save-to-mail prompt */
     'prompt_title' => 'Mail this product to yourself',
     'prompt_text' => 'One message with a direct link to everything you save, ready in your inbox to open from any device.',
     'prompt_button' => 'Send it to me',
@@ -60,7 +56,6 @@ return [
     'prompt_note' => 'No account needed — we use this address only for this list.',
     'prompt_close' => 'Close',
 
-    /* permanent link */
     'link_title' => 'Your permanent link',
     'link_text' => 'This address always opens this list — keep it in your bookmarks or send it to a colleague.',
     'copy' => 'Copy link',
@@ -74,7 +69,6 @@ return [
     'help_text' => 'Send us the list and we answer with a project quotation.',
     'help_cta' => 'Talk to the factory',
 
-    /* errors */
     'err_email' => 'Please enter a valid e-mail address.',
     'err_empty' => 'Save a product before mailing the list.',
     'err_product' => 'That product is not available any more.',
@@ -86,7 +80,6 @@ return [
 
     'not_found' => 'That saved list could not be found.',
 
-    /* e-mail */
     'mail_subject_one' => 'Your LUFLY saved list — 1 product',
     'mail_subject_many' => 'Your LUFLY saved list — :n products',
     'mail_admin_subject_one' => 'Saved list from :email (1 product)',

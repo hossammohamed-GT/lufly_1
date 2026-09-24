@@ -1,12 +1,3 @@
-/* ============================================================
-   Contact enquiry form.
-
-   There is no mail backend on this site, so the form composes the answers
-   into a single WhatsApp message and opens the chat. That keeps one reply
-   channel rather than promising an inbox nobody reads, and nothing the user
-   types is stored or transmitted anywhere else.
-   ============================================================ */
-
 (function () {
   'use strict';
 
@@ -24,7 +15,6 @@
     form.addEventListener('submit', function (e) {
       e.preventDefault();
 
-      /* let the browser surface its own validation messages */
       if (typeof form.reportValidity === 'function' && !form.reportValidity()) return;
 
       var lines = [

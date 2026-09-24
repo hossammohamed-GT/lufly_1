@@ -6,7 +6,6 @@ namespace Core\Http;
 
 class JsonResponse extends Response
 {
-    /** @param array<string|int, mixed> $data */
     public function __construct(array $data, int $status = 200, array $headers = [])
     {
         $headers['Content-Type'] = 'application/json; charset=utf-8';

@@ -3,7 +3,6 @@
 declare(strict_types=1);
 
 return [
-    /* page */
     'eyebrow' => 'LUFLY · uložené produkty',
     'title' => 'Váš uložený seznam',
     'lede' => 'Vše, co jste si označili, na jednom místě. Pošlete si seznam e-mailem, otevřete produkt přímo ze zprávy nebo se na tuto stránku kdykoli vraťte.',
@@ -26,7 +25,6 @@ return [
     'removed_named' => ':name bylo odebráno ze seznamu.',
     'cleared' => 'Váš seznam je prázdný.',
 
-    /* empty state */
     'empty_title' => 'Zatím nic neuloženo',
     'empty_text' => 'Projděte katalog a klepněte na srdce u kteréhokoli produktu. Zůstane tady — a celý seznam vám můžeme poslat e-mailem.',
     'empty_cta' => 'Prohlédnout katalog',
@@ -37,7 +35,6 @@ return [
     'step_3_title' => 'Pošlete e-mailem',
     'step_3_text' => 'Pošlete si seznam — každá položka nese přímý odkaz na svůj produkt.',
 
-    /* mail panel */
     'mail_eyebrow' => 'Poslat seznam',
     'mail_title' => 'Poslat mi tento seznam e-mailem',
     'mail_text_one' => 'Jedna zpráva s uloženým produktem a přímým odkazem na něj.',
@@ -52,7 +49,6 @@ return [
     'mail_point_2' => 'Seznam se otevře i na jiném zařízení',
     'mail_point_3' => 'Bez účtu a bez hesla',
 
-    /* save-to-mail prompt */
     'prompt_title' => 'Pošlete si tento produkt e-mailem',
     'prompt_text' => 'Jedna zpráva s přímým odkazem na vše, co si uložíte — ve schránce připravená k otevření z jakéhokoli zařízení.',
     'prompt_button' => 'Poslat mi to',
@@ -60,7 +56,6 @@ return [
     'prompt_note' => 'Bez účtu — tuto adresu použijeme jen pro tento seznam.',
     'prompt_close' => 'Zavřít',
 
-    /* permanent link */
     'link_title' => 'Váš trvalý odkaz',
     'link_text' => 'Tato adresa vždy otevře tento seznam — uložte si ji do záložek nebo pošlete kolegovi.',
     'copy' => 'Kopírovat odkaz',
@@ -74,7 +69,6 @@ return [
     'help_text' => 'Pošlete nám seznam a odpovíme nabídkou pro váš projekt.',
     'help_cta' => 'Kontaktovat výrobce',
 
-    /* errors */
     'err_email' => 'Zadejte prosím platnou e-mailovou adresu.',
     'err_empty' => 'Než seznam odešlete, uložte alespoň jeden produkt.',
     'err_product' => 'Tento produkt už není dostupný.',
@@ -86,7 +80,6 @@ return [
 
     'not_found' => 'Tento uložený seznam nebyl nalezen.',
 
-    /* e-mail */
     'mail_subject_one' => 'Váš uložený seznam LUFLY — 1 produkt',
     'mail_subject_many' => 'Váš uložený seznam LUFLY — :n produktů',
     'mail_admin_subject_one' => 'Uložený seznam od :email (1 produkt)',

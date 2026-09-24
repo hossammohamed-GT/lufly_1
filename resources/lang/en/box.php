@@ -2,8 +2,6 @@
 
 declare(strict_types=1);
 
-/* The quotation box (see modules/Box). */
-
 return [
     'short' => 'Box',
     'add' => 'Add to the box',

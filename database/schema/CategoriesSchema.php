@@ -7,10 +7,6 @@ namespace Database\Schema;
 use Core\Database\Schema\Blueprint;
 use Core\Database\Schema\SchemaDefinition;
 
-/**
- * Category tree - unlimited depth through parent_id.
- * Example: Bathroom > Toilets > Wall Hung Toilets.
- */
 class CategoriesSchema extends SchemaDefinition
 {
     protected string $table = 'categories';

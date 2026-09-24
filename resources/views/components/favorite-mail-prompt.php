@@ -1,18 +1,4 @@
 <?php
-/**
- * "Mail it to me" prompt.
- *
- * A visitor cannot be e-mailed the moment they tap a heart — nobody knows the
- * address yet — so this sheet asks for it once, right after the first product
- * is saved, and sends the list with the direct product links from there.
- *
- * frontend/favorites/favorites.js opens it (after the heart animation) on every
- * page except the saved-list page, which carries the full mail panel, and
- * remembers the answer in localStorage so the offer is made exactly once.
- *
- * @var Core\View\View $view
- */
-
 if (!feature('favorites', true) || !class_exists(\Modules\Favorites\Services\FavoriteService::class)) {
     return;
 }

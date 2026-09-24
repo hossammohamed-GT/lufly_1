@@ -1,7 +1,3 @@
-/* Home component: inspiration rooms - machined editorial edition.
-   Editorial photo cards with hairline frames and a coded tag; hover keeps
-   the photo zoom but adds the primary frame instead of a glassy lift. */
-
 .inspiration-section {
   padding: var(--space-16) 0;
   border-bottom: 1px solid var(--ds-border);
@@ -27,8 +23,6 @@
   box-shadow: var(--shadow-2);
 }
 
-/* ---- hover: a teal hairline draws itself from the top-left all the way
-   round the card over 1.5s, instead of the card jumping upwards ---- */
 .inspiration-trace {
   position: absolute;
   inset: 1px;
@@ -43,7 +37,6 @@
   fill: none;
   stroke: var(--ds-primary);
   stroke-width: 2;
-  /* pathLength=1 lets one dash cover the whole perimeter regardless of size */
   stroke-dasharray: 1;
   stroke-dashoffset: 1;
   transition: stroke-dashoffset 1.5s cubic-bezier(0.65, 0, 0.35, 1);

@@ -15,10 +15,6 @@ class AuditService
     ) {
     }
 
-    /**
-     * @param array<string, mixed>|null $before
-     * @param array<string, mixed>|null $after
-     */
     public function record(string $entity, int|string|null $entityId, string $action, ?array $before, ?array $after, int|string|null $userId = null): void
     {
         $userId ??= $this->auth->id();
@@ -34,7 +30,7 @@ class AuditService
                 'created_at' => date('Y-m-d H:i:s'),
             ]);
         } catch (\Throwable) {
-            // Auditing must never break the primary operation.
+
         }
     }
 }

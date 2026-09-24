@@ -6,7 +6,6 @@ namespace Core\Support;
 
 final class Arr
 {
-    /** @param array<string|int, mixed> $array */
     public static function get(array $array, string|int|null $key, mixed $default = null): mixed
     {
         if ($key === null) {
@@ -28,7 +27,6 @@ final class Arr
         return $value;
     }
 
-    /** @param array<string|int, mixed> $array */
     public static function set(array &$array, string|int|null $key, mixed $value): void
     {
         if ($key === null) {
@@ -49,13 +47,11 @@ final class Arr
         }
     }
 
-    /** @param array<string|int, mixed> $array */
     public static function only(array $array, array $keys): array
     {
         return array_intersect_key($array, array_flip($keys));
     }
 
-    /** @param array<string|int, mixed> $array */
     public static function except(array $array, array $keys): array
     {
         return array_diff_key($array, array_flip($keys));

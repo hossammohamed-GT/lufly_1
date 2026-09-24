@@ -1,21 +1,9 @@
-/* ============================================================
-   LUFLY - Preloader "Building the brand" & Global Loading Controller
-   Seed dot -> glyph pieces fly in -> settle + glass reflection ->
-   seal glow -> curtain exit. All choreography lives in loader.css
-   keyframes; this controller only schedules seal/exit and classifies
-   which pages get the loader at all.
-   ============================================================ */
-
 (function () {
   'use strict';
 
   var loader = document.getElementById('ldLoader');
   if (!loader) return;
 
-  /* The app may be deployed under a sub-directory (XAMPP: /lufly_1/). Strip
-     that base before classifying URLs - otherwise home (/lufly_1/en) never
-     matches the home rule and the loader is skipped (shows a lone seed dot
-     and vanishes). */
   var basePath = (loader.getAttribute('data-base') || '').replace(/\/+$/, '');
   function stripBase(pathname) {
     if (basePath && pathname.toLowerCase().indexOf(basePath.toLowerCase()) === 0) {
@@ -28,14 +16,7 @@
   var reduced = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
   if (reduced) loader.classList.add('ld-reduced');
 
-  /* --- assembly choreography timing (must match loader.css keyframes) --- */
-  var T_SHOW = reduced ? 1100 : 2500;   /* seed -> pieces assemble -> settle + reflection in */
-  var T_SEAL = reduced ? 150 : 450;     /* mark glow pulse before the curtain */
-  var T_CURTAIN = 900;                  /* slide-out transition (css: .85s + .01) */
-  var HARD_STOP = 6000;                 /* never trap the page behind the splash */
-  var NAV_HOLD = reduced ? 200 : 520;   /* how long the nav flash holds */
-
-  var isExited = false;
+  var T_SHOW = reduced ? 1100 : 2500;   var T_SEAL = reduced ? 150 : 450;     var T_CURTAIN = 900;                  var HARD_STOP = 6000;                 var NAV_HOLD = reduced ? 200 : 520;   var isExited = false;
 
   function exitLoader() {
     if (isExited) return;
@@ -48,7 +29,6 @@
     }, T_CURTAIN);
   }
 
-  /* Boot skip path: pages that never get the loader must not flash it. */
   function releasePage() {
     loader.style.display = 'none';
     document.body.classList.remove('ld-loading');
@@ -56,18 +36,13 @@
     isExited = true;
   }
 
-  /* Initial visit: the assembly owns the full moment, then seal and exit.
-     No progress gating - the animation IS the wait, by design. */
   function startInitialSequence() {
     document.body.classList.add('ld-loading');
     setTimeout(function () { loader.classList.add('seal'); }, T_SHOW);
     setTimeout(exitLoader, T_SHOW + T_SEAL);
-    /* absolute backstop; harmless once exitLoader has run */
     setTimeout(exitLoader, HARD_STOP);
   }
 
-  /* Navigation flash (home/contact links + contact form submits): the
-     finished mark without the choreography, shorter hold. */
   function showLoader() {
     isExited = false;
     loader.classList.remove('exit', 'seal');
@@ -89,22 +64,13 @@
     }, hold);
   }
 
-  /* ---- Which navigations deserve the full-screen loader? ----
-     Explicit allow-list: home and contact only. Everything else
-     (catalogue, product, search) is skeleton backed and navigates
-     without it. */
   var LOADER_PATHS = [
-    'contact',   /* en */
-    'kontakt',   /* cs */
-    'iletisim'   /* tr */
-  ];
+    'contact',   'kontakt',   'iletisim'   ];
 
   function isHomePath(pathname) {
-    /* home is '' after the locale segment: '/', '/en', '/en/' */
     var parts = pathname.split('/').filter(function (x) { return x !== ''; });
     if (parts.length === 0) return true;
-    if (parts.length === 1 && parts[0].length <= 5) return true; /* locale only */
-    return false;
+    if (parts.length === 1 && parts[0].length <= 5) return true; return false;
   }
 
   function isLoaderPath(pathname) {
@@ -115,8 +81,6 @@
   }
 
   function bootLoader() {
-    /* Never let an unexpected error here leave body.ld-loading applied: that
-       class sets overflow:hidden, so a throw at boot freezes the whole site. */
     try {
       bootLoaderInner();
     } catch (err) {
@@ -125,8 +89,6 @@
   }
 
   function bootLoaderInner() {
-    /* Landing directly on a catalogue, category or product URL must not show
-       the loading screen at all, because those pages are skeleton backed. */
     if (!isLoaderPath(stripBase(window.location.pathname))) {
       releasePage();
       return;
@@ -144,14 +106,11 @@
     if (link && link.hasAttribute('data-loader-skip')) return true;
     if (link && link.hasAttribute('data-loader-force')) return false;
 
-    /* pagination, filtering and sorting on the current page */
     if (url.pathname === window.location.pathname) return true;
 
-    /* anything that is not home or contact skips the loader */
     return !isLoaderPath(stripBase(url.pathname));
   }
 
-  /* ---- Auto-wire: link clicks ---- */
   document.addEventListener('click', function (e) {
     var link = e.target.closest('a');
     if (!link) return;
@@ -174,20 +133,16 @@
     if (targetUrl.origin !== window.location.origin) return;
     if (targetUrl.pathname === window.location.pathname && targetUrl.search === window.location.search) return;
 
-    /* The full-screen loader is reserved for home and contact. Product
-       browsing renders glass skeletons in place instead. */
     if (isLightNavigation(targetUrl, link)) return;
 
     showLoader();
   }, { passive: true });
 
-  /* ---- Auto-wire: form submissions ---- */
   document.addEventListener('submit', function (e) {
     var form = e.target;
     if (!form || form.target === '_blank' || e.defaultPrevented) return;
     if (form.hasAttribute('data-loader-skip')) return;
 
-    /* only forms that post to a loader page (i.e. contact) show it */
     var action = form.getAttribute('action') || window.location.pathname;
     var actionPath;
     try {
@@ -199,9 +154,6 @@
     showLoader();
   }, { passive: true });
 
-  /* Public API. setProgress/setMessage are accepted no-ops: the assembly
-     choreography carries the moment now, but older callers stay safe.
-     .done() is used by app.js to dismiss the loader on bfcache restore. */
   window.LUFLYLoader = {
     start: startInitialSequence,
     show: showLoader,

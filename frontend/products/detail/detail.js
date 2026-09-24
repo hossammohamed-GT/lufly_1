@@ -1,13 +1,3 @@
-/* ============================================================
-   Product detail media stage.
-
-   Two levels, both fully data driven:
-   1. View tabs (product / drawing / installed). A tab only exists when the
-      product actually has images of that type, so nothing is hardcoded here.
-   2. Inside a view, any number of images: prev/next arrows, dots, swipe and
-      arrow keys. Views holding a single image simply have no controls.
-   ============================================================ */
-
 (function () {
   'use strict';
 
@@ -39,7 +29,6 @@
       dot.addEventListener('click', function () { show(n); });
     });
 
-    /* touch swipe */
     var startX = null;
     view.addEventListener('touchstart', function (e) {
       startX = e.touches[0].clientX;
@@ -128,7 +117,6 @@
       });
     }
 
-    /* arrow keys move through the images of the view on screen */
     stage.addEventListener('keydown', function (e) {
       if (e.key !== 'ArrowRight' && e.key !== 'ArrowLeft') return;
       var slider = sliders[current()];

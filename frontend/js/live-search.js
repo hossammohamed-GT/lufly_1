@@ -1,27 +1,3 @@
-/* ============================================================
-   Live product search (shared)
-   THE search system of the site. There is no separate results
-   page: typing filters the product grid in place, with scope
-   (current category / all products), skeleton cards while
-   loading, and a shareable URL (replaceState, no navigation).
-   ------------------------------------------------------------
-   Contract for host markup:
-   <div data-livesearch                                     (required)
-        data-livesearch-grid="[data-catalog-grid]"          (optional: results grid)
-        data-livesearch-pagination="[data-catalog-pagination]" (optional: hidden while live)
-        data-livesearch-count=".catalog-count">             (optional: live count badge)
-     <form>
-       <input data-livesearch-input data-locale="en"
-              data-livesearch-limit="36" ...>
-     </form>
-     <div data-livesearch-results>                (status panel; scope row lives here)
-       <div data-livesearch-scope>                (optional)
-         <button type="button" data-scope="category">..</button>
-         <button type="button" data-scope="all">..</button>
-       </div>
-     </div>
-   ============================================================ */
-
 (function () {
   'use strict';
 
@@ -33,7 +9,6 @@
       if (host.__livesearch) return;
       host.__livesearch = true;
 
-      // the host may be the form itself or a wrapper around it
       var form = host.matches('form') ? host : host.querySelector('form');
       if (!form) return;
 
@@ -144,8 +119,6 @@
         return base + '/' + String(raw).replace(/^\/+/, '');
       }
 
-      /* ---------- status panel (scope row stays in the DOM, listeners intact) ---------- */
-
       var statusEl = box.querySelector('.livesearch-status');
       if (!statusEl) {
         statusEl = document.createElement('div');
@@ -204,15 +177,11 @@
             ta.select();
             document.execCommand('copy');
             document.body.removeChild(ta);
-          } catch (e) { /* clipboard unavailable */ }
+          } catch (e) { }
           resolve();
         });
       }
 
-      /* ---------- grid takeover ---------- */
-
-      /* the grid lives inside a skeleton host; while live search owns it the
-         real content must stay visible rather than flipping back to glass */
       function ensureGridVisible() {
         if (!grid) return;
         var host = grid.closest ? grid.closest('[data-sk-host]') : null;
@@ -259,7 +228,6 @@
         return out;
       }
 
-      /* make sure the user sees the skeletons / results appear */
       function revealGrid() {
         if (!grid || typeof grid.scrollIntoView !== 'function') return;
         var rect = grid.getBoundingClientRect();
@@ -267,11 +235,9 @@
           var reduce = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
           try {
             grid.scrollIntoView({ behavior: reduce ? 'auto' : 'smooth', block: 'start' });
-          } catch (e) { /* older browsers */ }
+          } catch (e) { }
         }
       }
-
-      /* ---------- url + sort ---------- */
 
       function syncUrl(query) {
         if (!window.history || !window.history.replaceState) return;
@@ -305,8 +271,6 @@
         return sortSelect ? sortSelect.value : 'newest';
       }
 
-      /* ---------- rendering ---------- */
-
       function render(matches, query) {
         var list = sortedMatches(matches);
 
@@ -336,10 +300,6 @@
           var shortDesc = esc(String(product.short_description || '').trim());
           var slug = encodeURIComponent(product.slug || product.id || '');
           var href = base + '/' + encodeURIComponent(locale) + '/products/' + slug;
-          /* hover cycles through every image of the product: the photos
-             first (main shot on top), then the technical drawings, then the
-             installed shots. Each slide keeps the section it came from so
-             the card can name it. */
           var slides = [];
           (product.card_slides || []).forEach(function (slide) {
             if (!slide || !slide.path) return;
@@ -348,7 +308,6 @@
             if (!dup) slides.push({ src: src, kind: slide.kind || 'photo' });
           });
           if (slides.length === 0) {
-            /* payload without the slide list: fall back to the plain groups */
             [['gallery', 'photo'], ['drawings', 'drawing'], ['situ_images', 'situ']].forEach(function (group) {
               (product[group[0]] || []).forEach(function (p) {
                 if (!p) return;
@@ -416,8 +375,6 @@
         syncUrl(query);
       }
 
-      /* ---------- search ---------- */
-
       function search(query, reveal) {
         lastQuery = query;
         var cacheKey = locale + ':' + scope + ':' + query.toLowerCase();
@@ -459,7 +416,7 @@
             cache[cacheKey] = data;
             if (lastQuery === query) render(data, query);
           })
-          .catch(function () { /* aborted or offline */ });
+          .catch(function () { });
       }
 
       function clearSearch() {
@@ -469,8 +426,6 @@
         showIdle();
         input.focus();
       }
-
-      /* ---------- scope toggle ---------- */
 
       if (scopeWrap) {
         scopeWrap.addEventListener('click', function (e) {
@@ -486,8 +441,6 @@
           }
         });
       }
-
-      /* ---------- input wiring ---------- */
 
       input.addEventListener('input', function () {
         var query = input.value.trim();
@@ -526,7 +479,6 @@
         }
       });
 
-      /* Enter never navigates: the live grid already shows everything */
       form.addEventListener('submit', function (e) {
         e.preventDefault();
         var query = input.value.trim();
@@ -537,7 +489,6 @@
         search(query, true);
       });
 
-      /* sort re-renders the live results client-side (catalog.js dispatches this) */
       form.addEventListener('livesearch:rerender', function () {
         if (isLive && lastQuery) {
           var cacheKey = locale + ':' + scope + ':' + lastQuery.toLowerCase();
@@ -545,7 +496,6 @@
         }
       });
 
-      /* close the panel on outside click (grid results stay) */
       document.addEventListener('click', function (e) {
         if (!host.contains(e.target)) {
           box.classList.remove('is-open');
@@ -560,11 +510,10 @@
         }
       });
 
-      /* ---------- deep link: /products?q=... opens in live search ---------- */
       var urlQuery = '';
       try {
         urlQuery = new URLSearchParams(window.location.search).get('q') || '';
-      } catch (e2) { /* older browsers */ }
+      } catch (e2) { }
       if (urlQuery.trim().length >= 2) {
         input.value = urlQuery.trim();
         search(urlQuery.trim());

@@ -8,7 +8,6 @@ use Core\Database\DatabaseManager;
 
 class SettingsService
 {
-    /** @var array<string, mixed> */
     private array $runtime = [];
 
     private bool $loaded = false;
@@ -55,7 +54,6 @@ class SettingsService
         $this->audit->record('setting', $key, 'update', ['key' => $key, 'value' => $before], ['key' => $key, 'value' => $value], $userId);
     }
 
-    /** @param array<string, mixed> $values */
     public function setMany(array $values, int|string|null $userId = null): void
     {
         foreach ($values as $key => $value) {
@@ -63,7 +61,6 @@ class SettingsService
         }
     }
 
-    /** @return array<string, mixed> */
     public function all(): array
     {
         $this->load();

@@ -17,7 +17,6 @@ return [
     'weight' => 'Ağırlık',
     'dimensions' => 'Ölçüler',
 
-    /* storefront product page */
     'code_label' => 'Model kodu',
     'view_main' => 'Ürün',
     'view_drawing' => 'Teknik çizim',
@@ -46,7 +45,6 @@ return [
     'scope_category' => 'Bu kategoride',
     'scope_all' => 'Tüm ürünler',
 
-    /* yönetim - ürün görsel bölümleri (fotoğraf / çizim / montaj) */
     'images_title' => 'Ürün görselleri',
     'images_intro' => 'Her görsel üç bölümden birine aittir ve bu bölümler ürün sayfasındaki sekmelerdir. Bölüm içindeki sıra, ziyaretçinin gördüğü sıradır.',
     'images_after_create' => 'Önce ürünü kaydedin - fotoğraf, teknik çizim ve montaj görsellerini buradan ekleyebilirsiniz.',

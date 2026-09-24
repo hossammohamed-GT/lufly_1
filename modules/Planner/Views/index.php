@@ -1,24 +1,8 @@
 <?php
-/**
- * Bathroom planner — the chat.
- *
- * The visitor answers three questions on the left; the plan, the drawing and
- * the matching products appear on the right as soon as the last answer lands.
- * Everything the page needs to talk to the server travels in data attributes,
- * so the flow never depends on a hard-coded route or locale.
- *
- * @var Core\View\View $view
- * @var string $locale
- * @var array<string, mixed> $answers
- * @var array<int, string> $waiting
- * @var array<string, string> $endpoints
- */
 $view->layout('layouts.frontend');
 $view->pushStyle('frontend/planner/planner.css');
 $view->pushScript('frontend/planner/planner.js');
 
-/* the plan offers the matching products with the usual heart, so the saved-list
-   script comes along whenever the feature is on */
 if (feature('favorites', true)) {
     $view->pushStyle('frontend/favorites/favorites.css');
     $view->pushScript('frontend/favorites/favorites.js');
@@ -27,7 +11,6 @@ if (feature('favorites', true)) {
 $endpoints = $endpoints ?? [];
 $waiting = $waiting ?? [];
 
-/* the floating chat stays out of this page: the chat *is* the page here */
 $view->share(['plannerInline' => true]);
 ?>
 <main class="planner" id="main"
@@ -59,8 +42,7 @@ $view->share(['plannerInline' => true]);
         </header>
 
         <div class="planner-grid">
-            <!-- the conversation -->
-            <section class="planner-chat" aria-label="<?= e(trans('planner.title')) ?>">
+<section class="planner-chat" aria-label="<?= e(trans('planner.title')) ?>">
                 <?= $view->renderFile($view->resolvePath('planner::partials.chat'), [
                     'answers' => $answers,
                     'locale' => $locale,
@@ -68,9 +50,7 @@ $view->share(['plannerInline' => true]);
                     'progress' => 1,
                 ]) ?>
             </section>
-
-            <!-- the plan -->
-            <?= $view->renderFile($view->resolvePath('planner::partials.board'), ['variant' => 'page']) ?>
+<?= $view->renderFile($view->resolvePath('planner::partials.board'), ['variant' => 'page']) ?>
 
         </div>
 

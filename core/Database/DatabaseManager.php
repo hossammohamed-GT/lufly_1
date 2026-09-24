@@ -8,7 +8,6 @@ use Core\Exceptions\DatabaseException;
 
 class DatabaseManager
 {
-    /** @var array<string, Connection> */
     private array $connections = [];
 
     public function connection(?string $name = null): Connection

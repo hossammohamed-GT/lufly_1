@@ -8,7 +8,7 @@ use Modules\Products\Controllers\ProductController;
 use Modules\Products\Controllers\ProductMediaController;
 
 return function (Router $router): void {
-    // Localized public storefront routes: /en/products, /tr/urunler, /cs/produkty ...
+
     $router->group(['middleware' => 'web'], function (Router $router): void {
         $router->localized('GET', 'products.index', [ProductController::class, 'index'])
             ->name('products.index');
@@ -18,7 +18,6 @@ return function (Router $router): void {
             ->name('products.show');
     });
 
-    // Admin panel routes.
     $router->group([
         'prefix' => 'admin/products',
         'middleware' => ['web', 'auth'],
@@ -51,7 +50,6 @@ return function (Router $router): void {
             ->where('id', '\d+')
             ->name('destroy');
 
-        /* product images: photos / technical drawings / installed shots */
         $router->post('/{id}/media', [ProductMediaController::class, 'store'])
             ->middleware('permission:products.manage')
             ->where('id', '\d+')
@@ -82,7 +80,6 @@ return function (Router $router): void {
             ->name('media.destroy');
     });
 
-    // Public + protected REST API.
     $router->group(['prefix' => 'api/products', 'middleware' => 'api'], function (Router $router): void {
         $router->get('/', [ProductApiController::class, 'index'])
             ->name('api.products.index')

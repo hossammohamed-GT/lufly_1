@@ -1,8 +1,5 @@
 <?php
-/** @var Core\View\View $view */
 $view->layout('layouts.admin');
-/** @var Core\Database\Paginator $paginator */
-/** @var array<int, array<string, mixed>> $items */
 ?>
 <div class="admin-toolbar">
     <p class="admin-hint"><?= e(trans('announcements.hint')) ?></p>

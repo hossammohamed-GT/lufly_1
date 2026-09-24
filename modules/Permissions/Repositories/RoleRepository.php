@@ -15,7 +15,6 @@ class RoleRepository extends Repository
 
     protected string $auditEntity = 'role';
 
-    /** @param string[] $permissionIds */
     public function syncPermissions(int|string $roleId, array $permissionIds): void
     {
         $connection = Role::query()->connection();
@@ -31,7 +30,6 @@ class RoleRepository extends Repository
 
     public function findByName(string $name): ?Role
     {
-        /** @var Role|null $role */
         $role = Role::query()->where('name', $name)->first();
 
         return $role;

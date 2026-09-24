@@ -17,13 +17,11 @@ class RedirectResponse extends Response
         return $this;
     }
 
-    /** @param array<string, string[]> $errors */
     public function withErrors(array $errors): static
     {
         return $this->with('_errors', $errors);
     }
 
-    /** @param array<string, mixed> $input */
     public function withInput(array $input = []): static
     {
         if ($input === []) {

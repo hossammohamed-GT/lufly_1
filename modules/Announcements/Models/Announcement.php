@@ -6,10 +6,6 @@ namespace Modules\Announcements\Models;
 
 use Core\Database\Model;
 
-/**
- * A storefront announcement ("the word") - e.g. "50% discount today".
- * The visible text per language lives in announcement_translations.
- */
 class Announcement extends Model
 {
     protected static string $table = 'announcements';
@@ -26,7 +22,6 @@ class Announcement extends Model
 
     private ?array $translationsCache = null;
 
-    /** @return array<string, array<string, mixed>> locale => row */
     public function translations(): array
     {
         if ($this->translationsCache === null) {
@@ -45,12 +40,6 @@ class Announcement extends Model
         return $this->translationsCache;
     }
 
-    /**
-     * Merged announcement payload for a locale (falls back to any other
-     * language that has a message, then to an empty message).
-     *
-     * @return array<string, mixed>
-     */
     public function translate(string $locale, string $fallback = 'en'): array
     {
         $translations = $this->translations();
@@ -64,7 +53,6 @@ class Announcement extends Model
         ]);
     }
 
-    /** Whether the announcement is inside its optional time window. */
     public function isLive(): bool
     {
         if ((int) $this->is_active !== 1) {

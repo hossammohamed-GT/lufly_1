@@ -9,20 +9,12 @@ use Throwable;
 
 class Validator
 {
-    /** @var array<string, string[]> */
     private array $errors = [];
 
-    /** @var array<string, mixed> */
     private array $validated = [];
 
     private bool $ran = false;
 
-    /**
-     * @param array<string, mixed> $data
-     * @param array<string, string> $rules field => "required|max:255"
-     * @param array<string, mixed> $files uploaded files ($_FILES shape)
-     * @param array<string, string> $messages custom messages keyed by "field.rule"
-     */
     public function __construct(
         private readonly array $data,
         private readonly array $rules,
@@ -43,7 +35,6 @@ class Validator
         return !$this->passes();
     }
 
-    /** @return array<string, string[]> */
     public function errors(): array
     {
         $this->run();
@@ -51,7 +42,6 @@ class Validator
         return $this->errors;
     }
 
-    /** @return array<string, mixed> */
     public function validated(): array
     {
         $this->run();
@@ -116,7 +106,6 @@ class Validator
         $this->validated[$field] = $value;
     }
 
-    /** @return array{0: string, 1: string|null} */
     private function parseRule(string $rule): array
     {
         [$name, $parameter] = array_pad(explode(':', $rule, 2), 2, null);

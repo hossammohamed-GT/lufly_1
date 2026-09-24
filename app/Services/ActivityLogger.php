@@ -16,7 +16,6 @@ class ActivityLogger
     ) {
     }
 
-    /** @param array<string, mixed> $data */
     public function log(string $action, string $entity, int|string|null $entityId = null, string $description = '', array $data = [], ?int $userId = null): void
     {
         $userId ??= $this->auth->id() !== null ? (int) $this->auth->id() : null;
@@ -32,7 +31,7 @@ class ActivityLogger
                 'created_at' => date('Y-m-d H:i:s'),
             ]);
         } catch (\Throwable) {
-            // Table may not exist yet during migrations; keep the file log.
+
         }
 
         Log::info('activity.' . $action, [
@@ -42,13 +41,11 @@ class ActivityLogger
         ]);
     }
 
-    /** @param array<string, mixed> $data */
     public function created(string $entity, int|string|null $entityId, array $data = []): void
     {
         $this->log('create', $entity, $entityId, '', $data);
     }
 
-    /** @param array<string, mixed> $data */
     public function updated(string $entity, int|string|null $entityId, array $data = []): void
     {
         $this->log('update', $entity, $entityId, '', $data);
@@ -69,7 +66,6 @@ class ActivityLogger
         $this->log('logout', 'user', $userId);
     }
 
-    /** @param array<string, mixed> $changes */
     public function settingsChanged(array $changes): void
     {
         $this->log('settings_change', 'settings', null, '', $changes);

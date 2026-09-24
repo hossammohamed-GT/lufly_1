@@ -21,7 +21,7 @@ final class CsrfGuard implements MiddlewareInterface
     public function handle(Request $request, callable $next): Response
     {
         if (in_array($request->method(), self::UNSAFE_METHODS, true)) {
-            // Requests authenticated purely via Bearer tokens are not vulnerable to browser cookie CSRF
+
             if ($request->bearerToken() !== null) {
                 return $next($request);
             }
@@ -36,7 +36,6 @@ final class CsrfGuard implements MiddlewareInterface
                 return $next($request);
             }
 
-            // Also permit same-origin AJAX requests containing the custom XMLHttpRequest header
             $isAjax = $request->header('X-Requested-With') === 'XMLHttpRequest';
             if ($isAjax) {
                 $origin = (string) ($request->header('Origin') ?? $request->header('Referer') ?? '');

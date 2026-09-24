@@ -1,10 +1,3 @@
-/* ============================================================
-   LUFLY - Preloader "Building the brand"
-   Seed dot -> glyph pieces fly in on their own paths -> settle
-   + glass reflection -> seal glow -> glowing curtain exit.
-   Tokens resolve through design-system/style.css with fallbacks.
-   ============================================================ */
-
 :root {
   --ld-teal-hi: var(--lu-mint, #7fe2d0);
   --ld-mint: var(--lu-mint, #7fe2d0);
@@ -17,18 +10,10 @@ body.ld-loading {
 }
 
 body.ready {
-  /* the design system clips horizontal overflow globally; a bare
-     `overflow: auto` here undid that for the whole site once the loader
-     exited (any too-wide element then scrolled the page sideways) */
   overflow-y: auto;
   overflow-x: clip;
-  overflow-x: hidden; /* fallback for browsers without `clip` */
-}
+  overflow-x: hidden; }
 
-/* Last-resort safety net, pure CSS so it works even if the script dies.
-   The loader is only allowed to hold the page for a few seconds; after
-   that it fades out and scrolling is returned no matter what state JS
-   is in. Nothing here depends on a class being added by JavaScript. */
 @keyframes ldFailsafe {
   to { opacity: 0; visibility: hidden; pointer-events: none; }
 }
@@ -45,15 +30,12 @@ body.ld-loading {
   animation: ldRestoreScroll 0s linear 8.4s forwards;
 }
 
-/* once the normal exit path runs, the failsafe must not interfere */
 .ld-loader.exit { animation: none; }
 
 @media (prefers-reduced-motion: reduce) {
   .ld-loader { animation-delay: 3s; }
   body.ld-loading { animation-delay: 3.4s; }
 }
-
-/* ---------------- loader stage ---------------- */
 
 .ld-loader {
   position: fixed;
@@ -63,8 +45,6 @@ body.ld-loading {
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  /* Balanced translucent scrim: preserves page visibility underneath
-     while guaranteeing high contrast for the brand assembly */
   background: rgba(4, 9, 10, 0.42);
   backdrop-filter: blur(12px) saturate(140%);
   -webkit-backdrop-filter: blur(12px) saturate(140%);
@@ -82,7 +62,6 @@ body.ld-loading {
 }
 
 .ld-loader.exit::after {
-  /* glowing curtain edge */
   content: "";
   position: absolute;
   left: 0;
@@ -93,15 +72,10 @@ body.ld-loading {
   box-shadow: 0 0 60px 12px color-mix(in srgb, var(--ld-mint) 45%, transparent);
 }
 
-/* re-entry must be instant: without this, the .exit visibility delay
-   (0.86s) would keep a re-shown nav loader invisible while it blocks
-   clicks. Hides keep their delay; shows get none. */
 .ld-loader:not(.exit) {
   visibility: visible;
   transition-delay: 0s, 0s, 0s;
 }
-
-/* ---------------- center content stage ---------------- */
 
 .ld-center {
   display: flex;
@@ -111,8 +85,6 @@ body.ld-loading {
   width: 100%;
   margin: auto;
 }
-
-/* ---------------- logo box: assemble + reflect ---------------- */
 
 .ld-logoBox {
   position: relative;
@@ -132,10 +104,6 @@ body.ld-loading {
   animation: ldSettle .45s ease 1.56s both;
 }
 
-/* ---- "Building the brand": every glyph piece flies in on its own path.
-   Staggered so the mark assembles piece by piece, then the whole group
-   settles with a tiny vibration. ---- */
-
 .ld-draw path {
   fill: none;
   stroke: var(--ld-teal-hi);
@@ -151,7 +119,6 @@ body.ld-loading {
   animation-fill-mode: both;
 }
 
-/* two-tone identity: mint strokes with two soft-ink accents */
 .ld-draw path:nth-child(4),
 .ld-draw path:nth-child(8) {
   stroke: color-mix(in srgb, var(--lu-neutral-0, #ffffff) 82%, var(--ld-mint));
@@ -175,15 +142,12 @@ body.ld-loading {
 @keyframes ldPieceBounce { 0% { opacity: 0; transform: translateY(42px) scale(.94); } 28% { opacity: 1; } 62% { transform: translateY(-8px) scale(1.01); } 82% { transform: translateY(3px); } 100% { opacity: 1; transform: translateY(0) scale(1); } }
 @keyframes ldPieceSpin   { 0% { opacity: 0; transform: translateY(-34px) rotate(12deg); } 30% { opacity: 1; } 75% { transform: translateY(3px) rotate(-2.5deg); } 100% { opacity: 1; transform: translateY(0) rotate(0deg); } }
 
-/* settling motion: tiny vibration before full rest */
 @keyframes ldSettle {
   0% { transform: scale(1); }
   40% { transform: scale(1.015) translateY(-1.5px); }
   70% { transform: scale(0.998); }
   100% { transform: scale(1); }
 }
-
-/* ---- seed dot: minimal presence before the first piece ---- */
 
 .ld-seed {
   position: absolute;
@@ -205,8 +169,6 @@ body.ld-loading {
   52% { opacity: .9; transform: scale(1.3); }
   100% { opacity: 0; transform: scale(2.4); }
 }
-
-/* ---- glass-floor reflection (flipped, squashed, teal tint) ---- */
 
 .ld-floor {
   position: absolute;
@@ -254,14 +216,11 @@ body.ld-loading {
   to { opacity: .32; }
 }
 
-/* navigation overlays: the finished mark, no replay of the choreography */
 .ld-loader.is-nav .ld-seed { display: none; }
 .ld-loader.is-nav .ld-draw { animation: none; }
 .ld-loader.is-nav .ld-draw path { animation: none; opacity: 1; }
 .ld-loader.is-nav .ld-floor { animation: none; opacity: .5; }
 .ld-loader.is-nav .ld-reflect { animation: none; opacity: .32; }
-
-/* ---------------- seal: one warm glow pulse, then the curtain ---------------- */
 
 .ld-loader.seal .ld-logoBox {
   animation: ldSeal .45s var(--ld-ease) both;
@@ -272,8 +231,6 @@ body.ld-loading {
   50% { transform: scale(1.02); filter: drop-shadow(0 0 20px color-mix(in srgb, var(--ld-mint) 50%, transparent)); }
   100% { transform: scale(1); filter: none; }
 }
-
-/* ---------------- reduced motion ---------------- */
 
 .ld-reduced .ld-draw { animation: none; }
 .ld-reduced .ld-draw path { animation: none; opacity: 1; transform: none; }

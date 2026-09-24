@@ -1,11 +1,9 @@
 <?php
-/** @var Core\View\View $view */
 $view->pushStyle('frontend/css/product-card.css');
 $view->pushStyle('frontend/home/masterpieces/masterpieces.css');
 $view->pushScript('frontend/products/catalog/catalog.js');
 $view->pushStyle('frontend/components/skeleton/skeleton.css');
 $view->pushScript('frontend/components/skeleton/skeleton.js');
-/** @var array $featuredProducts */
 $fallbackImg = '/images/products/prod_146_1620-111-a.jpg';
 $featured = is_array($featuredProducts ?? null) ? $featuredProducts : [];
 ?>
@@ -21,10 +19,7 @@ $featured = is_array($featuredProducts ?? null) ? $featuredProducts : [];
                 <svg viewBox="0 0 20 20" fill="currentColor" width="14" height="14" aria-hidden="true"><path fill-rule="evenodd" d="M10.293 3.293a1 1 0 011.414 0l6 6a1 1 0 010 1.414l-6 6a1 1 0 01-1.414-1.414L14.586 11H3a1 1 0 110-2h11.586l-4.293-4.293a1 1 0 010-1.414z" clip-rule="evenodd"/></svg>
             </a>
         </div>
-
-        <!-- database driven: a glass skeleton holds the shape while the
-             product imagery decodes, so this block never blocks first paint -->
-        <div data-sk-host>
+<div data-sk-host>
             <div class="sk-grid" data-sk-skeleton aria-hidden="true">
                 <?php for ($i = 0; $i < 4; $i++): ?>
                     <div class="sk sk-card">
@@ -44,9 +39,6 @@ $featured = is_array($featuredProducts ?? null) ? $featuredProducts : [];
         <div class="masterpieces-grid catalog-grid" data-sk-real>
             <?php foreach (array_slice($featured, 0, 4) as $idx => $product):
                 $img = (string) ($product['image'] ?? '') !== '' ? (string) $product['image'] : $fallbackImg;
-                /* same media contract as the catalogue grid: every image of
-                   the product - photos, then technical drawings, then the
-                   installed shots - de-duplicated */
                 $cardSlides = [];
                 foreach ((array) ($product['card_slides'] ?? []) as $slide) {
                     $slidePath = (string) ($slide['path'] ?? '');

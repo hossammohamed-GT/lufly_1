@@ -14,7 +14,6 @@ return [
     'favorites.email' => 'favoriler/e-posta',
     'favorites.clear' => 'favoriler/temizle',
 
-    /* quotation box */
     'box.index' => 'kutu',
     'box.claim' => 'kutu/{token}',
     'box.add' => 'kutu/ekle',
@@ -22,8 +21,6 @@ return [
     'box.clear' => 'kutu/bosalt',
     'box.send' => 'kutu/gonder',
 
-    /* bathroom planner */
-    /* quotation box */
     'box.index' => 'kutu',
     'box.claim' => 'kutu/{token}',
     'box.add' => 'kutu/ekle',
@@ -37,6 +34,5 @@ return [
     'planner.render' => 'banyo-planlayici/gorsel',
     'planner.send' => 'banyo-planlayici/gonder',
 
-    /* ürün bulucu */
     'assistant.ask' => 'asistan/ara',
 ];

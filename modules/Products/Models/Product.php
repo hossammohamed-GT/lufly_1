@@ -6,10 +6,6 @@ namespace Modules\Products\Models;
 
 use Core\Database\Model;
 
-/**
- * Base product / main model. Price, stock, images and specs live on the
- * related tables (product_variants, product_media, product_specifications).
- */
 class Product extends Model
 {
     protected static string $table = 'products';
@@ -28,10 +24,8 @@ class Product extends Model
         'sort_order' => 'int',
     ];
 
-    /** Cached translated payload (used by translate()). */
     private ?array $resolved = null;
 
-    /** Preloaded relations for batch hydration */
     private ?array $preloadedTranslations = null;
     private ?array $preloadedVariants = null;
     private ?array $preloadedSpecs = null;
@@ -39,20 +33,12 @@ class Product extends Model
     private bool $hasLoadedDimensions = false;
     private ?array $preloadedMedia = null;
 
-    /**
-     * Eager load relations for an array of Product models to eliminate N+1 queries.
-     *
-     * @param Product[] $products
-     * @param string[] $relations
-     * @return Product[]
-     */
     public static function eagerLoad(array $products, array $relations = ['translations', 'variants', 'specs', 'dimensions', 'media']): array
     {
         if ($products === []) {
             return $products;
         }
 
-        /** @var array<int, Product> $map */
         $map = [];
         foreach ($products as $p) {
             if ($p instanceof self && $p->getKey() !== null) {
@@ -161,7 +147,6 @@ class Product extends Model
         return $products;
     }
 
-    /** @return array<string, array<string, mixed>> locale => row */
     public function translations(): array
     {
         if ($this->preloadedTranslations !== null) {
@@ -181,13 +166,6 @@ class Product extends Model
         return $this->preloadedTranslations = $out;
     }
 
-    /**
-     * Merged product payload for a locale, enriched with the primary variant
-     * (sku / price / stock), primary image, and flexible specifications so
-     * storefront views keep a simple array shape.
-     *
-     * @return array<string, mixed>
-     */
     public function translate(string $locale): array
     {
         if ($this->resolved !== null) {
@@ -208,7 +186,6 @@ class Product extends Model
             'description' => $translation['description'] ?? '',
             'short_description' => $translation['short_description'] ?? '',
 
-            /* compatibility aliases for storefront views */
             'sku' => $primaryVariant['sku'] ?? (string) ($this->model_code ?? ''),
             'price' => (float) ($primaryVariant['price'] ?? 0),
             'stock_status' => $primaryVariant['stock_status'] ?? 'in_stock',
@@ -216,9 +193,6 @@ class Product extends Model
             'situ_image' => $this->situImageUrl(),
             'specs' => $specs,
 
-            /* three independent image groups, each holding any number of
-               images: product photos (type main/gallery), technical drawings
-               (type drawing), installed shots (type situ) */
             'gallery' => array_map(
                 static fn (array $row): string => (string) $row['path'],
                 $this->gallery(),
@@ -226,11 +200,8 @@ class Product extends Model
             'drawings' => $this->drawings(),
             'situ_images' => $this->situImages(),
 
-            /* every image of the product as the cards rotate them on hover,
-               each one labelled with the section it came from */
             'card_slides' => $this->cardSlides(),
 
-            /* full related data */
             'variants' => $variants,
             'dimensions' => $dimensions,
         ]);
@@ -238,7 +209,6 @@ class Product extends Model
         return $this->resolved;
     }
 
-    /** @return array<int, array<string, mixed>> ordered variant rows */
     public function variants(): array
     {
         if ($this->preloadedVariants !== null) {
@@ -256,11 +226,6 @@ class Product extends Model
         ]), $rows);
     }
 
-    /**
-     * Flexible specifications as ordered key/value/unit rows.
-     *
-     * @return array<int, array{spec_key: string, spec_value: string, unit: ?string}>
-     */
     public function specs(): array
     {
         if ($this->preloadedSpecs !== null) {
@@ -277,7 +242,6 @@ class Product extends Model
         return $this->preloadedSpecs = $rows;
     }
 
-    /** @return array<string, mixed>|null */
     public function dimensions(): ?array
     {
         if ($this->hasLoadedDimensions) {
@@ -294,19 +258,6 @@ class Product extends Model
         return $this->preloadedDimensions = $row;
     }
 
-    /**
-     * Raw attachments from the media library, ordered (primary first).
-     *
-     * `product_media.type` is the switch that fills the three tabs of the
-     * product page: "main"/"gallery" are photos, "drawing" is the technical
-     * drawing sheet, "situ" is the installed-on-location shot. See
-     * docs/Media-Taxonomy.md.
-     *
-     * Media rows imported from the legacy system whose file was never
-     * exported carry status "missing"; they are skipped by default so the
-     * storefront never renders a broken image. Pass $includeMissing to audit
-     * what is still outstanding.
-     */
     public function media(?string $type = null, bool $includeMissing = false): array
     {
         if ($this->preloadedMedia !== null) {
@@ -335,12 +286,6 @@ class Product extends Model
         return $filtered;
     }
 
-    /**
-     * Product photos for the main gallery: everything that is neither a
-     * technical drawing nor an installed ("situ") shot. Primary first.
-     *
-     * @return array<int, array<string, mixed>>
-     */
     public function gallery(): array
     {
         return array_values(array_filter(
@@ -349,17 +294,8 @@ class Product extends Model
         ));
     }
 
-    /**
-     * Attachments grouped the way the admin panel and the product page show
-     * them: photos, technical drawings, installed shots. Order is preserved
-     * inside every group.
-     *
-     * @return array{photos: array<int, array<string, mixed>>, drawings: array<int, array<string, mixed>>, situ: array<int, array<string, mixed>>}
-     */
     public function mediaBySection(): array
     {
-        /* the admin also sees attachments whose file is still missing on disk,
-           so a broken import stays fixable instead of silently disappearing */
         $rows = $this->media(null, true);
 
         return [
@@ -378,11 +314,6 @@ class Product extends Model
         ];
     }
 
-    /**
-     * Installed / in-situ photos (the product mounted on location).
-     *
-     * @return array<int, string>
-     */
     public function situImages(): array
     {
         return array_map(
@@ -391,11 +322,6 @@ class Product extends Model
         );
     }
 
-    /**
-     * Technical drawing URLs for this product, empty when none was exported.
-     *
-     * @return array<int, string>
-     */
     public function drawings(): array
     {
         return array_map(
@@ -404,15 +330,6 @@ class Product extends Model
         );
     }
 
-    /**
-     * Every image of the product in the order a catalogue card offers it while
-     * the pointer hovers the card: the photos first (main shot on top), then
-     * the technical drawings, then the installed shots. Each slide carries the
-     * section it belongs to so the card can name what is on screen; a file
-     * attached twice in different sections is only shown once.
-     *
-     * @return array<int, array{path: string, kind: string}> kind: photo|drawing|situ
-     */
     public function cardSlides(): array
     {
         $groups = [
@@ -440,11 +357,6 @@ class Product extends Model
         return $slides;
     }
 
-    /**
-     * Cover image URL: the flagged photo first, then any photo, and only when
-     * the product has no photo at all its first technical drawing - so cards,
-     * search results and share images never render blank.
-     */
     private function primaryImageUrl(): string
     {
         $rows = $this->gallery();
@@ -465,7 +377,6 @@ class Product extends Model
         return (string) ($drawings[0] ?? '');
     }
 
-    /** First "situ" (installed on location) image URL, empty string when none. */
     private function situImageUrl(): string
     {
         $rows = $this->media('situ');

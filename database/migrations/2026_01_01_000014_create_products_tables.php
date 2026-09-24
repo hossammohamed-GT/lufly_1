@@ -23,12 +23,6 @@ use Database\Schema\ProductVariantsSchema;
 use Database\Schema\ProductsSchema;
 use Database\Schema\SeoMetaSchema;
 
-/**
- * Full product-catalog architecture:
- * brands / collections -> products -> translations, variants, attributes,
- * specifications, dimensions, media, documents, relations, seo, keywords,
- * import logs.
- */
 class CreateProductsTables extends Migration
 {
     public function up(): void

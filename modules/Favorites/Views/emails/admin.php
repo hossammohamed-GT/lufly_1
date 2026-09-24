@@ -1,16 +1,4 @@
 <?php
-/**
- * The store-inbox copy of a saved list — the lead behind the list.
- *
- * Deliberately compact: who saved what, with the visitor's address as Reply-To
- * so answering it starts the conversation about the quotation.
- *
- * @var array<int, array<string, mixed>> $items
- * @var int $count
- * @var string $listUrl
- * @var string $email
- * @var string $adminSubject
- */
 $ink = '#102a2a';
 $muted = '#617674';
 $line = '#d3deda';

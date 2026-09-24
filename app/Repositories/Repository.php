@@ -9,12 +9,8 @@ use Core\Contracts\RepositoryInterface;
 use Core\Database\Model;
 use Core\Database\Paginator;
 
-/**
- * Base repository over an Eloquent-lite model.
- */
 abstract class Repository implements RepositoryInterface
 {
-    /** @var class-string<Model> */
     protected string $model;
 
     protected bool $auditing = false;
@@ -38,7 +34,6 @@ abstract class Repository implements RepositoryInterface
     public function create(array $data): object
     {
         $class = $this->model;
-        /** @var Model $entity */
         $entity = $class::create($data);
 
         if ($this->auditing) {
@@ -50,7 +45,6 @@ abstract class Repository implements RepositoryInterface
 
     public function update(int|string $id, array $data): bool
     {
-        /** @var Model|null $entity */
         $entity = $this->find($id);
         if ($entity === null) {
             return false;
@@ -68,7 +62,6 @@ abstract class Repository implements RepositoryInterface
 
     public function delete(int|string $id): bool
     {
-        /** @var Model|null $entity */
         $entity = $this->find($id);
         if ($entity === null) {
             return false;
@@ -84,7 +77,6 @@ abstract class Repository implements RepositoryInterface
         return $result;
     }
 
-    /** @param array<string, mixed> $filters */
     public function paginate(array $filters = [], int $page = 1, int $perPage = 10): Paginator
     {
         $class = $this->model;

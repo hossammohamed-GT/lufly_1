@@ -30,7 +30,6 @@ final class Handler
         register_shutdown_function([self::class, 'onShutdown']);
     }
 
-    /** @internal */
     public static function onError(int $severity, string $message, string $file = '', int $line = 0): bool
     {
         if (!(error_reporting() & $severity)) {
@@ -44,7 +43,6 @@ final class Handler
         throw new ErrorException($message, 0, $severity, $file, $line);
     }
 
-    /** @internal */
     public static function onShutdown(): void
     {
         $error = error_get_last();
@@ -53,7 +51,6 @@ final class Handler
         }
     }
 
-    /** @internal */
     public static function onUncaught(Throwable $e): void
     {
         self::render($e, self::currentRequest())->send();
@@ -67,7 +64,7 @@ final class Handler
         self::log($e, $status);
 
         if ($e instanceof ValidationException && $request !== null && !$request->expectsJson()) {
-            // Errors + old input are already flashed by Request::validate().
+
             return new RedirectResponse(
                 is_string($request->header('HTTP_REFERER')) ? (string) $request->header('HTTP_REFERER') : url('/'),
             );
@@ -80,8 +77,6 @@ final class Handler
                 'errors' => $e instanceof ValidationException ? $e->errors() : new \stdClass(),
                 'error_code' => $code,
             ];
-            /* No debug payload is ever attached to responses - it lives in the logs. */
-
             return new JsonResponse($payload, $status);
         }
 
@@ -95,8 +90,7 @@ final class Handler
             'title' => self::statusTitle($status),
             'message' => self::publicMessage($e, $status),
             'errors' => $e instanceof ValidationException ? $e->errors() : [],
-            'debug' => null, /* never rendered on public pages - logs only */
-        ];
+            'debug' => null, ];
 
         try {
             $view = app(View::class);
@@ -123,14 +117,12 @@ final class Handler
                 $e->getLine()
             ), ['trace' => array_slice(explode("\n", $e->getTraceAsString()), 0, 10)]);
         } catch (Throwable) {
-            // Logging must never break the error response path.
+
         }
     }
 
     private static function publicMessage(Throwable $e, int $status): string
     {
-        /* 5xx must NEVER leak backend details to visitors - regardless of
-           APP_DEBUG. Full exception + trace go to storage/logs/error.log. */
         if ($status >= 500) {
             try {
                 $message = trans('errors.server_error');
@@ -138,17 +130,15 @@ final class Handler
                     return $message;
                 }
             } catch (Throwable) {
-                // translator itself unavailable - static safe text below
+
             }
 
             return 'The service is temporarily unavailable. Please try again in a moment.';
         }
 
-        /* 4xx exceptions carry user-facing (translated) messages by design. */
         return $e->getMessage();
     }
 
-    /** @return array<string, mixed> */
     private static function debugPayload(Throwable $e): array
     {
         return [

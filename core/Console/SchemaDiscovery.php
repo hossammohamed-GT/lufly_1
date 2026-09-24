@@ -8,7 +8,6 @@ use Core\Database\Schema\SchemaDefinition;
 
 final class SchemaDiscovery
 {
-    /** @return SchemaDefinition[] */
     public static function definitions(string $path): array
     {
         $definitions = [];

@@ -14,7 +14,6 @@ return [
         ],
     ],
 
-    // Stored inside public/images/uploads (accessible directly and via asset()).
     'path' => 'public/images/uploads',
 
     'max_size_kb' => (int) env('UPLOAD_MAX_SIZE', 10240),

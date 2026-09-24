@@ -2,8 +2,6 @@
 
 declare(strict_types=1);
 
-/* The quotation box (see modules/Box). */
-
 return [
     'short' => 'Kutu',
     'add' => 'Kutuya ekle',

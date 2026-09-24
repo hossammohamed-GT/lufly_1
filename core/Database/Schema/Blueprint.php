@@ -6,20 +6,15 @@ namespace Core\Database\Schema;
 
 class Blueprint
 {
-    /** @var ColumnDefinition[] */
     private array $columns = [];
 
-    /** @var array<int, array{columns: string[], unique: bool}> */
     private array $indexes = [];
 
-    /** @var ForeignKeyDefinition[] */
     private array $foreignKeys = [];
 
     public function __construct(public readonly string $table)
     {
     }
-
-    /* ---------------------------------------------------- standard types */
 
     public function id(string $column = 'id'): ColumnDefinition
     {
@@ -90,8 +85,6 @@ class Blueprint
     {
         return Types::seo($this, $column);
     }
-
-    /* ---------------------------------------------------- primitive types */
 
     public function bigIncrements(string $column): ColumnDefinition
     {
@@ -184,27 +177,22 @@ class Blueprint
         $this->indexes[] = ['columns' => $columns, 'unique' => false];
     }
 
-    /* ---------------------------------------------------- compilation */
-
     private function addColumn(ColumnDefinition $column): ColumnDefinition
     {
         $this->columns[] = $column;
         return $column;
     }
 
-    /** @return ColumnDefinition[] */
     public function columns(): array
     {
         return $this->columns;
     }
 
-    /** @return ForeignKeyDefinition[] */
     public function foreignKeys(): array
     {
         return $this->foreignKeys;
     }
 
-    /** @return string[] SQL statements for the target driver */
     public function toStatements(string $driver): array
     {
         $quote = static fn (string $identifier): string => $driver === 'mysql'
@@ -263,13 +251,11 @@ class Blueprint
         return $statements;
     }
 
-    /** @param string[] $columns */
     private function indexName(array $columns, bool $unique): string
     {
         $name = $this->table . '_' . implode('_', $columns) . ($unique ? '_unique' : '_index');
 
-        // MySQL identifiers are limited to 64 characters; stay deterministic
-        // by truncating the readable part and appending a stable hash suffix.
+
         if (strlen($name) > 64) {
             $name = rtrim(substr($name, 0, 53), '_') . '_' . substr(md5($name), 0, 10);
         }

@@ -17,7 +17,6 @@ return [
     'weight' => 'Hmotnost',
     'dimensions' => 'Rozměry',
 
-    /* storefront product page */
     'code_label' => 'Kód modelu',
     'view_main' => 'Produkt',
     'view_drawing' => 'Výkres',
@@ -46,7 +45,6 @@ return [
     'scope_category' => 'Této kategorii',
     'scope_all' => 'Všech produktech',
 
-    /* administrace - sekce obrázků produktu (fotografie / výkresy / instalace) */
     'images_title' => 'Obrázky produktu',
     'images_intro' => 'Každý obrázek patří do jedné ze tří sekcí a tyto sekce jsou záložkami na stránce produktu. Pořadí v sekci je pořadím, které vidí návštěvník.',
     'images_after_create' => 'Nejprve produkt uložte - fotografie, technické výkresy a snímky instalace pak přidáte přímo zde.',

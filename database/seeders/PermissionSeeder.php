@@ -51,7 +51,6 @@ class PermissionSeeder extends Seeder
         $this->sync('viewer', self::VIEWER_PERMISSIONS);
     }
 
-    /** @param string[] $permissionKeys */
     private function sync(string $roleName, array $permissionKeys): void
     {
         $role = $this->db->selectOne('SELECT id FROM roles WHERE name = ?', [$roleName]);

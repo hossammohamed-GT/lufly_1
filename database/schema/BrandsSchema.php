@@ -7,12 +7,6 @@ namespace Database\Schema;
 use Core\Database\Schema\Blueprint;
 use Core\Database\Schema\SchemaDefinition;
 
-/**
- * Product catalog - brands.
- * The manufacturer / trademark behind the products. Kept even though the
- * factory currently ships a single brand, so multi-brand growth needs no
- * migration later.
- */
 class BrandsSchema extends SchemaDefinition
 {
     protected string $table = 'brands';

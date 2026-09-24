@@ -8,26 +8,12 @@ use Core\Console\Command;
 use Core\Console\SchemaDiscovery;
 use Core\Database\DatabaseManager;
 
-/**
- * Builds lufly-database.sql - a phpMyAdmin / XAMPP ready MySQL dump with the
- * full schema (all tables, indexes, foreign keys) plus every seed row that
- * currently lives in the active database (typically the seeded sqlite copy).
- *
- * Usage:
- *   php cli db:export-mysql                     # -> lufly-database.sql
- *   php cli db:export-mysql --out=path/to.sql
- */
 final class ExportMysqlCommand extends Command
 {
     protected string $name = 'db:export-mysql';
 
     protected string $description = 'Export schema + data as lufly-database.sql (MySQL / phpMyAdmin / XAMPP ready).';
 
-    /**
-     * Creation order (parents first). Drops use the reverse order.
-     *
-     * @var string[]
-     */
     private const TABLE_ORDER = [
         'migrations',
         'languages',
@@ -139,7 +125,6 @@ DDL;
             $sql[] = '';
         }
 
-        /* --------------------------------------------------------------- data */
         $sql[] = '';
         $sql[] = '-- =====================================================================';
         $sql[] = '-- Seed / live data';
@@ -186,7 +171,6 @@ DDL;
         return 0;
     }
 
-    /** @param array<string, mixed> $row */
     private function insertStatement(string $table, array $row): string
     {
         $columns = [];

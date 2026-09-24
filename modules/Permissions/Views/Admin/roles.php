@@ -1,8 +1,5 @@
 <?php
-/** @var Core\View\View $view */
 $view->layout('layouts.admin');
-/** @var array<int, \Modules\Permissions\Models\Role> $roles */
-/** @var array<int, \Modules\Permissions\Models\Permission> $permissions */
 ?>
 <div class="grid grid-3">
     <?php foreach ($roles as $role): $granted = $role->permissionKeys(); ?>

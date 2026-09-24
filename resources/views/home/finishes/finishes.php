@@ -1,13 +1,7 @@
 <?php
-/** @var Core\View\View $view */
 $view->pushStyle('frontend/home/finishes/finishes.css');
 $view->pushScript('frontend/home/finishes/finishes.js');
 
-/* Finish list confirmed with the factory (management review):
-   every finish below is currently available, "Brushed Steel" is
-   renamed to "Brushed Nickel", Mirror Gold plus the Gunmetal
-   variants (Brushed Gunmetal / Gun Gray) were added, and the PVD
-   badge is shown only where PVD is actually used. */
 $finishes = [
     [
         'key' => 'brushed-rose-gold',
@@ -94,13 +88,7 @@ $finishes = [
             </div>
             <div class="finishes-heading-note"><?= e(trans('home.finishes_note_1')) ?><br><?= e(trans('home.finishes_note_2')) ?><br><?= e(trans('home.finishes_note_3')) ?><br><?= e(trans('home.finishes_note_4')) ?><span></span></div>
         </div>
-
-        <!-- The nine finishes as a named index: a 96px texture chip, the name and
-             the process. Wide screens get one column of rows beside the showcase;
-             everything narrower gets a single scrollable row of pills. The old
-             nine picture tiles collapsed into a 2x5 block of squares on a phone,
-             which made this the tallest band on the page. -->
-        <div class="finishes-picker scroll-reveal" data-delay="1">
+<div class="finishes-picker scroll-reveal" data-delay="1">
             <?php foreach ($finishes as $i => $finish): ?>
                 <?php $chip = str_replace('/swatch-', '/chip-', (string) $finish['img']); ?>
                 <button type="button"

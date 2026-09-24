@@ -18,14 +18,12 @@ class UserService
     ) {
     }
 
-    /** @param array<string, mixed> $data */
     public function create(array $data, array $roleIds = []): User
     {
         $data['password'] = password_hash((string) $data['password'], PASSWORD_BCRYPT, [
             'cost' => (int) config('security.bcrypt_cost', 12),
         ]);
 
-        /** @var User $user */
         $user = $this->users->create($data);
 
         if ($roleIds !== []) {
@@ -37,7 +35,6 @@ class UserService
         return $user;
     }
 
-    /** @param array<string, mixed> $data */
     public function update(int $id, array $data, ?array $roleIds = null): User
     {
         $user = $this->find($id);
@@ -67,7 +64,6 @@ class UserService
         $this->activity->deleted('user', $id);
     }
 
-    /** @param array<string, mixed> $filters */
     public function paginate(array $filters = [], int $page = 1, int $perPage = 10): Paginator
     {
         return $this->users->paginate($filters, $page, $perPage);
@@ -80,7 +76,6 @@ class UserService
             throw new NotFoundException(trans('errors.user_not_found'));
         }
 
-        /** @var User $user */
         return $user;
     }
 }

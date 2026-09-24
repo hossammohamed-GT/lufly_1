@@ -1,17 +1,3 @@
-/* ============================================================
-   Skeleton controller.
-
-   Any element carrying [data-sk-host] holds two children: a glass
-   [data-sk-skeleton] placeholder and the real [data-sk-real] content. The
-   real content is already in the HTML - the skeleton exists so the section
-   has a settled shape while its images decode, which is what actually makes
-   a data driven block feel slow.
-
-   Reveal happens on whichever comes first:
-     - the images inside the real content have loaded, or
-     - a short ceiling, so a broken image can never strand a skeleton.
-   ============================================================ */
-
 (function () {
   'use strict';
 
@@ -26,8 +12,6 @@
   function initHost(host) {
     var real = host.querySelector('[data-sk-real]');
 
-    /* Arm only now: from this point the script is demonstrably running, so
-       hiding the real content is safe because we can always reveal it. */
     host.classList.add('sk-armed');
     if (!real) {
       revealHost(host);
@@ -36,7 +20,6 @@
 
     var imgs = Array.prototype.slice.call(real.querySelectorAll('img'));
 
-    /* nothing to wait for */
     if (imgs.length === 0) {
       revealHost(host);
       return;
@@ -66,7 +49,6 @@
       return;
     }
 
-    /* never let a stalled request hold the section hostage */
     setTimeout(function () {
       if (!settled) {
         settled = true;
@@ -86,6 +68,5 @@
     init();
   }
 
-  /* expose so live search and other dynamic renderers can reuse it */
   window.LUFLYSkeleton = { reveal: revealHost, scan: init };
 })();

@@ -46,7 +46,6 @@ class LocalizationService extends \App\Services\LocalizationService
 
     public function toggleLanguage(int $id): bool
     {
-        /** @var Language|null $language */
         $language = $this->languages->find($id);
         if ($language === null) {
             return false;

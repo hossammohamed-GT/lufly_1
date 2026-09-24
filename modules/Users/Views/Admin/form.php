@@ -1,8 +1,5 @@
 <?php
-/** @var Core\View\View $view */
 $view->layout('layouts.admin');
-/** @var \Modules\Users\Models\User|null $user */
-/** @var array<int, \Modules\Permissions\Models\Role> $roles */
 $action = $user === null ? route('admin.users.store') : route('admin.users.update', ['id' => $user->id]);
 $userRoles = $user !== null ? $user->roleNames() : [];
 ?>

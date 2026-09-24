@@ -18,29 +18,11 @@ class ProductRepository extends Repository
 
     public function findBySlug(string $slug): ?Product
     {
-        /** @var Product|null $product */
         $product = Product::query()->where('slug', $slug)->first();
 
         return $product;
     }
 
-    /**
-     * Storefront search + filter + sort.
-     *
-     * Bindings follow placeholder order: joins first, then WHERE, then sort
-     * join (earlier builds appended the search bindings before the category
-     * join, which broke every filtered/searched listing).
-     *
-     * @param array{
-     *     status?: string,
-     *     search?: string,
-     *     locale?: string,
-     *     category_slug?: string,
-     *     category_id?: int|string,
-     *     featured?: bool,
-     *     sort?: string,
-     * } $filters
-     */
     public function search(array $filters, int $page = 1, int $perPage = 12): Paginator
     {
         $locale = $filters['locale'] ?? 'en';
@@ -127,10 +109,6 @@ class ProductRepository extends Repository
         return new Paginator($items, $total, $page, $perPage);
     }
 
-    /**
-     * @param array{locale?: string, search?: string, status?: string} $filters
-     * @return Product[]
-     */
     public function quickSearch(array $filters, int $limit = 8): array
     {
         $locale = $filters['locale'] ?? 'en';

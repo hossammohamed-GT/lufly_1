@@ -1,5 +1,3 @@
-/* Finish selector: swatch data, showcase swap, auto-scroll to the
-   showcase panel on phones so the user always sees what changed. */
 (function () {
   'use strict';
 
@@ -155,8 +153,6 @@
       }, 160);
     }
 
-    /* on phones the showcase sits below the fold: bring it into view
-       after a selection so the change is never missed */
     function revealShowcase() {
       if (!showcase || typeof showcase.scrollIntoView !== 'function') {
         return;
@@ -168,7 +164,7 @@
           window.matchMedia('(prefers-reduced-motion: reduce)').matches;
         try {
           showcase.scrollIntoView({ behavior: reduce ? 'auto' : 'smooth', block: 'start' });
-        } catch (e) { /* older browsers */ }
+        } catch (e) { }
       }
     }
 

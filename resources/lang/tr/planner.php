@@ -3,7 +3,6 @@
 declare(strict_types=1);
 
 return [
-    /* page */
     'eyebrow' => 'LUFLY · banyo planlayıcı',
     'title' => 'Banyo planlayıcı',
     'lede' => 'Üç kısa dokunuşla banyonuz planlanır: neyin takılacağı, hangi ölçüde, her parçanın yeri ve tesisatçınıza verebileceğiniz ölçekli bir çizim.',
@@ -15,7 +14,6 @@ return [
     'restart' => 'Yeniden başla',
     'step_of' => 'Adım :n / 3',
 
-    /* the three questions */
     'q_size' => 'Oda ne kadar büyük?',
     'q_size_hint' => 'Genişlik × derinlik, santimetre. En yakınını seçin ya da kendi ölçülerinizi yazın.',
     'size_compact' => 'Kompakt · 160 × 200 cm',
@@ -40,7 +38,6 @@ return [
     'look_minimal-steel' => 'Minimal · fırçalanmış çelik',
     'look_hint' => 'Tek dokunuş hem stili hem de tüm armatürlerin metal yüzeyini belirler.',
 
-    /* waiting */
     'thinking' => 'Planınız hazırlanıyor…',
     'wait_1' => 'Gecikme için özür dileriz — planınızı toparlıyoruz.',
     'wait_2' => 'Bir dakika lütfen, son dokunuşlar yapılıyor.',
@@ -50,7 +47,6 @@ return [
     'wait_6' => 'Birkaç saniye daha, plan neredeyse tamam.',
     'render_wait' => 'Görsel çiziliyor — bu yaklaşık yarım dakika sürer.',
 
-    /* the plan */
     'plan_ready' => 'Planınız hazır',
     'items' => 'Neler takılacak',
     'item_toilet' => 'Klozet',
@@ -88,7 +84,6 @@ return [
     'scale' => 'Ölçek',
 
 
-    /* the floating chat: the bubble in the corner of every page */
     'chat_open' => 'Banyomu planla',
     'chat_open_hint' => '3 dokunuş · ücretsiz',
     'chat_subtitle' => 'Üç kısa soru, tek plan',
@@ -100,8 +95,6 @@ return [
     'chat_foot' => 'Ücretsiz · hesap gerekmez',
     'chat_full' => 'Tam planlayıcıyı aç',
 
-    /* the picture */
-    /* the free image quota is not there yet: promised, not offered */
     'render_soon_pill' => 'Çok yakında',
     'render_soon_hint' => 'Bu banyonun tam bu parçalarla çizilmiş görseli yolda. Yukarıdaki plan ve ölçekli çizim bugün kullanıma hazır.',
     'render_cta' => 'Bitmiş banyoyu göster',
@@ -112,7 +105,6 @@ return [
     'render_limit' => 'Bugünkü görsel hakkınız doldu — yarın tekrar deneyin.',
     'render_failed' => 'Görsel bu kez çizilemedi. Planınız eksiksiz ve güvende.',
 
-    /* "does it fit?" — answered from the product's own words, never a picture */
     'fit_title' => 'Banyoma uyar mı?',
     'fit_hint' => 'Tek dokunuş: bu ürünü yukarıdaki planla karşılaştırırız. Fotoğraf yok — açıklama ve ölçüler yeterli.',
     'fit_cta' => 'Planımla karşılaştır',
@@ -124,7 +116,6 @@ return [
     'fit_mail_line' => 'Bakılan ürün: :name',
     'err_fit' => 'Bu ürünü şu anda kontrol edemedik. Planınız yine de eksiksiz — ekibimize gönderin, onaylarlar.',
 
-    /* handoff */
     'handoff_title' => 'Bunları benim için bulun',
     'handoff_text' => 'Planın tamamını LUFLY ekibine gönderin; size en yakın parçaları ve fiyatlarını iletelim.',
     'handoff_whatsapp' => 'WhatsApp ile gönder',
@@ -139,13 +130,11 @@ return [
     'email_label' => 'E-posta adresiniz',
     'email_placeholder' => 'siz@ornek.com',
 
-    /* errors */
     'err_size' => 'Lütfen önce oda ölçüsünü seçin.',
     'err_custom' => 'Lütfen 100 ile 600 cm arasında bir genişlik ve derinlik yazın.',
     'err_email' => 'Lütfen geçerli bir e-posta adresi girin.',
     'err_send' => 'Mesaj şu anda gönderilemedi. WhatsApp\'ı kullanın ya da birazdan tekrar deneyin.',
 
-    /* the promise: the planner is not open yet */
     'soon_pill' => 'Çok yakında',
     'soon_title' => 'Banyo planlayıcı yolda',
     'soon_text' => 'Oda ölçüsünü girin, plan hazır olsun: ne kurulacak, hangi ölçüde, hangi duvara, ve tesisatçınıza verebileceğiniz bir çizim.',

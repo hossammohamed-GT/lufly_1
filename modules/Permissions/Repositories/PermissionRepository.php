@@ -13,7 +13,6 @@ class PermissionRepository extends Repository
 
     public function findByKey(string $key): ?Permission
     {
-        /** @var Permission|null $permission */
         $permission = Permission::query()->where('key', $key)->first();
 
         return $permission;

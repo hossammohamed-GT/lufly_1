@@ -12,7 +12,6 @@ class Auth
 {
     private ?object $cachedUser = null;
 
-    /** @var string[]|null */
     private ?array $cachedPermissions = null;
 
     public function __construct(
@@ -105,20 +104,17 @@ class Auth
         $emailKey = 'login_lockout_email_' . sha1($cleanEmail);
         $ipKey = 'login_lockout_ip_' . sha1($ip);
 
-        // 1. Check persistent email lockout
         $emailEntry = $this->readLockoutEntry($emailKey);
         if ($emailEntry && ($emailEntry['count'] ?? 0) >= $maxAttempts && ($emailEntry['locked_until'] ?? 0) > time()) {
             return true;
         }
 
-        // 2. Check persistent IP lockout
         $ipEntry = $this->readLockoutEntry($ipKey);
         $maxIpAttempts = $maxAttempts * 3;
         if ($ipEntry && ($ipEntry['count'] ?? 0) >= $maxIpAttempts && ($ipEntry['locked_until'] ?? 0) > time()) {
             return true;
         }
 
-        // 3. Fallback check for session
         $attempts = (array) $this->session->get('_login_attempts', []);
         $sessionEntry = $attempts[$cleanEmail] ?? null;
         if (is_array($sessionEntry) && ($sessionEntry['count'] ?? 0) >= $maxAttempts && ($sessionEntry['locked_until'] ?? 0) > time()) {
@@ -138,7 +134,6 @@ class Auth
         $emailKey = 'login_lockout_email_' . sha1($cleanEmail);
         $ipKey = 'login_lockout_ip_' . sha1($ip);
 
-        // 1. Update persistent email attempts
         $emailEntry = $this->readLockoutEntry($emailKey) ?? ['count' => 0, 'locked_until' => 0];
         $emailCount = (int) (($emailEntry['count'] ?? 0) + 1);
         $emailLockedUntil = $emailCount >= $maxAttempts ? time() + $lockoutSeconds : 0;
@@ -148,7 +143,6 @@ class Auth
             'expires_at' => time() + $lockoutSeconds,
         ]);
 
-        // 2. Update persistent IP attempts
         $ipEntry = $this->readLockoutEntry($ipKey) ?? ['count' => 0, 'locked_until' => 0];
         $ipCount = (int) (($ipEntry['count'] ?? 0) + 1);
         $ipLockedUntil = $ipCount >= ($maxAttempts * 3) ? time() + $lockoutSeconds : 0;
@@ -158,7 +152,6 @@ class Auth
             'expires_at' => time() + $lockoutSeconds,
         ]);
 
-        // 3. Update session
         $attempts = (array) $this->session->get('_login_attempts', []);
         $attempts[$cleanEmail] = [
             'count' => $emailCount,
@@ -188,7 +181,6 @@ class Auth
         return $dir . '/' . $key . '.json';
     }
 
-    /** @return array<string, mixed>|null */
     private function readLockoutEntry(string $key): ?array
     {
         $path = $this->getLockoutPath($key);
@@ -209,7 +201,6 @@ class Auth
         return $data;
     }
 
-    /** @param array<string, mixed> $data */
     private function writeLockoutEntry(string $key, array $data): void
     {
         $path = $this->getLockoutPath($key);

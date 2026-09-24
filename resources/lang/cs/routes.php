@@ -14,7 +14,6 @@ return [
     'favorites.email' => 'oblibene/email',
     'favorites.clear' => 'oblibene/vymazat',
 
-    /* quotation box */
     'box.index' => 'krabice',
     'box.claim' => 'krabice/{token}',
     'box.add' => 'krabice/pridat',
@@ -22,8 +21,6 @@ return [
     'box.clear' => 'krabice/vysypat',
     'box.send' => 'krabice/poslat',
 
-    /* bathroom planner */
-    /* quotation box */
     'box.index' => 'krabice',
     'box.claim' => 'krabice/{token}',
     'box.add' => 'krabice/pridat',
@@ -37,6 +34,5 @@ return [
     'planner.render' => 'planovac-koupelny/obrazek',
     'planner.send' => 'planovac-koupelny/odeslat',
 
-    /* vyhledávač výrobků */
     'assistant.ask' => 'asistent/najdi',
 ];

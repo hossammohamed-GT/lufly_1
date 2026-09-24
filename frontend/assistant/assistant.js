@@ -1,19 +1,3 @@
-/*
- * The finder — the floating chat on every storefront page.
- *
- * Two tabs. The first is the one that opens: a description in the visitor's own
- * language, or a photo, is posted to /assistant/ask and comes back as a short
- * answer, the closest pieces from our own catalogue as cards, and the promise
- * that a piece we do not show yet is still a piece we can get.
- *
- * Nothing about the catalogue lives here: the server does the searching and the
- * wording, the browser only draws what came back. The photo is shrunk here
- * first (longest side 1280 px, JPEG) so the upload — and the model's view of
- * it — stays small.
- *
- * The shell (bubble, panel, expand, drag-to-resize, remembered size) is the
- * same one the planner used; the second tab says the planner is on its way.
- */
 (function () {
   'use strict';
 
@@ -44,19 +28,11 @@
   var labels = parseJSON(root.getAttribute('data-assistant-labels')) || {};
   var EMAIL_KEY = 'lufly-chat-email';
   var SIZE_KEY = 'lufly-chat-size';
-  /* the box's token, written by frontend/box/box.js: the piece the visitor puts
-     in the box from a chat card joins the very same list as the one he tapped on
-     a product page, even in a browser that keeps no cookies */
   var BOX_TOKEN_KEY = 'lufly-box-token';
-  /* the conversation follows the visitor from page to page: the widget is on
-     every screen, so what was said on the home page is still there on a product
-     page — same browser, same shop, one chat */
   var HISTORY_KEY = 'lufly-chat-history';
   var HISTORY_MAX = 24;
   var photo = null;
   var busy = false;
-  /* what the chat asked and what the visitor chose: a tiny bit of state that
-     travels with every message instead of being stored on the server */
   var thread = null;
 
   if (!panel || !log || !form) return;
@@ -68,7 +44,6 @@
 
       var saved = JSON.parse(raw);
       if (!saved || !saved.entries || !saved.entries.length) return null;
-      /* a conversation older than a day is a different visit */
       if (Date.now() - (saved.time || 0) > 86400000) {
         window.localStorage.removeItem(HISTORY_KEY);
         return null;
@@ -88,7 +63,7 @@
         thread: thread,
         entries: history
       }));
-    } catch (error) { /* private mode: the chat simply starts fresh on the next page */ }
+    } catch (error) { }
   }
 
   function remember(entry) {
@@ -130,8 +105,6 @@
     }
   }
 
-  /* ---------- the shell: open, close, expand, drag ---------- */
-
   var toggle = root.querySelector('[data-aichat-toggle]');
   var closeButton = root.querySelector('[data-aichat-close]');
   var growButton = root.querySelector('[data-aichat-grow]');
@@ -143,7 +116,7 @@
     if (!size) return;
     try {
       window.localStorage.setItem(SIZE_KEY, JSON.stringify(size));
-    } catch (error) { /* private mode */ }
+    } catch (error) { }
   }
 
   function applySize() {
@@ -154,8 +127,6 @@
     if (size.wide) {
       panel.style.removeProperty('--aichat-w');
       panel.style.removeProperty('--aichat-h');
-      /* the launcher stretches to the panel's width: it is the base the panel
-         grows out of, so it may not be narrower than the panel itself */
       root.style.setProperty('--aichat-fab-w', 'min(1020px, calc(100vw - 48px))');
       return;
     }
@@ -176,7 +147,6 @@
     }
   }
 
-  /* one button, two jobs: expand the window or hand it back its corner */
   function labelGrow() {
     if (!growButton) return;
 
@@ -191,10 +161,6 @@
     if (growText) growText.textContent = text;
   }
 
-  /* The panel grows out of the corner it lives in and sinks back into it, the
-     way a sheet does on iOS. Closing has an animation of its own, so the panel
-     may not be hidden the moment the visitor asks for it: the class goes on, and
-     the frame that carries it away calls finishClosing(). */
   var closingTimer = null;
 
   function finishClosing() {
@@ -224,15 +190,11 @@
 
     if (!open) {
       root.classList.add('is-closing');
-      /* the animation says when it is done; the timer is only the safety net for
-         a browser that never fires the event (or a visitor who asked for less
-         motion, where there is no animation at all) */
       closingTimer = window.setTimeout(finishClosing, 400);
       return;
     }
 
     applySize();
-    /* the address is asked once, before the first answer */
     if (askEmail && gate && !email()) gate.hidden = false;
     if (input) input.focus();
     window.requestAnimationFrame(scrollLog);
@@ -248,8 +210,6 @@
 
   if (toggle) toggle.addEventListener('click', function () { openPanel(panel.hidden); });
 
-  /* a link that lands on ?chat=1 opens the chat by itself — that is where the
-     promise page's "find a piece in the meantime" button points */
   if (/[?&]chat=1(&|$)/.test(window.location.search)) openPanel(true);
 
   if (closeButton) {
@@ -259,10 +219,6 @@
     });
   }
 
-  /* Anywhere empty closes the chat. The visitor should never have to find the
-     same button again to put it away — and a tap on the page around the panel is
-     the most natural way to say "not now". Taps inside the panel, on the
-     launcher, and on anything the chat put on the page are left alone. */
   document.addEventListener('pointerdown', function (event) {
     if (panel.hidden || root.classList.contains('is-closing')) return;
 
@@ -332,8 +288,6 @@
     });
   }
 
-  /* ---------- the two tabs ---------- */
-
   var tabs = root.querySelectorAll('[data-assistant-tab]');
   var panes = root.querySelectorAll('[data-assistant-pane]');
 
@@ -349,7 +303,6 @@
     });
 
     var compose = root.querySelector('[data-assistant-form]');
-    /* the planner tab is a promise, not a form */
     if (compose) compose.hidden = name !== 'find';
     scrollLog();
   }
@@ -362,8 +315,6 @@
   });
 
   if (plannerSoon) root.classList.add('is-planner-soon');
-
-  /* ---------- the address, once ---------- */
 
   if (gate) {
     gate.addEventListener('submit', function (event) {
@@ -387,7 +338,7 @@
     if (clean !== '') {
       try {
         window.localStorage.setItem(EMAIL_KEY, clean);
-      } catch (error) { /* private mode */ }
+      } catch (error) { }
     }
 
     if (gate) gate.hidden = true;
@@ -398,8 +349,6 @@
 
     if (input) input.focus();
   }
-
-  /* ---------- the photo ---------- */
 
   if (fileField) {
     fileField.addEventListener('change', function () {
@@ -433,10 +382,6 @@
     });
   }
 
-  /*
-   * Longest side 1280 px, JPEG at 0.82. A phone photo of 4 MB becomes roughly
-   * 200 KB: a small upload, and a small picture for the model to look at.
-   */
   function shrink(file, done) {
     var reader = new FileReader();
 
@@ -485,8 +430,6 @@
     reader.readAsDataURL(file);
   }
 
-  /* ---------- the conversation ---------- */
-
   function say(who, text, list, rememberIt) {
     var bubble = el('div', 'aichat-say is-' + who);
     bubble.appendChild(el('p', null, text));
@@ -509,9 +452,6 @@
     scrollLog();
   }
 
-  /* the cards: the same picture, code and link the catalogue shows — plus the
-     two things the visitor wants to do with a piece he likes: save it, or put it
-     in the box he will send to the team */
   function bank(cards) {
     var grid = el('div', 'aichat-bank');
 
@@ -538,9 +478,6 @@
       link.appendChild(body);
       wrap.appendChild(link);
 
-      /* the box is the one tool a chat card carries: the heart belonged to the
-         catalogue, and on a card inside the panel it floated over the header and
-         covered the close button */
       var tools = el('span', 'aichat-card-tools');
 
       if (boxEndpoint) tools.appendChild(boxButton(card));
@@ -571,8 +508,6 @@
     return button;
   }
 
-  /* the few answers the chat offers: one tap, and the answer is the next turn
-     of the conversation */
   function choices(list) {
     var wrap = el('div', 'aichat-choices');
 
@@ -617,17 +552,10 @@
     return wrap.childNodes.length > 0 ? wrap : null;
   }
 
-  /* ---------- the round trip ---------- */
-
   var waitingIndex = 0;
   var waitingTimer = null;
   var waitingBubble = null;
 
-  /* The glow the visitor watches while the answer is written: a slow
-     iridescent orb, a scan of rings over it, and a gloss that sweeps across —
-     the look of a fingerprint reader. It sits under the words, and it is pure
-     scenery: the bubble is never remembered, so it cannot come back on the next
-     page as if the chat were still thinking. */
   function waitingGlow() {
     var glow = el('span', 'aichat-aura');
     glow.setAttribute('aria-hidden', 'true');
@@ -642,9 +570,6 @@
     if (waiting.length === 0) return;
 
     waitingIndex = 0;
-    /* the rotating line is scenery, not conversation: it must not end up in
-       the saved thread, or the visitor would come back to a stale
-       "reading your words…" on the next page */
     waitingBubble = say('bot is-waiting', waiting[0], null, false);
     waitingBubble.insertBefore(waitingGlow(), waitingBubble.firstChild);
 
@@ -677,9 +602,6 @@
     });
   }
 
-  /* typing a fresh request ends the guide's question, unless the chat is waiting
-     for the answer to it (then the words are the answer) */
-
   function send(override, productId, pick) {
     if (busy) return;
 
@@ -700,7 +622,6 @@
 
     if (shown === '' && fromProduct && context) shown = context.name || '';
     if (shown === '' && photo) shown = labels.photo_ready || '';
-    /* a tap on one of the chat's own choices: the words are the button itself */
     if (shown === '' && pick) shown = pick.label || '';
 
     say('me', shown, photo ? previewShot(photo.data) : null);
@@ -784,15 +705,12 @@
 
     if (answers) bubble.appendChild(answers);
 
-    /* the "see all in the catalogue" / support links: only under a bank of
-       cards, where they mean something */
     if (data.cards && data.cards.length > 0) {
       var more = links(data);
 
       if (more) bubble.appendChild(more);
     }
 
-    /* the chat keeps the little bit of state it needs for the next turn */
     thread = data.thread && data.thread.topic ? data.thread : null;
 
     remember({
@@ -815,7 +733,6 @@
     scrollLog();
   }
 
-  /* what was said on the previous page, put back the way it was */
   function restore() {
     var entries = loadHistory();
 
@@ -852,8 +769,6 @@
     }
   }
 
-  /* wherever the chat points at the box, it points at *his* box: the token in the
-     address opens the same list in any browser, cookie or no cookie */
   function boxHref(base) {
     var token = boxToken();
 
@@ -872,8 +787,6 @@
       if (href) link.setAttribute('href', href);
     });
   }
-
-  /* ---------- the chips, and the choices the chat offers back ---------- */
 
   Array.prototype.forEach.call(root.querySelectorAll('[data-assistant-chip]'), function (chip) {
     chip.addEventListener('click', function () {
@@ -905,11 +818,8 @@
   restore();
   paintBoxLinks();
 
-  /* a piece saved anywhere on the page: the link to the box follows the token
-     that save produced */
   document.addEventListener('box:changed', paintBoxLinks);
 
-  /* a piece landing in the box is worth a line in the conversation */
   document.addEventListener('box:changed', function (event) {
     var detail = (event && event.detail) || {};
 

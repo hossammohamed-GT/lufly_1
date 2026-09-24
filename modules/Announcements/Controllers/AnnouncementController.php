@@ -20,8 +20,6 @@ class AnnouncementController extends Controller
     ) {
     }
 
-    /* ------------------------------------------------------- admin panel */
-
     public function index(Request $request): Response
     {
         $paginator = $this->announcements->paginate((int) $request->query('page', '1'), 15);
@@ -97,13 +95,6 @@ class AnnouncementController extends Controller
             ->with('_success', trans('common.deleted'));
     }
 
-    /* ------------------------------------------------------------ helpers */
-
-    /**
-     * Normalized row for the admin table.
-     *
-     * @return array<string, mixed>
-     */
     private function present(object $announcement): array
     {
         $locale = $this->translator->getLocale();
@@ -119,11 +110,6 @@ class AnnouncementController extends Controller
         ]);
     }
 
-    /**
-     * Base validation shared by store/update.
-     *
-     * @return array<string, mixed>
-     */
     private function validated(Request $request): array
     {
         return $request->validate([
@@ -142,10 +128,6 @@ class AnnouncementController extends Controller
         ]);
     }
 
-    /**
-     * @param array<string, mixed> $data
-     * @return array<string, mixed>
-     */
     private function coreFields(array $data): array
     {
         return [
@@ -158,7 +140,6 @@ class AnnouncementController extends Controller
         ];
     }
 
-    /** datetime-local input (Y-m-d\TH:i) -> DB datetime (Y-m-d H:i:s). */
     private function dbDateTime(mixed $value): ?string
     {
         $value = str_replace('T', ' ', trim((string) $value));
@@ -174,12 +155,6 @@ class AnnouncementController extends Controller
         return $value;
     }
 
-    /**
-     * Collect the three language messages from the form.
-     *
-     * @param array<string, mixed> $data
-     * @return array<string, array<string, mixed>>
-     */
     private function translationsFromForm(array $data): array
     {
         $translations = [];

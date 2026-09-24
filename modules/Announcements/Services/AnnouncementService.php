@@ -20,7 +20,6 @@ class AnnouncementService
     ) {
     }
 
-    /** @return Announcement[] live storefront messages for a placement */
     public function activeFor(string $placement = 'topbar', int $limit = 5): array
     {
         return $this->announcements->active($placement, $limit);
@@ -51,17 +50,11 @@ class AnnouncementService
             throw new NotFoundException(trans('errors.not_found'));
         }
 
-        /** @var Announcement $announcement */
         return $announcement;
     }
 
-    /**
-     * @param array<string, mixed> $data core fields
-     * @param array<string, array<string, mixed>> $translations locale => fields
-     */
     public function create(array $data, array $translations): Announcement
     {
-        /** @var Announcement $announcement */
         $announcement = $this->announcements->create($data);
         $this->localization->syncTranslations('announcement', $announcement->id, $translations);
         $this->activity->created('announcement', $announcement->id, ['placement' => $announcement->placement]);
@@ -69,10 +62,6 @@ class AnnouncementService
         return $announcement;
     }
 
-    /**
-     * @param array<string, mixed> $data
-     * @param array<string, array<string, mixed>> $translations
-     */
     public function update(int $id, array $data, array $translations = []): Announcement
     {
         $announcement = $this->find($id);
@@ -85,7 +74,6 @@ class AnnouncementService
 
         $this->activity->updated('announcement', $id, array_intersect_key($data, array_flip(['is_active', 'placement', 'style'])));
 
-        /** @var Announcement $fresh */
         $fresh = $this->announcements->find($id);
 
         return $fresh ?? $announcement;

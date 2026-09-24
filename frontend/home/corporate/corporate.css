@@ -1,7 +1,3 @@
-/* Home component: corporate entity - machined editorial edition.
-   One solid entity slab on the blueprint grid; the spec desk is the fixed
-   deep-teal machined panel (announcement-bar language). */
-
 .corporate-section {
   position: relative;
   padding: var(--space-16) 0;
@@ -9,8 +5,6 @@
   border-bottom: 1px solid var(--ds-border);
 }
 
-/* ---- fixed production-hall backdrop, veiled per theme (same concept as
-   the finishes and rituals bands) ---- */
 .corporate-section::before {
   content: "";
   position: absolute;
@@ -20,9 +14,6 @@
   background: url('../../../images/lifestyle/corporate-backdrop.jpg') center / cover fixed;
 }
 
-/* veil lives on its own layer so brightness/contrast tuning applies to the
-   photograph only - filtering a combined layer also lightens the veil and
-   cancels itself out */
 .corporate-section::after {
   content: "";
   position: absolute;
@@ -35,9 +26,6 @@
 }
 
 [data-theme="light"] .corporate-section::before {
-  /* the source photo is dark; lift it so it reads on a pale page without
-     blowing out the detail (the veil above is now light, so a gentler
-     lift is enough) */
   filter: brightness(1.55) contrast(0.92) saturate(0.85);
 }
 
@@ -124,7 +112,6 @@
   margin-inline-end: 6px;
 }
 
-/* machined spec desk (fixed brand palette) */
 .spec-desk {
   position: relative;
   overflow: hidden;

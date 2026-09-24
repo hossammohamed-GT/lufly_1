@@ -13,7 +13,6 @@ class SettingRepository extends Repository
 
     public function findByKey(string $key): ?Setting
     {
-        /** @var Setting|null $setting */
         $setting = Setting::query()->where('key', $key)->first();
 
         return $setting;

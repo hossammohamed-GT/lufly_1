@@ -10,13 +10,11 @@ use Core\Http\Response;
 
 abstract class Controller
 {
-    /** @param array<string, mixed> $data */
     protected function view(string $template, array $data = [], int $status = 200): Response
     {
         return Response::view($template, $data, $status);
     }
 
-    /** @param array<string|int, mixed> $data */
     protected function json(array $data, int $status = 200): JsonResponse
     {
         return new JsonResponse($data, $status);

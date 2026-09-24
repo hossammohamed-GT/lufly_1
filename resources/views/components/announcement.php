@@ -1,19 +1,4 @@
 <?php
-/**
- * Storefront announcement bar ("the word").
- *
- * Live announcements come from the Announcements module (admin writable,
- * one message per language). The bar renders nothing when the module is
- * disabled, the table is missing, or nothing is currently live.
- *
- * Layout: [glass icon chip] [scrolling message with diamond separator]
- * [solid CTA pill] [close]. The CTA and chip stay fixed while a very long
- * message travels between them.
- *
- * @var Core\View\View $view
- * @var Core\Localization\Translator|null $translator
- */
-
 $view->pushStyle('frontend/components/announcement/announcement.css');
 
 $translator = $translator ?? app('Core\Localization\Translator');
@@ -26,7 +11,6 @@ try {
     $service = app(Modules\Announcements\Services\AnnouncementService::class);
     $items = $service->activeFor('topbar', 3);
 } catch (\Throwable) {
-    /* table missing or module unavailable - the bar simply stays hidden */
     $items = [];
 }
 
@@ -54,8 +38,6 @@ foreach ($items as $announcement) {
 
     $style = (string) ($announcement->style ?? 'promo');
 
-    /* '{contact}' in link_url resolves to the localized contact page
-       (/en/contact, /tr/iletisim, /cs/kontakt). Any other URL is kept as is. */
     $link = $announcement->link_url;
     if (is_string($link) && str_contains($link, '{contact}')) {
         $link = route('contact');
@@ -137,7 +119,6 @@ if ($messages === []) {
     <?php endif; ?>
 </aside>
 <script>
-/* Announcement bar: dismiss per message + cycle multiple live messages. */
 (function () {
     'use strict';
 
@@ -155,7 +136,7 @@ if ($messages === []) {
     function store(key) {
         try {
             sessionStorage.setItem(key, '1');
-        } catch (error) { /* storage unavailable */ }
+        } catch (error) { }
     }
 
     function dismissed(key) {
@@ -211,7 +192,6 @@ if ($messages === []) {
         }
     }
 
-    /* 1. drop messages the visitor already dismissed */
     items.forEach(function (item) {
         var key = item.getAttribute('data-luann-dismiss-key');
         if (key && dismissed(key) && item.parentNode) {
@@ -220,7 +200,6 @@ if ($messages === []) {
     });
     items = collect();
 
-    /* 2. wire close buttons + dots */
     items.forEach(function (item) {
         var close = item.querySelector('[data-luann-close]');
         if (close) {
@@ -239,7 +218,6 @@ if ($messages === []) {
         });
     });
 
-    /* 3. marquee only travels when the text really overflows */
     function fitMarquees() {
         items.forEach(function (item) {
             var marquee = item.querySelector('[data-luann-marquee]');

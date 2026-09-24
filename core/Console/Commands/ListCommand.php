@@ -21,7 +21,6 @@ final class ListCommand extends Command
         $this->line('');
 
         foreach ($this->app->get(Kernel::class)->commands() as $name => $class) {
-            /** @var Command $command */
             $command = $this->app->make($class);
             $this->line(sprintf('  %-16s %s', $name, $command->description()));
         }

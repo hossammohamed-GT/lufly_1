@@ -9,12 +9,6 @@ use Core\Http\RedirectResponse;
 use Core\Http\Request;
 use Core\Http\Response;
 
-/**
- * Machine-facing SEO assets: robots.txt, the sitemap index family and a
- * dynamic Open Graph image card. All routes are plain (no session, no
- * locale prefix) and safe to deploy under a sub-directory, because every
- * emitted absolute URL goes through url()/asset().
- */
 class SeoAssetsController extends Controller
 {
     public function __construct(private readonly SitemapService $sitemaps)
@@ -32,33 +26,7 @@ class SeoAssetsController extends Controller
             'Disallow: /api/',
             '',
             '# faceted catalogue states: crawlable (follow) but never indexed twice',
-            'Disallow: /*?*sort=',
-            'Disallow: /*?*page=',
-            '',
-            'Sitemap: ' . url('/sitemap.xml'),
-        ];
-
-        return Response::make(implode("\n", $lines) . "\n")
-            ->header('Content-Type', 'text/plain; charset=UTF-8')
-            ->header('Cache-Control', 'public, max-age=86400');
-    }
-
-    public function sitemapIndex(): Response
-    {
-        return $this->xml($this->sitemaps->renderIndex());
-    }
-
-    public function sitemapPages(): Response
-    {
-        return $this->xml($this->sitemaps->renderUrlset($this->sitemaps->pageEntries()));
-    }
-
-    public function sitemapProducts(): Response
-    {
-        /* products.xml carries every URL in every locale: one <url> block
-           per localized variant, all linked through hreflang alternates.
-           Yielded via generator to keep memory usage bounded during generation. */
-        $generator = function () {
+            'Disallow: $generator = function () {
             foreach ($this->sitemaps->productEntriesGenerator() as $entry) {
                 foreach ((array) ($entry['locales'] ?? []) as $loc) {
                     $item = $entry;
@@ -84,13 +52,6 @@ class SeoAssetsController extends Controller
             ->header('X-Robots-Tag', 'noindex');
     }
 
-    /* ------------------------------------------------ OG image card -- */
-
-    /**
-     * /og-image?title=...&subtitle=... — renders a 1200x630 PNG social card.
-     * Degrades gracefully: without GD (or a usable TTF) it redirects to the
-     * static hero OG image, so meta tags never point at a broken endpoint.
-     */
     public function ogImage(Request $request): Response
     {
         $title = trim((string) $request->query('title', ''));
@@ -114,7 +75,6 @@ class SeoAssetsController extends Controller
             return new RedirectResponse(asset('/images/lifestyle/heroc-1.webp'));
         }
 
-        /* brand gradient: deep teal -> teal */
         $top = [12, 67, 71];
         $bottom = [28, 139, 139];
         for ($y = 0; $y < $h; $y++) {
@@ -132,10 +92,8 @@ class SeoAssetsController extends Controller
         $white = (int) imagecolorallocate($img, 255, 255, 255);
         $soft = (int) imagecolorallocate($img, 210, 226, 224);
 
-        /* mint accent bar */
         imagefilledrectangle($img, 90, 150, 100, 480, $mint);
 
-        /* logo, bottom-right */
         $logoPath = base_path('public/images/logo.png');
         if (is_file($logoPath) && function_exists('imagecreatefrompng')) {
             $logo = @imagecreatefrompng($logoPath);
@@ -149,7 +107,6 @@ class SeoAssetsController extends Controller
             }
         }
 
-        /* word-wrapped title */
         $x = 135;
         $y = 210;
         $fontSize = 46;
@@ -167,7 +124,6 @@ class SeoAssetsController extends Controller
             }
         }
 
-        /* footer strip with domain */
         imagettftext($img, 20, 0, $x, $h - 70, $mint, $font, (string) parse_url((string) config('app.url'), PHP_URL_HOST));
 
         $png = $this->capturePng($img);
@@ -182,7 +138,6 @@ class SeoAssetsController extends Controller
             ->header('Cache-Control', 'public, max-age=604800, immutable');
     }
 
-    /** @return list<string> */
     private function wrap(string $text, string $font, int $size, int $maxWidth): array
     {
         $lines = [];

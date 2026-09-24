@@ -26,7 +26,6 @@ class User extends Model
         return $attributes;
     }
 
-    /** @return string[] */
     public function roleNames(): array
     {
         return array_column(

@@ -1,8 +1,7 @@
 <footer class="lufly-mega-footer">
     <div class="container">
         <div class="footer-grid">
-            <!-- Brand Column -->
-            <div class="footer-col">
+<div class="footer-col">
                 <div class="footer-brand">
                     <img class="footer-brand-logo" src="<?= e(asset('images/logo.png')) ?>" alt="LUFLY">
                     <span class="footer-brand-name">LUFLY</span>
@@ -14,9 +13,7 @@
                     TIDAL MONOLITH SYSTEM · 2026 ARCHITECTURAL SPECIFICATION
                 </div>
             </div>
-
-            <!-- Collections -->
-            <div class="footer-col">
+<div class="footer-col">
                 <h5><?= e(trans('common.footer_sanitary')) ?></h5>
                 <ul>
                     <li><a href="<?= e(route('products.index', ['category' => 'bathroom-ceramics'])) ?>"><?= e(trans('home.category_toilets')) ?></a></li>
@@ -26,9 +23,7 @@
                     <li><a href="<?= e(route('products.index', ['category' => 'kids'])) ?>"><?= e(trans('home.category_kids')) ?></a></li>
                 </ul>
             </div>
-
-            <!-- Brassware & Finishes -->
-            <div class="footer-col">
+<div class="footer-col">
                 <h5><?= e(trans('common.footer_finishes')) ?></h5>
                 <ul>
                     <li><a href="<?= e(route('home')) ?>#finishes"><?= e(trans('home.finish_rose_title')) ?></a></li>
@@ -38,9 +33,7 @@
                     <li><a href="<?= e(route('home')) ?>#finishes"><?= e(trans('home.finish_gunmetal_title')) ?></a></li>
                 </ul>
             </div>
-
-            <!-- Technical & Specifiers -->
-            <div class="footer-col">
+<div class="footer-col">
                 <h5><?= e(trans('common.footer_technical')) ?></h5>
                 <ul>
                     <li><a href="<?= e(route('contact')) ?>"><?= e(trans('nav.download_catalog')) ?></a></li>
@@ -50,9 +43,7 @@
                     <li><a href="<?= e(route('products.index')) ?>"><?= e(trans('home.full_catalog')) ?></a></li>
                 </ul>
             </div>
-
-            <!-- Legal Entity -->
-            <div class="footer-col">
+<div class="footer-col">
                 <h5><?= e(trans('common.footer_factory')) ?></h5>
                 <p class="footer-legal-name">
                     LUFLY İNŞAAT SANAYİ VE TİCARET LİMİTED ŞİRKETİ

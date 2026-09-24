@@ -7,10 +7,6 @@ namespace Database\Schema;
 use Core\Database\Schema\Blueprint;
 use Core\Database\Schema\SchemaDefinition;
 
-/**
- * One row per AI call: which key answered, how many tokens it cost, whether it
- * worked. Feeds the per-visitor daily guard and the admin quota overview.
- */
 class AiUsageSchema extends SchemaDefinition
 {
     protected string $table = 'ai_usage';

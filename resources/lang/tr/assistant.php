@@ -67,12 +67,10 @@ return [
     'soon_text' => 'Oda ölçüsünü girin, plan hazır olsun: ne kurulacak, hangi ölçüde, hangi duvara, ve tesisatçınıza verebileceğiniz bir çizim. Henüz üzerinde çalışıyoruz.',
     'soon_note' => 'Hazır olana kadar ihtiyacınızı yukarıda anlatın ya da fotoğraf gönderin — hemen kataloğumuzla eşleştirelim.',
 
-    /* the same tab once the planner really opens */
     'plan_open_title' => 'Banyo planınızı çizin',
     'plan_open_text' => 'Üç kısa soru ve tesisatçınıza verebileceğiniz bir plan: hangi ürün, hangi ölçüde, nereye.',
     'mail_subject' => 'Yeni ürün arama talebi #:n',
 
-    /* ---- the guided conversation: the chat talks before it lists ---- */
     'chat_hello' => 'Merhaba! Ben LUFLY asistanı.',
     'chat_hello_2' => 'Ne aradığınızı kendi kelimelerinizle, istediğiniz dilde yazın — ya da fotoğraf gönderin; bulurum ya da ekibe teyit ettiririm.',
     'chat_talk' => 'Elbette, konuşalım — ne aradığınızı söyleyin, birlikte daraltalım.',

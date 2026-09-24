@@ -3,7 +3,6 @@
 declare(strict_types=1);
 
 return [
-    /* page */
     'eyebrow' => 'LUFLY · plánovač koupelny',
     'title' => 'Plánovač koupelny',
     'lede' => 'Tři rychlá klepnutí a koupelna je naplánovaná: co se instaluje, v jaké velikosti, kam která část patří a nákres, který vytisknete nebo předáte instalatérovi.',
@@ -15,7 +14,6 @@ return [
     'restart' => 'Začít znovu',
     'step_of' => 'Krok :n ze 3',
 
-    /* the three questions */
     'q_size' => 'Jak je místnost velká?',
     'q_size_hint' => 'Šířka × hloubka v centimetrech. Vyberte nejbližší variantu nebo napište vlastní rozměry.',
     'size_compact' => 'Kompaktní · 160 × 200 cm',
@@ -40,7 +38,6 @@ return [
     'look_minimal-steel' => 'Minimalistický · kartáčovaná ocel',
     'look_hint' => 'Jedno klepnutí nastaví styl i kovový povrch všech armatur.',
 
-    /* waiting */
     'thinking' => 'Sestavujeme váš plán…',
     'wait_1' => 'Omlouváme se za zdržení — dáváme plán dohromady.',
     'wait_2' => 'Vydržte prosím chvilku, doděláváme poslední detaily.',
@@ -50,7 +47,6 @@ return [
     'wait_6' => 'Ještě pár sekund, plán je téměř hotový.',
     'render_wait' => 'Kreslíme obrázek — potrvá to asi půl minuty.',
 
-    /* the plan */
     'plan_ready' => 'Váš plán je hotový',
     'items' => 'Co se instaluje',
     'item_toilet' => 'WC',
@@ -88,7 +84,6 @@ return [
     'scale' => 'Měřítko',
 
 
-    /* the floating chat: the bubble in the corner of every page */
     'chat_open' => 'Naplánovat koupelnu',
     'chat_open_hint' => '3 klepnutí · zdarma',
     'chat_subtitle' => 'Tři krátké otázky, jeden plán',
@@ -100,8 +95,6 @@ return [
     'chat_foot' => 'Zdarma · bez registrace',
     'chat_full' => 'Otevřít celý plánovač',
 
-    /* the picture */
-    /* the free image quota is not there yet: promised, not offered */
     'render_soon_pill' => 'Již brzy',
     'render_soon_hint' => 'Obrázek této koupelny s těmito konkrétními prvky je na cestě. Plán a kresba v měřítku jsou připravené k použití ještě dnes.',
     'render_cta' => 'Ukažte mi hotovou koupelnu',
@@ -112,7 +105,6 @@ return [
     'render_limit' => 'Dnešní limit obrázků je vyčerpán — zkuste to prosím znovu zítra.',
     'render_failed' => 'Obrázek se tentokrát nepodařilo nakreslit. Plán je přesto kompletní a v bezpečí.',
 
-    /* "does it fit?" — answered from the product's own words, never a picture */
     'fit_title' => 'Vešlo by se mi do koupelny?',
     'fit_hint' => 'Jedno klepnutí: porovnáme tento výrobek s plánem výše. Bez fotografií — popis a rozměry stačí.',
     'fit_cta' => 'Porovnat s mým plánem',
@@ -124,7 +116,6 @@ return [
     'fit_mail_line' => 'Zajímal se o: :name',
     'err_fit' => 'Tento výrobek jsme teď nemohli zkontrolovat. Plán je i tak kompletní — pošlete ho našemu týmu a potvrdí vám to.',
 
-    /* handoff */
     'handoff_title' => 'Sežeňte mi tyto díly',
     'handoff_text' => 'Pošlete celý plán týmu LUFLY a my se ozveme s nejbližšími odpovídajícími díly a jejich cenami.',
     'handoff_whatsapp' => 'Poslat na WhatsApp',
@@ -139,13 +130,11 @@ return [
     'email_label' => 'Váš e-mail',
     'email_placeholder' => 'vy@example.com',
 
-    /* errors */
     'err_size' => 'Nejprve prosím vyberte velikost místnosti.',
     'err_custom' => 'Napište prosím šířku a hloubku mezi 100 a 600 cm.',
     'err_email' => 'Zadejte prosím platnou e-mailovou adresu.',
     'err_send' => 'Zprávu se teď nepodařilo odeslat. Použijte WhatsApp nebo to zkuste za chvíli znovu.',
 
-    /* the promise: the planner is not open yet */
     'soon_pill' => 'Již brzy',
     'soon_title' => 'Plánovač koupelny je na cestě',
     'soon_text' => 'Zadáte rozměr místnosti a máte celý plán: co instalovat, v jaké velikosti, na kterou stěnu, a výkres pro instalatéra.',

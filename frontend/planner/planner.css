@@ -1,16 +1,3 @@
-/* ==========================================================================
-   LUFLY — bathroom planner
-   --------------------------------------------------------------------------
-   1. .planner       the page: hero, the two columns (chat + plan)
-   2. .planner-*     the conversation: bubbles, choices, the rotating line
-   3. .planp-*       the plan: facts, item list, catalogue picks, handoff
-   4. .plan-svg      the scaled drawing (its own classes, print-safe)
-   5. @media print   only the plan leaves the printer
-
-   Built from the design-system tokens, so light and dark both work without a
-   second palette.
-   ========================================================================== */
-
 .planner {
   --planner-gap: var(--space-8);
   position: relative;
@@ -27,8 +14,6 @@
   margin: 0 auto;
   padding: 0 var(--space-6);
 }
-
-/* ---------- hero ---------- */
 
 .planner-hero {
   position: relative;
@@ -115,8 +100,6 @@
   border-color: var(--ds-primary-line);
   background: var(--ds-primary-soft);
 }
-
-/* ---------- the two columns ---------- */
 
 .planner-grid {
   display: grid;
@@ -232,8 +215,6 @@
   color: var(--ds-primary);
 }
 
-/* ---------- the choices ---------- */
-
 .planner-choices {
   display: grid;
   gap: var(--space-2);
@@ -323,7 +304,6 @@
   background: linear-gradient(135deg, #e2e6e8, #a9b3b7 50%, #dfe4e6);
 }
 
-/* typing a size of your own */
 .planner-numbers {
   display: grid;
   gap: var(--space-3);
@@ -371,8 +351,6 @@
   font-size: 13px;
 }
 
-/* ---------- the line that rotates while the server works ---------- */
-
 .planner-thinking {
   display: flex;
   align-items: center;
@@ -419,8 +397,6 @@
   40% { opacity: 1; transform: translateY(-3px); }
 }
 
-/* ---------- the board on the right ---------- */
-
 .planner-board {
   min-height: 320px;
   scroll-margin-top: 96px;
@@ -447,8 +423,6 @@
 .planner-board-plan.is-ready {
   animation: planner-in 420ms cubic-bezier(0.16, 1, 0.3, 1) both;
 }
-
-/* ---------- the plan itself ---------- */
 
 .planp {
   display: grid;
@@ -630,8 +604,6 @@
   --fav-size: 30px;
 }
 
-/* the drawing */
-
 .planp-draw-head {
   display: flex;
   align-items: center;
@@ -673,8 +645,6 @@
   color: var(--ds-warning);
 }
 
-/* the picture */
-
 .planp-render-out {
   margin-top: var(--space-4);
   color: var(--ds-text-muted);
@@ -690,8 +660,6 @@
   border-radius: var(--radius-lg);
   border: 1px solid var(--ds-border);
 }
-
-/* handing the plan over */
 
 .planp-handoff-actions {
   display: grid;
@@ -802,8 +770,6 @@
   justify-self: start;
 }
 
-/* ---------- toast ---------- */
-
 .planner-toast {
   position: fixed;
   inset-inline: 0;
@@ -829,8 +795,6 @@
   opacity: 1;
   transform: none;
 }
-
-/* ---------- the drawing (plain SVG, prints on its own) ---------- */
 
 .plan-svg {
   width: 100%;
@@ -901,8 +865,6 @@
   text-anchor: end;
 }
 
-/* ---------- the picture: promised, not offered (free quota) ---------- */
-
 .planp-pill {
   display: inline-block;
   margin-inline-start: 8px;
@@ -921,8 +883,6 @@
 .planp-render.is-soon .planp-note {
   max-width: 60ch;
 }
-
-/* ---------- "does it fit my bathroom?" ---------- */
 
 .planp-fit {
   display: grid;
@@ -967,13 +927,6 @@
   color: var(--ds-text-muted);
 }
 
-/* ==========================================================================
-   the floating chat — the planner in the corner of every page
-   --------------------------------------------------------------------------
-   A bubble opens the same conversation as /planner inside a panel that can be
-   expanded or dragged to any size, remembered per browser.
-   ========================================================================== */
-
 .aichat {
   --aichat-w: 396px;
   --aichat-h: min(620px, calc(100vh - 148px));
@@ -987,10 +940,6 @@
   display: inline-flex;
   align-items: center;
   gap: 12px;
-  /* the words hold the start of the bar and the mark its end: at rest the two
-     are neighbours (the bar is only as wide as they are), and as the bar
-     stretches the auto margin carries the mark out to the right — the label
-     stays where it is, which is what makes the growth read as one movement */
   padding: 8px 10px 8px 20px;
   border: 1px solid var(--ds-border);
   border-radius: var(--radius-full);
@@ -999,17 +948,12 @@
   color: var(--ds-text);
   box-shadow: var(--shadow-2);
   cursor: pointer;
-  /* Keep a real numeric start width: animating from `auto` makes the launcher
-     snap instead of easing. The label remains readable while the bar gently
-     grows toward the chat panel on hover. */
   width: 220px;
   max-width: calc(100vw - 40px);
   transition: width 560ms cubic-bezier(0.16, 1, 0.3, 1), transform 360ms cubic-bezier(0.16, 1, 0.3, 1),
               box-shadow 360ms ease, border-color 280ms ease, opacity 240ms ease;
 }
 
-/* Pointing at it is enough to show what it becomes. Mouse only: a touch screen
-   would keep the stretched state after a tap. */
 @media (hover: hover) {
   .aichat-fab:hover {
     width: var(--aichat-fab-w, var(--aichat-w));
@@ -1021,8 +965,6 @@
   .aichat-fab { width: min(220px, calc(100vw - 40px)); }
 }
 
-/* and it stays that wide for as long as the chat is open — the panel grows out
-   of it, so the bar is the chat's own base */
 .aichat.is-open .aichat-fab {
   width: var(--aichat-fab-w, var(--aichat-w));
   max-width: calc(100vw - 40px);
@@ -1076,8 +1018,6 @@
   color: var(--ds-text-muted);
 }
 
-/* the little "we are here" light rides on the icon, so the bar's own width can
-   change without it drifting */
 .aichat-fab-dot {
   position: absolute;
   inset-block-start: 1px;
@@ -1095,7 +1035,6 @@
   22% { box-shadow: 0 0 0 6px color-mix(in srgb, var(--ds-success) 22%, transparent); }
 }
 
-/* the "mail it to me" sheet lives in the same corner: give it the floor */
 body.has-favmail .aichat-fab {
   opacity: 0;
   pointer-events: none;
@@ -1118,10 +1057,6 @@ body.has-favmail .aichat-fab {
   background: var(--ds-surface);
   box-shadow: var(--shadow-3, var(--shadow-2));
   overflow: hidden;
-  /* It is unrolled out of the launcher: the bar under it is already the panel's
-     own width, and the panel's bottom edge is where the bar is, so revealing it
-     from that edge upward reads as the chat being formed out of the button.
-     Nothing inside is scaled, so no text is ever squashed on the way in. */
   transform-origin: bottom right;
   animation: aichat-in 560ms cubic-bezier(0.16, 1, 0.3, 1) both;
 }
@@ -1144,10 +1079,6 @@ body.has-favmail .aichat-fab {
   }
 }
 
-/* Closing is the same move backwards: the top edge comes down and the panel is
-   rolled back into the bar, which then returns to its own size. The class stays
-   on until the frame is over — frontend/assistant/assistant.js hides the panel
-   on animationend, and keeps a timer as the safety net. */
 .aichat.is-closing .aichat-panel {
   animation: aichat-out 320ms cubic-bezier(0.4, 0, 0.7, 0.3) both;
   pointer-events: none;
@@ -1289,9 +1220,6 @@ body.is-chat-resizing {
   outline-offset: 1px;
 }
 
-/* The way out, said plainly. The visitor should not have to find the launcher
-   again to put the chat away, so closing is a button of its own — visible at
-   rest, not only on hover. */
 .aichat-icon-btn[data-aichat-close] {
   width: 34px;
   height: 34px;
@@ -1350,7 +1278,6 @@ body.is-chat-resizing {
   align-items: start;
 }
 
-/* inside the panel the chat is the panel, not a card of its own */
 .aichat .planner-chat {
   position: static;
   padding: 0;
@@ -1424,7 +1351,6 @@ body.is-chat-resizing {
   text-decoration: underline;
 }
 
-/* the box, in the chat's footer: a link and the number of pieces in it */
 .aichat-foot-link.is-box {
   display: inline-flex;
   align-items: center;
@@ -1445,8 +1371,6 @@ body.is-chat-resizing {
   font-weight: 600;
 }
 
-/* ---------- wider phones hold two columns ---------- */
-
 @media (max-width: 1000px) {
   .planner-grid {
     grid-template-columns: minmax(0, 1fr);
@@ -1461,8 +1385,6 @@ body.is-chat-resizing {
     align-items: start;
   }
 }
-
-/* ---------- phones: the chat takes the screen ---------- */
 
 @media (max-width: 720px) {
   .aichat-fab,
@@ -1536,7 +1458,6 @@ body.is-chat-resizing {
   }
 }
 
-/* a visitor who asked for less motion gets a plain show and hide */
 @media (prefers-reduced-motion: reduce) {
   .aichat-panel,
   .aichat.is-closing .aichat-panel {
@@ -1556,8 +1477,6 @@ body.is-chat-resizing {
     animation: none;
   }
 }
-
-/* ---------- print: the plan, and nothing else ---------- */
 
 @media print {
   .site-header,
@@ -1579,12 +1498,10 @@ body.is-chat-resizing {
     display: none !important;
   }
 
-  /* a closed panel has nothing to print */
   .aichat-panel[hidden] {
     display: none !important;
   }
 
-  /* printing from the floating chat prints the plan, not the panel */
   .aichat,
   .aichat-panel,
   .aichat-body {

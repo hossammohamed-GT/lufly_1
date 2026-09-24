@@ -1,7 +1,5 @@
 <?php
-/** @var Core\View\View $view */
 $view->layout('layouts.admin');
-/** @var array<int, \Modules\Media\Models\Media> $items */
 ?>
 <form method="post" action="<?= e(route('admin.media.store')) ?>" enctype="multipart/form-data" class="stack admin-form">
     <?= csrf_field() ?>

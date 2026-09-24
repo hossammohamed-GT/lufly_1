@@ -81,7 +81,6 @@ class Logger implements LoggerInterface
         $this->log('critical', $message, $context);
     }
 
-    /** @param array<string, mixed> $context */
     private function interpolate(string $message, array $context): string
     {
         $replace = [];
@@ -94,7 +93,6 @@ class Logger implements LoggerInterface
         return strtr($message, $replace);
     }
 
-    /** @param array<string, mixed> $context */
     private function formatContext(array $context): string
     {
         if ($context === []) {
@@ -108,7 +106,6 @@ class Logger implements LoggerInterface
         }
     }
 
-    /** @param array<string|int, mixed> $value */
     private function normalize(array $value, int $depth = 0): array
     {
         if ($depth > 3) {

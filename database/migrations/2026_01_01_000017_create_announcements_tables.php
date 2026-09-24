@@ -8,9 +8,6 @@ use Core\Database\Migration\Migration;
 use Database\Schema\AnnouncementTranslationsSchema;
 use Database\Schema\AnnouncementsSchema;
 
-/**
- * Storefront announcements ("the word") + their per-locale messages.
- */
 class CreateAnnouncementsTables extends Migration
 {
     public function up(): void

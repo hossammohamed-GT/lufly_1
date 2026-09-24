@@ -11,10 +11,6 @@ use Core\Http\Request;
 use Modules\Products\Services\ProductMediaService;
 use Modules\Products\Services\ProductService;
 
-/**
- * Admin endpoints behind the three image sections of the product form
- * (photos / technical drawings / installed shots).
- */
 class ProductMediaController extends Controller
 {
     public function __construct(
@@ -23,7 +19,6 @@ class ProductMediaController extends Controller
     ) {
     }
 
-    /** Upload one or more files into a section. */
     public function store(Request $request, int $id): RedirectResponse
     {
         $this->products->find($id);
@@ -88,11 +83,6 @@ class ProductMediaController extends Controller
         return route('admin.products.edit', ['id' => $id]);
     }
 
-    /**
-     * Flatten one or many uploaded files ($_FILES entries) into a plain list.
-     *
-     * @return array<int, array<string, mixed>>
-     */
     private function uploadedFiles(Request $request): array
     {
         $entry = $request->file('images');
@@ -100,12 +90,10 @@ class ProductMediaController extends Controller
             return [];
         }
 
-        /* single input: ['name' => string, 'tmp_name' => string, ...] */
         if (!is_array($entry['name'])) {
             return $entry['error'] === UPLOAD_ERR_NO_FILE ? [] : [$entry];
         }
 
-        /* multiple input (name="images[]"): every key holds an array */
         $files = [];
         foreach (array_keys($entry['name']) as $index) {
             $file = [

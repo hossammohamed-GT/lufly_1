@@ -10,7 +10,6 @@ class Application extends Container
 {
     public const VERSION = '1.0.0';
 
-    /** @var ServiceProvider[] */
     private array $providers = [];
 
     private bool $booted = false;
@@ -60,7 +59,6 @@ class Application extends Container
     public function registerProviders(): void
     {
         foreach ((array) config('app.providers', []) as $providerClass) {
-            /** @var ServiceProvider $provider */
             $provider = new $providerClass($this);
             $provider->register();
             $this->providers[] = $provider;

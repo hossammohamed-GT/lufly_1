@@ -7,17 +7,6 @@ namespace Core\Console\Commands;
 use Core\Console\Command;
 use Modules\Assistant\Services\CatalogFinder;
 
-/**
- * What the chat does, from the terminal — the local half of the finder, with no
- * model and no network, which is exactly the part that has to work on any host.
- *
- *   php cli assistant:find "a small oval washbasin, chrome, 55 cm"
- *   php cli assistant:find "duş bataryası"        # any language
- *
- * It prints the words it kept, the category it recognised, and the cards the
- * visitor would have seen — so a strange answer on a live database can be
- * traced without opening the site.
- */
 final class AssistantFindCommand extends Command
 {
     protected string $name = 'assistant:find';
@@ -33,8 +22,6 @@ final class AssistantFindCommand extends Command
             return 1;
         }
 
-        /* option() takes strings (and hands back the default when the flag is
-           absent), so every value is read, then replaced when it is empty */
         $locale = trim((string) $this->option($options, 'locale', ''));
         $locale = $locale !== '' ? $locale : (string) config('localization.default', 'en');
         $limit = (int) $this->option($options, 'limit', '0');

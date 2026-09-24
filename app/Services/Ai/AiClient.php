@@ -7,30 +7,10 @@ namespace App\Services\Ai;
 use Core\Logging\Log;
 use Throwable;
 
-/**
- * Google Gemini client with a rotating key pool.
- *
- * One HTTP call does everything: prompt, conversation, image input and image
- * output all travel in `contents` (a text part plus optional inline_data
- * parts), exactly as the Gemini REST API expects.
- *
- * Two details matter and are easy to get wrong:
- *
- *   1. The key travels in the `x-goog-api-key` header, never in `?key=`. The
- *      keys AI Studio issues today start with `AQ.` and are rejected by the
- *      query-parameter route (Google answers 404), while the header works.
- *   2. A key pool is walked, not chosen: a 429 (quota) or a 5xx moves to the
- *      next key, so five free accounts behave like five times the daily limit.
- *
- * Nothing here throws. Every call returns a result object, failures included,
- * so an AI outage can never take a storefront page down with it.
- */
 class AiClient
 {
-    /** @var array<int, string> keys in ring order */
     private array $keys;
 
-    /** @var array<int, string> per-key model override */
     private array $models;
 
     private int $cursor = 0;
@@ -47,8 +27,6 @@ class AiClient
 
     public function enabled(): bool
     {
-        /* FEATURE_AI=false in .env switches every AI feature off, AI_ENABLED is
-           the module-level switch, and a pool without keys is simply off. */
         return feature('ai', true)
             && (bool) config('ai.enabled', true)
             && $this->keys !== [];
@@ -59,7 +37,6 @@ class AiClient
         return count($this->keys);
     }
 
-    /** Masked key list, for diagnostics (`php cli ai:doctor`). */
     public function keyLabels(): array
     {
         return array_map(
@@ -76,15 +53,6 @@ class AiClient
         );
     }
 
-    /* ------------------------------------------------------------------ API */
-
-    /**
-     * Ask a model to generate content.
-     *
-     * @param string|array<int, mixed> $contents  a prompt, or a full `contents` array
-     * @param array<string, mixed> $options       model, system, json, images, temperature, …
-     * @return array{ok: bool, text: string, data: array<string, mixed>, images: array<int, array{mime: string, data: string}>, raw: array<string, mixed>, error: ?string, key: int, model: string}
-     */
     public function generate(string|array $contents, array $options = []): array
     {
         $model = (string) ($options['model'] ?? config('ai.model', 'gemini-2.5-flash'));
@@ -114,14 +82,11 @@ class AiClient
             $elapsed = (int) round((microtime(true) - $started) * 1000);
 
             if ($response['status'] >= 200 && $response['status'] < 300) {
-                $this->cursor = $slot; /* remember the key that answered */
-
-                return $this->success($response['body'], $model, $slot, $elapsed);
+                $this->cursor = $slot; return $this->success($response['body'], $model, $slot, $elapsed);
             }
 
             $lastError = $this->describeError($response);
 
-            /* a dead key is skipped for good; a throttled one only for now */
             if ($response['status'] === 429 || $response['status'] >= 500) {
                 $this->sleep();
                 continue;
@@ -139,19 +104,11 @@ class AiClient
         return $this->failure((string) $lastError, $model);
     }
 
-    /** Convenience: ask for a small JSON object and get it decoded. */
     public function json(string $prompt, array $options = []): array
     {
         return $this->generate($prompt, $options + ['json' => true]);
     }
 
-    /**
-     * Ask for an edited / generated image (Nano Banana).
-     *
-     * @param string|array<int, mixed> $contents
-     * @param array<int, array{mime: string, data: string}> $images
-     * @return array{ok: bool, images: array<int, array{mime: string, data: string}>, text: string, error: ?string, model: string}
-     */
     public function image(string|array $contents, array $images = [], array $options = []): array
     {
         $model = (string) ($options['model'] ?? config('ai.image_model', ''));
@@ -171,16 +128,6 @@ class AiClient
         ];
     }
 
-    /* -------------------------------------------------------------- internals */
-
-    /**
-     * Build the `parts` array: a text part, the inline images, then the system
-     * prompt as a leading text part (Gemini has no separate system field in
-     * v1beta's generateContent, so it is folded into the first text part).
-     *
-     * @param array<int, array{mime: string, data: string}> $images
-     * @return array<int, array<string, mixed>>
-     */
     private function parts(string|array $contents, array $images, string $system): array
     {
         if (is_array($contents)) {
@@ -214,7 +161,6 @@ class AiClient
         return $parts;
     }
 
-    /** @param array<string, mixed> $options */
     private function generationConfig(bool $jsonMode, array $options, string $model): array
     {
         $config = [
@@ -226,7 +172,6 @@ class AiClient
             $config['responseMimeType'] = 'application/json';
         }
 
-        /* image models answer with an image part, never with text alone */
         if (str_contains($model, 'image') || (bool) ($options['with_image'] ?? false)) {
             $config['responseModalities'] = ['TEXT', 'IMAGE'];
         }
@@ -254,12 +199,6 @@ class AiClient
         return (string) config('ai.model', 'gemini-2.5-flash');
     }
 
-    /**
-     * One POST to the model endpoint. Returns status + decoded body.
-     *
-     * @param array<string, mixed> $payload
-     * @return array{status: int, body: array<string, mixed>, raw: string}
-     */
     private function post(string $model, array $payload, string $key): array
     {
         $endpoint = rtrim((string) config('ai.endpoint', 'https://generativelanguage.googleapis.com/v1beta'), '/');
@@ -270,8 +209,6 @@ class AiClient
             return ['status' => 0, 'body' => [], 'raw' => 'payload could not be encoded'];
         }
 
-        /* Not every host has the curl extension enabled (a lot of shared
-           cPanel accounts do not), so the call falls back to a plain stream. */
         if (!function_exists('curl_init')) {
             return $this->postViaStream($url, $json, $key);
         }
@@ -286,7 +223,6 @@ class AiClient
             CURLOPT_RETURNTRANSFER => true,
             CURLOPT_HTTPHEADER => [
                 'Content-Type: application/json',
-                /* the only auth route the new AQ. keys accept */
                 'x-goog-api-key: ' . $key,
             ],
             CURLOPT_POSTFIELDS => $json,
@@ -321,11 +257,6 @@ class AiClient
         ];
     }
 
-    /**
-     * Same POST without the curl extension (allow_url_fopen hosts).
-     *
-     * @return array{status: int, body: array<string, mixed>, raw: string}
-     */
     private function postViaStream(string $url, string $json, string $key): array
     {
         $context = stream_context_create([
@@ -336,8 +267,7 @@ class AiClient
                     . "Accept: application/json\r\n",
                 'content' => $json,
                 'timeout' => max(5, (int) config('ai.timeout', 45)),
-                'ignore_errors' => true, /* keep the body of a 4xx/5xx */
-            ],
+                'ignore_errors' => true, ],
             'ssl' => [
                 'verify_peer' => true,
                 'verify_peer_name' => true,
@@ -361,10 +291,6 @@ class AiClient
         return ['status' => $status, 'body' => is_array($decoded) ? $decoded : [], 'raw' => $raw];
     }
 
-    /**
-     * @param array<string, mixed> $body
-     * @return array{ok: bool, text: string, data: array<string, mixed>, images: array<int, array{mime: string, data: string}>, raw: array<string, mixed>, error: ?string, key: int, model: string}
-     */
     private function success(array $body, string $model, int $slot, int $ms): array
     {
         $candidate = (array) ($body['candidates'][0] ?? []);
@@ -409,7 +335,6 @@ class AiClient
         ];
     }
 
-    /** @return array{ok: bool, text: string, data: array<string, mixed>, images: array<int, array{mime: string, data: string}>, raw: array<string, mixed>, error: ?string, key: int, model: string} */
     private function failure(string $error, string $model): array
     {
         return [
@@ -424,7 +349,6 @@ class AiClient
         ];
     }
 
-    /** @return array<string, mixed> */
     private function decodeJson(string $text): array
     {
         $text = trim($text);
@@ -432,7 +356,6 @@ class AiClient
             return [];
         }
 
-        /* models occasionally wrap JSON in a fenced block */
         if (str_starts_with($text, '```')) {
             $text = preg_replace('/^```[a-zA-Z]*\s*|\s*```$/', '', $text) ?? $text;
         }
@@ -442,7 +365,6 @@ class AiClient
         return is_array($decoded) ? $decoded : [];
     }
 
-    /** @param array{status: int, body: array<string, mixed>, raw: string} $response */
     private function describeError(array $response): string
     {
         $message = (string) ($response['body']['error']['message'] ?? '');
@@ -462,7 +384,6 @@ class AiClient
         }
     }
 
-    /** @param array<string, mixed> $context */
     private function log(string $level, string $message, array $context): void
     {
         if (!(bool) config('ai.log', true)) {

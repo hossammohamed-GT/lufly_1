@@ -4,33 +4,11 @@ declare(strict_types=1);
 
 namespace Modules\Assistant\Services;
 
-/**
- * What the chat says when there is no model to ask.
- *
- * The model is the real brain of this chat, but a shop can never answer a visitor
- * with silence because a key ran out, the quota is spent or the network blinked.
- * The things people actually say to a chat — hello, thanks, "do you speak
- * Arabic?", "where are you?", "how much is it?", "do you deliver?" — are answered
- * here, in the visitor's own language, from a short table.
- *
- * It is also the layer that keeps the chat honest: a question about the weather or
- * the football is not the shop's business, and it says so in one friendly line
- * instead of dragging the visitor towards a shelf of washbasins.
- *
- * Nothing here searches the catalogue and nothing here costs anything.
- */
 final class Talk
 {
-    /** Languages the shop answers in. The storefront ships en/tr/cs; Arabic is for the visitor who writes Arabic. */
     private const LANGUAGES = ['en', 'tr', 'cs', 'ar'];
 
-    /**
-     * Words that put a sentence inside the shop's world. A question that holds
-     * none of them is answered as small talk instead of as a search.
-     */
     private const DOMAIN = [
-        /* the shop's own words. Written as stems on purpose: "koupelnové" and
-           "koupelna" are the same room, and the test is a plain substring one. */
         'bathroom', 'bath', 'kitchen', 'washbasin', 'basin', 'sink', 'toilet', 'wc', 'shower', 'tap',
         'mixer', 'faucet', 'ceramic', 'tile', 'mirror', 'cabinet', 'furniture', 'radiator', 'accessor',
         'price', 'cost', 'quote', 'deliver', 'shipping', 'ship', 'order', 'install', 'fitting',
@@ -48,7 +26,6 @@ final class Talk
         'سنتيمتر', 'خامة', 'مصنع', 'جملة', 'تصدير', 'كونتينر', 'كتالوج', 'مخزون', 'متوفر', 'عينة',
     ];
 
-    /** "Do you speak Arabic?" — the visitor asks about the language itself. */
     private const LANGUAGE_ASK = [
         'arabic', 'arab', 'speak arabic', 'in arabic', 'turkish', 'turkce', 'türkçe', 'czech', 'cesky', 'česky',
         'english', 'speak', 'language', 'dil', 'diliniz', 'jazyk', 'mluvite', 'arabca', 'arapca', 'arapça',
@@ -56,13 +33,6 @@ final class Talk
         'تركي', 'تركى', 'انجليزي', 'إنجليزي', 'تشيكي',
     ];
 
-    /**
-     * The visitor wants your opinion, not a shelf: "is a bath practical?",
-     * "what do you think of central vacuum?", "its pros and cons?".
-     *
-     * This is the question the shop is here for — it is wired to a model so it can
-     * answer about things that are not on the site at all.
-     */
     private const ADVICE = [
         'what do you think', 'your opinion', 'your view', 'do you recommend', 'would you recommend',
         'is it worth', 'worth it', 'worth buying', 'is it practical', 'practical', 'pros and cons',
@@ -92,7 +62,6 @@ final class Talk
         'dekuji', 'děkuji', 'شكرا', 'شكرًا', 'متشكر', 'تسلم', 'ربنا يكرمك', 'جزاك الله',
     ];
 
-    /** "Who are you?" / "what do you sell?" */
     private const WHO = [
         'who are you', 'what are you', 'your name', 'what do you sell', 'what do you make', 'what is this',
         'about you', 'about the shop', 'about lufly', 'kimsiniz', 'nesiniz', 'ne satiyorsunuz', 'ne satıyorsunuz',
@@ -100,32 +69,23 @@ final class Talk
         'بتعمل ايه', 'بتصنعوا ايه', 'عندكم ايه', 'الموقع ده', 'ايه ده',
     ];
 
-    /** "Where are you?" / contact */
     private const WHERE = [
         'where are you', 'where is the factory', 'your address', 'contact', 'phone', 'telephone', 'email',
         'adres', 'nerede', 'iletisim', 'iletişim', 'telefon', 'adresa', 'kontakt', 'kde jste',
         'فين', 'عنوانكم', 'العنوان', 'تليفون', 'رقم', 'تواصل', 'اميل', 'ايميل', 'فين المصنع', 'مقركم',
     ];
 
-    /** Delivery / shipping / ordering */
     private const SHIPPING = [
         'deliver', 'delivery', 'shipping', 'ship', 'send it', 'order', 'when can i get', 'how long',
         'teslimat', 'kargo', 'gonderi', 'gönderi', 'siparis', 'sipariş', 'ne zaman', 'doprava', 'dodani',
         'dodání', 'objednat', 'kdy', 'توصيل', 'شحن', 'هتوصل', 'امتى', 'متى', 'الاوردر', 'أوردر', 'الشحن',
     ];
 
-    /** Price */
     private const PRICE = [
         'price', 'how much', 'cost', 'quote', 'discount', 'fiyat', 'ne kadar', 'kac para', 'kaç para', 'tutar',
         'cena', 'kolik', 'sleva', 'بكام', 'بكم', 'السعر', 'سعر', 'اسعار', 'أسعار', 'كام', 'الخصم', 'تخفيض',
     ];
 
-    /**
-     * One line per language and intent. Short on purpose: a chat that writes a
-     * paragraph is a chat nobody reads.
-     *
-     * @var array<string, array<string, array{say:string, note:string}>>
-     */
     private const LINES = [
         'en' => [
             'language' => ['say' => 'Yes — say it in Arabic and I answer in Arabic (أهلاً بيك 👋). Turkish and Czech too.', 'note' => 'Ask me whatever you like: sizes, installation, materials — or the piece you cannot find.'],
@@ -173,7 +133,6 @@ final class Talk
         ],
     ];
 
-    /** The pieces the chat offers, in the visitor's own words. */
     private const CHIP_LABELS = [
         'ar' => [
             'basin' => 'حوض', 'toilet' => 'قاعدة حمام', 'shower' => 'دش', 'tap' => 'خلاطات',
@@ -181,10 +140,6 @@ final class Talk
         ],
     ];
 
-    /**
-     * Which language the visitor is writing in — from the letters themselves, so
-     * nobody has to switch the shop's language to be understood.
-     */
     public function language(string $question, string $locale): string
     {
         $text = mb_strtolower(trim($question), 'UTF-8');
@@ -201,16 +156,11 @@ final class Talk
             return 'cs';
         }
 
-        /* Nothing in the letters says which language it is — so the answer follows
-           the language the shop is being read in. Asking *about* Arabic ("can you
-           speak Arabic?") is not writing Arabic: the answer stays in the visitor's
-           own language, and says so. */
         $locale = strtolower($locale);
 
         return in_array($locale, self::LANGUAGES, true) ? $locale : 'en';
     }
 
-    /** Is he asking what we think — an opinion, a comparison, the pros and cons? */
     public function asksAdvice(string $question): bool
     {
         $text = $this->flatten($question);
@@ -228,14 +178,6 @@ final class Talk
         return false;
     }
 
-    /**
-     * The shop's own answer to "what do you think of it?" — the model's fallback,
-     * and what a visitor reads when there is no model to ask. Null when the piece
-     * is not one the shop has words about (the model then takes it, or the generic
-     * line does).
-     *
-     * @return array{say:string,note:string,language:string,intent:string}|null
-     */
     public function consult(string $question, string $locale, string $topic = ''): ?array
     {
         $language = $this->language($question, $locale);
@@ -243,8 +185,6 @@ final class Talk
         $note = self::LINES[$language]['talk']['note'] ?? self::LINES['en']['talk']['note'];
 
         if ($say === '') {
-            /* nothing of our own to say about it — the model is the consultant,
-               and this line is what the visitor gets if there is no model either */
             $say = self::CONSULT_GENERIC[$language] ?? self::CONSULT_GENERIC['en'];
 
             return [
@@ -259,13 +199,11 @@ final class Talk
         return ['say' => $say, 'note' => $note, 'language' => $language, 'intent' => 'advice'];
     }
 
-    /** The advice note in the visitor's language (what to do with the answer). */
     public function adviceNote(string $language, string $fallback): string
     {
         return self::LINES[$language]['talk']['note'] ?? $fallback;
     }
 
-    /** Does the visitor's sentence have anything to do with what this shop is? */
     public function inDomain(string $question): bool
     {
         $text = $this->flatten($question);
@@ -279,12 +217,6 @@ final class Talk
         return false;
     }
 
-    /**
-     * A line for the sentence, or null when nothing here fits (the caller then
-     * falls back to the shop's own wording).
-     *
-     * @return array{say:string,note:string,language:string,intent:string}|null
-     */
     public function reply(string $question, string $locale, bool $questionLike = false): ?array
     {
         $language = $this->language($question, $locale);
@@ -309,14 +241,6 @@ final class Talk
         ];
     }
 
-    /**
-     * The visitor's own language consultative line for one of the shop's pieces —
-     * what it is good for, and the one thing worth knowing before deciding. It is
-     * the fallback for the model, and the thing a visitor reads when the shop has
-     * no key left or no network.
-     *
-     * @var array<string, array<string, string>>
-     */
     private const CONSULT = [
         'en' => [
             'basin' => 'A washbasin is the piece you touch every day, so the room decides more than the design: 45–55 cm suits a guest WC or a narrow wall, 60 cm and up is what a family bathroom uses comfortably. The one thing to watch is depth — a deep bowl looks generous and then eats the room in front of it. Tell me the wall you have and I will bring the sizes that fit it.',
@@ -356,7 +280,6 @@ final class Talk
         ],
     ];
 
-    /** The generic consult line, for a piece the shop has no words of its own about. */
     private const CONSULT_GENERIC = [
         'en' => 'Tell me the piece and I will give you my honest read: what it is good for, what to watch out for, and what suits a room like yours. If it is something we do not make, I will say so and point you at what we do.',
         'tr' => 'Parçayı söyleyin, size dürüst kanaatimi vereyim: neye iyi gelir, nelere dikkat edilir ve sizin gibi bir odaya ne uyar. Bizim üretmediğimiz bir şeyse açıkça söyler, neyi ürettiğimize yönlendiririm.',
@@ -364,15 +287,6 @@ final class Talk
         'ar' => 'قوللي القطعة وأنا أقولك رأيي بصراحة: بتنفع في إيه، وإيه اللي تاخد بالك منه، وإيه الأنسب لمكانك. ولو حاجة مش بنعملها هقولك على طول وأوريك اللي بنعمله.',
     ];
 
-    /**
-     * The questions that are about the shop itself — the language it speaks,
-     * where it is, what it makes, what things cost, how they travel. A visitor
-     * who asks one of those gets an answer, even when the same sentence happens
-     * to name a piece ("how much is a washbasin?" is a question about prices,
-     * not a reason to show a shelf).
-     *
-     * @return array{say:string,note:string,language:string,intent:string}|null
-     */
     public function service(string $question, string $locale): ?array
     {
         $reply = $this->reply($question, $locale, false);
@@ -386,14 +300,6 @@ final class Talk
             : null;
     }
 
-    /**
-     * The few pieces the chat offers, written in the visitor's language. Null when
-     * the language is one the shop already speaks (the storefront's own
-     * translations are better there).
-     *
-     * @param array<int, string> $topics
-     * @return array<int, array{id:string,label:string,kind:string}>|null
-     */
     public function chips(string $language, array $topics): ?array
     {
         $labels = self::CHIP_LABELS[$language] ?? null;
@@ -415,7 +321,6 @@ final class Talk
         return $chips === [] ? null : $chips;
     }
 
-    /** The note under a chat answer, in the visitor's language. */
     public function note(string $language, string $fallback): string
     {
         $line = self::LINES[$language]['talk'] ?? null;
@@ -442,7 +347,6 @@ final class Talk
         return $questionLike ? 'talk' : '';
     }
 
-    /** Lower case, Arabic letters folded, extra spaces squeezed. */
     private function flatten(string $text): string
     {
         $text = mb_strtolower(trim($text), 'UTF-8');

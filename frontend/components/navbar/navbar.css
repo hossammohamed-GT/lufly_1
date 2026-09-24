@@ -1,28 +1,4 @@
-/* The one value the app shell needs from this component: how much room the side
-   spine takes, so page content can clear it without touching component classes.
-   --mnav-row1 is global for the same reason: the hero subtracts it so the first
-   screen is always exactly filled (row 1 is a fixed 64px slab). */
 :root { --mnav-rail-w: 0px; --mnav-row1: 64px; }
-
-/* ==========================================================================
-   LUFLY - Component: navbar ("Machined Glass")
-   --------------------------------------------------------------------------
-   One glass slab plus a machined side spine:
-     slab    brand · instant search · utility actions  (a single row, always
-             64px tall, so the bar never grows)
-     spine   a fixed vertical rail on the inline-start edge: the crooked
-             machined line (hover target), the quick links read downwards, a
-             knurled foot and the scroll progress. Approaching the line
-             unfolds the geometric index drawer out of the spine.
-   Below 1024px the spine gives way to a small bloom button that opens a
-   chamfered bottom sheet whose petals unfold and whose links stagger in.
-
-   Rules of the house:
-     * every colour resolves through a token from design-system/style.css
-     * only transform / opacity / clip-path / background are animated
-     * no layout thrash on scroll - the slab keeps a fixed height, the spine is
-       fixed to the viewport and content is offset from it once, on load
-   ========================================================================== */
 
 .mnav {
   --mnav-row1: 64px;
@@ -38,12 +14,9 @@
   -webkit-tap-highlight-color: transparent;
 }
 
-/* ---------- 1. the glass slab ---------- */
-
 .mnav-slab {
   position: relative;
-  z-index: 6; /* above the sheet scrim so the bar stays live while the sheet is open */
-  background: var(--ds-nav-glass);
+  z-index: 6; background: var(--ds-nav-glass);
   backdrop-filter: blur(8px);
   -webkit-backdrop-filter: blur(8px);
   border-bottom: var(--border-hairline) solid var(--ds-nav-hairline);
@@ -55,7 +28,6 @@
 
 .mnav.is-scrolled .mnav-slab { background: var(--ds-nav-glass-dense); }
 
-/* brushed-metal grain, drawn with gradients - zero image bytes */
 .mnav-grain {
   position: absolute;
   inset: 0;
@@ -68,7 +40,6 @@
   );
 }
 
-/* specular band across the slab */
 .mnav-beam {
   position: absolute;
   inset: 0;
@@ -82,7 +53,6 @@
   );
 }
 
-/* elevation appears on scroll without ever changing header height */
 .mnav-slab::after {
   content: "";
   position: absolute;
@@ -96,8 +66,6 @@
 }
 
 .mnav.is-scrolled .mnav-slab::after { opacity: 1; }
-
-/* ---------- 2. row 1 - brand · search · actions ---------- */
 
 .mnav-top {
   position: relative;
@@ -128,8 +96,6 @@
 [dir="rtl"] .mnav-brand-img { transform-origin: right center; }
 
 .mnav.is-scrolled .mnav-brand-img { transform: scale(0.9); }
-
-/* ---------- 3. instant search ---------- */
 
 .mnav-search {
   position: relative;
@@ -189,7 +155,6 @@
 
 .mnav-input::placeholder { color: var(--ds-text-muted); }
 
-/* Safari keeps a native clear affordance on search inputs - drop it */
 .mnav-input::-webkit-search-decoration,
 .mnav-input::-webkit-search-cancel-button { -webkit-appearance: none; }
 
@@ -249,7 +214,6 @@
   transition-delay: 0s;
 }
 
-/* Informative prompt / status banner */
 .search-status-banner {
   display: flex;
   align-items: center;
@@ -276,14 +240,12 @@
   line-height: var(--leading-normal);
 }
 
-/* Results grid layout */
 .search-results-grid {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
   gap: var(--space-3);
 }
 
-/* Product Card in Search */
 .search-result-card {
   display: flex;
   align-items: center;
@@ -365,8 +327,6 @@
   opacity: .5;
 }
 
-/* ---------- 4. row 1 - utility actions ---------- */
-
 .mnav-actions {
   display: flex;
   align-items: center;
@@ -403,8 +363,6 @@
 
 .mnav-search-open { display: none; }
 
-/* ---------- saved products ("favorites") and the quotation box ---------- */
-
 .mnav-fav,
 .mnav-box { position: relative; }
 
@@ -436,7 +394,6 @@
   transition: transform var(--ds-nav-base) var(--ds-nav-ease);
 }
 
-/* an empty badge keeps its place in the layout but is invisible */
 .mnav-fav-badge:empty { display: none; }
 
 .mnav-fav-badge.is-bump { animation: mnavFavBump 460ms cubic-bezier(0.16, 1, 0.3, 1); }
@@ -454,7 +411,6 @@
   .mnav-fav-badge.is-bump { animation: none; }
 }
 
-/* theme morph - sun and moon rotate through each other */
 .mnav-theme-icons {
   position: relative;
   display: block;
@@ -476,7 +432,6 @@
 [data-theme="dark"] .mnav-sun { opacity: 1; transform: none; }
 [data-theme="dark"] .mnav-moon { opacity: 0; transform: rotate(70deg) scale(0.55); }
 
-/* language selector - machined reticle */
 .mnav-lang { position: relative; }
 
 .mnav-lang-btn {
@@ -529,8 +484,7 @@
   backdrop-filter: blur(8px);
   -webkit-backdrop-filter: blur(8px);
   box-shadow: var(--ds-nav-shadow);
-/* removed clip-path */
-  opacity: 0;
+opacity: 0;
   visibility: hidden;
   transform: translate3d(0, -6px, 0);
   transition:
@@ -594,8 +548,6 @@
 
 .mnav-lang-check { color: var(--ds-primary); font-size: var(--text-sm); }
 
-/* ---------- 5. the bloom trigger (mobile) ---------- */
-
 .mnav-bloom { display: none; overflow: visible; }
 
 .mnav-bloom-bars {
@@ -624,7 +576,6 @@
 .mnav.is-sheet-open .mnav-bloom-bars i:nth-child(2) { opacity: 0; transform: scaleX(0.3); }
 .mnav.is-sheet-open .mnav-bloom-bars i:nth-child(3) { transform: translateY(-6px) rotate(-45deg); }
 
-/* hexagonal ring that unfolds around the trigger */
 .mnav-bloom-ring {
   position: absolute;
   inset: 4px;
@@ -642,10 +593,6 @@
   opacity: 1;
   transform: scale(1.35) rotate(0deg);
 }
-
-/* ---------- 6. the side spine (desktop) ----------
-   Row two does not stack under row one: it becomes a vertical machined spine
-   fixed to the inline-start edge, so the bar stays one row tall. */
 
 .mnav-rail {
   position: fixed;
@@ -671,7 +618,6 @@
 
 .mnav.is-scrolled .mnav-rail { background: var(--ds-nav-glass-dense); }
 
-/* brushed grain runs along the spine */
 .mnav-rail::before {
   content: "";
   position: absolute;
@@ -701,7 +647,6 @@
 
 .mnav-rail-inner::-webkit-scrollbar { display: none; }
 
-/* crooked machined line - hover target that unfolds the index drawer */
 .mnav-mark {
   position: relative;
   display: flex;
@@ -741,7 +686,6 @@
 .mnav-mark:hover .mnav-mark-label,
 .mnav.is-drawer-open .mnav-mark-label { color: var(--ds-primary); }
 
-/* only part of the line is visible - the rest is clipped and faded out */
 .mnav-mark-draw {
   display: block;
   inline-size: var(--mnav-mark-thick);
@@ -820,7 +764,6 @@
 .mnav-mark:hover .mnav-mark-ticks i,
 .mnav.is-drawer-open .mnav-mark-ticks i { background: var(--ds-nav-line); }
 
-/* quick links read down the spine */
 .mnav-quick {
   display: flex;
   flex-direction: column;
@@ -939,7 +882,6 @@
 .mnav-quick-link:hover::after,
 .mnav-quick-link.is-active::after { opacity: 1; }
 
-/* knurled meta strip at the foot of the spine */
 .mnav-rail-meta {
   display: flex;
   flex-direction: column;
@@ -1005,7 +947,6 @@
   color: var(--ds-primary);
 }
 
-/* scroll progress - a single composited transform, read down the spine */
 .mnav-progress {
   position: absolute;
   inset-block: 0;
@@ -1027,8 +968,6 @@
   transform-origin: top center;
   will-change: transform;
 }
-
-/* ---------- 7. the geometric index drawer ---------- */
 
 .mnav-drawer {
   position: absolute;
@@ -1100,7 +1039,6 @@
   transition-delay: 0s;
 }
 
-/* knurled edge, as if the panel came off a mill */
 .mnav-drawer-knurl {
   position: absolute;
   inset-block: 0;
@@ -1198,7 +1136,6 @@
 .mnav-index-item:nth-child(8) { transition-delay: 205ms; }
 .mnav-index-item:nth-child(9) { transition-delay: 230ms; }
 
-/* machined cursor that marks the hovered line */
 .mnav-index-item::before {
   content: "";
   position: absolute;
@@ -1272,8 +1209,6 @@
   letter-spacing: var(--tracking-wide);
   text-transform: uppercase;
 }
-/* ---------- 8. mobile bloom sheet ---------- */
-
 .mnav-scrim {
   position: fixed;
   inset: 0;
@@ -1330,7 +1265,6 @@
   transition-delay: 0s;
 }
 
-/* petals that unfold from behind the top edge */
 .mnav-sheet-bloom {
   position: absolute;
   inset-inline-start: 50%;
@@ -1499,8 +1433,6 @@
   cursor: default;
 }
 
-/* ---------- 9. focus + fallbacks ---------- */
-
 .mnav :focus-visible {
   outline: var(--border-standard) solid var(--ds-primary);
   outline-offset: 2px;
@@ -1516,9 +1448,6 @@
   .mnav-sheet { background: var(--ds-surface); }
 }
 
-/* ---------- 10. responsive ---------- */
-
-/* the spine needs room to breathe on narrow desktops */
 @media (max-width: 1279px) {
   .mnav-knurl { display: none; }
   .mnav-kbd { display: none; }
@@ -1531,8 +1460,6 @@
   .mnav-catalog { padding: var(--space-2); }
 }
 
-/* Shorter viewports give way in this order: the catalogue caption, then the
-   line, then the ticks. The spine also scrolls as a last resort. */
 @media (max-height: 900px) {
   .mnav { --mnav-mark-len: 124px; }
   .mnav-catalog-text { display: none; }
@@ -1552,7 +1479,6 @@
   .mnav-btn-menu { display: none; }
   .mnav-dropdown-bar { display: none !important; }
   .mnav { --mnav-row1: 58px; }
-  /* the hero subtracts this on :root, so it has to follow the real slab */
   :root { --mnav-row1: 58px; }
 
   .mnav-grain { opacity: 0.35; }
@@ -1569,7 +1495,6 @@
 
   .mnav-top { grid-template-columns: auto 1fr auto; }
 
-  /* Search on tablets & phones: precisely 80% viewport width, perfectly centered */
   .mnav-search {
     position: absolute;
     top: 50%;
@@ -1639,7 +1564,6 @@
 
   .mnav-actions { gap: 2px; }
 
-  /* language + theme move into the sheet utilities on phones */
   .mnav-lang,
   .mnav-theme,
   .mnav-account { display: none; }
@@ -1656,7 +1580,6 @@
 }
 
 @media (min-width: 1024px) {
-  /* Keep the fixed spine at the viewport edge; only page content clears it. */
   .has-nav-rail > .ds-main,
   .has-nav-rail > .lufly-mega-footer {
     padding-inline-start: 0;
@@ -1673,7 +1596,6 @@
 }
 
 
-/* Topbar Architectural Menu Button */
 .mnav-btn-menu {
   display: inline-flex;
   align-items: center;
@@ -1739,8 +1661,6 @@
 }
 
 
-/* ---------- 6. Floating Glass Quick-Dock ---------- */
-
 .mnav-dock {
   position: fixed;
   bottom: var(--space-6);
@@ -1754,7 +1674,6 @@
   transition: opacity .35s var(--ds-nav-ease), transform .35s var(--ds-nav-ease), visibility 0s linear .35s;
 }
 
-/* Dock appears elegantly when scrolled, or stays gently hovered */
 .mnav.is-scrolled ~ * .mnav-dock,
 .mnav.is-scrolled .mnav-dock,
 .mnav-dock.is-visible {
@@ -1846,7 +1765,6 @@
   .mnav-dock { display: none; }
 }
 
-/* Scrim for Drawer */
 .mnav-drawer-scrim {
   position: fixed;
   inset: 0;
@@ -1863,14 +1781,11 @@
   transition-delay: 0s;
 }
 
-/* Update Drawer to slide in from inline-start edge */
 .mnav-drawer {
   position: fixed !important;
   top: 0;
   bottom: 0;
   inset-inline-start: 0;
-  /* dvh: on phones 100vh includes the browser toolbar, which pushed the last
-     drawer entries below the visible area */
   height: 100vh;
   height: 100dvh;
   z-index: 101;
@@ -1910,8 +1825,6 @@
 .mnav-dock-catalog { color: var(--ds-primary); }
 
 
-/* ---------- Horizontal Full-Width Index Bar (Fast & Text-Only) ---------- */
-
 .mnav-dropdown-bar {
   position: absolute;
   top: 100%;
@@ -1936,7 +1849,6 @@
   transition-delay: 0s;
 }
 
-/* Floating Architectural Capsule look - distinctive from the navbar */
 .mnav-dropdown-inner {
   display: flex;
   align-items: center;

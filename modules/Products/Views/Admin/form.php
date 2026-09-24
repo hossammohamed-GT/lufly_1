@@ -1,14 +1,9 @@
 <?php
-/** @var Core\View\View $view */
 $view->layout('layouts.admin');
-/** @var \Modules\Products\Models\Product|null $product */
-/** @var array<string, array<string, mixed>> $translations */
-/** @var array<string, array<int, array<string, mixed>>> $mediaSections */
 $action = $product === null ? route('admin.products.store') : route('admin.products.update', ['id' => $product->id]);
 $locales = $translator->locales();
 $fallbackLocale = (string) config('localization.fallback', 'en');
 
-/* default variant price (the simple price field edits the first variant) */
 $price = '';
 if ($product !== null) {
     $variants = $product->variants();
@@ -28,9 +23,6 @@ $collectionId = (string) ($product->collection_id ?? '');
 $brandId = (string) ($product->brand_id ?? '');
 $isFeatured = $product === null ? 0 : (int) $product->is_featured;
 
-/* ------------------------------------------------------------------ images
-   Three independent sections, exactly as the product page shows them:
-   photos (main gallery), technical drawings, installed shots. */
 $mediaSections = $mediaSections ?? [];
 $imageSections = [
     'photos' => [

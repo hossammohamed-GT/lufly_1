@@ -7,9 +7,6 @@ namespace Database\Schema;
 use Core\Database\Schema\Blueprint;
 use Core\Database\Schema\SchemaDefinition;
 
-/**
- * Translated name/description per collection and locale.
- */
 class CollectionTranslationsSchema extends SchemaDefinition
 {
     protected string $table = 'collection_translations';

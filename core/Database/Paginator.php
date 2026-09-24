@@ -6,7 +6,6 @@ namespace Core\Database;
 
 class Paginator
 {
-    /** @param array<int, mixed> $items */
     public function __construct(
         private readonly array $items,
         private readonly int $total,
@@ -15,7 +14,6 @@ class Paginator
     ) {
     }
 
-    /** @return array<int, mixed> */
     public function items(): array
     {
         return $this->items;

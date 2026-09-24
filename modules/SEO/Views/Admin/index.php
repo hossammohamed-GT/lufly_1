@@ -1,7 +1,5 @@
 <?php
-/** @var Core\View\View $view */
 $view->layout('layouts.admin');
-/** @var array<string, mixed> $seo */
 $keywords = is_array($seo['keywords'] ?? null) ? implode(', ', $seo['keywords']) : (string) ($seo['keywords'] ?? '');
 ?>
 <form method="post" action="<?= e(route('admin.seo.update')) ?>" class="stack admin-form">

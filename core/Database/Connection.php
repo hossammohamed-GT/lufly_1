@@ -16,7 +16,6 @@ class Connection
     private ?PDO $pdo = null;
     private int $queryCount = 0;
 
-    /** @param array<string, mixed> $config */
     public function __construct(private readonly array $config)
     {
     }
@@ -89,7 +88,6 @@ class Connection
         $this->queryCount = 0;
     }
 
-    /** @param array<int|string, mixed> $bindings */
     public function query(string $sql, array $bindings = []): PDOStatement
     {
         $this->queryCount++;
@@ -104,20 +102,17 @@ class Connection
         }
     }
 
-    /** @param array<int|string, mixed> $bindings */
     public function select(string $sql, array $bindings = []): array
     {
         return $this->query($sql, $bindings)->fetchAll();
     }
 
-    /** @param array<int|string, mixed> $bindings */
     public function selectOne(string $sql, array $bindings = []): ?array
     {
         $row = $this->query($sql, $bindings)->fetch();
         return $row === false ? null : $row;
     }
 
-    /** @param array<int|string, mixed> $bindings */
     public function affect(string $sql, array $bindings = []): int
     {
         return $this->query($sql, $bindings)->rowCount();
@@ -135,7 +130,6 @@ class Connection
         }
     }
 
-    /** @param array<string, mixed> $values */
     public function insert(string $table, array $values): int|string
     {
         $columns = array_keys($values);
@@ -156,7 +150,6 @@ class Connection
         return $this->pdo()->lastInsertId();
     }
 
-    /** @template T @param callable(): T $callback @return T */
     public function transaction(callable $callback): mixed
     {
         $this->pdo()->beginTransaction();
@@ -183,7 +176,6 @@ class Connection
         return new QueryBuilder($this, $table);
     }
 
-    /** @param array<int|string, mixed> $bindings */
     private function log(string $sql, array $bindings): void
     {
         if (config('database.log', true)) {

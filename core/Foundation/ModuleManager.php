@@ -6,12 +6,8 @@ namespace Core\Foundation;
 
 use Core\Foundation\Application;
 
-/**
- * Discovers modules/ entries and loads their Routes/routes.php files.
- */
 final class ModuleManager
 {
-    /** @var string[] */
     private array $enabled = [];
 
     public function __construct(private readonly Application $app)
@@ -19,7 +15,6 @@ final class ModuleManager
         $this->enabled = (array) config('modules.enabled', []);
     }
 
-    /** @return string[] */
     public function enabled(): array
     {
         return $this->enabled;

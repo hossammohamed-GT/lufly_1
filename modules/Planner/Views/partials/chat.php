@@ -1,18 +1,4 @@
 <?php
-/**
- * The conversation itself: the greeting, the question on screen and the line
- * that rotates while the assistant works.
- *
- * Shared by the planner page and the floating chat, so both speak with the
- * same voice and carry the same markup (frontend/planner/planner.js wires
- * whichever one the page shows).
- *
- * @var Core\View\View $view
- * @var array<string, mixed> $answers
- * @var string $locale
- * @var string $step        the question to open with
- * @var int $progress
- */
 $step = (string) ($step ?? 'size');
 $progress = (int) ($progress ?? 1);
 ?>
@@ -31,7 +17,7 @@ $progress = (int) ($progress ?? 1);
     </div>
 
     <div class="planner-questions" data-planner-questions>
-        <?php /* renderFile: $view->render() would drop the layout */ ?>
+        <?php ?>
         <?= $view->renderFile($view->resolvePath('planner::partials.question'), [
             'step' => $step,
             'answers' => $answers,
@@ -40,8 +26,6 @@ $progress = (int) ($progress ?? 1);
         ]) ?>
     </div>
 </div>
-
-<!-- one sentence at a time, never the same one twice -->
 <div class="planner-thinking" data-planner-thinking hidden>
     <span class="planner-dots" aria-hidden="true"><i></i><i></i><i></i></span>
     <span class="planner-thinking-text" data-planner-thinking-text></span>

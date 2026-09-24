@@ -1,11 +1,4 @@
 <?php
-/**
- * Global SEO & Social Meta Component
- * @var \App\Services\SEOService|null $seo
- * @var string|null $title
- * @var int|null $status          present on error pages (4xx/5xx)
- */
-
 $defaults = (array) config('seo.defaults', []);
 $meta = $seo !== null ? $seo->toArray() : $defaults;
 
@@ -19,14 +12,11 @@ $currentUrl = (string) request()->url();
 $canonical = $meta['canonical'] ?? $currentUrl;
 $ogType = $meta['type'] ?? 'website';
 $siteName = $meta['site_name'] ?? 'LUFLY Architectural Sanitary Ware';
-/* asset() must never wrap an already-absolute URL (double-origin bug) */
 $rawImage = (string) ($meta['image'] ?? '');
 $image = $rawImage !== ''
     ? (preg_match('#^https?://#i', $rawImage) ? $rawImage : asset($rawImage))
     : asset('/images/lifestyle/heroc-1.webp');
 
-/* Error pages must never enter the index: noindex them even though the
-   layout chrome still renders. */
 $robots = $meta['robots'] ?? 'index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1';
 if (isset($status) && (int) $status >= 400) {
     $robots = 'noindex, nofollow';
@@ -39,9 +29,6 @@ $supportedLocales = $translator instanceof \Core\Localization\Translator ? $tran
 $localeMap = ['en' => 'en_US', 'tr' => 'tr_TR', 'cs' => 'cs_CZ'];
 $ogLocale = $localeMap[$currentLocale] ?? 'en_US';
 
-/* hreflang: prefer the routing-accurate alternates the controller
-   registered through SEOService (translated slugs per locale). The
-   prefix-swap fallback stays for pages that never register them. */
 $alternates = $seo !== null ? $seo->alternates() : [];
 $xDefault = null;
 if ($alternates !== []) {
@@ -67,7 +54,6 @@ if ($translator instanceof \Core\Localization\Translator) {
     }
 }
 
-/* one shared @id base so every schema block cross-links */
 $orgId = url('/#organization');
 $siteId = url('/#website');
 ?>
@@ -87,16 +73,12 @@ $siteId = url('/#website');
 <?php if (!empty($verification['bing'])): ?>
 <meta name="msvalidate.01" content="<?= e($verification['bing']) ?>">
 <?php endif; ?>
-
-<!-- Multilingual SEO / Hreflang Tags -->
 <?php foreach ($alternates as $code => $altUrl): ?>
 <link rel="alternate" hreflang="<?= e((string) $code) ?>" href="<?= e($altUrl) ?>">
 <?php endforeach; ?>
 <?php if ($xDefault !== null): ?>
 <link rel="alternate" hreflang="x-default" href="<?= e($xDefault) ?>">
 <?php endif; ?>
-
-<!-- Open Graph / Facebook -->
 <meta property="og:type" content="<?= e($ogType) ?>">
 <meta property="og:site_name" content="<?= e($siteName) ?>">
 <meta property="og:title" content="<?= e($pageTitle) ?>">
@@ -113,8 +95,6 @@ $siteId = url('/#website');
 <meta property="og:locale:alternate" content="<?= e($loc) ?>">
 <?php endif; ?>
 <?php endforeach; ?>
-
-<!-- Twitter Cards -->
 <meta name="twitter:card" content="summary_large_image">
 <?php if ($twitterHandle !== ''): ?>
 <meta name="twitter:site" content="<?= e($twitterHandle) ?>">
@@ -123,8 +103,6 @@ $siteId = url('/#website');
 <meta name="twitter:description" content="<?= e($description) ?>">
 <meta name="twitter:image" content="<?= e($image) ?>">
 <meta name="twitter:image:alt" content="<?= e($pageTitle) ?>">
-
-<!-- Global Organization, LocalBusiness & WebSite JSON-LD Schema -->
 <?php
 $graph = [
     [

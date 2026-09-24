@@ -19,7 +19,6 @@ class FavoriteRepository extends Repository
             return null;
         }
 
-        /** @var Favorite|null $favorite */
         $favorite = Favorite::query()->where('token', $token)->first();
 
         return $favorite;
@@ -35,7 +34,6 @@ class FavoriteRepository extends Repository
         return $favorite instanceof Favorite ? $favorite : null;
     }
 
-    /** Products of a list, newest first. @return int[] */
     public function productIds(Favorite $favorite): array
     {
         return array_map(
@@ -92,7 +90,6 @@ class FavoriteRepository extends Repository
             ->delete();
     }
 
-    /** @return array<int, array{favorite_id: int, product_id: int, created_at: string}> */
     public function itemRows(Favorite $favorite): array
     {
         return FavoriteItem::query()->connection()->select(
@@ -102,7 +99,6 @@ class FavoriteRepository extends Repository
         );
     }
 
-    /** Admin overview (newest lists first). */
     public function paginate(array $filters = [], int $page = 1, int $perPage = 20): Paginator
     {
         $builder = Favorite::query();

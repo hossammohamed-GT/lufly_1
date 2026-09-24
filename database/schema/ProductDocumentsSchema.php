@@ -7,10 +7,6 @@ namespace Database\Schema;
 use Core\Database\Schema\Blueprint;
 use Core\Database\Schema\SchemaDefinition;
 
-/**
- * Documents attached to products.
- * Types: catalog | technical_sheet | installation_guide | warranty | certificate
- */
 class ProductDocumentsSchema extends SchemaDefinition
 {
     protected string $table = 'product_documents';

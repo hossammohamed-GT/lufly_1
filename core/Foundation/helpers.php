@@ -17,7 +17,6 @@ use Core\View\View;
 if (!function_exists('app')) {
     function app(?string $abstract = null): mixed
     {
-        /** @var Application|null $instance */
         $instance = $GLOBALS['__app'] ?? null;
 
         if ($abstract === null) {
@@ -31,9 +30,6 @@ if (!function_exists('app')) {
 if (!function_exists('env')) {
     function env(string $key, mixed $default = null): mixed
     {
-        /* A key that is present keeps its value even when that value is falsy —
-           FEATURE_X=false in .env must return false and not fall back to the
-           default, which is what the old `false === unset` check did. */
         if (array_key_exists($key, $_ENV)) {
             $value = $_ENV[$key];
         } else {
@@ -108,16 +104,6 @@ if (!function_exists('url')) {
 }
 
 if (!function_exists('asset')) {
-    /**
-     * A URL for a file the web server hands out itself (stylesheets, scripts,
-     * images).
-     *
-     * The URL carries the file's own timestamp, so a browser never runs
-     * yesterday's script against today's page: change the file and every page
-     * that points at it fetches the new one, no cache to explain away. Files
-     * that live outside the application folder (a CDN, a remote image) are left
-     * exactly as they are.
-     */
     function asset(string $path): string
     {
         $url = app(Router::class)->baseUrl(ltrim($path, '/'));

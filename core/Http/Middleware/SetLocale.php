@@ -26,7 +26,7 @@ final class SetLocale implements MiddlewareInterface
 
         $requested = $request->query('locale') ?? $request->query('lang');
         if ($hasLocalizedRoute) {
-            // An explicit /en/, /tr/ or /cs/ URL must override the session locale.
+
             $locale = (string) $request->locale();
         } elseif (is_string($requested) && $this->translator->isSupported($requested)) {
             $locale = $requested;

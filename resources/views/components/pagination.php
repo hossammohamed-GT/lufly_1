@@ -1,12 +1,4 @@
 <?php
-/**
- * Reusable pagination component.
- *
- * Props:
- * - paginator: Core\Database\Paginator
- * - route: (optional) route name
- * - params: (optional) route params
- */
 $paginator = $props['paginator'] ?? null;
 if (!$paginator instanceof \Core\Database\Paginator || $paginator->lastPage() <= 1) {
     return;

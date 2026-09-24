@@ -1,7 +1,5 @@
 <?php
-/** @var Core\View\View $view */
 $view->layout('layouts.admin');
-/** @var Core\Database\Paginator $paginator */
 ?>
 <div class="admin-toolbar">
     <span></span>

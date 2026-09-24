@@ -9,14 +9,6 @@ use Core\Localization\Translator;
 use Modules\Box\Models\Box;
 use Modules\Box\Repositories\BoxRepository;
 
-/**
- * The visitor's quotation box.
- *
- * The box is found through a cookie holding its token; nothing is written to the
- * database until the first piece goes in. The same token is printed in the
- * message the shop receives, so the team — and the visitor, later, on another
- * device — open exactly the same list.
- */
 class BoxService
 {
     private ?Box $box = null;
@@ -29,7 +21,6 @@ class BoxService
     ) {
     }
 
-    /** Where one visitor's box token is remembered besides his cookie. */
     private const SESSION_KEY = 'lufly_box_token';
 
     public function enabled(): bool
@@ -42,12 +33,9 @@ class BoxService
         return (string) config('box.cookie', 'lufly_box');
     }
 
-    /** The visitor's box, or null. Creates one when $create is true. */
     public function current(bool $create = false): ?Box
     {
         if ($this->resolved) {
-            /* an earlier call in this same request asked only to look — and there
-               was nothing. A caller that needs a box now still gets one. */
             return $this->box === null && $create ? $this->create() : $this->box;
         }
 
@@ -55,11 +43,6 @@ class BoxService
 
         $token = (string) request()->cookie($this->cookieName(), '');
 
-        /* One visitor, one box. Three things can carry it, and any one of them is
-           enough: the cookie, the token a page handed to the browser, and — for a
-           browser that drops cookies but keeps the session — the token the
-           session remembers. Only when none of them has a box does a new one
-           begin. */
         foreach ([$token, (string) session(self::SESSION_KEY, '')] as $remembered) {
             if ($remembered === '') {
                 continue;
@@ -75,15 +58,11 @@ class BoxService
         return $create ? $this->create() : null;
     }
 
-    /** Adopt a box opened from a shared link. */
     public function adopt(Box $box): Box
     {
         $this->resolved = true;
         $this->box = $box;
 
-        /* opening the link from the team's mail makes this browser the visitor's
-           browser: the box is remembered here too, so the next piece he saves
-           joins this list and not a fresh one */
         session()->set(self::SESSION_KEY, (string) $box->token);
 
         if ($box->claimed_at === null) {
@@ -93,7 +72,6 @@ class BoxService
         return $box;
     }
 
-    /** Remember a box the browser handed back by token. */
     public function remember(string $token): ?Box
     {
         $box = $this->boxes->findByToken($token);
@@ -114,7 +92,6 @@ class BoxService
         return $this->boxes->findByToken($token);
     }
 
-    /** The token of the visitor's box, or '' when there is none yet. */
     public function token(): string
     {
         $box = $this->current();
@@ -129,7 +106,6 @@ class BoxService
         return $box === null ? 0 : $this->boxes->countItems($box);
     }
 
-    /** @return int[] the pieces in the box (newest first) */
     public function productIds(): array
     {
         $box = $this->current();
@@ -144,11 +120,6 @@ class BoxService
         return $box !== null && $this->boxes->has($box, $productId);
     }
 
-    /**
-     * Put one piece in the box, or take it out again.
-     *
-     * @return array{added: bool, count: int, limit_reached: bool}
-     */
     public function toggle(int $productId): array
     {
         if (!$this->enabled()) {
@@ -200,7 +171,6 @@ class BoxService
         }
     }
 
-    /** @return array<int, array<string, mixed>> */
     public function items(string $locale): array
     {
         $box = $this->current();
@@ -208,13 +178,11 @@ class BoxService
         return $box === null ? [] : $this->boxes->items($box, $locale);
     }
 
-    /** The permanent link that opens this exact box anywhere (also the one the shop gets). */
     public function shareUrl(Box $box): string
     {
         return route('box.claim', ['token' => (string) $box->token]);
     }
 
-    /** Stamp the visitor's cookie on a response so the box follows the browser. */
     public function attachCookie(Response $response, ?Box $box = null): Response
     {
         $box ??= $this->current();
@@ -247,13 +215,6 @@ class BoxService
         );
     }
 
-    /**
-     * A Secure cookie is only sent over https — and a browser on plain http
-     * silently throws it away, which is what makes a visitor's list (or his box)
-     * start from nothing on every click. So the flag follows the request, not
-     * APP_ENV: a shop on localhost over http keeps its cookie, and a shop behind
-     * a proxy gets it from X-Forwarded-Proto.
-     */
     private function isSecure(): bool
     {
         $server = (array) ($_SERVER ?? []);
@@ -275,7 +236,6 @@ class BoxService
         return $this->box = $box;
     }
 
-    /** IP addresses are never stored in the clear. */
     private function ipHash(): string
     {
         $ip = request()->ip();

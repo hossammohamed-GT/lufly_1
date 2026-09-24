@@ -6,19 +6,10 @@ namespace App\Services\Ai;
 
 use Throwable;
 
-/**
- * Guard rails for the public AI endpoints.
- *
- * Five free accounts are a real quota, but a public form can burn it in a
- * minute, so every call is counted per visitor (hashed IP) and per day — the
- * same shape as the saved-list e-mail throttle. Counters live in `ai_usage`,
- * which also feeds the admin overview of how much quota went where.
- */
 class AiGuard
 {
     private ?string $ipHash = null;
 
-    /** @param array<string, mixed> $meta */
     public function record(string $scope, array $meta = []): void
     {
         try {
@@ -35,11 +26,9 @@ class AiGuard
                 'error' => mb_substr((string) ($meta['error'] ?? ''), 0, 250),
             ]);
         } catch (Throwable) {
-            /* counting must never block a feature */
-        }
+            }
     }
 
-    /** How many requests this visitor already spent today. */
     public function usedToday(string $scope): int
     {
         try {
@@ -53,7 +42,6 @@ class AiGuard
         }
     }
 
-    /** True while the visitor may still ask. */
     public function allows(string $scope, ?int $limit = null): bool
     {
         $limit ??= (int) config('ai.daily_limit_per_ip', 15);
@@ -61,7 +49,6 @@ class AiGuard
         return $limit <= 0 || $this->usedToday($scope) < $limit;
     }
 
-    /** Remaining requests for this visitor today (-1 = unlimited). */
     public function remaining(string $scope, ?int $limit = null): int
     {
         $limit ??= (int) config('ai.daily_limit_per_ip', 15);
@@ -69,7 +56,6 @@ class AiGuard
         return $limit <= 0 ? -1 : max(0, $limit - $this->usedToday($scope));
     }
 
-    /** @return array<string, int> tokens spent on a day, whole site */
     public function spendOn(string $day): array
     {
         try {

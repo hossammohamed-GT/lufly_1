@@ -1,14 +1,7 @@
 <?php
-/**
- * Props: code. National colours are third-party identity marks.
- */
 $flagCode = $props['code'] ?? 'en';
 $flagStyle = 'border-radius: 2px; display: inline-block; vertical-align: middle;';
 
-/* The Union Jack is built from clip paths, and the navbar renders this
-   component once per menu entry - so the ids have to be unique per instance.
-   Duplicated ids are invalid HTML and, worse, a reference can end up resolving
-   to a copy that a collapsed/mobile menu has taken out of the DOM. */
 $flagUid = substr(bin2hex(random_bytes(4)), 0, 6);
 $ukClipId = 'flag-uk-clip-' . $flagUid;
 $ukDiagId = 'flag-uk-diag-' . $flagUid;

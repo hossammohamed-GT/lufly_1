@@ -48,7 +48,6 @@ final class BackupDbCommand extends Command
             $pass = (string) config('database.connections.mysql.password', '');
             $target = "{$backupDir}/lufly-backup-{$timestamp}.sql";
 
-            // Write credentials to a protected temporary options file (readable only by current process owner)
             $cnfFile = tempnam($backupDir, 'my_cnf_');
             if ($cnfFile === false) {
                 $this->error('Failed to create secure credentials file.');

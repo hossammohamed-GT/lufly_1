@@ -15,22 +15,8 @@ use Core\Localization\Translator;
 use Core\View\View;
 use Modules\Planner\Services\PlannerService;
 
-/**
- * The bathroom planner — three taps, then a plan.
- *
- * GET  /{locale}/planner          the chat
- * POST /{locale}/planner/step     one answer: size, wet area or look
- * POST /{locale}/planner/fit      "does the product I was looking at fit?"
- * POST /{locale}/planner/picture  the optional picture of the finished room
- * POST /{locale}/planner/send     hand the plan to the LUFLY team
- *
- * The chat talks in fragments: every answer comes back as the HTML the page
- * appends (bubble + the next choice), so the wording stays in PHP and the
- * browser only has to place nodes.
- */
 class PlannerController extends Controller
 {
-    /** Answers a visitor may send back, in flow order. */
     private const STEPS = ['size', 'custom', 'wet', 'look'];
 
     public function __construct(
@@ -45,7 +31,6 @@ class PlannerController extends Controller
     {
         $locale = $this->translator->getLocale();
 
-        /* promised, not delivered yet: the page says so and points at the finder */
         if ((bool) config('planner.coming_soon', true)) {
             $this->seo->setTitle(trans('planner.soon_title'));
             $this->seo->setDescription(trans('planner.soon_text'));
@@ -54,7 +39,6 @@ class PlannerController extends Controller
             return $this->view('planner::soon', [
                 'title' => trans('planner.soon_title'),
                 'locale' => $locale,
-                /* ?chat=1 opens the finder panel the moment the page loads */
                 'finderUrl' => route('products.index', ['chat' => 1]),
             ]);
         }
@@ -78,7 +62,6 @@ class PlannerController extends Controller
         ]);
     }
 
-    /** One tap: answer the current question and get the next one (or the plan). */
     public function step(Request $request): JsonResponse
     {
         $locale = $this->translator->getLocale();
@@ -129,14 +112,6 @@ class PlannerController extends Controller
         return ApiResponse::success($data);
     }
 
-    /**
-     * "Does the piece I was looking at fit my plan?" — the floating chat asks
-     * this on a product page.
-     *
-     * The product arrives as text (name, description, category), so the model
-     * is never handed an image and never has to read the catalogue. Nothing is
-     * stored: the same request answers the same question from the cache.
-     */
     public function fit(Request $request): JsonResponse
     {
         $locale = $this->translator->getLocale();
@@ -164,7 +139,6 @@ class PlannerController extends Controller
         ]);
     }
 
-    /** The optional picture: one image generation, only when asked for. */
     public function render(Request $request): JsonResponse
     {
         $locale = $this->translator->getLocale();
@@ -188,11 +162,6 @@ class PlannerController extends Controller
         ]);
     }
 
-    /**
-     * Hand the plan to the team. The plan travels from the visitor's answers,
-     * never from the text the browser sends, so what support reads is exactly
-     * what the drawing shows.
-     */
     public function send(Request $request): JsonResponse
     {
         $locale = $this->translator->getLocale();
@@ -211,8 +180,6 @@ class PlannerController extends Controller
             'plan' => (string) $plan['plan_text'],
         ]);
 
-        /* the chat on a product page is asked "does this fit?" — support should
-           know which piece the visitor meant, in words they can search for */
         $context = $this->contextFrom($request);
 
         if ($context !== null) {
@@ -251,12 +218,6 @@ class PlannerController extends Controller
         ], trans('planner.handoff_sent', ['email' => $email]));
     }
 
-    /* ------------------------------------------------------------- helpers */
-
-    /**
-     * What the visitor just chose, as a sentence in the chat: the answer, not
-     * the question.
-     */
     private function echoLine(string $step, array $answers, string $locale): string
     {
         return match ($step) {
@@ -274,7 +235,6 @@ class PlannerController extends Controller
         };
     }
 
-    /** The next question with its choices. */
     private function question(string $step, array $answers, string $locale, int $progress): string
     {
         return $this->fragment('planner::partials.question', [
@@ -285,18 +245,11 @@ class PlannerController extends Controller
         ]);
     }
 
-    /** A view rendered on its own, for the fragments the chat appends. */
     private function fragment(string $template, array $data): string
     {
         return app(View::class)->render($template, $data);
     }
 
-    /**
-     * How far the visitor has walked. Typing their own size is still question
-     * one, so the counter does not move for it.
-     *
-     * @param array<int, string> $answered
-     */
     private function progress(array $answered, string $next): int
     {
         if ($next === 'custom') {
@@ -306,14 +259,6 @@ class PlannerController extends Controller
         return min(3, count(array_diff($answered, ['custom'])) + 1);
     }
 
-    /**
-     * Everything the plan fragment needs. `renderSoon` is what the free Google
-     * accounts can do today: the picture is announced, not offered.
-     *
-     * @param array<string, mixed> $plan
-     * @param array{id: int, name: string, text: string, category: string, url: string}|null $context
-     * @return array<string, mixed>
-     */
     private function planData(array $plan, string $locale, ?array $context = null): array
     {
         $answers = (array) $plan['answers'];
@@ -332,13 +277,6 @@ class PlannerController extends Controller
         ];
     }
 
-    /**
-     * The "does it fit?" block: only when the chat was opened on a product page
-     * and only while the feature is on. Everything it shows is text.
-     *
-     * @param array{id: int, name: string, text: string, category: string, url: string}|null $context
-     * @return array{name: string, hint: string}|null
-     */
     private function fitSection(?array $context): ?array
     {
         if ($context === null || !(bool) config('planner.fit.enabled', true)) {
@@ -351,19 +289,10 @@ class PlannerController extends Controller
         ];
     }
 
-    /**
-     * The product the visitor was looking at, as *text*: name, description,
-     * category, link. Pictures never travel with it — a few hundred characters
-     * answer the question, an image neither adds an answer nor survives the
-     * cost of sending the catalogue.
-     *
-     * @return array{id: int, name: string, text: string, category: string, url: string}|null
-     */
     private function contextFrom(Request $request): ?array
     {
         $name = $this->cleanText($request->input('product_name', ''), 120);
 
-        /* no product on this page (the chat also floats over every other page) */
         if ($name === '') {
             return null;
         }
@@ -380,7 +309,6 @@ class PlannerController extends Controller
         ];
     }
 
-    /** One line of product text, safe to hand to a model and to echo back. */
     private function cleanText(mixed $value, int $limit): string
     {
         $value = (string) preg_replace('/\s+/u', ' ', strip_tags((string) $value)) ?? '';
@@ -388,11 +316,6 @@ class PlannerController extends Controller
         return mb_substr(trim($value), 0, max(1, $limit));
     }
 
-    /**
-     * The steps the visitor has already answered, as the page sends them.
-     *
-     * @return array<int, string>
-     */
     private function answeredFrom(Request $request): array
     {
         $raw = $request->input('answered', []);

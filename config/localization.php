@@ -3,7 +3,7 @@
 declare(strict_types=1);
 
 return [
-    // Languages can be added here (and in the languages table) without code changes.
+
     'supported' => [
         'en' => 'English',
         'tr' => 'Türkçe',
@@ -14,7 +14,6 @@ return [
 
     'fallback' => env('APP_FALLBACK_LOCALE', 'en'),
 
-    // Entities that support dynamic translations (*_translations tables).
     'translatable' => [
         'products',
         'categories',

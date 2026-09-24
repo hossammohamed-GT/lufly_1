@@ -15,7 +15,6 @@ class Category extends Model
         'sort_order' => 'int',
     ];
 
-    /** @return array<string, array<string, mixed>> translations keyed by locale */
     public function translations(): array
     {
         $rows = static::db()->connection()->select(

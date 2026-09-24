@@ -7,12 +7,6 @@ namespace Database\Schema;
 use Core\Database\Schema\Blueprint;
 use Core\Database\Schema\SchemaDefinition;
 
-/**
- * Product catalog - the base product / main model.
- * Created once per model (e.g. Wall Hung Toilet). Everything that can vary
- * per finish or size lives in product_variants; everything translatable
- * lives in product_translations.
- */
 class ProductsSchema extends SchemaDefinition
 {
     protected string $table = 'products';

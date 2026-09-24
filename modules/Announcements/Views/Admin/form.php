@@ -1,8 +1,5 @@
 <?php
-/** @var Core\View\View $view */
 $view->layout('layouts.admin');
-/** @var \Modules\Announcements\Models\Announcement|null $announcement */
-/** @var array<string, array<string, mixed>> $translations */
 $action = $announcement === null
     ? route('admin.announcements.store')
     : route('admin.announcements.update', ['id' => $announcement->id]);

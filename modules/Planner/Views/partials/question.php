@@ -1,16 +1,4 @@
 <?php
-/**
- * One question of the planner chat: the sentence, the hint and the choices.
- *
- * Every choice is a button carrying the field it answers and the value it
- * holds — the browser never builds an answer of its own (see planner.js).
- *
- * @var Core\View\View $view
- * @var string $step        size | custom | wet | look
- * @var array<string, mixed> $answers
- * @var string $locale
- * @var int $progress
- */
 $progress = (int) ($progress ?? 1);
 $room = (array) ($answers['room'] ?? ['w' => 200, 'l' => 250]);
 $limits = (array) config('planner.custom', ['min' => 100, 'max' => 600]);

@@ -7,12 +7,6 @@ namespace Database\Schema;
 use Core\Database\Schema\Blueprint;
 use Core\Database\Schema\SchemaDefinition;
 
-/**
- * One saved product inside a favorites list.
- *
- * A plain join row: removing a product deletes the row, deleting a product
- * removes it from every list automatically (CASCADE).
- */
 class FavoriteItemsSchema extends SchemaDefinition
 {
     protected string $table = 'favorite_items';

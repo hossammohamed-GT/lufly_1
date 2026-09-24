@@ -15,19 +15,6 @@ use Modules\Box\Services\BoxMailer;
 use Modules\Box\Services\BoxService;
 use Modules\Products\Models\Product;
 
-/**
- * The quotation box — "collect the pieces, ask for their prices in one go".
- *
- * GET  /{locale}/box                  the box (own cookie)
- * GET  /{locale}/box/{token}          the same box from the link in the mail
- * POST /{locale}/box/add              put one piece in / take it out
- * POST /{locale}/box/remove           take one piece out
- * POST /{locale}/box/clear            empty the box
- * POST /{locale}/box/send             send the list to the team
- *
- * The difference from the saved list is the whole point: this one ends in the
- * shop's inbox, as a quotation request with every piece linked.
- */
 class BoxController extends Controller
 {
     public function __construct(
@@ -40,7 +27,6 @@ class BoxController extends Controller
 
     public function index(Request $request): Response
     {
-        /* ?t=<token> behaves like the shared link */
         $token = trim((string) $request->query('t', ''));
 
         if ($token !== '') {
@@ -54,7 +40,6 @@ class BoxController extends Controller
         return $this->page($this->box->current());
     }
 
-    /** The link printed in the message: opens the same box on any device. */
     public function claim(Request $request, string $token): Response
     {
         $box = $this->box->findByToken($token);
@@ -96,11 +81,6 @@ class BoxController extends Controller
             ? trans('box.added_named', ['name' => $name])
             : trans('box.removed_named', ['name' => $name]);
 
-        /* Saving tells the team — not on every click, and never loudly. The notice
-           is *decided* here (and the box is stamped, so a second click within the
-           cooldown never queues another one), but the mail itself is sent after
-           the visitor has his answer: a saved piece must not wait on an SMTP
-           handshake. */
         $notified = $result['added'] && $this->teamShouldHear($locale);
 
         $response = ApiResponse::success([
@@ -153,7 +133,6 @@ class BoxController extends Controller
         return $this->box->attachCookie($response);
     }
 
-    /** Send the list to the shop: this is the whole reason the box exists. */
     public function send(Request $request): Response
     {
         $this->adoptToken($request);
@@ -210,8 +189,6 @@ class BoxController extends Controller
         return $this->box->attachCookie($response, $box);
     }
 
-    /* ------------------------------------------------------------- helpers */
-
     private function page(?Box $box): Response
     {
         $locale = $this->translator->getLocale();
@@ -221,7 +198,6 @@ class BoxController extends Controller
         $this->seo->setTitle($title);
         $this->seo->setDescription(trans('box.meta_description'));
         $this->seo->setCanonical(route('box.index'));
-        /* a personal list has nothing to do in a search index */
         $this->seo->setRobots('noindex, nofollow');
 
         $response = $this->view('box::index', [
@@ -239,19 +215,11 @@ class BoxController extends Controller
         return $this->box->attachCookie($response, $box);
     }
 
-    /** @return array<int, array<string, mixed>> */
     private function boxServiceItems(Box $box, string $locale): array
     {
-        /* the repository is reached through the service the visitor's cookie
-           already resolved, so the page and the API never disagree */
         return $this->box->items($locale);
     }
 
-    /**
-     * A browser that keeps no cookies (private mode, strict settings) still gets
-     * to keep its box: it carries the token in the page, and every call may hand
-     * it back. The cookie stays the first choice — this is only the net under it.
-     */
     private function adoptToken(Request $request): void
     {
         if ($this->box->current() !== null) {
@@ -271,7 +239,6 @@ class BoxController extends Controller
         }
     }
 
-    /** The product a request points at, when it is one we actually sell. */
     private function product(Request $request): ?Product
     {
         $productId = (int) $request->input('product_id', 0);
@@ -290,13 +257,6 @@ class BoxController extends Controller
         return $box->last_sent_at !== null && str_starts_with((string) $box->last_sent_at, date('Y-m-d'));
     }
 
-    /**
-     * Should the team hear about this save?
-     *
-     * Cheap, and it stamps the box, so the decision is made once even though the
-     * mail itself goes out later. One message per box per cooldown window: five
-     * clicks in a row are one note, not five.
-     */
     private function teamShouldHear(string $locale): bool
     {
         if (!(bool) config('box.saved_notice', true)) {
@@ -325,13 +285,6 @@ class BoxController extends Controller
         return true;
     }
 
-    /**
-     * "A visitor saved these" — the mail itself.
-     *
-     * Runs after the visitor's answer has left the building, so a saved piece
-     * never waits on an SMTP handshake. Silent on failure: the piece is already
-     * saved, and the visitor should never see the shop's mail trouble.
-     */
     private function tellTheTeam(string $locale): bool
     {
         $box = $this->box->current();
@@ -351,7 +304,6 @@ class BoxController extends Controller
         return (bool) $result['sent'];
     }
 
-    /** Cooldown / daily cap on the public "send my box" endpoint. */
     private function throttle(Box $box): ?string
     {
         $cooldown = max(0, (int) config('box.send_cooldown', 60));

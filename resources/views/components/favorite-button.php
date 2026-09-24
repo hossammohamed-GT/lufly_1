@@ -1,15 +1,4 @@
 <?php
-/**
- * Save-to-favorites toggle.
- *
- * Rendered wherever a product appears (catalogue card, product page, saved
- * list). With JavaScript it posts to the favourites endpoint and updates every
- * copy of itself for that product; the markup already carries the correct state
- * server-side, so the button is right even before the script loads.
- *
- * @var Core\View\View $view
- * @var array{product_id?: int|string, name?: string, variant?: string, on?: bool, label?: string} $props
- */
 if (!feature('favorites', true)) {
     return;
 }

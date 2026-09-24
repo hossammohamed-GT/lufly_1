@@ -6,31 +6,12 @@ namespace App\Services\Mail;
 
 use RuntimeException;
 
-/**
- * Minimal SMTP client — no Composer, no external library.
- *
- * Supports the three shapes real mailboxes use:
- *   - implicit TLS      (MAIL_ENCRYPTION=ssl,  port 465)
- *   - STARTTLS          (MAIL_ENCRYPTION=tls,  port 587)
- *   - plain, no auth    (MAIL_ENCRYPTION=none, localhost / intranet relay)
- *
- * It speaks the smallest useful subset: EHLO, STARTTLS, AUTH LOGIN (with an
- * AUTH PLAIN fallback), MAIL FROM, RCPT TO, DATA with dot-stuffing and QUIT.
- * Every server reply is checked; failures are thrown as RuntimeException and
- * logged by MailService so a broken mailbox never breaks a page.
- *
- * The stream is opened through openStream() so the dialogue can be tested
- * without a network (see the favourites test harness).
- */
 class SmtpClient
 {
-    /** @var resource|null */
     protected $stream;
 
-    /** Transcript of the conversation (used by the mail log). */
     private string $transcript = '';
 
-    /** @param array<string, mixed> $config */
     public function __construct(private readonly array $config = [])
     {
     }
@@ -40,16 +21,6 @@ class SmtpClient
         return $this->transcript;
     }
 
-    /**
-     * @param array{
-     *     from: string,
-     *     from_name: string,
-     *     to: string,
-     *     subject: string,
-     *     body: string,
-     *     headers?: array<string, string>,
-     * } $message
-     */
     public function send(array $message): void
     {
         $host = (string) ($this->config['host'] ?? '127.0.0.1');
@@ -110,12 +81,6 @@ class SmtpClient
         }
     }
 
-    /**
-     * Open the socket. Overridable so the SMTP dialogue can be exercised in a
-     * test without touching the network.
-     *
-     * @return resource
-     */
     protected function openStream(string $target, int $timeout)
     {
         $context = stream_context_create([
@@ -169,7 +134,6 @@ class SmtpClient
             $this->command(base64_encode($password), [235]);
             return;
         } catch (RuntimeException $e) {
-            /* Server refused AUTH LOGIN (some do) — fall back to AUTH PLAIN. */
             if (!str_contains($e->getMessage(), '504') && !str_contains($e->getMessage(), '500')) {
                 throw $e;
             }
@@ -179,7 +143,6 @@ class SmtpClient
         $this->command('AUTH PLAIN ' . $plain, [235]);
     }
 
-    /** @param array<string, mixed> $message */
     private function data(array $message): string
     {
         $headers = $message['headers'] ?? [];
@@ -192,7 +155,6 @@ class SmtpClient
 
         $body = implode("\r\n", $lines);
 
-        /* Normalise line endings, then dot-stuff (RFC 5321 4.5.2). */
         $body = str_replace(["\r\n", "\r"], "\n", $body);
         $body = implode("\r\n", array_map(
             static fn (string $line): string => str_starts_with($line, '.') ? '.' . $line : $line,
@@ -202,7 +164,6 @@ class SmtpClient
         return $body . "\r\n.\r\n";
     }
 
-    /** @param int[] $expected */
     private function command(string $line, array $expected, bool $tolerateFailure = false): void
     {
         $this->write($line . "\r\n");
@@ -226,7 +187,6 @@ class SmtpClient
         $this->transcript .= '> ' . trim($data) . "\n";
     }
 
-    /** @param int[] $expected */
     private function expect(array $expected): string
     {
         $response = '';
@@ -241,7 +201,6 @@ class SmtpClient
             $response .= $line;
             $code = (int) substr(trim($line), 0, 3);
 
-            /* multi-line replies continue while the 4th character is "-" */
             if (strlen(trim($line)) > 3 && substr(trim($line), 3, 1) === '-') {
                 $response .= "\n";
                 continue;

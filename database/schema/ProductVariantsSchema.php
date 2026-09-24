@@ -7,11 +7,6 @@ namespace Database\Schema;
 use Core\Database\Schema\Blueprint;
 use Core\Database\Schema\SchemaDefinition;
 
-/**
- * Product variants - the sellable copies of one product.
- * Example: Chrome / Matt Black / Gold, or 60cm / 80cm / 100cm.
- * Price and stock live here, not on the base product.
- */
 class ProductVariantsSchema extends SchemaDefinition
 {
     protected string $table = 'product_variants';

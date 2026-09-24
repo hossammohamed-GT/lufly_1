@@ -1,12 +1,4 @@
 <?php
-/**
- * Storefront catalog - machined editorial identity.
- * Coded header with result count, blueprint toolbar (search + sort),
- * category rail with counts, editorial product cards (main shot with a
- * situ crossfade on hover), machined pagination.
- *
- * @var Core\View\View $view
- */
 $view->layout('layouts.frontend');
 $view->pushStyle('frontend/css/product-card.css');
 $view->pushStyle('frontend/css/live-search.css');
@@ -17,13 +9,6 @@ $view->pushStyle('frontend/components/skeleton/skeleton.css');
 $view->pushScript('frontend/components/skeleton/skeleton.js');
 $view->pushStyle('frontend/favorites/favorites.css');
 $view->pushScript('frontend/favorites/favorites.js');
-/** @var Core\Database\Paginator $paginator */
-/** @var array $categories */
-/** @var array $categoryCounts */
-/** @var string $activeCategory */
-/** @var string $searchQuery */
-/** @var string $sort */
-/** @var string $locale */
 $categories = $categories ?? [];
 $categoryCounts = $categoryCounts ?? [];
 $activeCategory = $activeCategory ?? '';
@@ -49,15 +34,11 @@ $buildUrl = static function (array $overrides = []) use ($activeCategory, $searc
 
 $fallbackImg = '/images/products/prod_146_1620-111-a.jpg';
 
-/* Products this visitor already saved, so every card shows the heart in the
-   right state before the script runs (one query, and none at all for a visitor
-   who never used the list). */
 $savedIds = [];
 if (feature('favorites', true) && class_exists(\Modules\Favorites\Services\FavoriteService::class)) {
     $savedIds = array_flip(app(\Modules\Favorites\Services\FavoriteService::class)->productIds());
 }
 
-/* and the pieces already in the quotation box */
 $boxIds = [];
 if (feature('box', true) && class_exists(\Modules\Box\Services\BoxService::class)) {
     $boxIds = array_flip(app(\Modules\Box\Services\BoxService::class)->productIds());
@@ -157,9 +138,6 @@ if (feature('box', true) && class_exists(\Modules\Box\Services\BoxService::class
                     $item = $product->translate($locale);
                     $img = (string) ($item['image'] ?? '') !== '' ? (string) $item['image'] : $fallbackImg;
 
-                    /* hover cycles through every image of the product: the
-                       photos first (main shot on top), then the technical
-                       drawings, then the installed shots */
                     $cardSlides = [];
                     foreach ((array) ($item['card_slides'] ?? []) as $slide) {
                         $slidePath = (string) ($slide['path'] ?? '');

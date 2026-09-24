@@ -1,14 +1,4 @@
 <?php
-/**
- * The box, in plain text — the same message for the team and for the visitor.
- *
- * @var string $audience  'admin' (it was sent) | 'saved' (still being filled) | 'visitor'
- * @var array<int, array<string, mixed>> $items
- * @var int $count
- * @var string $boxUrl
- * @var string $email
- * @var string $note
- */
 $audience = (string) ($audience ?? 'admin');
 $admin = $audience !== 'visitor';
 $saved = $audience === 'saved';

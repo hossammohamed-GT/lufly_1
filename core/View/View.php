@@ -10,15 +10,12 @@ use Throwable;
 
 class View
 {
-    /** @var array<string, string> namespace => base path */
     private array $namespaces = [];
 
     private ?string $layout = null;
 
-    /** @var array<string, mixed> */
     private array $shared = [];
 
-    /** @var array<string, list<string>> */
     private array $assets = ['styles' => [], 'scripts' => [], 'preloads' => []];
 
     public function __construct(
@@ -32,13 +29,11 @@ class View
         $this->namespaces[$namespace] = rtrim($path, '/\\');
     }
 
-    /** @param array<string, mixed> $data */
     public function share(array $data): void
     {
         $this->shared = array_merge($this->shared, $data);
     }
 
-    /** @param array<string, mixed> $data */
     public function render(string $template, array $data = []): string
     {
         $this->layout = null;
@@ -55,7 +50,6 @@ class View
         return $content;
     }
 
-    /** Called from inside a template: $view->layout('layouts.frontend'); */
     public function layout(string $template): void
     {
         $this->layout = $template;
@@ -73,7 +67,6 @@ class View
         return $this->app->resourcePath('views/' . str_replace('.', '/', $template) . '.php');
     }
 
-    /** @param array<string, mixed> $data */
     public function renderFile(string $path, array $data = []): string
     {
         if (!is_file($path)) {
@@ -95,11 +88,6 @@ class View
         return (string) ob_get_clean();
     }
 
-    /**
-     * Render a reusable component partial.
-     *
-     * @param array<string, mixed> $props
-     */
     public function component(string $name, array $props = [], ?string $slot = null): string
     {
         $props['slot'] = $slot;
@@ -110,41 +98,26 @@ class View
         );
     }
 
-    /**
-     * Register a stylesheet from a component view. The layout renders it in <head>.
-     */
     public function pushStyle(string $path): void
     {
         $this->pushAsset('styles', $path);
     }
 
-    /**
-     * Register a script from a component view. The layout renders it before </body>.
-     */
     public function pushScript(string $path): void
     {
         $this->pushAsset('scripts', $path);
     }
 
-    /** @return list<string> */
     public function styles(): array
     {
         return $this->assets['styles'];
     }
 
-    /** @return list<string> */
     public function scripts(): array
     {
         return $this->assets['scripts'];
     }
 
-    /**
-     * Ask the browser to fetch a critical asset before it is discovered in the
-     * markup (hero imagery, fonts). Attributes are emitted verbatim, so they
-     * stay limited to values the layout can trust.
-     *
-     * @param array<string, string> $attributes e.g. ['as' => 'image', 'type' => 'image/webp']
-     */
     public function pushPreload(string $href, array $attributes = ['as' => 'image']): void
     {
         foreach ($this->assets['preloads'] as $preload) {
@@ -156,7 +129,6 @@ class View
         $this->assets['preloads'][] = ['href' => $href, 'attributes' => $attributes];
     }
 
-    /** @return list<array{href: string, attributes: array<string, string>}> */
     public function preloads(): array
     {
         return $this->assets['preloads'];

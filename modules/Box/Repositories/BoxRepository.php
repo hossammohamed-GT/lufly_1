@@ -19,13 +19,11 @@ class BoxRepository extends Repository
             return null;
         }
 
-        /** @var Box|null $box */
         $box = Box::query()->where('token', $token)->first();
 
         return $box;
     }
 
-    /** Pieces of a box, newest first. @return int[] */
     public function productIds(Box $box): array
     {
         return array_map(
@@ -78,12 +76,6 @@ class BoxRepository extends Repository
         return BoxItem::query()->where('box_id', (int) $box->getKey())->delete();
     }
 
-    /**
-     * The pieces of a box, translated for a locale and in the order they were
-     * added (newest first). Products that left the shop drop out.
-     *
-     * @return array<int, array<string, mixed>>
-     */
     public function items(Box $box, string $locale): array
     {
         $ids = $this->productIds($box);
@@ -92,7 +84,6 @@ class BoxRepository extends Repository
             return [];
         }
 
-        /** @var Product[] $models */
         $models = Product::query()
             ->whereIn('id', $ids)
             ->where('status', 'active')

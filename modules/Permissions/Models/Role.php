@@ -12,7 +12,6 @@ class Role extends Model
 
     protected static array $fillable = ['name', 'description'];
 
-    /** @return string[] permission keys */
     public function permissionKeys(): array
     {
         return array_column(

@@ -8,10 +8,6 @@ use Core\Database\Migration\Migration;
 use Database\Schema\AiCacheSchema;
 use Database\Schema\AiUsageSchema;
 
-/**
- * The AI foundation: cached answers and the usage counters that keep a free
- * quota alive (see app/Services/Ai).
- */
 class CreateAiTables extends Migration
 {
     public function up(): void

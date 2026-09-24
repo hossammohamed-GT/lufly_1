@@ -1,19 +1,3 @@
-/* ==========================================================================
-   LUFLY — saved products ("favorites")
-   --------------------------------------------------------------------------
-   One script for every page that can save a product:
-     * [data-fav-toggle]         add / remove a product (card heart, product
-                                 page pill, "remove" on the saved list)
-     * [data-fav-mail-form]      e-mail the list to the visitor
-     * [data-fav-clear-form]     empty the list
-     * [data-fav-copy]           copy the permanent link
-     * [data-fav-prompt]         the "mail it to me" sheet that opens after the
-                                 first product is saved (all pages except the
-                                 saved-list page, which has its own panel)
-
-   The endpoints come from data attributes, the CSRF token from the <head>
-   meta tag, so nothing here is hard-coded to a locale or a route.
-   ========================================================================== */
 (function () {
   'use strict';
 
@@ -31,8 +15,6 @@
     token = meta('csrf-token');
   }
 
-  /* A stale page (long-idle tab) is answered with 419; the sheet carries a
-     sentence a visitor understands, so the toast says that instead of "CSRF". */
   function messageFor(json) {
     var message = (json && (json.message || '')) || '';
 
@@ -43,7 +25,6 @@
     return message;
   }
 
-  /* the "e-mail me when I save something new" checkbox of either form */
   function wantsUpdates(form) {
     var box = form ? form.querySelector('input[name="notify"]') : null;
 
@@ -80,8 +61,6 @@
     });
   }
 
-  /* ---------- toast ---------- */
-
   function toast(message) {
     if (!message) return;
 
@@ -105,19 +84,15 @@
     toastTimer = window.setTimeout(function () { host.classList.remove('is-on'); }, 4200);
   }
 
-  /* ---------- counters ---------- */
-
   function setCount(count) {
     var nodes = document.querySelectorAll('[data-fav-count]');
     for (var i = 0; i < nodes.length; i++) {
       nodes[i].textContent = String(count);
       nodes[i].classList.remove('is-bump');
-      /* restart the pop animation */
       void nodes[i].offsetWidth;
       nodes[i].classList.add('is-bump');
     }
 
-    /* the badge in the header follows along, filled or outlined */
     var link = document.querySelector('.mnav-fav');
     if (link) {
       link.classList.toggle('has-items', count > 0);
@@ -127,8 +102,6 @@
       }
     }
   }
-
-  /* ---------- button state ---------- */
 
   function paint(button, on) {
     button.classList.toggle('is-on', on);
@@ -159,8 +132,6 @@
     window.setTimeout(function () { button.classList.remove('is-bursting'); }, 560);
   }
 
-  /* ---------- toggle ---------- */
-
   document.addEventListener('click', function (event) {
     var button = event.target.closest ? event.target.closest('[data-fav-toggle]') : null;
     if (!button) return;
@@ -180,8 +151,6 @@
     button.classList.add('is-busy');
     button.disabled = true;
 
-    /* Paint first, confirm after: when the list is mailed on save the round
-       trip can take a moment, and the heart should not wait for the postman. */
     paintProduct(productId, willBeOn);
     burst(button, willBeOn);
 
@@ -207,12 +176,10 @@
         offerMailPrompt();
       }
 
-      /* the list went out again automatically: say so once the save has landed */
       if (data.mailed && data.mail_message) {
         window.setTimeout(function () { toast(data.mail_message); }, 1800);
       }
 
-      /* on the saved list a product that was removed leaves the grid */
       if (button.hasAttribute('data-fav-removing') && !data.added) {
         var card = button.closest('[data-fav-card]');
         if (card) {
@@ -235,8 +202,6 @@
       button.disabled = false;
     });
   }, false);
-
-  /* ---------- mail the list ---------- */
 
   var mailForm = document.querySelector('[data-fav-mail-form]');
   if (mailForm) {
@@ -291,10 +256,6 @@
     }, false);
   }
 
-  /* ---------- "mail it to me" prompt ---------- */
-
-  /* The prompt is offered once: after it has sent the list, or after the visitor
-     said "not now", localStorage remembers the answer for two weeks. */
   var prompt = promptHost;
   var promptStoreKey = 'lufly-fav-mail';
   var promptEmailKey = 'lufly-fav-email';
@@ -306,7 +267,7 @@
       if (value === undefined) return window.localStorage.getItem(key);
       if (value === null) window.localStorage.removeItem(key);
       else window.localStorage.setItem(key, value);
-    } catch (error) { /* private mode: the prompt simply asks every time */ }
+    } catch (error) { }
     return null;
   }
 
@@ -324,9 +285,7 @@
 
   function promptAvailable() {
     if (!prompt) return false;
-    /* the saved-list page runs the full mail panel instead */
     if (document.querySelector('[data-favorites]')) return false;
-    /* never interrupt a visitor who is already typing somewhere */
     var active = document.activeElement;
     if (active && /^(INPUT|TEXTAREA|SELECT)$/.test(active.tagName)) return false;
 
@@ -346,12 +305,9 @@
     }
 
     prompt.hidden = false;
-    /* the planning chat floats in the same corner: it steps aside while this
-       sheet is on screen (frontend/planner/planner.css) */
     if (document.body) document.body.classList.add('has-favmail');
     window.requestAnimationFrame(function () { prompt.classList.add('is-on'); });
 
-    /* a keyboard popping up is helpful on a desktop, intrusive on a phone */
     var touch = window.matchMedia && window.matchMedia('(hover: none)').matches;
     if (input && !touch) {
       window.setTimeout(function () { input.focus(); }, 220);
@@ -369,7 +325,6 @@
   function offerMailPrompt() {
     if (!promptAvailable()) return;
     if (promptTimer) window.clearTimeout(promptTimer);
-    /* let the heart burst and the toast land first */
     promptTimer = window.setTimeout(openPrompt, 1100);
   }
 
@@ -450,8 +405,6 @@
     }
   }
 
-  /* ---------- clear the list ---------- */
-
   var clearForm = document.querySelector('[data-fav-clear-form]');
   if (clearForm) {
     clearForm.addEventListener('submit', function (event) {
@@ -466,11 +419,9 @@
         if (json.success) {
           window.setTimeout(function () { window.location.reload(); }, 400);
         }
-      }).catch(function () { /* offline: leave the list as it is */ });
+      }).catch(function () { });
     }, false);
   }
-
-  /* ---------- copy the permanent link ---------- */
 
   document.addEventListener('click', function (event) {
     var button = event.target.closest ? event.target.closest('[data-fav-copy]') : null;

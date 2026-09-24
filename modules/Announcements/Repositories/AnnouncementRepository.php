@@ -15,11 +15,6 @@ class AnnouncementRepository extends Repository
 
     protected string $auditEntity = 'announcement';
 
-    /**
-     * Live announcements for the storefront, ordered.
-     *
-     * @return Announcement[]
-     */
     public function active(string $placement = 'topbar', int $limit = 5): array
     {
         $now = date('Y-m-d H:i:s');

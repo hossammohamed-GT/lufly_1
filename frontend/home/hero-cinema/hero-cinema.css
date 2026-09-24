@@ -1,9 +1,3 @@
-/* ==========================================================================
-   LUFLY - HERO CINEMA "Living Monolith" (Ultra-Optimized)
-   GPU-accelerated WebP showcase with zero jank, zero ticker overhead,
-   responsive typography, and seamless theme integration.
-   ========================================================================== */
-
 .lfc {
   --lfc-teal: var(--ds-primary, #1c8b8b);
   --lfc-teal-hi: #5fd4d4;
@@ -11,9 +5,6 @@
   --lfc-ease: cubic-bezier(.19, 1, .22, 1);
   --lfc-dur: 6500ms;
 
-  /* Fill the first screen exactly: small viewport minus the announcement bar
-     (--luann-h) and the navbar slab (--mnav-row1). Pure CSS fallback - the
-     script then measures the same space and pins the height in px. */
   height: calc(100vh - var(--luann-h, 0px) - var(--mnav-row1, 64px));
   height: calc(100svh - var(--luann-h, 0px) - var(--mnav-row1, 64px));
   min-height: 480px;
@@ -26,31 +17,17 @@
   contain: layout paint;
 }
 
-/* Phone: the JS measures precisely, but default to a shorter hero so there
-   is no full-viewport flash before the script runs. */
-/* Landscape phones: the hero takes the whole first screen (the copy is short
-   there - the max-height rule at the bottom hides the sub line), so the
-   pre-script height must not be the portrait 80%. */
 @media (max-width: 760px) and (orientation: landscape) {
-  /* the landscape screen is short: give it the whole viewport instead of the
-     portrait 80% - but subtract the navbar as well as the announcement bar,
-     otherwise the fallback hero is 56px taller than the space it has and the
-     first screen ends up showing a slice of the next section. */
   .lfc { height: calc(100svh - var(--luann-h, 0px) - var(--mnav-row1, 56px)); }
 }
 
 @media (max-width: 760px) {
   .lfc {
-    /* the script pins the exact height; this is the pre-script fallback and
-       the same screen the script measures - below the announcement bar and
-       the navbar, never taller than what is left */
     height: calc(100svh - var(--luann-h, 0px) - var(--mnav-row1, 56px));
     min-height: 320px;
     min-height: min(320px, 58svh);
   }
 }
-
-/* ---------- 1. scenes ---------- */
 
 .lfc-scenes {
   position: absolute;
@@ -62,7 +39,6 @@
 
 .lfc-scene {
   position: absolute;
-  /* the bleed hides the parallax edges */
   inset: -3.5%;
   background-size: cover;
   background-position: center;
@@ -83,14 +59,9 @@
 @keyframes lfcKb3 { from { transform: scale(1.07) translate3d(-1.2%, 0, 0); } to { transform: scale(1.07) translate3d(1.2%, 0.4%, 0); } }
 @keyframes lfcKb4 { from { transform: scale(1.02) translate3d(0.5%, 0.8%, 0); } to { transform: scale(1.10) translate3d(-0.5%, -0.5%, 0); } }
 
-/* Cap the bleed on browsers that can do it: an uncapped percentage turns
-   into hundreds of px on a tall hero, and the extra box scales the cover
-   artwork (and its crop) right up with it. */
 @supports (inset: min(1px, 2px)) {
   .lfc-scene { inset: calc(min(3.5%, 44px) * -1); }
 }
-
-/* ---------- 2. shade & atmosphere ---------- */
 
 .lfc-shade {
   position: absolute; inset: 0; z-index: 3;
@@ -106,9 +77,6 @@
 
 .lfc-atmo { position: absolute; inset: 0; z-index: 4; pointer-events: none; }
 
-/* Light theme: the hero swaps to high-key daylight photos (handled in JS),
-   so the scrim softens to let the brightness breathe while the light ink
-   text keeps its contrast. */
 [data-theme="light"] .lfc-shade {
   background:
     linear-gradient(90deg, rgba(18, 22, 22, 0.62) 0%, rgba(18, 22, 22, 0.30) 46%, rgba(18, 22, 22, 0) 74%),
@@ -148,8 +116,6 @@
 }
 @keyframes lfcBeam { 0% { left: -35%; } 36% { left: 130%; } 100% { left: 130%; } }
 
-/* ---------- 3. copy panels ---------- */
-
 .lfc-stage {
   position: absolute; inset: 0; z-index: 10;
   pointer-events: none;
@@ -175,7 +141,6 @@
 }
 .lfc-inner { max-width: 680px; pointer-events: auto; }
 
-/* entrance animations */
 .lfc-panel.is-on .lfc-kicker { animation: lfcKicker 0.85s var(--lfc-ease) 0.12s both; }
 .lfc-panel.is-on .lfc-line > span { animation: lfcLine 0.95s var(--lfc-ease) both; }
 .lfc-panel.is-on .lfc-line:nth-child(1) > span { animation-delay: 0.24s; }
@@ -230,8 +195,6 @@
   to { opacity: 1; transform: translate3d(0, 0, 0); }
 }
 
-/* ---------- 4. CTAs ---------- */
-
 .lfc-ctas { display: flex; flex-wrap: wrap; gap: 14px; margin-top: clamp(22px, 3.2vh, 32px); }
 
 .lfc-cta {
@@ -247,8 +210,6 @@
 .lfc-cta--s { border: 1px solid rgba(240, 248, 248, 0.32); color: var(--lfc-ink); background: rgba(18, 30, 30, 0.25); }
 .lfc-cta--s:hover { border-color: var(--lfc-teal-hi); color: var(--lfc-teal-hi); background: rgba(28, 139, 139, 0.16); transform: translate3d(0, -2px, 0); }
 .lfc-btn-icon { flex-shrink: 0; }
-
-/* ---------- 5. brand (logo) slide ---------- */
 
 .lfc-logoBox { position: relative; width: min(430px, 60vw); margin: 4px 0 clamp(18px, 3vh, 28px); }
 
@@ -291,8 +252,6 @@
 [dir="rtl"] .lfc-tag { letter-spacing: 0.12em; }
 .lfc-panel.is-on .lfc-tag { animation: lfcKicker 0.95s var(--lfc-ease) 1.4s both; }
 
-/* ---------- 6. progress ticks ---------- */
-
 .lfc-progress {
   position: absolute; z-index: 12;
   inset-inline-end: clamp(16px, 3.4vw, 46px); top: 50%; transform: translateY(-50%);
@@ -309,8 +268,6 @@
 .lfc-tick.act .lfc-bar > i { animation: lfcFill var(--lfc-dur) linear forwards; }
 .lfc-tick:hover .lfc-num { color: var(--lfc-teal-hi); }
 @keyframes lfcFill { to { transform: scaleY(1); } }
-
-/* ---------- 7. arrows ---------- */
 
 .lfc-arrows {
   position: absolute; z-index: 12;
@@ -329,16 +286,12 @@
 .lfc-arrow:hover { border-color: var(--lfc-teal-hi); color: var(--lfc-teal-hi); background: rgba(28, 139, 139, 0.25); transform: translate3d(0, -2px, 0); }
 .lfc-arrow svg { display: block; }
 
-/* ---------- 8. reduced motion & responsive ---------- */
-
 .lfc-reduced .lfc-scene.is-on,
 .lfc-reduced .lfc-beam,
 .lfc-reduced .lfc-glow,
 .lfc-reduced .lfc-grain { animation: none !important; }
 .lfc-reduced .lfc-panel.is-on * { animation-duration: 0.01s !important; animation-delay: 0s !important; }
 
-/* Phone: the box is portrait while the artwork is landscape, so `cover`
-   already crops hard. Keep the drift, drop the extra zoom. */
 @media (max-width: 760px) {
   .lfc-scene.is-on.kb1 { animation-name: lfcKbM1; }
   .lfc-scene.is-on.kb2 { animation-name: lfcKbM2; }
@@ -358,10 +311,6 @@
   .lfc-inner { max-width: 100%; }
   .lfc-beam { display: none; }
 
-  /* phone type scale: the copy gets the lower part of the hero, so the
-     display size has to work at that width instead of the desktop clamp */
-  /* every rule below is scoped to the hero (`.lfc `) so the later generic
-     phone block cannot undo it on source order alone */
   .lfc .lfc-kicker { margin-bottom: 8px; }
   .lfc .lfc-logoBox { width: min(190px, 46vw); margin: 0 0 8px; }
   .lfc .lfc-tag { display: none; }
@@ -379,14 +328,12 @@
   .lfc .lfc-ctas { margin-top: 12px; gap: 8px; }
   .lfc .lfc-cta { padding: 12px 20px; }
 
-  /* copy stays vertically centered; extra bottom padding clears the arrows */
   .lfc-panel {
     padding-inline: 24px;
     padding-top: 28px;
     padding-bottom: 92px;
   }
 
-  /* soften: calmer contrast + gentler type rhythm */
   .lfc-shade,
   [dir="rtl"] .lfc-shade {
     background: linear-gradient(180deg,
@@ -407,10 +354,6 @@
   .lfc-grain { background-size: 32px 32px; }
 }
 
-/* Compact screens: a 568px-tall phone cannot hold the desktop rhythm, so the
-   panel tightens (smaller gaps and buttons, smaller logo) instead of pushing
-   the CTAs out of the hero. Declared after the phone block on purpose - it has
-   to win over it. */
 @media (max-height: 700px) {
   .lfc-panel { padding-top: 16px; padding-bottom: 72px; }
   .lfc-kicker { margin-bottom: 12px; }
@@ -423,24 +366,15 @@
   .lfc-tag { margin-bottom: 12px; }
 }
 
-/* Very short (landscape phones): drop the paragraph and the strapline so the
-   two CTAs always stay visible inside the first screen. */
 @media (max-height: 640px) {
   .lfc-sub { display: none; }
 }
 
-/* very narrow phones (Galaxy Fold closed, 280px): the paragraph costs more
-   room than it returns - the title and the CTAs carry the slide */
 @media (max-width: 340px) {
   .lfc-sub { display: none; }
   .lfc-cta { padding: 11px 16px; font-size: 11px; }
 }
 
-/* short screens (landscape phones, small laptops) stay on one screen.
-   The hero clips its overflow, so whatever does not fit simply disappears off
-   the panel - and the CTAs sit at the bottom. Everything decorative goes, the
-   brand box and the type get smaller, and the two CTAs shrink so the row still
-   fits: on a 568x320 phone that is ~176px of copy inside a 224px panel. */
 @media (max-height: 560px) {
   .lfc { min-height: 200px; }
   .lfc-panel { padding-top: 8px; padding-bottom: 56px; }

@@ -4,15 +4,10 @@ declare(strict_types=1);
 
 namespace Core\Foundation;
 
-/**
- * PSR-4 autoloader.
- */
 final class Autoloader
 {
-    /** @var array<string, string> */
     private static array $prefixes = [];
 
-    /** @param array<string, string> $prefixes namespace prefix => base directory */
     public static function register(array $prefixes): void
     {
         foreach ($prefixes as $prefix => $dir) {
@@ -32,7 +27,6 @@ final class Autoloader
                     return true;
                 }
 
-                // Linux case-sensitivity fallback (e.g. Database\Schema -> database/schema)
                 $parts = explode('\\', $relative);
                 if (count($parts) > 1) {
                     $altParts = $parts;

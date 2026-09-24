@@ -7,9 +7,6 @@ namespace Database\Schema;
 use Core\Database\Schema\Blueprint;
 use Core\Database\Schema\SchemaDefinition;
 
-/**
- * Per-locale SEO metadata for products.
- */
 class SeoMetaSchema extends SchemaDefinition
 {
     protected string $table = 'seo_meta';

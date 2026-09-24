@@ -1,28 +1,3 @@
-/* ==========================================================================
-   LUFLY — bathroom planner
-   --------------------------------------------------------------------------
-   Three questions, three taps, one plan:
-
-     [data-planner]               the root: endpoints, waiting sentences and the
-                                  answers gathered so far live on it. On /planner
-                                  it is the page; everywhere else it is the
-                                  floating chat (.aichat)
-     [data-planner-answer]        one choice (size, wet area, look) — the button
-                                  carries the field and the value it answers
-     [data-planner-custom]        "my own size": two numbers and a submit
-     [data-planner-thinking]      the line that rotates while the server works
-     [data-planner-board-plan]    where the finished plan lands
-     [data-planner-fit]           "does this product fit my plan?" — answered
-                                  from the product's words, never its picture
-     [data-planner-render]        the optional picture of the finished room
-     [data-planner-send]          hand the plan to the LUFLY team by e-mail
-
-   The floating chat adds [data-aichat-*]: open/close, expand and drag-to-resize,
-   with the chosen size remembered in localStorage.
-
-   Everything the browser sends is a tap the visitor made; the plan itself is
-   always built (and cached) on the server.
-   ========================================================================== */
 (function () {
   'use strict';
 
@@ -36,7 +11,6 @@
   var boardEmpty = root.querySelector('[data-planner-board-empty]');
   var toast = root.querySelector('[data-planner-toast]');
   var trail = root.querySelectorAll('.planner-trail-step');
-  /* the same script drives the page and the floating chat */
   var panel = root.querySelector('[data-aichat-panel]');
   var isChat = !!panel;
   var token = (document.querySelector('meta[name="csrf-token"]') || {}).content || '';
@@ -45,7 +19,6 @@
   var waitIndex = 0;
   var toastTimer = null;
 
-  /* the few sentences the page has to hand to the script */
   var renderText = root.getAttribute('data-planner-render-wait') || '';
   var againText = root.getAttribute('data-planner-render-again') || '';
   var sentWaiting = root.getAttribute('data-planner-send-wait') || '';
@@ -60,9 +33,6 @@
     waiting = [];
   }
 
-  /* the product this chat was opened on, as text: name, description, category.
-     It rides along with every answer so the plan can offer "does it fit?" —
-     and it is never an image. */
   var context = null;
   try {
     context = JSON.parse(root.getAttribute('data-planner-context') || 'null') || null;
@@ -83,8 +53,6 @@
       product_url: context.url || ''
     };
   }
-
-  /* ---------- small helpers ---------- */
 
   function post(url, payload) {
     if (!url) return Promise.resolve({ success: false, message: '' });
@@ -132,7 +100,6 @@
     toastTimer = window.setTimeout(function () { toast.classList.remove('is-on'); }, 5200);
   }
 
-  /* the newest bubble, always in view: the page scrolls, the panel scrolls */
   function scrollToBoard() {
     if (!boardPlan || !boardPlan.firstChild) return;
 
@@ -154,8 +121,6 @@
     if (body) body.scrollTop = body.scrollHeight;
   }
 
-  /* ---------- the waiting line: never the same sentence twice ---------- */
-
   function startWaiting() {
     if (!thinking || !thinkingText) return;
 
@@ -170,7 +135,6 @@
       waitIndex = (waitIndex + 1) % lines.length;
       thinking.classList.remove('is-fresh');
       thinkingText.textContent = lines[waitIndex];
-      /* restart the fade so each line arrives on its own */
       void thinkingText.offsetWidth;
       thinking.classList.add('is-fresh');
     }, 2600);
@@ -185,8 +149,6 @@
       thinking.hidden = true;
     }
   }
-
-  /* ---------- the conversation ---------- */
 
   function answered() {
     var raw = (root.getAttribute('data-planner-answered') || '').split(',');
@@ -264,8 +226,6 @@
     return body;
   }
 
-  /* ---------- one answer ---------- */
-
   function sendStep(step, values, block, bubbleText) {
     if (busy) return;
 
@@ -286,7 +246,6 @@
       var data = json.data || {};
 
       if (!json.success) {
-        /* the visitor can simply tap again — the question stays on screen */
         if (block) {
           block.classList.remove('is-done');
           var controls = block.querySelectorAll('button, input');
@@ -324,8 +283,6 @@
     });
   }
 
-  /* ---------- the pieces of the finished plan ---------- */
-
   function wirePlan() {
     if (!boardPlan) return;
 
@@ -343,7 +300,6 @@
       });
     }
 
-    /* "does this product fit my plan?" — one small call, text only */
     var fitButton = boardPlan.querySelector('[data-planner-fit]');
     var fitOut = boardPlan.querySelector('[data-planner-fit-out]');
     if (fitButton && fitOut) {
@@ -447,14 +403,6 @@
     }
   }
 
-  /* ---------- the floating chat ---------- */
-
-  /*
-   * A bubble in the corner of every page. Tapping it opens the same chat as
-   * /planner in a panel that can be expanded or dragged to any size; the size
-   * the visitor chose is remembered, because a chat should not have to be
-   * resized twice.
-   */
   if (isChat) {
     var toggle = root.querySelector('[data-aichat-toggle]');
     var closeButton = root.querySelector('[data-aichat-close]');
@@ -469,7 +417,7 @@
 
       try {
         window.localStorage.setItem(SIZE_KEY, JSON.stringify(size));
-      } catch (error) { /* private mode */ }
+      } catch (error) { }
     }
 
     function applySize() {
@@ -498,7 +446,6 @@
       }
     }
 
-    /* one button, two jobs: expand the window or hand it back its corner */
     function labelGrow() {
       if (!growButton) return;
 
@@ -555,7 +502,6 @@
       if (event.key === 'Escape' && !panel.hidden) openPanel(false);
     });
 
-    /* drag the top corner: the panel is anchored to the other one */
     if (grip) {
       grip.addEventListener('pointerdown', function (event) {
         if (window.matchMedia && window.matchMedia('(max-width: 720px)').matches) return;
@@ -603,8 +549,6 @@
     }
   }
 
-  /* ---------- wiring ---------- */
-
   root.addEventListener('click', function (event) {
     var button = event.target.closest ? event.target.closest('[data-planner-answer]') : null;
     if (!button || button.disabled) return;
@@ -616,11 +560,8 @@
 
     root.__plannerState = root.__plannerState || {};
 
-    if (field === 'custom') return; /* handled by the form below */
-
-    if (field === 'size') {
+    if (field === 'custom') return; if (field === 'size') {
       root.__plannerState.size = value;
-      /* a preset size replaces any numbers typed before */
       root.__plannerState.w = '';
       root.__plannerState.l = '';
       sendStep('size', {}, block, text);

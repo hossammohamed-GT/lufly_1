@@ -14,12 +14,6 @@ class UploadService
     {
     }
 
-    /**
-     * Validate + store an uploaded file.
-     *
-     * @param array<string, mixed> $file $_FILES entry
-     * @return array{path: string, filename: string, original_name: string, extension: string, mime: string, size: int, directory: string}
-     */
     public function store(array $file, string $directory = 'general'): array
     {
         $this->assertValidUpload($file);
@@ -41,7 +35,6 @@ class UploadService
             throw new UploadException('Path traversal detected in upload directory.');
         }
 
-        // Sanitize path segments: only allow letters, numbers, hyphens, and underscores
         $segments = array_values(array_filter(explode('/', trim($directory, '/')), fn ($s) => $s !== '' && $s !== '.'));
         foreach ($segments as $seg) {
             if (!preg_match('/^[a-zA-Z0-9_\-]+$/', $seg)) {
@@ -70,7 +63,6 @@ class UploadService
             throw new UploadException(trans('errors.upload_directory_failed'));
         }
 
-        // Verify targetDir is strictly within uploadRoot
         $realTarget = realpath($targetDir);
         if ($realTarget === false || $uploadRoot === false || !str_starts_with($realTarget, $uploadRoot)) {
             throw new UploadException('Target upload directory is outside of allowed upload root.');
@@ -84,7 +76,6 @@ class UploadService
             throw new UploadException(trans('errors.upload_move_failed'));
         }
 
-        // Generate web-accessible path (compatible with asset() and storefront)
         $cleanBase = ltrim($baseUploadPath, '/');
         if (str_starts_with($cleanBase, 'public/')) {
             $webPrefix = '/' . substr($cleanBase, strlen('public/'));
@@ -104,9 +95,6 @@ class UploadService
         ];
     }
 
-    /**
-     * Resolve base upload path respecting config('uploads.disk') and config('uploads.disks').
-     */
     public function getUploadBasePath(?string $disk = null): string
     {
         $diskName = $disk ?? (string) config('uploads.disk', 'local');
@@ -123,9 +111,6 @@ class UploadService
         return (string) config('uploads.path', 'public/images/uploads');
     }
 
-    /**
-     * Generate filename based on configured naming strategy ('random', 'slug', 'original').
-     */
     public function generateFilename(string $original, string $extension, ?string $strategy = null): string
     {
         $strategy = $strategy ?? (string) config('uploads.naming', 'random');
@@ -179,7 +164,6 @@ class UploadService
         return unlink($realTarget);
     }
 
-    /** @param array<string, mixed> $file */
     private function assertValidUpload(array $file): void
     {
         $error = $file['error'] ?? UPLOAD_ERR_NO_FILE;
@@ -215,7 +199,6 @@ class UploadService
             throw new UploadException(trans('errors.upload_missing'));
         }
 
-        // 1. Inspect MIME type using fileinfo
         $detectedMime = 'application/octet-stream';
         if (function_exists('finfo_open')) {
             $finfo = finfo_open(FILEINFO_MIME_TYPE);
@@ -228,7 +211,6 @@ class UploadService
             }
         }
 
-        // Validate raster images match expected image MIME types
         $rasterMimes = [
             'jpg' => ['image/jpeg'],
             'jpeg' => ['image/jpeg'],
@@ -242,40 +224,33 @@ class UploadService
             }
         }
 
-        // 2. Prevent embedded PHP/executable scripts in any file
         $sample = file_get_contents($tmpPath, false, null, 0, 8192);
         if ($sample !== false && (stripos($sample, '<?php') !== false || stripos($sample, '<?=') !== false)) {
             throw new UploadException(trans('errors.upload_type_blocked'));
         }
 
-        // 3. Deep SVG content inspection and security sanitization checks
         if ($extension === 'svg' || str_contains($detectedMime, 'svg') || str_contains($detectedMime, 'xml')) {
             $content = file_get_contents($tmpPath);
             if ($content === false || trim($content) === '') {
                 throw new UploadException('Uploaded SVG file is empty or unreadable.');
             }
 
-            // Reject executable tags
             if (preg_match('/<\s*(?:script|foreignobject|iframe|embed|object|applet|meta|link|base)\b/i', $content)) {
                 throw new UploadException('Uploaded SVG contains prohibited executable tags.');
             }
 
-            // Reject inline event handlers: onload=, onerror=, onclick=, etc.
             if (preg_match('/\bon[a-z]{3,}\s*=/i', $content)) {
                 throw new UploadException('Uploaded SVG contains prohibited event handlers.');
             }
 
-            // Reject dangerous link protocols: href="javascript:...", xlink:href="javascript:..."
             if (preg_match('/(?:href|xlink:href|src)\s*=\s*["\']?\s*(?:javascript|vbscript|data\s*:\s*text\/html)/i', $content)) {
                 throw new UploadException('Uploaded SVG contains prohibited script or data URIs.');
             }
 
-            // Reject XML External Entity (XXE) and DOCTYPE injection
             if (preg_match('/<!(?:ENTITY|DOCTYPE\s+[^>]*SYSTEM)/i', $content)) {
                 throw new UploadException('Uploaded SVG contains prohibited external entity references.');
             }
 
-            // Reject XML stylesheets that could load arbitrary remote CSS or scripts
             if (preg_match('/<\?xml-stylesheet/i', $content)) {
                 throw new UploadException('Uploaded SVG contains prohibited XML stylesheets.');
             }

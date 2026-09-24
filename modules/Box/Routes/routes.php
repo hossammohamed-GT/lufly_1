@@ -10,13 +10,10 @@ return function (Router $router): void {
         return;
     }
 
-    /* Localized storefront routes:
-       /en/box · /tr/kutu · /cs/krabice (see resources/lang/<locale>/routes.php) */
     $router->group(['middleware' => 'web'], function (Router $router): void {
         $router->localized('GET', 'box.index', [BoxController::class, 'index'])
             ->name('box.index');
 
-        /* the link that travels in the message to the shop: one box, one link */
         $router->localized('GET', 'box.claim', [BoxController::class, 'claim'])
             ->where('token', '[A-Za-z0-9]{16,64}')
             ->name('box.claim');

@@ -1,7 +1,5 @@
 <?php
-/** @var Core\View\View $view */
 $view->layout('layouts.admin');
-/** @var array<string, int> $stats */
 ?>
 <div class="grid grid-4 stat-grid">
     <?php foreach ($stats as $table => $count): ?>

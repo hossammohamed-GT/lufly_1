@@ -1,11 +1,6 @@
 <?php
-/** @var Core\View\View $view */
 $view->layout('layouts.frontend');
 $view->pushStyle('frontend/errors/errors.css');
-/** @var int $status */
-/** @var string $title */
-/** @var string $message */
-
 $displayTitle = trim((string) ($title ?? ''));
 if ($displayTitle === '' || strcasecmp($displayTitle, 'Not Found') === 0) {
     $displayTitle = trans('errors.page_not_found_title');

@@ -1,11 +1,3 @@
-/* ==========================================================================
-   Contact page - machined editorial edition
-   Blueprint grid page, a signature deep-teal WhatsApp panel, beam-hover
-   channel cards and coded request lines. Static page: no JS, no scroll
-   effects. Design-system tokens only; the WhatsApp panel keeps the fixed
-   brand palette (like the announcement bar) so it reads in both themes.
-   ========================================================================== */
-
 .cpage {
   padding-block: clamp(36px, 5vw, 64px) clamp(56px, 8vw, 96px);
   color: var(--ds-text);
@@ -24,8 +16,6 @@
   display: grid;
   gap: clamp(24px, 3.5vw, 36px);
 }
-
-/* ---------- hero row: intro + machined WhatsApp panel ---------- */
 
 .cpage-hero {
   display: grid;
@@ -102,8 +92,6 @@
 }
 
 .cpage-note svg { color: var(--ds-primary); flex: none; }
-
-/* ---------- the signature WhatsApp panel (fixed brand palette) ---------- */
 
 .cpage-wa {
   position: relative;
@@ -226,8 +214,6 @@
 
 [dir="rtl"] .cpage-wa-cta svg,
 [dir="rtl"] .cpage-line-arrow { transform: scaleX(-1); }
-
-/* ---------- channel cards: flat with machined beam hover ---------- */
 
 .cpage-grid {
   display: grid;
@@ -353,8 +339,6 @@
   font-weight: 600;
 }
 
-/* ---------- coded request lines ---------- */
-
 .cpage-quick {
   padding: 22px 24px 10px;
   border-radius: var(--radius-lg);
@@ -425,8 +409,6 @@
 
 [dir="rtl"] .cpage-line:hover .cpage-line-arrow { transform: scaleX(-1) translateX(4px); }
 
-/* ---------- responsive ---------- */
-
 @media (max-width: 960px) {
   .cpage-hero { grid-template-columns: 1fr; }
   .cpage-wa { min-height: 0; }
@@ -452,14 +434,7 @@
 }
 
 
-/* ==========================================================================
-   Expanded contact page: badge, form, reassurance grid, FAQ.
-   Every block is icon-led, so the icon styling is shared here.
-   ========================================================================== */
-
 .cico { flex: none; }
-
-/* ---------- trust badge under the intro ---------- */
 
 .cpage-badge {
   margin: 4px 0 0;
@@ -480,8 +455,6 @@
 
 .cpage-kicker .cico { color: var(--ds-primary); }
 
-/* ---------- shared section heading ---------- */
-
 .cpage-section-title {
   display: flex;
   align-items: center;
@@ -494,8 +467,6 @@
 }
 
 .cpage-section-title .cico { color: var(--ds-primary); }
-
-/* ---------- map link on the factory card ---------- */
 
 .cpage-maplink {
   margin-top: 12px;
@@ -517,8 +488,6 @@
   align-items: center;
   gap: 6px;
 }
-
-/* ---------- enquiry form ---------- */
 
 .cpage-form-wrap {
   margin-top: 30px;
@@ -627,8 +596,6 @@
   color: var(--ds-text-muted);
 }
 
-/* ---------- reassurance grid ---------- */
-
 .cpage-why { margin-top: 34px; }
 
 .cpage-why-grid {
@@ -670,14 +637,10 @@
   color: var(--ds-text-muted);
 }
 
-/* ---------- request lines: icon column ---------- */
-
 .cpage-line-ico {
   display: inline-flex;
   color: var(--ds-primary);
 }
-
-/* ---------- FAQ ---------- */
 
 .cpage-faq { margin-top: 34px; }
 
@@ -723,8 +686,6 @@
   line-height: 1.6;
   color: var(--ds-text-muted);
 }
-
-/* ---------- responsive ---------- */
 
 @media (max-width: 900px) {
   .cpage-why-grid { grid-template-columns: 1fr 1fr; }

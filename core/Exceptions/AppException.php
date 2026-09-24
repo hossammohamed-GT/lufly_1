@@ -12,7 +12,6 @@ class AppException extends Exception
 
     protected string $errorCode = 'server_error';
 
-    /** @var array<string, mixed> */
     protected array $extra = [];
 
     public function __construct(string $message = '', ?int $httpStatus = null, ?string $errorCode = null)
@@ -41,14 +40,12 @@ class AppException extends Exception
         return $this->errorCode;
     }
 
-    /** @param array<string, mixed> $extra */
     public function withExtra(array $extra): static
     {
         $this->extra = $extra;
         return $this;
     }
 
-    /** @return array<string, mixed> */
     public function extra(): array
     {
         return $this->extra;

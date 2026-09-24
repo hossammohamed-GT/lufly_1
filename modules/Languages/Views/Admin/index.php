@@ -1,7 +1,5 @@
 <?php
-/** @var Core\View\View $view */
 $view->layout('layouts.admin');
-/** @var array<int, \Modules\Languages\Models\Language> $languages */
 ?>
 <table class="table">
     <thead>

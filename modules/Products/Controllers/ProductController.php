@@ -56,7 +56,6 @@ class ProductController extends Controller
             [$locale, $fallback]
         );
 
-        /* per-category counts for the coded category rail */
         $categoryCounts = [];
         foreach ($connection->select(
             "SELECT c.slug AS slug, COUNT(p.id) AS n
@@ -81,9 +80,6 @@ class ProductController extends Controller
         $this->seo->setDescription($catalogDescs[$locale] ?? $catalogDescs['en']);
         $this->seo->setCanonical(route('products.index'));
 
-        /* Faceted states (filters, search, sorting, pagination) share the
-           canonical of the clean catalogue URL and stay out of the index:
-           crawlers may follow them, but only one catalog page ranks. */
         $isFaceted = $categorySlug !== '' || $categoryId > 0 || $searchQuery !== ''
             || $sort !== 'newest' || (int) $request->query('page', '1') > 1;
         if ($isFaceted) {
@@ -92,7 +88,6 @@ class ProductController extends Controller
         $this->seo->setAlternatesFor('products.index');
 
         if (!$isFaceted) {
-            /* ItemList rich result for the first visible products. */
             $listItems = [];
             foreach (array_slice($paginator->items(), 0, 20) as $item) {
                 $translated = is_object($item) && method_exists($item, 'translate')
@@ -138,7 +133,6 @@ class ProductController extends Controller
         $locale = $this->translator->getLocale();
         $product = $this->products->findTranslatedBySlug($slug, $locale);
 
-        /* Category slug drives the technical-sheet silhouette on the page. */
         $categorySlug = '';
         if (!empty($product['category_id'])) {
             $connection = \Modules\Products\Models\Product::query()->connection();
@@ -162,7 +156,6 @@ class ProductController extends Controller
         $this->seo->setType('product');
         $this->seo->setAlternatesFor('products.show', ['slug' => $product['slug'] ?? $slug]);
 
-        /* share card: dynamically rendered OG image carrying the product name */
         $this->seo->setImage(route('seo.ogimage', [
             'title' => $productName,
             'subtitle' => $product['category_slug'] !== '' ? 'LUFLY ' . ucfirst((string) $product['category_slug']) : 'LUFLY',
@@ -188,8 +181,6 @@ class ProductController extends Controller
             'seo' => $this->seo,
         ]);
     }
-
-    /* ------------------------------------------------------- admin panel */
 
     public function adminIndex(Request $request): Response
     {
@@ -269,10 +260,6 @@ class ProductController extends Controller
             ->with('_success', trans('common.deleted'));
     }
 
-    /**
-     * @param array<string, mixed> $data
-     * @return array<string, mixed>
-     */
     private function coreFields(array $data): array
     {
         return [
@@ -289,10 +276,6 @@ class ProductController extends Controller
         ];
     }
 
-    /**
-     * @param array<string, mixed> $data
-     * @return array<string, array<string, mixed>>
-     */
     private function translationsFromForm(array $data): array
     {
         $translations = [];
@@ -313,12 +296,6 @@ class ProductController extends Controller
         return $translations;
     }
 
-    /**
-     * Upload coming from the single-image field of the product form: it lands
-     * in the photos section and becomes the main image.
-     *
-     * @param array<string, mixed> $file
-     */
     private function attachPrimaryImage(int $productId, array $file): void
     {
         $this->media->upload($productId, $file, 'photos', true);

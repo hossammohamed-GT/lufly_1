@@ -1,17 +1,3 @@
-/* ==========================================================================
-   LUFLY - Component: navbar controller
-   --------------------------------------------------------------------------
-   One small controller for the machined-glass header:
-     * scroll state + the progress line that reads down the side spine,
-       painted inside requestAnimationFrame
-     * index drawer with hover intent (desktop), click, Escape and focus restore
-     * bloom sheet on phones: scroll lock, focus trap, swipe-down to close
-     * search overlay for small screens
-     * instant product search (debounced, aborts stale requests)
-     * language menu + keyboard shortcuts (/ and Cmd/Ctrl+K)
-   No dependencies, no layout reads on every frame, listeners are passive.
-   ========================================================================== */
-
 (function () {
   'use strict';
 
@@ -28,8 +14,6 @@
   var OPEN_DELAY = 90;
   var CLOSE_DELAY = 220;
 
-  /* ---------- 1. scroll state + progress ---------- */
-
   var progress = header.querySelector('[data-nav-progress]');
   var frameQueued = false;
 
@@ -39,11 +23,10 @@
     var y = window.scrollY || window.pageYOffset || 0;
     header.classList.toggle('is-scrolled', y > 8);
 
-    // Close index dropdown automatically on scroll
     if (header.classList.contains('is-index-open')) {
       closeIndex();
     }
-    // Also close search and collapse it back on scroll
+
     hideResults();
     var dock = header.querySelector('.mnav-dock');
     if (dock) {
@@ -71,8 +54,6 @@
   window.addEventListener('scroll', queueScrollPaint, { passive: true });
   window.addEventListener('resize', queueScrollPaint, { passive: true });
   paintScroll();
-
-  /* ---------- 2. panels that can only be open one at a time ---------- */
 
   var marks = header.querySelectorAll('[data-drawer-toggle]');
   var mark = marks.length > 0 ? marks[0] : null;
@@ -185,8 +166,6 @@
     });
   }
 
-  /* ---------- 3. index drawer (hover intent on desktop) ---------- */
-
   var openTimer = null;
   var closeTimer = null;
 
@@ -258,8 +237,6 @@
     });
   }
 
-  /* ---------- 4. bloom sheet (phones) ---------- */
-
   if (sheetTrigger) {
     sheetTrigger.addEventListener('click', function (event) {
       event.preventDefault();
@@ -282,7 +259,6 @@
     var dragDelta = 0;
 
     sheet.addEventListener('pointerdown', function (event) {
-      /* only the grab area (handle / petals) starts a pull-down */
       if (event.clientY - sheet.getBoundingClientRect().top > 110) {
         return;
       }
@@ -315,8 +291,6 @@
       });
     });
   }
-
-  /* ---------- 5. search overlay + instant search ---------- */
 
   if (searchToggle) {
     searchToggle.addEventListener('click', function () {
@@ -425,7 +399,6 @@
     resultsBox.classList.add('is-open');
   }
 
-  /* skeleton result rows so the user sees cards are on their way */
   function showSearchBusy(query) {
     if (!resultsBox) return;
     var one = '<div class="livesearch-skel livesearch-skel-row" aria-hidden="true">' +
@@ -552,8 +525,7 @@
             renderResults(data, query);
           })
           .catch(function () {
-            /* request aborted or offline */
-          });
+            });
       }, 120);
     });
 
@@ -566,8 +538,6 @@
     });
   }
 
-  /* ---------- 6. language menu ---------- */
-
   if (langToggle) {
     langToggle.addEventListener('click', function (event) {
       event.preventDefault();
@@ -579,8 +549,6 @@
       setLang(!currentlyOpen);
     });
   }
-
-  /* ---------- 7. global dismissal + shortcuts ---------- */
 
   document.addEventListener('click', function (event) {
     if (langMenu && !langMenu.contains(event.target)) {
@@ -642,7 +610,6 @@
     }
   });
 
-  /* Tab is trapped inside the sheet while it is open */
   document.addEventListener('keydown', function (event) {
     if (event.key !== 'Tab' || !header.classList.contains('is-sheet-open') || !sheet) {
       return;
@@ -666,7 +633,6 @@
     }
   });
 
-  /* navigating anywhere closes the panels */
   header.addEventListener('click', function (event) {
     var link = event.target.closest ? event.target.closest('a') : null;
 
@@ -683,7 +649,6 @@
     hideResults();
   });
 
-  /* desktop <-> mobile switches must not leave an orphan panel open */
   if (mobileQuery && typeof mobileQuery.addEventListener === 'function') {
     mobileQuery.addEventListener('change', function (event) {
       if (!event.matches) {
@@ -694,8 +659,6 @@
       }
     });
   }
-
-  /* ---------- 8. helpers ---------- */
 
   function focusElement(element) {
     if (element && typeof element.focus === 'function') {

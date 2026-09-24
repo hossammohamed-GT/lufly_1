@@ -14,7 +14,6 @@ class Blog extends Model
         'seo' => 'json',
     ];
 
-    /** @return array<string, array<string, mixed>> */
     public function translations(): array
     {
         $rows = static::db()->connection()->select(

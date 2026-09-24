@@ -1,11 +1,4 @@
 <?php
-/**
- * Plain-text twin of the saved-list e-mail (same content, no markup).
- *
- * @var array<int, array<string, mixed>> $items
- * @var int $count
- * @var string $listUrl
- */
 $lines = [];
 $lines[] = 'LUFLY — ' . trans('favorites.mail_title');
 $lines[] = '';

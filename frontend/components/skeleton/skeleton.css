@@ -1,13 +1,3 @@
-/* ==========================================================================
-   Glass skeletons.
-
-   Instead of holding the whole page behind the preloader while database
-   driven sections resolve, those sections render a translucent "glass" card
-   in the shape of the real content. The user sees the layout immediately and
-   the data swaps in underneath, so the loading screen is reserved for the
-   genuinely heavy, static first paint.
-   ========================================================================== */
-
 .sk {
   position: relative;
   overflow: hidden;
@@ -18,7 +8,6 @@
   backdrop-filter: blur(9px) saturate(1.15);
 }
 
-/* the travelling sheen that signals "still working" */
 .sk::after {
   content: "";
   position: absolute;
@@ -38,8 +27,6 @@
   to { transform: translateX(100%); }
 }
 
-/* ---- primitives ---- */
-
 .sk-line {
   height: 11px;
   border-radius: 999px;
@@ -55,9 +42,6 @@
 .sk-line.w-55 { width: 55%; }
 .sk-line.w-70 { width: 70%; }
 .sk-line.w-85 { width: 85%; }
-
-/* ---- product card skeleton: mirrors .pcard exactly so nothing jumps
-   when the real markup replaces it ---- */
 
 .sk-card {
   display: flex;
@@ -83,8 +67,6 @@
 
 .sk-card-top .sk-line { width: 64px; height: 8px; margin: 0; }
 
-/* ---- grid wrapper, same columns as the catalogue ---- */
-
 .sk-grid {
   display: grid;
   grid-template-columns: repeat(4, 1fr);
@@ -94,17 +76,6 @@
 @media (max-width: 1024px) { .sk-grid { grid-template-columns: repeat(2, 1fr); } }
 @media (max-width: 560px)  { .sk-grid { grid-template-columns: 1fr; } }
 
-/* ---- swap behaviour: the skeleton is removed once the real content is in.
-   Keeping both in the DOM briefly avoids a flash of empty space. ---- */
-
-/* Fail-safe direction: the REAL content is visible by default and the
-   skeleton is what gets hidden. Hiding real content by default meant that if
-   the script failed to run - an error anywhere earlier on the page, a blocked
-   file, an old browser - the products disappeared permanently. Content must
-   never depend on JavaScript to be seen.
-
-   The script adds .sk-armed only once it is running and able to reveal
-   again, so the placeholder is shown strictly while that guarantee holds. */
 [data-sk-host].sk-armed > [data-sk-real] { display: none; }
 [data-sk-host].sk-armed > [data-sk-skeleton] { display: grid; }
 
@@ -112,8 +83,6 @@
 [data-sk-host].is-ready > [data-sk-skeleton] { display: none; }
 [data-sk-host].is-ready > [data-sk-real] { display: revert; }
 
-/* Catalog results are a grid, not the block-level default restored by
-   `display: revert` above. */
 [data-sk-host].is-ready > [data-sk-real].catalog-grid { display: grid; }
 
 @media (prefers-reduced-motion: reduce) {

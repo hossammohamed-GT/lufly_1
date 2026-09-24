@@ -6,14 +6,6 @@ namespace Database\Seeders;
 
 use Core\Database\Seeding\Seeder;
 
-/**
- * Categories come from the legacy LUFLY WooCommerce taxonomy
- * (database/seeders/data/categories.json, produced by
- * tools/import/extract_legacy.py). No invented categories.
- *
- * Only the locales the legacy data actually carries (en, cs) are written.
- * Turkish translations are added later by the content team from Admin.
- */
 class CategorySeeder extends Seeder
 {
     public function run(): void

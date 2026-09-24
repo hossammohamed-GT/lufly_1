@@ -8,10 +8,6 @@ use Core\Database\Migration\Migration;
 use Database\Schema\BoxItemsSchema;
 use Database\Schema\BoxesSchema;
 
-/**
- * The quotation box: the list a visitor fills with the pieces he wants priced,
- * and the one message that sends it to the team.
- */
 class CreateBoxesTables extends Migration
 {
     public function up(): void
