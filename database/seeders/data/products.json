@@ -254,6 +254,16 @@
                 "available": true,
                 "legacy_file": "2023/10/SOANA.jpg",
                 "legacy_attachment_id": 1951
+            },
+            {
+                "type": "situ",
+                "path": "/images/products/prod_214_SOANA-situ-1.jpg",
+                "available": true
+            },
+            {
+                "type": "situ",
+                "path": "/images/products/prod_214_SOANA-situ-2.jpg",
+                "available": true
             }
         ],
         "created_at": "2023-10-12 06:13:16",
@@ -282,6 +292,16 @@
                 "available": true,
                 "legacy_file": "2023/10/EXE.jpg",
                 "legacy_attachment_id": 1954
+            },
+            {
+                "type": "situ",
+                "path": "/images/products/prod_215_EXE-situ-1.jpg",
+                "available": true
+            },
+            {
+                "type": "situ",
+                "path": "/images/products/prod_215_EXE-situ-2.jpg",
+                "available": true
             }
         ],
         "created_at": "2023-10-12 06:11:00",
@@ -5300,6 +5320,16 @@
                 "available": true,
                 "legacy_file": "2025/12/Screenshot-2025-12-22-151442.png",
                 "legacy_attachment_id": 2639
+            },
+            {
+                "type": "situ",
+                "path": "/images/products/prod_2637-situ-1.jpg",
+                "available": true
+            },
+            {
+                "type": "situ",
+                "path": "/images/products/prod_2637-situ-2.jpg",
+                "available": true
             }
         ],
         "created_at": "2025-12-22 11:15:37",
@@ -8583,6 +8613,16 @@
                 "available": true,
                 "legacy_file": "2026/07/Screenshot-2026-07-22-170303.png",
                 "legacy_attachment_id": 2954
+            },
+            {
+                "type": "situ",
+                "path": "/images/products/prod_2952-situ-1.jpg",
+                "available": true
+            },
+            {
+                "type": "situ",
+                "path": "/images/products/prod_2952-situ-2.jpg",
+                "available": true
             }
         ],
         "created_at": "2026-07-22 13:03:32",
@@ -8617,6 +8657,16 @@
                 "available": true,
                 "legacy_file": "2026/07/Screenshot-2026-07-22-170510.png",
                 "legacy_attachment_id": 2958
+            },
+            {
+                "type": "situ",
+                "path": "/images/products/prod_2956-situ-1.jpg",
+                "available": true
+            },
+            {
+                "type": "situ",
+                "path": "/images/products/prod_2956-situ-2.jpg",
+                "available": true
             }
         ],
         "created_at": "2026-07-22 13:05:56",
@@ -8672,6 +8722,16 @@
                 "available": true,
                 "legacy_file": "2026/07/Screenshot-2026-07-22-170931.png",
                 "legacy_attachment_id": 2963
+            },
+            {
+                "type": "situ",
+                "path": "/images/products/prod_2961-situ-1.jpg",
+                "available": true
+            },
+            {
+                "type": "situ",
+                "path": "/images/products/prod_2961-situ-2.jpg",
+                "available": true
             }
         ],
         "created_at": "2026-07-22 13:09:44",
@@ -8706,6 +8766,16 @@
                 "available": true,
                 "legacy_file": "2026/07/Screenshot-2026-07-22-171134.png",
                 "legacy_attachment_id": 2967
+            },
+            {
+                "type": "situ",
+                "path": "/images/products/prod_2965-situ-1.jpg",
+                "available": true
+            },
+            {
+                "type": "situ",
+                "path": "/images/products/prod_2965-situ-2.jpg",
+                "available": true
             }
         ],
         "created_at": "2026-07-22 13:11:54",
@@ -8754,6 +8824,16 @@
                 "available": true,
                 "legacy_file": "2026/07/Screenshot-2026-07-22-171323.png",
                 "legacy_attachment_id": 2971
+            },
+            {
+                "type": "situ",
+                "path": "/images/products/prod_2969-situ-1.jpg",
+                "available": true
+            },
+            {
+                "type": "situ",
+                "path": "/images/products/prod_2969-situ-2.jpg",
+                "available": true
             }
         ],
         "created_at": "2026-07-22 13:13:38",
@@ -8786,6 +8866,16 @@
                 "available": true,
                 "legacy_file": "2026/07/Screenshot-2026-07-22-171427.png",
                 "legacy_attachment_id": 2974
+            },
+            {
+                "type": "situ",
+                "path": "/images/products/prod_2973-situ-1.jpg",
+                "available": true
+            },
+            {
+                "type": "situ",
+                "path": "/images/products/prod_2973-situ-2.jpg",
+                "available": true
             }
         ],
         "created_at": "2026-07-22 13:14:51",
@@ -8942,6 +9032,16 @@
                 "available": true,
                 "legacy_file": "2026/07/Screenshot-2026-07-22-172200.png",
                 "legacy_attachment_id": 2987
+            },
+            {
+                "type": "situ",
+                "path": "/images/products/prod_2985-situ-1.jpg",
+                "available": true
+            },
+            {
+                "type": "situ",
+                "path": "/images/products/prod_2985-situ-2.jpg",
+                "available": true
             }
         ],
         "created_at": "2026-07-22 13:22:29",
@@ -8981,6 +9081,16 @@
                 "available": true,
                 "legacy_file": "2026/07/Screenshot-2026-07-22-172355.png",
                 "legacy_attachment_id": 2991
+            },
+            {
+                "type": "situ",
+                "path": "/images/products/prod_2989-situ-1.jpg",
+                "available": true
+            },
+            {
+                "type": "situ",
+                "path": "/images/products/prod_2989-situ-2.jpg",
+                "available": true
             }
         ],
         "created_at": "2026-07-22 13:24:25",
@@ -9020,6 +9130,16 @@
                 "available": true,
                 "legacy_file": "2026/07/Screenshot-2026-07-22-172630.png",
                 "legacy_attachment_id": 2995
+            },
+            {
+                "type": "situ",
+                "path": "/images/products/prod_2993-situ-1.jpg",
+                "available": true
+            },
+            {
+                "type": "situ",
+                "path": "/images/products/prod_2993-situ-2.jpg",
+                "available": true
             }
         ],
         "created_at": "2026-07-22 13:27:02",
