@@ -83,9 +83,25 @@
 .category-mosaic {
   counter-reset: cat;
   display: grid;
-  grid-template-columns: repeat(5, minmax(0, 1fr));
-  gap: var(--space-4);
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 20px;
 }
+
+/* The collection title is an invitation to explore, not a tiny index: give
+   each category a generous editorial frame and let the five tiles breathe. */
+.category-card-stage { aspect-ratio: 4 / 3; }
+
+.category-card-shot { padding: 18px; }
+
+.category-card-info {
+  padding: 18px 18px 20px;
+}
+
+.category-card-info h3 {
+  font-size: clamp(17px, 1.5vw, 22px);
+}
+
+.category-card-info p { font-size: 12px; }
 
 .category-card-monolith {
   counter-increment: cat;
