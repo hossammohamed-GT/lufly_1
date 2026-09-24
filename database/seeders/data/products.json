@@ -7671,6 +7671,11 @@
                 "available": true,
                 "legacy_file": "2026/07/Screenshot-2026-07-16-151641.png",
                 "legacy_attachment_id": 2803
+            },
+            {
+                "type": "situ",
+                "path": "/images/products/prod_2805-situ-1.jpg",
+                "available": true
             }
         ],
         "created_at": "2026-07-16 11:19:47",
@@ -7714,6 +7719,11 @@
                 "available": true,
                 "legacy_file": "2026/07/Screenshot-2026-07-16-151641.png",
                 "legacy_attachment_id": 2803
+            },
+            {
+                "type": "situ",
+                "path": "/images/products/prod_2808-situ-1.jpg",
+                "available": true
             }
         ],
         "created_at": "2026-07-16 11:23:01",
