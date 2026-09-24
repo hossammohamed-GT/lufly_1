@@ -125,6 +125,8 @@ if (feature('planner', true) && (bool) config('planner.enabled', true)) {
                                      alt="<?= e(($product['name'] ?? '') . ' - ' . $v['label']) ?>"
                                      class="pdp-view-img<?= $v['key'] === 'situ' ? ' pdp-view-img-cover' : '' ?><?= $iIndex === 0 ? ' is-on' : '' ?>"
                                      data-pdp-slide="<?= (int) $iIndex ?>"
+                                     data-pdp-lightbox
+                                     tabindex="0"
                                      width="900" height="700"
                                      <?= $vIndex === 0 && $iIndex === 0 ? 'decoding="async"' : 'loading="lazy" decoding="async"' ?>
                                      onerror="this.onerror=null; this.remove();">
