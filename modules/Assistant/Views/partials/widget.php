@@ -42,9 +42,10 @@ $plannerSoon = $plannerTab && (bool) config('planner.coming_soon', true);
 
 $waiting = $assistant->waiting($locale);
 
-/* the heart on every card in the chat, and the box: two independent lists the
-   visitor can fill while he talks to the finder */
-$favoritesOn = feature('favorites', true) && class_exists(\Modules\Favorites\Services\FavoriteService::class);
+/* The box is the one list the chat feeds: a card carries its box button only.
+   The heart lives on the catalogue and on product pages, where it belongs — on
+   a card inside the panel it floated over the header and covered the close
+   button, so the chat does not load the favourites assets at all. */
 $boxOn = feature('box', true) && class_exists(\Modules\Box\Services\BoxService::class);
 $boxCount = 0;
 
@@ -59,11 +60,6 @@ if ($boxOn) {
 $view->pushStyle('frontend/planner/planner.css');
 $view->pushStyle('frontend/assistant/chat.css');
 $view->pushScript('frontend/assistant/assistant.js');
-
-if ($favoritesOn) {
-    $view->pushStyle('frontend/favorites/favorites.css');
-    $view->pushScript('frontend/favorites/favorites.js');
-}
 
 if ($boxOn) {
     $view->pushStyle('frontend/box/box.css');
@@ -85,7 +81,6 @@ if ($boxOn) {
      data-assistant-max-kb="<?= (int) config('assistant.photo.max_kb', 4096) ?>"
      data-assistant-ask-email="<?= ((bool) config('assistant.lead.ask_email', true) && (bool) config('assistant.lead.email', '')) ? '1' : '0' ?>"
      data-assistant-planner-soon="<?= $plannerSoon ? '1' : '0' ?>"
-     data-assistant-fav-endpoint="<?= $favoritesOn ? e(route('favorites.toggle')) : '' ?>"
      data-assistant-box="<?= $boxOn ? e(route('box.add')) : '' ?>"
      data-assistant-box-remove="<?= $boxOn ? e(route('box.remove')) : '' ?>"
      data-assistant-box-page="<?= $boxOn ? e(route('box.index')) : '' ?>"
@@ -97,8 +92,6 @@ if ($boxOn) {
          'see_all' => trans('assistant.see_all'),
          'support_mail' => trans('assistant.support_mail'),
          'support_whatsapp' => trans('assistant.support_whatsapp'),
-         'fav_save' => $favoritesOn ? trans('favorites.save') : '',
-         'fav_saved' => $favoritesOn ? trans('favorites.saved') : '',
          'box_add' => $boxOn ? trans('box.add') : '',
          'box_added' => $boxOn ? trans('box.added') : '',
          'box_err' => $boxOn ? trans('box.err') : '',
@@ -106,18 +99,20 @@ if ($boxOn) {
 
     <button type="button" class="aichat-fab" data-aichat-toggle
             aria-expanded="false" aria-controls="lufly-chat-panel">
+        <!-- the words first, the mark last: the bar is anchored to the right, so
+             stretching it out to the panel's width leaves the mark where it is -->
+        <span class="aichat-fab-text">
+            <strong><?= e(trans('assistant.open')) ?></strong>
+            <em><?= e(trans('assistant.open_hint')) ?></em>
+        </span>
         <span class="aichat-fab-icon" aria-hidden="true">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"
                  stroke-linecap="round" stroke-linejoin="round">
                 <circle cx="11" cy="11" r="7"/>
                 <path d="m20 20-3.6-3.6"/>
             </svg>
+            <span class="aichat-fab-dot"></span>
         </span>
-        <span class="aichat-fab-text">
-            <strong><?= e(trans('assistant.open')) ?></strong>
-            <em><?= e(trans('assistant.open_hint')) ?></em>
-        </span>
-        <span class="aichat-fab-dot" aria-hidden="true"></span>
     </button>
 
     <section class="aichat-panel" id="lufly-chat-panel" data-aichat-panel hidden

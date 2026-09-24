@@ -987,7 +987,11 @@
   display: inline-flex;
   align-items: center;
   gap: 12px;
-  padding: 8px 20px 8px 10px;
+  /* the words hold the start of the bar and the mark its end: at rest the two
+     are neighbours (the bar is only as wide as they are), and as the bar
+     stretches the auto margin carries the mark out to the right — the label
+     stays where it is, which is what makes the growth read as one movement */
+  padding: 8px 10px 8px 20px;
   border: 1px solid var(--ds-border);
   border-radius: var(--radius-full);
   background: var(--ds-glass-bg-strong);
@@ -995,7 +999,28 @@
   color: var(--ds-text);
   box-shadow: var(--shadow-2);
   cursor: pointer;
-  transition: transform 240ms cubic-bezier(0.16, 1, 0.3, 1), box-shadow 240ms ease, border-color 200ms ease, opacity 200ms ease;
+  /* the width is part of the motion: the button stretches out to the width of
+     the panel it is about to become */
+  width: auto;
+  transition: width 420ms cubic-bezier(0.22, 1, 0.36, 1), transform 240ms cubic-bezier(0.16, 1, 0.3, 1),
+              box-shadow 240ms ease, border-color 200ms ease, opacity 200ms ease;
+}
+
+/* Pointing at it is enough to show what it becomes. Mouse only: a touch screen
+   would keep the stretched state after a tap. */
+@media (hover: hover) {
+  .aichat-fab:hover {
+    width: var(--aichat-fab-w, var(--aichat-w));
+    max-width: calc(100vw - 40px);
+  }
+}
+
+/* and it stays that wide for as long as the chat is open — the panel grows out
+   of it, so the bar is the chat's own base */
+.aichat.is-open .aichat-fab {
+  width: var(--aichat-fab-w, var(--aichat-w));
+  max-width: calc(100vw - 40px);
+  border-color: var(--ds-primary-line);
 }
 
 .aichat-fab:hover {
@@ -1010,9 +1035,11 @@
 }
 
 .aichat-fab-icon {
+  position: relative;
   display: grid;
   place-items: center;
   flex: 0 0 auto;
+  margin-inline-start: auto;
   width: 38px;
   height: 38px;
   border-radius: var(--radius-full);
@@ -1043,22 +1070,23 @@
   color: var(--ds-text-muted);
 }
 
+/* the little "we are here" light rides on the icon, so the bar's own width can
+   change without it drifting */
 .aichat-fab-dot {
-  flex: 0 0 auto;
-  width: 8px;
-  height: 8px;
+  position: absolute;
+  inset-block-start: 1px;
+  inset-inline-end: 1px;
+  width: 9px;
+  height: 9px;
   border-radius: var(--radius-full);
   background: var(--ds-success);
+  box-shadow: 0 0 0 2px var(--ds-primary);
   animation: aichat-ping 2.8s ease-out infinite;
 }
 
 @keyframes aichat-ping {
   0%, 62%, 100% { box-shadow: 0 0 0 0 transparent; opacity: 1; }
   22% { box-shadow: 0 0 0 6px color-mix(in srgb, var(--ds-success) 22%, transparent); }
-}
-
-.aichat.is-open .aichat-fab {
-  border-color: var(--ds-primary-line);
 }
 
 /* the "mail it to me" sheet lives in the same corner: give it the floor */
@@ -1084,10 +1112,11 @@ body.has-favmail .aichat-fab {
   background: var(--ds-surface);
   box-shadow: var(--shadow-3, var(--shadow-2));
   overflow: hidden;
-  /* it grows out of the corner the launcher sits in, the way a sheet does on
-     iOS: quick, a small overshoot, then still */
-  transform-origin: calc(100% - 20px) calc(100% + 58px);
-  animation: aichat-in 420ms cubic-bezier(0.22, 1, 0.36, 1) both;
+  /* It is unrolled out of the launcher: the bar under it is already the panel's
+     own width, and the panel's bottom edge is where the bar is, so revealing it
+     from that edge upward reads as the chat being formed out of the button.
+     Nothing inside is scaled, so no text is ever squashed on the way in. */
+  animation: aichat-in 460ms cubic-bezier(0.16, 1, 0.3, 1) both;
 }
 
 .aichat-panel[hidden] {
@@ -1095,22 +1124,39 @@ body.has-favmail .aichat-fab {
 }
 
 @keyframes aichat-in {
-  0%   { opacity: 0; transform: translateY(26px) scale(0.9); }
-  55%  { opacity: 1; transform: translateY(-4px) scale(1.012); }
-  100% { opacity: 1; transform: translateY(0) scale(1); }
+  0% {
+    clip-path: inset(100% 0 0 0 round var(--radius-xl));
+    transform: translateY(10px);
+    opacity: 0.5;
+  }
+  45% { opacity: 1; }
+  100% {
+    clip-path: inset(0 0 0 0 round var(--radius-xl));
+    transform: translateY(0);
+    opacity: 1;
+  }
 }
 
-/* and it sinks back into that corner when it closes. The class stays on until
-   the frame is over — frontend/assistant/assistant.js hides the panel on
-   animationend, and keeps a timer as the safety net. */
+/* Closing is the same move backwards: the top edge comes down and the panel is
+   rolled back into the bar, which then returns to its own size. The class stays
+   on until the frame is over — frontend/assistant/assistant.js hides the panel
+   on animationend, and keeps a timer as the safety net. */
 .aichat.is-closing .aichat-panel {
-  animation: aichat-out 270ms cubic-bezier(0.4, 0, 0.85, 0.55) both;
+  animation: aichat-out 320ms cubic-bezier(0.4, 0, 0.7, 0.3) both;
   pointer-events: none;
 }
 
 @keyframes aichat-out {
-  0%   { opacity: 1; transform: translateY(0) scale(1); }
-  100% { opacity: 0; transform: translateY(22px) scale(0.92); }
+  0% {
+    clip-path: inset(0 0 0 0 round var(--radius-xl));
+    transform: translateY(0);
+    opacity: 1;
+  }
+  100% {
+    clip-path: inset(100% 0 0 0 round var(--radius-xl));
+    transform: translateY(8px);
+    opacity: 0.75;
+  }
 }
 
 .aichat.is-wide .aichat-panel {
@@ -1412,15 +1458,16 @@ body.is-chat-resizing {
 /* ---------- phones: the chat takes the screen ---------- */
 
 @media (max-width: 720px) {
-  .aichat-fab {
+  .aichat-fab,
+  .aichat.is-open .aichat-fab {
     inset-block-end: 18px;
     inset-inline-end: 18px;
     gap: 0;
+    width: 54px;
     padding: 8px;
   }
 
-  .aichat-fab-text,
-  .aichat-fab-dot {
+  .aichat-fab-text {
     display: none;
   }
 
@@ -1435,8 +1482,6 @@ body.is-chat-resizing {
     max-height: none;
     border: 0;
     border-radius: 0;
-    /* full screen: it rises from the bottom edge instead of a corner */
-    transform-origin: 50% 100%;
   }
 
   .aichat-grip {

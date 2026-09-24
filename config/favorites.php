@@ -23,7 +23,8 @@ return [
     'email_cooldown' => (int) env('FAVORITES_EMAIL_COOLDOWN', 60),
     'email_daily_limit' => (int) env('FAVORITES_EMAIL_DAILY_LIMIT', 5),
 
-    /* every mailed list is also delivered to the store inbox (a lead to follow
-       up). Set FAVORITES_NOTIFY_ADMIN=false to keep the inbox quiet. */
-    'notify_admin' => (bool) env('FAVORITES_NOTIFY_ADMIN', true),
+    /* A mailed list goes to the visitor who asked for it, and to nobody else.
+       The store inbox copy is off by default (FAVORITES_NOTIFY_ADMIN=true turns
+       it back on for a team that wants the lead in its mail). */
+    'notify_admin' => (bool) env('FAVORITES_NOTIFY_ADMIN', false),
 ];

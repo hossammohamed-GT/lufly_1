@@ -1306,9 +1306,13 @@ final class AssistantService
             return false;
         }
 
-        /* text questions are only mailed once per visitor per day; a picture
-           always is — somebody has to look at it */
-        if (!$withPhoto && $this->alreadyTold()) {
+        /* A typed question is answered in the chat and mailed to nobody: the
+           visitor did not ask for a human, so the shop does not write to one.
+           (It is still stored as a lead, so the team can read it in the admin.)
+           A photo is the visitor asking us to look, so that one goes out — and
+           only once per visitor per day for the typed ones when the switch is
+           on. */
+        if (!$withPhoto && (!(bool) config('assistant.lead.notify_text', false) || $this->alreadyTold())) {
             return false;
         }
 

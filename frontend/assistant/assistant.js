@@ -37,7 +37,6 @@
   var photosOn = root.getAttribute('data-assistant-photos') === '1';
   var askEmail = root.getAttribute('data-assistant-ask-email') === '1';
   var plannerSoon = root.getAttribute('data-assistant-planner-soon') === '1';
-  var favEndpoint = root.getAttribute('data-assistant-fav-endpoint') || '';
   var boxEndpoint = root.getAttribute('data-assistant-box') || '';
   var boxRemoveEndpoint = root.getAttribute('data-assistant-box-remove') || '';
   var boxPage = root.getAttribute('data-assistant-box-page') || '';
@@ -155,11 +154,15 @@
     if (size.wide) {
       panel.style.removeProperty('--aichat-w');
       panel.style.removeProperty('--aichat-h');
+      /* the launcher stretches to the panel's width: it is the base the panel
+         grows out of, so it may not be narrower than the panel itself */
+      root.style.setProperty('--aichat-fab-w', 'min(1020px, calc(100vw - 48px))');
       return;
     }
 
     panel.style.setProperty('--aichat-w', size.w + 'px');
     panel.style.setProperty('--aichat-h', size.h + 'px');
+    root.style.setProperty('--aichat-fab-w', size.w + 'px');
   }
 
   function rememberSize() {
@@ -224,7 +227,7 @@
       /* the animation says when it is done; the timer is only the safety net for
          a browser that never fires the event (or a visitor who asked for less
          motion, where there is no animation at all) */
-      closingTimer = window.setTimeout(finishClosing, 340);
+      closingTimer = window.setTimeout(finishClosing, 400);
       return;
     }
 
@@ -535,9 +538,11 @@
       link.appendChild(body);
       wrap.appendChild(link);
 
+      /* the box is the one tool a chat card carries: the heart belonged to the
+         catalogue, and on a card inside the panel it floated over the header and
+         covered the close button */
       var tools = el('span', 'aichat-card-tools');
 
-      if (favEndpoint) tools.appendChild(heart(card));
       if (boxEndpoint) tools.appendChild(boxButton(card));
 
       if (tools.childNodes.length > 0) wrap.appendChild(tools);
@@ -546,26 +551,6 @@
     });
 
     return grid;
-  }
-
-  /* the heart posts to the favourites endpoint — favourites.js paints every
-     copy of it and keeps the counter in the header in step */
-  function heart(card) {
-    var button = el('button', 'favbtn favbtn-card' + (card.fav ? ' is-on' : ''));
-    button.type = 'button';
-    button.setAttribute('data-fav-toggle', '');
-    button.setAttribute('data-fav-product', String(card.id || 0));
-    button.setAttribute('data-fav-endpoint', favEndpoint);
-    button.setAttribute('data-fav-label-on', labels.fav_saved || '');
-    button.setAttribute('data-fav-label-off', labels.fav_save || '');
-    button.setAttribute('aria-pressed', card.fav ? 'true' : 'false');
-    button.setAttribute('title', card.fav ? (labels.fav_saved || '') : (labels.fav_save || ''));
-    button.innerHTML = '<span class="favbtn-icon" aria-hidden="true">' +
-      '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" ' +
-      'stroke-linecap="round" stroke-linejoin="round"><path d="M12 20.6 4.2 12.8a5.1 5.1 0 0 1 0-7.2 ' +
-      '5.1 5.1 0 0 1 7.2 0l.6.6.6-.6a5.1 5.1 0 0 1 7.2 0 5.1 5.1 0 0 1 0 7.2Z"/></svg></span>';
-
-    return button;
   }
 
   function boxButton(card) {

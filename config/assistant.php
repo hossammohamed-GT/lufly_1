@@ -63,6 +63,13 @@ return [
         'default_email' => (string) env('ASSISTANT_LEAD_DEFAULT', 'hossam545mohamed@gmail.com'),
         /* ask for the address before the first answer (never twice) */
         'ask_email' => (bool) env('ASSISTANT_ASK_EMAIL', true),
+        /* A question typed into the chat is answered in the chat and goes no
+           further: nothing is mailed to anybody unless the visitor sends
+           something of his own — a photo he wants a human to look at. Every
+           question is still stored, so the team can read it in the admin. Turn
+           ASSISTANT_LEAD_TEXT=true on to have typed questions mailed too (at
+           most one per visitor per day). */
+        'notify_text' => (bool) env('ASSISTANT_LEAD_TEXT', false),
     ],
 
     /*
@@ -73,7 +80,7 @@ return [
      * in one look whether the copy it is serving is the one that was just
      * deployed — instead of wondering why a fix does not show.
      */
-    'build' => (string) env('ASSISTANT_BUILD', '2026-09-24.6'),
+    'build' => (string) env('ASSISTANT_BUILD', '2026-09-24.7'),
 
     'ai' => [
         'enabled' => (bool) env('ASSISTANT_AI', true),

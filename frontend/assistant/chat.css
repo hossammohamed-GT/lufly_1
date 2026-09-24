@@ -8,8 +8,11 @@
    and the promise of the planner.
    ========================================================================== */
 
-/* the panel is a column of its own: header, tabs, body, compose, foot */
-.aichat[data-assistant] .aichat-panel {
+/* The panel is a column of its own: header, tabs, body, compose, foot.
+   The size lives on the chat itself, not on the panel, because the launcher
+   below it reads the same numbers — it stretches to the panel's width, and two
+   sources for one width is one mismatch waiting to happen. */
+.aichat[data-assistant] {
   --aichat-w: 412px;
   --aichat-h: min(640px, calc(100vh - 148px));
 }
@@ -400,13 +403,10 @@
   padding: 0 8px 8px;
 }
 
-.aichat-card-tools .favbtn,
 .aichat-card-tools .boxbtn {
-  --fav-size: 30px;
   --box-size: 30px;
 }
 
-.aichat-card-tools .favbtn svg,
 .aichat-card-tools .boxbtn svg {
   width: 15px;
   height: 15px;

@@ -37,9 +37,11 @@ return [
     'send_cooldown' => (int) env('BOX_SEND_COOLDOWN', 60),
     'send_daily_limit' => (int) env('BOX_SEND_DAILY_LIMIT', 5),
 
-    /* the team hears about a box while it is being filled, not only when it is
-       sent — but not once per click either */
-    'saved_notice' => (bool) env('BOX_SAVED_NOTICE', true),
+    /* Off by default: the shop keeps quiet until the visitor himself sends.
+       A box that is only being filled is his business, not the team's — turn
+       BOX_SAVED_NOTICE=true on when the team wants to watch boxes fill, and the
+       cooldown below keeps that to one note per box per window. */
+    'saved_notice' => (bool) env('BOX_SAVED_NOTICE', false),
     'saved_cooldown' => (int) env('BOX_SAVED_COOLDOWN', 300),
 
     /* how much the visitor may write with the request */
