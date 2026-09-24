@@ -16,7 +16,11 @@
   var reduced = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
   if (reduced) loader.classList.add('ld-reduced');
 
-  var T_SHOW = reduced ? 1100 : 2500;   var T_SEAL = reduced ? 150 : 450;     var T_CURTAIN = 900;                  var HARD_STOP = 6000;                 var NAV_HOLD = reduced ? 200 : 520;   var isExited = false;
+  var T_SHOW = reduced ? 1100 : 2500;
+  var T_CURTAIN = 900;
+  var HARD_STOP = 6000;
+  var NAV_HOLD = reduced ? 200 : 520;
+  var isExited = false;
 
   function exitLoader() {
     if (isExited) return;
@@ -38,8 +42,7 @@
 
   function startInitialSequence() {
     document.body.classList.add('ld-loading');
-    setTimeout(function () { loader.classList.add('seal'); }, T_SHOW);
-    setTimeout(exitLoader, T_SHOW + T_SEAL);
+    setTimeout(exitLoader, T_SHOW);
     setTimeout(exitLoader, HARD_STOP);
   }
 
@@ -56,11 +59,8 @@
     var hold = typeof after === 'number' ? after : NAV_HOLD;
     var cb = typeof after === 'function' ? after : onComplete;
     setTimeout(function () {
-      loader.classList.add('seal');
-      setTimeout(function () {
-        exitLoader();
-        if (typeof cb === 'function') cb();
-      }, T_SEAL);
+      exitLoader();
+      if (typeof cb === 'function') cb();
     }, hold);
   }
 
