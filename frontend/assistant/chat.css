@@ -253,7 +253,7 @@
     radial-gradient(58% 58% at 32% 42%, color-mix(in srgb, #ffffff 92%, transparent) 0%, transparent 62%),
     radial-gradient(105% 118% at 34% 46%, transparent 52%, color-mix(in srgb, #6b3ad6 46%, transparent) 78%, transparent 90%),
     conic-gradient(from 205deg,
-
+      #ff6fd8, #a86bff, #59c9ff, #63ffd5, #ffe27a, #ff6fd8);
   filter: blur(22px) saturate(180%);
   opacity: 0.78;
   animation: aichat-orb 11s linear infinite;

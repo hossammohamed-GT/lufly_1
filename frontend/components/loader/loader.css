@@ -222,6 +222,16 @@ body.ld-loading {
 .ld-loader.is-nav .ld-floor { animation: none; opacity: .5; }
 .ld-loader.is-nav .ld-reflect { animation: none; opacity: .32; }
 
+.ld-loader.seal .ld-logoBox {
+  animation: ldSeal .45s var(--ld-ease) both;
+}
+
+@keyframes ldSeal {
+  0% { transform: scale(1); filter: drop-shadow(0 0 0 transparent); }
+  50% { transform: scale(1.02); filter: drop-shadow(0 0 20px color-mix(in srgb, var(--ld-mint) 50%, transparent)); }
+  100% { transform: scale(1); filter: none; }
+}
+
 .ld-reduced .ld-draw { animation: none; }
 .ld-reduced .ld-draw path { animation: none; opacity: 1; transform: none; }
 .ld-reduced .ld-seed { display: none; }
