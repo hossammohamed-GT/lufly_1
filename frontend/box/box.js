@@ -100,7 +100,7 @@
       });
     });
   }
-
+// s
   function paintCount(count) {
     var nodes = document.querySelectorAll('[data-box-count]');
     for (var i = 0; i < nodes.length; i++) {
