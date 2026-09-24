@@ -4667,6 +4667,11 @@
                 "available": true,
                 "legacy_file": "2025/11/Image_20250702134627.png",
                 "legacy_attachment_id": 2550
+            },
+            {
+                "type": "situ",
+                "path": "/images/products/prod_2554-situ-1.jpg",
+                "available": true
             }
         ],
         "created_at": "2025-11-28 12:51:02",
@@ -4706,6 +4711,11 @@
                 "available": true,
                 "legacy_file": "2025/11/Image_20250702134621.png",
                 "legacy_attachment_id": 2557
+            },
+            {
+                "type": "situ",
+                "path": "/images/products/prod_2556-situ-1.jpg",
+                "available": true
             }
         ],
         "created_at": "2025-11-28 12:53:39",
@@ -4745,6 +4755,11 @@
                 "available": true,
                 "legacy_file": "2025/11/Image_20250702134621.png",
                 "legacy_attachment_id": 2557
+            },
+            {
+                "type": "situ",
+                "path": "/images/products/prod_2559-situ-1.jpg",
+                "available": true
             }
         ],
         "created_at": "2025-11-28 12:55:19",
@@ -4784,6 +4799,11 @@
                 "available": true,
                 "legacy_file": "2025/11/Image_20250702134621.png",
                 "legacy_attachment_id": 2557
+            },
+            {
+                "type": "situ",
+                "path": "/images/products/prod_2561-situ-1.jpg",
+                "available": true
             }
         ],
         "created_at": "2025-11-28 12:57:06",
@@ -4827,6 +4847,11 @@
                 "available": true,
                 "legacy_file": "2025/11/Image_20250702134615.png",
                 "legacy_attachment_id": 2549
+            },
+            {
+                "type": "situ",
+                "path": "/images/products/prod_2563-situ-1.jpg",
+                "available": true
             }
         ],
         "created_at": "2025-11-28 12:58:39",
@@ -4870,6 +4895,11 @@
                 "available": true,
                 "legacy_file": "2025/11/Image_20250702134615.png",
                 "legacy_attachment_id": 2549
+            },
+            {
+                "type": "situ",
+                "path": "/images/products/prod_2565-situ-1.jpg",
+                "available": true
             }
         ],
         "created_at": "2025-11-28 13:00:33",
