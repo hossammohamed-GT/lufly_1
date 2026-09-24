@@ -13,7 +13,7 @@ $view->pushStyle('frontend/home/categories/categories.css');
 $view->pushScript('frontend/home/categories/categories.js');
 
 /** @var array<int, array<string, mixed>> $items */
-$items = array_slice(is_array($categories ?? null) ? $categories : [], 0, 5);
+$items = array_slice(is_array($categories ?? null) ? $categories : [], 0, 4);
 
 if ($items === []) {
     /* Nothing to show only when the catalogue really has no active category -
@@ -84,6 +84,13 @@ $fallbackImg = '/images/logo.png';
                     </div>
                 </a>
             <?php endforeach; ?>
+        </div>
+
+        <div class="categories-more-wrap scroll-reveal">
+            <a href="<?= e(route('products.index')) ?>" class="categories-more">
+                <span><?= e(trans('home.full_catalog')) ?></span>
+                <svg viewBox="0 0 20 20" fill="currentColor" width="14" height="14" aria-hidden="true"><path fill-rule="evenodd" d="M10.293 3.293a1 1 0 011.414 0l6 6a1 1 0 010 1.414l-6 6a1 1 0 01-1.414-1.414L14.586 11H3a1 1 0 110-2h11.586l-4.293-4.293a1 1 0 010-1.414z" clip-rule="evenodd"/></svg>
+            </a>
         </div>
     </div>
 </section>
