@@ -386,6 +386,11 @@
                 "available": true,
                 "legacy_file": "2023/10/MERO-65.jpg",
                 "legacy_attachment_id": 1948
+            },
+            {
+                "type": "situ",
+                "path": "/images/products/prod_227-situ-1.jpg",
+                "available": true
             }
         ],
         "created_at": "2023-10-12 06:23:38",
@@ -413,6 +418,11 @@
                 "available": true,
                 "legacy_file": "2023/10/EBRO-1610-154.jpg",
                 "legacy_attachment_id": 1942
+            },
+            {
+                "type": "situ",
+                "path": "/images/products/prod_236-situ-1.jpg",
+                "available": true
             }
         ],
         "created_at": "2023-10-12 06:19:52",
@@ -440,6 +450,11 @@
                 "available": true,
                 "legacy_file": "2023/10/LEGATO-1610-094.jpg",
                 "legacy_attachment_id": 1936
+            },
+            {
+                "type": "situ",
+                "path": "/images/products/prod_252-situ-1.jpg",
+                "available": true
             }
         ],
         "created_at": "2023-10-12 06:38:24",
@@ -467,6 +482,11 @@
                 "available": true,
                 "legacy_file": "2023/10/MERO-55-1610-242-1.jpg",
                 "legacy_attachment_id": 1937
+            },
+            {
+                "type": "situ",
+                "path": "/images/products/prod_253-situ-1.jpg",
+                "available": true
             }
         ],
         "created_at": "2023-10-12 06:42:19",
@@ -494,6 +514,11 @@
                 "available": true,
                 "legacy_file": "2023/10/MARANO-1610-164.jpg",
                 "legacy_attachment_id": 1930
+            },
+            {
+                "type": "situ",
+                "path": "/images/products/prod_254-situ-1.jpg",
+                "available": true
             }
         ],
         "created_at": "2023-10-12 06:48:29",
@@ -528,6 +553,11 @@
                 "available": true,
                 "legacy_file": "2023/10/1695-209-bdrawing.jpg",
                 "legacy_attachment_id": 1925
+            },
+            {
+                "type": "situ",
+                "path": "/images/products/prod_268-situ-1.jpg",
+                "available": true
             }
         ],
         "created_at": "2023-10-12 07:04:18",
@@ -562,6 +592,11 @@
                 "available": true,
                 "legacy_file": "2023/10/1695-209-drawing-1.jpg",
                 "legacy_attachment_id": 1923
+            },
+            {
+                "type": "situ",
+                "path": "/images/products/prod_269-situ-1.jpg",
+                "available": true
             }
         ],
         "created_at": "2023-10-12 07:08:14",
@@ -596,6 +631,11 @@
                 "available": true,
                 "legacy_file": "2023/10/1695-209-drawing.jpg",
                 "legacy_attachment_id": 1916
+            },
+            {
+                "type": "situ",
+                "path": "/images/products/prod_270-situ-1.jpg",
+                "available": true
             }
         ],
         "created_at": "2023-10-12 07:11:35",
@@ -635,6 +675,11 @@
                 "available": true,
                 "legacy_file": "2023/10/1610-242-b.jpg",
                 "legacy_attachment_id": 2025
+            },
+            {
+                "type": "situ",
+                "path": "/images/products/prod_2028-situ-1.jpg",
+                "available": true
             }
         ],
         "created_at": "2024-11-05 19:24:41",
@@ -669,6 +714,11 @@
                 "available": true,
                 "legacy_file": "2024/11/1690-000-Drawing.jpg",
                 "legacy_attachment_id": 2053
+            },
+            {
+                "type": "situ",
+                "path": "/images/products/prod_2050-situ-1.jpg",
+                "available": true
             }
         ],
         "created_at": "2024-11-05 20:27:22",
