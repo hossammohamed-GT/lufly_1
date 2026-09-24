@@ -77,6 +77,12 @@
   display: block;
 }
 
+/* The conversation scrolls to its end, and the end must clear the composer:
+   without this the last thing the chat said sits half under the input. */
+.aichat-pane {
+  padding-block-end: 14px;
+}
+
 /* ---------- the welcome: one sentence, then chips ---------- */
 
 .aichat-welcome[hidden] {
@@ -222,14 +228,122 @@
   color: var(--ds-text);
 }
 
+/* ---------- while the answer is being written ------------------------------- */
+
+/* The visitor watches this bubble for a second or two, so it may as well be
+   worth watching: an iridescent orb turning slowly, a scan of rings over it,
+   and a gloss sweeping across — the look of a fingerprint reader. The words
+   stay on top of the glow. Everything below moves with transform/opacity only,
+   so a phone does not heat up while it waits. */
+
+.aichat-say.is-waiting {
+  position: relative;
+  isolation: isolate;
+  display: flex;
+  align-items: center;
+  overflow: hidden;
+  /* room for the light to move in: a strip as tall as the words would cut the
+     orb in half */
+  min-height: 76px;
+  padding: 16px 18px;
+  border: 1px solid var(--ds-border);
+  border-radius: var(--radius-lg);
+  /* frosted glass over the colour, the way the card in the reference reads */
+  background: color-mix(in srgb, var(--ds-surface) 74%, transparent);
+  box-shadow: inset 0 1px 0 color-mix(in srgb, #ffffff 70%, transparent);
+}
+
 .aichat-say.is-waiting p {
-  color: var(--ds-text-muted);
+  position: relative;
+  z-index: 2;
+  color: var(--ds-text);
   animation: aichat-breathe 2.6s ease-in-out infinite;
 }
 
 @keyframes aichat-breathe {
   0%, 100% { opacity: 1; }
-  50% { opacity: 0.55; }
+  50% { opacity: 0.62; }
+}
+
+.aichat-aura,
+.aichat-aura > span {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+}
+
+.aichat-aura {
+  z-index: 1;
+  border-radius: inherit;
+  overflow: hidden;
+}
+
+/* The colour: a conic holo gradient turned until it is light rather than shape,
+   with a violet rim and a white core, so it reads as a sphere behind glass and
+   not as a smear of paint. */
+.aichat-aura-orb {
+  inset: -78% -22%;
+  border-radius: 50%;
+  background:
+    radial-gradient(58% 58% at 32% 42%, color-mix(in srgb, #ffffff 92%, transparent) 0%, transparent 62%),
+    radial-gradient(105% 118% at 34% 46%, transparent 52%, color-mix(in srgb, #6b3ad6 46%, transparent) 78%, transparent 90%),
+    conic-gradient(from 205deg,
+      #ff6fd8, #a86bff, #59c9ff, #63ffd5, #ffe27a, #ff6fd8);
+  filter: blur(22px) saturate(180%);
+  opacity: 0.78;
+  animation: aichat-orb 11s linear infinite;
+}
+
+@keyframes aichat-orb {
+  from { transform: rotate(0turn) scale(1.05); }
+  50%  { transform: rotate(0.5turn) scale(1.22); }
+  to   { transform: rotate(1turn) scale(1.05); }
+}
+
+/* the scan: rings of a reader, breathing over the colour */
+.aichat-aura-rings {
+  background: repeating-radial-gradient(circle at 30% 50%,
+      transparent 0 6px,
+      color-mix(in srgb, #ffffff 52%, transparent) 6px 7px);
+  -webkit-mask-image: radial-gradient(circle at 30% 50%, #000 0%, transparent 72%);
+  mask-image: radial-gradient(circle at 30% 50%, #000 0%, transparent 72%);
+  opacity: 0.42;
+  animation: aichat-rings 6.5s ease-in-out infinite;
+}
+
+@keyframes aichat-rings {
+  0%, 100% { transform: scale(1); opacity: 0.24; }
+  50% { transform: scale(1.09); opacity: 0.42; }
+}
+
+/* the gloss that crosses the bubble, like the shine on the card */
+.aichat-aura-sheen {
+  inset: -80% auto;
+  inset-inline-start: 0;
+  width: 42%;
+  height: 260%;
+  background: linear-gradient(90deg, transparent, color-mix(in srgb, #ffffff 60%, transparent), transparent);
+  filter: blur(7px);
+  opacity: 0;
+  animation: aichat-sheen 4.2s ease-in-out infinite;
+}
+
+@keyframes aichat-sheen {
+  0%   { transform: translateX(-160%) rotate(14deg); opacity: 0; }
+  18%  { opacity: 0.6; }
+  70%  { opacity: 0.38; }
+  100% { transform: translateX(380%) rotate(14deg); opacity: 0; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .aichat-aura-orb,
+  .aichat-aura-rings,
+  .aichat-aura-sheen {
+    animation: none;
+  }
+
+  .aichat-aura-orb { opacity: 0.34; }
+  .aichat-aura-sheen { opacity: 0; }
 }
 
 .aichat-say-shot {

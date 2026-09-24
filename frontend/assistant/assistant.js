@@ -188,12 +188,45 @@
     if (growText) growText.textContent = text;
   }
 
+  /* The panel grows out of the corner it lives in and sinks back into it, the
+     way a sheet does on iOS. Closing has an animation of its own, so the panel
+     may not be hidden the moment the visitor asks for it: the class goes on, and
+     the frame that carries it away calls finishClosing(). */
+  var closingTimer = null;
+
+  function finishClosing() {
+    if (closingTimer) {
+      window.clearTimeout(closingTimer);
+      closingTimer = null;
+    }
+
+    root.classList.remove('is-closing');
+    panel.hidden = true;
+  }
+
   function openPanel(open) {
+    if (open) {
+      if (closingTimer) {
+        window.clearTimeout(closingTimer);
+        closingTimer = null;
+      }
+      root.classList.remove('is-closing');
+      panel.hidden = false;
+    } else if (panel.hidden) {
+      return;
+    }
+
     root.classList.toggle('is-open', open);
-    panel.hidden = !open;
     if (toggle) toggle.setAttribute('aria-expanded', open ? 'true' : 'false');
 
-    if (!open) return;
+    if (!open) {
+      root.classList.add('is-closing');
+      /* the animation says when it is done; the timer is only the safety net for
+         a browser that never fires the event (or a visitor who asked for less
+         motion, where there is no animation at all) */
+      closingTimer = window.setTimeout(finishClosing, 340);
+      return;
+    }
 
     applySize();
     /* the address is asked once, before the first answer */
@@ -201,6 +234,10 @@
     if (input) input.focus();
     window.requestAnimationFrame(scrollLog);
   }
+
+  panel.addEventListener('animationend', function (event) {
+    if (event.target === panel && event.animationName === 'aichat-out') finishClosing();
+  });
 
   rememberSize();
   applySize();
@@ -218,6 +255,20 @@
       if (toggle) toggle.focus();
     });
   }
+
+  /* Anywhere empty closes the chat. The visitor should never have to find the
+     same button again to put it away — and a tap on the page around the panel is
+     the most natural way to say "not now". Taps inside the panel, on the
+     launcher, and on anything the chat put on the page are left alone. */
+  document.addEventListener('pointerdown', function (event) {
+    if (panel.hidden || root.classList.contains('is-closing')) return;
+
+    var node = event.target;
+    if (!node || typeof node.closest !== 'function') return;
+    if (node.closest('[data-aichat-panel]') || node.closest('[data-aichat-toggle]')) return;
+
+    openPanel(false);
+  }, true);
 
   if (growButton) {
     growButton.addEventListener('click', function () {
@@ -587,6 +638,21 @@
   var waitingTimer = null;
   var waitingBubble = null;
 
+  /* The glow the visitor watches while the answer is written: a slow
+     iridescent orb, a scan of rings over it, and a gloss that sweeps across —
+     the look of a fingerprint reader. It sits under the words, and it is pure
+     scenery: the bubble is never remembered, so it cannot come back on the next
+     page as if the chat were still thinking. */
+  function waitingGlow() {
+    var glow = el('span', 'aichat-aura');
+    glow.setAttribute('aria-hidden', 'true');
+    glow.appendChild(el('span', 'aichat-aura-orb'));
+    glow.appendChild(el('span', 'aichat-aura-rings'));
+    glow.appendChild(el('span', 'aichat-aura-sheen'));
+
+    return glow;
+  }
+
   function startWaiting() {
     if (waiting.length === 0) return;
 
@@ -595,6 +661,7 @@
        the saved thread, or the visitor would come back to a stale
        "reading your words…" on the next page */
     waitingBubble = say('bot is-waiting', waiting[0], null, false);
+    waitingBubble.insertBefore(waitingGlow(), waitingBubble.firstChild);
 
     waitingTimer = window.setInterval(function () {
       waitingIndex = (waitingIndex + 1) % waiting.length;
