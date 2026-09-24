@@ -758,6 +758,11 @@
                 "available": true,
                 "legacy_file": "2024/11/1660-140-Drawing.jpg",
                 "legacy_attachment_id": 2057
+            },
+            {
+                "type": "situ",
+                "path": "/images/products/prod_2054-situ-1.jpg",
+                "available": true
             }
         ],
         "created_at": "2024-11-05 20:31:02",
@@ -1864,6 +1869,11 @@
                 "available": true,
                 "legacy_file": "2025/06/hand-dryer.jpeg",
                 "legacy_attachment_id": 2218
+            },
+            {
+                "type": "situ",
+                "path": "/images/products/prod_2213-situ-1.jpg",
+                "available": true
             }
         ],
         "created_at": "2025-06-12 18:36:21",
@@ -6024,6 +6034,11 @@
                 "available": true,
                 "legacy_file": "2025/12/Screenshot-2025-12-22-151747.png",
                 "legacy_attachment_id": 2643
+            },
+            {
+                "type": "situ",
+                "path": "/images/products/prod_2641-situ-1.jpg",
+                "available": true
             }
         ],
         "created_at": "2025-12-22 11:18:24",
@@ -6063,6 +6078,11 @@
                 "available": true,
                 "legacy_file": "2025/12/Screenshot-2025-12-23-070531.png",
                 "legacy_attachment_id": 2651
+            },
+            {
+                "type": "situ",
+                "path": "/images/products/prod_2649-situ-1.jpg",
+                "available": true
             }
         ],
         "created_at": "2025-12-23 03:07:26",
@@ -6097,6 +6117,11 @@
                 "available": true,
                 "legacy_file": "2025/12/Screenshot-2025-12-23-071710.png",
                 "legacy_attachment_id": 2657
+            },
+            {
+                "type": "situ",
+                "path": "/images/products/prod_2655-situ-1.jpg",
+                "available": true
             }
         ],
         "created_at": "2025-12-23 03:18:37",
@@ -6140,6 +6165,11 @@
                 "available": true,
                 "legacy_file": "2025/12/Screenshot-2025-12-23-072509.png",
                 "legacy_attachment_id": 2661
+            },
+            {
+                "type": "situ",
+                "path": "/images/products/prod_2659-situ-1.jpg",
+                "available": true
             }
         ],
         "created_at": "2025-12-23 03:26:36",
@@ -6183,6 +6213,11 @@
                 "available": true,
                 "legacy_file": "2025/12/Screenshot-2025-12-23-072951.png",
                 "legacy_attachment_id": 2666
+            },
+            {
+                "type": "situ",
+                "path": "/images/products/prod_2664-situ-1.jpg",
+                "available": true
             }
         ],
         "created_at": "2025-12-23 03:30:30",
