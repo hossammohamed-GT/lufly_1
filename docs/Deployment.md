@@ -240,7 +240,20 @@ python3 tools/media_audit/optimize_images.py
 
 # plus downscaled renditions for srcset (<name>.jpg@480w.webp, @960w, @1440w)
 python3 tools/media_audit/optimize_images.py --variants 480,960,1440 public/images/lifestyle
+
+# renditions for images referenced from CSS (background-image). These must be
+# JPEGs: a stylesheet names one file and cannot negotiate on Accept, so the
+# rule needs a .jpg that .htaccess can swap for its .jpg.webp twin.
+python3 tools/media_audit/optimize_images.py --filter backdrop \
+    --variants 760,1440 --variant-format both
+
+# --filter restricts a run to filenames containing the text, so one group of
+# images can be given renditions without regenerating everything.
 ```
+
+The rendition suffix is `<original>@<width>w.<ext>`. `optimize_images.py`
+skips files carrying that suffix, so re-running it never builds a rendition of
+a rendition.
 
 `.htaccess` then negotiates WebP automatically: when the browser sends
 `Accept: image/webp` and the twin exists, it is served for the original URL.
