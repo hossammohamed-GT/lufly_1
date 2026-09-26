@@ -27,7 +27,7 @@ $view->layout('layouts.admin');
                 <td><?= (int) $item['id'] ?></td>
                 <td class="cell-message">
                     <?php if (($item['link_url'] ?? '') !== null && $item['link_url'] !== ''): ?>
-                        <a href="<?= e((string) $item['link_url']) ?>" target="_blank" rel="noopener"><?= e((string) $item['message']) ?></a>
+                        <a href="<?= e((string) $item['link_url']) ?>" <?= external_link_attrs((string) $item['link_url']) ?>><?= e((string) $item['message']) ?></a>
                     <?php else: ?>
                         <?= e((string) $item['message']) ?>
                     <?php endif; ?>

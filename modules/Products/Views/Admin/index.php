@@ -40,7 +40,7 @@ foreach ($paginator->items() as $product) {
                 <td><?= (int) $product->id ?></td>
                 <td style="width: 60px;">
                     <?php if ($productImage): ?>
-                        <a href="<?= $productImage ?>" target="_blank" rel="noopener" title="<?= e($productName) ?>">
+                        <a href="<?= $productImage ?>" title="<?= e($productName) ?>">
                             <img src="<?= $productImage ?>" alt="<?= e($productName) ?>" loading="lazy" style="width: 48px; height: 48px; object-fit: cover; border-radius: 6px; border: 1px solid var(--ds-border, #e2e8f0); display: block; background: var(--ds-surface, #fff);">
                         </a>
                     <?php else: ?>

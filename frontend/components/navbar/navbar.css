@@ -1977,16 +1977,6 @@
   color: var(--ds-primary);
 }
 
-.mnav-drop-catalog {
-  margin-inline-start: auto;
-  border: 1px solid var(--ds-primary-line);
-  color: var(--ds-primary);
-}
-
-.mnav-drop-catalog:hover {
-  background: var(--ds-primary);
-  color: var(--lu-neutral-0);
-}
 
 .mnav-btn-menu-chevron {
   width: 14px;

@@ -262,3 +262,65 @@ if (!function_exists('feature')) {
     }
 }
 
+if (!function_exists('is_external_url')) {
+    /**
+     * Does this URL leave the site?
+     *
+     * The test is the host, never the scheme: `route()` builds absolute URLs
+     * (`https://example.com/en/products`), so "starts with http" says nothing
+     * about whether a link is ours. Anything that stays on our own host - an
+     * absolute route, a relative path, a bare `#anchor` - is internal, and so
+     * are the schemes that never navigate to a page at all (`mailto:`, `tel:`,
+     * `whatsapp:`).
+     */
+    function is_external_url(?string $url): bool
+    {
+        $trimmed = trim((string) $url);
+
+        if ($trimmed === '' || str_starts_with($trimmed, '#')) {
+            return false;
+        }
+
+        $scheme = parse_url($trimmed, PHP_URL_SCHEME);
+
+        /* No scheme (a relative path, or a protocol-relative `//host/x`) or a
+           scheme that is not a web navigation: nothing to leave the page for. */
+        if ($scheme !== null && !in_array(strtolower($scheme), ['http', 'https'], true)) {
+            return false;
+        }
+
+        $host = parse_url($trimmed, PHP_URL_HOST);
+
+        /* No host of its own means it resolves against our own origin. */
+        if ($host === null || $host === '') {
+            return false;
+        }
+
+        $own = app(Router::class);
+
+        if ($own === null) {
+            return false;
+        }
+
+        $ownHost = parse_url($own->baseUrl(), PHP_URL_HOST);
+
+        return $ownHost === null
+            || $ownHost === ''
+            || strcasecmp((string) $host, (string) $ownHost) !== 0;
+    }
+}
+
+if (!function_exists('external_link_attrs')) {
+    /**
+     * The attributes a link needs only when it leaves the site: an empty
+     * string for our own pages, `target="_blank"` plus the security `rel` for
+     * somebody else's. See `docs/Link-Targets.md`.
+     */
+    function external_link_attrs(?string $url): string
+    {
+        return is_external_url($url)
+            ? 'target="_blank" rel="noopener noreferrer"'
+            : '';
+    }
+}
+

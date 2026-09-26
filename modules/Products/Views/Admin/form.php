@@ -167,7 +167,7 @@ $productId = $product === null ? 0 : (int) $product->id;
                             ?>
                             <figure class="media-card<?= $isPrimary ? ' is-primary' : '' ?><?= $isMissing ? ' is-missing' : '' ?>">
                                 <div class="media-card-media">
-                                    <a href="<?= e(asset((string) $item['path'])) ?>" target="_blank" rel="noopener">
+                                    <a href="<?= e(asset((string) $item['path'])) ?>">
                                         <img src="<?= e(asset((string) $item['path'])) ?>" alt="<?= e((string) ($item['original_name'] ?? '')) ?>" loading="lazy" decoding="async"
                                              onerror="this.onerror=null; this.closest('.media-card').classList.add('is-missing');">
                                     </a>

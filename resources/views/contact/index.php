@@ -76,6 +76,7 @@ $faqs = [
 ];
 
 $mapUrl = 'https://www.google.com/maps/search/?api=1&query=Gaziantep%2C%20T%C3%BCrkiye';
+$waCta = $wa('Hello LUFLY, I would like to contact your architectural team.');
 ?>
 <main class="cpage" id="main">
     <div class="cpage-inner">
@@ -106,8 +107,8 @@ $mapUrl = 'https://www.google.com/maps/search/?api=1&query=Gaziantep%2C%20T%C3%B
                     <span><?= e(trans('contact.whatsapp_title')) ?></span>
                 </span>
                 <p class="cpage-wa-desc"><?= e(trans('contact.whatsapp_desc')) ?></p>
-                <a class="cpage-wa-number" href="https://wa.me/<?= e($waNumber) ?>" target="_blank" rel="noopener noreferrer">+90 850 3040 817</a>
-                <a class="cpage-wa-cta" href="<?= e($wa('Hello LUFLY, I would like to contact your architectural team.')) ?>" target="_blank" rel="noopener noreferrer">
+                <a class="cpage-wa-number" href="https://wa.me/<?= e($waNumber) ?>" <?= external_link_attrs('https://wa.me/' . $waNumber) ?>>+90 850 3040 817</a>
+                <a class="cpage-wa-cta" href="<?= e($waCta) ?>" <?= external_link_attrs($waCta) ?>>
                     <span><?= e(trans('contact.whatsapp_cta')) ?></span>
                     <?= $icon('arrow', 15) ?>
                 </a>
@@ -142,7 +143,7 @@ $mapUrl = 'https://www.google.com/maps/search/?api=1&query=Gaziantep%2C%20T%C3%B
                     <?= e(trans('contact.factory_line1')) ?><br>
                     <?= e(trans('contact.factory_line2')) ?>
                 </p>
-                <a class="cpage-maplink" href="<?= e($mapUrl) ?>" target="_blank" rel="noopener noreferrer">
+                <a class="cpage-maplink" href="<?= e($mapUrl) ?>" <?= external_link_attrs($mapUrl) ?>>
                     <?= $icon('pin', 14) ?>
                     <span><?= e(trans('contact.map_cta')) ?></span>
                 </a>
@@ -232,7 +233,7 @@ $mapUrl = 'https://www.google.com/maps/search/?api=1&query=Gaziantep%2C%20T%C3%B
             </h2>
             <div class="cpage-lines">
                 <?php foreach ($requestLines as $line): ?>
-                    <a class="cpage-line" href="<?= e($line['href']) ?>" target="_blank" rel="noopener noreferrer">
+                    <a class="cpage-line" href="<?= e($line['href']) ?>" <?= external_link_attrs((string) $line['href']) ?>>
                         <span class="cpage-line-code"><?= e($line['code']) ?></span>
                         <span class="cpage-line-ico" aria-hidden="true"><?= $icon($line['icon'], 17) ?></span>
                         <span class="cpage-line-label"><?= e(trans('contact.' . $line['key'])) ?></span>

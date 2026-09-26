@@ -167,7 +167,7 @@ $fallbackImg = asset('/images/products/prod_146_1620-111-a.jpg');
 
         <div class="planp-handoff-actions">
             <a class="planp-btn is-whatsapp" href="<?= e((string) $handoff['whatsapp']) ?>"
-               target="_blank" rel="noopener">
+               <?= external_link_attrs((string) $handoff['whatsapp']) ?>>
                 <?= e(trans('planner.handoff_whatsapp')) ?>
             </a>
 

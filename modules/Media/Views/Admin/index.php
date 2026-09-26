@@ -105,7 +105,7 @@ $totalFiles = array_sum(array_column($collections ?? [], 'count'));
                     <td><?= (int) $media->id ?></td>
                     <td style="width: 60px;">
                         <?php if ($isImage): ?>
-                            <a href="<?= $mediaUrl ?>" target="_blank" rel="noopener" title="<?= e($media->original_name) ?>">
+                            <a href="<?= $mediaUrl ?>" title="<?= e($media->original_name) ?>">
                                 <img src="<?= $mediaUrl ?>" alt="<?= e($media->original_name) ?>" loading="lazy" style="width: 48px; height: 48px; object-fit: cover; border-radius: 6px; border: 1px solid var(--ds-border, #e2e8f0); display: block; background: var(--ds-surface, #fff);">
                             </a>
                         <?php else: ?>

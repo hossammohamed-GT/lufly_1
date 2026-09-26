@@ -118,8 +118,6 @@ $getSectionIcon = static function (string $key): string {
     };
 };
 
-$catalogUrl = route('contact');
-
 /* Language targets keep the current route translated per locale. */
 $languageLinks = [];
 
@@ -345,13 +343,9 @@ src="<?= e(asset('images/logo.png')) ?>"
                 <?php foreach ($indexLinks as $link): ?>
                     <a class="mnav-drop-link<?= $isActive($link['url']) ? ' is-active' : '' ?>"
                        href="<?= e($link['url']) ?>"
-                       <?= str_starts_with($link['url'], 'http') ? 'target="_blank" rel="noopener"' : '' ?>
+                       <?= external_link_attrs($link['url']) ?>
                        <?= $isActive($link['url']) ? 'aria-current="page"' : '' ?>><?= e(trans('nav.' . $link['key'], [], $currentLocale)) ?></a>
                 <?php endforeach; ?>
-                <a class="mnav-drop-link mnav-drop-catalog"
-                   href="<?= e($catalogUrl) ?>"
-                   target="_blank"
-                   rel="noopener"><?= e(trans('nav.download_catalog', [], $currentLocale)) ?> (PDF)</a>
             </div>
         </nav>
 
@@ -385,7 +379,7 @@ src="<?= e(asset('images/logo.png')) ?>"
                 <?php foreach ($indexLinks as $position => $link): ?>
                     <a class="mnav-sheet-link<?= $isActive($link['url']) ? ' is-active' : '' ?>"
                        href="<?= e($link['url']) ?>"
-                       <?= str_starts_with($link['url'], 'http') ? 'target="_blank" rel="noopener"' : '' ?>
+                       <?= external_link_attrs($link['url']) ?>
                        <?= $isActive($link['url']) ? 'aria-current="page"' : '' ?>>
                         <span class="mnav-sheet-num"><?= e(str_pad((string) ($position + 1), 2, '0', STR_PAD_LEFT)) ?></span>
                         <span><?= e(trans('nav.' . $link['key'], [], $currentLocale)) ?></span>
@@ -452,10 +446,6 @@ src="<?= e(asset('images/logo.png')) ?>"
                     </svg>
                     <?= e(trans('nav.theme_toggle', [], $currentLocale)) ?>
                 </button>
-
-                <a class="mnav-util-link" href="<?= e($catalogUrl) ?>" target="_blank" rel="noopener">
-                    <?= e(trans('nav.download_catalog', [], $currentLocale)) ?>
-                </a>
             </div>
         </div>
     </section>

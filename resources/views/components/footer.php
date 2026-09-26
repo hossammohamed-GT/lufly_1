@@ -63,7 +63,7 @@
                 </p>
                 <p class="footer-contact">
                     <a class="footer-link-strong" href="<?= e(route('contact')) ?>"><?= e(trans('nav.contact')) ?></a><br>
-                    <a class="footer-link-strong" href="https://wa.me/908503040817" target="_blank" rel="noopener">WhatsApp: +90 850 3040 817</a><br>
+                    <a class="footer-link-strong" href="https://wa.me/908503040817" <?= external_link_attrs('https://wa.me/908503040817') ?>>WhatsApp: +90 850 3040 817</a><br>
                     <a class="footer-link-muted" href="mailto:info@lufly.tr">
                         Email: info@lufly.tr
                     </a>
