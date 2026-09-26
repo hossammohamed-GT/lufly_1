@@ -1946,9 +1946,9 @@
   border: 1px solid var(--ds-primary-line);
   border-radius: var(--radius-full);
   box-shadow: 0 16px 36px var(--ds-nav-shadow), 0 0 0 1px var(--ds-primary-tint);
-  overflow-x: auto;
-  scrollbar-width: none;
-  -webkit-overflow-scrolling: touch;
+  /* Deliberately not a scroll container any more: the bar now holds six
+     items, and `overflow` here would clip the "More" menu below. */
+  overflow: visible;
 }
 
 .mnav-dropdown-inner::-webkit-scrollbar {
@@ -1974,6 +1974,104 @@
 .mnav-drop-link:focus-visible,
 .mnav-drop-link.is-active {
   background: var(--ds-primary-tint);
+  color: var(--ds-primary);
+}
+
+/* ---------- the "More" fold: everything that did not fit the row ---------- */
+
+.mnav-drop-more {
+  position: relative;
+  display: inline-flex;
+}
+
+.mnav-drop-more-btn {
+  gap: 6px;
+  border: 0;
+  background: none;
+  font: inherit;
+  cursor: pointer;
+  white-space: nowrap;
+}
+
+.mnav-drop-more-chevron {
+  width: 12px;
+  height: 12px;
+  flex: 0 0 auto;
+  transition: transform var(--ds-nav-fast) var(--ds-nav-ease);
+}
+
+.mnav-drop-more.is-open .mnav-drop-more-chevron {
+  transform: rotate(180deg);
+}
+
+.mnav-drop-more.is-open .mnav-drop-more-btn {
+  background: var(--ds-primary-tint);
+  color: var(--ds-primary);
+}
+
+.mnav-drop-more-menu {
+  position: absolute;
+  inset-inline-start: 0;
+  top: calc(100% + var(--space-2));
+  z-index: 9999;
+  min-width: 220px;
+  padding: var(--space-2);
+  text-align: start;
+  background: var(--ds-surface);
+  border: 1px solid var(--ds-border);
+  border-radius: var(--radius-sm);
+  box-shadow: var(--ds-nav-shadow);
+  opacity: 0;
+  visibility: hidden;
+  transform: translate3d(0, -6px, 0);
+  transition:
+    opacity var(--ds-nav-fast) var(--ds-nav-ease),
+    transform var(--ds-nav-fast) var(--ds-nav-ease),
+    visibility 0s linear var(--ds-nav-fast);
+}
+
+.mnav-drop-more.is-open .mnav-drop-more-menu {
+  opacity: 1;
+  visibility: visible;
+  transform: none;
+  transition-delay: 0s;
+}
+
+.mnav-drop-more-title {
+  padding: var(--space-2) var(--space-3);
+  border-bottom: var(--border-hairline) solid var(--ds-nav-hairline);
+  color: var(--ds-nav-etch);
+  font-family: var(--font-mono);
+  font-size: var(--text-caption);
+  font-weight: var(--weight-bold);
+  letter-spacing: var(--tracking-widest);
+  text-transform: uppercase;
+}
+
+.mnav-drop-more-title + .mnav-drop-more-link,
+.mnav-drop-more-link + .mnav-drop-more-title {
+  margin-block-start: var(--space-1);
+}
+
+.mnav-drop-more-link {
+  display: block;
+  padding: var(--space-2) var(--space-3);
+  border-radius: var(--radius-xs);
+  color: var(--ds-text);
+  font-size: var(--text-sm);
+  text-decoration: none;
+  text-transform: none;
+  letter-spacing: normal;
+  white-space: nowrap;
+  transition:
+    color var(--ds-nav-fast) var(--ds-nav-ease),
+    background var(--ds-nav-fast) var(--ds-nav-ease);
+}
+
+.mnav-drop-more-link:hover,
+.mnav-drop-more-link:focus-visible,
+.mnav-drop-more-link.is-active {
+  background: var(--ds-primary-soft);
   color: var(--ds-primary);
 }
 

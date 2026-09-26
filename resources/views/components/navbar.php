@@ -98,7 +98,34 @@ if ($plannerOn) {
     ]]);
 }
 
-$railLinks = array_slice($indexLinks, 0, 4);
+/* The index bar is one row, so it cannot carry every link without turning
+   into a ribbon you have to scroll. The places a visitor actually goes stay
+   as pills; the rest folds into a single "More" button. Saved list, Box and
+   the planner keep their own buttons in the top row, so the bar does not
+   need to repeat them. */
+$barKeys = ['bathroom', 'kitchen', 'latest', 'collections', 'contact'];
+$exploreKeys = ['finishes', 'rituals', 'inspirations', 'news'];
+
+$barLinks = [];
+$exploreLinks = [];
+$toolLinks = [];
+
+foreach ($indexLinks as $link) {
+    if (in_array($link['key'], $barKeys, true)) {
+        $barLinks[] = $link;
+    } elseif (in_array($link['key'], $exploreKeys, true)) {
+        $exploreLinks[] = $link;
+    } else {
+        $toolLinks[] = $link;
+    }
+}
+
+/* The "More" button lights up when the page you are on is inside it. */
+$moreActive = false;
+
+foreach (array_merge($exploreLinks, $toolLinks) as $link) {
+    $moreActive = $moreActive || $isActive($link['url']);
+}
 
 $getSectionIcon = static function (string $key): string {
     return match ($key) {
@@ -340,12 +367,53 @@ src="<?= e(asset('images/logo.png')) ?>"
                 <!-- Horizontal Full-Width Index Bar (Text Only, Ultra Fast) -->
         <nav class="mnav-dropdown-bar" id="mnav-dropdown-bar" aria-label="<?= e(trans('nav.index', [], $currentLocale)) ?>">
             <div class="container mnav-dropdown-inner">
-                <?php foreach ($indexLinks as $link): ?>
+                <?php foreach ($barLinks as $link): ?>
                     <a class="mnav-drop-link<?= $isActive($link['url']) ? ' is-active' : '' ?>"
                        href="<?= e($link['url']) ?>"
                        <?= external_link_attrs($link['url']) ?>
                        <?= $isActive($link['url']) ? 'aria-current="page"' : '' ?>><?= e(trans('nav.' . $link['key'], [], $currentLocale)) ?></a>
                 <?php endforeach; ?>
+
+                <?php if ($exploreLinks || $toolLinks): ?>
+                    <div class="mnav-drop-more" data-more-menu>
+                        <button type="button"
+                                class="mnav-drop-link mnav-drop-more-btn<?= $moreActive ? ' is-active' : '' ?>"
+                                data-more-toggle
+                                aria-expanded="false"
+                                aria-haspopup="true"
+                                aria-controls="mnav-drop-more-menu">
+                            <?= e(trans('nav.more', [], $currentLocale)) ?>
+                            <svg class="icon mnav-drop-more-chevron" viewBox="0 0 24 24" aria-hidden="true">
+                                <polyline points="6 9 12 15 18 9"></polyline>
+                            </svg>
+                        </button>
+
+                        <div class="mnav-drop-more-menu" id="mnav-drop-more-menu" role="menu"
+                             aria-label="<?= e(trans('nav.more', [], $currentLocale)) ?>">
+                            <?php if ($exploreLinks): ?>
+                                <div class="mnav-drop-more-title"><?= e(trans('nav.more_explore', [], $currentLocale)) ?></div>
+                                <?php foreach ($exploreLinks as $link): ?>
+                                    <a class="mnav-drop-more-link<?= $isActive($link['url']) ? ' is-active' : '' ?>"
+                                       href="<?= e($link['url']) ?>"
+                                       role="menuitem"
+                                       <?= external_link_attrs($link['url']) ?>
+                                       <?= $isActive($link['url']) ? 'aria-current="page"' : '' ?>><?= e(trans('nav.' . $link['key'], [], $currentLocale)) ?></a>
+                                <?php endforeach; ?>
+                            <?php endif; ?>
+
+                            <?php if ($toolLinks): ?>
+                                <div class="mnav-drop-more-title"><?= e(trans('nav.more_tools', [], $currentLocale)) ?></div>
+                                <?php foreach ($toolLinks as $link): ?>
+                                    <a class="mnav-drop-more-link<?= $isActive($link['url']) ? ' is-active' : '' ?>"
+                                       href="<?= e($link['url']) ?>"
+                                       role="menuitem"
+                                       <?= external_link_attrs($link['url']) ?>
+                                       <?= $isActive($link['url']) ? 'aria-current="page"' : '' ?>><?= e(trans('nav.' . $link['key'], [], $currentLocale)) ?></a>
+                                <?php endforeach; ?>
+                            <?php endif; ?>
+                        </div>
+                    </div>
+                <?php endif; ?>
             </div>
         </nav>
 

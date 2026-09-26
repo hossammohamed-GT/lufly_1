@@ -14,7 +14,7 @@ return [
     'foot' => 'Náš vlastní katalog · bez registrace',
     'tab_find' => 'Najít výrobek',
     'tab_planner' => 'Plán koupelny',
-    'placeholder' => 'např. malé oválné umyvadlo, chrom, 55 cm…',
+    'placeholder' => 'Popište výrobek…',
     'send' => 'Odeslat',
     'attach' => 'Poslat fotku',
     'attach_hint' => 'Jedna fotka — výrobek, který máte na mysli',

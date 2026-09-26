@@ -176,12 +176,48 @@
 
   function closeIndex() {
     setIndex(false);
+    closeMore();
   }
 
   if (indexToggle) {
     indexToggle.addEventListener('click', function (e) {
       e.stopPropagation();
       setIndex(!header.classList.contains('is-index-open'));
+    });
+  }
+
+  /* ---------- 2b. the "More" fold in the index bar ---------- */
+
+  var moreMenu = header.querySelector('[data-more-menu]');
+  var moreToggle = header.querySelector('[data-more-toggle]');
+
+  function setMore(open) {
+    if (!moreMenu || !moreToggle) {
+      return;
+    }
+
+    moreMenu.classList.toggle('is-open', open);
+    moreToggle.setAttribute('aria-expanded', open ? 'true' : 'false');
+  }
+
+  function closeMore() {
+    setMore(false);
+  }
+
+  if (moreToggle) {
+    moreToggle.addEventListener('click', function (event) {
+      event.stopPropagation();
+      setMore(!moreMenu.classList.contains('is-open'));
+    });
+  }
+
+  if (moreMenu) {
+    /* Following a link must close the fold, whichever way the loader
+       decides to move to the page. */
+    moreMenu.addEventListener('click', function (event) {
+      if (event.target.closest('a')) {
+        closeMore();
+      }
     });
   }
 
@@ -586,6 +622,10 @@
     if (langMenu && !langMenu.contains(event.target)) {
       closeLang();
     }
+
+    if (moreMenu && !moreMenu.contains(event.target)) {
+      closeMore();
+    }
     var dropdownBar = header.querySelector('#mnav-dropdown-bar');
     if (dropdownBar && !dropdownBar.contains(event.target) && !(indexToggle && indexToggle.contains(event.target))) {
       closeIndex();
@@ -621,6 +661,7 @@
       }
 
       closeLang();
+      closeMore();
       return;
     }
 

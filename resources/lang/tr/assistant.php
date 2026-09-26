@@ -14,7 +14,7 @@ return [
     'foot' => 'Kendi kataloğumuz · hesap gerekmez',
     'tab_find' => 'Ürün bul',
     'tab_planner' => 'Banyo planı',
-    'placeholder' => 'örn. küçük oval lavabo, krom, 55 cm…',
+    'placeholder' => 'Ürünü tarif edin…',
     'send' => 'Gönder',
     'attach' => 'Fotoğraf gönder',
     'attach_hint' => 'Bir fotoğraf — aklınızdaki parça',

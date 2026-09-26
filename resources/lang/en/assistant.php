@@ -23,7 +23,7 @@ return [
     'tab_planner' => 'Bathroom plan',
 
     /* the input */
-    'placeholder' => 'e.g. a small oval washbasin, chrome, 55 cm…',
+    'placeholder' => 'Describe the piece…',
     'send' => 'Send',
     'attach' => 'Send a photo',
     'attach_hint' => 'One picture — the piece you have in mind',
