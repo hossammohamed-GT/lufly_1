@@ -23,14 +23,6 @@ return [
     'box.send' => 'krabice/poslat',
 
     /* bathroom planner */
-    /* quotation box */
-    'box.index' => 'krabice',
-    'box.claim' => 'krabice/{token}',
-    'box.add' => 'krabice/pridat',
-    'box.remove' => 'krabice/odebrat',
-    'box.clear' => 'krabice/vysypat',
-    'box.send' => 'krabice/poslat',
-
     'planner.index' => 'planovac-koupelny',
     'planner.step' => 'planovac-koupelny/krok',
     'planner.fit' => 'planovac-koupelny/vejde-se',

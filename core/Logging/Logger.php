@@ -20,6 +20,9 @@ class Logger implements LoggerInterface
         'emergency' => 7,
     ];
 
+    /** Directories are created once per logger, not once per log line. */
+    private bool $directoryChecked = false;
+
     public function __construct(
         private readonly string $channel,
         private readonly string $filePath,
@@ -48,9 +51,16 @@ class Logger implements LoggerInterface
             $this->formatContext($context),
         );
 
-        $dir = dirname($this->filePath);
-        if (!is_dir($dir)) {
-            @mkdir($dir, 0775, true);
+        /* stat() on every call showed up repeatedly in profiles of the home
+           page, where the query log alone emitted ten lines per request. The
+           directory cannot disappear mid-request, so it is checked once. */
+        if (!$this->directoryChecked) {
+            $dir = dirname($this->filePath);
+            if (!is_dir($dir)) {
+                @mkdir($dir, 0775, true);
+            }
+
+            $this->directoryChecked = true;
         }
 
         @file_put_contents($this->filePath, $line, FILE_APPEND | LOCK_EX);

@@ -131,3 +131,12 @@
   .footer-grid { grid-template-columns: minmax(0, 1fr); }
   .footer-bottom-bar { flex-direction: column; text-align: center; }
 }
+
+/* ---------- Responsive images ---------- */
+
+/* <picture> is only a srcset container here. `display: contents` keeps it from
+   becoming a box of its own, so an <img> wrapped in it stays the direct child
+   of whatever grid or flex parent it was written for. */
+.respic {
+  display: contents;
+}

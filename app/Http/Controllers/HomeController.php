@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Http\Controllers;
 
+use App\Services\CacheService;
 use App\Services\SEOService;
 use Core\Http\RedirectResponse;
 use Core\Http\Response;
@@ -11,10 +12,43 @@ use Core\Localization\Translator;
 
 class HomeController extends Controller
 {
+    /**
+     * How long the catalogue-wide lookups below are kept.
+     *
+     * They are the only part of the home page whose cost grows with the number
+     * of products, and they only change when somebody edits the catalogue, so
+     * five minutes of staleness here is invisible next to a render that is
+     * deliberately different on every visit.
+     */
+    private const CACHE_TTL = 300;
+
     public function __construct(
         private readonly Translator $translator,
         private readonly SEOService $seo,
+        private readonly CacheService $cache,
     ) {
+    }
+
+    /**
+     * Fetch through the cache. CacheService::get() is a single file read, so
+     * this stays cheaper than re-running the query even for the current, small
+     * catalogue - and it stops mattering entirely once the catalogue grows.
+     *
+     * @param callable(): array<int, array<string, mixed>> $callback
+     * @return array<int, array<string, mixed>>
+     */
+    private function remember(string $key, callable $callback): array
+    {
+        $cached = $this->cache->get($key);
+
+        if (is_array($cached)) {
+            return $cached;
+        }
+
+        $value = $callback();
+        $this->cache->set($key, $value, self::CACHE_TTL);
+
+        return $value;
     }
 
     public function root(): RedirectResponse
@@ -28,7 +62,13 @@ class HomeController extends Controller
         $connection = \Modules\Products\Models\Product::query()->connection();
 
         $fallback = (string) config('localization.fallback', 'en');
-        $categories = $connection->select(
+
+        /* These three read (or join) whole tables instead of a handful of rows,
+           which makes them the only home-page cost that grows with the
+           catalogue. The rows themselves change rarely, so they are cached;
+           the shuffling and random picking that make every visit different
+           stay in PHP and are not affected. */
+        $categories = $this->remember('home.categories.' . $locale . '.' . $fallback, static fn (): array => $connection->select(
             "SELECT c.id, c.slug, c.image,
                     COALESCE(ct.name, ctf.name) AS name,
                     COALESCE(ct.description, ctf.description) AS description
@@ -38,7 +78,7 @@ class HomeController extends Controller
              WHERE c.deleted_at IS NULL AND c.status = 'active'
              ORDER BY c.id ASC",
             [$locale, $fallback]
-        );
+        ));
 
         /* Category tiles lead with a real product from their own category.
            Only photographs qualify (main / gallery media) - the technical
@@ -46,7 +86,7 @@ class HomeController extends Controller
            tile never fills up with three angles of the same fixture. The list
            is shuffled per request, which is what makes the mosaic change from
            visit to visit instead of always showing the same picture. */
-        $shotRows = $connection->select(
+        $shotRows = $this->remember('home.category-shots', static fn (): array => $connection->select(
             "SELECT p.category_id, m.path
                FROM products p
                JOIN product_media pm ON pm.product_id = p.id
@@ -57,7 +97,7 @@ class HomeController extends Controller
                 AND pm.type IN ('main', 'gallery')
               ORDER BY p.category_id ASC, (pm.type = 'main') DESC,
                        pm.is_primary DESC, pm.sort_order ASC, pm.id ASC",
-        );
+        ));
 
         $shotsByCategory = [];
         foreach ($shotRows as $row) {
@@ -86,11 +126,11 @@ class HomeController extends Controller
            category, then keeps 4 for the grid - so each reload shows a
            different mix that always spans distinct categories. Curated
            (is_featured) products win within their category when any exist. */
-        $pool = $connection->select(
+        $pool = $this->remember('home.featured-pool', static fn (): array => $connection->select(
             "SELECT id, category_id, is_featured
                FROM products
               WHERE status = 'active' AND deleted_at IS NULL",
-        );
+        ));
 
         $byCategory = [];
         foreach ($pool as $row) {

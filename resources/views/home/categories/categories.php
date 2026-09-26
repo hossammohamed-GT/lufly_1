@@ -9,7 +9,7 @@
  * @var Core\View\View $view
  * @var array<int, array<string, mixed>> $categories
  */
-$view->pushStyle('frontend/home/categories/categories.css');
+$view->pushDeferredStyle('frontend/home/categories/categories.css');
 $view->pushScript('frontend/home/categories/categories.js');
 
 /** @var array<int, array<string, mixed>> $items */

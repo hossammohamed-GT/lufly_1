@@ -221,6 +221,48 @@ Notes that save a support ticket:
 - [ ] `MAIL_TRANSPORT=smtp` + credentials set, and one saved list mailed end to end
 - [ ] `php cli ai:doctor --image` answers on all five keys, and the planner's
       picture button draws once (spends one image from the day's allowance)
+- [ ] Images optimised: `python3 tools/media_audit/optimize_images.py --variants 480,960,1440 public/images/lifestyle`
+      (see below — without it the site ships ~46 MB of JPEG/PNG)
+- [ ] `DB_LOG=false` on production (it defaults to off; turning it on writes
+      every query to `storage/logs/database.log` with a blocking lock)
+
+## Images
+
+`public/images/` is committed as-is, but the raw JPEG/PNG originals are heavy
+(~46 MB, and ~2 MB of that is on the home page alone). Two things fix this, and
+both are non-destructive — the originals are never modified:
+
+```bash
+pip install Pillow
+
+# WebP twin next to every JPEG/PNG (<name>.jpg.webp). ~46 MB -> ~8 MB.
+python3 tools/media_audit/optimize_images.py
+
+# plus downscaled renditions for srcset (<name>.jpg@480w.webp, @960w, @1440w)
+python3 tools/media_audit/optimize_images.py --variants 480,960,1440 public/images/lifestyle
+```
+
+`.htaccess` then negotiates WebP automatically: when the browser sends
+`Accept: image/webp` and the twin exists, it is served for the original URL.
+No template changes are needed and browsers without WebP get the untouched
+original. `Vary: Accept` is sent so caches key correctly.
+
+Both commands are incremental — they only rebuild what is missing or older than
+its source — so they are safe to re-run and to put in a deploy hook. The home
+page templates pull the renditions in through
+`resources/views/components/responsive-image.php`:
+
+```php
+<?= $view->component('responsive-image', [
+    'src'   => 'images/lifestyle/spa-suite.jpg',
+    'alt'   => trans('home.inspiration_1_title'),
+    'class' => 'inspiration-img',
+    'sizes' => '(max-width: 640px) 92vw, (max-width: 1024px) 46vw, 23vw',
+]) ?>
+```
+
+Measured effect on the home page: 2,083 KB of imagery → 791 KB on desktop and
+399 KB on mobile. Background: `docs/Home-Performance-Audit.md`.
 
 ## Troubleshooting
 

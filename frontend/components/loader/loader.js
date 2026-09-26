@@ -28,12 +28,39 @@
   var reduced = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
   if (reduced) loader.classList.add('ld-reduced');
 
-  /* --- assembly choreography timing (must match loader.css keyframes) --- */
-  var T_SHOW = reduced ? 1100 : 2500;   /* seed -> pieces assemble -> settle + reflection in */
-  var T_SEAL = reduced ? 150 : 450;     /* mark glow pulse before the curtain */
+  /* --- assembly choreography timing (must match loader.css keyframes) ---
+     These used to be 2500 + 450 = 2950 ms of blocked, unscrollable page on
+     every single home visit. The brand moment is kept for a first-time
+     visitor, but at a fifth of the length; everyone coming back (and every
+     in-site navigation) goes straight to the page. See
+     docs/Home-Performance-Audit.md. */
+  var T_SHOW = reduced ? 300 : 800;     /* seed -> pieces assemble -> settle + reflection in */
+  var T_SEAL = reduced ? 120 : 300;     /* mark glow pulse before the curtain */
   var T_CURTAIN = 900;                  /* slide-out transition (css: .85s + .01) */
-  var HARD_STOP = 6000;                 /* never trap the page behind the splash */
-  var NAV_HOLD = reduced ? 200 : 520;   /* how long the nav flash holds */
+  var HARD_STOP = 2500;                 /* never trap the page behind the splash */
+  var NAV_HOLD = reduced ? 120 : 300;   /* how long the nav flash holds */
+
+  /* --- first visit only ---------------------------------------------------
+     Stored per browser, not per tab, so a repeat visit is instant. Bump
+     SEEN_VERSION whenever the animation itself changes and deserves another
+     airing. Storage can throw (private mode, blocked cookies) - in that case
+     the visitor simply sees the splash, which is the safe direction. */
+  var SEEN_KEY = 'lufly-loader-seen';
+  var SEEN_VERSION = '1';
+
+  function hasSeenSplash() {
+    try {
+      return window.localStorage.getItem(SEEN_KEY) === SEEN_VERSION;
+    } catch (err) {
+      return false;
+    }
+  }
+
+  function rememberSplash() {
+    try {
+      window.localStorage.setItem(SEEN_KEY, SEEN_VERSION);
+    } catch (err) { /* nothing to remember into */ }
+  }
 
   var isExited = false;
 
@@ -59,6 +86,7 @@
   /* Initial visit: the assembly owns the full moment, then seal and exit.
      No progress gating - the animation IS the wait, by design. */
   function startInitialSequence() {
+    rememberSplash();
     document.body.classList.add('ld-loading');
     setTimeout(function () { loader.classList.add('seal'); }, T_SHOW);
     setTimeout(exitLoader, T_SHOW + T_SEAL);
@@ -69,6 +97,9 @@
   /* Navigation flash (home/contact links + contact form submits): the
      finished mark without the choreography, shorter hold. */
   function showLoader() {
+    /* Returning visitors get the page immediately, splash or not. */
+    if (hasSeenSplash()) return;
+
     isExited = false;
     loader.classList.remove('exit', 'seal');
     loader.classList.add('is-nav');
@@ -131,6 +162,14 @@
       releasePage();
       return;
     }
+
+    /* The splash is a once-per-browser brand moment. After that the assets are
+       cached and holding the page back only makes the site feel slow. */
+    if (hasSeenSplash()) {
+      releasePage();
+      return;
+    }
+
     startInitialSequence();
   }
 

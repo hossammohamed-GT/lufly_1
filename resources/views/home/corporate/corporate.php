@@ -1,6 +1,6 @@
 <?php
 /** @var Core\View\View $view */
-$view->pushStyle('frontend/home/corporate/corporate.css');
+$view->pushDeferredStyle('frontend/home/corporate/corporate.css');
 ?>
 <section class="corporate-section scroll-section" id="corporate">
     <div class="container">

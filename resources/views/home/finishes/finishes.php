@@ -1,6 +1,6 @@
 <?php
 /** @var Core\View\View $view */
-$view->pushStyle('frontend/home/finishes/finishes.css');
+$view->pushDeferredStyle('frontend/home/finishes/finishes.css');
 $view->pushScript('frontend/home/finishes/finishes.js');
 
 /* Finish list confirmed with the factory (management review):
@@ -119,10 +119,17 @@ $finishes = [
 
         <div class="finish-showcase-box scroll-reveal" data-delay="2">
             <figure class="finish-showcase-media">
+                <?php /* The showcase sits below the hero, so it has no business
+                         competing with it for bandwidth: 188 KB of JPEG loaded
+                         eagerly for an image nobody has scrolled to yet. The
+                         explicit dimensions keep the layout from shifting when
+                         it does arrive. */ ?>
                 <img src="<?= e(asset('images/finishes/swatch-rose-gold.jpg')) ?>"
                      alt="LUFLY Brushed Rose Gold finish"
                      id="finish-showcase-img"
-                     class="finish-showcase-img">
+                     class="finish-showcase-img"
+                     width="1376" height="768"
+                     loading="lazy" decoding="async">
                 <figcaption class="finish-image-caption"><?= e(trans('home.finish_caption')) ?></figcaption>
             </figure>
 

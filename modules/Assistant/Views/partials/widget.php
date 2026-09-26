@@ -57,12 +57,12 @@ if ($boxOn) {
     }
 }
 
-$view->pushStyle('frontend/planner/planner.css');
-$view->pushStyle('frontend/assistant/chat.css');
+$view->pushDeferredStyle('frontend/planner/planner.css');
+$view->pushDeferredStyle('frontend/assistant/chat.css');
 $view->pushScript('frontend/assistant/assistant.js');
 
 if ($boxOn) {
-    $view->pushStyle('frontend/box/box.css');
+    $view->pushDeferredStyle('frontend/box/box.css');
     $view->pushScript('frontend/box/box.js');
 }
 ?>

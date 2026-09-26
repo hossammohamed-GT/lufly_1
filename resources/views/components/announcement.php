@@ -14,8 +14,6 @@
  * @var Core\Localization\Translator|null $translator
  */
 
-$view->pushStyle('frontend/components/announcement/announcement.css');
-
 $translator = $translator ?? app('Core\Localization\Translator');
 $locale = $translator->getLocale();
 $fallback = (string) config('localization.fallback', 'en');
@@ -73,8 +71,12 @@ foreach ($items as $announcement) {
 }
 
 if ($messages === []) {
+    /* Nothing is live: skip the stylesheet entirely rather than making
+       every storefront page pay for an empty bar. */
     return;
 }
+
+$view->pushStyle('frontend/components/announcement/announcement.css');
 ?>
 <aside class="lufly-announcements" data-announcements aria-label="<?= e(trans('common.announcements')) ?>">
     <?php foreach ($messages as $index => $item): ?>

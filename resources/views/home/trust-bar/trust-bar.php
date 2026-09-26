@@ -1,6 +1,6 @@
 <?php
 /** @var Core\View\View $view */
-$view->pushStyle('frontend/home/trust-bar/trust-bar.css');
+$view->pushDeferredStyle('frontend/home/trust-bar/trust-bar.css');
 
 $contactUrl = route('contact');
 ?>

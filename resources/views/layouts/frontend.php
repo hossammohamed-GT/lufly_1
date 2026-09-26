@@ -36,6 +36,7 @@ $assistantChat = $translator !== null
     : '';
 
 $styles = $view->styles();
+$deferredStyles = $view->deferredStyles();
 $scripts = $view->scripts();
 $preloads = $view->preloads();
 
@@ -91,7 +92,12 @@ $clarity = trim((string) ($analytics['clarity'] ?? ''));
 <?php endif; ?>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap">
+<?php /* The webfont is a nice-to-have, not a reason to hold the first paint:
+         preload it, then swap it in without blocking rendering. Self-hosting
+         the woff2 would be better still - see docs/Home-Performance-Audit.md. */ ?>
+<link rel="preload" as="style" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" media="print" onload="this.media='all'">
+<noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap"></noscript>
 <?php foreach (array_keys($externalOrigins) as $origin): ?>
 <link rel="preconnect" href="<?= e($origin) ?>" crossorigin>
 <?php endforeach; ?>
@@ -108,6 +114,12 @@ $clarity = trim((string) ($analytics['clarity'] ?? ''));
 <?php else: ?>
 <link rel="stylesheet" href="<?= e(asset($style)) ?>">
 <?php endif; ?>
+<?php endforeach; ?>
+<?php /* Everything below the fold (and every widget the visitor has not opened)
+         arrives after the first paint instead of delaying it. */ ?>
+<?php foreach ($deferredStyles as $style): ?>
+<link rel="stylesheet" href="<?= e(asset($style)) ?>" media="print" onload="this.media='all'">
+<noscript><link rel="stylesheet" href="<?= e(asset($style)) ?>"></noscript>
 <?php endforeach; ?>
 </head>
 <body class="ds-app aquatic-stage ld-loading">

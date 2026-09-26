@@ -17,7 +17,9 @@ if (!feature('favorites', true) || !class_exists(\Modules\Favorites\Services\Fav
     return;
 }
 
-$view->pushStyle('frontend/favorites/favorites.css');
+/* The sheet starts hidden and only appears after the first heart tap, so its
+   stylesheet must not sit in the critical path of every page. */
+$view->pushDeferredStyle('frontend/favorites/favorites.css');
 $view->pushScript('frontend/favorites/favorites.js');
 ?>
 <aside class="favmail" data-fav-prompt hidden

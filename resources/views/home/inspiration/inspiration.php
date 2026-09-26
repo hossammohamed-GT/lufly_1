@@ -1,6 +1,6 @@
 <?php
 /** @var Core\View\View $view */
-$view->pushStyle('frontend/home/inspiration/inspiration.css');
+$view->pushDeferredStyle('frontend/home/inspiration/inspiration.css');
 
 /* Each room links into the catalogue search for the fixture it showcases.
    These are real product terms (verified against the catalogue), not the
@@ -24,7 +24,13 @@ $searchTerms = ['Bath Mixer', 'Washbasin Mixer', 'Washbasin', 'Sink Mixer'];
                     <rect class="inspiration-trace-rect" x="0" y="0" width="100%" height="100%" rx="10" pathLength="1" />
                 </svg>
                 <div class="inspiration-img-wrap">
-                    <img src="<?= e(asset('images/lifestyle/spa-suite.jpg')) ?>" alt="<?= e(trans('home.inspiration_1_title')) ?>" loading="lazy" decoding="async" class="inspiration-img">
+                    <?= $view->component('responsive-image', [
+                        'src'    => 'images/lifestyle/spa-suite.jpg',
+                        'alt'    => trans('home.inspiration_1_title'),
+                        'class'  => 'inspiration-img',
+                        /* 4 columns > 1024px, 2 down to 640px, 1 below that */
+                        'sizes'  => '(max-width: 640px) 92vw, (max-width: 1024px) 46vw, 23vw',
+                    ]) ?>
                 </div>
                 <div class="inspiration-body">
                     <span class="inspiration-tag"><?= e(trans('home.inspiration_1_tag')) ?></span>
@@ -41,7 +47,13 @@ $searchTerms = ['Bath Mixer', 'Washbasin Mixer', 'Washbasin', 'Sink Mixer'];
                     <rect class="inspiration-trace-rect" x="0" y="0" width="100%" height="100%" rx="10" pathLength="1" />
                 </svg>
                 <div class="inspiration-img-wrap">
-                    <img src="<?= e(asset('images/lifestyle/modern-bathroom.jpg')) ?>" alt="<?= e(trans('home.inspiration_2_title')) ?>" loading="lazy" decoding="async" class="inspiration-img">
+                    <?= $view->component('responsive-image', [
+                        'src'    => 'images/lifestyle/modern-bathroom.jpg',
+                        'alt'    => trans('home.inspiration_2_title'),
+                        'class'  => 'inspiration-img',
+                        /* 4 columns > 1024px, 2 down to 640px, 1 below that */
+                        'sizes'  => '(max-width: 640px) 92vw, (max-width: 1024px) 46vw, 23vw',
+                    ]) ?>
                 </div>
                 <div class="inspiration-body">
                     <span class="inspiration-tag"><?= e(trans('home.inspiration_2_tag')) ?></span>
@@ -58,7 +70,13 @@ $searchTerms = ['Bath Mixer', 'Washbasin Mixer', 'Washbasin', 'Sink Mixer'];
                     <rect class="inspiration-trace-rect" x="0" y="0" width="100%" height="100%" rx="10" pathLength="1" />
                 </svg>
                 <div class="inspiration-img-wrap">
-                    <img src="<?= e(asset('images/lifestyle/minimal-basin.jpg')) ?>" alt="<?= e(trans('home.inspiration_3_title')) ?>" loading="lazy" decoding="async" class="inspiration-img">
+                    <?= $view->component('responsive-image', [
+                        'src'    => 'images/lifestyle/minimal-basin.jpg',
+                        'alt'    => trans('home.inspiration_3_title'),
+                        'class'  => 'inspiration-img',
+                        /* 4 columns > 1024px, 2 down to 640px, 1 below that */
+                        'sizes'  => '(max-width: 640px) 92vw, (max-width: 1024px) 46vw, 23vw',
+                    ]) ?>
                 </div>
                 <div class="inspiration-body">
                     <span class="inspiration-tag"><?= e(trans('home.inspiration_3_tag')) ?></span>
@@ -75,7 +93,13 @@ $searchTerms = ['Bath Mixer', 'Washbasin Mixer', 'Washbasin', 'Sink Mixer'];
                     <rect class="inspiration-trace-rect" x="0" y="0" width="100%" height="100%" rx="10" pathLength="1" />
                 </svg>
                 <div class="inspiration-img-wrap">
-                    <img src="<?= e(asset('images/lifestyle/kitchen-suite.jpg')) ?>" alt="<?= e(trans('home.inspiration_4_title')) ?>" loading="lazy" decoding="async" class="inspiration-img">
+                    <?= $view->component('responsive-image', [
+                        'src'    => 'images/lifestyle/kitchen-suite.jpg',
+                        'alt'    => trans('home.inspiration_4_title'),
+                        'class'  => 'inspiration-img',
+                        /* 4 columns > 1024px, 2 down to 640px, 1 below that */
+                        'sizes'  => '(max-width: 640px) 92vw, (max-width: 1024px) 46vw, 23vw',
+                    ]) ?>
                 </div>
                 <div class="inspiration-body">
                     <span class="inspiration-tag"><?= e(trans('home.inspiration_4_tag')) ?></span>

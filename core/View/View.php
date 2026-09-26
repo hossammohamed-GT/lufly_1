@@ -18,8 +18,19 @@ class View
     /** @var array<string, mixed> */
     private array $shared = [];
 
-    /** @var array<string, list<string>> */
-    private array $assets = ['styles' => [], 'scripts' => [], 'preloads' => []];
+    /**
+     * 'styles' are render-blocking; 'deferred-styles' are fetched after the
+     * first paint. Keeping them apart lets a page ship only the CSS its
+     * above-the-fold content needs in the critical path.
+     *
+     * @var array<string, list<string>>
+     */
+    private array $assets = [
+        'styles' => [],
+        'deferred-styles' => [],
+        'scripts' => [],
+        'preloads' => [],
+    ];
 
     public function __construct(
         private readonly Application $app,
@@ -119,6 +130,24 @@ class View
     }
 
     /**
+     * Register a stylesheet that is NOT needed for the first paint - anything
+     * below the fold, or a widget the visitor has not opened yet. The layout
+     * loads these with the `media="print"` swap so they never block rendering.
+     *
+     * A path claimed as critical always wins: if some other component already
+     * asked for it render-blocking, this call is a no-op rather than a
+     * downgrade.
+     */
+    public function pushDeferredStyle(string $path): void
+    {
+        if (in_array($path, $this->assets['styles'], true)) {
+            return;
+        }
+
+        $this->pushAsset('deferred-styles', $path);
+    }
+
+    /**
      * Register a script from a component view. The layout renders it before </body>.
      */
     public function pushScript(string $path): void
@@ -130,6 +159,12 @@ class View
     public function styles(): array
     {
         return $this->assets['styles'];
+    }
+
+    /** @return list<string> */
+    public function deferredStyles(): array
+    {
+        return $this->assets['deferred-styles'];
     }
 
     /** @return list<string> */

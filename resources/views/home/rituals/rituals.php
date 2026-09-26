@@ -1,6 +1,6 @@
 <?php
 /** @var Core\View\View $view */
-$view->pushStyle('frontend/home/rituals/rituals.css');
+$view->pushDeferredStyle('frontend/home/rituals/rituals.css');
 ?>
 <section class="rituals-section scroll-section" id="rituals">
     <div class="container">
@@ -13,10 +13,15 @@ $view->pushStyle('frontend/home/rituals/rituals.css');
         <div class="rituals-grid">
             <div class="ritual-card scroll-reveal" data-delay="1">
                 <div class="ritual-figure">
-                    <img src="<?= e(asset('images/lifestyle/ritual-flow.jpg')) ?>"
-                         alt="<?= e(trans('home.ritual_1_title')) ?>"
-                         class="ritual-img" width="520" height="340"
-                         loading="lazy" decoding="async">
+                    <?= $view->component('responsive-image', [
+                        'src'    => 'images/lifestyle/ritual-flow.jpg',
+                        'alt'    => trans('home.ritual_1_title'),
+                        'class'  => 'ritual-img',
+                        'width'  => 520,
+                        'height' => 340,
+                        /* three columns above 1024px, one below */
+                        'sizes'  => '(max-width: 1024px) 92vw, 31vw',
+                    ]) ?>
                 </div>
                 <div class="ritual-number">01 / <?= e(trans('home.ritual_1_label')) ?></div>
                 <h3><?= e(trans('home.ritual_1_title')) ?></h3>
@@ -26,10 +31,15 @@ $view->pushStyle('frontend/home/rituals/rituals.css');
 
             <div class="ritual-card scroll-reveal" data-delay="2">
                 <div class="ritual-figure">
-                    <img src="<?= e(asset('images/lifestyle/ritual-cartridge.jpg')) ?>"
-                         alt="<?= e(trans('home.ritual_2_title')) ?>"
-                         class="ritual-img" width="520" height="340"
-                         loading="lazy" decoding="async">
+                    <?= $view->component('responsive-image', [
+                        'src'    => 'images/lifestyle/ritual-cartridge.jpg',
+                        'alt'    => trans('home.ritual_2_title'),
+                        'class'  => 'ritual-img',
+                        'width'  => 520,
+                        'height' => 340,
+                        /* three columns above 1024px, one below */
+                        'sizes'  => '(max-width: 1024px) 92vw, 31vw',
+                    ]) ?>
                 </div>
                 <div class="ritual-number">02 / <?= e(trans('home.ritual_2_label')) ?></div>
                 <h3><?= e(trans('home.ritual_2_title')) ?></h3>
@@ -39,10 +49,15 @@ $view->pushStyle('frontend/home/rituals/rituals.css');
 
             <div class="ritual-card scroll-reveal" data-delay="3">
                 <div class="ritual-figure">
-                    <img src="<?= e(asset('images/lifestyle/ritual-thermostat.jpg')) ?>"
-                         alt="<?= e(trans('home.ritual_3_title')) ?>"
-                         class="ritual-img" width="520" height="340"
-                         loading="lazy" decoding="async">
+                    <?= $view->component('responsive-image', [
+                        'src'    => 'images/lifestyle/ritual-thermostat.jpg',
+                        'alt'    => trans('home.ritual_3_title'),
+                        'class'  => 'ritual-img',
+                        'width'  => 520,
+                        'height' => 340,
+                        /* three columns above 1024px, one below */
+                        'sizes'  => '(max-width: 1024px) 92vw, 31vw',
+                    ]) ?>
                 </div>
                 <div class="ritual-number">03 / <?= e(trans('home.ritual_3_label')) ?></div>
                 <h3><?= e(trans('home.ritual_3_title')) ?></h3>

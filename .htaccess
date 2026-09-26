@@ -12,7 +12,104 @@ RewriteRule ^(storage|database|core|app|modules|config|scratch|tests)(/.*)?$ - [
 # Serve frontend assets from root directly
 RewriteRule ^frontend/.* - [L]
 
+# --- WebP content negotiation ------------------------------------------------
+# tools/media_audit/optimize_images.py writes a WebP twin next to every
+# JPEG/PNG (<name>.jpg.webp). When the browser advertises WebP support the twin
+# is served instead - no template change, no <picture> markup, and the original
+# stays untouched as the fallback for browsers that do not.
+#
+# The condition tests %{REQUEST_FILENAME}, so the rule only fires once the
+# request has been resolved to a real file. That makes it correct whether the
+# docroot is the project root (where the catch-all below prefixes /public/ on
+# the second pass) or public/ itself.
+<IfModule mod_rewrite.c>
+    RewriteCond %{HTTP_ACCEPT} image/webp
+    RewriteCond %{REQUEST_FILENAME}.webp -f
+    RewriteRule ^(.+\.(?:jpe?g|png))$ $1.webp [T=image/webp,L]
+</IfModule>
+
 # Route all other traffic through public/
 RewriteCond %{REQUEST_URI} !^/public/
 RewriteRule ^(.*)$ public/$1 [QSA,L]
 
+
+# ===========================================================================
+# PERFORMANCE
+# ---------------------------------------------------------------------------
+# Nothing below changes routing: every block is wrapped in <IfModule>, so a
+# host without the module simply skips it.
+#
+# Measured impact on the home page (see docs/Home-Performance-Audit.md):
+#   * gzip shrinks HTML + CSS + JS from 476.9 KB to 110.7 KB (-77%)
+#   * asset URLs already carry a stable ?v=<filemtime> stamp, so static files
+#     can be cached for a year without ever serving a stale version
+# ===========================================================================
+
+# --- Compression ------------------------------------------------------------
+# Text only. Images, fonts and video are already compressed; re-compressing
+# them wastes CPU and can even make them bigger.
+<IfModule mod_deflate.c>
+    <IfModule mod_filter.c>
+        AddOutputFilterByType DEFLATE text/html text/plain text/css text/xml \
+            text/javascript application/javascript application/x-javascript \
+            application/json application/xml application/rss+xml \
+            application/xhtml+xml image/svg+xml application/vnd.ms-fontobject \
+            application/x-font-ttf font/opentype
+    </IfModule>
+
+    # Netscape 4.x and IE 6 cannot cope with compressed output
+    BrowserMatch ^Mozilla/4 gzip-only-text/html
+    BrowserMatch ^Mozilla/4\.0[678] no-gzip
+    BrowserMatch \bMSIE[ ]7 !no-gzip !gzip-only-text/html
+
+    SetEnvIfNoCase Request_URI \.(?:gif|jpe?g|png|webp|avif|zip|gz|bz2|mp4|webm|ogv|woff2?|ttf|otf|eot|pdf)$ no-gzip dont-vary
+</IfModule>
+
+# Brotli beats gzip by roughly another 15-20% where the module is available.
+<IfModule mod_brotli.c>
+    <IfModule mod_filter.c>
+        AddOutputFilterByType BROTLI_COMPRESS text/html text/plain text/css text/xml \
+            text/javascript application/javascript application/x-javascript \
+            application/json application/xml application/rss+xml \
+            application/xhtml+xml image/svg+xml application/vnd.ms-fontobject \
+            application/x-font-ttf font/opentype
+    </IfModule>
+</IfModule>
+
+# --- Browser caching --------------------------------------------------------
+# mod_expires keys off the response Content-Type, so HTML (served without a
+# file extension, e.g. /en) is covered correctly here.
+<IfModule mod_expires.c>
+    ExpiresActive On
+    ExpiresDefault                      "access plus 1 hour"
+    ExpiresByType text/html             "access plus 0 seconds"
+    ExpiresByType application/json      "access plus 0 seconds"
+    ExpiresByType text/css              "access plus 1 year"
+    ExpiresByType text/javascript       "access plus 1 year"
+    ExpiresByType application/javascript "access plus 1 year"
+    ExpiresByType image/jpeg            "access plus 1 year"
+    ExpiresByType image/png             "access plus 1 year"
+    ExpiresByType image/webp            "access plus 1 year"
+    ExpiresByType image/gif             "access plus 1 year"
+    ExpiresByType image/svg+xml         "access plus 1 year"
+    ExpiresByType image/x-icon          "access plus 1 year"
+    ExpiresByType font/woff2            "access plus 1 year"
+    ExpiresByType font/woff             "access plus 1 year"
+</IfModule>
+
+<IfModule mod_headers.c>
+    # asset() appends ?v=<filemtime>; the URL changes the moment the file does,
+    # so these are safe to mark immutable.
+    <FilesMatch "\.(css|js|mjs|webp|avif|jpe?g|png|gif|svg|ico|woff2?|ttf|otf|eot)$">
+        Header set Cache-Control "public, max-age=31536000, immutable"
+    </FilesMatch>
+
+    Header append Vary Accept-Encoding
+
+    # The rewrite above serves <name>.jpg.webp for the same <name>.jpg URL, so
+    # caches must key on Accept or a WebP-only browser's cached copy could be
+    # replayed to one that cannot decode it.
+    <FilesMatch "\.(?:jpe?g|png|webp)$">
+        Header append Vary Accept
+    </FilesMatch>
+</IfModule>

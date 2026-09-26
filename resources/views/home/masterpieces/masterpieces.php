@@ -1,9 +1,9 @@
 <?php
 /** @var Core\View\View $view */
-$view->pushStyle('frontend/css/product-card.css');
-$view->pushStyle('frontend/home/masterpieces/masterpieces.css');
+$view->pushDeferredStyle('frontend/css/product-card.css');
+$view->pushDeferredStyle('frontend/home/masterpieces/masterpieces.css');
 $view->pushScript('frontend/products/catalog/catalog.js');
-$view->pushStyle('frontend/components/skeleton/skeleton.css');
+$view->pushDeferredStyle('frontend/components/skeleton/skeleton.css');
 $view->pushScript('frontend/components/skeleton/skeleton.js');
 /** @var array $featuredProducts */
 $fallbackImg = '/images/products/prod_146_1620-111-a.jpg';
