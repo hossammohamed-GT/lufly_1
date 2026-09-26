@@ -123,13 +123,22 @@ $finishes = [
                          competing with it for bandwidth: 188 KB of JPEG loaded
                          eagerly for an image nobody has scrolled to yet. The
                          explicit dimensions keep the layout from shifting when
-                         it does arrive. */ ?>
-                <img src="<?= e(asset('images/finishes/swatch-rose-gold.jpg')) ?>"
-                     alt="LUFLY Brushed Rose Gold finish"
-                     id="finish-showcase-img"
-                     class="finish-showcase-img"
-                     width="1376" height="768"
-                     loading="lazy" decoding="async">
+                         it does arrive, and the renditions let a phone pull the
+                         18 KB version instead of the 118 KB one.
+
+                         finishes.js swaps this image when a swatch is picked;
+                         it rebuilds the srcset from data-respic-widths so the
+                         renditions follow the new file. */ ?>
+                <?= $view->component('responsive-image', [
+                    'src'    => 'images/finishes/swatch-rose-gold.jpg',
+                    'alt'    => 'LUFLY Brushed Rose Gold finish',
+                    'class'  => 'finish-showcase-img',
+                    'id'     => 'finish-showcase-img',
+                    'width'  => 1376,
+                    'height' => 768,
+                    /* one column in the grid below 900px, ~half of it above */
+                    'sizes'  => '(max-width: 900px) 92vw, 46vw',
+                ]) ?>
                 <figcaption class="finish-image-caption"><?= e(trans('home.finish_caption')) ?></figcaption>
             </figure>
 

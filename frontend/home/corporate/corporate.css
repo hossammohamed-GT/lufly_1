@@ -205,3 +205,15 @@
 @media (prefers-reduced-motion: reduce) {
   .spec-desk-cta { transition: none; }
 }
+
+/* ---- responsive backdrop -------------------------------------------------
+   The full-size photograph is 1584 px wide to cover a desktop viewport, but a
+   phone was downloading all of it for a ~390 px screen. tools/media_audit/
+   optimize_images.py writes downscaled JPEG renditions; naming a JPEG (not a
+   WebP) here keeps the rule working for every browser, because .htaccess
+   serves the matching .jpg.webp twin when one exists. */
+@media (max-width: 760px) {
+  .corporate-section::before {
+    background-image: url('../../../images/lifestyle/corporate-backdrop.jpg@760w.jpg');
+  }
+}

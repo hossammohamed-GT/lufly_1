@@ -45,6 +45,7 @@ Requirements: Pillow with WebP support (`pip install Pillow`).
 from __future__ import annotations
 
 import argparse
+import re
 import os
 import sys
 import time
@@ -60,12 +61,21 @@ if not features.check("webp"):
 
 SOURCE_SUFFIXES = {".jpg", ".jpeg", ".png"}
 
+# A rendition written by this script is named "<original>@<width>w.<ext>".
+# Without skipping them a second run would happily generate
+# "foo.jpg@1440w.jpg@760w.jpg" - a rendition of a rendition.
+RENDITION_RE = re.compile(r"@\d+w\.[a-z]{3,4}$", re.IGNORECASE)
+
+
+def is_rendition(path: Path) -> bool:
+    return bool(RENDITION_RE.search(path.name))
+
 
 def find_sources(root: Path) -> list[Path]:
     return sorted(
         p
         for p in root.rglob("*")
-        if p.is_file() and p.suffix.lower() in SOURCE_SUFFIXES
+        if p.is_file() and p.suffix.lower() in SOURCE_SUFFIXES and not is_rendition(p)
     )
 
 
@@ -81,9 +91,15 @@ def stale(source: Path, twin: Path) -> bool:
     return twin.stat().st_mtime < source.stat().st_mtime
 
 
-def variant_path(source: Path, width: int) -> Path:
-    """`foo.jpg` -> `foo.jpg@960w.webp` (a downscaled rendition)."""
-    return source.with_name(f"{source.name}@{width}w.webp")
+def variant_path(source: Path, width: int, suffix: str = ".webp") -> Path:
+    """`foo.jpg` -> `foo.jpg@960w.webp` (or `foo.jpg@960w.jpg`).
+
+    A `.jpg`-suffixed rendition is what CSS needs: `background-image` cannot
+    negotiate on Accept, so the markup has to name one file and let `.htaccess`
+    swap in the `.webp` twin of *that* file. Plain WebP renditions are only safe
+    inside <picture>, where a browser that cannot decode them ignores them.
+    """
+    return source.with_name(f"{source.name}@{width}w{suffix}")
 
 
 def variant_is_stale(source: Path, variant: Path, width: int) -> bool:
@@ -97,7 +113,9 @@ def variant_is_stale(source: Path, variant: Path, width: int) -> bool:
         return width < img.size[0]
 
 
-def convert_variant(source: Path, variant: Path, width: int, quality: int, method: int) -> int:
+def convert_variant(
+    source: Path, variant: Path, width: int, quality: int, method: int, fmt: str = "webp"
+) -> int:
     """Write one downscaled rendition. Returns its size in bytes."""
     with Image.open(source) as img:
         img.load()
@@ -109,8 +127,18 @@ def convert_variant(source: Path, variant: Path, width: int, quality: int, metho
         ratio = width / img.size[0]
         target = target.resize((width, max(1, round(img.size[1] * ratio))), Image.LANCZOS)
 
+        if fmt == "jpeg":
+            # JPEG has no alpha; flatten or the encoder refuses.
+            if target.mode == "RGBA":
+                background = Image.new("RGB", target.size, (255, 255, 255))
+                background.paste(target, mask=target.split()[-1])
+                target = background
+            save_args, save_fmt = {"quality": quality, "optimize": True, "progressive": True}, "JPEG"
+        else:
+            save_args, save_fmt = {"quality": quality, "method": method, "exact": False}, "WEBP"
+
         tmp = variant.with_suffix(variant.suffix + ".tmp")
-        target.save(tmp, "WEBP", quality=quality, method=method, exact=False)
+        target.save(tmp, save_fmt, **save_args)
         tmp.replace(variant)
 
     return variant.stat().st_size
@@ -170,6 +198,20 @@ def main() -> int:
         metavar="WIDTHS",
         help="also emit downscaled renditions at these widths, e.g. 480,960,1440",
     )
+    ap.add_argument(
+        "--variant-format",
+        default="webp",
+        choices=("webp", "jpeg", "both"),
+        help="rendition format. Use jpeg for anything referenced from CSS "
+             "(background-image cannot negotiate, so it needs a JPEG with a "
+             ".webp twin) and webp for <picture> srcset.",
+    )
+    ap.add_argument(
+        "--filter",
+        default="",
+        metavar="TEXT",
+        help="only touch source files whose name contains TEXT, e.g. backdrop",
+    )
     args = ap.parse_args()
 
     widths = []
@@ -184,6 +226,8 @@ def main() -> int:
         sys.exit(f"No such directory: {root}")
 
     sources = find_sources(root)
+    if args.filter:
+        sources = [s for s in sources if args.filter in s.name]
     if not sources:
         print(f"No JPEG/PNG files under {root}")
         return 0
@@ -241,25 +285,31 @@ def main() -> int:
         print(f"  responsive renditions at {', '.join(str(w) + 'w' for w in widths)}:")
         v_in = v_out = v_count = 0
 
+        formats = {"webp": [".webp"], "jpeg": [".jpg"], "both": [".webp", ".jpg"]}[args.variant_format]
+
         for source in sources:
             for width in widths:
-                variant = variant_path(source, width)
-                if not args.force and not variant_is_stale(source, variant, width):
-                    continue
+                for suffix in formats:
+                    variant = variant_path(source, width, suffix)
+                    if not args.force and not variant_is_stale(source, variant, width):
+                        continue
 
-                if args.dry_run:
-                    v_count += 1
-                    continue
+                    if args.dry_run:
+                        v_count += 1
+                        continue
 
-                try:
-                    size = convert_variant(source, variant, width, args.quality, args.method)
-                except Exception as exc:
-                    failures.append((variant, str(exc)))
-                    continue
+                    try:
+                        size = convert_variant(
+                            source, variant, width, args.quality, args.method,
+                            "jpeg" if suffix == ".jpg" else "webp",
+                        )
+                    except Exception as exc:
+                        failures.append((variant, str(exc)))
+                        continue
 
-                if size:
-                    v_count += 1
-                    v_out += size
+                    if size:
+                        v_count += 1
+                        v_out += size
 
         if v_count:
             full = sum(twin_path(s).stat().st_size for s in sources if twin_path(s).exists())

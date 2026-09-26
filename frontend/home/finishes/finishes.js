@@ -98,6 +98,31 @@
 
   var ORDER = ['brushed-rose-gold', 'chrome', 'brushed-gold', 'mirror-gold', 'matte-black', 'brushed-nickel', 'gunmetal', 'brushed-gunmetal', 'gun-gray'];
 
+  /* The showcase lives in a <picture> so the browser can pick a right-sized
+     rendition. Swapping only img.src would leave the old srcset in place and
+     the browser would keep serving the *previous* finish's renditions, so the
+     srcset has to be rebuilt from the widths the template published. */
+  function setShowcaseImage(image, url) {
+    var raw = image.getAttribute('data-respic-widths') || '';
+    var widths = raw ? raw.split(',') : [];
+    var host = image.parentNode;
+    var source = host && host.tagName === 'PICTURE'
+      ? host.querySelector('source[type="image/webp"]')
+      : null;
+
+    image.src = url;
+
+    if (!source || !widths.length) {
+      return;
+    }
+
+    var parts = [];
+    for (var i = 0; i < widths.length; i++) {
+      parts.push(url + '@' + widths[i] + 'w.webp ' + widths[i] + 'w');
+    }
+    source.srcset = parts.join(', ');
+  }
+
   function init() {
     var section = document.querySelector('.finishes-section');
     var buttons = Array.prototype.slice.call(document.querySelectorAll('.finish-swatch-btn'));
@@ -150,7 +175,7 @@
         window.clearTimeout(swapTimer);
       }
       swapTimer = window.setTimeout(function () {
-        image.src = base + '/' + data.image;
+        setShowcaseImage(image, base + '/' + data.image);
         image.style.opacity = '1';
       }, 160);
     }

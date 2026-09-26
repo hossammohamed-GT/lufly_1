@@ -15,10 +15,16 @@
  * does not turn the image into a nested box: grid and flex parents keep
  * treating the <img> itself as their child.
  *
+ * The widths that were actually found are published on the <img> as
+ * `data-respic-widths`, so a script that swaps the image (the finishes
+ * showcase) can rebuild the srcset for the new file instead of silently
+ * falling back to the full-size original.
+ *
  * @var string   $src     path under public/, e.g. images/lifestyle/spa-suite.jpg
  * @var string   $alt
  * @var string   $sizes   CSS sizes descriptor, e.g. "(max-width: 640px) 92vw, 23vw"
  * @var string   $class   classes for the <img>
+ * @var string   $id      id for the <img>
  * @var int|null $width   intrinsic width, for reserving layout space
  * @var int|null $height  intrinsic height
  * @var string   $loading "lazy" (default) or "eager"
@@ -29,11 +35,13 @@ $widths = $widths ?? [480, 960, 1440];
 $loading = $loading ?? 'lazy';
 
 $srcset = [];
+$found = [];
 foreach ($widths as $variant) {
     $candidate = $src . '@' . $variant . 'w.webp';
 
     if (is_file(base_path('public/' . ltrim($candidate, '/')))) {
         $srcset[] = e(asset($candidate)) . ' ' . (int) $variant . 'w';
+        $found[] = (int) $variant;
     }
 }
 
@@ -41,10 +49,12 @@ $attributes = '';
 $attributes .= ' src="' . e(asset($src)) . '"';
 $attributes .= ' alt="' . e($alt) . '"';
 $attributes .= isset($class) && $class !== '' ? ' class="' . e($class) . '"' : '';
+$attributes .= isset($id) && $id !== '' ? ' id="' . e($id) . '"' : '';
 $attributes .= isset($width) ? ' width="' . (int) $width . '"' : '';
 $attributes .= isset($height) ? ' height="' . (int) $height . '"' : '';
 $attributes .= ' loading="' . e($loading) . '"';
 $attributes .= ' decoding="async"';
+$attributes .= ' data-respic-widths="' . e(implode(',', $found)) . '"';
 
 if ($srcset === []): ?>
 <img<?= $attributes ?>>
