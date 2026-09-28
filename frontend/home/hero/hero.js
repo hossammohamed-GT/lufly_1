@@ -468,7 +468,7 @@
       return;
     }
 
-    var NAVIGATE_MS = 980;               /* end of the CSS choreography  */
+    var NAVIGATE_MS = 460;               /* end of the CSS choreography  */
     var launching = false;
 
     function launch(event) {

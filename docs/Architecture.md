@@ -161,11 +161,14 @@ Invariants when touching it:
   (`.hero-frame-ghost`). The engine listens for the site's `lufly:theme`
   event and mirrors `data-theme` with a MutationObserver. A light visitor
   swaps at boot, before the first paint when possible.
-- **The Explore Collections CTA is the one showpiece.** A plain left click is
-  intercepted (hero.js): the arrow lunges then spirals into itself (a
-  decaying 1.8-turn orbit with a blur trail and a teal energy core), ripple
-  rings pulse out of the button, the photograph recedes and the UI cascades
-  out; ~860ms later the catalogue loads (warmed by a hover prefetch).
+- **The Explore Collections CTA is the one showpiece - and a fast one.** A
+  plain left click is intercepted (hero.js): the arrow ignites (bright ink
+  with a teal halo, so it reads over the photograph), then follows a tight
+  decaying orbit of ~2.5 turns while a teal comet-arc (the vortex) spins
+  behind it; the photograph recedes and the UI cascades out. The whole
+  show is ~420ms and the catalogue takes over at ~460ms (warmed by a hover
+  prefetch) - the exit fades keep running while the new page loads, so the
+  handover stays smooth even on a slower server.
   Modified clicks, non-left buttons and prefers-reduced-motion visitors
   never see the show - they navigate at once. The `is-launching` class only
   ever sits on the section root and is cleared when the back button

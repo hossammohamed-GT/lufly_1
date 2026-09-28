@@ -406,7 +406,7 @@ const active = (world) => world.frames.findIndex((f) => f.classList.contains('is
 
   await tick(1000);
   ok(world.window.location.href === '/products',
-    'launch: the catalogue takes over after the sequence (~980ms)');
+    'launch: the catalogue takes over almost at once (~460ms)');
 
   /* bfcache return: the hero must come back clean for an encore */
   (world.winListeners.pageshow || []).forEach((fn) => fn({ persisted: true }));

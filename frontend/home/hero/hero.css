@@ -1034,23 +1034,24 @@
 /* ==========================================================================
    15. Launch sequence - the Explore Collections button
    --------------------------------------------------------------------------
-   The one showpiece animation on the page. A plain left click on the
-   primary CTA starts a ~1s choreography before the catalogue takes over
-   (hero.js intercepts the click, adds .is-launching to the section root,
-   then navigates):
+   The one showpiece animation on the page - but a FAST one: the whole
+   show is over in under half a second, so the click never feels held
+   back. A plain left click on the primary CTA starts it (hero.js
+   intercepts the click, adds .is-launching to the section root, then
+   navigates):
 
      t=0     the arrow ignites - it flips to bright ink with a teal halo
              (it is about to travel over the photo, where the dark
              resting ink would disappear) - pulls back a touch, then
-             follows a wide decaying orbit of ~2.8 turns while a teal
-             comet-arc (the vortex) spins behind it and collapses as the
-             arrow dives into the centre
-     t=240ms the photograph recedes (dim + a gentle zoom)
-     t=300ms copy, scroll cue, tabs and trust strip cascade out
-     t=700ms the CTA row itself bows out, after the spiral has finished
-     t=980ms hero.js hands over to the catalogue
+             follows a tight decaying orbit of ~2.5 turns while a teal
+             comet-arc (the vortex) spins behind it
+     t=100ms the photograph starts receding (dim + a gentle zoom)
+     t=140ms copy, scroll cue, tabs and trust strip start cascading out
+     t=460ms hero.js hands over to the catalogue - the exit fades keep
+             running while the new page loads, so the handover stays
+             smooth even on a slower server
 
-   The arrow stays crisp and readable for most of the orbit - no blur, no
+   The arrow stays crisp and readable through the orbit - no blur, no
    cover; the spin itself is the show. Everything is transform / opacity
    on composited layers. Modified clicks (ctrl/cmd/shift/alt), non-left
    buttons and prefers-reduced-motion visitors never see it; hero.js
@@ -1070,7 +1071,7 @@
    centre. The radius peaks around 26px - far enough to visibly leave the
    pill and sweep across the photo */
 .is-launching .hero-cta-arrow {
-  animation: heroArrowSpiral 900ms cubic-bezier(0.37, 0, 0.25, 1) both;
+  animation: heroArrowSpiral 420ms cubic-bezier(0.37, 0, 0.25, 1) both;
   will-change: transform, opacity;
 }
 
@@ -1110,31 +1111,27 @@
 
 @keyframes heroArrowSpiral {
   0%   { transform: translate(0, 0) rotate(0deg) scale(1); opacity: 1; }
-  8%   { transform: translate(-3px, 1px) rotate(-18deg) scale(1.14); opacity: 1; }
-  18%  { transform: translate(9px, -13px) rotate(85deg) scale(1.06); }
-  30%  { transform: translate(20px, -20px) rotate(190deg) scale(0.96); }
-  42%  { transform: translate(26px, -10px) rotate(300deg) scale(0.88); }
-  54%  { transform: translate(22px, 4px) rotate(410deg) scale(0.8); }
-  66%  { transform: translate(14px, 14px) rotate(515deg) scale(0.7); }
-  78%  { transform: translate(6px, 8px) rotate(640deg) scale(0.56); }
-  88%  { transform: translate(2px, 3px) rotate(770deg) scale(0.4); opacity: 0.9; }
-  95%  { transform: translate(0, 1px) rotate(880deg) scale(0.22); opacity: 0.5; }
-  100% { transform: translate(0, 0) rotate(1010deg) scale(0); opacity: 0; }
+  8%   { transform: translate(-3px, 1px) rotate(-20deg) scale(1.14); opacity: 1; }
+  20%  { transform: translate(10px, -11px) rotate(90deg) scale(1.04); }
+  34%  { transform: translate(19px, -17px) rotate(210deg) scale(0.94); }
+  48%  { transform: translate(22px, -6px) rotate(330deg) scale(0.84); }
+  62%  { transform: translate(16px, 6px) rotate(450deg) scale(0.72); }
+  76%  { transform: translate(8px, 9px) rotate(570deg) scale(0.55); opacity: 0.9; }
+  88%  { transform: translate(2px, 3px) rotate(720deg) scale(0.35); opacity: 0.55; }
+  100% { transform: translate(0, 0) rotate(900deg) scale(0); opacity: 0; }
 }
 
 /* the same spiral, mirrored for RTL locales */
 @keyframes heroArrowSpiralRtl {
   0%   { transform: translate(0, 0) rotate(0deg) scale(1); opacity: 1; }
-  8%   { transform: translate(3px, 1px) rotate(18deg) scale(1.14); opacity: 1; }
-  18%  { transform: translate(-9px, -13px) rotate(-85deg) scale(1.06); }
-  30%  { transform: translate(-20px, -20px) rotate(-190deg) scale(0.96); }
-  42%  { transform: translate(-26px, -10px) rotate(-300deg) scale(0.88); }
-  54%  { transform: translate(-22px, 4px) rotate(-410deg) scale(0.8); }
-  66%  { transform: translate(-14px, 14px) rotate(-515deg) scale(0.7); }
-  78%  { transform: translate(-6px, 8px) rotate(-640deg) scale(0.56); }
-  88%  { transform: translate(-2px, 3px) rotate(-770deg) scale(0.4); opacity: 0.9; }
-  95%  { transform: translate(0, 1px) rotate(-880deg) scale(0.22); opacity: 0.5; }
-  100% { transform: translate(0, 0) rotate(-1010deg) scale(0); opacity: 0; }
+  8%   { transform: translate(3px, 1px) rotate(20deg) scale(1.14); opacity: 1; }
+  20%  { transform: translate(-10px, -11px) rotate(-90deg) scale(1.04); }
+  34%  { transform: translate(-19px, -17px) rotate(-210deg) scale(0.94); }
+  48%  { transform: translate(-22px, -6px) rotate(-330deg) scale(0.84); }
+  62%  { transform: translate(-16px, 6px) rotate(-450deg) scale(0.72); }
+  76%  { transform: translate(-8px, 9px) rotate(-570deg) scale(0.55); opacity: 0.9; }
+  88%  { transform: translate(-2px, 3px) rotate(-720deg) scale(0.35); opacity: 0.55; }
+  100% { transform: translate(0, 0) rotate(-900deg) scale(0); opacity: 0; }
 }
 
 @keyframes heroVortex {
@@ -1170,7 +1167,7 @@
 
 /* the photograph recedes while the UI leaves */
 .is-launching .hero-media {
-  animation: heroMediaExit 620ms 240ms var(--hero-ease) both;
+  animation: heroMediaExit 420ms 100ms var(--hero-ease) both;
 }
 
 @keyframes heroMediaExit {
