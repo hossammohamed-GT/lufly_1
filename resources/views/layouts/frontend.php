@@ -87,8 +87,12 @@ $clarity = trim((string) ($analytics['clarity'] ?? ''));
 <script>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}gtag('js',new Date());gtag('config','<?= e($ga4) ?>',{anonymize_ip:true});</script>
 <?php endif; ?>
 <?php if ($clarity !== ''): ?>
-<!-- Microsoft Clarity -->
-<script>(function(c,l,a,r,i,t,y){c[a]=c[a]||function(){(c[a].q=c[a].q||[]).push(arguments)};t=l.createElement(r);t.async=1;t.src="https://www.clarity.ms/tag/"+i;y=l.getElementsByTagName(r)[0];y.parentNode.insertBefore(t,y);})(window,document,"clarity","script","<?= e($clarity) ?>");</script>
+<!-- Microsoft Clarity: deferred until the page has settled. It records the
+     DOM and scroll behaviour, and booting it during the first render/scroll
+     competed with every frame of the visit's most expensive moment. It still
+     loads on every page - just after the visitor has their first still
+     moment, so the sessions and heatmaps keep working as before. -->
+<script>(function(){var run=function(){(function(c,l,a,r,i,t,y){c[a]=c[a]||function(){(c[a].q=c[a].q||[]).push(arguments)};t=l.createElement(r);t.async=1;t.src="https://www.clarity.ms/tag/"+i;y=l.getElementsByTagName(r)[0];y.parentNode.insertBefore(t,y);})(window,document,"clarity","script","<?= e($clarity) ?>");};if(window.requestIdleCallback){window.requestIdleCallback(run,{timeout:4000});}else{window.setTimeout(run,3500);}})();</script>
 <?php endif; ?>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>

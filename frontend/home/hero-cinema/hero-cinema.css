@@ -141,13 +141,27 @@
 }
 
 .lfc-beam {
-  position: absolute; top: -20%; bottom: -20%; left: -30%; width: 32%;
+  position: absolute; top: -20%; bottom: -20%; left: -35%; width: 32%;
   background: linear-gradient(100deg, transparent, rgba(190, 240, 240, 0.05), transparent);
   transform: skewX(-12deg);
   animation: lfcBeam 14s ease-in-out infinite;
   pointer-events: none;
 }
-@keyframes lfcBeam { 0% { left: -35%; } 36% { left: 130%; } 100% { left: 130%; } }
+/* The sweep rides a transform, not `left`: same path (from -35% to 130% of the
+   hero), but the compositor alone can carry it - `left` put layout and paint
+   on the main thread every frame, which janked scrolling through the whole
+   page while the beam ran. */
+@keyframes lfcBeam {
+  0% { transform: translateX(0) skewX(-12deg); }
+  36%, 100% { transform: translateX(516%) skewX(-12deg); }
+}
+
+/* Off-screen the hero's scenery pauses (see the observer in hero-cinema.js):
+   glow, beam and shine are decoration, and none of them is worth a frame of
+   the visitor's scroll. */
+.lfc.is-offscreen .lfc-glow,
+.lfc.is-offscreen .lfc-beam { animation-play-state: paused; }
+.lfc.is-offscreen .lfc-panel.is-on .lfc-shine { animation-play-state: paused; }
 
 /* ---------- 3. copy panels ---------- */
 

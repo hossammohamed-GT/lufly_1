@@ -189,6 +189,20 @@
 
   fitToScreen();
 
+  /* Off-screen, the scenery stops. The glow, the beam and the brand shine are
+     pure decoration, and they used to keep animating forever - the beam on
+     `left` and the shine on `background-position` mean LAYOUT AND PAINT on the
+     main thread every frame - long after the hero had scrolled out of view,
+     dragging every fast scroll through the sections below. Paused here, they
+     cost nothing; back in view they resume mid-flight. */
+  if ('IntersectionObserver' in window) {
+    new IntersectionObserver(function (entries) {
+      for (var i = 0; i < entries.length; i++) {
+        root.classList.toggle('is-offscreen', !entries[i].isIntersecting);
+      }
+    }, { rootMargin: '80px' }).observe(root);
+  }
+
   window.addEventListener('resize', scheduleFit, { passive: true });
   window.addEventListener('orientationchange', function () {
     scheduleFit();

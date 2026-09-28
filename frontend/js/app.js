@@ -173,5 +173,5 @@
      One line in the console says which front-end build the browser is
      actually running - when a fix "does not work", this is how you tell
      in three seconds whether it is the code or a stale cached file. */
-  try { console.info('LUFLY front-end build 2026-09-28.2'); } catch (e) { /* console stripped */ }
+  try { console.info('LUFLY front-end build 2026-09-28.3'); } catch (e) { /* console stripped */ }
 })();
