@@ -172,9 +172,7 @@ function buildWorld({ reducedMotion = false } = {}) {
       ? makeImage('/hero-bathroom.webp')
       : makeImage('', () => promotionOrder.push(i));
     frame.attrs['data-hero-src'] = `/hero-${i}.webp`;
-    frame.attrs['data-hero-srcset'] = `/hero-${i}.webp 1376w`;
     frame.attrs['data-hero-src-light'] = `/hero-${i}-light.webp`;
-    frame.attrs['data-hero-srcset-light'] = `/hero-${i}-light.webp 1376w`;
     frame.classes.add('hero-frame');
     if (i === 0) frame.classes.add('is-active');
     media.appendChild(frame);
@@ -268,6 +266,11 @@ const active = (world) => world.frames.findIndex((f) => f.classList.contains('is
     'queue: frames promoted strictly one after another (got ' + JSON.stringify(world.promotionOrder) + ')');
   ok(!('src' in world.frames[0].attrs) || world.frames[0].getAttribute('src') === '/hero-bathroom.webp',
     'queue: the eager first frame is never re-fetched');
+  ok(world.frames.every((f) => f.getAttribute('src') === `/hero-${world.frames.indexOf(f)}.webp`
+      || world.frames.indexOf(f) === 0),
+    'queue: every promoted frame gets the full master-quality src');
+  ok(world.frames.every((f) => !f.attrs.srcset),
+    'policy: no srcset ladder is ever written - one master file per scene');
 
   /* autoplay order + timing (clock is now ~t+150ms) */
   await tick(DWELL - 100 + 60);

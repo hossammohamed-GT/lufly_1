@@ -101,7 +101,6 @@
      * comes. The visible one gets the soft crossfade. */
     frames.forEach(function (frame) {
       var nextSrc = frame.getAttribute(attrName('data-hero-src'));
-      var nextSrcset = frame.getAttribute(attrName('data-hero-srcset'));
 
       if (!nextSrc || !frame.getAttribute('src')) {
         return;
@@ -111,7 +110,6 @@
         /* still loading or never promoted: point it quietly */
         frame.dataset.heroDone = '';
         frame.dataset.heroLoading = '';
-        if (nextSrcset) { frame.srcset = nextSrcset; }
         frame.src = nextSrc;
         return;
       }
@@ -143,7 +141,6 @@
         }
       }, { once: true });
 
-      if (nextSrcset) { frame.srcset = nextSrcset; }
       frame.src = nextSrc;
     });
   }
@@ -171,11 +168,12 @@
   /* ------------------------------------------------------------------
      1. progressive image queue
      The first frame ships eager + preloaded. Every other frame carries
-     data-hero-src / data-hero-srcset instead: the browser would otherwise
-     fetch all five photographs while the visitor is still looking at the
-     first one. Promote them one at a time, in autoplay order, once the
-     page has settled. When a scene's turn comes before its photo arrived,
-     the switch waits for it (see goTo). */
+     data-hero-src instead: the browser would otherwise fetch all five
+     photographs while the visitor is still looking at the first one.
+     Promote them one at a time, in autoplay order, once the page has
+     settled. When a scene's turn comes before its photo arrived, the
+     switch waits for it (see goTo). Every frame is the same master-quality
+     file - only the loading ORDER is progressive, never the quality. */
   function promote(frame) {
     if (frame.dataset.heroDone === '1' || frame.dataset.heroReady === '1') {
       return Promise.resolve();
@@ -201,9 +199,8 @@
     }
 
     var src = frame.getAttribute(attrName('data-hero-src'));
-    var srcset = frame.getAttribute(attrName('data-hero-srcset'));
 
-    if (!src && !srcset) {
+    if (!src) {
       frame.dataset.heroDone = '1';
       return Promise.resolve();
     }
@@ -221,12 +218,7 @@
         resolve();
       }, { once: true });
 
-      if (srcset) {
-        frame.srcset = srcset;
-      }
-      if (src) {
-        frame.src = src;
-      }
+      frame.src = src;
     });
   }
 

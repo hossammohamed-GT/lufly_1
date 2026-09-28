@@ -116,28 +116,10 @@
 
   var ORDER = ['brushed-rose-gold', 'chrome', 'brushed-gold', 'mirror-gold', 'matte-black', 'brushed-nickel', 'gunmetal', 'brushed-gunmetal', 'gun-gray'];
 
-  /* Each scene layer is a <picture>; swapping only img.src would leave the
-     previous finish's srcset serving. Rebuild it from the widths the template
-     published on the img. */
+  /* Each scene layer is a plain <img> at full original quality (no rendition
+     ladder anymore) - swapping the src is all it takes. */
   function setStageImage(img, url) {
-    var raw = img.getAttribute('data-respic-widths') || '';
-    var widths = raw ? raw.split(',') : [];
-    var host = img.parentNode;
-    var source = host && host.tagName === 'PICTURE'
-      ? host.querySelector('source[type="image/webp"]')
-      : null;
-
     img.src = url;
-
-    if (!source || !widths.length) {
-      return;
-    }
-
-    var parts = [];
-    for (var i = 0; i < widths.length; i++) {
-      parts.push(url + '@' + widths[i] + 'w.webp ' + widths[i] + 'w');
-    }
-    source.srcset = parts.join(', ');
   }
 
   function pad(n) {

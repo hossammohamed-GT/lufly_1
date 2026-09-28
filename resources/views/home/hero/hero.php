@@ -17,23 +17,15 @@ $view->pushScript('frontend/home/hero/hero.js');
 
 /* The artwork is cached for a year: bump this with every image re-shoot so
    returning visitors actually receive the new files. */
-$heroImgV = '2026-09-28.3';
+$heroImgV = '2026-09-29.1';
 
-/* LCP: the first scene is the largest paint. The preload mirrors the srcset
-   the markup offers, so a phone fetches the small rendition instead of the
-   full-width one. */
+/* LCP: the first scene is the largest paint. One master-quality lossless
+   file serves every screen - no rendition ladder, no reduced variants. */
 $firstImg = 'hero-bathroom';
 $view->pushPreload(asset('images/hero/' . $firstImg . '.webp') . '?v=' . $heroImgV, [
     'as' => 'image',
     'type' => 'image/webp',
     'fetchpriority' => 'high',
-    'imagesrcset' => implode(', ', [
-        asset('images/hero/' . $firstImg . '@480w.webp') . '?v=' . $heroImgV . ' 480w',
-        asset('images/hero/' . $firstImg . '@760w.webp') . '?v=' . $heroImgV . ' 760w',
-        asset('images/hero/' . $firstImg . '@1024w.webp') . '?v=' . $heroImgV . ' 1024w',
-        asset('images/hero/' . $firstImg . '.webp') . '?v=' . $heroImgV . ' 1376w',
-    ]),
-    'imagesizes' => '100vw',
 ]);
 
 /* The five scenes, in autoplay order. Each tab links to the catalogue page
@@ -61,17 +53,8 @@ $heroScenes = [
     ],
 ];
 
-/* srcset string builder - the frames below share the same rendition ladder.
-   $variant '' = the dark masters, '-light' = the bright daylight set. */
-$heroSrcset = static function (string $key, string $variant = '') use ($heroImgV): string {
-    return implode(', ', [
-        asset("images/hero/hero-{$key}{$variant}@480w.webp") . '?v=' . $heroImgV . ' 480w',
-        asset("images/hero/hero-{$key}{$variant}@760w.webp") . '?v=' . $heroImgV . ' 760w',
-        asset("images/hero/hero-{$key}{$variant}@1024w.webp") . '?v=' . $heroImgV . ' 1024w',
-        asset("images/hero/hero-{$key}{$variant}.webp") . '?v=' . $heroImgV . ' 1376w',
-    ]);
-};
 ?>
+
 <section class="hero" id="lufly-hero" data-hero aria-label="<?= e(trans('home.hero_tabs_label')) ?>">
 
     <!-- Scene stack: every frame is in the DOM; the engine fades between them.
@@ -82,12 +65,8 @@ $heroSrcset = static function (string $key, string $variant = '') use ($heroImgV
             <?php if ($i === 0): ?>
                 <img class="hero-frame is-active"
                      src="<?= e(asset('images/hero/hero-' . $s['key'] . '.webp') . '?v=' . $heroImgV) ?>"
-                     srcset="<?= e($heroSrcset($s['key'])) ?>"
                      data-hero-src="<?= e(asset('images/hero/hero-' . $s['key'] . '.webp') . '?v=' . $heroImgV) ?>"
-                     data-hero-srcset="<?= e($heroSrcset($s['key'])) ?>"
                      data-hero-src-light="<?= e(asset('images/hero/hero-' . $s['key'] . '-light.webp') . '?v=' . $heroImgV) ?>"
-                     data-hero-srcset-light="<?= e($heroSrcset($s['key'], '-light')) ?>"
-                     sizes="100vw"
                      alt=""
                      width="1376" height="768"
                      fetchpriority="high"
@@ -95,10 +74,7 @@ $heroSrcset = static function (string $key, string $variant = '') use ($heroImgV
             <?php else: ?>
                 <img class="hero-frame"
                      data-hero-src="<?= e(asset('images/hero/hero-' . $s['key'] . '.webp') . '?v=' . $heroImgV) ?>"
-                     data-hero-srcset="<?= e($heroSrcset($s['key'])) ?>"
                      data-hero-src-light="<?= e(asset('images/hero/hero-' . $s['key'] . '-light.webp') . '?v=' . $heroImgV) ?>"
-                     data-hero-srcset-light="<?= e($heroSrcset($s['key'], '-light')) ?>"
-                     sizes="100vw"
                      alt=""
                      width="1376" height="768"
                      decoding="async">

@@ -162,15 +162,19 @@ Invariants when touching it:
   event and mirrors `data-theme` with a MutationObserver. A light visitor
   swaps at boot, before the first paint when possible.
 
-Artwork: `public/images/hero/hero-<scene>{,-light}{,@480w,@760w,@1024w}.webp`
-plus `-thumb.webp` tab thumbnails, built from the masters in
-`tools/hero-masters/` by `python3 tools/hero-masters/build_hero_images.py`.
-**Quality policy: the hero is the brand photograph - it is never squeezed.**
-Full-width WebP saves at q96 straight from the lossless PNG master, renditions
-at q92; this deliberately ignores the aggressive settings of
-`tools/media_audit/optimize_images.py` (the "quality reduction system" - do
-not run it over the hero). The scene crop is anchored on the product
-(`object-position`, biased further right on phones).
+Artwork: `public/images/hero/hero-<scene>{,-light}.webp` plus `-thumb.webp`
+tab thumbnails, built from the masters in `tools/hero-masters/` by
+`python3 tools/hero-masters/build_hero_images.py`.
+**Quality policy (2026-09-29): every hero file is LOSSLESS WebP, straight
+from the lossless PNG master - pixel-identical on every screen.** There is no
+rendition ladder (the old `@480w/@760w/@1024w` q92 files are gone) and no
+lossy quality setting; a phone downloads the same master-quality frame as a
+desktop. The site-wide compression system was removed with it: no WebP
+negotiation in `.htaccess`, no q80 `.webp` twins under `public/images`, and
+`responsive-image` renders a plain `<img>` over the untouched original. Do
+not reintroduce reduced-quality variants (site policy: no image is ever
+served at lower quality than its source). The scene crop is anchored on the
+product (`object-position`, biased further right on phones).
 
 The navbar over the hero dissolves in two stages (all of it driven by the one
 `--nav-glass` variable painted on rAF): while the glass fades in it stays

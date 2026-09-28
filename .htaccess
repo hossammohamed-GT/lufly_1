@@ -17,10 +17,8 @@ DirectoryIndex index.php
 
     RewriteRule ^frontend/.* - [L]
 
-    # WebP
-    RewriteCond %{HTTP_ACCEPT} image/webp
-    RewriteCond %{REQUEST_FILENAME}.webp -f
-    RewriteRule ^(.+\.(jpe?g|png))$ $1.webp [T=image/webp,L]
+    # No image re-negotiation: every JPEG/PNG URL serves its untouched
+    # original at full quality (no-quality-reduction policy, 2026-09-29).
 
     RewriteCond %{REQUEST_URI} !^/public/
     RewriteRule ^(.*)$ public/$1 [L,QSA]
