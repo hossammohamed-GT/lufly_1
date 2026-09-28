@@ -96,9 +96,10 @@
   inset: 0;
   background:
     linear-gradient(to top,
-      rgba(3, 10, 12, 0.78) 0%,
-      rgba(3, 10, 12, 0.3) 15%,
-      rgba(3, 10, 12, 0) 30%),
+      rgba(3, 10, 12, 0.9) 0%,
+      rgba(3, 10, 12, 0.58) 12%,
+      rgba(3, 10, 12, 0.26) 26%,
+      rgba(3, 10, 12, 0) 44%),
     linear-gradient(to right,
       rgba(4, 11, 13, 0.8) 0%,
       rgba(4, 11, 13, 0.46) 24%,
@@ -114,9 +115,10 @@
 [dir='rtl'] .hero-shade {
   background:
     linear-gradient(to top,
-      rgba(3, 10, 12, 0.78) 0%,
-      rgba(3, 10, 12, 0.3) 15%,
-      rgba(3, 10, 12, 0) 30%),
+      rgba(3, 10, 12, 0.9) 0%,
+      rgba(3, 10, 12, 0.58) 12%,
+      rgba(3, 10, 12, 0.26) 26%,
+      rgba(3, 10, 12, 0) 44%),
     linear-gradient(to left,
       rgba(4, 11, 13, 0.8) 0%,
       rgba(4, 11, 13, 0.46) 24%,
@@ -608,6 +610,10 @@
    ========================================================================== */
 
 .hero-trust {
+  /* NOT a surface: no background, no blur, no border, no radius - the strip
+     is just text floating on the photo. The readability comes from the
+     bottom gradient of .hero-shade, which darkens the whole lower third of
+     the photograph so the strip reads as part of the scene, not a box. */
   position: relative;
   z-index: 3;
   grid-row: 3;
@@ -616,10 +622,6 @@
   grid-auto-flow: column;
   grid-auto-columns: 1fr;
   padding: 18px max(var(--container-gutter, 24px), calc((100% - var(--container-max, 1450px)) / 2 + var(--container-gutter)));
-  border-block-start: 1px solid rgba(255, 255, 255, 0.09);
-  background: rgba(3, 10, 12, 0.58);
-  backdrop-filter: blur(12px) saturate(1.2);
-  -webkit-backdrop-filter: blur(12px) saturate(1.2);
 }
 
 .hero-trust-item {
@@ -900,7 +902,6 @@
 
 @media (prefers-reduced-transparency: reduce) {
   .hero-tabs,
-  .hero-trust,
   .hero-cta-play {
     backdrop-filter: none;
     -webkit-backdrop-filter: none;
@@ -929,9 +930,10 @@
 [data-theme='light'] .hero-shade {
   background:
     linear-gradient(to top,
-      rgba(10, 22, 24, 0.74) 0%,
-      rgba(10, 22, 24, 0.28) 15%,
-      rgba(10, 22, 24, 0) 30%),
+      rgba(10, 22, 24, 0.88) 0%,
+      rgba(10, 22, 24, 0.55) 12%,
+      rgba(10, 22, 24, 0.24) 26%,
+      rgba(10, 22, 24, 0) 44%),
     linear-gradient(to right,
       rgba(8, 20, 22, 0.72) 0%,
       rgba(8, 20, 22, 0.42) 24%,
@@ -946,9 +948,10 @@
 [dir='rtl'] [data-theme='light'] .hero-shade {
   background:
     linear-gradient(to top,
-      rgba(10, 22, 24, 0.74) 0%,
-      rgba(10, 22, 24, 0.28) 15%,
-      rgba(10, 22, 24, 0) 30%),
+      rgba(10, 22, 24, 0.88) 0%,
+      rgba(10, 22, 24, 0.55) 12%,
+      rgba(10, 22, 24, 0.24) 26%,
+      rgba(10, 22, 24, 0) 44%),
     linear-gradient(to left,
       rgba(8, 20, 22, 0.72) 0%,
       rgba(8, 20, 22, 0.42) 24%,

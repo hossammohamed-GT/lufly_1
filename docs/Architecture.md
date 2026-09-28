@@ -128,6 +128,12 @@ Invariants when touching it:
   trust strip; the photo is the absolutely positioned backdrop. The copy row can
   never slide under the category selector, at any viewport, because the selector
   is its own row - overlap is structurally impossible.
+- **The trust strip is not a surface.** No background, no blur, no border, no
+  radius - only text floating on the photograph. Its readability comes from the
+  bottom gradient of `.hero-shade` (0.9 at the bottom edge, fading out across
+  the lower ~44% of the frame), so the strip reads as part of the scene's own
+  darkening, the way the reference composes it. Do not give it a panel
+  treatment again.
 - **The cross-dissolve is one class.** `.hero-frame.is-active` flips opacity and
   a slow `scale(1.001 -> 1.06)` Ken Burns drift; both are compositor-only.
   Switching waits for the incoming photo to decode (`img.decode()`), so the fade
