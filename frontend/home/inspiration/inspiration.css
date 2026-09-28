@@ -90,7 +90,7 @@
   font-weight: var(--weight-bold);
   text-transform: uppercase;
   letter-spacing: 0.18em;
-  color: var(--ds-primary);
+  color: var(--ds-accent-text);
   margin-bottom: var(--space-1);
   display: block;
 }

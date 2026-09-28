@@ -100,7 +100,9 @@
   margin-top: var(--space-6);
   font-family: var(--font-mono);
   font-size: 10px;
-  color: var(--ds-primary);
+  /* 10px mono caps on the card surface: accent-text ramp, not --ds-primary
+     (teal-500 measures 3.4-4.1:1 there; AA needs 4.5:1 at this size) */
+  color: var(--ds-accent-text);
   letter-spacing: 0.2em;
   font-weight: var(--weight-bold);
   text-transform: uppercase;
@@ -134,7 +136,7 @@
   font-weight: var(--weight-bold);
   letter-spacing: 0.14em;
   text-transform: uppercase;
-  color: var(--ds-primary);
+  color: var(--ds-accent-text);
   background: var(--ds-primary-soft);
   border: 1px solid color-mix(in srgb, var(--ds-primary) 26%, transparent);
   padding: 5px 11px;

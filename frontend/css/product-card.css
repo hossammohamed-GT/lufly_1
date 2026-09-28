@@ -175,7 +175,7 @@
   font-weight: 700;
   letter-spacing: 0.14em;
   text-transform: uppercase;
-  color: var(--ds-primary);
+  color: var(--ds-accent-text);
 }
 
 .pcard-no {
@@ -198,7 +198,7 @@
   transition: color 140ms ease;
 }
 
-.pcard-title a:hover { color: var(--ds-primary); }
+.pcard-title a:hover { color: var(--ds-accent-text); }
 
 .pcard-desc {
   margin: 0;

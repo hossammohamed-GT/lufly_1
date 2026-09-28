@@ -4,7 +4,7 @@ $view->pushDeferredStyle('frontend/home/rituals/rituals.css');
 ?>
 <section class="rituals-section scroll-section" id="rituals">
     <div class="container">
-        <div class="section-header-center scroll-reveal">
+        <div class="section-header-center section-header-on-photo scroll-reveal">
             <span class="section-tag"><?= e(trans('home.rituals_tag')) ?></span>
             <h2 class="section-title"><?= e(trans('home.rituals_title')) ?></h2>
             <p class="section-subtitle"><?= e(trans('home.rituals_desc')) ?></p>

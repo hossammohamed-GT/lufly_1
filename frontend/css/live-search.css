@@ -38,7 +38,7 @@
 }
 
 .livesearch-status.is-ok {
-  color: var(--ds-primary);
+  color: var(--ds-accent-text);
   border-color: color-mix(in srgb, var(--ds-primary) 30%, var(--ds-border));
   background: var(--ds-primary-tint);
 }

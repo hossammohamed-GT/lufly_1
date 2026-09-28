@@ -70,10 +70,18 @@
   --ds-surface: var(--lu-neutral-0);
   --ds-surface-alt: var(--lu-neutral-100);
   --ds-text: var(--lu-neutral-900);
-  --ds-text-muted: var(--lu-neutral-500);
+  /* neutral-500 measured 4.47:1 against --ds-bg (WCAG AA needs 4.5:1 for
+     body copy); neutral-600 measures 5.9:1 on the page background and 6.4:1
+     on white surfaces while still reading as "muted" next to neutral-900 */
+  --ds-text-muted: var(--lu-neutral-600);
   --ds-border: var(--lu-border-light);
 
   --ds-primary: var(--lu-teal-500);
+  /* Accent for TEXT below the large-size threshold: teal-500 tops out at
+     4.1:1 on white (3.8:1 on the page background), which fails AA for the
+     10px mono tags/labels it was used on. teal-700 measures 7.6:1 on the
+     page background - same hue, readable at any size. */
+  --ds-accent-text: var(--lu-teal-700);
   --ds-primary-hover: var(--lu-teal-600);
   --ds-primary-text: var(--lu-neutral-0);
   --ds-primary-soft: color-mix(in srgb, var(--lu-teal-500) 10%, transparent);
@@ -126,6 +134,10 @@
   --ds-border: var(--lu-ink-600);
 
   --ds-primary: var(--lu-teal-500);
+  /* teal-500 on the ink surfaces measures 3.4:1 - fine for borders, icons
+     and large display type, not for 10px labels. teal-200 measures 7.6:1
+     on --ds-surface and 8.7:1 on --ds-bg. */
+  --ds-accent-text: var(--lu-teal-200);
   --ds-primary-hover: var(--lu-mint);
   --ds-primary-text: var(--lu-ink-950);
   --ds-primary-soft: color-mix(in srgb, var(--lu-teal-500) 20%, transparent);
@@ -485,7 +497,7 @@ hr { border: 0; border-top: var(--border-hairline) solid var(--ds-border); }
   letter-spacing: var(--tracking-wider);
   font-size: var(--text-xs);
   font-weight: var(--weight-bold);
-  color: var(--ds-primary);
+  color: var(--ds-accent-text);
 }
 .section-header { margin-bottom: var(--space-8); }
 .section-tag {
@@ -493,7 +505,9 @@ hr { border: 0; border-top: var(--border-hairline) solid var(--ds-border); }
   align-items: center;
   gap: 10px;
   margin-bottom: var(--space-4);
-  color: var(--ds-primary);
+  /* 10px mono caps: below the WCAG large-text threshold, so it must sit on
+     the accent-text ramp (7.6:1 light / 8.7:1 dark), not --ds-primary */
+  color: var(--ds-accent-text);
   font-family: var(--font-mono);
   font-size: 10px;
   font-weight: var(--weight-bold);
@@ -529,6 +543,32 @@ hr { border: 0; border-top: var(--border-hairline) solid var(--ds-border); }
 
 .section-header-left { max-width: 620px; }
 .section-header-center { max-width: 680px; margin-inline: auto; margin-bottom: var(--space-12); text-align: center; }
+
+/* Section header floating over a photographic band (categories, rituals, …).
+   A veil alone cannot guarantee WCAG AA: the photograph underneath decides
+   the contrast, and the backdrops here run from near-black to near-white
+   behind the same heading. So the header carries its own surface: a plate
+   of the page colour, anchored to the header box itself (so it is correct
+   at every breakpoint), sitting fully opaque under the copy and softened
+   at the edges with a blur. The copy is therefore measured against a known
+   surface, not against the photograph. */
+.section-header-on-photo { position: relative; z-index: 1; }
+.section-header-on-photo::before {
+  content: "";
+  position: absolute;
+  z-index: -1;
+  /* the bleed is wider than the blur transition, so no text ever sits in
+     the soft edge: the copy is always on the solid core of the plate */
+  inset: -46px -12% -54px;
+  border-radius: 44px;
+  background: color-mix(in srgb, var(--ds-bg) 94%, transparent);
+  filter: blur(30px);
+}
+/* phones: the header fills the width, so keep the side bleed small enough
+   that the plate stays inside the viewport */
+@media (max-width: 640px) {
+  .section-header-on-photo::before { inset: -36px -9% -44px; filter: blur(24px); }
+}
 .separator { height: var(--border-hairline); background: var(--ds-border); border: 0; }
 
 /* ============================================================

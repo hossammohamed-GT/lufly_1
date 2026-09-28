@@ -66,7 +66,7 @@
   font-weight: 700;
   letter-spacing: 0.2em;
   text-transform: uppercase;
-  color: var(--ds-primary);
+  color: var(--ds-accent-text);
 }
 
 .trust-head h2 {
@@ -81,7 +81,7 @@
 
 .trust-head h2 em {
   font-style: normal;
-  color: var(--ds-primary);
+  color: var(--ds-accent-text);
 }
 
 .trust-contact-link {
@@ -104,7 +104,7 @@
 }
 
 .trust-contact-link:hover {
-  color: var(--ds-primary);
+  color: var(--ds-accent-text);
   border-color: color-mix(in srgb, var(--ds-primary) 45%, var(--ds-border));
   transform: translateY(-1px);
 }

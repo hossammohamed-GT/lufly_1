@@ -85,7 +85,7 @@
   font-weight: var(--weight-bold);
   letter-spacing: 0.18em;
   text-transform: uppercase;
-  color: var(--ds-primary);
+  color: var(--ds-accent-text);
   background: var(--ds-primary-soft);
   border: 1px solid color-mix(in srgb, var(--ds-primary) 26%, transparent);
   padding: 5px 11px;

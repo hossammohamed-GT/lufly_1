@@ -38,7 +38,7 @@
 }
 
 .masterpieces-all:hover {
-  color: var(--ds-primary);
+  color: var(--ds-accent-text);
   border-color: color-mix(in srgb, var(--ds-primary) 45%, var(--ds-border));
   transform: translateY(-1px);
 }

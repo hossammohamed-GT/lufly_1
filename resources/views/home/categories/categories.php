@@ -30,7 +30,7 @@ $fallbackImg = '/images/logo.png';
 ?>
 <section class="categories-section scroll-section" id="categories">
     <div class="container">
-        <div class="section-header-center scroll-reveal">
+        <div class="section-header-center section-header-on-photo scroll-reveal">
             <span class="section-tag"><?= e(trans('home.collections_tag')) ?></span>
             <h2 class="section-title"><?= e(trans('home.design_title')) ?></h2>
             <p class="section-subtitle"><?= e(trans('home.design_desc')) ?></p>

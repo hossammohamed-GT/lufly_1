@@ -250,6 +250,31 @@ How a photo band is built - copy this shape, do not invent another one:
 - Backdrops live in `images/lifestyle/` as 1584x672 (2.36:1) or 1408x768 JPEGs,
   ~85-200 KB each, and are named `<band>-backdrop.jpg`.
 
+### Text contrast on photo bands (WCAG AA)
+
+A veil is a *mood* layer, not a contrast guarantee: the backdrops run from
+near-black to near-white behind the same heading, and the veils (12-40%) leave
+both extremes readable by neither the light nor the dark theme. Measured against
+the real artwork, the section subtitles landed at 1.3:1 - invisible. So text on
+a photo band never relies on the veil alone:
+
+- A section header that floats on a photograph adds
+  `.section-header-on-photo` (design system). It paints a blurred plate of
+  `--ds-bg` behind the header box itself - anchored to the header, so it is
+  correct at every breakpoint, and the bleed is wider than the blur transition
+  so no glyph ever sits in the soft edge. The copy is then measured against a
+  known surface, worst case ~5.1:1 in both themes.
+- Small caps/mono labels (10px tags, codes, badges) use `--ds-accent-text`
+  (teal-700 light / teal-200 dark), not `--ds-primary`: teal-500 tops out at
+  4.1:1 on white and 3.4:1 on ink, which fails AA below the large-text
+  threshold. `--ds-primary` stays for large display type, borders, icons and
+  fills.
+- Light-theme `--ds-text-muted` is neutral-600, not neutral-500: neutral-500
+  measured 4.47:1 on `--ds-bg` - one hundredth under the AA line.
+- The hero copy panel carries its own blurred scrim in the light theme
+  (`.lfc-inner::before`): the daylight scenes are near-white exactly where the
+  copy sits and the soft 0.62 scrim left the kicker at 1.7:1.
+
 `node tools/frontend_audit/band_audit.mjs` checks all of the above against the
 render order read from `home/index.php`: a plain band that starts painting a
 photograph, a photo band whose backdrop stops resolving, a missing veil layer or

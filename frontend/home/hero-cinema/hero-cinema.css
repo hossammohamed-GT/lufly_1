@@ -175,6 +175,28 @@
 }
 .lfc-inner { max-width: 680px; pointer-events: auto; }
 
+/* Light theme: the daylight scenes run near-white exactly where the copy
+   panel sits, and the soft light scrim (0.62 -> 0) let the bright pixels
+   through - the kicker measured 1.7:1 and the sub line 2.4:1 there. The
+   copy now carries its own anchored scrim, softened with a blur: solid
+   under the text block, fading out on all sides. Dark theme is unchanged
+   (the 0.82 scrim already measures 8.6:1). */
+[data-theme="light"] .lfc-inner { position: relative; }
+[data-theme="light"] .lfc-inner::before {
+  content: "";
+  position: absolute;
+  z-index: -1;
+  /* the photo side gets the wide bleed; the copy always sits on the solid
+     core of the plate, never in the blurred edge */
+  inset: -36px -170px -44px -34px;
+  border-radius: 36px;
+  background: rgba(12, 18, 18, 0.72);
+  filter: blur(28px);
+}
+[dir="rtl"][data-theme="light"] .lfc-inner::before {
+  inset: -36px -34px -44px -170px;
+}
+
 /* entrance animations */
 .lfc-panel.is-on .lfc-kicker { animation: lfcKicker 0.85s var(--lfc-ease) 0.12s both; }
 .lfc-panel.is-on .lfc-line > span { animation: lfcLine 0.95s var(--lfc-ease) both; }
