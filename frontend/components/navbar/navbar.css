@@ -1105,6 +1105,10 @@
     transform: none;
     opacity: 1;
     pointer-events: auto;
+    /* the desktop open rule (min(500px, 46vw)) must not leak in here:
+       on a 390px phone it squeezed the panel to ~180px hanging off the
+       start edge. On phones the panel is always full-bleed. */
+    inline-size: auto;
   }
 
   .mnav-field { transform: none; opacity: 1; }

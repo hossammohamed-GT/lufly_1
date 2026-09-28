@@ -85,7 +85,13 @@ function ___tpl($code) {
 }
 
 function e($v) { return htmlspecialchars((string) $v, ENT_QUOTES, 'UTF-8'); }
-function asset($p) { return '/' . ltrim($p, '/'); }
+function asset($p) {
+    $u = '/' . ltrim($p, '/');
+    /* css/js get a render-time stamp, mirroring the filemtime stamp the
+       real asset() adds - so a fresh render always means fresh URLs */
+    if (preg_match('#\\.(css|js)$#i', $u) !== 1) { return $u; }
+    return $u . '?v=' . (int) $GLOBALS['___vstamp'];
+}
 function url($p = '') { return '/' . ltrim($p, '/'); }
 function config($key, $default = null) { return $default; }
 function feature($name, $default = false) { return in_array($name, ['ai', 'assistant'], true) ? false : $default; }
@@ -179,6 +185,7 @@ class ___FakeRequest {
 }
 
 $GLOBALS['___localeCode'] = ${phpString(locale)};
+$GLOBALS['___vstamp'] = ${phpString(String(Date.now()))};
 $GLOBALS['___request'] = new ___FakeRequest();
 
 class ___View {
@@ -308,7 +315,8 @@ if (mode === 'lint') {
     process.exit(1);
   }
   mkdirSync(path.join(ROOT, 'storage/reports'), { recursive: true });
-  writeFileSync(path.join(ROOT, 'storage/reports/_home-render.html'), text);
+  const stamped = `<!-- preview build ${new Date().toISOString()} -->\n` + text;
+  writeFileSync(path.join(ROOT, 'storage/reports/_home-render.html'), stamped);
   console.log(`rendered ${(text.length / 1024).toFixed(1)} KB -> storage/reports/_home-render.html`);
 }
 process.exit(0);
