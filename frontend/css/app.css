@@ -2,33 +2,38 @@
    live in frontend/components/navbar/navbar.css. */
 
 /* ---------- Performance & Rendering Directives ----------
-   content-visibility skips the sections that are still off-screen. The
-   placeholder height matters though: while a section is skipped the browser
-   lays it out with contain-intrinsic-size, and a placeholder that is far too
-   short makes the document grow section by section while the visitor scrolls
-   (on phones that drags the sliding URL bar with it, i.e. a viewport resize
-   mid-scroll). The values below follow the real heights of each band, and the
-   phone column re-states them for the single-column layouts. `auto` keeps the
-   measured height after the first paint, so these are first-paint hints only. */
+   content-visibility skips rendering the sections that are still off-screen,
+   which keeps scrolling cheap. It is the classic scroll-jump trap though:
+   while a section is skipped the browser lays it out at contain-intrinsic-size,
+   and the first fast scroll makes it enter the viewport before the estimate
+   is replaced by the real height - the document grows or shrinks under the
+   visitor mid-scroll and the page feels like it snaps backwards.
 
-.trust-bar { content-visibility: auto; contain-intrinsic-size: auto 620px; }
-.finishes-section { content-visibility: auto; contain-intrinsic-size: auto 720px; }
-.categories-section { content-visibility: auto; contain-intrinsic-size: auto 760px; }
-.inspiration-section { content-visibility: auto; contain-intrinsic-size: auto 920px; }
-.rituals-section { content-visibility: auto; contain-intrinsic-size: auto 720px; }
-.masterpieces-section { content-visibility: auto; contain-intrinsic-size: auto 820px; }
-.corporate-section { content-visibility: auto; contain-intrinsic-size: auto 660px; }
-.lufly-mega-footer { content-visibility: auto; contain-intrinsic-size: auto 640px; }
+   So the directive is opt-in: cv-stabilize.js measures every band's real
+   height after load (images are aspect-boxed and fonts are ready by then, so
+   the measurement is final), writes it inline as the intrinsic size, and only
+   then adds body.cv-on. The sizes below are only the no-JS fallback; `auto`
+   keeps the measured height after the first paint, so they are first-paint
+   hints for browsers without the script. */
+
+body.cv-on .trust-bar { content-visibility: auto; contain-intrinsic-size: auto 620px; }
+body.cv-on .finishes-section { content-visibility: auto; contain-intrinsic-size: auto 720px; }
+body.cv-on .categories-section { content-visibility: auto; contain-intrinsic-size: auto 760px; }
+body.cv-on .inspiration-section { content-visibility: auto; contain-intrinsic-size: auto 920px; }
+body.cv-on .rituals-section { content-visibility: auto; contain-intrinsic-size: auto 720px; }
+body.cv-on .masterpieces-section { content-visibility: auto; contain-intrinsic-size: auto 820px; }
+body.cv-on .corporate-section { content-visibility: auto; contain-intrinsic-size: auto 660px; }
+body.cv-on .lufly-mega-footer { content-visibility: auto; contain-intrinsic-size: auto 640px; }
 
 @media (max-width: 760px) {
-  .trust-bar { contain-intrinsic-size: auto 610px; }
-  .finishes-section { contain-intrinsic-size: auto 980px; }
-  .categories-section { contain-intrinsic-size: auto 1850px; }
-  .inspiration-section { contain-intrinsic-size: auto 1420px; }
-  .rituals-section { contain-intrinsic-size: auto 1180px; }
-  .masterpieces-section { contain-intrinsic-size: auto 1520px; }
-  .corporate-section { contain-intrinsic-size: auto 800px; }
-  .lufly-mega-footer { contain-intrinsic-size: auto 900px; }
+  body.cv-on .trust-bar { contain-intrinsic-size: auto 610px; }
+  body.cv-on .finishes-section { contain-intrinsic-size: auto 980px; }
+  body.cv-on .categories-section { contain-intrinsic-size: auto 1850px; }
+  body.cv-on .inspiration-section { contain-intrinsic-size: auto 1420px; }
+  body.cv-on .rituals-section { contain-intrinsic-size: auto 1180px; }
+  body.cv-on .masterpieces-section { contain-intrinsic-size: auto 1520px; }
+  body.cv-on .corporate-section { contain-intrinsic-size: auto 800px; }
+  body.cv-on .lufly-mega-footer { contain-intrinsic-size: auto 900px; }
 }
 
 /* ---------- Section scrolling ----------
