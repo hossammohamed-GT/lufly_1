@@ -14,7 +14,7 @@ $view->pushScript('frontend/home/hero-cinema/hero-cinema.js');
    version is what makes returning visitors actually receive the new file.
    Bump it with every artwork change. Must be set before the preloads and
    the scene markup below - both append it to the image URLs. */
-$heroImgV = '2026-09-28';
+$heroImgV = '2026-09-28.1';
 
 /* The first slide is the largest paint: preload for instant LCP.
    Three shapes, matching exactly what the script picks at runtime:
