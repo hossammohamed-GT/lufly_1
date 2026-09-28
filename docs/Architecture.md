@@ -139,12 +139,31 @@ Invariants when touching it:
   restarting it is a class remove/reflow/add, no timers in JS.
 - **`prefers-reduced-motion`** keeps the hero fully readable: no autoplay, no
   zoom, a 220ms plain fade, no entrance cascade.
+- **The artwork follows the site theme.** Every scene exists twice: the dark
+  masters (`data-hero-src...`, shipped in the HTML) and a bright daylight set
+  (`data-hero-src-light...`). Frames not yet promoted simply promote the
+  variant the visitor is on; promoted ones are re-pointed, and the visible
+  frame crossfades through a frozen copy of the outgoing photo
+  (`.hero-frame-ghost`). The engine listens for the site's `lufly:theme`
+  event and mirrors `data-theme` with a MutationObserver. A light visitor
+  swaps at boot, before the first paint when possible.
 
-Artwork: `public/images/hero/hero-<scene>{,@480w,@760w,@1024w}.webp` plus
-`hero-<scene>.jpg` fallbacks and `hero-<scene>-thumb.webp` tab thumbnails, built
-from the masters in `tools/hero-masters/` by
-`python3 tools/hero-masters/build_hero_images.py`. The scene crop is anchored on
-the product (`object-position`, biased further right on phones).
+Artwork: `public/images/hero/hero-<scene>{,-light}{,@480w,@760w,@1024w}.webp`
+plus `-thumb.webp` tab thumbnails, built from the masters in
+`tools/hero-masters/` by `python3 tools/hero-masters/build_hero_images.py`.
+**Quality policy: the hero is the brand photograph - it is never squeezed.**
+Full-width WebP saves at q96 straight from the lossless PNG master, renditions
+at q92; this deliberately ignores the aggressive settings of
+`tools/media_audit/optimize_images.py` (the "quality reduction system" - do
+not run it over the hero). The scene crop is anchored on the product
+(`object-position`, biased further right on phones).
+
+The navbar over the hero dissolves in two stages (all of it driven by the one
+`--nav-glass` variable painted on rAF): while the glass fades in it stays
+DARK with white icons - readable over the photo at every opacity - and only
+when the bar is ~80% through the hero (`is-solid`) do the layer and the ink
+join the theme. In light mode that keeps the mid-scroll moment from pairing
+light glass with light icons.
 
 The hero clips its overflow (`.hero { overflow: hidden }`). Short screens shrink
 gracefully: at `max-height: 800` the copy anchors to the top of its row and the

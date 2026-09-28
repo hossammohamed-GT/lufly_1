@@ -52,6 +52,9 @@
       var t = Math.min(1, Math.max(0, y / heroEdge));
       header.style.setProperty('--nav-glass', Math.pow(t, 0.6).toFixed(3));
       header.classList.toggle('is-scrolled', t >= 0.42);
+      /* the glass is nearly solid here: safe for the ink + layer to join
+         the theme (see the two-stage rules in navbar.css) */
+      header.classList.toggle('is-solid', t >= 0.8);
     } else {
       header.classList.toggle('is-scrolled', y > 8);
     }

@@ -206,12 +206,13 @@ function loadEngine() {
   ok(world.header.classList.contains('is-scrolled') === false, 'overlay: not scrolled at rest');
   ok(world.header.style.props?.['--nav-glass'] === '0' || world.header.glass === undefined, 'overlay: glass starts hidden (inline style 0)');
 
-  world.scroll(300);
-  const half = world.header.classList.contains('is-scrolled');
-  ok(typeof half === 'boolean', 'overlay: scroll paints without error');
+  world.scroll(400);   /* t = 400 / (836 - 64) = 0.52 */
+  ok(world.header.classList.contains('is-scrolled'), 'overlay: is-scrolled mid-hero (glass fading in, still dark)');
+  ok(!world.header.classList.contains('is-solid'), 'overlay: not solid yet - the ink stays white over the photo');
 
   world.scroll(836);
   ok(world.header.classList.contains('is-scrolled'), 'overlay: is-scrolled once the hero is gone');
+  ok(world.header.classList.contains('is-solid'), 'overlay: is-solid near the end - ink + glass join the theme');
 }
 
 /* --- non-overlay page ----------------------------------------------- */

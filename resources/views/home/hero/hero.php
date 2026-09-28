@@ -17,7 +17,7 @@ $view->pushScript('frontend/home/hero/hero.js');
 
 /* The artwork is cached for a year: bump this with every image re-shoot so
    returning visitors actually receive the new files. */
-$heroImgV = '2026-09-28.1';
+$heroImgV = '2026-09-28.2';
 
 /* LCP: the first scene is the largest paint. The preload mirrors the srcset
    the markup offers, so a phone fetches the small rendition instead of the
@@ -66,13 +66,14 @@ $heroScenes = [
     ],
 ];
 
-/* srcset string builder - the frames below share the same rendition ladder. */
-$heroSrcset = static function (string $key) use ($heroImgV): string {
+/* srcset string builder - the frames below share the same rendition ladder.
+   $variant '' = the dark masters, '-light' = the bright daylight set. */
+$heroSrcset = static function (string $key, string $variant = '') use ($heroImgV): string {
     return implode(', ', [
-        asset("images/hero/hero-{$key}@480w.webp") . '?v=' . $heroImgV . ' 480w',
-        asset("images/hero/hero-{$key}@760w.webp") . '?v=' . $heroImgV . ' 760w',
-        asset("images/hero/hero-{$key}@1024w.webp") . '?v=' . $heroImgV . ' 1024w',
-        asset("images/hero/hero-{$key}.webp") . '?v=' . $heroImgV . ' 1376w',
+        asset("images/hero/hero-{$key}{$variant}@480w.webp") . '?v=' . $heroImgV . ' 480w',
+        asset("images/hero/hero-{$key}{$variant}@760w.webp") . '?v=' . $heroImgV . ' 760w',
+        asset("images/hero/hero-{$key}{$variant}@1024w.webp") . '?v=' . $heroImgV . ' 1024w',
+        asset("images/hero/hero-{$key}{$variant}.webp") . '?v=' . $heroImgV . ' 1376w',
     ]);
 };
 ?>
@@ -87,6 +88,10 @@ $heroSrcset = static function (string $key) use ($heroImgV): string {
                 <img class="hero-frame is-active"
                      src="<?= e(asset('images/hero/hero-' . $s['key'] . '.webp') . '?v=' . $heroImgV) ?>"
                      srcset="<?= e($heroSrcset($s['key'])) ?>"
+                     data-hero-src="<?= e(asset('images/hero/hero-' . $s['key'] . '.webp') . '?v=' . $heroImgV) ?>"
+                     data-hero-srcset="<?= e($heroSrcset($s['key'])) ?>"
+                     data-hero-src-light="<?= e(asset('images/hero/hero-' . $s['key'] . '-light.webp') . '?v=' . $heroImgV) ?>"
+                     data-hero-srcset-light="<?= e($heroSrcset($s['key'], '-light')) ?>"
                      sizes="100vw"
                      alt=""
                      width="1376" height="768"
@@ -96,6 +101,8 @@ $heroSrcset = static function (string $key) use ($heroImgV): string {
                 <img class="hero-frame"
                      data-hero-src="<?= e(asset('images/hero/hero-' . $s['key'] . '.webp') . '?v=' . $heroImgV) ?>"
                      data-hero-srcset="<?= e($heroSrcset($s['key'])) ?>"
+                     data-hero-src-light="<?= e(asset('images/hero/hero-' . $s['key'] . '-light.webp') . '?v=' . $heroImgV) ?>"
+                     data-hero-srcset-light="<?= e($heroSrcset($s['key'], '-light')) ?>"
                      sizes="100vw"
                      alt=""
                      width="1376" height="768"
@@ -157,6 +164,7 @@ $heroSrcset = static function (string $key) use ($heroImgV): string {
                         title="<?= e(trans('home.' . $s['label'])) ?>">
                     <span class="hero-tab-thumb">
                         <img src="<?= e(asset('images/hero/hero-' . $s['key'] . '-thumb.webp') . '?v=' . $heroImgV) ?>"
+                             data-thumb-light="<?= e(asset('images/hero/hero-' . $s['key'] . '-light-thumb.webp') . '?v=' . $heroImgV) ?>"
                              alt=""
                              width="130" height="90"
                              loading="lazy"

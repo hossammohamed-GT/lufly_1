@@ -12,6 +12,9 @@
  *   4. click         - a tab click switches at once and restarts the timer
  *   5. hover         - hovering the selector pauses autoplay, leaving resumes
  *   6. reduced motion- no autoplay at all, still switches on click
+ *   7. theme        - the light artwork set swaps in (active frame crossfades
+ *                     through a ghost, thumbnails follow, queue promotes the
+ *                     new variant) and back to dark
  *
  *   node tools/frontend_audit/hero_engine_test.mjs
  *
@@ -78,9 +81,10 @@ function makeElement(tag) {
     classes: new Set(),
     listeners: {},
     style: { setProperty() {} },
+    children: [],
     hidden: false,
-    fire(type) {
-      (el.listeners[type] || []).slice().forEach((fn) => fn({}));
+    fire(type, extra = {}) {
+      (el.listeners[type] || []).slice().forEach((fn) => fn({ target: el, ...extra }));
     },
     addEventListener(type, fn) { (el.listeners[type] = el.listeners[type] || []).push(fn); },
     removeEventListener() {},
@@ -104,6 +108,16 @@ function makeElement(tag) {
     },
     getAttribute: (n) => (n in el.attrs ? el.attrs[n] : null),
     setAttribute: (n, v) => { el.attrs[n] = String(v); },
+    removeAttribute: (n) => { delete el.attrs[n]; },
+    className: '',
+    parentNode: null,
+    appendChild(child) { child.parentNode = el; el.children.push(child); return child; },
+    removeChild(child) {
+      const i = el.children.indexOf(child);
+      if (i >= 0) el.children.splice(i, 1);
+      child.parentNode = null;
+      return child;
+    },
     getBoundingClientRect: () => ({ top: 64, height: 836, bottom: 900 }),
     querySelector: () => null,
     querySelectorAll: () => [],
@@ -114,6 +128,7 @@ function makeElement(tag) {
 
 function makeImage(src, onPromote) {
   const el = makeElement('img');
+  if (src) el.attrs.src = src;
   el.complete = !!src;
   el.naturalWidth = src ? 1376 : 0;
   el.decode = () => Promise.resolve();
@@ -131,6 +146,14 @@ function makeImage(src, onPromote) {
     get: () => el.attrs.srcset || '',
     set: (v) => { el.attrs.srcset = v; if (v) arrive(); },
   });
+  el.cloneNode = function () {
+    const twin = makeImage(el.attrs.src || '');
+    twin.attrs = { ...el.attrs };
+    twin.classes = new Set(el.classes);
+    twin.complete = el.complete;
+    twin.naturalWidth = el.naturalWidth;
+    return twin;
+  };
   return el;
 }
 
@@ -141,16 +164,20 @@ function buildWorld({ reducedMotion = false } = {}) {
   const panels = [];
   const promotionOrder = [];
 
+  const media = makeElement('div');
+  const thumbs = [];
+
   for (let i = 0; i < 5; i++) {
     const frame = i === 0
       ? makeImage('/hero-bathroom.webp')
       : makeImage('', () => promotionOrder.push(i));
-    if (i !== 0) {
-      frame.attrs['data-hero-src'] = `/hero-${i}.webp`;
-      frame.attrs['data-hero-srcset'] = `/hero-${i}.webp 1376w`;
-    }
+    frame.attrs['data-hero-src'] = `/hero-${i}.webp`;
+    frame.attrs['data-hero-srcset'] = `/hero-${i}.webp 1376w`;
+    frame.attrs['data-hero-src-light'] = `/hero-${i}-light.webp`;
+    frame.attrs['data-hero-srcset-light'] = `/hero-${i}-light.webp 1376w`;
     frame.classes.add('hero-frame');
     if (i === 0) frame.classes.add('is-active');
+    media.appendChild(frame);
     frames.push(frame);
 
     const panel = makeElement('div');
@@ -162,6 +189,10 @@ function buildWorld({ reducedMotion = false } = {}) {
     tab.attrs['data-hero-tab'] = String(i);
     tab.setAttribute('aria-pressed', i === 0 ? 'true' : 'false');
     tabs.push(tab);
+
+    const thumb = makeImage(`/hero-${i}-thumb.webp`);
+    thumb.attrs['data-thumb-light'] = `/hero-${i}-light-thumb.webp`;
+    thumbs.push(thumb);
   }
 
   const tabsEl = makeElement('nav');
@@ -172,6 +203,7 @@ function buildWorld({ reducedMotion = false } = {}) {
     if (sel === '[data-hero-panel]') return panels;
     if (sel === '[data-hero-tab]') return tabs;
     if (sel === '[data-hero-tabs]') return [tabsEl];
+    if (sel === '.hero-tab-thumb img') return thumbs;
     return [];
   };
   root.querySelector = (sel) => (sel === '[data-hero-tabs]' ? tabsEl : null);
@@ -183,8 +215,13 @@ function buildWorld({ reducedMotion = false } = {}) {
   const doc = makeElement('#document');
   doc.querySelector = (sel) => (sel === '[data-hero]' ? root : null);
   doc.querySelectorAll = () => [];
-  doc.addEventListener = () => {};
   doc.hidden = false;
+
+  globalThis.MutationObserver = class {
+    constructor() {}
+    observe() {}
+    disconnect() {}
+  };
 
   globalThis.document = doc;
   globalThis.document.documentElement = documentElement;
@@ -199,7 +236,7 @@ function buildWorld({ reducedMotion = false } = {}) {
     },
   };
 
-  return { root, frames, tabs, panels, tabsEl, promotionOrder };
+  return { root, media, frames, tabs, panels, tabsEl, thumbs, promotionOrder, doc, documentElement };
 }
 
 function loadEngine() {
@@ -270,6 +307,53 @@ const active = (world) => world.frames.findIndex((f) => f.classList.contains('is
   world.tabs[3].fire('click');
   await tick(400);
   ok(active(world) === 3, 'reduced motion: click still switches');
+}
+
+/* --- theme: dark -> light -> dark -------------------------------------- */
+{
+  const world = buildWorld();
+  loadEngine();
+  await tick(300);                       /* queue settles, all frames loaded */
+  world.frames[0].dataset.heroDone = '1'; /* so the swap takes the ghost path */
+
+  const ghostsBefore = world.media.children.length;
+  world.doc.fire('lufly:theme', { detail: { theme: 'light' } });
+  await tick(50);
+
+  ok(world.frames[0].attrs.src === '/hero-0-light.webp',
+    'theme: the active frame re-points to the light artwork');
+  ok(world.thumbs.every((t) => t.attrs.src === t.attrs['data-thumb-light']),
+    'theme: every tab thumbnail follows');
+  ok(world.media.children.length === ghostsBefore + 1,
+    'theme: a ghost carries the outgoing artwork');
+  ok(world.frames[1].attrs.src === '/hero-1-light.webp',
+    'theme: already-promoted frames re-point quietly');
+
+  /* the ghost fades out and is removed once the new artwork is in */
+  await tick(600);
+  ok(world.media.children.length === ghostsBefore,
+    'theme: the ghost is cleaned up after the crossfade');
+
+  /* and back to dark */
+  world.frames[0].dataset.heroDone = '1';
+  world.doc.fire('lufly:theme', { detail: { theme: 'dark' } });
+  await tick(50);
+  ok(world.frames[0].attrs.src === '/hero-0.webp',
+    'theme: switching back re-points to the dark artwork');
+  ok(world.thumbs.every((t) => t.attrs.src === `/hero-${world.thumbs.indexOf(t)}-thumb.webp`),
+    'theme: thumbnails return to the dark set');
+}
+
+/* --- theme: a visitor whose theme is light from the start --------------- */
+{
+  const world = buildWorld();
+  world.documentElement.attrs['data-theme'] = 'light';
+  loadEngine();
+  await tick(50);
+
+  ok(world.frames[0].attrs.src === '/hero-0-light.webp',
+    'light boot: the first frame swaps before the first paint');
+  ok(world.frames[0].classList.contains('is-active'), 'light boot: scene 1 still active');
 }
 
 console.log(failures ? `\n${failures} assertion(s) failed` : '\nall assertions passed');

@@ -14,6 +14,8 @@
        hidden or when the hero leaves the viewport
      * the tab progress hairline (a CSS animation, restarted per scene)
      * smooth scroll for the cue + the story button
+     * dark / light theme artwork: the bright daylight renditions swap in
+       with a soft crossfade when the site theme flips
      * prefers-reduced-motion: no autoplay, no drift, a short plain fade
    ========================================================================== */
 (function () {
@@ -51,6 +53,122 @@
   var paused = false;
 
   /* ------------------------------------------------------------------
+     0. theme variant
+     The artwork ships in two moods: the dark masters (data-hero-src...) and
+     the bright daylight set (data-hero-src-light...). The site theme lives
+     on <html data-theme>; unpromoted frames simply promote the variant the
+     visitor is looking at, promoted ones are re-pointed with a soft
+     crossfade (a frozen copy of the outgoing photo fades out on top). */
+  var theme = document.documentElement
+    && document.documentElement.getAttribute('data-theme') === 'light'
+    ? 'light' : 'dark';
+
+  function attrName(base) {
+    return theme === 'light' ? base + '-light' : base;
+  }
+
+  function applyTheme(next) {
+    if (next === theme) {
+      return;
+    }
+
+    theme = next;
+
+    /* tab thumbnails follow the mood (tiny: a straight swap is fine) */
+    Array.prototype.forEach.call(
+      root.querySelectorAll('.hero-tab-thumb img'),
+      function (img) {
+        var light = img.getAttribute('data-thumb-light');
+
+        if (!light) {
+          return;
+        }
+
+        if (theme === 'light') {
+          if (!img.getAttribute('data-thumb-dark')) {
+            img.setAttribute('data-thumb-dark', img.getAttribute('src'));
+            img.setAttribute('src', light);
+          }
+        } else if (img.getAttribute('data-thumb-dark')) {
+          img.setAttribute('src', img.getAttribute('data-thumb-dark'));
+          img.removeAttribute('data-thumb-dark');
+        }
+      }
+    );
+
+    /* frames that already carry a photo re-point to the new variant;
+     * frames still waiting on data-hero-src promote it when their turn
+     * comes. The visible one gets the soft crossfade. */
+    frames.forEach(function (frame) {
+      var nextSrc = frame.getAttribute(attrName('data-hero-src'));
+      var nextSrcset = frame.getAttribute(attrName('data-hero-srcset'));
+
+      if (!nextSrc || !frame.getAttribute('src')) {
+        return;
+      }
+
+      if (frame.dataset.heroDone !== '1') {
+        /* still loading or never promoted: point it quietly */
+        frame.dataset.heroDone = '';
+        frame.dataset.heroLoading = '';
+        if (nextSrcset) { frame.srcset = nextSrcset; }
+        frame.src = nextSrc;
+        return;
+      }
+
+      var ghost = null;
+      var visible = frame.classList.contains('is-active');
+
+      if (visible && typeof frame.cloneNode === 'function') {
+        ghost = frame.cloneNode(false);
+        ghost.className = 'hero-frame hero-frame-ghost';
+        frame.parentNode.appendChild(ghost);
+      }
+
+      frame.dataset.heroDone = '';
+      frame.dataset.heroLoading = '1';
+
+      frame.addEventListener('load', function onLoad() {
+        frame.removeEventListener('load', onLoad);
+        frame.dataset.heroDone = '1';
+        frame.dataset.heroLoading = '';
+
+        if (ghost) {
+          ghost.classList.add('is-out');
+          window.setTimeout(function () {
+            if (ghost.parentNode) {
+              ghost.parentNode.removeChild(ghost);
+            }
+          }, reduceMotion ? 180 : 480);
+        }
+      }, { once: true });
+
+      if (nextSrcset) { frame.srcset = nextSrcset; }
+      frame.src = nextSrc;
+    });
+  }
+
+  document.addEventListener('lufly:theme', function (event) {
+    applyTheme(event && event.detail && event.detail.theme === 'light'
+      ? 'light' : 'dark');
+  });
+
+  /* the event covers the site toggle; the observer also catches a theme
+   * applied before this script ran (or by anything else that writes the
+   * attribute) */
+  if (typeof MutationObserver === 'function' && document.documentElement) {
+    new MutationObserver(function () {
+      applyTheme(
+        document.documentElement.getAttribute('data-theme') === 'light'
+          ? 'light' : 'dark'
+      );
+    }).observe(document.documentElement, {
+      attributes: true,
+      attributeFilter: ['data-theme']
+    });
+  }
+
+  /* ------------------------------------------------------------------
      1. progressive image queue
      The first frame ships eager + preloaded. Every other frame carries
      data-hero-src / data-hero-srcset instead: the browser would otherwise
@@ -82,8 +200,8 @@
       });
     }
 
-    var src = frame.getAttribute('data-hero-src');
-    var srcset = frame.getAttribute('data-hero-srcset');
+    var src = frame.getAttribute(attrName('data-hero-src'));
+    var srcset = frame.getAttribute(attrName('data-hero-srcset'));
 
     if (!src && !srcset) {
       frame.dataset.heroDone = '1';
@@ -143,7 +261,8 @@
      A switch only starts once the incoming photo is decoded, so the fade
      is always a real cross-dissolve, never a blank flash. */
   function ready(frame) {
-    var empty = !frame.getAttribute('src') && !frame.getAttribute('data-hero-src');
+    var empty = !frame.getAttribute('src')
+      && !frame.getAttribute(attrName('data-hero-src'));
 
     if (empty || frame.complete) {
       var decode = typeof frame.decode === 'function' ? frame.decode() : null;
@@ -343,6 +462,14 @@
 
   /* ------------------------------------------------------------------
      5. boot */
+
+  /* the markup always ships the dark artwork eagerly; a visitor whose
+   * theme is already light swaps before the first paint whenever the
+   * engine runs early enough to matter */
+  if (theme === 'light') {
+    theme = 'dark';
+    applyTheme('light');
+  }
 
   paintTabs(0);
   schedule();

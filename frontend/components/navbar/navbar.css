@@ -74,14 +74,17 @@
   --mnav-hairline: rgba(255, 255, 255, 0.14);
 }
 
-/* Once the hero has scrolled away, the bar joins the theme. */
-.mnav--overlay.is-scrolled {
+/* The hero dissolves away in two stages. While the glass fades in
+   (is-scrolled) it stays DARK - the white icons remain readable over the
+   photo at every opacity. Only when the bar is nearly solid (is-solid,
+   ~80% through the hero) do the layer and the ink join the theme. */
+.mnav--overlay.is-solid {
   --mnav-ink: var(--ds-text);
   --mnav-glass-bg: color-mix(in srgb, var(--lu-neutral-0) 82%, transparent);
   --mnav-hairline: var(--ds-nav-hairline);
 }
 
-[data-theme='dark'] .mnav--overlay.is-scrolled {
+[data-theme='dark'] .mnav--overlay.is-solid {
   --mnav-ink: var(--ds-text);
   --mnav-glass-bg: color-mix(in srgb, var(--lu-ink-900) 74%, transparent);
 }
@@ -266,13 +269,12 @@
 
 /* ---------- 4. the expanding search ---------- */
 
-/* The field lives at the very end of the row (after the actions, via order):
-   closed it is 0px wide and its auto margin keeps the actions pushed to the
-   end edge; opened it grows leftward into that margin, so the icons never
-   move while the field expands. */
+/* The field sits just before the actions. Closed it is 0px wide and its auto
+   margin keeps everything after the brand pushed to the end edge (icons
+   right, like the design); opened it grows leftward into that margin, so
+   the icons never move while the field expands. */
 .mnav-search {
   position: relative;
-  order: 3;
   flex: 0 1 auto;
   inline-size: 0;
   opacity: 0;
