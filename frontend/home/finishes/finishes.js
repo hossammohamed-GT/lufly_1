@@ -238,6 +238,12 @@
       currentKey = key;
       section.setAttribute('data-finish', key);
 
+      /* the headline phrase takes the finish's own metal tone (lightened
+         automatically on the dark theme by the color-mix in the CSS) */
+      if (card.dataset.accent) {
+        section.style.setProperty('--fs-accent', card.dataset.accent);
+      }
+
       cards.forEach(function (other) {
         var active = other === card;
         other.classList.toggle('is-active', active);

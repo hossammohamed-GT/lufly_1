@@ -1,10 +1,13 @@
 /* ==========================================================================
-   The finishes lab - a finish configurator, premium-manufacturer style.
-   Left: headline + story + finish cards + CTAs. Right: the product stage
-   (cross-fading photo, ambient tint, hotspots). A factory strip closes the
-   band. The whole header block the band used to carry (~300px of two-line
-   display type) is gone - the headline lives inside the left column now,
-   which is what makes the band ~30% shorter than it was.
+   The finishes lab - styled after the owner's reference (a premium-finish
+   configurator mock): a warm beige canvas, a big two-line ink headline whose
+   second line is the finish's own phrase (coloured per finish), a grey
+   two-line description, a thin horizontal row of white cards - circular
+   texture swatch on top, name + process under it - and the product stage on
+   the right with a warm glow around it and the finish's story line riding
+   the stage. The dark theme keeps the same geometry over the deep ink
+   surface. Everything follows the selected finish: photo (600ms cross-fade),
+   ambient tint, phrase colour, story line, specs, counter, ?finish= URL.
    ========================================================================== */
 
 .finishes-section {
@@ -14,9 +17,12 @@
   color: var(--ds-band-text);
   background: var(--lu-ink-900);
   border-bottom: 1px solid var(--ds-band-hairline);
+  /* the selected finish's phrase colour (set per finish by finishes.js);
+     dark theme lightens it via color-mix below */
+  --fs-accent: var(--lu-mint);
 }
 
-/* NO PHOTOGRAPH IN THIS BAND: only the glow, over the deep ink surface. */
+/* Dark theme (site default tokens): the deep ink surface with its glows. */
 .finishes-backdrop {
   position: absolute;
   inset: 0;
@@ -26,8 +32,23 @@
     linear-gradient(180deg, color-mix(in srgb, var(--lu-ink-900) 62%, transparent), color-mix(in srgb, var(--lu-ink-900) 48%, transparent));
 }
 
-/* The per-finish ambient wash: two layers cross-fade (see finishes.js), so
-   the room around the product changes temperature with the selected metal. */
+/* Light theme: the reference look - a warm beige canvas with a soft glow
+   gathering behind the product stage. */
+[data-theme="light"] .finishes-section {
+  --ds-band-text: #1f1e1b;
+  --ds-band-text-soft: color-mix(in srgb, #1f1e1b 74%, transparent);
+  --ds-band-hairline: color-mix(in srgb, #1f1e1b 14%, transparent);
+  --ds-band-accent: #8a6240;
+  --ds-band-primary: #8a6240;
+  background: #f1ece4;
+}
+[data-theme="light"] .finishes-backdrop {
+  background:
+    radial-gradient(85% 120% at 76% 42%, rgba(191, 150, 110, 0.34), transparent 62%),
+    linear-gradient(180deg, #f4f0ea 0%, #ece3d6 100%);
+}
+
+/* The per-finish ambient wash: two layers cross-fade (see finishes.js). */
 .fs-tint {
   position: absolute;
   inset: 0;
@@ -42,11 +63,11 @@
   z-index: 1;
 }
 
-/* ---------- the grid ---------- */
+/* ---------- the grid: left column ~55%, stage ~45% (as in the reference) ---------- */
 
 .fs-grid {
   display: grid;
-  grid-template-columns: minmax(0, 5fr) minmax(0, 7fr);
+  grid-template-columns: minmax(0, 11fr) minmax(0, 9fr);
   gap: clamp(28px, 4vw, 60px);
   align-items: start;
 }
@@ -56,62 +77,76 @@
 .fs-left .section-tag { margin-bottom: var(--space-4); }
 
 .fs-headline {
-  margin: 0 0 var(--space-3);
+  margin: 0 0 var(--space-4);
   font-family: var(--font-display);
-  font-size: clamp(30px, 3.4vw, 50px);
+  font-size: clamp(32px, 3.8vw, 54px);
   font-weight: var(--weight-bold);
-  line-height: 1.08;
+  line-height: 1.1;
   letter-spacing: 0.005em;
   color: var(--ds-band-text);
 }
 .fs-headline em {
   font-style: normal;
-  color: var(--ds-band-accent);
+  color: var(--fs-accent);
+}
+[data-theme="dark"] .fs-headline em,
+html:not([data-theme="light"]) .fs-headline em {
+  color: color-mix(in srgb, var(--fs-accent) 55%, #e9e6de);
+}
+
+/* the grey two-line description straight under the headline (reference order) */
+.fs-desc {
+  margin: 0 0 var(--space-6);
+  max-width: 56ch;
+  font-size: 15px;
+  line-height: 1.7;
+  color: color-mix(in srgb, #55524c 100%, transparent);
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+[data-theme="dark"] .fs-desc,
+html:not([data-theme="light"]) .fs-desc {
+  color: var(--ds-band-text-soft);
 }
 
 /* the phrase + story micro-fade, in step with the image cross-fade */
-.fs-phrase, .fs-story, .finish-title, .finish-desc {
+.fs-phrase, .fs-story, .finish-title, .fs-desc {
   transition: opacity 180ms ease;
 }
 .is-swapping { opacity: 0; }
 
-.fs-story {
-  margin: 0 0 var(--space-6);
-  font-family: var(--font-mono);
-  font-size: 11.5px;
-  font-weight: var(--weight-bold);
-  letter-spacing: 0.22em;
-  text-transform: uppercase;
-  color: var(--ds-band-primary, var(--lu-mint));
-}
-
-/* ---------- finish cards ---------- */
+/* ---------- finish cards: white vertical tiles in one thin row ---------- */
 
 .fs-cards {
-  display: grid;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
+  display: flex;
+  flex-wrap: wrap;
   gap: 10px;
   margin-bottom: var(--space-6);
 }
 
 .fs-card {
   position: relative;
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  padding: 10px 12px;
-  text-align: start;
+  flex: 0 1 106px;
+  display: grid;
+  justify-items: center;
+  gap: 8px;
+  padding: 13px 8px 11px;
   cursor: pointer;
   border: 1px solid var(--ds-band-hairline);
-  border-radius: 12px;
-  background: color-mix(in srgb, var(--lu-ink-800) 55%, transparent);
+  border-radius: 14px;
+  background: color-mix(in srgb, #ffffff 88%, transparent);
   transition: transform 260ms var(--ds-nav-ease, ease), border-color 220ms ease,
               box-shadow 260ms ease, background 220ms ease;
 }
+[data-theme="dark"] .fs-card,
+html:not([data-theme="light"]) .fs-card {
+  background: color-mix(in srgb, var(--lu-ink-800) 55%, transparent);
+}
 
 /* light sweep across the texture when the pointer rests on a card
-   (kept inside the card's bounds: no overflow clipping here, so the
-   "View Finish" chip above the card is never cut off) */
+   (no overflow clipping: the "View Finish" chip above stays visible) */
 .fs-card::after {
   content: "";
   position: absolute;
@@ -120,7 +155,7 @@
   left: 0;
   width: 34%;
   transform: skewX(-18deg) translateX(-160%);
-  background: linear-gradient(100deg, transparent, color-mix(in srgb, var(--lu-neutral-0) 14%, transparent), transparent);
+  background: linear-gradient(100deg, transparent, color-mix(in srgb, var(--lu-neutral-0) 16%, transparent), transparent);
   opacity: 0;
   border-radius: inherit;
   pointer-events: none;
@@ -134,31 +169,34 @@
 }
 
 .fs-card-chip {
-  flex: none;
-  width: 40px;
-  height: 40px;
-  border-radius: 9px;
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
   overflow: hidden;
   border: 1px solid var(--ds-band-hairline);
-  background: var(--lu-ink-900);
+  background: #ffffff;
+  box-shadow: 0 4px 10px color-mix(in srgb, #1f1e1b 10%, transparent);
 }
 .fs-card-chip img { width: 100%; height: 100%; object-fit: cover; display: block; }
 
-.fs-card-text { display: grid; gap: 2px; min-width: 0; }
+.fs-card-text { display: grid; gap: 2px; justify-items: center; text-align: center; min-width: 0; }
 .fs-card-name {
-  font-size: 12.5px;
+  font-size: 11.5px;
   font-weight: var(--weight-bold);
-  letter-spacing: 0.02em;
+  letter-spacing: 0.01em;
   color: var(--ds-band-text);
+  white-space: nowrap;
 }
 .fs-card-tech {
   font-family: var(--font-mono);
-  font-size: 8.5px;
-  letter-spacing: 0.06em;
-  color: color-mix(in srgb, var(--lu-ink-100) 58%, transparent);
+  font-size: 8px;
+  letter-spacing: 0.05em;
+  color: color-mix(in srgb, #1f1e1b 52%, transparent);
   white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
+}
+[data-theme="dark"] .fs-card-tech,
+html:not([data-theme="light"]) .fs-card-tech {
+  color: color-mix(in srgb, var(--lu-ink-100) 55%, transparent);
 }
 
 /* the "View Finish" chip that appears above a hovered card */
@@ -173,8 +211,8 @@
   font-size: 8.5px;
   font-weight: var(--weight-bold);
   letter-spacing: 0.14em;
-  color: var(--lu-ink-950, #141311);
-  background: var(--lu-mint);
+  color: #fffdf9;
+  background: #8a6240;
   opacity: 0;
   transform: translateY(6px);
   transition: opacity 180ms ease, transform 220ms ease;
@@ -186,12 +224,20 @@
 
 .fs-card:hover {
   transform: scale(1.05);
-  border-color: color-mix(in srgb, var(--lu-mint) 45%, transparent);
-  box-shadow: 0 16px 34px color-mix(in srgb, var(--lu-ink-950) 45%, transparent);
+  border-color: color-mix(in srgb, #8a6240 40%, transparent);
+  box-shadow: 0 16px 34px color-mix(in srgb, #1f1e1b 16%, transparent);
   z-index: 1;
 }
 
 .fs-card.is-active {
+  border-color: color-mix(in srgb, #8a6240 55%, transparent);
+  background: #ffffff;
+  box-shadow:
+    inset 0 0 0 1px color-mix(in srgb, #8a6240 30%, transparent),
+    0 14px 30px color-mix(in srgb, #8a6240 18%, transparent);
+}
+[data-theme="dark"] .fs-card.is-active,
+html:not([data-theme="light"]) .fs-card.is-active {
   border-color: color-mix(in srgb, var(--lu-mint) 60%, transparent);
   background: color-mix(in srgb, var(--lu-teal-500) 16%, transparent);
   box-shadow:
@@ -212,8 +258,13 @@
   margin: 0;
   border-radius: 18px;
   border: 1px solid var(--ds-band-hairline);
-  background: var(--lu-ink-900);
+  background: #ffffff;
   overflow: hidden;
+  box-shadow: 0 30px 60px color-mix(in srgb, #1f1e1b 14%, transparent);
+}
+[data-theme="dark"] .fs-stage,
+html:not([data-theme="light"]) .fs-stage {
+  background: var(--lu-ink-900);
   box-shadow: 0 30px 60px color-mix(in srgb, var(--lu-ink-950) 42%, transparent);
 }
 
@@ -229,10 +280,37 @@
 }
 .fs-img.is-on { opacity: 1; }
 
+/* the finish's story line, riding the stage like a caption (reference: the
+   "A warm, sophisticated finish" line sits beside the product) */
+.fs-stage-caption {
+  position: absolute;
+  top: 14px;
+  inset-inline-start: 14px;
+  z-index: 4;
+  max-width: 62%;
+  padding: 8px 14px;
+  border-radius: 20px;
+  border: 1px solid color-mix(in srgb, #ffffff 55%, transparent);
+  background: color-mix(in srgb, #ffffff 78%, transparent);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  font-size: 12.5px;
+  font-weight: 600;
+  letter-spacing: 0.01em;
+  color: #6d5a48;
+  pointer-events: none;
+}
+[data-theme="dark"] .fs-stage-caption,
+html:not([data-theme="light"]) .fs-stage-caption {
+  border-color: color-mix(in srgb, var(--lu-neutral-0) 22%, transparent);
+  background: color-mix(in srgb, var(--lu-ink-950) 62%, transparent);
+  color: color-mix(in srgb, var(--lu-ink-100) 88%, transparent);
+}
+
 /* stage meta: process pill + counter */
 .fs-stage-meta {
   position: absolute;
-  top: 14px;
+  bottom: 14px;
   inset-inline-start: 14px;
   right: 14px;
   display: flex;
@@ -243,7 +321,7 @@
 }
 .fs-stage-meta .finish-spec-pill {
   margin: 0;
-  max-width: 70%;
+  max-width: 66%;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
@@ -252,13 +330,13 @@
 /* the View in Spaces button rides the stage's bottom corner */
 .fs-spaces-open {
   position: absolute;
-  bottom: 14px;
+  bottom: 44px;
   inset-inline-end: 14px;
   padding: 9px 16px;
   border-radius: 22px;
-  border: 1px solid color-mix(in srgb, var(--lu-neutral-0) 30%, transparent);
-  background: color-mix(in srgb, var(--lu-ink-950) 55%, transparent);
-  color: var(--lu-ink-100, #e9e6de);
+  border: 1px solid color-mix(in srgb, #1f1e1b 30%, transparent);
+  background: color-mix(in srgb, #ffffff 72%, transparent);
+  color: #1f1e1b;
   font-family: var(--font-mono);
   font-size: 9.5px;
   font-weight: var(--weight-bold);
@@ -270,9 +348,20 @@
   transition: border-color 220ms ease, background 220ms ease, transform 220ms ease;
 }
 .fs-spaces-open:hover {
+  border-color: #8a6240;
+  background: #ffffff;
+  transform: translateY(-2px);
+}
+[data-theme="dark"] .fs-spaces-open,
+html:not([data-theme="light"]) .fs-spaces-open {
+  border-color: color-mix(in srgb, var(--lu-neutral-0) 30%, transparent);
+  background: color-mix(in srgb, var(--lu-ink-950) 55%, transparent);
+  color: var(--lu-ink-100, #e9e6de);
+}
+[data-theme="dark"] .fs-spaces-open:hover,
+html:not([data-theme="light"]) .fs-spaces-open:hover {
   border-color: var(--lu-mint);
   background: color-mix(in srgb, var(--lu-teal-500) 30%, transparent);
-  transform: translateY(-2px);
 }
 
 /* ---------- hotspots ---------- */
@@ -295,8 +384,8 @@
   width: 15px;
   height: 15px;
   border-radius: 50%;
-  background: var(--lu-neutral-0, #fff);
-  box-shadow: 0 0 0 3px color-mix(in srgb, var(--lu-ink-950) 35%, transparent);
+  background: #ffffff;
+  box-shadow: 0 0 0 3px color-mix(in srgb, #1f1e1b 22%, transparent);
   transition: transform 200ms ease;
 }
 .fs-hotspot:hover .fs-spot-dot { transform: scale(1.25); }
@@ -307,8 +396,12 @@
   position: absolute;
   inset: -7px;
   border-radius: 50%;
-  border: 1px solid color-mix(in srgb, var(--lu-neutral-0) 70%, transparent);
+  border: 1px solid color-mix(in srgb, #1f1e1b 55%, transparent);
   animation: fsPing 2.6s ease-out infinite;
+}
+[data-theme="dark"] .fs-spot-dot::after,
+html:not([data-theme="light"]) .fs-spot-dot::after {
+  border-color: color-mix(in srgb, var(--lu-neutral-0) 70%, transparent);
 }
 @keyframes fsPing {
   0% { transform: scale(0.5); opacity: 0.9; }
@@ -324,8 +417,8 @@
   min-width: 168px;
   padding: 10px 14px;
   border-radius: 10px;
-  border: 1px solid color-mix(in srgb, var(--lu-mint) 30%, transparent);
-  background: color-mix(in srgb, var(--lu-ink-950) 88%, transparent);
+  border: 1px solid color-mix(in srgb, #8a6240 30%, transparent);
+  background: color-mix(in srgb, #ffffff 94%, transparent);
   backdrop-filter: blur(10px);
   -webkit-backdrop-filter: blur(10px);
   text-align: start;
@@ -339,14 +432,14 @@
   font-size: 10px;
   letter-spacing: 0.14em;
   text-transform: uppercase;
-  color: var(--lu-mint);
+  color: #8a6240;
 }
 .fs-spot-tip i {
   display: block;
   margin-top: 3px;
   font-style: normal;
   font-size: 12px;
-  color: var(--lu-ink-100, #e9e6de);
+  color: #1f1e1b;
 }
 .fs-hotspot.is-open .fs-spot-tip {
   opacity: 1;
@@ -364,29 +457,27 @@
 .fs-hotspot[data-spot="core"].is-open .fs-spot-tip {
   transform: translateY(-50%) translateX(0);
 }
+[data-theme="dark"] .fs-spot-tip,
+html:not([data-theme="light"]) .fs-spot-tip {
+  border-color: color-mix(in srgb, var(--lu-mint) 30%, transparent);
+  background: color-mix(in srgb, var(--lu-ink-950) 88%, transparent);
+}
+[data-theme="dark"] .fs-spot-tip b,
+html:not([data-theme="light"]) .fs-spot-tip b { color: var(--lu-mint); }
+[data-theme="dark"] .fs-spot-tip i,
+html:not([data-theme="light"]) .fs-spot-tip i { color: var(--lu-ink-100, #e9e6de); }
 
 /* ---------- the details under the stage ---------- */
 
 .fs-details { padding: var(--space-5) 2px 0; }
 
 .finish-title {
-  margin: 0 0 var(--space-2);
+  margin: 0 0 var(--space-4);
   color: var(--ds-band-text);
   font-family: var(--font-display);
   font-size: var(--text-xl, 20px);
   font-weight: var(--weight-bold);
   line-height: 1.15;
-}
-
-.finish-desc {
-  font-size: var(--text-sm);
-  line-height: var(--leading-normal);
-  color: var(--ds-band-text-soft);
-  margin: 0 0 var(--space-5) 0;
-  display: -webkit-box;
-  -webkit-line-clamp: 2;
-  -webkit-box-orient: vertical;
-  overflow: hidden;
 }
 
 .finish-tech-specs {
@@ -405,12 +496,16 @@
   font-size: 8.5px;
   letter-spacing: 0.12em;
   text-transform: uppercase;
-  color: color-mix(in srgb, var(--lu-ink-100) 52%, transparent);
+  color: color-mix(in srgb, #1f1e1b 52%, transparent);
 }
 .tech-spec-item b {
   font-size: 12px;
   font-weight: var(--weight-bold);
   color: var(--ds-band-text);
+}
+[data-theme="dark"] .tech-spec-item span,
+html:not([data-theme="light"]) .tech-spec-item span {
+  color: color-mix(in srgb, var(--lu-ink-100) 52%, transparent);
 }
 
 /* ---------- the factory strip ---------- */
@@ -428,7 +523,7 @@
   font-weight: var(--weight-bold);
   letter-spacing: 0.18em;
   text-transform: uppercase;
-  color: color-mix(in srgb, var(--lu-ink-100) 68%, transparent);
+  color: color-mix(in srgb, #1f1e1b 66%, transparent);
 }
 .fs-strip span { display: inline-flex; align-items: center; gap: 8px; }
 .fs-strip span::before {
@@ -436,21 +531,27 @@
   width: 5px;
   height: 5px;
   border-radius: 50%;
-  background: var(--lu-mint);
+  background: #8a6240;
 }
+[data-theme="dark"] .fs-strip,
+html:not([data-theme="light"]) .fs-strip {
+  color: color-mix(in srgb, var(--lu-ink-100) 68%, transparent);
+}
+[data-theme="dark"] .fs-strip span::before,
+html:not([data-theme="light"]) .fs-strip span::before { background: var(--lu-mint); }
 
 /* ---------- compare drawer ---------- */
 
 /* `hidden` must win: the panels are display:flex/grid, which would otherwise
    override the attribute and leave an invisible full-viewport layer drinking
-   every click on the page (the "buttons don't work" bug). */
+   every click on the page. */
 .fs-drawer[hidden], .fs-modal[hidden] { display: none; }
 
 .fs-drawer {
   position: fixed;
   inset: 0;
   z-index: 130;
-  background: color-mix(in srgb, var(--lu-ink-950) 55%, transparent);
+  background: color-mix(in srgb, #141311 55%, transparent);
   opacity: 0;
   transition: opacity 380ms ease;
 }
@@ -464,11 +565,17 @@
   max-height: 76vh;
   display: flex;
   flex-direction: column;
-  background: color-mix(in srgb, var(--lu-ink-900) 97%, transparent);
-  border-top: 1px solid color-mix(in srgb, var(--lu-mint) 24%, transparent);
+  background: #f7f3ec;
+  border-top: 1px solid color-mix(in srgb, #8a6240 30%, transparent);
   border-radius: 22px 22px 0 0;
   transform: translateY(100%);
   transition: transform 420ms var(--ds-nav-ease, ease);
+  box-shadow: 0 -30px 70px color-mix(in srgb, #141311 30%, transparent);
+}
+[data-theme="dark"] .fs-drawer-panel,
+html:not([data-theme="light"]) .fs-drawer-panel {
+  background: color-mix(in srgb, var(--lu-ink-900) 97%, transparent);
+  border-top-color: color-mix(in srgb, var(--lu-mint) 24%, transparent);
   box-shadow: 0 -30px 70px color-mix(in srgb, var(--lu-ink-950) 60%, transparent);
 }
 .fs-drawer.is-open .fs-drawer-panel { transform: translateY(0); }
@@ -482,21 +589,30 @@
 .fs-drawer-head b {
   font-family: var(--font-display);
   font-size: 18px;
-  color: var(--lu-ink-100, #e9e6de);
+  color: #1f1e1b;
 }
+[data-theme="dark"] .fs-drawer-head b,
+html:not([data-theme="light"]) .fs-drawer-head b { color: var(--lu-ink-100, #e9e6de); }
 .fs-drawer-close, .fs-modal-close {
   width: 36px;
   height: 36px;
   border-radius: 50%;
-  border: 1px solid color-mix(in srgb, var(--lu-neutral-0) 22%, transparent);
+  border: 1px solid color-mix(in srgb, #1f1e1b 24%, transparent);
   background: none;
-  color: var(--lu-ink-100, #e9e6de);
+  color: #1f1e1b;
   font-size: 20px;
   line-height: 1;
   cursor: pointer;
   transition: border-color 200ms ease, transform 200ms ease;
 }
-.fs-drawer-close:hover, .fs-modal-close:hover { border-color: var(--lu-mint); transform: rotate(90deg); }
+.fs-drawer-close:hover, .fs-modal-close:hover { border-color: #8a6240; transform: rotate(90deg); }
+[data-theme="dark"] .fs-drawer-close,
+html:not([data-theme="light"]) .fs-drawer-close,
+[data-theme="dark"] .fs-modal-close,
+html:not([data-theme="light"]) .fs-modal-close {
+  border-color: color-mix(in srgb, var(--lu-neutral-0) 22%, transparent);
+  color: var(--lu-ink-100, #e9e6de);
+}
 
 .fs-drawer-table {
   overflow: auto;
@@ -506,16 +622,27 @@
 .fs-drawer-table th, .fs-drawer-table td {
   padding: 10px 12px;
   text-align: start;
-  border-bottom: 1px solid var(--ds-band-hairline);
+  border-bottom: 1px solid color-mix(in srgb, #1f1e1b 12%, transparent);
   font-size: 12.5px;
-  color: var(--lu-ink-100, #e9e6de);
+  color: #1f1e1b;
   white-space: nowrap;
+}
+[data-theme="dark"] .fs-drawer-table th,
+html:not([data-theme="light"]) .fs-drawer-table th,
+[data-theme="dark"] .fs-drawer-table td,
+html:not([data-theme="light"]) .fs-drawer-table td {
+  border-bottom-color: var(--ds-band-hairline);
+  color: var(--lu-ink-100, #e9e6de);
 }
 .fs-drawer-table thead th {
   font-family: var(--font-mono);
   font-size: 9px;
   letter-spacing: 0.16em;
   text-transform: uppercase;
+  color: color-mix(in srgb, #1f1e1b 55%, transparent);
+}
+[data-theme="dark"] .fs-drawer-table thead th,
+html:not([data-theme="light"]) .fs-drawer-table thead th {
   color: color-mix(in srgb, var(--lu-ink-100) 55%, transparent);
 }
 .fs-drawer-table tbody th { font-weight: var(--weight-bold); }
@@ -528,7 +655,7 @@
   border: 1px solid var(--ds-band-hairline);
 }
 .fs-drawer-table tr[data-finish-row] { cursor: pointer; transition: background 180ms ease; }
-.fs-drawer-table tr[data-finish-row]:hover { background: color-mix(in srgb, var(--lu-teal-500) 10%, transparent); }
+.fs-drawer-table tr[data-finish-row]:hover { background: color-mix(in srgb, #8a6240 10%, transparent); }
 
 .fs-rate {
   display: inline-block;
@@ -540,9 +667,15 @@
   letter-spacing: 0.1em;
   text-transform: uppercase;
 }
-.fs-rate-high   { color: var(--lu-mint); background: color-mix(in srgb, var(--lu-teal-500) 22%, transparent); }
-.fs-rate-medium { color: var(--lu-warning-dark, #e7b658); background: color-mix(in srgb, var(--lu-warning-dark) 14%, transparent); }
-.fs-rate-low    { color: color-mix(in srgb, var(--lu-ink-100) 60%, transparent); background: color-mix(in srgb, var(--lu-ink-100) 8%, transparent); }
+.fs-rate-high   { color: #14715c; background: color-mix(in srgb, #1c8b8b 18%, transparent); }
+.fs-rate-medium { color: #8a6240; background: color-mix(in srgb, #8a6240 14%, transparent); }
+.fs-rate-low    { color: color-mix(in srgb, #1f1e1b 60%, transparent); background: color-mix(in srgb, #1f1e1b 8%, transparent); }
+[data-theme="dark"] .fs-rate-high,
+html:not([data-theme="light"]) .fs-rate-high { color: var(--lu-mint); background: color-mix(in srgb, var(--lu-teal-500) 22%, transparent); }
+[data-theme="dark"] .fs-rate-medium,
+html:not([data-theme="light"]) .fs-rate-medium { color: var(--lu-warning-dark, #e7b658); background: color-mix(in srgb, var(--lu-warning-dark) 14%, transparent); }
+[data-theme="dark"] .fs-rate-low,
+html:not([data-theme="light"]) .fs-rate-low { color: color-mix(in srgb, var(--lu-ink-100) 60%, transparent); background: color-mix(in srgb, var(--lu-ink-100) 8%, transparent); }
 
 /* ---------- view in spaces modal ---------- */
 
@@ -553,7 +686,7 @@
   display: grid;
   place-items: center;
   padding: 20px;
-  background: color-mix(in srgb, var(--lu-ink-950) 62%, transparent);
+  background: color-mix(in srgb, #141311 62%, transparent);
   opacity: 0;
   transition: opacity 300ms ease;
 }
@@ -564,12 +697,18 @@
   max-height: 90vh;
   display: flex;
   flex-direction: column;
-  background: color-mix(in srgb, var(--lu-ink-900) 97%, transparent);
-  border: 1px solid color-mix(in srgb, var(--lu-mint) 22%, transparent);
+  background: #f7f3ec;
+  border: 1px solid color-mix(in srgb, #8a6240 26%, transparent);
   border-radius: 20px;
   overflow: hidden;
   transform: translateY(18px) scale(0.98);
   transition: transform 320ms var(--ds-nav-ease, ease);
+  box-shadow: 0 40px 90px color-mix(in srgb, #141311 35%, transparent);
+}
+[data-theme="dark"] .fs-modal-panel,
+html:not([data-theme="light"]) .fs-modal-panel {
+  background: color-mix(in srgb, var(--lu-ink-900) 97%, transparent);
+  border-color: color-mix(in srgb, var(--lu-mint) 22%, transparent);
   box-shadow: 0 40px 90px color-mix(in srgb, var(--lu-ink-950) 65%, transparent);
 }
 .fs-modal.is-open .fs-modal-panel { transform: translateY(0) scale(1); }
@@ -583,8 +722,10 @@
 .fs-modal-head b {
   font-family: var(--font-display);
   font-size: 17px;
-  color: var(--lu-ink-100, #e9e6de);
+  color: #1f1e1b;
 }
+[data-theme="dark"] .fs-modal-head b,
+html:not([data-theme="light"]) .fs-modal-head b { color: var(--lu-ink-100, #e9e6de); }
 
 .fs-modal-places {
   display: flex;
@@ -595,9 +736,9 @@
 .fs-place {
   padding: 9px 16px;
   border-radius: 20px;
-  border: 1px solid color-mix(in srgb, var(--lu-neutral-0) 20%, transparent);
+  border: 1px solid color-mix(in srgb, #1f1e1b 22%, transparent);
   background: none;
-  color: color-mix(in srgb, var(--lu-ink-100) 78%, transparent);
+  color: color-mix(in srgb, #1f1e1b 78%, transparent);
   font-family: var(--font-mono);
   font-size: 10px;
   font-weight: var(--weight-bold);
@@ -606,8 +747,19 @@
   cursor: pointer;
   transition: border-color 200ms ease, color 200ms ease, background 200ms ease;
 }
-.fs-place:hover { color: var(--lu-ink-100, #e9e6de); border-color: color-mix(in srgb, var(--lu-mint) 45%, transparent); }
+.fs-place:hover { color: #1f1e1b; border-color: color-mix(in srgb, #8a6240 45%, transparent); }
 .fs-place.is-active {
+  color: #fffdf9;
+  background: #8a6240;
+  border-color: #8a6240;
+}
+[data-theme="dark"] .fs-place,
+html:not([data-theme="light"]) .fs-place {
+  border-color: color-mix(in srgb, var(--lu-neutral-0) 20%, transparent);
+  color: color-mix(in srgb, var(--lu-ink-100) 78%, transparent);
+}
+[data-theme="dark"] .fs-place.is-active,
+html:not([data-theme="light"]) .fs-place.is-active {
   color: var(--lu-ink-950, #141311);
   background: var(--lu-mint);
   border-color: var(--lu-mint);
@@ -650,81 +802,23 @@
 .fs-hotspot { opacity: 0; transition: opacity 500ms ease 1.1s; }
 .fs-in .fs-hotspot { opacity: 1; }
 
-/* ---------- light theme ---------- */
-
-[data-theme="light"] .finishes-backdrop {
-  background:
-    radial-gradient(120% 90% at 80% 0%, color-mix(in srgb, var(--lu-teal-500) 10%, transparent), transparent 58%),
-    radial-gradient(95% 75% at 8% 100%, color-mix(in srgb, var(--lu-mint) 13%, transparent), transparent 66%),
-    linear-gradient(180deg, var(--lu-neutral-50), var(--lu-neutral-100));
-}
-
-[data-theme="light"] .finishes-section {
-  --ds-band-text: var(--lu-ink-900);
-  --ds-band-text-soft: color-mix(in srgb, var(--lu-ink-900) 76%, transparent);
-  --ds-band-hairline: color-mix(in srgb, var(--lu-ink-900) 16%, transparent);
-  --ds-band-accent: var(--lu-teal-600);
-  --ds-band-primary: var(--lu-teal-600);
-}
-
-[data-theme="light"] .fs-story { color: var(--lu-teal-700); }
-[data-theme="light"] .finish-spec-pill { color: var(--lu-teal-700); }
-[data-theme="light"] .fs-card { background: color-mix(in srgb, var(--lu-neutral-0) 58%, transparent); }
-[data-theme="light"] .fs-card.is-active {
-  background: color-mix(in srgb, var(--lu-teal-500) 12%, transparent);
-  box-shadow:
-    inset 0 0 0 1px color-mix(in srgb, var(--lu-teal-600) 40%, transparent),
-    0 14px 34px color-mix(in srgb, var(--lu-teal-500) 22%, transparent);
-}
-[data-theme="light"] .fs-card-tech { color: color-mix(in srgb, var(--lu-ink-900) 55%, transparent); }
-[data-theme="light"] .fs-card-view { color: var(--lu-neutral-0); background: var(--lu-teal-700); }
-[data-theme="light"] .fs-stage { background: var(--lu-neutral-0); }
-[data-theme="light"] .fs-spot-dot { box-shadow: 0 0 0 3px color-mix(in srgb, var(--lu-ink-900) 25%, transparent); }
-[data-theme="light"] .fs-spot-tip {
-  background: color-mix(in srgb, var(--lu-neutral-0) 94%, transparent);
-  border-color: color-mix(in srgb, var(--lu-teal-600) 30%, transparent);
-}
-[data-theme="light"] .fs-spot-tip b { color: var(--lu-teal-700); }
-[data-theme="light"] .fs-spot-tip i { color: var(--lu-ink-900); }
-[data-theme="light"] .fs-spaces-open {
-  color: var(--lu-ink-900);
-  background: color-mix(in srgb, var(--lu-neutral-0) 72%, transparent);
-  border-color: color-mix(in srgb, var(--lu-ink-900) 26%, transparent);
-}
-[data-theme="light"] .tech-spec-item span { color: color-mix(in srgb, var(--lu-ink-900) 52%, transparent); }
-[data-theme="light"] .fs-strip { color: color-mix(in srgb, var(--lu-ink-900) 70%, transparent); }
-[data-theme="light"] .fs-strip span::before { background: var(--lu-teal-600); }
-[data-theme="light"] .fs-drawer-panel,
-[data-theme="light"] .fs-modal-panel {
-  background: color-mix(in srgb, var(--lu-neutral-0) 97%, transparent);
-  border-color: color-mix(in srgb, var(--lu-teal-600) 24%, transparent);
-}
-[data-theme="light"] .fs-drawer-close, [data-theme="light"] .fs-modal-close { color: var(--lu-ink-900); }
-[data-theme="light"] .fs-drawer-head b, [data-theme="light"] .fs-modal-head b { color: var(--lu-ink-900); }
-[data-theme="light"] .fs-drawer-table th, [data-theme="light"] .fs-drawer-table td { color: var(--lu-ink-900); }
-[data-theme="light"] .fs-drawer-table thead th { color: color-mix(in srgb, var(--lu-ink-900) 55%, transparent); }
-[data-theme="light"] .fs-rate-high { color: var(--lu-teal-700); background: color-mix(in srgb, var(--lu-teal-500) 16%, transparent); }
-[data-theme="light"] .fs-rate-low { color: color-mix(in srgb, var(--lu-ink-900) 60%, transparent); background: color-mix(in srgb, var(--lu-ink-900) 8%, transparent); }
-[data-theme="light"] .fs-place { color: color-mix(in srgb, var(--lu-ink-900) 75%, transparent); }
-[data-theme="light"] .fs-place.is-active { color: var(--lu-neutral-0); background: var(--lu-teal-700); border-color: var(--lu-teal-700); }
-
 /* ---------- responsive ---------- */
 
 @media (max-width: 980px) {
   .fs-grid { grid-template-columns: minmax(0, 1fr); gap: 30px; }
-  .fs-cards { grid-template-columns: repeat(2, minmax(0, 1fr)); }
-  .finish-desc { -webkit-line-clamp: 3; }
+  .fs-desc { -webkit-line-clamp: 3; }
 }
 
 @media (max-width: 560px) {
   .finishes-section { padding: var(--space-10) 0 var(--space-6); }
   .fs-headline { font-size: clamp(28px, 8.4vw, 34px); }
-  .fs-cards { grid-template-columns: minmax(0, 1fr); }
-  .fs-card-tech { white-space: normal; }
+  .fs-card { flex: 1 1 86px; }
+  .fs-card-name { white-space: normal; }
   .fs-strip { justify-content: flex-start; gap: 10px 20px; }
   .fs-stage-meta .finish-spec-pill { display: none; }
   .finish-tech-specs { grid-template-columns: minmax(0, 1fr); }
   .fs-spot-tip { min-width: 150px; }
+  .fs-stage-caption { max-width: 74%; font-size: 11.5px; }
 }
 
 /* ---------- reduced motion ---------- */

@@ -24,15 +24,15 @@ $view->pushScript('frontend/home/finishes/finishes.js');
    drawer (durability / fingerprints / luxury); tint is the ambient wash the
    stage adopts while that finish is selected. */
 $finishMeta = [
-    'brushed-rose-gold'  => ['phrase' => 'finishes_phrase_brushed_rose_gold',  'story' => 'finishes_story_brushed_rose_gold',  'scratch' => 92, 'rates' => ['high', 'low', 'high'],   'tint' => 'rgba(214, 158, 128, 0.20)'],
-    'chrome'             => ['phrase' => 'finishes_phrase_chrome',             'story' => 'finishes_story_chrome',             'scratch' => 78, 'rates' => ['medium', 'high', 'medium'], 'tint' => 'rgba(196, 208, 214, 0.18)'],
-    'brushed-gold'       => ['phrase' => 'finishes_phrase_brushed_gold',       'story' => 'finishes_story_brushed_gold',       'scratch' => 94, 'rates' => ['high', 'low', 'high'],   'tint' => 'rgba(226, 190, 116, 0.18)'],
-    'mirror-gold'        => ['phrase' => 'finishes_phrase_mirror_gold',        'story' => 'finishes_story_mirror_gold',        'scratch' => 90, 'rates' => ['medium', 'high', 'high'],  'tint' => 'rgba(236, 204, 132, 0.22)'],
-    'matte-black'        => ['phrase' => 'finishes_phrase_matte_black',        'story' => 'finishes_story_matte_black',        'scratch' => 85, 'rates' => ['high', 'medium', 'high'], 'tint' => 'rgba(70, 70, 74, 0.22)'],
-    'brushed-nickel'     => ['phrase' => 'finishes_phrase_brushed_nickel',     'story' => 'finishes_story_brushed_nickel',     'scratch' => 93, 'rates' => ['high', 'low', 'medium'],  'tint' => 'rgba(176, 178, 180, 0.16)'],
-    'gunmetal'           => ['phrase' => 'finishes_phrase_gunmetal',           'story' => 'finishes_story_gunmetal',           'scratch' => 94, 'rates' => ['high', 'medium', 'high'], 'tint' => 'rgba(96, 116, 132, 0.20)'],
-    'brushed-gunmetal'   => ['phrase' => 'finishes_phrase_brushed_gunmetal',   'story' => 'finishes_story_brushed_gunmetal',   'scratch' => 93, 'rates' => ['high', 'low', 'high'],   'tint' => 'rgba(84, 100, 114, 0.18)'],
-    'gun-gray'           => ['phrase' => 'finishes_phrase_gun_gray',           'story' => 'finishes_story_gun_gray',           'scratch' => 92, 'rates' => ['high', 'medium', 'medium'], 'tint' => 'rgba(140, 146, 152, 0.14)'],
+    'brushed-rose-gold'  => ['phrase' => 'finishes_phrase_brushed_rose_gold',  'story' => 'finishes_story_brushed_rose_gold',  'scratch' => 92, 'rates' => ['high', 'low', 'high'],   'tint' => 'rgba(214, 158, 128, 0.30)', 'accent' => '#A06538'],
+    'chrome'             => ['phrase' => 'finishes_phrase_chrome',             'story' => 'finishes_story_chrome',             'scratch' => 78, 'rates' => ['medium', 'high', 'medium'], 'tint' => 'rgba(196, 208, 214, 0.30)', 'accent' => '#62676D'],
+    'brushed-gold'       => ['phrase' => 'finishes_phrase_brushed_gold',       'story' => 'finishes_story_brushed_gold',       'scratch' => 94, 'rates' => ['high', 'low', 'high'],   'tint' => 'rgba(226, 190, 116, 0.30)', 'accent' => '#9A742A'],
+    'mirror-gold'        => ['phrase' => 'finishes_phrase_mirror_gold',        'story' => 'finishes_story_mirror_gold',        'scratch' => 90, 'rates' => ['medium', 'high', 'high'],  'tint' => 'rgba(236, 204, 132, 0.32)', 'accent' => '#8F6E1F'],
+    'matte-black'        => ['phrase' => 'finishes_phrase_matte_black',        'story' => 'finishes_story_matte_black',        'scratch' => 85, 'rates' => ['high', 'medium', 'high'], 'tint' => 'rgba(70, 70, 74, 0.30)', 'accent' => '#26262B'],
+    'brushed-nickel'     => ['phrase' => 'finishes_phrase_brushed_nickel',     'story' => 'finishes_story_brushed_nickel',     'scratch' => 93, 'rates' => ['high', 'low', 'medium'],  'tint' => 'rgba(176, 178, 180, 0.28)', 'accent' => '#6E7176'],
+    'gunmetal'           => ['phrase' => 'finishes_phrase_gunmetal',           'story' => 'finishes_story_gunmetal',           'scratch' => 94, 'rates' => ['high', 'medium', 'high'], 'tint' => 'rgba(96, 116, 132, 0.30)', 'accent' => '#4C5763'],
+    'brushed-gunmetal'   => ['phrase' => 'finishes_phrase_brushed_gunmetal',   'story' => 'finishes_story_brushed_gunmetal',   'scratch' => 93, 'rates' => ['high', 'low', 'high'],   'tint' => 'rgba(84, 100, 114, 0.28)', 'accent' => '#525F6B'],
+    'gun-gray'           => ['phrase' => 'finishes_phrase_gun_gray',           'story' => 'finishes_story_gun_gray',           'scratch' => 92, 'rates' => ['high', 'medium', 'medium'], 'tint' => 'rgba(140, 146, 152, 0.26)', 'accent' => '#667079'],
 ];
 
 $finishes = [
@@ -59,9 +59,11 @@ $spaces = [
 
 $first = $finishes[0]['key'];
 $firstMeta = $finishMeta[$first];
+/* the phrase's colour rides the section as a CSS variable (set per finish
+   by finishes.js); dark theme lightens it via color-mix in the CSS */
 $rateWord = static fn (string $r): string => trans('home.finishes_rating_' . $r);
 ?>
-<section class="band finishes-section scroll-section" id="finishes" data-finish="<?= e($first) ?>">
+<section class="band finishes-section scroll-section" id="finishes" data-finish="<?= e($first) ?>" style="--fs-accent: <?= e($firstMeta['accent']) ?>">
     <div class="finishes-backdrop" aria-hidden="true"></div>
     <div class="fs-tint fs-tint-a" aria-hidden="true"></div>
     <div class="fs-tint fs-tint-b" aria-hidden="true"></div>
@@ -78,7 +80,7 @@ $rateWord = static fn (string $r): string => trans('home.finishes_rating_' . $r)
                     <em class="fs-phrase" id="fs-phrase"><?= e(trans('home.' . $firstMeta['phrase'])) ?></em>
                 </h2>
 
-                <p class="fs-story fs-anim" id="fs-story" style="--d: 2"><?= e(trans('home.' . $firstMeta['story'])) ?></p>
+                <p class="fs-desc fs-anim" id="finish-desc" style="--d: 2"><?= e(trans('home.finish_default_desc')) ?></p>
 
                 <div class="fs-cards fs-anim" style="--d: 3" role="group" aria-label="<?= e(trans('home.finishes_kicker')) ?>">
                     <?php foreach ($finishes as $i => $finish):
@@ -92,14 +94,15 @@ $rateWord = static fn (string $r): string => trans('home.finishes_rating_' . $r)
                                 data-phrase="<?= e(trans('home.' . $meta['phrase'])) ?>"
                                 data-story="<?= e(trans('home.' . $meta['story'])) ?>"
                                 data-tint="<?= e($meta['tint']) ?>"
+                                data-accent="<?= e($meta['accent']) ?>"
                                 aria-pressed="<?= $i === 0 ? 'true' : 'false' ?>"
                                 style="--i: <?= (int) $i ?>">
                             <span class="fs-card-chip">
-                                <img src="<?= e(asset($chip)) ?>" alt="" width="34" height="34" loading="lazy" decoding="async">
+                                <img src="<?= e(asset($chip)) ?>" alt="" width="44" height="44" loading="lazy" decoding="async">
                             </span>
                             <span class="fs-card-text">
                                 <b class="fs-card-name"><?= e($finish['label']) ?></b>
-                                <small class="fs-card-tech"><?= e($finish['tech']) ?> · <?= e(trans('home.finishes_scratch', ['pct' => $meta['scratch']])) ?></small>
+                                <small class="fs-card-tech"><?= e($finish['tech']) ?> · <?= $meta['scratch'] ?>%</small>
                             </span>
                             <span class="fs-card-view" aria-hidden="true"><?= e(trans('home.finishes_view_finish')) ?></span>
                         </button>
@@ -138,6 +141,10 @@ $rateWord = static fn (string $r): string => trans('home.finishes_rating_' . $r)
                         ]) ?>
                     </div>
 
+                    <figcaption class="fs-stage-caption">
+                        <span id="fs-story"><?= e(trans('home.' . $firstMeta['story'])) ?></span>
+                    </figcaption>
+
                     <!-- interactive hotspots: the third rail of the story -->
                     <button type="button" class="fs-hotspot" data-spot="pvd" style="--x: 52%; --y: 24%">
                         <span class="fs-spot-dot" aria-hidden="true"></span>
@@ -173,7 +180,6 @@ $rateWord = static fn (string $r): string => trans('home.finishes_rating_' . $r)
 
                 <div class="fs-details">
                     <h3 class="finish-title" id="finish-title"><?= e(trans('home.finish_default_title')) ?></h3>
-                    <p class="finish-desc" id="finish-desc"><?= e(trans('home.finish_default_desc')) ?></p>
 
                     <div class="finish-tech-specs">
                         <div class="tech-spec-item">
