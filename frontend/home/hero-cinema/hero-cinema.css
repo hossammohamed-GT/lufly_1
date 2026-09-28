@@ -114,9 +114,6 @@
     linear-gradient(90deg, rgba(18, 22, 22, 0.62) 0%, rgba(18, 22, 22, 0.30) 46%, rgba(18, 22, 22, 0) 74%),
     linear-gradient(0deg, rgba(18, 22, 22, 0.55) 0%, rgba(18, 22, 22, 0) 42%);
 }
-[data-theme="light"] .lfc-vignette {
-  background: radial-gradient(120% 100% at 50% 45%, transparent 62%, rgba(40, 46, 46, 0.35) 100%);
-}
 
 .lfc-glow {
   position: absolute; top: -25%; right: -15%; width: 55vw; height: 55vw;
@@ -126,9 +123,13 @@
 }
 @keyframes lfcBreathe { 0%, 100% { opacity: 0.55; transform: scale(1); } 50% { opacity: 0.95; transform: scale(1.08); } }
 
+/* The edge vignette is gone: the only thing it was visibly doing was the
+   shadow behind the slide numbers column (01-05) on the right edge.
+   Nothing else in the hero changes - the copy panel, the scrims and the
+   artwork are exactly as they were. */
 .lfc-vignette {
   position: absolute; inset: 0;
-  background: radial-gradient(120% 100% at 50% 45%, transparent 58%, rgba(10, 15, 15, 0.55) 100%);
+  background: none;
 }
 
 .lfc-grain {
