@@ -1035,24 +1035,27 @@
    15. Launch sequence - the Explore Collections button
    --------------------------------------------------------------------------
    The one showpiece animation on the page. A plain left click on the
-   primary CTA starts a ~0.9s choreography before the catalogue takes over
+   primary CTA starts a ~1s choreography before the catalogue takes over
    (hero.js intercepts the click, adds .is-launching to the section root,
    then navigates):
 
-     t=0      the arrow lunges forward, then spirals into itself - a
-              decaying 1.8-turn orbit with a blur trail and a teal energy
-              core riding along
-     t=60ms   teal ripple rings pulse out of the button
-     t=240ms  the photograph recedes (dim + a gentle zoom)
-     t=260ms  copy, scroll cue, tabs and trust strip cascade out
-     t=560ms  the CTA row itself bows out, after the spiral has finished
-     t=860ms  hero.js hands over to the catalogue
+     t=0     the arrow ignites - it flips to bright ink with a teal halo
+             (it is about to travel over the photo, where the dark
+             resting ink would disappear) - pulls back a touch, then
+             follows a wide decaying orbit of ~2.8 turns while a teal
+             comet-arc (the vortex) spins behind it and collapses as the
+             arrow dives into the centre
+     t=240ms the photograph recedes (dim + a gentle zoom)
+     t=300ms copy, scroll cue, tabs and trust strip cascade out
+     t=700ms the CTA row itself bows out, after the spiral has finished
+     t=980ms hero.js hands over to the catalogue
 
-   Everything is transform / opacity / a blur on a 16px glyph - compositor
-   work only. Modified clicks (ctrl/cmd/shift/alt), non-left buttons and
-   prefers-reduced-motion visitors never see the show; hero.js leaves those
-   to the browser. The resting button carries none of this: every rule
-   below lives under .is-launching.
+   The arrow stays crisp and readable for most of the orbit - no blur, no
+   cover; the spin itself is the show. Everything is transform / opacity
+   on composited layers. Modified clicks (ctrl/cmd/shift/alt), non-left
+   buttons and prefers-reduced-motion visitors never see it; hero.js
+   leaves those to the browser. The resting button carries none of this:
+   every rule below lives under .is-launching.
    ========================================================================== */
 
 .hero-cta--primary { position: relative; }
@@ -1063,88 +1066,82 @@
   transform-origin: 50% 50%;
 }
 
-/* the arrow: anticipation lunge, then a decaying spiral into nothing */
+/* the arrow: ignite, coil back, then a wide decaying orbit into the
+   centre. The radius peaks around 26px - far enough to visibly leave the
+   pill and sweep across the photo */
 .is-launching .hero-cta-arrow {
-  animation: heroArrowSpiral 640ms cubic-bezier(0.5, 0.04, 0.5, 0.96) both;
-  will-change: transform, opacity, filter;
+  animation: heroArrowSpiral 900ms cubic-bezier(0.37, 0, 0.25, 1) both;
+  will-change: transform, opacity;
+}
+
+.is-launching .hero-cta-arrow svg {
+  color: #ffffff;
+  filter: drop-shadow(0 0 5px rgba(47, 196, 196, 0.95))
+    drop-shadow(0 0 14px rgba(23, 162, 162, 0.55));
 }
 
 [dir='rtl'] .is-launching .hero-cta-arrow {
   animation-name: heroArrowSpiralRtl;
 }
 
-/* the energy core that travels with the arrow (::before paints behind
-   the strokes, so it reads as the glow the arrow is diving into) */
+/* the vortex: a comet-arc ring that rides with the arrow and sweeps one
+   and a half extra turns of its own, drawing the spiral path behind it,
+   then collapses to nothing as the arrow dives in */
 .is-launching .hero-cta-arrow::before {
   content: '';
   position: absolute;
   inset: 50% auto auto 50%;
-  inline-size: 30px;
-  block-size: 30px;
+  inline-size: 52px;
+  block-size: 52px;
   translate: -50% -50%;
   border-radius: 50%;
-  background: radial-gradient(circle,
-    rgba(47, 196, 196, 0.95) 0%,
-    rgba(47, 196, 196, 0.45) 38%,
-    rgba(47, 196, 196, 0) 72%);
-  animation: heroArrowCore 640ms cubic-bezier(0.5, 0.04, 0.5, 0.96) both;
+  background: conic-gradient(from 210deg,
+    rgba(47, 196, 196, 0) 0deg,
+    rgba(47, 196, 196, 0) 195deg,
+    rgba(47, 196, 196, 0.6) 295deg,
+    rgba(216, 251, 251, 0.95) 352deg,
+    rgba(47, 196, 196, 0) 360deg);
+  -webkit-mask: radial-gradient(circle,
+    rgba(0, 0, 0, 0) 30%, #000 42%, #000 58%, rgba(0, 0, 0, 0) 74%);
+  mask: radial-gradient(circle,
+    rgba(0, 0, 0, 0) 30%, #000 42%, #000 58%, rgba(0, 0, 0, 0) 74%);
+  animation: heroVortex 900ms cubic-bezier(0.37, 0, 0.25, 1) both;
 }
 
 @keyframes heroArrowSpiral {
-  0%   { transform: translate(0, 0) rotate(0deg) scale(1); opacity: 1; filter: blur(0); }
-  12%  { transform: translate(4px, 0) rotate(0deg) scale(1.08); opacity: 1; filter: blur(0); }
-  26%  { transform: translate(12px, -8px) rotate(95deg) scale(0.96); filter: blur(0.3px); }
-  40%  { transform: translate(7px, -15px) rotate(200deg) scale(0.78); filter: blur(0.6px); }
-  54%  { transform: translate(-7px, -9px) rotate(320deg) scale(0.58); filter: blur(1px); }
-  68%  { transform: translate(-9px, 3px) rotate(430deg) scale(0.4); filter: blur(1.5px); }
-  82%  { transform: translate(-4px, 7px) rotate(520deg) scale(0.24); opacity: 0.9; filter: blur(2px); }
-  92%  { transform: translate(1px, -3px) rotate(590deg) scale(0.12); opacity: 0.55; filter: blur(2.2px); }
-  100% { transform: translate(0, 0) rotate(640deg) scale(0); opacity: 0; filter: blur(2.4px); }
+  0%   { transform: translate(0, 0) rotate(0deg) scale(1); opacity: 1; }
+  8%   { transform: translate(-3px, 1px) rotate(-18deg) scale(1.14); opacity: 1; }
+  18%  { transform: translate(9px, -13px) rotate(85deg) scale(1.06); }
+  30%  { transform: translate(20px, -20px) rotate(190deg) scale(0.96); }
+  42%  { transform: translate(26px, -10px) rotate(300deg) scale(0.88); }
+  54%  { transform: translate(22px, 4px) rotate(410deg) scale(0.8); }
+  66%  { transform: translate(14px, 14px) rotate(515deg) scale(0.7); }
+  78%  { transform: translate(6px, 8px) rotate(640deg) scale(0.56); }
+  88%  { transform: translate(2px, 3px) rotate(770deg) scale(0.4); opacity: 0.9; }
+  95%  { transform: translate(0, 1px) rotate(880deg) scale(0.22); opacity: 0.5; }
+  100% { transform: translate(0, 0) rotate(1010deg) scale(0); opacity: 0; }
 }
 
-/* the same vortex, mirrored for RTL locales */
+/* the same spiral, mirrored for RTL locales */
 @keyframes heroArrowSpiralRtl {
-  0%   { transform: translate(0, 0) rotate(0deg) scale(1); opacity: 1; filter: blur(0); }
-  12%  { transform: translate(-4px, 0) rotate(0deg) scale(1.08); opacity: 1; filter: blur(0); }
-  26%  { transform: translate(-12px, -8px) rotate(-95deg) scale(0.96); filter: blur(0.3px); }
-  40%  { transform: translate(-7px, -15px) rotate(-200deg) scale(0.78); filter: blur(0.6px); }
-  54%  { transform: translate(7px, -9px) rotate(-320deg) scale(0.58); filter: blur(1px); }
-  68%  { transform: translate(9px, 3px) rotate(-430deg) scale(0.4); filter: blur(1.5px); }
-  82%  { transform: translate(4px, 7px) rotate(-520deg) scale(0.24); opacity: 0.9; filter: blur(2px); }
-  92%  { transform: translate(-1px, -3px) rotate(-590deg) scale(0.12); opacity: 0.55; filter: blur(2.2px); }
-  100% { transform: translate(0, 0) rotate(-640deg) scale(0); opacity: 0; filter: blur(2.4px); }
+  0%   { transform: translate(0, 0) rotate(0deg) scale(1); opacity: 1; }
+  8%   { transform: translate(3px, 1px) rotate(18deg) scale(1.14); opacity: 1; }
+  18%  { transform: translate(-9px, -13px) rotate(-85deg) scale(1.06); }
+  30%  { transform: translate(-20px, -20px) rotate(-190deg) scale(0.96); }
+  42%  { transform: translate(-26px, -10px) rotate(-300deg) scale(0.88); }
+  54%  { transform: translate(-22px, 4px) rotate(-410deg) scale(0.8); }
+  66%  { transform: translate(-14px, 14px) rotate(-515deg) scale(0.7); }
+  78%  { transform: translate(-6px, 8px) rotate(-640deg) scale(0.56); }
+  88%  { transform: translate(-2px, 3px) rotate(-770deg) scale(0.4); opacity: 0.9; }
+  95%  { transform: translate(0, 1px) rotate(-880deg) scale(0.22); opacity: 0.5; }
+  100% { transform: translate(0, 0) rotate(-1010deg) scale(0); opacity: 0; }
 }
 
-@keyframes heroArrowCore {
-  0%   { opacity: 0; transform: scale(0.4); }
-  18%  { opacity: 0.95; transform: scale(1); }
-  55%  { opacity: 0.6; transform: scale(1.35); }
-  100% { opacity: 0; transform: scale(0.15); }
-}
-
-/* ripple rings pulsing out of the button */
-.is-launching .hero-cta--primary::before,
-.is-launching .hero-cta--primary::after {
-  content: '';
-  position: absolute;
-  inset: -2px;
-  border-radius: 999px;
-  border: 2px solid rgba(47, 196, 196, 0.8);
-  pointer-events: none;
-}
-
-.is-launching .hero-cta--primary::before {
-  animation: heroCtaRipple 640ms 60ms cubic-bezier(0.16, 1, 0.3, 1) both;
-}
-
-.is-launching .hero-cta--primary::after {
-  border-color: rgba(242, 247, 247, 0.45);
-  animation: heroCtaRipple 720ms 240ms cubic-bezier(0.16, 1, 0.3, 1) both;
-}
-
-@keyframes heroCtaRipple {
-  0%   { transform: scale(1); opacity: 0.9; }
-  100% { transform: scale(2.15); opacity: 0; }
+@keyframes heroVortex {
+  0%   { opacity: 0; transform: rotate(0deg) scale(0.35); }
+  14%  { opacity: 0.95; transform: rotate(120deg) scale(0.85); }
+  55%  { opacity: 0.8; transform: rotate(330deg) scale(1); }
+  100% { opacity: 0; transform: rotate(520deg) scale(0.2); }
 }
 
 /* the button itself: freeze interactions, squeeze, glow harder */
@@ -1187,20 +1184,20 @@
 .is-launching .hero-title-row .hero-title-word,
 .is-launching .hero-desc,
 .is-launching .hero-scroll {
-  animation: heroExit 480ms 260ms var(--hero-ease) both;
+  animation: heroExit 480ms 300ms var(--hero-ease) both;
 }
 
 .is-launching .hero-tabs {
-  animation: heroExit 460ms 310ms var(--hero-ease) both;
+  animation: heroExit 460ms 350ms var(--hero-ease) both;
 }
 
 .is-launching .hero-trust {
-  animation: heroExit 460ms 360ms var(--hero-ease) both;
+  animation: heroExit 460ms 400ms var(--hero-ease) both;
 }
 
 /* the CTA row stays crisp until the spiral has finished its turn */
 .is-launching .hero-ctas {
-  animation: heroExit 300ms 560ms var(--hero-ease) both;
+  animation: heroExit 280ms 700ms var(--hero-ease) both;
 }
 
 @keyframes heroExit {
@@ -1212,8 +1209,6 @@
 @media (prefers-reduced-motion: reduce) {
   .is-launching .hero-cta-arrow,
   .is-launching .hero-cta-arrow::before,
-  .is-launching .hero-cta--primary::before,
-  .is-launching .hero-cta--primary::after,
   .is-launching .hero-media,
   .is-launching .hero-kicker,
   .is-launching .hero-title-row .hero-title-word,
