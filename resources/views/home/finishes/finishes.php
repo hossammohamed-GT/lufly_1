@@ -82,37 +82,14 @@ $rateWord = static fn (string $r): string => trans('home.finishes_rating_' . $r)
         <div class="fs-scene-shade"></div>
     </div>
 
-    <!-- ============ overlays that track the faucet through every crop =====
-             (data-x / data-y are percentages of the photograph; finishes.js
-             maps them onto the rendered box, so they survive any crop) ===== -->
     <div class="fs-scene-ui">
-        <div class="fs-callout" data-x="54" data-y="13">
-            <span class="fs-callout-rule" aria-hidden="true"></span>
-            <b id="fs-caption-title"><?= e(trans('home.finish_default_title')) ?></b>
-            <span id="fs-story"><?= e(trans('home.' . $firstMeta['story'])) ?></span>
+        <div class="fs-callout" data-x="81" data-y="35">
+            <div class="fs-callout-body">
+                <span class="fs-callout-rule" aria-hidden="true"></span>
+                <b id="fs-caption-title"><?= e(trans('home.finish_default_title')) ?></b>
+                <span id="fs-story"><?= e(trans('home.' . $firstMeta['story'])) ?></span>
+            </div>
         </div>
-
-        <button type="button" class="fs-hotspot" data-spot="pvd" data-x="81" data-y="35">
-            <span class="fs-spot-dot" aria-hidden="true"></span>
-            <span class="fs-spot-tip">
-                <b><?= e(trans('home.finishes_hs_pvd_t')) ?></b>
-                <i><?= e(trans('home.finishes_hs_pvd_d')) ?></i>
-            </span>
-        </button>
-        <button type="button" class="fs-hotspot" data-spot="core" data-x="75" data-y="66">
-            <span class="fs-spot-dot" aria-hidden="true"></span>
-            <span class="fs-spot-tip">
-                <b><?= e(trans('home.finishes_hs_core_t')) ?></b>
-                <i><?= e(trans('home.finishes_hs_core_d')) ?></i>
-            </span>
-        </button>
-        <button type="button" class="fs-hotspot" data-spot="aerator" data-x="63" data-y="46">
-            <span class="fs-spot-dot" aria-hidden="true"></span>
-            <span class="fs-spot-tip">
-                <b><?= e(trans('home.finishes_hs_aerator_t')) ?></b>
-                <i><?= e(trans('home.finishes_hs_aerator_d')) ?></i>
-            </span>
-        </button>
     </div>
 
     <div class="container finishes-container">
@@ -175,36 +152,7 @@ $rateWord = static fn (string $r): string => trans('home.finishes_rating_' . $r)
                 </div>
             </div>
 
-            <!-- ============ RIGHT: the spec sheet beside the product ============ -->
-            <div class="fs-right">
-                <div class="fs-specs fs-anim" style="--d: 3">
-                    <div class="fs-specs-head">
-                        <h3 class="finish-title" id="finish-title"><?= e(trans('home.finish_default_title')) ?></h3>
-                        <span class="finish-counter"><b id="finish-index">01</b> / <?= e(str_pad((string) count($finishes), 2, '0', STR_PAD_LEFT)) ?></span>
-                    </div>
 
-                    <span class="finish-spec-pill" id="finish-tag">PVD TITANIUM VAPOR DEPOSITION</span>
-
-                    <div class="finish-tech-specs">
-                        <div class="tech-spec-item">
-                            <span><?= e(trans('home.finish_base_label')) ?></span>
-                            <b id="finish-base">Solid Brass CW617N</b>
-                        </div>
-                        <div class="tech-spec-item">
-                            <span><?= e(trans('home.finish_coating_label')) ?></span>
-                            <b id="finish-coating">PVD Titanium 0.4µm</b>
-                        </div>
-                        <div class="tech-spec-item">
-                            <span><?= e(trans('home.finish_cartridge_label')) ?></span>
-                            <b id="finish-cartridge">Kerox® Hungary 35mm Ceramic</b>
-                        </div>
-                        <div class="tech-spec-item">
-                            <span><?= e(trans('home.finish_aerator_label')) ?></span>
-                            <b id="finish-aerator">Neoperl® Coin-Slot Pro-Eco 5.7 L/min</b>
-                        </div>
-                    </div>
-                </div>
-            </div>
         </div>
 
         <!-- ============ the factory strip ============ -->
