@@ -650,15 +650,17 @@
 }
 
 .hero-trust-icon {
+  /* white outlined icons over the darkened photo, like the reference -
+     the teal accent stays for the interactive elements (CTA, tabs) */
   display: grid;
   place-items: center;
   inline-size: 38px;
   block-size: 38px;
   flex: none;
   border-radius: 50%;
-  border: 1px solid rgba(47, 196, 196, 0.3);
-  color: var(--hero-accent-bright);
-  background: rgba(27, 166, 166, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.38);
+  color: #ffffff;
+  background: rgba(255, 255, 255, 0.05);
 }
 
 .hero-trust-icon svg {
