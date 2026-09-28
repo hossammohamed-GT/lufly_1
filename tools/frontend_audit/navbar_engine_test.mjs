@@ -114,6 +114,8 @@ function buildWorld({ overlay }) {
 
   const searchToggle = makeElement('button');
   searchToggle.attrs['data-search-toggle'] = '';
+  const sheetSearchToggle = makeElement('button');
+  sheetSearchToggle.attrs['data-search-toggle'] = '';
   const searchClose = makeElement('button');
   searchClose.attrs['data-search-close'] = '';
 
@@ -134,7 +136,7 @@ function buildWorld({ overlay }) {
     '[data-nav-sheet]': [sheet],
     '[data-nav-open]': [sheetTrigger],
     '[data-search]': [searchWrap],
-    '[data-search-toggle]': [searchToggle],
+    '[data-search-toggle]': [searchToggle, sheetSearchToggle],
     '[data-search-close]': [searchClose],
     '[data-search-input]': [searchInput],
     '[data-search-results]': [resultsBox],
@@ -185,7 +187,7 @@ function buildWorld({ overlay }) {
     (windowListeners.scroll || []).forEach((fn) => fn());
   };
 
-  return { header, hero, searchInput, resultsBox, searchToggle, langToggle, langMenu, moreToggle, moreMenu, sheetTrigger, scrim, sheet, scroll, documentElement, doc };
+  return { header, hero, searchInput, resultsBox, searchToggle, sheetSearchToggle, langToggle, langMenu, moreToggle, moreMenu, sheetTrigger, scrim, sheet, scroll, documentElement, doc };
 }
 
 function loadEngine() {
@@ -235,6 +237,9 @@ function loadEngine() {
   world.searchToggle.fire('click');
   ok(world.header.classList.contains('is-search-open'), 'search: opens on the icon');
   ok(world.searchInput.focused, 'search: the field takes focus');
+  ok(world.searchToggle.getAttribute('aria-expanded') === 'true'
+    && world.sheetSearchToggle.getAttribute('aria-expanded') === 'true',
+    'search: every toggle (bar + sheet) reports the open state');
 
   /* type a query, let the debounce + fetch resolve */
   world.searchInput.value = 'aura';
@@ -275,6 +280,14 @@ function loadEngine() {
   world.scrim.fire('click');
   ok(!world.header.classList.contains('is-sheet-open'), 'sheet: closes on the scrim');
   ok(globalThis.document.body.style.overflow === '', 'sheet: the page scroll is released');
+
+  /* the sheet's own search entry: opens the search and dismisses the sheet */
+  world.sheetTrigger.fire('click');
+  ok(world.header.classList.contains('is-sheet-open'), 'sheet: reopened');
+  world.sheetSearchToggle.fire('click');
+  ok(world.header.classList.contains('is-search-open'), 'sheet search: opens the search');
+  ok(!world.header.classList.contains('is-sheet-open'), 'sheet search: the sheet steps aside');
+  ok(globalThis.document.body.style.overflow === '', 'sheet search: the page scroll is released');
 }
 
 console.log(failures ? `\n${failures} assertion(s) failed` : '\nall assertions passed');

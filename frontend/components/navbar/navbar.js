@@ -85,7 +85,7 @@
   var sheet = header.querySelector('[data-nav-sheet]');
   var sheetTrigger = header.querySelector('[data-nav-open]');
   var searchWrap = header.querySelector('[data-search]');
-  var searchToggle = header.querySelector('[data-search-toggle]');
+  var searchToggles = Array.prototype.slice.call(header.querySelectorAll('[data-search-toggle]'));
   var searchInput = searchWrap ? searchWrap.querySelector('[data-search-input]') : null;
   var resultsBox = searchWrap ? searchWrap.querySelector('[data-search-results]') : null;
   var langMenu = header.querySelector('[data-lang-menu]');
@@ -121,11 +121,12 @@
   function setSearch(open) {
     header.classList.toggle('is-search-open', open);
 
-    if (searchToggle) {
-      searchToggle.setAttribute('aria-expanded', open ? 'true' : 'false');
-    }
+    searchToggles.forEach(function (toggle) {
+      toggle.setAttribute('aria-expanded', open ? 'true' : 'false');
+    });
 
     if (open) {
+      setSheet(false);
       closeLang();
       closeMore();
       focusElement(searchInput);
@@ -168,11 +169,11 @@
 
   /* ---------- 3. the expanding search + instant results ---------- */
 
-  if (searchToggle) {
-    searchToggle.addEventListener('click', function () {
+  searchToggles.forEach(function (toggle) {
+    toggle.addEventListener('click', function () {
       setSearch(!header.classList.contains('is-search-open'));
     });
-  }
+  });
 
   var searchClose = header.querySelector('[data-search-close]');
 

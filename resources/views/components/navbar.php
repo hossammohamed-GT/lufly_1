@@ -272,7 +272,7 @@ foreach ($supported as $code => $name) {
                     </span>
                 </button>
 
-                <span class="mnav-sep" aria-hidden="true"></span>
+                <span class="mnav-sep mnav-sep--search" aria-hidden="true"></span>
 
                 <button type="button"
                         class="mnav-icon-btn mnav-search-open"
@@ -314,18 +314,6 @@ foreach ($supported as $code => $name) {
                         <span class="mnav-fav-badge" data-fav-count><?= $savedCount > 0 ? (int) $savedCount : '' ?></span>
                     </a>
                 <?php endif; ?>
-
-                <a href="<?= auth()->check() ? e(route('admin.dashboard')) : e(route('login')) ?>"
-                   class="mnav-icon-btn mnav-account"
-                   title="<?= e(trans('nav.account', [], $currentLocale)) ?>"
-                   aria-label="<?= e(trans('nav.account', [], $currentLocale)) ?>">
-                    <svg class="icon" viewBox="0 0 24 24" aria-hidden="true">
-                        <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
-                        <circle cx="12" cy="7" r="4"></circle>
-                    </svg>
-                </a>
-
-                <span class="mnav-sep" aria-hidden="true"></span>
 
                 <div class="mnav-lang" data-lang-menu>
                     <button type="button"
@@ -411,6 +399,15 @@ foreach ($supported as $code => $name) {
             </nav>
 
             <div class="mnav-sheet-utils">
+                <button type="button" class="mnav-util-link" data-search-toggle>
+                    <svg class="icon icon-sm" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                         stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                        <circle cx="11" cy="11" r="8"></circle>
+                        <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+                    </svg>
+                    <?= e(trans('nav.search', [], $currentLocale)) ?>
+                </button>
+
                 <?php foreach ($languageLinks as $code => $link): ?>
                     <?php if ($code === $currentLocale): ?>
                         <span class="mnav-util-link is-current" aria-current="true" lang="<?= e($code) ?>">

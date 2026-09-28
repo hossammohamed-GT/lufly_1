@@ -1078,6 +1078,10 @@
      left, every icon right, like the reference */
   .mnav-actions { margin-inline-start: auto; }
 
+  /* the search lives in the sheet on small screens, not in the bar */
+  .mnav-search-open,
+  .mnav-sep--search { display: none; }
+
   .mnav-brand-img { height: 36px; }
 
   .mnav-bloom { display: grid; }
@@ -1143,11 +1147,6 @@
   .mnav-sep { margin-inline: 4px; }
 
   .mnav-icon-btn { inline-size: 38px; block-size: 38px; }
-}
-
-/* very narrow: hide the account link before the bloom button */
-@media (max-width: 380px) {
-  .mnav-account { display: none; }
 }
 
 /* ---------- 9. reduced motion ---------- */
