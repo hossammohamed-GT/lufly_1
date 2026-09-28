@@ -1,15 +1,22 @@
 /* ==========================================================================
-   The finishes lab: a finish configurator, Dornbracht-style.
+   The finishes lab: staged after the owner's reference.
    --------------------------------------------------------------------------
-   One selection drives everything: the product photograph cross-fades into
-   the chosen finish (600ms, two stacked layers), the ambient tint behind the
-   stage washes to that finish's colour, the headline phrase and the story
-   panel change, the spec sheet and the counter follow, and the URL grows a
-   ?finish= parameter so a chosen finish is shareable and survives a reload.
+   One selection drives everything: the band's scene photograph cross-fades
+   into the same bathroom with the faucet wearing the chosen finish (600ms,
+   two stacked layers), the callout on the scene and the glass spec sheet
+   follow, the headline phrase changes, the URL grows a ?finish= parameter
+   so a chosen finish is shareable, and the selected card is scrolled into
+   view inside the finish rail (the rail's chevrons scroll it, the cards
+   select).
 
-   Copy is never hardcoded here: the per-finish phrase / story / tint ride on
-   the cards as data attributes (rendered from translations by the server),
-   and the spec data lives in the FINISHES map below.
+   Copy is never hardcoded here: the per-finish phrase / story ride on the
+   cards as data attributes (rendered from translations by the server), and
+   the spec data lives in the FINISHES map below.
+
+   The callout and the hotspots carry data-x / data-y in percentages of the
+   PHOTOGRAPH; placeOverlays() maps them onto the rendered scene box
+   (object-fit: cover crops from the left), so the annotations stay glued
+   to the faucet at every width.
    ========================================================================== */
 (function () {
   'use strict';
@@ -18,7 +25,7 @@
     'brushed-rose-gold': {
       title: 'Brushed Rose Gold (PVD)',
       tag: 'PVD TITANIUM VAPOR DEPOSITION / 10-YEAR COLOR STABILITY',
-      image: 'images/finishes/swatch-rose-gold.jpg',
+      image: 'images/finishes/scene-brushed-rose-gold.jpg',
       desc: 'An opulent, warm metallic hue crafted via vacuum plasma PVD. Ultra-resistant to micro-scratches, finger marks, and corrosion in coastal and humid spa environments.',
       base: 'Solid Brass CW617N',
       coating: 'PVD Titanium 0.4um',
@@ -28,7 +35,7 @@
     'chrome': {
       title: 'Polished Mirror Chrome',
       tag: '12-MICRON MULTI-STAGE ELECTROPLATING / ISO 9227 TESTED',
-      image: 'images/finishes/swatch-chrome.jpg',
+      image: 'images/finishes/scene-chrome.jpg',
       desc: 'The quintessential architectural finish. Triple-layer nickel-chromium electroplating delivering flawless diamond mirror reflectivity and effortless descaling.',
       base: 'Low-Lead Architectural Brass',
       coating: 'Multi-layer Ni-Cr 12.5um',
@@ -38,7 +45,7 @@
     'brushed-gold': {
       title: 'Brushed Royal Gold (PVD)',
       tag: 'ARCHITECTURAL MATTE BRASS / RESISTANT TO AGGRESSIVE ACIDS',
-      image: 'images/finishes/swatch-gold.jpg',
+      image: 'images/finishes/scene-brushed-gold.jpg',
       desc: 'A luminous, subtle champagne-gold with directional brushwork that captures natural bathroom lighting while resisting soap film and water spotting.',
       base: 'Dezincification Resistant Brass (DZR)',
       coating: 'Zirconium PVD Physical Vapor',
@@ -48,7 +55,7 @@
     'mirror-gold': {
       title: 'Polished Mirror Gold (PVD)',
       tag: 'HIGH-GLOSS PVD GOLD / PERMANENT MIRROR BRILLIANCE',
-      image: 'images/finishes/swatch-mirror-gold.jpg',
+      image: 'images/finishes/scene-mirror-gold.jpg',
       desc: 'A flawless high-gloss gold mirror sealed in the PVD vacuum chamber, holding permanent brilliance and corrosion resistance where plated gold would fade.',
       base: 'Solid Brass CW617N',
       coating: 'PVD Zirconium Nitride Mirror',
@@ -58,7 +65,7 @@
     'matte-black': {
       title: 'Matte Obsidian Black',
       tag: 'ELECTROSTATIC SOFT-TOUCH POWDER COATING / ZERO GLARE',
-      image: 'images/finishes/swatch-black.jpg',
+      image: 'images/finishes/scene-matte-black.jpg',
       desc: 'A tactile, non-reflective velvety black engineered for bold monolithic contrasts with white vitreous china and natural stone vanities.',
       base: 'Solid Cast Brass & Duroplast',
       coating: 'Electrophoretic Matte Coating',
@@ -68,7 +75,7 @@
     'brushed-nickel': {
       title: 'Brushed Nickel (PVD)',
       tag: 'SATIN BRUSHED PVD / FINGERPRINT-RESISTANT SHEEN',
-      image: 'images/finishes/swatch-brushed-nickel.jpg',
+      image: 'images/finishes/scene-brushed-nickel.jpg',
       desc: 'A warm satin-silver finish with fine directional brushing, bonded in a PVD vacuum chamber for enduring elegance that shrugs off fingerprints and daily wear.',
       base: 'Solid Brass CW617N',
       coating: 'PVD Satin Nickel 0.4um',
@@ -78,7 +85,7 @@
     'gunmetal': {
       title: 'Gunmetal Titanium Grey',
       tag: 'DEEP ANTHRACITE PVD / AEROSPACE HARDNESS',
-      image: 'images/finishes/swatch-gunmetal.jpg',
+      image: 'images/finishes/scene-gunmetal.jpg',
       desc: 'A moody, deep charcoal metallic finish designed for modern loft, brutalist, and dark spa architecture with an iridescent aquatic undertone.',
       base: 'Solid Brass CW617N',
       coating: 'PVD Titanium Carbonitride',
@@ -88,7 +95,7 @@
     'brushed-gunmetal': {
       title: 'Brushed Gunmetal (PVD)',
       tag: 'BRUSHED ANTHRACITE PVD / SOFT MATTE METALLIC',
-      image: 'images/finishes/swatch-brushed-gunmetal.jpg',
+      image: 'images/finishes/scene-brushed-gunmetal.jpg',
       desc: 'Directional brushing softens the deep gunmetal tone into a refined matte metallic sheen that hides water marks and pairs with stone and dark timber.',
       base: 'Solid Brass CW617N',
       coating: 'PVD Brushed Titanium Carbonitride',
@@ -98,7 +105,7 @@
     'gun-gray': {
       title: 'Gun Gray (PVD)',
       tag: 'SATIN GRAY PVD / LOW-GLARE ARCHITECTURAL TONE',
-      image: 'images/finishes/swatch-gun-gray.jpg',
+      image: 'images/finishes/scene-gun-gray.jpg',
       desc: 'A calm satin gray metallic engineered for minimalist architecture, with a low-glare surface that keeps its even tone under harsh bathroom lighting.',
       base: 'Solid Brass CW617N',
       coating: 'PVD Satin Gray Titanium',
@@ -109,7 +116,7 @@
 
   var ORDER = ['brushed-rose-gold', 'chrome', 'brushed-gold', 'mirror-gold', 'matte-black', 'brushed-nickel', 'gunmetal', 'brushed-gunmetal', 'gun-gray'];
 
-  /* Each stage layer is a <picture>; swapping only img.src would leave the
+  /* Each scene layer is a <picture>; swapping only img.src would leave the
      previous finish's srcset serving. Rebuild it from the widths the template
      published on the img. */
   function setStageImage(img, url) {
@@ -140,8 +147,8 @@
   function init() {
     var section = document.querySelector('.finishes-section');
     var cards = Array.prototype.slice.call(document.querySelectorAll('.fs-card'));
-    var imgA = document.querySelector('.fs-img-a');
-    var imgB = document.querySelector('.fs-img-b');
+    var imgA = document.querySelector('.fs-scene-img-a');
+    var imgB = document.querySelector('.fs-scene-img-b');
     if (!section || !cards.length || !imgA || !imgB) {
       return;
     }
@@ -149,21 +156,21 @@
     var base = document.documentElement.getAttribute('data-base') || '';
     var phrase = document.getElementById('fs-phrase');
     var story = document.getElementById('fs-story');
+    var captionTitle = document.getElementById('fs-caption-title');
     var title = document.getElementById('finish-title');
-    var tag = document.getElementById('finish-tag');
     var desc = document.getElementById('finish-desc');
     var indexEl = document.getElementById('finish-index');
+    var tag = document.getElementById('finish-tag');
     var baseSpec = document.getElementById('finish-base');
     var coating = document.getElementById('finish-coating');
     var cartridge = document.getElementById('finish-cartridge');
     var aerator = document.getElementById('finish-aerator');
-    var tintA = section.querySelector('.fs-tint-a');
-    var tintB = section.querySelector('.fs-tint-b');
+    var scene = section.querySelector('.fs-scene');
+    var ui = section.querySelector('.fs-scene-ui');
     var reduce = window.matchMedia &&
       window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
-    var tintOnA = true;          /* which tint layer is currently visible */
-    var imgOnA = true;           /* which image layer is currently visible */
+    var imgOnA = true;           /* which scene layer is currently visible */
     var currentKey = null;
 
     function setText(node, value) {
@@ -172,13 +179,14 @@
       }
     }
 
-    /* headline + story swap with a micro-fade, so the change reads as one
-       gesture with the image cross-fade instead of a hard text jump */
+    /* headline + callout + specs swap with a micro-fade, so the change reads
+       as one gesture with the photo cross-fade instead of a hard text jump */
     var textTimer = null;
     function swapCopy(map) {
       var targets = [
         [phrase, map.phrase],
         [story, map.story],
+        [captionTitle, map.captionTitle],
         [title, map.title],
         [desc, map.desc]
       ];
@@ -192,19 +200,6 @@
         targets.forEach(function (t) { setText(t[0], t[1]); });
         targets.forEach(function (t) { if (t[0]) t[0].classList.remove('is-swapping'); });
       }, 180);
-    }
-
-    function applyTint(tint) {
-      if (!tintA || !tintB || !tint) {
-        return;
-      }
-      var showEl = tintOnA ? tintB : tintA;
-      var hideEl = tintOnA ? tintA : tintB;
-      showEl.style.background =
-        'radial-gradient(90% 120% at 72% 38%, ' + tint + ', transparent 70%)';
-      showEl.style.opacity = '1';
-      hideEl.style.opacity = '0';
-      tintOnA = !tintOnA;
     }
 
     function applyImage(key) {
@@ -228,6 +223,63 @@
       imgOnA = !imgOnA;
     }
 
+    /* ---- the finish rail: chevrons scroll, cards select ---- */
+
+    var strip = section.querySelector('.fs-cards');
+    var prevBtn = section.querySelector('[data-fs-prev]');
+    var nextBtn = section.querySelector('[data-fs-next]');
+
+    function scrollStrip(x) {
+      if (typeof strip.scrollTo === 'function') {
+        try {
+          strip.scrollTo({ left: x, behavior: reduce ? 'auto' : 'smooth' });
+          return;
+        } catch (e) { /* very old engines fall through to the assignment */ }
+      }
+      strip.scrollLeft = x;
+    }
+
+    function navState() {
+      if (!strip || !prevBtn || !nextBtn) {
+        return;
+      }
+      var max = strip.scrollWidth - strip.clientWidth;
+      prevBtn.disabled = strip.scrollLeft <= 1;
+      nextBtn.disabled = max <= 1 || strip.scrollLeft >= max - 1;
+    }
+
+    function nudge(dir) {
+      var max = strip.scrollWidth - strip.clientWidth;
+      var target = strip.scrollLeft + dir * strip.clientWidth * 0.75;
+      if (target < 0) { target = 0; }
+      if (target > max) { target = max; }
+      scrollStrip(target);
+    }
+
+    /* bring the freshly selected card into view, but never jog the rail
+       while the customer is already looking at that card */
+    function revealCard(card) {
+      if (!strip) {
+        return;
+      }
+      var left = card.offsetLeft;
+      var right = left + card.offsetWidth;
+      var max = strip.scrollWidth - strip.clientWidth;
+      if (left >= strip.scrollLeft && right <= strip.scrollLeft + strip.clientWidth) {
+        return;
+      }
+      var target = Math.min(Math.max(0, left - 8), Math.max(0, max));
+      scrollStrip(target);
+    }
+
+    if (prevBtn && nextBtn && strip) {
+      prevBtn.addEventListener('click', function () { nudge(-1); });
+      nextBtn.addEventListener('click', function () { nudge(1); });
+      strip.addEventListener('scroll', navState, { passive: true });
+      window.addEventListener('resize', navState);
+      navState();
+    }
+
     function select(key, options) {
       var data = FINISHES[key];
       var card = cards.filter(function (c) { return c.dataset.finish === key; })[0];
@@ -237,12 +289,6 @@
       options = options || {};
       currentKey = key;
       section.setAttribute('data-finish', key);
-
-      /* the headline phrase takes the finish's own metal tone (lightened
-         automatically on the dark theme by the color-mix in the CSS) */
-      if (card.dataset.accent) {
-        section.style.setProperty('--fs-accent', card.dataset.accent);
-      }
 
       cards.forEach(function (other) {
         var active = other === card;
@@ -260,6 +306,7 @@
       swapCopy({
         phrase: card.dataset.phrase,
         story: card.dataset.story,
+        captionTitle: data.title,
         title: data.title,
         desc: data.desc
       });
@@ -267,7 +314,7 @@
       if (!options.skipImage) {
         applyImage(key);
       }
-      applyTint(card.dataset.tint);
+      revealCard(card);
 
       /* shareable / reloadable selection: ?finish=chrome */
       if (options.updateUrl && window.history && window.history.replaceState) {
@@ -292,6 +339,44 @@
         select(wanted, {});
       }
     } catch (e) { /* no URLSearchParams: the default finish stays */ }
+
+    /* ---- overlays: keep the callout and the hotspots glued to the faucet.
+            data-x / data-y are percentages of the photograph; the scene is
+            painted with object-fit: cover, anchored right, so the crop eats
+            into the photograph's left edge first. ---- */
+    var pinned = Array.prototype.slice.call(section.querySelectorAll('.fs-scene-ui [data-x]'));
+
+    function placeOverlays() {
+      if (!scene || !ui || !imgA.naturalWidth || !imgA.naturalHeight || !pinned.length) {
+        return;
+      }
+      var sr = scene.getBoundingClientRect();
+      var ur = ui.getBoundingClientRect();
+      if (!sr.width || !sr.height || !ur.width || !ur.height) {
+        return;
+      }
+      var scale = Math.max(sr.width / imgA.naturalWidth, sr.height / imgA.naturalHeight);
+      var rw = imgA.naturalWidth * scale;   /* rendered photo size (px) */
+      var rh = imgA.naturalHeight * scale;
+      var offX = sr.width - rw;             /* right-anchored: <= 0 */
+      var offY = (sr.height - rh) / 2;      /* vertically centred  */
+
+      pinned.forEach(function (el) {
+        var x = (parseFloat(el.getAttribute('data-x')) || 0) / 100 * rw + offX;
+        var y = (parseFloat(el.getAttribute('data-y')) || 0) / 100 * rh + offY;
+        var leftPct = (sr.left - ur.left + x) / ur.width * 100;
+        var topPct = (sr.top - ur.top + y) / ur.height * 100;
+        el.style.left = Math.max(0, Math.min(100, leftPct)) + '%';
+        el.style.top = Math.max(0, Math.min(100, topPct)) + '%';
+      });
+    }
+
+    if (imgA.addEventListener) {
+      imgA.addEventListener('load', placeOverlays);
+      imgA.addEventListener('error', function () { /* CSS defaults stay */ });
+    }
+    window.addEventListener('resize', placeOverlays);
+    placeOverlays();
 
     /* ---- hotspots: one open at a time, Escape closes ---- */
     var spots = Array.prototype.slice.call(section.querySelectorAll('.fs-hotspot'));
@@ -334,56 +419,14 @@
       });
     }
 
-    /* ---- view in spaces modal ---- */
-    var modal = section.querySelector('[data-fs-modal]');
-    var spacesOpen = section.querySelector('[data-fs-spaces]');
-    var spacesClose = section.querySelector('[data-fs-spaces-close]');
-    var places = Array.prototype.slice.call(section.querySelectorAll('.fs-place'));
-    var modalImg = document.getElementById('fs-modal-img');
-
-    function setModal(open) {
-      if (!modal) return;
-      if (open) {
-        modal.hidden = false;
-        window.requestAnimationFrame(function () {
-          modal.classList.add('is-open');
-        });
-      } else {
-        modal.classList.remove('is-open');
-        window.setTimeout(function () { modal.hidden = true; }, 320);
-      }
-    }
-    if (spacesOpen) spacesOpen.addEventListener('click', function () { setModal(true); });
-    if (spacesClose) spacesClose.addEventListener('click', function () { setModal(false); });
-    if (modal) {
-      modal.addEventListener('click', function (event) {
-        if (event.target === modal) setModal(false);
-      });
-    }
-
-    places.forEach(function (place) {
-      place.addEventListener('click', function () {
-        places.forEach(function (p) { p.classList.toggle('is-active', p === place); });
-        if (modalImg && place.dataset.placeImg) {
-          modalImg.style.opacity = '0';
-          window.setTimeout(function () {
-            modalImg.src = place.dataset.placeImg;
-            modalImg.alt = place.textContent.trim();
-            modalImg.style.opacity = '1';
-          }, reduce ? 0 : 160);
-        }
-      });
-    });
-
     document.addEventListener('keydown', function (event) {
       if (event.key !== 'Escape') return;
       setDrawer(false);
-      setModal(false);
       spots.forEach(function (s) { s.classList.remove('is-open'); });
     });
 
-    /* ---- entrance choreography: title up, stage from the right,
-            cards one by one, the strip, then the hotspots ---- */
+    /* ---- entrance choreography: title up, scene settling in, cards one by
+            one, the rail, then the hotspots ---- */
     if ('IntersectionObserver' in window && !reduce) {
       var seen = false;
       new IntersectionObserver(function (entries, observer) {
