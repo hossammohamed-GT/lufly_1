@@ -132,44 +132,40 @@
   transform: scale(1.04);
 }
 
-/* ---------- 3. centre index links (desktop, glass state) ---------- */
+/* ---------- 3. index links (desktop, glass state, right cluster) ---------- */
 
+/* The links live in the RIGHT cluster, just before the icons - only the
+   logo stays on the start edge, exactly like the reference bar. They carry
+   the row's auto margin; the closed search field (0px) sits after them,
+   then the actions. When the search opens the links fade and fold out of
+   the way, handing their room to the field. */
 .mnav-links {
-  position: absolute;
-  left: 50%;
-  transform: translate(-50%, -6px);
   display: none;
   align-items: center;
   gap: 2px;
+  margin-inline-start: auto;
+  margin-inline-end: 8px;
+  flex: 0 1 auto;
+  min-inline-size: 0;
+  overflow: hidden;
   opacity: 0;
   pointer-events: none;
-  transition: opacity 300ms ease, transform 300ms var(--mnav-ease);
+  transition: opacity 300ms ease, flex-basis 380ms var(--mnav-ease);
   white-space: nowrap;
-}
-
-[dir='rtl'] .mnav-links {
-  left: auto;
-  right: 50%;
-  transform: translate(50%, -6px);
 }
 
 /* visible whenever the bar is in its "site" state */
 .mnav:not(.mnav--overlay) .mnav-links,
 .mnav.is-scrolled .mnav-links {
   opacity: 1;
-  transform: translate(-50%, 0);
   pointer-events: auto;
 }
 
-[dir='rtl'] .mnav:not(.mnav--overlay) .mnav-links,
-[dir='rtl'] .mnav.is-scrolled .mnav-links {
-  transform: translate(50%, 0);
-}
-
-/* the expanding search takes the middle of the row */
+/* the expanding search takes the room: the links fade and fold away */
 .mnav.is-search-open .mnav-links {
   opacity: 0;
   pointer-events: none;
+  flex-basis: 0;
 }
 
 .mnav-link {
@@ -278,17 +274,17 @@
 
 /* ---------- 4. the expanding search ---------- */
 
-/* The field sits just before the actions. Closed it is 0px wide and its auto
-   margin keeps everything after the brand pushed to the end edge (icons
-   right, like the design); opened it grows leftward into that margin, so
-   the icons never move while the field expands. */
+/* The field sits between the links and the actions. Closed it is 0px wide;
+   opened it grows leftward into the room the folding links hand over, so
+   the icons never move while the field expands. (On <1024px the links are
+   gone and the actions carry the auto margin instead - see the mobile
+   block.) */
 .mnav-search {
   position: relative;
   flex: 0 1 auto;
   inline-size: 0;
   opacity: 0;
   pointer-events: none;
-  margin-inline-start: auto;
   transition: inline-size 430ms var(--mnav-ease), opacity 240ms ease;
 }
 
