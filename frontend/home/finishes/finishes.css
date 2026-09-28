@@ -441,6 +441,11 @@
 
 /* ---------- compare drawer ---------- */
 
+/* `hidden` must win: the panels are display:flex/grid, which would otherwise
+   override the attribute and leave an invisible full-viewport layer drinking
+   every click on the page (the "buttons don't work" bug). */
+.fs-drawer[hidden], .fs-modal[hidden] { display: none; }
+
 .fs-drawer {
   position: fixed;
   inset: 0;
