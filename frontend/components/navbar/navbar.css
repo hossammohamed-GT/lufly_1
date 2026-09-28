@@ -1073,6 +1073,11 @@
   .mnav { --mnav-row1: 52px; }
   :root { --mnav-row1: 52px; }
 
+  /* the search panel is absolute here (out of the flex flow), so its auto
+     margin no longer pins anything - the actions carry it instead: logo
+     left, every icon right, like the reference */
+  .mnav-actions { margin-inline-start: auto; }
+
   .mnav-brand-img { height: 36px; }
 
   .mnav-bloom { display: grid; }
