@@ -163,18 +163,22 @@ Invariants when touching it:
   swaps at boot, before the first paint when possible.
 
 Artwork: `public/images/hero/hero-<scene>{,-light}.webp` plus `-thumb.webp`
-tab thumbnails, built from the masters in `tools/hero-masters/` by
-`python3 tools/hero-masters/build_hero_images.py`.
-**Quality policy (2026-09-29): every hero file is LOSSLESS WebP, straight
-from the lossless PNG master - pixel-identical on every screen.** There is no
-rendition ladder (the old `@480w/@760w/@1024w` q92 files are gone) and no
-lossy quality setting; a phone downloads the same master-quality frame as a
-desktop. The site-wide compression system was removed with it: no WebP
-negotiation in `.htaccess`, no q80 `.webp` twins under `public/images`, and
+tab thumbnails. **These lossless files ARE the masters** (2026-09-29
+cleanup): the separate PNG masters and the build toolkit in
+`tools/hero-masters/` were deleted - the public files are pixel-identical
+to them, so nothing was lost.
+**Quality policy (2026-09-29): every hero file is LOSSLESS WebP -
+pixel-identical on every screen.** There is no rendition ladder (the old
+`@480w/@760w/@1024w` q92 files are gone) and no lossy quality setting; a
+phone downloads the same master-quality frame as a desktop. The site-wide
+compression system was removed with it: no WebP negotiation in
+`.htaccess`, no q80 `.webp` twins under `public/images`, and
 `responsive-image` renders a plain `<img>` over the untouched original. Do
 not reintroduce reduced-quality variants (site policy: no image is ever
 served at lower quality than its source). The scene crop is anchored on the
-product (`object-position`, biased further right on phones).
+product (`object-position`, biased further right on phones). If a thumbnail
+ever needs rebuilding: crop the full frame at x from 0.22 to 1.0 (keep the
+product side), scale to 450x300, save as lossless WebP.
 
 The navbar over the hero dissolves in two stages (all of it driven by the one
 `--nav-glass` variable painted on rAF): while the glass fades in it stays

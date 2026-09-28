@@ -21,7 +21,7 @@ return [
             'asma klozet modelleri',
             'sanitarni keramika',
         ],
-        'image' => '/images/hero/hero-bathroom.jpg',
+        'image' => '/images/hero/hero-bathroom.webp',
         'site_name' => 'LUFLY Architectural Sanitary Ware',
         'twitter_handle' => '@LUFLYGlobal',
     ],
