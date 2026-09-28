@@ -1,5 +1,16 @@
-/* Finish selector: swatch data, showcase swap, auto-scroll to the
-   showcase panel on phones so the user always sees what changed. */
+/* ==========================================================================
+   The finishes lab: a finish configurator, Dornbracht-style.
+   --------------------------------------------------------------------------
+   One selection drives everything: the product photograph cross-fades into
+   the chosen finish (600ms, two stacked layers), the ambient tint behind the
+   stage washes to that finish's colour, the headline phrase and the story
+   panel change, the spec sheet and the counter follow, and the URL grows a
+   ?finish= parameter so a chosen finish is shareable and survives a reload.
+
+   Copy is never hardcoded here: the per-finish phrase / story / tint ride on
+   the cards as data attributes (rendered from translations by the server),
+   and the spec data lives in the FINISHES map below.
+   ========================================================================== */
 (function () {
   'use strict';
 
@@ -14,7 +25,7 @@
       cartridge: 'Kerox Hungary 35mm Ceramic',
       aerator: 'Neoperl Coin-Slot Pro-Eco 5.7 L/min'
     },
-    chrome: {
+    'chrome': {
       title: 'Polished Mirror Chrome',
       tag: '12-MICRON MULTI-STAGE ELECTROPLATING / ISO 9227 TESTED',
       image: 'images/finishes/swatch-chrome.jpg',
@@ -64,7 +75,7 @@
       cartridge: 'Kerox Hungary 35mm Ceramic',
       aerator: 'Neoperl Coin-Slot Pro-Eco 5.7 L/min'
     },
-    gunmetal: {
+    'gunmetal': {
       title: 'Gunmetal Titanium Grey',
       tag: 'DEEP ANTHRACITE PVD / AEROSPACE HARDNESS',
       image: 'images/finishes/swatch-gunmetal.jpg',
@@ -98,19 +109,18 @@
 
   var ORDER = ['brushed-rose-gold', 'chrome', 'brushed-gold', 'mirror-gold', 'matte-black', 'brushed-nickel', 'gunmetal', 'brushed-gunmetal', 'gun-gray'];
 
-  /* The showcase lives in a <picture> so the browser can pick a right-sized
-     rendition. Swapping only img.src would leave the old srcset in place and
-     the browser would keep serving the *previous* finish's renditions, so the
-     srcset has to be rebuilt from the widths the template published. */
-  function setShowcaseImage(image, url) {
-    var raw = image.getAttribute('data-respic-widths') || '';
+  /* Each stage layer is a <picture>; swapping only img.src would leave the
+     previous finish's srcset serving. Rebuild it from the widths the template
+     published on the img. */
+  function setStageImage(img, url) {
+    var raw = img.getAttribute('data-respic-widths') || '';
     var widths = raw ? raw.split(',') : [];
-    var host = image.parentNode;
+    var host = img.parentNode;
     var source = host && host.tagName === 'PICTURE'
       ? host.querySelector('source[type="image/webp"]')
       : null;
 
-    image.src = url;
+    img.src = url;
 
     if (!source || !widths.length) {
       return;
@@ -123,16 +133,22 @@
     source.srcset = parts.join(', ');
   }
 
+  function pad(n) {
+    return ('0' + n).slice(-2);
+  }
+
   function init() {
     var section = document.querySelector('.finishes-section');
-    var buttons = Array.prototype.slice.call(document.querySelectorAll('.finish-swatch-btn'));
-    var image = document.getElementById('finish-showcase-img');
-    if (!section || !buttons.length || !image) {
+    var cards = Array.prototype.slice.call(document.querySelectorAll('.fs-card'));
+    var imgA = document.querySelector('.fs-img-a');
+    var imgB = document.querySelector('.fs-img-b');
+    if (!section || !cards.length || !imgA || !imgB) {
       return;
     }
 
     var base = document.documentElement.getAttribute('data-base') || '';
-    var showcase = section.querySelector('.finish-showcase-box');
+    var phrase = document.getElementById('fs-phrase');
+    var story = document.getElementById('fs-story');
     var title = document.getElementById('finish-title');
     var tag = document.getElementById('finish-tag');
     var desc = document.getElementById('finish-desc');
@@ -141,9 +157,14 @@
     var coating = document.getElementById('finish-coating');
     var cartridge = document.getElementById('finish-cartridge');
     var aerator = document.getElementById('finish-aerator');
+    var tintA = section.querySelector('.fs-tint-a');
+    var tintB = section.querySelector('.fs-tint-b');
+    var reduce = window.matchMedia &&
+      window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
-    var current = 0;
-    var swapTimer = null;
+    var tintOnA = true;          /* which tint layer is currently visible */
+    var imgOnA = true;           /* which image layer is currently visible */
+    var currentKey = null;
 
     function setText(node, value) {
       if (node && value) {
@@ -151,68 +172,228 @@
       }
     }
 
-    function pad(n) {
-      return ('0' + n).slice(-2);
+    /* headline + story swap with a micro-fade, so the change reads as one
+       gesture with the image cross-fade instead of a hard text jump */
+    var textTimer = null;
+    function swapCopy(map) {
+      var targets = [
+        [phrase, map.phrase],
+        [story, map.story],
+        [title, map.title],
+        [desc, map.desc]
+      ];
+      if (reduce) {
+        targets.forEach(function (t) { setText(t[0], t[1]); });
+        return;
+      }
+      targets.forEach(function (t) { if (t[0]) t[0].classList.add('is-swapping'); });
+      if (textTimer) window.clearTimeout(textTimer);
+      textTimer = window.setTimeout(function () {
+        targets.forEach(function (t) { setText(t[0], t[1]); });
+        targets.forEach(function (t) { if (t[0]) t[0].classList.remove('is-swapping'); });
+      }, 180);
     }
 
-    function apply(key) {
+    function applyTint(tint) {
+      if (!tintA || !tintB || !tint) {
+        return;
+      }
+      var showEl = tintOnA ? tintB : tintA;
+      var hideEl = tintOnA ? tintA : tintB;
+      showEl.style.background =
+        'radial-gradient(90% 120% at 72% 38%, ' + tint + ', transparent 70%)';
+      showEl.style.opacity = '1';
+      hideEl.style.opacity = '0';
+      tintOnA = !tintOnA;
+    }
+
+    function applyImage(key) {
       var data = FINISHES[key];
       if (!data) {
         return;
       }
+      var from = imgOnA ? imgA : imgB;
+      var to = imgOnA ? imgB : imgA;
+      setStageImage(to, base + '/' + data.image);
+      if (reduce) {
+        to.classList.add('is-on');
+        from.classList.remove('is-on');
+      } else {
+        /* let the new file start arriving before the fade begins */
+        window.setTimeout(function () {
+          to.classList.add('is-on');
+          from.classList.remove('is-on');
+        }, 120);
+      }
+      imgOnA = !imgOnA;
+    }
 
-      setText(title, data.title);
+    function select(key, options) {
+      var data = FINISHES[key];
+      var card = cards.filter(function (c) { return c.dataset.finish === key; })[0];
+      if (!data || !card) {
+        return;
+      }
+      options = options || {};
+      currentKey = key;
+      section.setAttribute('data-finish', key);
+
+      cards.forEach(function (other) {
+        var active = other === card;
+        other.classList.toggle('is-active', active);
+        other.setAttribute('aria-pressed', active ? 'true' : 'false');
+      });
+
       setText(tag, data.tag);
-      setText(desc, data.desc);
       setText(baseSpec, data.base);
       setText(coating, data.coating);
       setText(cartridge, data.cartridge);
       setText(aerator, data.aerator);
       setText(indexEl, pad(ORDER.indexOf(key) + 1));
 
-      image.style.opacity = '0';
-      if (swapTimer) {
-        window.clearTimeout(swapTimer);
-      }
-      swapTimer = window.setTimeout(function () {
-        setShowcaseImage(image, base + '/' + data.image);
-        image.style.opacity = '1';
-      }, 160);
-    }
-
-    /* on phones the showcase sits below the fold: bring it into view
-       after a selection so the change is never missed */
-    function revealShowcase() {
-      if (!showcase || typeof showcase.scrollIntoView !== 'function') {
-        return;
-      }
-      var rect = showcase.getBoundingClientRect();
-      var vh = window.innerHeight || document.documentElement.clientHeight;
-      if (rect.top > vh * 0.72 || rect.bottom < vh * 0.3) {
-        var reduce = window.matchMedia &&
-          window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-        try {
-          showcase.scrollIntoView({ behavior: reduce ? 'auto' : 'smooth', block: 'start' });
-        } catch (e) { /* older browsers */ }
-      }
-    }
-
-    function select(key, button) {
-      current = ORDER.indexOf(key);
-      buttons.forEach(function (other) {
-        var active = other === button;
-        other.classList.toggle('is-active', active);
-        other.setAttribute('aria-pressed', active ? 'true' : 'false');
+      swapCopy({
+        phrase: card.dataset.phrase,
+        story: card.dataset.story,
+        title: data.title,
+        desc: data.desc
       });
-      apply(key);
-      revealShowcase();
+
+      if (!options.skipImage) {
+        applyImage(key);
+      }
+      applyTint(card.dataset.tint);
+
+      /* shareable / reloadable selection: ?finish=chrome */
+      if (options.updateUrl && window.history && window.history.replaceState) {
+        try {
+          var url = new URL(window.location.href);
+          url.searchParams.set('finish', key);
+          window.history.replaceState({}, '', url);
+        } catch (e) { /* ancient browsers simply keep the old URL */ }
+      }
     }
 
-    buttons.forEach(function (button) {
-      button.addEventListener('click', function () {
-        select(button.dataset.finish, button);
+    cards.forEach(function (card) {
+      card.addEventListener('click', function () {
+        select(card.dataset.finish, { updateUrl: true });
       });
     });
+
+    /* ---- deep link: ?finish=gunmetal opens the section pre-configured ---- */
+    try {
+      var wanted = new URLSearchParams(window.location.search).get('finish');
+      if (wanted && FINISHES[wanted] && wanted !== cards[0].dataset.finish) {
+        select(wanted, {});
+      }
+    } catch (e) { /* no URLSearchParams: the default finish stays */ }
+
+    /* ---- hotspots: one open at a time, Escape closes ---- */
+    var spots = Array.prototype.slice.call(section.querySelectorAll('.fs-hotspot'));
+    spots.forEach(function (spot) {
+      spot.addEventListener('click', function (event) {
+        event.stopPropagation();
+        var open = spot.classList.contains('is-open');
+        spots.forEach(function (s) { s.classList.remove('is-open'); });
+        if (!open) {
+          spot.classList.add('is-open');
+        }
+      });
+    });
+    document.addEventListener('click', function () {
+      spots.forEach(function (s) { s.classList.remove('is-open'); });
+    });
+
+    /* ---- compare drawer ---- */
+    var drawer = section.querySelector('[data-fs-drawer]');
+    var compareOpen = section.querySelector('[data-fs-compare]');
+    var compareClose = section.querySelector('[data-fs-compare-close]');
+
+    function setDrawer(open) {
+      if (!drawer) return;
+      if (open) {
+        drawer.hidden = false;
+        window.requestAnimationFrame(function () {
+          drawer.classList.add('is-open');
+        });
+      } else {
+        drawer.classList.remove('is-open');
+        window.setTimeout(function () { drawer.hidden = true; }, 420);
+      }
+    }
+    if (compareOpen) compareOpen.addEventListener('click', function () { setDrawer(true); });
+    if (compareClose) compareClose.addEventListener('click', function () { setDrawer(false); });
+    if (drawer) {
+      drawer.addEventListener('click', function (event) {
+        if (event.target === drawer) setDrawer(false);
+      });
+    }
+
+    /* ---- view in spaces modal ---- */
+    var modal = section.querySelector('[data-fs-modal]');
+    var spacesOpen = section.querySelector('[data-fs-spaces]');
+    var spacesClose = section.querySelector('[data-fs-spaces-close]');
+    var places = Array.prototype.slice.call(section.querySelectorAll('.fs-place'));
+    var modalImg = document.getElementById('fs-modal-img');
+
+    function setModal(open) {
+      if (!modal) return;
+      if (open) {
+        modal.hidden = false;
+        window.requestAnimationFrame(function () {
+          modal.classList.add('is-open');
+        });
+      } else {
+        modal.classList.remove('is-open');
+        window.setTimeout(function () { modal.hidden = true; }, 320);
+      }
+    }
+    if (spacesOpen) spacesOpen.addEventListener('click', function () { setModal(true); });
+    if (spacesClose) spacesClose.addEventListener('click', function () { setModal(false); });
+    if (modal) {
+      modal.addEventListener('click', function (event) {
+        if (event.target === modal) setModal(false);
+      });
+    }
+
+    places.forEach(function (place) {
+      place.addEventListener('click', function () {
+        places.forEach(function (p) { p.classList.toggle('is-active', p === place); });
+        if (modalImg && place.dataset.placeImg) {
+          modalImg.style.opacity = '0';
+          window.setTimeout(function () {
+            modalImg.src = place.dataset.placeImg;
+            modalImg.alt = place.textContent.trim();
+            modalImg.style.opacity = '1';
+          }, reduce ? 0 : 160);
+        }
+      });
+    });
+
+    document.addEventListener('keydown', function (event) {
+      if (event.key !== 'Escape') return;
+      setDrawer(false);
+      setModal(false);
+      spots.forEach(function (s) { s.classList.remove('is-open'); });
+    });
+
+    /* ---- entrance choreography: title up, stage from the right,
+            cards one by one, the strip, then the hotspots ---- */
+    if ('IntersectionObserver' in window && !reduce) {
+      var seen = false;
+      new IntersectionObserver(function (entries, observer) {
+        entries.forEach(function (entry) {
+          if (entry.isIntersecting && !seen) {
+            seen = true;
+            section.classList.add('fs-in');
+            observer.disconnect();
+          }
+        });
+      }, { rootMargin: '120px' }).observe(section);
+    } else {
+      section.classList.add('fs-in');
+    }
+
+    currentKey = cards[0].dataset.finish;
   }
 
   if (document.readyState === 'loading') {
