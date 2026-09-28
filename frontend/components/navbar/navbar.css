@@ -1081,7 +1081,7 @@
   .mnav-search {
     position: absolute;
     top: 100%;
-    inset-inline: calc(-1 * var(--container-gutter));
+    inset-inline: 0;
     z-index: 3;
     inline-size: auto;
     margin-inline-start: 0;
