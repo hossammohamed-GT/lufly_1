@@ -167,6 +167,11 @@ class ___FakeService {
     public function supported() { global $___locale; return ['en' => 'English', 'tr' => 'Türkçe', 'cs' => 'Čeština']; }
     public function trans($k, $p = [], $l = null) { return trans($k, $p, $l); }
 }
+/* the layout (and any view) picks the page language through
+   $translator instanceof \Core\Localization\Translator - alias the fake to
+   the real name so a tr/cs render carries lang="tr"/"cs" exactly like
+   production, instead of falling back to the default locale */
+class_alias('___FakeService', 'Core\\Localization\\Translator');
 class ___FakeAuth {
     public function check() { return false; }
     public function user() { return null; }

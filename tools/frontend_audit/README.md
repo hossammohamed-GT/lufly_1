@@ -107,6 +107,26 @@ snapshot's `http://localhost` URLs are turned into root-relative paths, so the
 browser talks to the preview host and never to localhost. Every missing file is
 logged as a 404.
 
+## `locale_data_test.py` — no language ever shows another language's text
+
+```bash
+python3 tools/frontend_audit/locale_data_test.py
+```
+
+The "language mixing" regression guard. Verifies, against the source of truth
+(`database/lufly.sqlite`) and the hosting copy (`lufly-database.sql` at the
+repo root), that every product, product SEO row and category has exactly one
+row per locale (en / tr / cs), and that no row carries another language's
+markers — Czech diacritics never appear in EN/TR rows, Turkish letters and the
+words "Boyut"/"Kod" never appear in EN/CS rows, and every SEO title equals
+`<translated name> | LUFLY` in its own locale. The dump is parsed as whole
+INSERT statements because values contain raw newlines, `''` and `\'` escapes.
+Exits 1 with a failure list when any check breaks.
+
+> Re-running `ProductSeeder` would undo the fix: it copies the Czech items
+> verbatim into English rows and creates no Turkish rows. The database files
+> are the source of truth — run this test after any re-seed.
+
 ## `phone_preview.mjs` — device preview in a real browser
 
 ```bash
