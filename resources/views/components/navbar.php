@@ -1,12 +1,24 @@
 <?php
 /**
- * Navbar: "Machined Glass".
+ * Navbar: "Overlay Glass".
  *
- * Row 1: brand mark, instant search, utility actions.
- * Row 2: blueprint rail, the crooked machined line on the inline-start edge,
- *        quick links, knurled meta strip and a scroll progress line.
- * Getting close to the crooked line unfolds the geometric index drawer.
- * Below 1024px the rail becomes a small bloom button that opens a bottom sheet.
+ * One 64px row. On the storefront home page the hero photograph runs under
+ * it (the hero pulls itself up under this sticky bar), so the bar is
+ * transparent with white ink while the hero is on screen and dissolves into
+ * theme glass as the hero scrolls away. Everywhere else it is glass from
+ * the first paint.
+ *
+ * Row: Lufly logo (inline-start) - centre index links (desktop, glass state
+ * only) - the expanding search field - theme toggle | search | box, wishlist,
+ * account | language switcher (inline-end), thin dividers between groups.
+ * Below 1024px the links fold into the bloom sheet.
+ *
+ * Contracts kept for other scripts:
+ *   [data-theme-toggle]      app.js swaps the theme
+ *   [data-fav-count]         favorites.js repaints the badge
+ *   [data-box-count]         box.js repaints the badge
+ *   .mnav-fav / .mnav-box    has-items state for both
+ *   --mnav-row1              pages subtract the row height from 100svh
  *
  * @var Core\View\View $view
  * @var Core\Localization\Translator $translator
@@ -24,8 +36,11 @@ $currentUrl = (string) request()->url();
 $currentPath = rtrim((string) parse_url($currentUrl, PHP_URL_PATH), '/');
 $currentQuery = (string) (parse_url($currentUrl, PHP_URL_QUERY) ?? '');
 
-/* A link counts as current when its path matches - and, for catalogue links that
-   differ only by query string, when the query matches too. */
+/* The hero runs under the navbar only on the storefront home page. */
+$isOverlay = $route !== null && ($route->name ?? '') === 'home';
+
+/* A link counts as current when its path matches - and, for catalogue links
+   that differ only by query string, when the query matches too. */
 $isActive = static function (string $target) use ($currentPath, $currentQuery): bool {
     $parts = parse_url($target) ?: [];
     $path = rtrim((string) ($parts['path'] ?? ''), '/');
@@ -42,108 +57,71 @@ $isActive = static function (string $target) use ($currentPath, $currentQuery): 
 /* Saved-products list: the badge shows how many products this visitor saved.
    Without the cookie the service answers 0 without touching the database. */
 $favoritesOn = feature('favorites', true) && class_exists(\Modules\Favorites\Services\FavoriteService::class);
-/* the planner only gets a place in the menu once it is actually open */
-$plannerOn = feature('planner', true)
-    && !(bool) config('planner.coming_soon', true)
-    && class_exists(\Modules\Planner\Services\PlannerService::class);
 $savedCount = 0;
 if ($favoritesOn) {
     $savedCount = app(\Modules\Favorites\Services\FavoriteService::class)->count();
 }
 
-/* Quotation box: the list the visitor fills to ask for every price at once.
-   Like the saved list, it answers 0 without a cookie and without a query. */
+/* Quotation box: the list the visitor fills to ask for every price at once. */
 $boxOn = feature('box', true) && class_exists(\Modules\Box\Services\BoxService::class);
 $boxCount = 0;
 if ($boxOn) {
     $boxCount = app(\Modules\Box\Services\BoxService::class)->count();
 }
 
+/* the planner only gets a place in the menu once it is actually open */
+$plannerOn = feature('planner', true)
+    && !(bool) config('planner.coming_soon', true)
+    && class_exists(\Modules\Planner\Services\PlannerService::class);
+
 $indexLinks = [
     ['key' => 'bathroom', 'url' => route('products.index', ['category' => 'bathroom-ceramics'])],
     ['key' => 'kitchen', 'url' => route('products.index', ['category' => 'sink-mixers'])],
     ['key' => 'latest', 'url' => route('products.index', ['sort' => 'newest'])],
     ['key' => 'collections', 'url' => route('products.index')],
+    ['key' => 'contact', 'url' => route('contact')],
+];
+
+$exploreLinks = [
     ['key' => 'finishes', 'url' => route('home') . '#finishes'],
     ['key' => 'rituals', 'url' => route('home') . '#rituals'],
     ['key' => 'inspirations', 'url' => route('home') . '#inspiration'],
     ['key' => 'news', 'url' => route('home') . '#corporate'],
-    [
-        'key' => 'contact',
-        'url' => route('contact'),
-    ],
 ];
 
+$toolLinks = [];
+
 if ($favoritesOn) {
-    /* the saved list sits between the editorial sections and the contact page */
-    array_splice($indexLinks, count($indexLinks) - 1, 0, [[
-        'key' => 'favorites',
-        'url' => route('favorites.index'),
-    ]]);
+    $toolLinks[] = ['key' => 'favorites', 'url' => route('favorites.index')];
 }
 
 if ($boxOn) {
-    /* the box follows the saved list: the pieces to be priced */
-    array_splice($indexLinks, count($indexLinks) - 1, 0, [[
-        'key' => 'box',
-        'url' => route('box.index'),
-    ]]);
+    $toolLinks[] = ['key' => 'box', 'url' => route('box.index')];
 }
 
 if ($plannerOn) {
-    /* the planner follows the box: plan a room, then collect what fits */
-    array_splice($indexLinks, count($indexLinks) - 1, 0, [[
-        'key' => 'planner',
-        'url' => route('planner.index'),
-    ]]);
+    $toolLinks[] = ['key' => 'planner', 'url' => route('planner.index')];
 }
 
-/* The index bar is one row, so it cannot carry every link without turning
-   into a ribbon you have to scroll. The places a visitor actually goes stay
-   as pills; the rest folds into a single "More" button. Saved list, Box and
-   the planner keep their own buttons in the top row, so the bar does not
-   need to repeat them. */
-$barKeys = ['bathroom', 'kitchen', 'latest', 'collections', 'contact'];
-$exploreKeys = ['finishes', 'rituals', 'inspirations', 'news'];
-
-$barLinks = [];
-$exploreLinks = [];
-$toolLinks = [];
-
-foreach ($indexLinks as $link) {
-    if (in_array($link['key'], $barKeys, true)) {
-        $barLinks[] = $link;
-    } elseif (in_array($link['key'], $exploreKeys, true)) {
-        $exploreLinks[] = $link;
-    } else {
-        $toolLinks[] = $link;
-    }
-}
+/* The centre rail keeps the places a visitor actually goes; everything
+   editorial folds into a single "More" button. */
+$barLinks = $indexLinks;
+$foldLinks = array_merge($exploreLinks, $toolLinks);
 
 /* The "More" button lights up when the page you are on is inside it. */
 $moreActive = false;
 
-foreach (array_merge($exploreLinks, $toolLinks) as $link) {
+foreach ($foldLinks as $link) {
     $moreActive = $moreActive || $isActive($link['url']);
 }
 
-$getSectionIcon = static function (string $key): string {
-    return match ($key) {
-        'bathroom' => '<svg class="icon mnav-cat-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 6h6a2 2 0 0 1 2 2v2H7V8a2 2 0 0 1 2-2z"></path><path d="M5 10h14a2 2 0 0 1 2 2v2a6 6 0 0 1-6 6H9a6 6 0 0 1-6-6v-2a2 2 0 0 1 2-2z"></path><line x1="7" y1="20" x2="7" y2="22"></line><line x1="17" y1="20" x2="17" y2="22"></line></svg>',
-        'kitchen' => '<svg class="icon mnav-cat-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 14h18"></path><path d="M5 14V6a3 3 0 0 1 6 0v2"></path><path d="M19 14v4a3 3 0 0 1-3 3H8a3 3 0 0 1-3-3v-4"></path><circle cx="8" cy="8" r="1"></circle></svg>',
-        'latest' => '<svg class="icon mnav-cat-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon></svg>',
-        'collections' => '<svg class="icon mnav-cat-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="3" width="7" height="7"></rect><rect x="14" y="3" width="7" height="7"></rect><rect x="14" y="14" width="7" height="7"></rect><rect x="3" y="14" width="7" height="7"></rect></svg>',
-        'finishes' => '<svg class="icon mnav-cat-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"></circle><path d="M12 3a9 9 0 0 1 9 9c0 2.5-2 4.5-4.5 4.5s-2.5-2-2.5-2H10"></path></svg>',
-        'rituals' => '<svg class="icon mnav-cat-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 2.69l5.66 5.66a8 8 0 1 1-11.31 0z"></path></svg>',
-        'inspirations' => '<svg class="icon mnav-cat-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10"></circle><polygon points="16.24 7.76 14.12 14.12 7.76 16.24 9.88 9.88 16.24 7.76"></polygon></svg>',
-        'news' => '<svg class="icon mnav-cat-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 22h16a2 2 0 0 0 2-2V4a2 2 0 0 0-2-2H8a2 2 0 0 0-2 2v16a2 2 0 0 1-2 2Zm0 0a2 2 0 0 1-2-2v-9c0-1.1.9-2 2-2h2"></path><path d="M18 14h-8"></path><path d="M15 18h-5"></path><path d="M10 6h8v4h-8V6Z"></path></svg>',
-        'favorites' => '<svg class="icon mnav-cat-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 20.6 4.2 12.8a5.1 5.1 0 0 1 0-7.2 5.1 5.1 0 0 1 7.2 0l.6.6.6-.6a5.1 5.1 0 0 1 7.2 0 5.1 5.1 0 0 1 0 7.2Z"></path></svg>',
-        'box' => '<svg class="icon mnav-cat-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 8.5 5 4h14l2 4.5"></path><path d="M3 8.5h18V19a1.5 1.5 0 0 1-1.5 1.5h-15A1.5 1.5 0 0 1 3 19Z"></path><path d="M12 8.5V20.5"></path></svg>',
-        'planner' => '<svg class="icon mnav-cat-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="4" width="18" height="16" rx="2"></rect><path d="M3 10h18M10 4v16"></path></svg>',
-        'contact' => '<svg class="icon mnav-cat-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path></svg>',
-        default => '<svg class="icon mnav-cat-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="4"></circle></svg>'
-    };
-};
+/* every link, for the mobile sheet */
+$sheetLinks = array_merge(
+    [$indexLinks[0], $indexLinks[1], $indexLinks[2], $indexLinks[3]],
+    $exploreLinks,
+    $toolLinks,
+    [$indexLinks[4]]
+);
 
 /* Language targets keep the current route translated per locale. */
 $languageLinks = [];
@@ -169,23 +147,74 @@ foreach ($supported as $code => $name) {
     $languageLinks[$code] = ['label' => $name, 'target' => $target];
 }
 ?>
-<header class="mnav" data-navbar>
-    <div class="mnav-slab">
-        <span class="mnav-grain" aria-hidden="true"></span>
-        <span class="mnav-beam" aria-hidden="true"></span>
+<header class="mnav<?= $isOverlay ? ' mnav--overlay' : '' ?>" data-navbar<?= $isOverlay ? ' data-nav-hero' : '' ?><?= $isOverlay ? ' style="--nav-glass:0"' : '' ?>>
 
-        <!-- Row 1: brand, search, utilities -->
-        <div class="container mnav-top">
+    <div class="mnav-slab">
+        <!-- the glass layer: dark over the hero, theme glass afterwards.
+             Its opacity is driven by --nav-glass (see navbar.js). -->
+        <span class="mnav-glass" aria-hidden="true"></span>
+
+        <!-- Row: brand / centre links / search / actions -->
+        <div class="container mnav-row">
+
             <a class="mnav-brand" href="<?= e(route('home')) ?>" title="LUFLY Sanitary Architecture">
                 <img class="mnav-brand-img"
-src="<?= e(asset('images/logo.png')) ?>"
-                    alt="LUFLY"
-                     width="66"
-                     height="42"
+                     src="<?= e(asset('images/logo.png')) ?>"
+                     alt="LUFLY"
+                     width="86"
+                     height="55"
                      decoding="async"
                      fetchpriority="high">
             </a>
 
+            <!-- centre index links: desktop + glass state only -->
+            <nav class="mnav-links" aria-label="<?= e(trans('nav.index', [], $currentLocale)) ?>">
+                <?php foreach ($barLinks as $link): ?>
+                    <a class="mnav-link<?= $isActive($link['url']) ? ' is-active' : '' ?>"
+                       href="<?= e($link['url']) ?>"
+                       <?= external_link_attrs($link['url']) ?>
+                       <?= $isActive($link['url']) ? 'aria-current="page"' : '' ?>><?= e(trans('nav.' . $link['key'], [], $currentLocale)) ?></a>
+                <?php endforeach; ?>
+
+                <?php if ($foldLinks): ?>
+                    <div class="mnav-more" data-more-menu>
+                        <button type="button"
+                                class="mnav-link mnav-more-btn<?= $moreActive ? ' is-active' : '' ?>"
+                                data-more-toggle
+                                aria-expanded="false"
+                                aria-haspopup="true"
+                                aria-controls="mnav-more-menu">
+                            <?= e(trans('nav.more', [], $currentLocale)) ?>
+                            <svg class="icon mnav-more-chevron" viewBox="0 0 24 24" aria-hidden="true">
+                                <polyline points="6 9 12 15 18 9"></polyline>
+                            </svg>
+                        </button>
+
+                        <div class="mnav-more-menu" id="mnav-more-menu" role="menu"
+                             aria-label="<?= e(trans('nav.more', [], $currentLocale)) ?>">
+                            <div class="mnav-more-title"><?= e(trans('nav.more_explore', [], $currentLocale)) ?></div>
+                            <?php foreach ($exploreLinks as $link): ?>
+                                <a class="mnav-more-link<?= $isActive($link['url']) ? ' is-active' : '' ?>"
+                                   href="<?= e($link['url']) ?>"
+                                   role="menuitem"
+                                   <?= external_link_attrs($link['url']) ?>><?= e(trans('nav.' . $link['key'], [], $currentLocale)) ?></a>
+                            <?php endforeach; ?>
+
+                            <?php if ($toolLinks): ?>
+                                <div class="mnav-more-title"><?= e(trans('nav.more_tools', [], $currentLocale)) ?></div>
+                                <?php foreach ($toolLinks as $link): ?>
+                                    <a class="mnav-more-link<?= $isActive($link['url']) ? ' is-active' : '' ?>"
+                                       href="<?= e($link['url']) ?>"
+                                       role="menuitem"
+                                       <?= external_link_attrs($link['url']) ?>><?= e(trans('nav.' . $link['key'], [], $currentLocale)) ?></a>
+                                <?php endforeach; ?>
+                            <?php endif; ?>
+                        </div>
+                    </div>
+                <?php endif; ?>
+            </nav>
+
+            <!-- expanding search: a field that grows out of the search icon -->
             <div class="mnav-search" data-search id="mnav-search">
                 <div class="mnav-field">
                     <svg class="icon mnav-field-icon" width="18" height="18" viewBox="0 0 24 24" aria-hidden="true">
@@ -197,9 +226,6 @@ src="<?= e(asset('images/logo.png')) ?>"
                            data-search-input
                            data-locale="<?= e($currentLocale) ?>"
                            placeholder="<?= e(trans('nav.search_placeholder', [], $currentLocale)) ?>"
-                           <?php /* the moods the placeholder types out when the field is idle:
-                                  trans() reads strings only, so the list is built key by key
-                                  (the same shape as the chat's waiting lines) */ ?>
                            <?php $searchMoods = []; ?>
                            <?php for ($i = 1; $i <= 4; $i++): ?>
                                <?php $moodLine = trans('nav.search_mood_' . $i, [], $currentLocale); ?>
@@ -222,31 +248,6 @@ src="<?= e(asset('images/logo.png')) ?>"
             </div>
 
             <div class="mnav-actions">
-                <button type="button"
-                        class="mnav-btn-menu"
-                        data-index-toggle
-                        aria-controls="mnav-dropdown-bar"
-                        aria-expanded="false"
-                        aria-label="<?= e(trans('nav.open_index', [], $currentLocale)) ?>">
-                    <span class="mnav-btn-menu-bars" aria-hidden="true"><i></i><i></i><i></i></span>
-                    <span class="mnav-btn-menu-text"><?= e(trans('nav.index', [], $currentLocale)) ?></span>
-                    <svg class="icon icon-sm mnav-btn-menu-chevron" viewBox="0 0 24 24" aria-hidden="true">
-                        <polyline points="6 9 12 15 18 9"></polyline>
-                    </svg>
-                </button>
-
-                <button type="button"
-                        class="mnav-icon-btn mnav-search-open"
-                        data-search-toggle
-                        aria-controls="mnav-search"
-                        aria-expanded="false"
-                        aria-label="<?= e(trans('nav.search', [], $currentLocale)) ?>">
-                    <svg class="icon" viewBox="0 0 24 24" aria-hidden="true">
-                        <circle cx="11" cy="11" r="8"></circle>
-                        <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
-                    </svg>
-                </button>
-
                 <button type="button"
                         class="mnav-icon-btn mnav-theme"
                         data-theme-toggle
@@ -271,26 +272,29 @@ src="<?= e(asset('images/logo.png')) ?>"
                     </span>
                 </button>
 
-                <?php if ($plannerOn): ?>
-                    <a href="<?= e(route('planner.index')) ?>"
-                       class="mnav-icon-btn mnav-plan"
-                       title="<?= e(trans('nav.planner', [], $currentLocale)) ?>"
-                       aria-label="<?= e(trans('nav.planner', [], $currentLocale)) ?>">
-                        <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
-                             stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-                            <rect x="3" y="4" width="18" height="16" rx="2"></rect>
-                            <path d="M3 10h18M10 4v16"></path>
-                        </svg>
-                    </a>
-                <?php endif; ?>
+                <span class="mnav-sep" aria-hidden="true"></span>
+
+                <button type="button"
+                        class="mnav-icon-btn mnav-search-open"
+                        data-search-toggle
+                        aria-controls="mnav-search"
+                        aria-expanded="false"
+                        aria-label="<?= e(trans('nav.search', [], $currentLocale)) ?>">
+                    <svg class="icon" viewBox="0 0 24 24" aria-hidden="true">
+                        <circle cx="11" cy="11" r="8"></circle>
+                        <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+                    </svg>
+                </button>
+
+                <span class="mnav-sep" aria-hidden="true"></span>
 
                 <?php if ($boxOn): ?>
                     <a href="<?= e(route('box.index')) ?>"
                        class="mnav-icon-btn mnav-box<?= $boxCount > 0 ? ' has-items' : '' ?>"
-                       title="<?= e(trans("nav.box", [], $currentLocale)) ?>"
-                       aria-label="<?= e(trans("nav.box", [], $currentLocale)) ?>">
-                        <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor"
-                             stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                       title="<?= e(trans('nav.box', [], $currentLocale)) ?>"
+                       aria-label="<?= e(trans('nav.box', [], $currentLocale)) ?>">
+                        <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                             stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
                             <path d="M4 8h16l-1.2 11.2a2 2 0 0 1-2 1.8H7.2a2 2 0 0 1-2-1.8Z"></path>
                             <path d="M9 8V6a3 3 0 0 1 6 0v2"></path>
                         </svg>
@@ -321,6 +325,8 @@ src="<?= e(asset('images/logo.png')) ?>"
                     </svg>
                 </a>
 
+                <span class="mnav-sep" aria-hidden="true"></span>
+
                 <div class="mnav-lang" data-lang-menu>
                     <button type="button"
                             class="mnav-lang-btn"
@@ -339,7 +345,6 @@ src="<?= e(asset('images/logo.png')) ?>"
                         <div class="mnav-lang-menu-title"><?= e(trans('nav.language', [], $currentLocale)) ?></div>
                         <?php foreach ($languageLinks as $code => $link): ?>
                             <?php if ($code === $currentLocale): ?>
-                                <?php /* Active locale renders as a non-clickable item. */ ?>
                                 <span class="mnav-lang-option is-current"
                                       role="menuitem"
                                       aria-current="true"
@@ -374,61 +379,6 @@ src="<?= e(asset('images/logo.png')) ?>"
                 </button>
             </div>
         </div>
-
-                <!-- Horizontal Full-Width Index Bar (Text Only, Ultra Fast) -->
-        <nav class="mnav-dropdown-bar" id="mnav-dropdown-bar" aria-label="<?= e(trans('nav.index', [], $currentLocale)) ?>">
-            <div class="container mnav-dropdown-inner">
-                <?php foreach ($barLinks as $link): ?>
-                    <a class="mnav-drop-link<?= $isActive($link['url']) ? ' is-active' : '' ?>"
-                       href="<?= e($link['url']) ?>"
-                       <?= external_link_attrs($link['url']) ?>
-                       <?= $isActive($link['url']) ? 'aria-current="page"' : '' ?>><?= e(trans('nav.' . $link['key'], [], $currentLocale)) ?></a>
-                <?php endforeach; ?>
-
-                <?php if ($exploreLinks || $toolLinks): ?>
-                    <div class="mnav-drop-more" data-more-menu>
-                        <button type="button"
-                                class="mnav-drop-link mnav-drop-more-btn<?= $moreActive ? ' is-active' : '' ?>"
-                                data-more-toggle
-                                aria-expanded="false"
-                                aria-haspopup="true"
-                                aria-controls="mnav-drop-more-menu">
-                            <?= e(trans('nav.more', [], $currentLocale)) ?>
-                            <svg class="icon mnav-drop-more-chevron" viewBox="0 0 24 24" aria-hidden="true">
-                                <polyline points="6 9 12 15 18 9"></polyline>
-                            </svg>
-                        </button>
-
-                        <div class="mnav-drop-more-menu" id="mnav-drop-more-menu" role="menu"
-                             aria-label="<?= e(trans('nav.more', [], $currentLocale)) ?>">
-                            <?php if ($exploreLinks): ?>
-                                <div class="mnav-drop-more-title"><?= e(trans('nav.more_explore', [], $currentLocale)) ?></div>
-                                <?php foreach ($exploreLinks as $link): ?>
-                                    <a class="mnav-drop-more-link<?= $isActive($link['url']) ? ' is-active' : '' ?>"
-                                       href="<?= e($link['url']) ?>"
-                                       role="menuitem"
-                                       <?= external_link_attrs($link['url']) ?>
-                                       <?= $isActive($link['url']) ? 'aria-current="page"' : '' ?>><?= e(trans('nav.' . $link['key'], [], $currentLocale)) ?></a>
-                                <?php endforeach; ?>
-                            <?php endif; ?>
-
-                            <?php if ($toolLinks): ?>
-                                <div class="mnav-drop-more-title"><?= e(trans('nav.more_tools', [], $currentLocale)) ?></div>
-                                <?php foreach ($toolLinks as $link): ?>
-                                    <a class="mnav-drop-more-link<?= $isActive($link['url']) ? ' is-active' : '' ?>"
-                                       href="<?= e($link['url']) ?>"
-                                       role="menuitem"
-                                       <?= external_link_attrs($link['url']) ?>
-                                       <?= $isActive($link['url']) ? 'aria-current="page"' : '' ?>><?= e(trans('nav.' . $link['key'], [], $currentLocale)) ?></a>
-                                <?php endforeach; ?>
-                            <?php endif; ?>
-                        </div>
-                    </div>
-                <?php endif; ?>
-            </div>
-        </nav>
-
-        <span class="mnav-progress" aria-hidden="true"><i data-nav-progress></i></span>
     </div>
 
     <!-- Mobile bloom sheet -->
@@ -441,12 +391,6 @@ src="<?= e(asset('images/logo.png')) ?>"
              aria-modal="true"
              aria-hidden="true"
              aria-label="<?= e(trans('nav.menu', [], $currentLocale)) ?>">
-        <span class="mnav-sheet-bloom" aria-hidden="true">
-            <span class="mnav-petal"></span>
-            <span class="mnav-petal"></span>
-            <span class="mnav-petal"></span>
-        </span>
-
         <button type="button" class="mnav-sheet-handle" data-sheet-close aria-label="<?= e(trans('nav.close', [], $currentLocale)) ?>">
             <i aria-hidden="true"></i>
         </button>
@@ -455,7 +399,7 @@ src="<?= e(asset('images/logo.png')) ?>"
             <p class="mnav-sheet-eyebrow"><?= e(trans('nav.index', [], $currentLocale)) ?></p>
 
             <nav class="mnav-sheet-nav" aria-label="<?= e(trans('nav.menu', [], $currentLocale)) ?>">
-                <?php foreach ($indexLinks as $position => $link): ?>
+                <?php foreach ($sheetLinks as $position => $link): ?>
                     <a class="mnav-sheet-link<?= $isActive($link['url']) ? ' is-active' : '' ?>"
                        href="<?= e($link['url']) ?>"
                        <?= external_link_attrs($link['url']) ?>
@@ -469,17 +413,12 @@ src="<?= e(asset('images/logo.png')) ?>"
             <div class="mnav-sheet-utils">
                 <?php foreach ($languageLinks as $code => $link): ?>
                     <?php if ($code === $currentLocale): ?>
-                        <?php /* Active locale renders as a non-clickable item. */ ?>
-                        <span class="mnav-util-link is-current"
-                              aria-current="true"
-                              lang="<?= e($code) ?>">
+                        <span class="mnav-util-link is-current" aria-current="true" lang="<?= e($code) ?>">
                             <span class="mnav-flag" aria-hidden="true"><?= $view->component('flag', ['code' => $code]) ?></span>
                             <?= e(strtoupper($code)) ?>
                         </span>
                     <?php else: ?>
-                        <a class="mnav-util-link"
-                           href="<?= e($link['target']) ?>"
-                           lang="<?= e($code) ?>">
+                        <a class="mnav-util-link" href="<?= e($link['target']) ?>" lang="<?= e($code) ?>">
                             <span class="mnav-flag" aria-hidden="true"><?= $view->component('flag', ['code' => $code]) ?></span>
                             <?= e(strtoupper($code)) ?>
                         </a>
@@ -493,17 +432,6 @@ src="<?= e(asset('images/logo.png')) ?>"
                             <path d="M12 20.6 4.2 12.8a5.1 5.1 0 0 1 0-7.2 5.1 5.1 0 0 1 7.2 0l.6.6.6-.6a5.1 5.1 0 0 1 7.2 0 5.1 5.1 0 0 1 0 7.2Z"></path>
                         </svg>
                         <?= e(trans('nav.favorites', [], $currentLocale)) ?>
-                    </a>
-                <?php endif; ?>
-
-                <?php if ($plannerOn): ?>
-                    <a class="mnav-util-link" href="<?= e(route('planner.index')) ?>">
-                        <svg class="icon icon-sm" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
-                             stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-                            <rect x="3" y="4" width="18" height="16" rx="2"></rect>
-                            <path d="M3 10h18M10 4v16"></path>
-                        </svg>
-                        <?= e(trans('nav.planner', [], $currentLocale)) ?>
                     </a>
                 <?php endif; ?>
 

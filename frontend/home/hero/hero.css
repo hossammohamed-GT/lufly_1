@@ -1,0 +1,896 @@
+/* ==========================================================================
+   LUFLY - HERO "Crafting Water"
+   --------------------------------------------------------------------------
+   A full-bleed cinematic first screen. One photograph (per category) runs
+   under the transparent navbar; the copy, the scroll cue, the category
+   selector and the trust strip float above it.
+
+   House rules:
+   * the hero pulls itself up under the sticky navbar, so the photo really
+     runs underneath it while the navbar is transparent;
+   * only transform / opacity are animated (the cross-dissolve, the Ken
+     Burns drift, the entrance cascade) - all compositor work;
+   * prefers-reduced-motion: no autoplay zoom, no entrance cascade, a short
+     plain fade only;
+   * logical properties throughout, so a future RTL locale mirrors itself.
+   ========================================================================== */
+
+.hero {
+  /* #1BA6A6 range, lifted a touch for contrast on photography */
+  --hero-accent: #1ba6a6;
+  --hero-accent-bright: #2fc4c4;
+  --hero-ink: #f2f7f7;
+  --hero-ink-soft: rgba(233, 244, 244, 0.82);
+  --hero-deep: #040c0e;
+  --hero-glass: rgba(7, 16, 18, 0.52);
+  --hero-hair: rgba(255, 255, 255, 0.1);
+  --hero-fade: 1050ms;
+  --hero-ease: cubic-bezier(0.42, 0, 0.25, 1);
+  --hero-drift: 9s;
+
+  position: relative;
+  z-index: 0;
+  isolation: isolate;
+  overflow: hidden;
+  /* three rows: the copy takes whatever is left above the cue/tabs row and
+     the trust strip - the layout can never push the copy under the tabs */
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  grid-template-rows: minmax(0, 1fr) auto auto;
+  background: var(--hero-deep);
+  color: var(--hero-ink);
+
+  /* The navbar is sticky and in flow: pull the hero up under it so the
+     photo shows through, then pad the copy back down. The announcement bar
+     keeps its own height above, so the first screen is exactly 100svh. */
+  margin-block-start: calc(-1 * var(--mnav-row1, 64px));
+  block-size: calc(100vh - var(--luann-h, 0px));
+  block-size: calc(100svh - var(--luann-h, 0px));
+  padding-block-start: var(--mnav-row1, 64px);
+}
+
+/* the photo spans all rows from behind */
+.hero-media {
+  grid-area: 1 / 1 / -1 / -1;
+}
+
+/* ==========================================================================
+   1. Scene stack - the cross-dissolve
+   ========================================================================== */
+
+.hero-media {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  overflow: hidden;
+}
+
+.hero-frame {
+  position: absolute;
+  inset: 0;
+  block-size: 100%;
+  inline-size: 100%;
+  object-fit: cover;
+  /* anchored on the product: right side, slightly above centre */
+  object-position: 64% 42%;
+  opacity: 0;
+  transform: scale(1.001);
+  transition:
+    opacity var(--hero-fade) var(--hero-ease),
+    transform var(--hero-drift) linear;
+  backface-visibility: hidden;
+}
+
+.hero-frame.is-active {
+  opacity: 1;
+  /* the slow Ken Burns drift on the incoming image */
+  transform: scale(1.06);
+}
+
+/* Readability gradients: navbar strip, copy side, tabs + trust strip */
+.hero-shade {
+  position: absolute;
+  inset: 0;
+  background:
+    linear-gradient(to top,
+      rgba(3, 10, 12, 0.82) 0%,
+      rgba(3, 10, 12, 0.38) 16%,
+      rgba(3, 10, 12, 0) 34%),
+    linear-gradient(to right,
+      rgba(4, 11, 13, 0.8) 0%,
+      rgba(4, 11, 13, 0.46) 24%,
+      rgba(4, 11, 13, 0.12) 44%,
+      rgba(4, 11, 13, 0) 60%),
+    linear-gradient(to bottom,
+      rgba(4, 11, 13, 0.62) 0%,
+      rgba(4, 11, 13, 0.2) 15%,
+      rgba(4, 11, 13, 0) 30%);
+}
+
+/* The copy column flips to the other side in RTL - so does its gradient. */
+[dir='rtl'] .hero-shade {
+  background:
+    linear-gradient(to top,
+      rgba(3, 10, 12, 0.82) 0%,
+      rgba(3, 10, 12, 0.38) 16%,
+      rgba(3, 10, 12, 0) 34%),
+    linear-gradient(to left,
+      rgba(4, 11, 13, 0.8) 0%,
+      rgba(4, 11, 13, 0.46) 24%,
+      rgba(4, 11, 13, 0.12) 44%,
+      rgba(4, 11, 13, 0) 60%),
+    linear-gradient(to bottom,
+      rgba(4, 11, 13, 0.62) 0%,
+      rgba(4, 11, 13, 0.2) 15%,
+      rgba(4, 11, 13, 0) 30%);
+}
+
+/* ==========================================================================
+   2. Copy column
+   ========================================================================== */
+
+.hero-body {
+  position: relative;
+  z-index: 2;
+  grid-row: 1;
+  grid-column: 1 / -1;
+  display: flex;
+  align-items: center;
+  inline-size: 100%;
+  padding-block: clamp(10px, 2.4vh, 28px) clamp(18px, 3.4vh, 40px);
+  padding-inline: max(var(--container-gutter, 24px), calc((100% - var(--container-max, 1450px)) / 2 + var(--container-gutter)));
+  pointer-events: none;
+}
+
+.hero-copy {
+  max-inline-size: 620px;
+  pointer-events: auto;
+}
+
+/* kicker ------------------------------------------------------------------ */
+
+.hero-kicker {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  margin: 0 0 22px;
+}
+
+.hero-kicker-line {
+  inline-size: 34px;
+  block-size: 1px;
+  background: linear-gradient(90deg, var(--hero-accent-bright), rgba(47, 196, 196, 0.25));
+  flex: none;
+}
+
+[dir='rtl'] .hero-kicker-line {
+  background: linear-gradient(270deg, var(--hero-accent-bright), rgba(47, 196, 196, 0.25));
+}
+
+.hero-kicker-text {
+  font-family: var(--font-body);
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.42em;
+  text-transform: uppercase;
+  color: rgba(223, 240, 240, 0.92);
+}
+
+/* headline ----------------------------------------------------------------- */
+
+.hero-title {
+  margin: 0 0 22px;
+  font-family: 'Playfair Display', Georgia, 'Times New Roman', serif;
+  font-weight: 600;
+  font-size: clamp(42px, 6.4vw, 88px);
+  line-height: 1.04;
+  letter-spacing: 0.005em;
+  color: var(--hero-ink);
+  text-wrap: balance;
+}
+
+.hero-title-row {
+  display: block;
+  overflow: hidden;
+  padding-block-end: 0.06em; /* keep descenders inside the reveal box */
+  margin-block-end: -0.06em;
+}
+
+.hero-title-word {
+  display: inline-block;
+}
+
+.hero-title-row--accent .hero-title-word {
+  color: var(--hero-accent-bright);
+}
+
+/* paragraph ---------------------------------------------------------------- */
+
+.hero-desc {
+  margin: 0 0 36px;
+  max-inline-size: 52ch;
+  font-family: var(--font-body);
+  font-size: clamp(15px, 1.25vw, 18px);
+  line-height: 1.65;
+  color: var(--hero-ink-soft);
+}
+
+/* CTAs ---------------------------------------------------------------------- */
+
+.hero-ctas {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 22px;
+}
+
+.hero-cta {
+  display: inline-flex;
+  align-items: center;
+  gap: 12px;
+  text-decoration: none;
+  font-family: var(--font-body);
+}
+
+.hero-cta--primary {
+  padding: 17px 32px;
+  border-radius: 999px;
+  background: linear-gradient(135deg, var(--hero-accent) 0%, #158e8e 100%);
+  color: #032222;
+  font-size: 12.5px;
+  font-weight: 800;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  box-shadow:
+    0 10px 32px rgba(27, 166, 166, 0.32),
+    inset 0 1px 0 rgba(255, 255, 255, 0.28);
+  transition: transform 260ms var(--hero-ease), box-shadow 260ms var(--hero-ease),
+    background-color 260ms linear;
+}
+
+.hero-cta--primary svg {
+  inline-size: 16px;
+  block-size: 16px;
+  transition: transform 260ms var(--hero-ease);
+}
+
+.hero-cta--primary:hover,
+.hero-cta--primary:focus-visible {
+  transform: translateY(-2px);
+  background: linear-gradient(135deg, var(--hero-accent-bright) 0%, #17a2a2 100%);
+  box-shadow: 0 16px 40px rgba(27, 166, 166, 0.42), inset 0 1px 0 rgba(255, 255, 255, 0.32);
+}
+
+.hero-cta--primary:hover svg,
+.hero-cta--primary:focus-visible svg {
+  transform: translateX(4px);
+}
+
+[dir='rtl'] .hero-cta--primary:hover svg,
+[dir='rtl'] .hero-cta--primary:focus-visible svg {
+  transform: translateX(-4px);
+}
+
+.hero-cta--primary:active {
+  transform: translateY(0);
+}
+
+.hero-cta--story {
+  color: var(--hero-ink);
+  font-size: 11.5px;
+  font-weight: 700;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  gap: 14px;
+}
+
+.hero-cta-play {
+  display: grid;
+  place-items: center;
+  inline-size: 56px;
+  block-size: 56px;
+  border-radius: 50%;
+  border: 1px solid rgba(242, 247, 247, 0.45);
+  background: rgba(7, 16, 18, 0.18);
+  backdrop-filter: blur(4px);
+  -webkit-backdrop-filter: blur(4px);
+  transition: transform 300ms var(--hero-ease), border-color 300ms linear,
+    box-shadow 300ms linear;
+}
+
+.hero-cta-play svg {
+  inline-size: 17px;
+  block-size: 17px;
+  margin-inline-start: 2px;
+  fill: var(--hero-ink);
+  transition: fill 300ms linear, transform 300ms var(--hero-ease);
+}
+
+.hero-cta--story:hover .hero-cta-play,
+.hero-cta--story:focus-visible .hero-cta-play {
+  transform: scale(1.07);
+  border-color: var(--hero-accent-bright);
+  box-shadow: 0 0 0 5px rgba(27, 166, 166, 0.14), 0 8px 26px rgba(3, 10, 12, 0.4);
+}
+
+.hero-cta--story:hover .hero-cta-play svg {
+  fill: var(--hero-accent-bright);
+}
+
+/* ==========================================================================
+   3. Scroll cue
+   ========================================================================== */
+
+.hero-scroll {
+  position: relative;
+  z-index: 2;
+  grid-row: 2;
+  grid-column: 1;
+  justify-self: start;
+  align-self: end;
+  margin-block-end: 30px;
+  margin-inline-start: max(var(--container-gutter, 24px), calc((100% - var(--container-max, 1450px)) / 2 + var(--container-gutter)));
+  display: flex;
+  align-items: center;
+  gap: 13px;
+  text-decoration: none;
+  color: rgba(233, 244, 244, 0.72);
+  transition: color 240ms linear;
+}
+
+.hero-scroll:hover,
+.hero-scroll:focus-visible {
+  color: var(--hero-ink);
+}
+
+.hero-scroll-mouse {
+  display: block;
+  inline-size: 21px;
+  block-size: 33px;
+  border: 1.5px solid currentColor;
+  border-radius: 11px;
+  opacity: 0.9;
+}
+
+.hero-scroll-wheel {
+  display: block;
+  inline-size: 3px;
+  block-size: 7px;
+  margin: 5px auto 0;
+  border-radius: 2px;
+  background: var(--hero-accent-bright);
+  animation: heroWheel 1900ms cubic-bezier(0.45, 0, 0.4, 1) infinite;
+}
+
+@keyframes heroWheel {
+  0% { transform: translateY(0); opacity: 1; }
+  70% { transform: translateY(11px); opacity: 0; }
+  71% { transform: translateY(-4px); opacity: 0; }
+  100% { transform: translateY(0); opacity: 1; }
+}
+
+.hero-scroll-text {
+  font-size: 9.5px;
+  font-weight: 700;
+  letter-spacing: 0.34em;
+  text-transform: uppercase;
+}
+
+/* ==========================================================================
+   4. Category selector
+   ========================================================================== */
+
+.hero-tabs {
+  position: relative;
+  z-index: 3;
+  grid-row: 2;
+  grid-column: 2;
+  justify-self: end;
+  align-self: end;
+  margin-block-end: 26px;
+  margin-inline-end: max(var(--container-gutter, 24px), calc((100% - var(--container-max, 1450px)) / 2 + var(--container-gutter)));
+  max-inline-size: 100%;
+  display: flex;
+  gap: 12px;
+  padding: 14px;
+  border-radius: 22px;
+  border: 1px solid var(--hero-hair);
+  background: var(--hero-glass);
+  backdrop-filter: blur(16px) saturate(1.35);
+  -webkit-backdrop-filter: blur(16px) saturate(1.35);
+  box-shadow: 0 24px 60px rgba(2, 8, 9, 0.45);
+}
+
+.hero-tab {
+  position: relative;
+  border-radius: 15px;
+  transition: transform 300ms var(--hero-ease);
+}
+
+.hero-tab-switch {
+  display: grid;
+  gap: 10px;
+  padding: 0;
+  border: 0;
+  background: none;
+  color: inherit;
+  font: inherit;
+  cursor: pointer;
+  text-align: start;
+  inline-size: 100%;
+}
+
+.hero-tab-thumb {
+  position: relative;
+  display: block;
+  inline-size: 132px;
+  aspect-ratio: 132 / 90;
+  border-radius: 11px;
+  overflow: hidden;
+  background: #0a1416;
+  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.07);
+  transition: box-shadow 300ms linear;
+}
+
+.hero-tab-thumb img {
+  inline-size: 100%;
+  block-size: 100%;
+  object-fit: cover;
+  display: block;
+  transform: scale(1.001);
+  transition: transform 4200ms var(--hero-ease);
+}
+
+.hero-tab:hover .hero-tab-thumb img {
+  transform: scale(1.08);
+}
+
+.hero-tab.is-active .hero-tab-thumb img {
+  transform: scale(1.04);
+}
+
+/* teal tint over the active thumbnail */
+.hero-tab-thumb::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  background:
+    linear-gradient(to top, rgba(4, 11, 13, 0.55), rgba(4, 11, 13, 0) 46%),
+    rgba(27, 166, 166, 0.14);
+  opacity: 0;
+  transition: opacity 300ms linear;
+}
+
+.hero-tab.is-active .hero-tab-thumb::after {
+  opacity: 1;
+}
+
+/* autoplay progress: a hairline that fills while the scene is on stage */
+.hero-tab-tick {
+  position: absolute;
+  inset-inline: 10px;
+  inset-block-end: 7px;
+  block-size: 2px;
+  border-radius: 2px;
+  background: rgba(255, 255, 255, 0.16);
+  overflow: hidden;
+  opacity: 0;
+  transition: opacity 240ms linear;
+}
+
+.hero-tab-tick::after {
+  content: '';
+  position: absolute;
+  inset-block: 0;
+  inset-inline-start: 0;
+  inline-size: 100%;
+  border-radius: inherit;
+  background: var(--hero-accent-bright);
+  transform-origin: inline-start;
+  transform: scaleX(0);
+}
+
+.hero-tab.is-active .hero-tab-tick {
+  opacity: 1;
+}
+
+.hero-tab.is-active .hero-tab-tick::after {
+  animation: heroTick var(--hero-dwell, 3050ms) linear forwards;
+}
+
+/* the hairline holds its breath while the visitor aims at a tab */
+.hero-tabs:hover .hero-tab-tick::after {
+  animation-play-state: paused;
+}
+
+[dir='rtl'] .hero-tab-tick::after {
+  transform-origin: inline-end;
+}
+
+@keyframes heroTick {
+  from { transform: scaleX(0); }
+  to { transform: scaleX(1); }
+}
+
+/* the label row: the label itself, with room reserved for the arrow link */
+.hero-tab-label {
+  display: block;
+  min-inline-size: 0;
+  padding-inline-end: 40px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: rgba(233, 244, 244, 0.86);
+  transition: color 240ms linear;
+}
+
+.hero-tab.is-active .hero-tab-label {
+  color: var(--hero-ink);
+}
+
+.hero-tab-arrow {
+  position: absolute;
+  inset-block-end: 0;
+  inset-inline-end: 0;
+  display: grid;
+  place-items: center;
+  inline-size: 30px;
+  block-size: 30px;
+  flex: none;
+  border-radius: 50%;
+  border: 1px solid rgba(255, 255, 255, 0.16);
+  background: rgba(255, 255, 255, 0.05);
+  color: rgba(233, 244, 244, 0.82);
+  text-decoration: none;
+  transition: transform 280ms var(--hero-ease), border-color 240ms linear,
+    background-color 240ms linear, color 240ms linear;
+}
+
+.hero-tab-arrow svg {
+  inline-size: 13px;
+  block-size: 13px;
+}
+
+[dir='rtl'] .hero-tab-arrow svg {
+  transform: scaleX(-1);
+}
+
+.hero-tab-arrow:hover,
+.hero-tab-arrow:focus-visible {
+  transform: translateX(2px) scale(1.06);
+  border-color: var(--hero-accent-bright);
+  background: rgba(27, 166, 166, 0.18);
+  color: var(--hero-accent-bright);
+}
+
+/* active card: teal ring + glow + tint */
+.hero-tab.is-active .hero-tab-switch {
+  cursor: default;
+}
+
+.hero-tab.is-active::before {
+  content: '';
+  position: absolute;
+  inset: -7px;
+  border-radius: 19px;
+  border: 1.5px solid var(--hero-accent);
+  background: rgba(27, 166, 166, 0.1);
+  box-shadow:
+    0 0 22px rgba(27, 166, 166, 0.3),
+    inset 0 0 18px rgba(27, 166, 166, 0.12);
+  pointer-events: none;
+  animation: heroTabGlow 620ms var(--hero-ease);
+}
+
+@keyframes heroTabGlow {
+  from { opacity: 0; transform: scale(0.97); }
+  to { opacity: 1; transform: scale(1); }
+}
+
+/* ==========================================================================
+   5. Trust strip
+   ========================================================================== */
+
+.hero-trust {
+  position: relative;
+  z-index: 3;
+  grid-row: 3;
+  grid-column: 1 / -1;
+  display: grid;
+  grid-auto-flow: column;
+  grid-auto-columns: 1fr;
+  padding: 18px max(var(--container-gutter, 24px), calc((100% - var(--container-max, 1450px)) / 2 + var(--container-gutter)));
+  border-block-start: 1px solid rgba(255, 255, 255, 0.09);
+  background: rgba(3, 10, 12, 0.58);
+  backdrop-filter: blur(12px) saturate(1.2);
+  -webkit-backdrop-filter: blur(12px) saturate(1.2);
+}
+
+.hero-trust-item {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 14px;
+  padding-inline: 26px;
+  min-inline-size: 0;
+}
+
+.hero-trust-item + .hero-trust-item {
+  border-inline-start: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.hero-trust-icon {
+  display: grid;
+  place-items: center;
+  inline-size: 34px;
+  block-size: 34px;
+  flex: none;
+  border-radius: 50%;
+  border: 1px solid rgba(47, 196, 196, 0.35);
+  color: var(--hero-accent-bright);
+  background: rgba(27, 166, 166, 0.07);
+}
+
+.hero-trust-icon svg {
+  inline-size: 16px;
+  block-size: 16px;
+}
+
+.hero-trust-text {
+  display: grid;
+  gap: 3px;
+  min-inline-size: 0;
+}
+
+.hero-trust-text strong {
+  font-size: 11.5px;
+  font-weight: 800;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--hero-ink);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.hero-trust-text small {
+  font-size: 9.5px;
+  font-weight: 600;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: rgba(233, 244, 244, 0.58);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* ==========================================================================
+   6. Entrance cascade (first paint only)
+   ========================================================================== */
+
+.hero-kicker,
+.hero-title-row .hero-title-word,
+.hero-desc,
+.hero-ctas,
+.hero-scroll,
+.hero-tabs,
+.hero-trust {
+  animation: heroRise 760ms var(--hero-ease) both;
+}
+
+.hero-title-row .hero-title-word { animation-name: heroWord; }
+.hero-kicker { animation-delay: 60ms; }
+.hero-title-row:nth-child(1) .hero-title-word { animation-delay: 130ms; }
+.hero-title-row:nth-child(2) .hero-title-word { animation-delay: 215ms; }
+.hero-title-row:nth-child(3) .hero-title-word { animation-delay: 300ms; }
+.hero-title-row:nth-child(4) .hero-title-word { animation-delay: 385ms; }
+.hero-desc { animation-delay: 460ms; }
+.hero-ctas { animation-delay: 540ms; }
+.hero-scroll { animation-delay: 700ms; }
+.hero-tabs { animation-delay: 620ms; }
+.hero-trust { animation-name: heroFade; animation-delay: 700ms; }
+
+@keyframes heroRise {
+  from { opacity: 0; transform: translateY(18px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes heroWord {
+  from { opacity: 0; transform: translateY(105%); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes heroFade {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+/* ==========================================================================
+   7. Reduced motion
+   ========================================================================== */
+
+@media (prefers-reduced-motion: reduce) {
+  .hero {
+    --hero-fade: 220ms;
+    --hero-drift: 0s;
+  }
+
+  .hero-frame {
+    transform: none;
+    transition: opacity 220ms linear;
+  }
+
+  .hero-frame.is-active {
+    transform: none;
+  }
+
+  .hero-kicker,
+  .hero-title-row .hero-title-word,
+  .hero-desc,
+  .hero-ctas,
+  .hero-scroll,
+  .hero-tabs,
+  .hero-trust {
+    animation: none;
+  }
+
+  .hero-scroll-wheel {
+    animation: none;
+  }
+
+  .hero-tab.is-active .hero-tab-tick {
+    display: none;
+  }
+
+  .hero-tab-thumb img {
+    transition: none;
+    transform: none;
+  }
+}
+
+/* ==========================================================================
+   8. Landscape laptops / short screens
+   ========================================================================== */
+
+@media (max-height: 800px) {
+  .hero-title { font-size: clamp(38px, 5.6vw, 66px); }
+  .hero-desc { margin-block-end: 28px; }
+  .hero-cta--primary { padding: 15px 28px; }
+  .hero-body { align-items: start; }
+}
+
+@media (max-height: 680px) {
+  .hero-scroll { display: none; }
+  .hero-kicker { margin-block-end: 16px; }
+  .hero-desc { display: none; }
+}
+
+/* ==========================================================================
+   9. Tablets and below
+   ========================================================================== */
+
+@media (max-width: 1180px) {
+  .hero-tabs {
+    gap: 10px;
+    padding: 12px;
+  }
+
+  .hero-tab-thumb { inline-size: 112px; }
+
+  .hero-scroll {
+    display: none;
+  }
+}
+
+@media (max-width: 1024px) {
+  /* the copy anchors to the top of its row, clear of the selector rail */
+  .hero-body { align-items: start; }
+
+  .hero-copy { max-inline-size: 560px; }
+}
+
+/* ==========================================================================
+   10. Phones
+   ========================================================================== */
+
+@media (max-width: 760px) {
+  .hero-copy { max-inline-size: 100%; }
+
+  .hero-title { font-size: clamp(34px, 10.5vw, 48px); }
+  .hero-title-row { padding-block-end: 0.1em; }
+
+  .hero-kicker-text { font-size: 10px; letter-spacing: 0.34em; }
+  .hero-desc { font-size: 14.5px; margin-block-end: 26px; }
+
+  .hero-ctas { gap: 16px; }
+
+  .hero-cta--primary { padding: 15px 26px; font-size: 11.5px; }
+  .hero-cta-play { inline-size: 48px; block-size: 48px; }
+  .hero-cta-story-text { max-inline-size: 10ch; line-height: 1.5; }
+
+  /* the selector becomes a full-width swipeable rail above the trust strip */
+  .hero-tabs {
+    grid-column: 1 / -1;
+    justify-self: stretch;
+    max-inline-size: none;
+    margin-inline: 0;
+    margin-block-end: 0;
+    gap: 9px;
+    padding: 10px 14px;
+    border-radius: 0;
+    border: 0;
+    border-block-start: 1px solid rgba(255, 255, 255, 0.08);
+    overflow-x: auto;
+    scroll-snap-type: x proximity;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: none;
+    justify-content: flex-start;
+    background: rgba(4, 11, 13, 0.66);
+  }
+
+  .hero-tabs::-webkit-scrollbar { display: none; }
+
+  .hero-tab { scroll-snap-align: start; flex: none; }
+  .hero-tab-thumb { inline-size: 96px; }
+  .hero-tab-label { font-size: 10.5px; letter-spacing: 0.08em; }
+  .hero-tab-arrow { inline-size: 26px; block-size: 26px; }
+
+  /* trust strip: 2 x 2 */
+  .hero-trust {
+    grid-auto-flow: row;
+    grid-template-columns: 1fr 1fr;
+    padding: 12px 18px;
+    gap: 10px 0;
+  }
+
+  .hero-trust-item { padding-inline: 14px; gap: 11px; justify-content: flex-start; }
+  .hero-trust-item:nth-child(3) { border-inline-start: 0; }
+  .hero-trust-icon { inline-size: 30px; block-size: 30px; }
+  .hero-trust-icon svg { inline-size: 14px; block-size: 14px; }
+  .hero-trust-text strong { font-size: 10px; letter-spacing: 0.12em; }
+  .hero-trust-text small { font-size: 8.5px; letter-spacing: 0.12em; }
+}
+
+/* very small phones */
+@media (max-width: 400px) {
+  .hero-trust-text small { display: none; }
+}
+
+/* phones in landscape: gain height by trimming the copy zone */
+@media (max-width: 760px) and (max-height: 560px) {
+  .hero-title { font-size: clamp(30px, 7vw, 40px); }
+  .hero-desc { display: none; }
+}
+
+/* ==========================================================================
+   11. No-JS: the stack still shows the first scene, nothing moves
+   ========================================================================== */
+
+.no-js .hero-tab-tick { display: none; }
+
+/* ==========================================================================
+   12. phones: keep the product in the narrow crop
+   ========================================================================== */
+
+@media (max-width: 760px) {
+  .hero-frame { object-position: 72% 38%; }
+}
+
+/* ==========================================================================
+   13. visitors who asked for less transparency get solid surfaces
+   ========================================================================== */
+
+@media (prefers-reduced-transparency: reduce) {
+  .hero-tabs,
+  .hero-trust,
+  .hero-cta-play {
+    backdrop-filter: none;
+    -webkit-backdrop-filter: none;
+    background: rgba(4, 12, 14, 0.94);
+  }
+}

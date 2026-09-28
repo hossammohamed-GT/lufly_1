@@ -23,7 +23,7 @@ $siteName = $meta['site_name'] ?? 'LUFLY Architectural Sanitary Ware';
 $rawImage = (string) ($meta['image'] ?? '');
 $image = $rawImage !== ''
     ? (preg_match('#^https?://#i', $rawImage) ? $rawImage : asset($rawImage))
-    : asset('/images/lifestyle/heroc-1.webp');
+    : asset('/images/hero/hero-bathroom.jpg');
 
 /* Error pages must never enter the index: noindex them even though the
    layout chrome still renders. */

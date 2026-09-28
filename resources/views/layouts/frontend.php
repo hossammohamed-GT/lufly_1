@@ -96,12 +96,14 @@ $clarity = trim((string) ($analytics['clarity'] ?? ''));
 <?php endif; ?>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<?php /* The webfont is a nice-to-have, not a reason to hold the first paint:
-         preload it, then swap it in without blocking rendering. Self-hosting
-         the woff2 would be better still - see docs/Home-Performance-Audit.md. */ ?>
-<link rel="preload" as="style" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap">
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" media="print" onload="this.media='all'">
-<noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap"></noscript>
+<?php /* The webfonts are a nice-to-have, not a reason to hold the first paint:
+         preload them, then swap them in without blocking rendering. Inter is
+         the interface face; Playfair Display is the hero display serif.
+         Self-hosting the woff2 would be better still - see
+         docs/Home-Performance-Audit.md. */ ?>
+<link rel="preload" as="style" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Playfair+Display:wght@500;600;700&display=swap">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Playfair+Display:wght@500;600;700&display=swap" media="print" onload="this.media='all'">
+<noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Playfair+Display:wght@500;600;700&display=swap"></noscript>
 <?php foreach (array_keys($externalOrigins) as $origin): ?>
 <link rel="preconnect" href="<?= e($origin) ?>" crossorigin>
 <?php endforeach; ?>

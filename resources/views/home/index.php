@@ -6,7 +6,7 @@ $component = static fn (string $name, array $data = []): string => $view->render
     $data,
 );
 ?>
-<?= $component('hero-cinema') ?>
+<?= $component('hero') ?>
 <?= $component('trust-bar') ?>
 <?= $component('finishes') ?>
 <?php

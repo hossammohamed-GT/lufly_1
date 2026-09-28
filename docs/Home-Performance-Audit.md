@@ -225,7 +225,7 @@ body.ld-loading { overflow: hidden !important; }
 | 50.1 KB | `components/navbar/navbar.css` | ✅ نعم (لكن ضخم جداً) |
 | 42.9 KB | `design-system/style.css` | ✅ نعم |
 | **32.9 KB** | **`planner/planner.css`** | ❌ **لا** — صفحة المخطط، مش الهوم |
-| 19.7 KB | `home/hero-cinema/hero-cinema.css` | ✅ نعم (فوق الطية) |
+| see file | `home/hero/hero.css` | ✅ (above the fold) |
 | **17.2 KB** | **`assistant/chat.css`** | 🟠 الشات العائم — مش محتاج لحد التفاعل |
 | 12.2 KB | `home/finishes/finishes.css` | ✅ |
 | 11.2 KB | `components/announcement/announcement.css` | 🟠 شريط إعلاني (فارغ حالياً: 0 صفوف) |
@@ -260,7 +260,7 @@ body.ld-loading { overflow: hidden !important; }
 | **28.5 KB** | `assistant/assistant.js` | الشات العائم — لا يعمل إلا بالضغط عليه |
 | 22.5 KB | `components/navbar/navbar.js` | مطلوب |
 | **13.1 KB** | `box/box.js` | صندوق عرض السعر — لا يعمل إلا بالتفاعل |
-| 17.1 KB | `home/hero-cinema/hero-cinema.js` | مطلوب (الهيرو) |
+| see file | `home/hero/hero.js` | مطلوب (الهيرو) |
 | 8.1 KB | `home/finishes/finishes.js` | مطلوب |
 | 7.6 KB | `components/loader/loader.js` | مطلوب (لكن يمكن تقليله لو قلّلنا الأنيميشن) |
 | 5.3 KB | `js/app.js` | مطلوب |

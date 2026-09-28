@@ -5,52 +5,41 @@ blocked, and no system browser can be installed), so the frontend is verified
 with small Node harnesses instead. They are plain ES modules with **no
 dependencies** — run them straight from the repo root.
 
-## `hero_fit_test.mjs` — home hero sizing
+## `hero_engine_test.mjs` — hero crossfade engine
 
 ```bash
-node tools/frontend_audit/hero_fit_test.mjs                  # 9 simulated devices, exits 1 on regression
-node tools/frontend_audit/hero_fit_test.mjs --all            # same, explicit
-node tools/frontend_audit/hero_fit_test.mjs --legacy-viewport # pretend the browser has no svh support
-node tools/frontend_audit/hero_fit_test.mjs --json           # machine-readable rows (used by hero_report)
-node tools/frontend_audit/hero_fit_test.mjs --file path.js   # test another build of the hero script
+node tools/frontend_audit/hero_engine_test.mjs
 ```
 
-It loads `frontend/home/hero-cinema/hero-cinema.js` into a stubbed DOM (a device
-profile, a fake `getBoundingClientRect`, a 100svh-style probe, a timer queue) and
-replays the browser behaviour that used to break the hero:
+Loads the real `frontend/home/hero/hero.js` into a stubbed DOM with a virtual
+clock (25ms slices, microtasks drained between slices, like a real event loop)
+and asserts the invariants the hero design depends on:
 
-- **scroll + `resize`** — the reported bug: the old script re-fitted from a client
-  rect, so every resize while scrolling added the scroll offset to the height
-  ("grew while scrolling 378 → 646").
-- **a burst of twelve resizes** while the viewport height wobbles (mobile URL bar)
-  — the height must settle on one value.
-- **`orientationchange` / hidden window** — no bogus height.
-- **the open screen** — at the top of the page with the browser toolbars retracted
-  the hero must fill the newly visible strip, but while scrolled it must hold the
-  small-viewport height so nothing under the reader shifts.
-- **rotation** — every portrait phone is also measured flipped to landscape, where
-  the viewport is suddenly much shorter (and the landscape-phone CSS block applies):
-  the hero must be re-measured, not carried over, and if the script hands the very
-  short viewports (<200px of space) to the CSS fallback, that fallback has to fit.
-- **the phone copy** — the model reproduces the compact phone type scale and checks
-  the copy still fits inside the full-height hero.
-- **the phone artwork** — the photo fills the hero edge to edge, so the box is tall
-  and the crop is what decides whether it looks cramped. The harness measures how
-  much of the portrait artwork (800x1072 dark / 768x1290 light, built by
-  `tools/media_audit/hero_portrait_crops.py`) a phone box actually shows and fails
-  under 65%.
-- **window round trips** — the simulated window can be resized (`m.resizeTo(w, h)`
-  moves the viewport, the media queries and fires `resize`), and four round trips
-  assert that the *applied* background follows the breakpoint both ways: a phone
-  window must get `-p`, a desktop width must get the landscape master, in any order.
-  That is the "the picture is suddenly zoomed after I go back to the big screen"
-  bug, and it is caught by reading `background-image` off the scenes.
-- the result must fit the first screen, cover what the copy needs, and stay under
-  the portrait artwork cap (`1.35 × width`) that keeps a phone photo from being
-  zoomed into a close-up.
+- **boot** — frame 1 active, tab 1 pressed, others released;
+- **image queue** — frames 2..5 promoted strictly one after another
+  (`[1,2,3,4]`), the eager first frame never re-fetched;
+- **autoplay** — bathroom → kitchen → shower in order, each scene holding its
+  2000ms dwell through the 1050ms cross-dissolve;
+- **click** — switches at once and restarts the dwell from the clicked scene
+  (wrapping back to bathroom);
+- **hover** — autoplay pauses while the visitor aims at the selector, resumes
+  on leave;
+- **reduced motion** — no autoplay at all, clicks still switch.
 
-Exit code 1 means at least one device failed; the printed table lists the hero
-height, the height the copy needs and the ceiling for each device.
+Exit code 1 on the first failed assertion.
+
+## `navbar_engine_test.mjs` — navbar controller
+
+```bash
+node tools/frontend_audit/navbar_engine_test.mjs
+```
+
+Loads the real `frontend/components/navbar/navbar.js` into a stubbed DOM with a
+virtual scroll and asserts: the progressive `--nav-glass` while the hero scrolls
+away (overlay mode) vs. the plain 8px threshold on other pages; the expanding
+search (open, focus, live results from a stubbed API, Escape); the language menu
+and the "More" fold excluding each other; and the bloom sheet (open, scroll lock,
+scrim close).
 
 ## `css_audit.mjs` — cascade / layout sweep
 
@@ -88,7 +77,7 @@ stylesheet is then checked against the intended background:
 
 | band | background |
 | --- | --- |
-| hero-cinema | photograph (`heroc-*`, chosen at runtime) |
+| hero | photograph (`images/hero/hero-<scene>.webp`, responsive srcset) |
 | trust-bar | plain |
 | finishes | plain (ink + glow, no `url()`) |
 | categories | photograph (`categories-backdrop.jpg`), with product-card framed tiles on it |

@@ -1,14 +1,14 @@
 /* ==========================================================================
-   LUFLY - Component: navbar controller
+   LUFLY - Component: navbar controller ("Overlay Glass")
    --------------------------------------------------------------------------
-   One small controller for the machined-glass header:
-     * scroll state + the progress line that reads down the side spine,
-       painted inside requestAnimationFrame
-     * index drawer with hover intent (desktop), click, Escape and focus restore
-     * bloom sheet on phones: scroll lock, focus trap, swipe-down to close
-     * search overlay for small screens
-     * instant product search (debounced, aborts stale requests)
-     * language menu + keyboard shortcuts (/ and Cmd/Ctrl+K)
+     * scroll state - on the home page the glass opacity tracks how far the
+       hero has scrolled away (--nav-glass, painted inside one rAF batch);
+       everywhere else the bar is glass from the start
+     * the expanding search: opens with a width+fade animation, runs the
+       instant product search (debounced, aborts stale requests, caches)
+       and types its placeholder moods while idle
+     * language menu, "More" fold, bloom sheet (scroll lock, focus trap,
+       swipe-down to close), keyboard shortcuts (/ and Cmd/Ctrl+K)
    No dependencies, no layout reads on every frame, listeners are passive.
    ========================================================================== */
 
@@ -23,40 +23,38 @@
 
   var root = document.documentElement;
   var base = root.getAttribute('data-base') || '';
+  var overlay = header.hasAttribute('data-nav-hero');
+  var hero = overlay ? document.querySelector('[data-hero]') : null;
   var mobileQuery = window.matchMedia ? window.matchMedia('(max-width: 1023px)') : null;
-  var hoverQuery = window.matchMedia ? window.matchMedia('(hover: hover) and (pointer: fine)') : null;
-  var OPEN_DELAY = 90;
-  var CLOSE_DELAY = 220;
 
-  /* ---------- 1. scroll state + progress ---------- */
+  /* ---------- 1. scroll state + the progressive glass ---------- */
 
-  var progress = header.querySelector('[data-nav-progress]');
   var frameQueued = false;
+  var heroEdge = 0;              /* scroll position at which the hero is gone */
+
+  function measureHero() {
+    if (!hero) {
+      return;
+    }
+
+    var rect = hero.getBoundingClientRect();
+    var top = Math.max(0, rect.top + (window.pageYOffset || 0));
+    heroEdge = Math.max(1, top + rect.height - 64);
+  }
 
   function paintScroll() {
     frameQueued = false;
 
     var y = window.scrollY || window.pageYOffset || 0;
-    header.classList.toggle('is-scrolled', y > 8);
 
-    // Close index dropdown automatically on scroll
-    if (header.classList.contains('is-index-open')) {
-      closeIndex();
+    if (overlay && hero) {
+      /* how much of the hero is still under the bar (0..1) */
+      var t = Math.min(1, Math.max(0, y / heroEdge));
+      header.style.setProperty('--nav-glass', Math.pow(t, 0.6).toFixed(3));
+      header.classList.toggle('is-scrolled', t >= 0.42);
+    } else {
+      header.classList.toggle('is-scrolled', y > 8);
     }
-    // Also close search and collapse it back on scroll
-    hideResults();
-    var dock = header.querySelector('.mnav-dock');
-    if (dock) {
-      dock.classList.toggle('is-visible', y > 120);
-    }
-
-    if (!progress) {
-      return;
-    }
-
-    var max = root.scrollHeight - window.innerHeight;
-    var ratio = max > 0 ? Math.min(1, Math.max(0, y / max)) : 0;
-    progress.style.transform = 'scaleY(' + ratio.toFixed(4) + ')';
   }
 
   function queueScrollPaint() {
@@ -68,41 +66,28 @@
     window.requestAnimationFrame(paintScroll);
   }
 
+  measureHero();
+  paintScroll();
+
   window.addEventListener('scroll', queueScrollPaint, { passive: true });
   window.addEventListener('resize', queueScrollPaint, { passive: true });
-  paintScroll();
+
+  if (hero && typeof ResizeObserver === 'function') {
+    new ResizeObserver(measureHero).observe(hero);
+  }
 
   /* ---------- 2. panels that can only be open one at a time ---------- */
 
-  var marks = header.querySelectorAll('[data-drawer-toggle]');
-  var mark = marks.length > 0 ? marks[0] : null;
-  var drawer = header.querySelector('[data-drawer]');
   var sheet = header.querySelector('[data-nav-sheet]');
   var sheetTrigger = header.querySelector('[data-nav-open]');
   var searchWrap = header.querySelector('[data-search]');
-  var indexToggle = header.querySelector('[data-index-toggle]');
   var searchToggle = header.querySelector('[data-search-toggle]');
   var searchInput = searchWrap ? searchWrap.querySelector('[data-search-input]') : null;
   var resultsBox = searchWrap ? searchWrap.querySelector('[data-search-results]') : null;
   var langMenu = header.querySelector('[data-lang-menu]');
   var langToggle = header.querySelector('[data-lang-toggle]');
-
-  function setDrawer(open) {
-    header.classList.toggle('is-drawer-open', open);
-
-    marks.forEach(function (btn) {
-      btn.setAttribute('aria-expanded', open ? 'true' : 'false');
-    });
-
-    if (drawer) {
-      drawer.setAttribute('aria-hidden', open ? 'false' : 'true');
-    }
-
-    if (open) {
-      closeSearch();
-      closeLang();
-    }
-  }
+  var moreMenu = header.querySelector('[data-more-menu]');
+  var moreToggle = header.querySelector('[data-more-toggle]');
 
   function setSheet(open) {
     header.classList.toggle('is-sheet-open', open);
@@ -120,6 +105,7 @@
     if (open) {
       closeSearch();
       closeLang();
+      closeMore();
       window.requestAnimationFrame(function () {
         focusFirst(sheet);
       });
@@ -137,6 +123,7 @@
 
     if (open) {
       closeLang();
+      closeMore();
       focusElement(searchInput);
     } else {
       hideResults();
@@ -162,35 +149,6 @@
     setLang(false);
   }
 
-  
-  function setIndex(open) {
-    header.classList.toggle('is-index-open', open);
-    if (indexToggle) {
-      indexToggle.setAttribute('aria-expanded', open ? 'true' : 'false');
-    }
-    if (open) {
-      closeSearch();
-      closeLang();
-    }
-  }
-
-  function closeIndex() {
-    setIndex(false);
-    closeMore();
-  }
-
-  if (indexToggle) {
-    indexToggle.addEventListener('click', function (e) {
-      e.stopPropagation();
-      setIndex(!header.classList.contains('is-index-open'));
-    });
-  }
-
-  /* ---------- 2b. the "More" fold in the index bar ---------- */
-
-  var moreMenu = header.querySelector('[data-more-menu]');
-  var moreToggle = header.querySelector('[data-more-toggle]');
-
   function setMore(open) {
     if (!moreMenu || !moreToggle) {
       return;
@@ -204,155 +162,7 @@
     setMore(false);
   }
 
-  if (moreToggle) {
-    moreToggle.addEventListener('click', function (event) {
-      event.stopPropagation();
-      setMore(!moreMenu.classList.contains('is-open'));
-    });
-  }
-
-  if (moreMenu) {
-    /* Following a link must close the fold, whichever way the loader
-       decides to move to the page. */
-    moreMenu.addEventListener('click', function (event) {
-      if (event.target.closest('a')) {
-        closeMore();
-      }
-    });
-  }
-
-  /* ---------- 3. index drawer (hover intent on desktop) ---------- */
-
-  var openTimer = null;
-  var closeTimer = null;
-
-  function clearTimers() {
-    window.clearTimeout(openTimer);
-    window.clearTimeout(closeTimer);
-  }
-
-  function scheduleDrawerOpen() {
-    clearTimers();
-    openTimer = window.setTimeout(function () {
-      setDrawer(true);
-    }, OPEN_DELAY);
-  }
-
-  function scheduleDrawerClose() {
-    clearTimers();
-    closeTimer = window.setTimeout(function () {
-      if (isPointing(mark) || isPointing(drawer)) {
-        return;
-      }
-
-      if (drawer && drawer.contains(document.activeElement)) {
-        return;
-      }
-
-      setDrawer(false);
-    }, CLOSE_DELAY);
-  }
-
-  function isPointing(element) {
-    return !!element && element.matches(':hover');
-  }
-
-  if (drawer) {
-    var rail = header.querySelector('.mnav-rail');
-    if (rail) {
-      rail.addEventListener('mouseenter', scheduleDrawerOpen);
-      rail.addEventListener('mouseleave', scheduleDrawerClose);
-    }
-    marks.forEach(function (btn) {
-      btn.addEventListener('click', function (event) {
-        event.preventDefault();
-        clearTimers();
-        setDrawer(!header.classList.contains('is-drawer-open'));
-      });
-    });
-
-    if (drawer) {
-      drawer.addEventListener('mouseenter', clearTimers);
-    }
-
-    drawer.addEventListener('keydown', function (event) {
-      if (event.key === 'Escape') {
-        setDrawer(false);
-        focusElement(mark);
-      }
-    });
-  }
-
-  var drawerCloses = header.querySelectorAll('[data-drawer-close]');
-    drawerCloses.forEach(function (btn) { btn.addEventListener('click', function () { setDrawer(false); }); });
-    var drawerClose = null;
-
-  if (drawerClose) {
-    drawerClose.addEventListener('click', function () {
-      setDrawer(false);
-      focusElement(mark);
-    });
-  }
-
-  /* ---------- 4. bloom sheet (phones) ---------- */
-
-  if (sheetTrigger) {
-    sheetTrigger.addEventListener('click', function (event) {
-      event.preventDefault();
-      event.stopPropagation();
-      if (typeof closeIndex === 'function') closeIndex();
-      if (typeof closeSearch === 'function') closeSearch();
-      closeLang();
-      setSheet(!header.classList.contains('is-sheet-open'));
-    });
-  }
-
-  Array.prototype.forEach.call(header.querySelectorAll('[data-sheet-close]'), function (trigger) {
-    trigger.addEventListener('click', function () {
-      setSheet(false);
-    });
-  });
-
-  if (sheet && typeof PointerEvent === 'function') {
-    var dragStart = null;
-    var dragDelta = 0;
-
-    sheet.addEventListener('pointerdown', function (event) {
-      /* only the grab area (handle / petals) starts a pull-down */
-      if (event.clientY - sheet.getBoundingClientRect().top > 110) {
-        return;
-      }
-
-      dragStart = event.clientY;
-      dragDelta = 0;
-    });
-
-    sheet.addEventListener('pointermove', function (event) {
-      if (dragStart === null) {
-        return;
-      }
-
-      dragDelta = Math.max(0, event.clientY - dragStart);
-      sheet.style.transform = 'translate3d(0,' + dragDelta + 'px,0)';
-    });
-
-    ['pointerup', 'pointercancel'].forEach(function (type) {
-      sheet.addEventListener(type, function () {
-        if (dragStart === null) {
-          return;
-        }
-
-        dragStart = null;
-        sheet.style.transform = '';
-
-        if (dragDelta > 90) {
-          setSheet(false);
-        }
-      });
-    });
-  }
-
-  /* ---------- 5. search overlay + instant search ---------- */
+  /* ---------- 3. the expanding search + instant results ---------- */
 
   if (searchToggle) {
     searchToggle.addEventListener('click', function () {
@@ -365,6 +175,7 @@
   if (searchClose) {
     searchClose.addEventListener('click', function () {
       setSearch(false);
+      focusElement(searchToggle);
     });
   }
 
@@ -372,15 +183,6 @@
     if (resultsBox) {
       resultsBox.classList.remove('is-open');
       resultsBox.innerHTML = '';
-    }
-    if (searchWrap) {
-      searchWrap.classList.remove('is-expanded');
-    }
-    if (header) {
-      header.classList.remove('is-search-open');
-    }
-    if (searchInput && document.activeElement === searchInput) {
-      searchInput.blur();
     }
   }
 
@@ -411,7 +213,7 @@
     var href = base + '/' + encodeURIComponent(locale()) + '/products/' + encodeURIComponent(slug);
 
     return '<a class="search-result-card" href="' + href + '">' +
-      '<img class="search-result-thumb" src="' + productImage(product.image || product.main_image_url) + '" alt="" loading="lazy" decoding="async" width="64" height="64">' +
+      '<img class="search-result-thumb" src="' + productImage(product.image || product.main_image_url) + '" alt="" loading="lazy" decoding="async" width="56" height="56">' +
       '<span class="search-result-body">' +
       '<span class="search-result-name">' + name + '</span>' +
       '<span class="search-result-sku">' + (sku ? 'SKU ' + sku : '') + '</span>' +
@@ -452,7 +254,7 @@
     return d[type] || '';
   }
 
-  function showStatus(text, isError) {
+  function showStatus(text) {
     if (!resultsBox) return;
     resultsBox.innerHTML = '<div class="search-status-banner">' +
       '<span class="search-status-icon"><svg class="icon icon-sm" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="8" x2="12" y2="12"></line><line x1="12" y1="16" x2="12.01" y2="16"></line></svg></span>' +
@@ -461,7 +263,6 @@
     resultsBox.classList.add('is-open');
   }
 
-  /* skeleton result rows so the user sees cards are on their way */
   function showSearchBusy(query) {
     if (!resultsBox) return;
     var one = '<div class="livesearch-skel livesearch-skel-row" aria-hidden="true">' +
@@ -523,17 +324,16 @@
 
     searchInput.addEventListener('focus', function () {
       var query = searchInput.value.trim();
-      if (searchWrap) searchWrap.classList.add('is-expanded');
 
       if (query.length === 1) {
-        showStatus(getGuideText('minChars', query), false);
+        showStatus(getGuideText('minChars', query));
       } else if (query.length === 0) {
-        showStatus(getGuideText('hint', query), false);
+        showStatus(getGuideText('hint', query));
       }
     });
 
-    searchInput.addEventListener('blur', function (event) {
-      setTimeout(function () {
+    searchInput.addEventListener('blur', function () {
+      window.setTimeout(function () {
         var active = document.activeElement;
         if (searchWrap && !searchWrap.contains(active)) {
           hideResults();
@@ -546,12 +346,12 @@
       var query = searchInput.value.trim();
 
       if (query.length === 0) {
-        showStatus(getGuideText('hint', query), false);
+        showStatus(getGuideText('hint', query));
         return;
       }
 
       if (query.length === 1) {
-        showStatus(getGuideText('minChars', query), false);
+        showStatus(getGuideText('minChars', query));
         return;
       }
 
@@ -597,22 +397,169 @@
       if (event.key === 'Escape') {
         searchInput.value = '';
         hideResults();
-        searchInput.blur();
+        setSearch(false);
       }
     });
   }
 
-  /* ---------- 6. language menu ---------- */
+  /* ---------- 4. the placeholder that types itself (while open + idle) ---------- */
+
+  (function () {
+    var field = header.querySelector('[data-search-moods]');
+
+    if (!field) return;
+
+    var moods = [];
+
+    try {
+      moods = JSON.parse(field.getAttribute('data-search-moods')) || [];
+    } catch (error) {
+      moods = [];
+    }
+
+    moods = moods.filter(function (mood) {
+      return typeof mood === 'string' && mood.trim() !== '';
+    });
+
+    var calm = window.matchMedia
+      && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+    if (moods.length === 0 || calm) return;
+
+    var index = 0;
+    var pos = 0;
+    var dir = 1;
+    var timer = null;
+
+    function idle() {
+      if (document.hidden) return false;
+      if (!header.classList.contains('is-search-open')) return false;
+      if (field.value !== '') return false;
+      if (document.activeElement === field) return false;
+      return true;
+    }
+
+    function tick() {
+      if (!idle()) {
+        timer = window.setTimeout(tick, 900);
+        return;
+      }
+
+      var mood = moods[index];
+
+      pos += dir;
+      field.setAttribute('placeholder', mood.slice(0, pos));
+
+      var delay = dir > 0 ? 58 : 26;
+
+      if (pos >= mood.length) {
+        dir = -1;
+        delay = 1900;
+      } else if (pos <= 0) {
+        dir = 1;
+        index = (index + 1) % moods.length;
+        delay = 460;
+      }
+
+      timer = window.setTimeout(tick, delay);
+    }
+
+    timer = window.setTimeout(function () {
+      pos = 0;
+      dir = 1;
+      tick();
+    }, 2400);
+  })();
+
+  /* ---------- 5. language menu + More fold ---------- */
 
   if (langToggle) {
     langToggle.addEventListener('click', function (event) {
       event.preventDefault();
       event.stopPropagation();
       var currentlyOpen = langMenu && langMenu.classList.contains('is-open');
-      if (typeof closeIndex === 'function') closeIndex();
-      if (typeof closeSearch === 'function') closeSearch();
-      if (header.classList.contains('is-sheet-open')) setSheet(false);
+      closeSearch();
+      closeMore();
       setLang(!currentlyOpen);
+    });
+  }
+
+  if (moreToggle) {
+    moreToggle.addEventListener('click', function (event) {
+      event.stopPropagation();
+      closeSearch();
+      closeLang();
+      setMore(!moreMenu.classList.contains('is-open'));
+    });
+  }
+
+  if (moreMenu) {
+    /* Following a link must close the fold, whichever way the loader
+       decides to move to the page. */
+    moreMenu.addEventListener('click', function (event) {
+      if (event.target.closest('a')) {
+        closeMore();
+      }
+    });
+  }
+
+  /* ---------- 6. bloom sheet (phones) ---------- */
+
+  if (sheetTrigger) {
+    sheetTrigger.addEventListener('click', function (event) {
+      event.preventDefault();
+      event.stopPropagation();
+      closeSearch();
+      closeLang();
+      closeMore();
+      setSheet(!header.classList.contains('is-sheet-open'));
+    });
+  }
+
+  Array.prototype.forEach.call(header.querySelectorAll('[data-sheet-close]'), function (trigger) {
+    trigger.addEventListener('click', function () {
+      setSheet(false);
+    });
+  });
+
+  if (sheet && typeof PointerEvent === 'function') {
+    var dragStart = null;
+    var dragDelta = 0;
+
+    sheet.addEventListener('pointerdown', function (event) {
+      /* only the grab area (handle) starts a pull-down */
+      if (event.clientY - sheet.getBoundingClientRect().top > 64) {
+        return;
+      }
+
+      dragStart = event.clientY;
+      dragDelta = 0;
+    });
+
+    sheet.addEventListener('pointermove', function (event) {
+      if (dragStart === null) {
+        return;
+      }
+
+      dragDelta = Math.max(0, event.clientY - dragStart);
+      sheet.style.transform = 'translate3d(0,' + dragDelta + 'px,0)';
+    });
+
+    ['pointerup', 'pointercancel'].forEach(function (type) {
+      sheet.addEventListener(type, function () {
+        if (dragStart === null) {
+          return;
+        }
+
+        dragStart = null;
+        sheet.style.transform = '';
+
+        if (dragDelta > 90) {
+          setSheet(false);
+        }
+
+        dragDelta = 0;
+      });
     });
   }
 
@@ -626,23 +573,10 @@
     if (moreMenu && !moreMenu.contains(event.target)) {
       closeMore();
     }
-    var dropdownBar = header.querySelector('#mnav-dropdown-bar');
-    if (dropdownBar && !dropdownBar.contains(event.target) && !(indexToggle && indexToggle.contains(event.target))) {
-      closeIndex();
-    }
 
     if (searchWrap && !searchWrap.contains(event.target) &&
       !(searchToggle && searchToggle.contains(event.target))) {
       hideResults();
-    }
-
-    var isClickOnToggle = false;
-    marks.forEach(function (btn) {
-      if (btn.contains(event.target)) isClickOnToggle = true;
-    });
-    if (drawer && !drawer.contains(event.target) && !isClickOnToggle &&
-      !(hoverQuery && hoverQuery.matches)) {
-      setDrawer(false);
     }
   });
 
@@ -656,8 +590,6 @@
         setSheet(false);
       } else if (header.classList.contains('is-search-open')) {
         setSearch(false);
-      } else if (header.classList.contains('is-drawer-open')) {
-        setDrawer(false);
       }
 
       closeLang();
@@ -674,12 +606,7 @@
 
     if ((isSlash || isCommand) && searchInput) {
       event.preventDefault();
-
-      if (mobileQuery && mobileQuery.matches) {
-        setSearch(true);
-      } else {
-        focusElement(searchInput);
-      }
+      setSearch(true);
     }
   });
 
@@ -719,8 +646,7 @@
       setSheet(false);
     }
 
-    closeIndex();
-    setDrawer(false);
+    closeMore();
     hideResults();
   });
 
@@ -730,8 +656,6 @@
       if (!event.matches) {
         setSheet(false);
         setSearch(false);
-      } else {
-        setDrawer(false);
       }
     });
   }
@@ -760,7 +684,7 @@
   function focusFirst(scope) {
     var focusable = focusableIn(scope);
 
-    if (focusable.length) {
+    if (focusable) {
       focusElement(focusable[0]);
     }
   }
@@ -781,88 +705,4 @@
       document.body.style.paddingRight = lockedPadding;
     }
   }
-
-  /* ---------- 7. the placeholder that types itself ----------
-     The empty search field is prime real estate: instead of one static line,
-     the placeholder writes out a few suggestions, character by character,
-     wipes them, and moves to the next - the way the big catalogues tease what
-     to look for. Rules of the road:
-       * it only runs while the field is EMPTY, blurred and on screen - the
-         moment the visitor focuses or types, the field belongs to him;
-       * it never runs for a visitor who asked for reduced motion;
-       * the static line from the markup stays until the first mood is ready,
-         so a slow phone (or no script at all) shows a real placeholder. */
-  (function () {
-    var field = header.querySelector('[data-search-moods]');
-
-    if (!field) return;
-
-    var moods = [];
-
-    try {
-      moods = JSON.parse(field.getAttribute('data-search-moods')) || [];
-    } catch (error) {
-      moods = [];
-    }
-
-    moods = moods.filter(function (mood) {
-      return typeof mood === 'string' && mood.trim() !== '';
-    });
-
-    var calm = window.matchMedia
-      && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-
-    if (moods.length === 0 || calm) return;
-
-    var index = 0;
-    var pos = 0;
-    var dir = 1;
-    var timer = null;
-
-    function idle() {
-      if (document.hidden) return false;
-      if (field.value !== '') return false;
-      if (document.activeElement === field) return false;
-      /* on small screens the field lives in a drawer that is usually closed:
-         typing into a closed drawer is nobody's idea of a suggestion */
-      if (searchWrap && searchWrap.offsetParent === null) return false;
-
-      return true;
-    }
-
-    function tick() {
-      if (!idle()) {
-        timer = setTimeout(tick, 900);
-        return;
-      }
-
-      var mood = moods[index];
-
-      pos += dir;
-      field.setAttribute('placeholder', mood.slice(0, pos));
-
-      var delay = dir > 0 ? 58 : 26;
-
-      if (pos >= mood.length) {
-        /* written out: let it be read, then wipe it back */
-        dir = -1;
-        delay = 1900;
-      } else if (pos <= 0) {
-        /* wiped: a beat of nothing, then the next mood */
-        dir = 1;
-        index = (index + 1) % moods.length;
-        delay = 460;
-      }
-
-      timer = setTimeout(tick, delay);
-    }
-
-    /* the static line holds the stage for a moment first: a page that has
-       just opened should not look like it is already busy */
-    timer = setTimeout(function () {
-      pos = 0;
-      dir = 1;
-      tick();
-    }, 2400);
-  })();
 })();

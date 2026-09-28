@@ -21,3 +21,6 @@ Thumbs.db
 # Python bytecode from the import tooling
 __pycache__/
 *.py[cod]
+
+# tooling installs (php-wasm, one-shot dev deps)
+node_modules/

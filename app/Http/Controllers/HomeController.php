@@ -183,7 +183,7 @@ class HomeController extends Controller
         $this->seo->setTitle($pageTitle);
         $this->seo->setDescription($pageDesc);
         $this->seo->setCanonical(route('home'));
-        $this->seo->setImage(asset('/images/lifestyle/heroc-1.webp'));
+        $this->seo->setImage(asset('/images/hero/hero-bathroom.jpg'));
         $this->seo->setAlternatesFor('home');
         $this->seo->addWebPageSchema([
             'name' => $pageTitle,

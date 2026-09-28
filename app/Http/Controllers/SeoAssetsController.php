@@ -99,19 +99,19 @@ class SeoAssetsController extends Controller
         $subtitle = mb_substr($subtitle, 0, 120);
 
         if (!function_exists('imagecreatetruecolor')) {
-            return new RedirectResponse(asset('/images/lifestyle/heroc-1.webp'));
+            return new RedirectResponse(asset('/images/hero/hero-bathroom.jpg'));
         }
 
         $font = $this->findFont();
         if ($font === null || !function_exists('imagettftext')) {
-            return new RedirectResponse(asset('/images/lifestyle/heroc-1.webp'));
+            return new RedirectResponse(asset('/images/hero/hero-bathroom.jpg'));
         }
 
         $w = 1200;
         $h = 630;
         $img = imagecreatetruecolor($w, $h);
         if ($img === false) {
-            return new RedirectResponse(asset('/images/lifestyle/heroc-1.webp'));
+            return new RedirectResponse(asset('/images/hero/hero-bathroom.jpg'));
         }
 
         /* brand gradient: deep teal -> teal */
@@ -174,7 +174,7 @@ class SeoAssetsController extends Controller
         imagedestroy($img);
 
         if ($png === null) {
-            return new RedirectResponse(asset('/images/lifestyle/heroc-1.webp'));
+            return new RedirectResponse(asset('/images/hero/hero-bathroom.jpg'));
         }
 
         return Response::make($png)
