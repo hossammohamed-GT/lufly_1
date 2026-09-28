@@ -102,7 +102,7 @@ mosaic went missing); with `APP_DEBUG=true` the component leaves a
 ## The home hero ("Crafting Water")
 
 `frontend/home/hero/` is a cinematic full-bleed hero: one photograph per
-collection (bathroom, kitchen, shower, accessories, smart), cross-dissolved by
+collection (bathroom, kitchen, shower, smart), cross-dissolved by
 `hero.js`. The navbar is part of the composition - the hero pulls itself up
 under the sticky bar (`margin-block-start: calc(-1 * var(--mnav-row1))`), so the
 photo runs underneath a transparent navbar while the hero is on screen, and the
@@ -111,11 +111,19 @@ below).
 
 Invariants when touching it:
 
-- **The height is pure CSS.** `block-size: calc(100svh - var(--luann-h))` (with a
-  `100vh` fallback line above it) plus the negative margin under the navbar. No
-  JS measuring: the announcement bar publishes `--luann-h`, the navbar publishes
+- **The height is pure CSS.** `block-size: calc(100svh - var(--luann-h) -
+  var(--mnav-row1))` (with a `100vh` fallback line above it). No JS measuring:
+  the announcement bar publishes `--luann-h`, the navbar publishes
   `--mnav-row1`, and the hero composes them. The announcement bar being absent,
   dismissed or present needs no code change.
+- **The navbar strip is painted by the hero, not by the navbar.** The hero box
+  sits in flow below the bar; `.hero-media` (the photo layer) reaches UP by
+  `--mnav-row1 + 32px` behind the transparent bar and carries its own themed
+  base colour, so the bar can never expose the page background behind it -
+  that is what "the navbar is part of the hero" means here, and it cannot
+  fail on a height mismatch the way the old negative-margin pull-up could.
+  The bar's slab is exactly `--mnav-row1` tall (fixed, not min-height) so its
+  content can never stretch it either.
 - **The layout is a named grid, not absolutes.** Rows: copy (`1fr`) / cue+tabs /
   trust strip; the photo is the absolutely positioned backdrop. The copy row can
   never slide under the category selector, at any viewport, because the selector
@@ -127,7 +135,7 @@ Invariants when touching it:
 - **The image queue is sequential.** Frame 1 ships in the HTML (eager,
   `fetchpriority="high"`, preloaded with a matching `imagesrcset`); frames 2..5
   carry `data-hero-src/-srcset` and are promoted one by one after the first
-  paint (`requestIdleCallback`), so the first screen never waits for five
+  paint (`requestIdleCallback`), so the first screen never waits for the
   photographs.
 - **Autoplay pauses honestly.** The 2s dwell timer restarts on every
   interaction, pauses while the visitor aims at the selector (hover), while the

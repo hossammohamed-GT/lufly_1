@@ -31,7 +31,6 @@
   position: relative;
   z-index: 0;
   isolation: isolate;
-  overflow: hidden;
   /* three rows: the copy takes whatever is left above the cue/tabs row and
      the trust strip - the layout can never push the copy under the tabs */
   display: grid;
@@ -40,30 +39,34 @@
   background: var(--hero-deep);
   color: var(--hero-ink);
 
-  /* The navbar is sticky and in flow: pull the hero up under it so the
-     photo shows through, then pad the copy back down. The announcement bar
-     keeps its own height above, so the first screen is exactly 100svh. */
-  margin-block-start: calc(-1 * var(--mnav-row1, 64px));
-  block-size: calc(100vh - var(--luann-h, 0px));
-  block-size: calc(100svh - var(--luann-h, 0px));
-  padding-block-start: var(--mnav-row1, 64px);
+  /* The navbar is sticky and in flow above the hero; the hero box starts
+     right under it, so the first screen is exactly 100svh (announcement
+     bar included via --luann-h). The PHOTO layer reaches up under the
+     navbar (see .hero-media) - that is what makes the bar read as part of
+     the hero, and it cannot fail on a height mismatch the way a negative
+     margin can. */
+  block-size: calc(100vh - var(--luann-h, 0px) - var(--mnav-row1, 56px));
+  block-size: calc(100svh - var(--luann-h, 0px) - var(--mnav-row1, 56px));
 }
 
-/* the photo spans all rows from behind */
+/* the photo spans all rows from behind - and continues UP under the
+   navbar (with margin to spare, so the bar can never expose the page
+   background behind its top edge) */
 .hero-media {
   grid-area: 1 / 1 / -1 / -1;
+  position: absolute;
+  inset-inline: 0;
+  inset-block-start: calc(-1 * (var(--mnav-row1, 56px) + 32px));
+  inset-block-end: 0;
+  overflow: hidden;
+  /* paints the navbar strip from the very first frame, even before the
+     photo has decoded (the hero box itself ends below the bar) */
+  background: var(--hero-deep);
 }
 
 /* ==========================================================================
    1. Scene stack - the cross-dissolve
    ========================================================================== */
-
-.hero-media {
-  position: absolute;
-  inset: 0;
-  z-index: 0;
-  overflow: hidden;
-}
 
 .hero-frame {
   position: absolute;
@@ -102,9 +105,9 @@
       rgba(4, 11, 13, 0.12) 44%,
       rgba(4, 11, 13, 0) 60%),
     linear-gradient(to bottom,
-      rgba(4, 11, 13, 0.34) 0%,
-      rgba(4, 11, 13, 0.12) 9%,
-      rgba(4, 11, 13, 0) 19%);
+      rgba(4, 11, 13, 0.2) 0%,
+      rgba(4, 11, 13, 0.07) 8%,
+      rgba(4, 11, 13, 0) 16%);
 }
 
 /* The copy column flips to the other side in RTL - so does its gradient. */
@@ -120,9 +123,9 @@
       rgba(4, 11, 13, 0.12) 44%,
       rgba(4, 11, 13, 0) 60%),
     linear-gradient(to bottom,
-      rgba(4, 11, 13, 0.34) 0%,
-      rgba(4, 11, 13, 0.12) 9%,
-      rgba(4, 11, 13, 0) 19%);
+      rgba(4, 11, 13, 0.2) 0%,
+      rgba(4, 11, 13, 0.07) 8%,
+      rgba(4, 11, 13, 0) 16%);
 }
 
 /* ==========================================================================
@@ -391,8 +394,8 @@
   margin-inline-end: max(var(--container-gutter, 24px), calc((100% - var(--container-max, 1450px)) / 2 + var(--container-gutter)));
   max-inline-size: 100%;
   display: flex;
-  gap: 12px;
-  padding: 14px;
+  gap: 16px;
+  padding: 16px;
   border-radius: 22px;
   border: 1px solid var(--hero-hair);
   background: var(--hero-glass);
@@ -423,8 +426,8 @@
 .hero-tab-thumb {
   position: relative;
   display: block;
-  inline-size: 132px;
-  aspect-ratio: 132 / 90;
+  inline-size: 150px;
+  aspect-ratio: 150 / 100;
   border-radius: 11px;
   overflow: hidden;
   background: #0a1416;
@@ -576,15 +579,23 @@
 .hero-tab.is-active::before {
   content: '';
   position: absolute;
-  inset: -7px;
-  border-radius: 19px;
-  border: 1.5px solid var(--hero-accent);
-  background: rgba(27, 166, 166, 0.1);
+  inset: -8px;
+  border-radius: 20px;
+  border: 2px solid var(--hero-accent-bright);
+  background: rgba(27, 166, 166, 0.12);
   box-shadow:
-    0 0 22px rgba(27, 166, 166, 0.3),
-    inset 0 0 18px rgba(27, 166, 166, 0.12);
+    0 0 30px rgba(47, 196, 196, 0.5),
+    0 0 70px rgba(27, 166, 166, 0.28),
+    inset 0 0 26px rgba(47, 196, 196, 0.18);
   pointer-events: none;
   animation: heroTabGlow 620ms var(--hero-ease);
+}
+
+/* the active thumbnail itself picks up the halo */
+.hero-tab.is-active .hero-tab-thumb {
+  box-shadow:
+    inset 0 0 0 1px rgba(255, 255, 255, 0.1),
+    0 0 26px rgba(27, 166, 166, 0.4);
 }
 
 @keyframes heroTabGlow {
@@ -778,11 +789,11 @@
 
 @media (max-width: 1180px) {
   .hero-tabs {
-    gap: 10px;
-    padding: 12px;
+    gap: 12px;
+    padding: 14px;
   }
 
-  .hero-tab-thumb { inline-size: 112px; }
+  .hero-tab-thumb { inline-size: 128px; }
 
   .hero-scroll {
     display: none;
@@ -820,32 +831,27 @@
   .hero-cta-play { inline-size: 48px; block-size: 48px; }
   .hero-cta-story-text { max-inline-size: 10ch; line-height: 1.5; }
 
-  /* the selector becomes a full-width swipeable rail above the trust strip */
+  /* four cards, one row, zero horizontal scroll at any phone width */
   .hero-tabs {
     grid-column: 1 / -1;
     justify-self: stretch;
     max-inline-size: none;
     margin-inline: 0;
     margin-block-end: 0;
-    gap: 9px;
-    padding: 10px 14px;
+    gap: 8px;
+    padding: 10px 12px;
     border-radius: 0;
     border: 0;
     border-block-start: 1px solid rgba(255, 255, 255, 0.08);
-    overflow-x: auto;
-    scroll-snap-type: x proximity;
-    -webkit-overflow-scrolling: touch;
-    scrollbar-width: none;
-    justify-content: flex-start;
     background: rgba(4, 11, 13, 0.66);
   }
 
-  .hero-tabs::-webkit-scrollbar { display: none; }
-
-  .hero-tab { scroll-snap-align: start; flex: none; }
-  .hero-tab-thumb { inline-size: 96px; }
-  .hero-tab-label { font-size: 10.5px; letter-spacing: 0.08em; }
-  .hero-tab-arrow { inline-size: 26px; block-size: 26px; }
+  .hero-tab { flex: 1 1 0; min-inline-size: 0; }
+  .hero-tab-thumb { inline-size: 100%; aspect-ratio: 150 / 100; }
+  .hero-tab-thumb img { transform: none; }
+  .hero-tab:hover .hero-tab-thumb img { transform: none; }
+  .hero-tab-label { font-size: 10px; letter-spacing: 0.06em; padding-inline-end: 30px; }
+  .hero-tab-arrow { inline-size: 24px; block-size: 24px; }
 
   /* trust strip: 2 x 2 */
   .hero-trust {
@@ -913,7 +919,8 @@
    ========================================================================== */
 
 /* a light visitor should never flash dark while the first photo decodes */
-[data-theme='light'] .hero {
+[data-theme='light'] .hero,
+[data-theme='light'] .hero-media {
   background: #d9e7e7;
 }
 
@@ -931,9 +938,9 @@
       rgba(8, 20, 22, 0.14) 44%,
       rgba(8, 20, 22, 0) 60%),
     linear-gradient(to bottom,
-      rgba(8, 20, 22, 0.3) 0%,
-      rgba(8, 20, 22, 0.1) 9%,
-      rgba(8, 20, 22, 0) 19%);
+      rgba(8, 20, 22, 0.22) 0%,
+      rgba(8, 20, 22, 0.08) 8%,
+      rgba(8, 20, 22, 0) 16%);
 }
 
 [dir='rtl'] [data-theme='light'] .hero-shade {
@@ -948,9 +955,9 @@
       rgba(8, 20, 22, 0.14) 44%,
       rgba(8, 20, 22, 0) 60%),
     linear-gradient(to bottom,
-      rgba(8, 20, 22, 0.3) 0%,
-      rgba(8, 20, 22, 0.1) 9%,
-      rgba(8, 20, 22, 0) 19%);
+      rgba(8, 20, 22, 0.22) 0%,
+      rgba(8, 20, 22, 0.08) 8%,
+      rgba(8, 20, 22, 0) 16%);
 }
 
 /* the frozen copy of the outgoing artwork while the theme swaps underneath

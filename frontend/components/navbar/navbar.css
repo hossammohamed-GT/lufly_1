@@ -1,7 +1,7 @@
 /* ==========================================================================
    LUFLY - Component: navbar ("Overlay Glass")
    --------------------------------------------------------------------------
-   One 64px row that lives over the content:
+   One slim row that lives over the content:
 
      * on the storefront home page (mnav--overlay) the hero photograph runs
        under the bar: transparent + white ink while the hero is on screen,
@@ -23,7 +23,7 @@
 
 /* The one value the app shell needs: page heroes and min-heights subtract
    the row height so the first screen is always exactly filled. */
-:root { --mnav-row1: 64px; }
+:root { --mnav-row1: 56px; }
 
 .mnav {
   --mnav-ink: var(--ds-text);
@@ -45,7 +45,8 @@
 
 .mnav-slab {
   position: relative;
-  min-height: var(--mnav-row1);
+  block-size: var(--mnav-row1);
+  min-height: 0;
 }
 
 /* The glass: dark translucent over the hero photo, theme glass afterwards.
@@ -72,6 +73,14 @@
   --mnav-ink: #f2f7f7;
   --mnav-glass-bg: rgba(5, 13, 15, 0.55);
   --mnav-hairline: rgba(255, 255, 255, 0.14);
+}
+
+/* the photo behind the bar can be bright (light artwork): keep the ink
+   readable with a soft shadow instead of painting a background on it */
+.mnav--overlay .mnav-icon-btn,
+.mnav--overlay .mnav-brand-img,
+.mnav--overlay .mnav-lang-current {
+  filter: drop-shadow(0 1px 10px rgba(3, 10, 12, 0.6));
 }
 
 /* The hero dissolves away in two stages. While the glass fades in
@@ -101,7 +110,7 @@
   display: flex;
   align-items: center;
   gap: 10px;
-  min-height: var(--mnav-row1);
+  block-size: var(--mnav-row1);
 }
 
 .mnav-brand {
@@ -114,7 +123,7 @@
 
 .mnav-brand-img {
   display: block;
-  height: 41px;
+  height: 34px;
   width: auto;
   transition: transform var(--mnav-base) var(--mnav-ease);
 }
@@ -293,7 +302,7 @@
   display: flex;
   align-items: center;
   gap: 10px;
-  height: 44px;
+  height: 40px;
   padding-inline: 16px;
   border-radius: 999px;
   border: 1px solid color-mix(in srgb, currentColor 20%, transparent);
@@ -443,8 +452,8 @@
   position: relative;
   display: grid;
   place-items: center;
-  inline-size: 40px;
-  block-size: 40px;
+  inline-size: 36px;
+  block-size: 36px;
   padding: 0;
   border: 0;
   border-radius: 12px;
@@ -463,8 +472,8 @@
 .mnav-icon-btn:active { transform: scale(0.94); }
 
 .mnav-icon-btn .icon {
-  inline-size: 21px;
-  block-size: 21px;
+  inline-size: 19px;
+  block-size: 19px;
 }
 
 .mnav-icon-btn:focus-visible {
@@ -1061,8 +1070,8 @@
 }
 
 @media (max-width: 1023px) {
-  .mnav { --mnav-row1: 58px; }
-  :root { --mnav-row1: 58px; }
+  .mnav { --mnav-row1: 52px; }
+  :root { --mnav-row1: 52px; }
 
   .mnav-brand-img { height: 36px; }
 

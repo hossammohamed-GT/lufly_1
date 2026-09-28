@@ -17,7 +17,7 @@ $view->pushScript('frontend/home/hero/hero.js');
 
 /* The artwork is cached for a year: bump this with every image re-shoot so
    returning visitors actually receive the new files. */
-$heroImgV = '2026-09-28.2';
+$heroImgV = '2026-09-28.3';
 
 /* LCP: the first scene is the largest paint. The preload mirrors the srcset
    the markup offers, so a phone fetches the small rendition instead of the
@@ -53,11 +53,6 @@ $heroScenes = [
         'key' => 'shower', 'label' => 'hero_tab_shower',
         'url' => route('products.index', ['category' => 'shower-sets']),
         'alt' => 'LUFLY chrome square rain shower head pouring a glittering curtain of water in a dark slate spa shower',
-    ],
-    [
-        'key' => 'accessories', 'label' => 'hero_tab_accessories',
-        'url' => route('products.index'),
-        'alt' => 'LUFLY brushed rose-gold towel ring, robe hook and paper holder on a dark marble wall',
     ],
     [
         'key' => 'smart', 'label' => 'hero_tab_smart',
@@ -166,7 +161,7 @@ $heroSrcset = static function (string $key, string $variant = '') use ($heroImgV
                         <img src="<?= e(asset('images/hero/hero-' . $s['key'] . '-thumb.webp') . '?v=' . $heroImgV) ?>"
                              data-thumb-light="<?= e(asset('images/hero/hero-' . $s['key'] . '-light-thumb.webp') . '?v=' . $heroImgV) ?>"
                              alt=""
-                             width="130" height="90"
+                             width="150" height="100"
                              loading="lazy"
                              decoding="async">
                         <i class="hero-tab-tick" aria-hidden="true"></i>

@@ -39,7 +39,8 @@
 
     var rect = hero.getBoundingClientRect();
     var top = Math.max(0, rect.top + (window.pageYOffset || 0));
-    heroEdge = Math.max(1, top + rect.height - 64);
+    var navH = header.offsetHeight || 64;
+    heroEdge = Math.max(1, top + rect.height - navH);
   }
 
   function paintScroll() {

@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """Build the Lufly hero artwork set from the AI masters in tools/hero-masters.
 
-For each of the five scenes (bathroom, kitchen, shower, accessories, smart)
+For each of the four scenes (bathroom, kitchen, shower, smart)
 and each mood (dark "", light "-light"):
 
     public/images/hero/hero-<name><v>.webp       full-width WebP (q96)
@@ -33,11 +33,11 @@ ROOT = Path(__file__).resolve().parents[2]
 SRC = ROOT / "tools/hero-masters"
 OUT = ROOT / "public/images/hero"
 
-SCENES = ["bathroom", "kitchen", "shower", "accessories", "smart"]
+SCENES = ["bathroom", "kitchen", "shower", "smart"]
 VARIANTS = ["", "-light"]             # dark masters + bright daylight set
 
 WIDTHS = [480, 760, 1024]             # renditions below the master width
-THUMB_SIZE = (400, 278)               # 1.44:1 -> 130x90 CSS px at ~3x
+THUMB_SIZE = (450, 300)               # 1.5:1 -> 150x100 CSS px at ~3x
 THUMB_WINDOW_X = (0.22, 1.0)          # keep the product (right side) in the crop
 
 Q_FULL = 96                           # hero policy: near-lossless
