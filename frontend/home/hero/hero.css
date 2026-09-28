@@ -613,45 +613,51 @@
   /* NOT a surface: no background, no blur, no border, no radius - the strip
      is just text floating on the photo. The readability comes from the
      bottom gradient of .hero-shade, which darkens the whole lower third of
-     the photograph so the strip reads as part of the scene, not a box. */
+     the photograph so the strip reads as part of the scene, not a box.
+     The four items flow from the START edge of the container (left in LTR)
+     at their natural width - like the reference, nothing is centred. */
   position: relative;
   z-index: 3;
   grid-row: 3;
   grid-column: 1 / -1;
-  display: grid;
-  grid-auto-flow: column;
-  grid-auto-columns: 1fr;
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
   padding: 18px max(var(--container-gutter, 24px), calc((100% - var(--container-max, 1450px)) / 2 + var(--container-gutter)));
 }
 
 .hero-trust-item {
   display: flex;
   align-items: center;
-  justify-content: center;
-  gap: 14px;
-  padding-inline: 26px;
+  gap: 15px;
+  padding-inline: 30px;
   min-inline-size: 0;
 }
 
+/* the first item hugs the container edge */
+.hero-trust-item:first-child {
+  padding-inline-start: 0;
+}
+
 .hero-trust-item + .hero-trust-item {
-  border-inline-start: 1px solid rgba(255, 255, 255, 0.1);
+  border-inline-start: 1px solid rgba(255, 255, 255, 0.08);
 }
 
 .hero-trust-icon {
   display: grid;
   place-items: center;
-  inline-size: 34px;
-  block-size: 34px;
+  inline-size: 38px;
+  block-size: 38px;
   flex: none;
   border-radius: 50%;
-  border: 1px solid rgba(47, 196, 196, 0.35);
+  border: 1px solid rgba(47, 196, 196, 0.3);
   color: var(--hero-accent-bright);
-  background: rgba(27, 166, 166, 0.07);
+  background: rgba(27, 166, 166, 0.05);
 }
 
 .hero-trust-icon svg {
-  inline-size: 16px;
-  block-size: 16px;
+  inline-size: 18px;
+  block-size: 18px;
 }
 
 .hero-trust-text {
@@ -661,9 +667,9 @@
 }
 
 .hero-trust-text strong {
-  font-size: 11.5px;
-  font-weight: 800;
-  letter-spacing: 0.16em;
+  font-size: 13px;
+  font-weight: 600;
+  letter-spacing: 0.12em;
   text-transform: uppercase;
   color: var(--hero-ink);
   white-space: nowrap;
@@ -672,11 +678,11 @@
 }
 
 .hero-trust-text small {
-  font-size: 9.5px;
-  font-weight: 600;
-  letter-spacing: 0.14em;
+  font-size: 11px;
+  font-weight: 500;
+  letter-spacing: 0.12em;
   text-transform: uppercase;
-  color: rgba(233, 244, 244, 0.58);
+  color: rgba(233, 244, 244, 0.66);
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
@@ -800,6 +806,21 @@
   .hero-scroll {
     display: none;
   }
+
+  /* four grown-up items no longer fit one row below ~1280px: the rail
+     becomes 2x2, still flowing from the start edge */
+  .hero-trust {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px 0;
+  }
+
+  .hero-trust-item { padding-inline: 20px; }
+  .hero-trust-item:first-child { padding-inline-start: 0; }
+  .hero-trust-item:nth-child(3) { border-inline-start: 0; }
+  .hero-trust-icon { inline-size: 34px; block-size: 34px; }
+  .hero-trust-text strong { font-size: 12px; }
+  .hero-trust-text small { font-size: 10px; }
 }
 
 @media (max-width: 1024px) {
@@ -855,20 +876,19 @@
   .hero-tab-label { font-size: 10px; letter-spacing: 0.06em; padding-inline-end: 30px; }
   .hero-tab-arrow { inline-size: 24px; block-size: 24px; }
 
-  /* trust strip: 2 x 2 */
+  /* trust strip: the 2x2 from <=1180, tightened for phones */
   .hero-trust {
-    grid-auto-flow: row;
-    grid-template-columns: 1fr 1fr;
     padding: 12px 18px;
     gap: 10px 0;
   }
 
-  .hero-trust-item { padding-inline: 14px; gap: 11px; justify-content: flex-start; }
+  .hero-trust-item { padding-inline: 14px; gap: 12px; }
+  .hero-trust-item:first-child { padding-inline-start: 0; }
   .hero-trust-item:nth-child(3) { border-inline-start: 0; }
-  .hero-trust-icon { inline-size: 30px; block-size: 30px; }
-  .hero-trust-icon svg { inline-size: 14px; block-size: 14px; }
-  .hero-trust-text strong { font-size: 10px; letter-spacing: 0.12em; }
-  .hero-trust-text small { font-size: 8.5px; letter-spacing: 0.12em; }
+  .hero-trust-icon { inline-size: 32px; block-size: 32px; }
+  .hero-trust-icon svg { inline-size: 15px; block-size: 15px; }
+  .hero-trust-text strong { font-size: 11px; letter-spacing: 0.1em; }
+  .hero-trust-text small { font-size: 9.5px; letter-spacing: 0.1em; }
 }
 
 /* very small phones */

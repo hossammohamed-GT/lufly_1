@@ -59,7 +59,7 @@ const TARGETS = [
   ['hero copy', '.hero-body', ['padding-block-end']],
   ['hero tabs', '.hero-tabs', ['inset-block-end', 'overflow-x']],
   ['hero tab thumb', '.hero-tab-thumb', ['inline-size']],
-  ['hero trust', '.hero-trust', ['grid-auto-flow', 'grid-template-columns']],
+  ['hero trust', '.hero-trust', ['display', 'flex-wrap', 'grid-template-columns']],
   ['trust grid', '.trust-grid', ['grid-template-columns']],
   ['finish grid', '.fs-grid', ['grid-template-columns']],
   ['finish cards', '.fs-cards', ['grid-template-columns']],
