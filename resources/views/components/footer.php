@@ -58,14 +58,17 @@
                     LUFLY İNŞAAT SANAYİ VE TİCARET LİMİTED ŞİRKETİ
                 </p>
                 <p class="footer-legal-text">
-                    Gaziantep Manufacturing & Export Hub, Turkey.<br>
-                    Direct European Logistics Dispatch.
+                    <?= e(trans('common.factory_address')) ?><br>
+                    <?= e(trans('common.factory_logistics')) ?>
                 </p>
                 <p class="footer-contact">
                     <a class="footer-link-strong" href="<?= e(route('contact')) ?>"><?= e(trans('nav.contact')) ?></a><br>
                     <a class="footer-link-strong" href="https://wa.me/908503040817" <?= external_link_attrs('https://wa.me/908503040817') ?>>WhatsApp: +90 850 3040 817</a><br>
                     <a class="footer-link-muted" href="mailto:info@lufly.tr">
                         Email: info@lufly.tr
+                    </a><br>
+                    <a class="footer-link-muted" href="https://maps.app.goo.gl/b4syJ4YpmdgtTV7d8" <?= external_link_attrs('https://maps.app.goo.gl/b4syJ4YpmdgtTV7d8') ?>>
+                        <?= e(trans('common.factory_map')) ?>
                     </a>
                 </p>
             </div>

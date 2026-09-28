@@ -14,8 +14,6 @@ return [
     'email_cta' => 'Write to info@lufly.tr',
     'factory_title' => 'Factory and export office',
     'factory_company' => 'LUFLY İNŞAAT SANAYİ VE TİCARET LİMİTED ŞİRKETİ',
-    'factory_line1' => 'Gaziantep Manufacturing & Export Hub, Turkey.',
-    'factory_line2' => 'Direct European logistics dispatch.',
     'hours_label' => 'Working hours',
     'hours_value' => 'Monday to Friday, 08:30 to 18:00 (GMT+3)',
     'quick_title' => 'Quick requests',

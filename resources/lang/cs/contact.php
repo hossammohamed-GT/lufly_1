@@ -14,8 +14,6 @@ return [
     'email_cta' => 'Napište na info@lufly.tr',
     'factory_title' => 'Továrna a exportní kancelář',
     'factory_company' => 'LUFLY İNŞAAT SANAYİ VE TİCARET LİMİTED ŞİRKETİ',
-    'factory_line1' => 'Výrobní a exportní centrum Gaziantep, Turecko.',
-    'factory_line2' => 'Přímá evropská logistická expedice.',
     'hours_label' => 'Pracovní doba',
     'hours_value' => 'Pondělí až pátek, 08:30 až 18:00 (GMT+3)',
     'quick_title' => 'Rychlé žádosti',

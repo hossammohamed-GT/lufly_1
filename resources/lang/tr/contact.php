@@ -14,8 +14,6 @@ return [
     'email_cta' => 'info@lufly.tr adresine yazın',
     'factory_title' => 'Fabrika ve ihracat ofisi',
     'factory_company' => 'LUFLY İNŞAAT SANAYİ VE TİCARET LİMİTED ŞİRKETİ',
-    'factory_line1' => 'Gaziantep Üretim ve İhracat Üssü, Türkiye.',
-    'factory_line2' => 'Avrupa\'ya direkt lojistik sevkıyat.',
     'hours_label' => 'Çalışma saatleri',
     'hours_value' => 'Pazartesi - Cuma, 08:30 - 18:00 (GMT+3)',
     'quick_title' => 'Hızlı talepler',

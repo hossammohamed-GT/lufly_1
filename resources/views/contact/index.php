@@ -75,7 +75,7 @@ $faqs = [
     ['q' => 'faq_4_q', 'a' => 'faq_4_a'],
 ];
 
-$mapUrl = 'https://www.google.com/maps/search/?api=1&query=Gaziantep%2C%20T%C3%BCrkiye';
+$mapUrl = 'https://maps.app.goo.gl/b4syJ4YpmdgtTV7d8';
 $waCta = $wa('Hello LUFLY, I would like to contact your architectural team.');
 ?>
 <main class="cpage" id="main">
@@ -140,8 +140,8 @@ $waCta = $wa('Hello LUFLY, I would like to contact your architectural team.');
                 <h2><?= e(trans('contact.factory_title')) ?></h2>
                 <p class="cpage-company"><?= e(trans('contact.factory_company')) ?></p>
                 <p class="cpage-card-desc">
-                    <?= e(trans('contact.factory_line1')) ?><br>
-                    <?= e(trans('contact.factory_line2')) ?>
+                    <?= e(trans('common.factory_address')) ?><br>
+                    <?= e(trans('common.factory_logistics')) ?>
                 </p>
                 <a class="cpage-maplink" href="<?= e($mapUrl) ?>" <?= external_link_attrs($mapUrl) ?>>
                     <?= $icon('pin', 14) ?>

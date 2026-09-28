@@ -11,6 +11,10 @@
  *       real lang files and stubbed helpers, then write
  *       storage/reports/_home-render.html for static_preview.mjs.
  *
+ *   node tools/php-wasm/render.mjs contact [locale]
+ *       same harness around contact.index (address, channels, form, FAQ),
+ *       written to storage/reports/_contact-render.html.
+ *
  * The framework helpers (route/trans/asset/...) are stubbed with values that
  * match their real shape; the View class is a faithful re-implementation of
  * Core\View\View (same asset push system, same renderFile semantics), so the
@@ -289,6 +293,14 @@ ${mode === 'lint' ? `
         }
     }
     exit($fail ? 1 : 0);
+` : mode === 'contact' ? `
+    $view = new ___View();
+    $translator = new ___FakeService();
+    echo $view->render('contact.index', [
+        'translator' => $translator,
+        'title' => 'LUFLY - Contact',
+    ]);
+    exit(0);
 ` : `
     $view = new ___View();
     $translator = new ___FakeService();
@@ -321,7 +333,8 @@ if (mode === 'lint') {
   }
   mkdirSync(path.join(ROOT, 'storage/reports'), { recursive: true });
   const stamped = `<!-- preview build ${new Date().toISOString()} -->\n` + text;
-  writeFileSync(path.join(ROOT, 'storage/reports/_home-render.html'), stamped);
-  console.log(`rendered ${(text.length / 1024).toFixed(1)} KB -> storage/reports/_home-render.html`);
+  const outFile = mode === 'contact' ? '_contact-render.html' : '_home-render.html';
+  writeFileSync(path.join(ROOT, 'storage/reports', outFile), stamped);
+  console.log(`rendered ${(text.length / 1024).toFixed(1)} KB -> storage/reports/${outFile}`);
 }
 process.exit(0);
