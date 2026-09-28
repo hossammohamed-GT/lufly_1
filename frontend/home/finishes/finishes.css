@@ -13,12 +13,12 @@
   border-bottom: 1px solid var(--ds-band-hairline);
 }
 
-/* NO PHOTOGRAPH IN THIS BAND. It used to borrow
-   images/lifestyle/finish-workshop.jpg, which made two neighbouring bands
-   read as photo bands and left this one without the ink surface it is
-   designed around. The photograph now lives on the category mosaic directly
-   below ("categories-backdrop.jpg"); here only the glow is left, exactly as
-   the note at the top of this file describes. */
+/* NO PHOTOGRAPH IN THIS BAND. It used to borrow the workshop photograph
+   (images/lifestyle/finish-workshop.jpg, since deleted with the other unused
+   images), which made two neighbouring bands read as photo bands and left this
+   one without the ink surface it is designed around. The photograph now lives
+   on the category mosaic directly below ("categories-backdrop.jpg"); here only
+   the glow is left, exactly as the note at the top of this file describes. */
 .finishes-backdrop {
   position: absolute;
   inset: 0;

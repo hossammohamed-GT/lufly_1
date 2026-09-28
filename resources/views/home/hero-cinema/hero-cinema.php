@@ -16,19 +16,19 @@ $view->pushScript('frontend/home/hero-cinema/hero-cinema.js');
              zoom a landscape shot into an unreadable close-up)
      -m      small landscape windows
      plain   desktop / landscape */
-$view->pushPreload(asset('images/lifestyle/heroc-1.webp'), [
+$view->pushPreload(asset('images/lifestyle/heroc-1.webp') . '?v=' . $heroImgV, [
     'as' => 'image',
     'type' => 'image/webp',
     'media' => '(min-width: 761px) and (orientation: landscape)',
     'fetchpriority' => 'high',
 ]);
-$view->pushPreload(asset('images/lifestyle/heroc-1-p.webp'), [
+$view->pushPreload(asset('images/lifestyle/heroc-1-p.webp') . '?v=' . $heroImgV, [
     'as' => 'image',
     'type' => 'image/webp',
     'media' => '(max-width: 900px) and (orientation: portrait)',
     'fetchpriority' => 'high',
 ]);
-$view->pushPreload(asset('images/lifestyle/heroc-1-m.webp'), [
+$view->pushPreload(asset('images/lifestyle/heroc-1-m.webp') . '?v=' . $heroImgV, [
     'as' => 'image',
     'type' => 'image/webp',
     'media' => '(max-width: 760px) and (orientation: landscape)',
@@ -36,6 +36,12 @@ $view->pushPreload(asset('images/lifestyle/heroc-1-m.webp'), [
 ]);
 
 $logoUrl = asset('images/lifestyle/hero-logo.png');
+
+/* The scene artwork changes when the products get the wordmark etched on
+   (or whenever a slide is re-shot), and images are cached for a year: the
+   version is what makes returning visitors actually receive the new file.
+   Bump it with every artwork change. */
+$heroImgV = '2026-09-28';
 
 $slides = [
     ['img' => 'heroc-1', 'brand' => true,
@@ -62,12 +68,12 @@ $slides = [
         <?php foreach ($slides as $i => $s): ?>
             <div class="lfc-scene"
                  role="img" aria-label="<?= e($s['alt']) ?>"
-                 data-img="<?= e(asset("images/lifestyle/{$s['img']}.webp")) ?>"
-                 data-img-m="<?= e(asset("images/lifestyle/{$s['img']}-m.webp")) ?>"
-                 data-img-p="<?= e(asset("images/lifestyle/{$s['img']}-p.webp")) ?>"
-                 data-img-light="<?= e(asset("images/lifestyle/{$s['img']}-light.jpg")) ?>"
-                 data-img-light-m="<?= e(asset("images/lifestyle/{$s['img']}-light-m.jpg")) ?>"
-                 data-img-light-p="<?= e(asset("images/lifestyle/{$s['img']}-light-p.jpg")) ?>"></div>
+                 data-img="<?= e(asset("images/lifestyle/{$s['img']}.webp") . '?v=' . $heroImgV) ?>"
+                 data-img-m="<?= e(asset("images/lifestyle/{$s['img']}-m.webp") . '?v=' . $heroImgV) ?>"
+                 data-img-p="<?= e(asset("images/lifestyle/{$s['img']}-p.webp") . '?v=' . $heroImgV) ?>"
+                 data-img-light="<?= e(asset("images/lifestyle/{$s['img']}-light.jpg") . '?v=' . $heroImgV) ?>"
+                 data-img-light-m="<?= e(asset("images/lifestyle/{$s['img']}-light-m.jpg") . '?v=' . $heroImgV) ?>"
+                 data-img-light-p="<?= e(asset("images/lifestyle/{$s['img']}-light-p.jpg") . '?v=' . $heroImgV) ?>"></div>
         <?php endforeach; ?>
     </div>
 
