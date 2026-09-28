@@ -15,6 +15,11 @@
  *   7. theme        - the light artwork set swaps in (active frame crossfades
  *                     through a ghost, thumbnails follow, queue promotes the
  *                     new variant) and back to dark
+ *   8. launch       - the Explore Collections spiral: a plain click is
+ *                     intercepted, the section enters is-launching,
+ *                     navigation is deferred ~860ms then fires; mid-flight
+ *                     clicks, bfcache returns, modified clicks and
+ *                     reduced-motion visitors all behave
  *
  *   node tools/frontend_audit/hero_engine_test.mjs
  *
@@ -196,6 +201,12 @@ function buildWorld({ reducedMotion = false } = {}) {
   const tabsEl = makeElement('nav');
   tabsEl.attrs['data-hero-tabs'] = '';
 
+  /* the Explore Collections CTA (the launch sequence target) */
+  const cta = makeElement('a');
+  cta.classes.add('hero-cta--primary');
+  cta.attrs.href = '/products';
+  root.appendChild(cta);
+
   root.querySelectorAll = (sel) => {
     if (sel === '.hero-frame') return frames;
     if (sel === '[data-hero-panel]') return panels;
@@ -204,7 +215,8 @@ function buildWorld({ reducedMotion = false } = {}) {
     if (sel === '.hero-tab-thumb img') return thumbs;
     return [];
   };
-  root.querySelector = (sel) => (sel === '[data-hero-tabs]' ? tabsEl : null);
+  root.querySelector = (sel) => (sel === '[data-hero-tabs]' ? tabsEl : null)
+    || (sel === '.hero-cta--primary' ? cta : null);
   root.addEventListener = () => {};
 
   const documentElement = makeElement('html');
@@ -221,6 +233,8 @@ function buildWorld({ reducedMotion = false } = {}) {
     disconnect() {}
   };
 
+  const winListeners = {};
+
   globalThis.document = doc;
   globalThis.document.documentElement = documentElement;
   globalThis.window = {
@@ -228,13 +242,17 @@ function buildWorld({ reducedMotion = false } = {}) {
     requestIdleCallback: (fn) => fn(),
     setTimeout: globalThis.setTimeout,
     clearTimeout: globalThis.clearTimeout,
+    location: { href: 'about:blank' },
+    addEventListener: (type, fn) => {
+      (winListeners[type] = winListeners[type] || []).push(fn);
+    },
     IntersectionObserver: class {
       constructor(cb) { this.cb = cb; }
       observe() { this.cb([{ isIntersecting: true }]); }
     },
   };
 
-  return { root, media, frames, tabs, panels, tabsEl, thumbs, promotionOrder, doc, documentElement };
+  return { root, media, frames, tabs, panels, tabsEl, thumbs, promotionOrder, doc, documentElement, cta, winListeners, window: globalThis.window };
 }
 
 function loadEngine() {
@@ -357,6 +375,69 @@ const active = (world) => world.frames.findIndex((f) => f.classList.contains('is
   ok(world.frames[0].attrs.src === '/hero-0-light.webp',
     'light boot: the first frame swaps before the first paint');
   ok(world.frames[0].classList.contains('is-active'), 'light boot: scene 1 still active');
+}
+
+/* --- launch: the Explore Collections spiral ---------------------------- */
+{
+  const world = buildWorld();
+  loadEngine();
+  await tick(50);
+
+  let prevented = 0;
+  const plainClick = (over = {}) => ({
+    button: 0, metaKey: false, ctrlKey: false, shiftKey: false, altKey: false,
+    defaultPrevented: false,
+    preventDefault() { prevented++; this.defaultPrevented = true; },
+    ...over,
+  });
+
+  world.cta.fire('click', plainClick());
+
+  ok(prevented === 1, 'launch: a plain click is swallowed for the show');
+  ok(world.root.classes.has('is-launching'),
+    'launch: the hero enters the launching state');
+  ok(world.window.location.href === 'about:blank',
+    'launch: navigation is deferred while the spiral plays');
+
+  /* a mid-flight double click must never race the choreography */
+  world.cta.fire('click', plainClick());
+  ok(prevented === 2 && world.window.location.href === 'about:blank',
+    'launch: a mid-flight click is swallowed, navigation still waits');
+
+  await tick(1000);
+  ok(world.window.location.href === '/products',
+    'launch: the catalogue takes over after the sequence (~860ms)');
+
+  /* bfcache return: the hero must come back clean for an encore */
+  (world.winListeners.pageshow || []).forEach((fn) => fn({ persisted: true }));
+  ok(!world.root.classes.has('is-launching'),
+    'launch: a bfcache return clears the launching state');
+
+  /* modified clicks keep native behaviour (new tab / new window) */
+  const world2 = buildWorld();
+  loadEngine();
+  await tick(50);
+  let modPrevented = 0;
+  world2.cta.fire('click', {
+    button: 0, metaKey: true, ctrlKey: false, shiftKey: false, altKey: false,
+    defaultPrevented: false,
+    preventDefault() { modPrevented++; },
+  });
+  ok(modPrevented === 0 && !world2.root.classes.has('is-launching'),
+    'launch: modified clicks (new tab) are left to the browser');
+
+  /* reduced motion: straight navigation, no show at all */
+  const world3 = buildWorld({ reducedMotion: true });
+  loadEngine();
+  await tick(50);
+  let rmPrevented = 0;
+  world3.cta.fire('click', {
+    button: 0, metaKey: false, ctrlKey: false, shiftKey: false, altKey: false,
+    defaultPrevented: false,
+    preventDefault() { rmPrevented++; },
+  });
+  ok(rmPrevented === 0 && !world3.root.classes.has('is-launching'),
+    'launch: reduced-motion visitors navigate without the show');
 }
 
 console.log(failures ? `\n${failures} assertion(s) failed` : '\nall assertions passed');

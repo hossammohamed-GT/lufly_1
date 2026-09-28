@@ -16,6 +16,8 @@
      * smooth scroll for the cue + the story button
      * dark / light theme artwork: the bright daylight renditions swap in
        with a soft crossfade when the site theme flips
+     * the launch sequence: the Explore Collections arrow spirals into
+       itself and the hero settles back before the catalogue takes over
      * prefers-reduced-motion: no autoplay, no drift, a short plain fade
    ========================================================================== */
 (function () {
@@ -451,6 +453,101 @@
       });
     }
   );
+
+  /* ------------------------------------------------------------------
+     4.5 the launch sequence (Explore Collections)
+     The primary CTA is the one playful moment on the page: on a plain
+     left click the arrow spirals into itself, ripple rings pulse out of
+     the button and the hero settles back - only then does the catalogue
+     take over. Modified clicks (new tab / new window), non-left buttons
+     and reduced-motion visitors skip the show and navigate at once. */
+  (function () {
+    var cta = root.querySelector('.hero-cta--primary');
+
+    if (!cta) {
+      return;
+    }
+
+    var NAVIGATE_MS = 860;               /* end of the CSS choreography  */
+    var launching = false;
+
+    function launch(event) {
+      if (event.defaultPrevented) {
+        return;
+      }
+
+      if (event.button !== 0 || event.metaKey || event.ctrlKey
+        || event.shiftKey || event.altKey) {
+        return;                          /* the browser knows better      */
+      }
+
+      var href = cta.getAttribute('href') || '';
+
+      if (!href || href.charAt(0) === '#') {
+        return;
+      }
+
+      if (reduceMotion) {
+        return;                          /* plain navigation, no show     */
+      }
+
+      /* swallow every plain click from here on: a mid-flight double click
+       * must never race the choreography to the catalogue */
+      event.preventDefault();
+
+      if (launching) {
+        return;
+      }
+
+      launching = true;
+      root.classList.add('is-launching');
+
+      window.setTimeout(function () {
+        if (window.location) {
+          window.location.href = href;
+        }
+      }, NAVIGATE_MS);
+    }
+
+    cta.addEventListener('click', launch);
+
+    /* warm the catalogue while the visitor is still deciding - the page
+     * is usually already in the cache when the spiral finishes */
+    if (document.createElement && !reduceMotion) {
+      var warmed = false;
+
+      var warm = function () {
+        if (warmed) {
+          return;
+        }
+        warmed = true;
+
+        try {
+          var link = document.createElement('link');
+          link.rel = 'prefetch';
+          link.href = cta.getAttribute('href') || '';
+          if (document.head) {
+            document.head.appendChild(link);
+          }
+        } catch (err) { /* prefetch is a bonus, never a requirement */ }
+      };
+
+      cta.addEventListener('pointerenter', warm);
+      cta.addEventListener('focus', warm);
+    }
+
+    /* coming back through the back button (bfcache): the hero must look
+     * untouched again, so a new click can play the show once more */
+    if (window.addEventListener) {
+      window.addEventListener('pageshow', function (event) {
+        if (!event || !event.persisted) {
+          return;
+        }
+        launching = false;
+        root.classList.remove('is-launching');
+      });
+    }
+  })();
 
   /* ------------------------------------------------------------------
      5. boot */

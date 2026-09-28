@@ -105,8 +105,10 @@ $heroScenes = [
 
             <div class="hero-ctas">
                 <a href="<?= e(route('products.index')) ?>" class="hero-cta hero-cta--primary">
-                    <span><?= e(trans('home.hero_cta_primary')) ?></span>
-                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14"/><path d="m13 6 6 6-6 6"/></svg>
+                    <span class="hero-cta-label"><?= e(trans('home.hero_cta_primary')) ?></span>
+                    <span class="hero-cta-arrow" aria-hidden="true">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/><path d="m13 6 6 6-6 6"/></svg>
+                    </span>
                 </a>
                 <a href="#rituals" class="hero-cta hero-cta--story" data-hero-story>
                     <span class="hero-cta-play" aria-hidden="true">
