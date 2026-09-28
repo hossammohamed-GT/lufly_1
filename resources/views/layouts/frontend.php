@@ -141,10 +141,6 @@ $clarity = trim((string) ($analytics['clarity'] ?? ''));
 <?= $view->renderFile($view->resolvePath('components.favorite-mail-prompt'), []) ?>
 <?= $assistantChat ?>
 <script defer src="<?= e(asset('frontend/js/app.js')) ?>"></script>
-<?php /* home bands + mega footer: content-visibility only after each band's
-   real height is measured (see frontend/js/cv-stabilize.js) - ungated it made
-   the first fast scroll jump when a band rendered at its real height */ ?>
-<script defer src="<?= e(asset('frontend/js/cv-stabilize.js')) ?>"></script>
 <?php foreach ($scripts as $script): ?>
 <script defer src="<?= e(asset($script)) ?>"></script>
 <?php endforeach; ?>

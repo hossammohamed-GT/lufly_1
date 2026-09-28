@@ -2,44 +2,22 @@
    live in frontend/components/navbar/navbar.css. */
 
 /* ---------- Performance & Rendering Directives ----------
-   content-visibility skips rendering the sections that are still off-screen,
-   which keeps scrolling cheap. It is the classic scroll-jump trap though:
-   while a section is skipped the browser lays it out at contain-intrinsic-size,
-   and the first fast scroll makes it enter the viewport before the estimate
-   is replaced by the real height - the document grows or shrinks under the
-   visitor mid-scroll and the page feels like it snaps backwards.
-
-   So the directive is opt-in: cv-stabilize.js measures every band's real
-   height after load (images are aspect-boxed and fonts are ready by then, so
-   the measurement is final), writes it inline as the intrinsic size, and only
-   then adds body.cv-on. The sizes below are only the no-JS fallback; `auto`
-   keeps the measured height after the first paint, so they are first-paint
-   hints for browsers without the script. */
-
-body.cv-on .trust-bar { content-visibility: auto; contain-intrinsic-size: auto 620px; }
-body.cv-on .finishes-section { content-visibility: auto; contain-intrinsic-size: auto 720px; }
-body.cv-on .categories-section { content-visibility: auto; contain-intrinsic-size: auto 760px; }
-body.cv-on .inspiration-section { content-visibility: auto; contain-intrinsic-size: auto 920px; }
-body.cv-on .rituals-section { content-visibility: auto; contain-intrinsic-size: auto 720px; }
-body.cv-on .masterpieces-section { content-visibility: auto; contain-intrinsic-size: auto 820px; }
-body.cv-on .corporate-section { content-visibility: auto; contain-intrinsic-size: auto 660px; }
-body.cv-on .lufly-mega-footer { content-visibility: auto; contain-intrinsic-size: auto 640px; }
-
-@media (max-width: 760px) {
-  body.cv-on .trust-bar { contain-intrinsic-size: auto 610px; }
-  body.cv-on .finishes-section { contain-intrinsic-size: auto 980px; }
-  body.cv-on .categories-section { contain-intrinsic-size: auto 1850px; }
-  body.cv-on .inspiration-section { contain-intrinsic-size: auto 1420px; }
-  body.cv-on .rituals-section { contain-intrinsic-size: auto 1180px; }
-  body.cv-on .masterpieces-section { contain-intrinsic-size: auto 1520px; }
-  body.cv-on .corporate-section { contain-intrinsic-size: auto 800px; }
-  body.cv-on .lufly-mega-footer { contain-intrinsic-size: auto 900px; }
-}
+   content-visibility used to skip rendering the off-screen bands. It cost
+   more than it saved on this page: while a band was skipped the browser
+   laid it out at an ESTIMATED height, so the first fast scroll made each
+   band enter the viewport and render at its real height - the document
+   shifted under the visitor mid-scroll and the page felt like it jumped
+   backwards (most visibly around the category mosaic). Even with the
+   estimates replaced by measured heights, the deferred render still
+   landed at the exact moment the band arrived - a hitch per section on
+   every fast scroll. The bands are light (media is aspect-boxed, images
+   stay loading="lazy"), so the skip bought almost nothing. Removed; the
+   rules and the measuring script live in git history (commit 6b2f014) if
+   the page ever grows heavy enough to want them back. */
 
 /* ---------- Section scrolling ----------
    Sections scroll in the normal document flow - no stacking, no
-   elevation shadows, no reveal transitions. Section rendering is kept
-   cheap through content-visibility above. */
+   elevation shadows, no reveal transitions. */
 
 /* ---------- Ambient stage ---------- */
 
