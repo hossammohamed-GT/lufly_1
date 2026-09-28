@@ -9,6 +9,13 @@
 $view->pushStyle('frontend/home/hero-cinema/hero-cinema.css');
 $view->pushScript('frontend/home/hero-cinema/hero-cinema.js');
 
+/* The scene artwork changes when the products get the wordmark etched on
+   (or whenever a slide is re-shot), and images are cached for a year: the
+   version is what makes returning visitors actually receive the new file.
+   Bump it with every artwork change. Must be set before the preloads and
+   the scene markup below - both append it to the image URLs. */
+$heroImgV = '2026-09-28';
+
 /* The first slide is the largest paint: preload for instant LCP.
    Three shapes, matching exactly what the script picks at runtime:
      -p      portrait phones AND portrait tablets / narrow portrait windows
@@ -36,12 +43,6 @@ $view->pushPreload(asset('images/lifestyle/heroc-1-m.webp') . '?v=' . $heroImgV,
 ]);
 
 $logoUrl = asset('images/lifestyle/hero-logo.png');
-
-/* The scene artwork changes when the products get the wordmark etched on
-   (or whenever a slide is re-shot), and images are cached for a year: the
-   version is what makes returning visitors actually receive the new file.
-   Bump it with every artwork change. */
-$heroImgV = '2026-09-28';
 
 $slides = [
     ['img' => 'heroc-1', 'brand' => true,
