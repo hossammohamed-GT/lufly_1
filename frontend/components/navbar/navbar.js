@@ -781,4 +781,88 @@
       document.body.style.paddingRight = lockedPadding;
     }
   }
+
+  /* ---------- 7. the placeholder that types itself ----------
+     The empty search field is prime real estate: instead of one static line,
+     the placeholder writes out a few suggestions, character by character,
+     wipes them, and moves to the next - the way the big catalogues tease what
+     to look for. Rules of the road:
+       * it only runs while the field is EMPTY, blurred and on screen - the
+         moment the visitor focuses or types, the field belongs to him;
+       * it never runs for a visitor who asked for reduced motion;
+       * the static line from the markup stays until the first mood is ready,
+         so a slow phone (or no script at all) shows a real placeholder. */
+  (function () {
+    var field = header.querySelector('[data-search-moods]');
+
+    if (!field) return;
+
+    var moods = [];
+
+    try {
+      moods = JSON.parse(field.getAttribute('data-search-moods')) || [];
+    } catch (error) {
+      moods = [];
+    }
+
+    moods = moods.filter(function (mood) {
+      return typeof mood === 'string' && mood.trim() !== '';
+    });
+
+    var calm = window.matchMedia
+      && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+    if (moods.length === 0 || calm) return;
+
+    var index = 0;
+    var pos = 0;
+    var dir = 1;
+    var timer = null;
+
+    function idle() {
+      if (document.hidden) return false;
+      if (field.value !== '') return false;
+      if (document.activeElement === field) return false;
+      /* on small screens the field lives in a drawer that is usually closed:
+         typing into a closed drawer is nobody's idea of a suggestion */
+      if (searchWrap && searchWrap.offsetParent === null) return false;
+
+      return true;
+    }
+
+    function tick() {
+      if (!idle()) {
+        timer = setTimeout(tick, 900);
+        return;
+      }
+
+      var mood = moods[index];
+
+      pos += dir;
+      field.setAttribute('placeholder', mood.slice(0, pos));
+
+      var delay = dir > 0 ? 58 : 26;
+
+      if (pos >= mood.length) {
+        /* written out: let it be read, then wipe it back */
+        dir = -1;
+        delay = 1900;
+      } else if (pos <= 0) {
+        /* wiped: a beat of nothing, then the next mood */
+        dir = 1;
+        index = (index + 1) % moods.length;
+        delay = 460;
+      }
+
+      timer = setTimeout(tick, delay);
+    }
+
+    /* the static line holds the stage for a moment first: a page that has
+       just opened should not look like it is already busy */
+    timer = setTimeout(function () {
+      pos = 0;
+      dir = 1;
+      tick();
+    }, 2400);
+  })();
 })();

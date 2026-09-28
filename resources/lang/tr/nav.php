@@ -14,6 +14,12 @@ return [
     'contact' => 'İletişim',
     'search' => 'Katalogda ara',
     'search_placeholder' => 'Mimari armatür, magnetic, silia ara...',
+    /* alan boş ve boşta dururken yer tutucunun harf harf yazdığı öneriler
+       (yukarıdaki durgun satır betik kapalıyken ve ilk anda görünür) */
+    'search_mood_1' => 'Deneyin: gömme rezervuarlı WC',
+    'search_mood_2' => 'Deneyin: küçük lavabo',
+    'search_mood_3' => 'Deneyin: krom duş seti',
+    'search_mood_4' => 'Deneyin: sensörlü batarya',
     'planner' => 'Banyo planlayıcı',
     'favorites' => 'Kayıtlı liste',
     'box' => 'Kutu',

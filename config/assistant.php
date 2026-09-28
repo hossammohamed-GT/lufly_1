@@ -63,6 +63,14 @@ return [
         'default_email' => (string) env('ASSISTANT_LEAD_DEFAULT', 'hossam545mohamed@gmail.com'),
         /* ask for the address before the first answer (never twice) */
         'ask_email' => (bool) env('ASSISTANT_ASK_EMAIL', true),
+        /* the address is the visitor's identity: when true the chat does not
+           accept a word (or a photo) until it is saved — the compose row is
+           locked and the eye is led to the e-mail field first. Set
+           ASSISTANT_REQUIRE_EMAIL=false to go back to the soft, optional gate */
+        'require_email' => (bool) env('ASSISTANT_REQUIRE_EMAIL', true),
+        /* how many addresses one visitor may save per day (the gate is a
+           public endpoint: without a cap it is a form spammer's toy) */
+        'gate_daily_per_ip' => (int) env('ASSISTANT_GATE_DAILY', 8),
         /* A question typed into the chat is answered in the chat and goes no
            further: nothing is mailed to anybody unless the visitor sends
            something of his own — a photo he wants a human to look at. Every
@@ -80,7 +88,7 @@ return [
      * in one look whether the copy it is serving is the one that was just
      * deployed — instead of wondering why a fix does not show.
      */
-    'build' => (string) env('ASSISTANT_BUILD', '2026-09-24.7'),
+    'build' => (string) env('ASSISTANT_BUILD', '2026-09-28.1'),
 
     'ai' => [
         'enabled' => (bool) env('ASSISTANT_AI', true),

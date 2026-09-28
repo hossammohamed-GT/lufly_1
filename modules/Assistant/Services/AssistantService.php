@@ -1239,6 +1239,53 @@ final class AssistantService
     /* ------------------------------------------------------------------ the lead */
 
     /**
+     * The gate: the visitor left an address before the first question.
+     *
+     * The address is kept at once (source "gate", no message) so the team sees
+     * who came in even if the visitor then asks nothing — and so the chat can
+     * honestly say "saved" instead of only tucking the address into the browser
+     * and hoping the first question arrives. It is never mailed: one row per
+     * visitor per day is identification enough, the questions themselves are
+     * kept (and told about) by keep().
+     *
+     * @return array{ok:bool,reason?:string,text:string}
+     */
+    public function registerEmail(string $email, string $locale): array
+    {
+        $email = mb_strtolower(trim($email));
+
+        if (!filter_var($email, FILTER_VALIDATE_EMAIL) || mb_strlen($email) > 190) {
+            return ['ok' => false, 'reason' => 'invalid', 'text' => trans('assistant.ask_invalid', [], $locale)];
+        }
+
+        $limit = (int) config('assistant.lead.gate_daily_per_ip', 8);
+
+        if (!$this->guard->allows('assistant.email', $limit)) {
+            return ['ok' => false, 'reason' => 'limit', 'text' => trans('assistant.ask_limit', [], $locale)];
+        }
+
+        $this->guard->record('assistant.email', ['ok' => true]);
+
+        try {
+            AssistantLead::create([
+                'token' => bin2hex(random_bytes(16)),
+                'ip_hash' => $this->guard->ipHash(),
+                'locale' => $locale,
+                'email' => $email,
+                'message' => null,
+                'source' => 'gate',
+                'status' => 'new',
+            ]);
+        } catch (Throwable) {
+            /* the chat must not die because the row could not be written: the
+               address still travels with the first question (see keep()), and
+               the visitor should not be told "it failed" over a bookkeeping row */
+        }
+
+        return ['ok' => true, 'text' => trans('assistant.ask_saved', [], $locale)];
+    }
+
+    /**
      * Keep the request and tell the shop about it.
      *
      * A photo always reaches the team (a human has to look at it). Text reaches

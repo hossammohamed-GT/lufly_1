@@ -197,6 +197,17 @@ src="<?= e(asset('images/logo.png')) ?>"
                            data-search-input
                            data-locale="<?= e($currentLocale) ?>"
                            placeholder="<?= e(trans('nav.search_placeholder', [], $currentLocale)) ?>"
+                           <?php /* the moods the placeholder types out when the field is idle:
+                                  trans() reads strings only, so the list is built key by key
+                                  (the same shape as the chat's waiting lines) */ ?>
+                           <?php $searchMoods = []; ?>
+                           <?php for ($i = 1; $i <= 4; $i++): ?>
+                               <?php $moodLine = trans('nav.search_mood_' . $i, [], $currentLocale); ?>
+                               <?php if ($moodLine !== '' && strpos($moodLine, 'search_mood_') === false) $searchMoods[] = $moodLine; ?>
+                           <?php endfor; ?>
+                           <?php if ($searchMoods !== []): ?>
+                               data-search-moods="<?= e((string) json_encode($searchMoods, JSON_UNESCAPED_UNICODE)) ?>"
+                           <?php endif; ?>
                            aria-label="<?= e(trans('nav.search', [], $currentLocale)) ?>"
                            autocomplete="off">
                     <kbd class="mnav-kbd" aria-hidden="true">/</kbd>

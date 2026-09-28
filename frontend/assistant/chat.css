@@ -140,6 +140,10 @@
 .aichat-gate {
   display: grid;
   gap: 8px;
+  /* a sibling of the welcome now (it must be able to stand in front of a
+     restored conversation, which hides the welcome), so it carries its own
+     breathing room on both sides */
+  margin: 0 0 var(--space-4, 16px);
   padding: var(--space-4, 16px);
   border: 1px solid var(--ds-primary-line);
   border-radius: var(--radius-lg);
@@ -193,6 +197,86 @@
   font-size: 11.5px;
   text-decoration: underline;
   cursor: pointer;
+}
+
+/* the gate's own verdict: right under the field, in the danger hue, announced
+   (role="alert") rather than whispered */
+.aichat-gate-err {
+  margin: 0;
+  font-size: 11.5px;
+  line-height: 1.45;
+  color: var(--ds-danger, #c64b4b);
+}
+
+.aichat-gate-err[hidden] {
+  display: none;
+}
+
+/* while the address travels: the button says so, and spins - pressing start
+   must never be a silent nothing */
+.aichat-gate-go {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+}
+
+.aichat-gate-go[disabled] {
+  cursor: progress;
+  opacity: 0.75;
+}
+
+.aichat-gate-go.is-busy::before {
+  content: "";
+  width: 12px;
+  height: 12px;
+  flex: none;
+  border: 2px solid color-mix(in srgb, currentColor 35%, transparent);
+  border-top-color: currentColor;
+  border-radius: 50%;
+  animation: aichat-spin 0.7s linear infinite;
+}
+
+@keyframes aichat-spin {
+  to { transform: rotate(360deg); }
+}
+
+/* ---------- the lock: the chat does not take words from a stranger ----------
+   While the visitor is not identified the compose row is visibly closed -
+   dimmed, inert, saying where to look - and the chips are scenery, not
+   shortcuts. One class on the root, from one place in the script. */
+
+.aichat.is-gated .aichat-compose {
+  opacity: 0.55;
+  filter: saturate(0.6);
+}
+
+.aichat.is-gated .aichat-input {
+  cursor: not-allowed;
+}
+
+.aichat.is-gated .aichat-send,
+.aichat.is-gated .aichat-attach {
+  opacity: 0.45;
+  pointer-events: none;
+}
+
+.aichat.is-gated .aichat-chips {
+  opacity: 0.55;
+}
+
+/* the broom in the header: two taps - the first arms it (and it says so),
+   the second sweeps. The colour is the only warning; no dialog, no detour */
+.aichat-icon-btn[data-aichat-clear].is-armed {
+  color: var(--ds-danger, #c64b4b);
+  border-color: color-mix(in srgb, var(--ds-danger, #c64b4b) 45%, transparent);
+  background: color-mix(in srgb, var(--ds-danger, #c64b4b) 10%, transparent);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .aichat-gate-go.is-busy::before {
+    animation-duration: 1.4s;
+  }
 }
 
 /* ---------- the conversation ---------- */

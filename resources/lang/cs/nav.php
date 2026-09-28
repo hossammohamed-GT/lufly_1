@@ -14,6 +14,12 @@ return [
     'contact' => 'Kontakt',
     'search' => 'Hledat v katalogu',
     'search_placeholder' => 'Hledat sanitární techniku, magnetic, silia...',
+    /* nápady, které placeholder vypisuje znak po znaku, dokud je pole prázdné
+       a nečinné (statický řádek výše zůstává fallbackem bez skriptu) */
+    'search_mood_1' => 'Zkuste: závěsné WC',
+    'search_mood_2' => 'Zkuste: malý umyvadlo',
+    'search_mood_3' => 'Zkuste: chromovou sprchovou sadu',
+    'search_mood_4' => 'Zkuste: senzorovou baterii',
     'planner' => 'Plánovač koupelny',
     'favorites' => 'Uložený seznam',
     'box' => 'Krabice',

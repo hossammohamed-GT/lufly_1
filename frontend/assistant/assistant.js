@@ -27,15 +27,24 @@
   var input = root.querySelector('[data-assistant-input]');
   var gate = root.querySelector('[data-assistant-gate]');
   var emailField = root.querySelector('[data-assistant-email]');
+  var gateGo = root.querySelector('[data-aichat-gate-go]');
+  var gateErr = root.querySelector('[data-assistant-gate-err]');
+  var sendButton = root.querySelector('[data-assistant-send]');
+  var clearButton = root.querySelector('[data-aichat-clear]');
   var fileField = root.querySelector('[data-assistant-file]');
   var shot = root.querySelector('[data-assistant-shot]');
   var shotImage = root.querySelector('[data-assistant-shot-img]');
   var shotName = root.querySelector('[data-assistant-shot-name]');
   var welcome = root.querySelector('[data-assistant-welcome]');
   var endpoint = root.getAttribute('data-assistant-endpoint') || '';
+  var emailEndpoint = root.getAttribute('data-assistant-email-endpoint') || '';
   var context = parseJSON(root.getAttribute('data-assistant-context'));
   var photosOn = root.getAttribute('data-assistant-photos') === '1';
   var askEmail = root.getAttribute('data-assistant-ask-email') === '1';
+  /* the address is the visitor's identity: with require on, nothing is sent
+     (nor typed) until it is saved - the compose row is locked and the focus
+     is led to the field that matters */
+  var requireEmail = root.getAttribute('data-assistant-require-email') === '1';
   var plannerSoon = root.getAttribute('data-assistant-planner-soon') === '1';
   var boxEndpoint = root.getAttribute('data-assistant-box') || '';
   var boxRemoveEndpoint = root.getAttribute('data-assistant-box-remove') || '';
@@ -55,6 +64,10 @@
   var HISTORY_MAX = 24;
   var photo = null;
   var busy = false;
+  var gateBusy = false;
+  /* the soft ask (address optional) may be waved away; the forced one may not */
+  var gateSkipped = false;
+  var plainPlaceholder = input ? (input.getAttribute('placeholder') || '') : '';
   /* what the chat asked and what the visitor chose: a tiny bit of state that
      travels with every message instead of being stored on the server */
   var thread = null;
@@ -232,9 +245,20 @@
     }
 
     applySize();
-    /* the address is asked once, before the first answer */
-    if (askEmail && gate && !email()) gate.hidden = false;
-    if (input) input.focus();
+    /* the lock (and the gate it brings) is decided on every open: a visitor
+       whose address vanished between two pages meets the gate again, a
+       returning identified one goes straight to the words */
+    updateLock();
+    /* the address is asked once, before the first answer - a visitor who said
+       "continue without it" is not asked again on the next open */
+    if (askEmail && gate && !email() && !gateSkipped) gate.hidden = false;
+    /* the eye lands on what the chat needs next: the address field while the
+       visitor is not identified, the words once he is */
+    if (gate && !gate.hidden && emailField) {
+      focusEmail();
+    } else if (input) {
+      input.focus();
+    }
     window.requestAnimationFrame(scrollLog);
   }
 
@@ -363,20 +387,163 @@
 
   if (plannerSoon) root.classList.add('is-planner-soon');
 
-  /* ---------- the address, once ---------- */
+  /* ---------- the address: asked first, saved loudly ---------- */
+
+  /* gated = the chat knows it does not know who it is talking to */
+  function isGated() {
+    return askEmail && requireEmail && email() === '';
+  }
+
+  function focusEmail() {
+    if (!emailField) return;
+
+    emailField.focus();
+
+    /* the address half-written is almost always a mistyped one: select it, so
+       the next keystroke starts clean instead of appending */
+    if (typeof emailField.select === 'function') emailField.select();
+  }
+
+  /* The lock is one place, applied from one place: while the visitor is not
+     identified the compose row cannot be typed into (the words would look
+     sent and be refused - exactly the confusion the lock exists to prevent),
+     the chips are inert, and the placeholder says where to look instead. */
+  function updateLock() {
+    var gated = isGated();
+
+    root.classList.toggle('is-gated', gated);
+
+    if (gate && gated) {
+      gate.hidden = false;
+      /* the question about the address never stands alone: its context (what
+         the chat is and what it can do) is right above it */
+      if (welcome && welcome.parentNode) welcome.hidden = false;
+    }
+
+    if (input) {
+      if (gated) {
+        input.setAttribute('readonly', 'readonly');
+        input.setAttribute('placeholder', labels.locked_placeholder || '');
+      } else {
+        input.removeAttribute('readonly');
+        input.setAttribute('placeholder', plainPlaceholder);
+      }
+    }
+
+    if (sendButton) sendButton.disabled = gated;
+    if (fileField) fileField.disabled = gated;
+  }
+
+  function gateError(text) {
+    if (!gateErr) return;
+
+    if (text) {
+      gateErr.textContent = text;
+      gateErr.hidden = false;
+    } else {
+      gateErr.textContent = '';
+      gateErr.hidden = true;
+    }
+  }
+
+  /* the honest "it is being saved": the button says so and spins while the
+     address travels, so pressing start is never a silent nothing */
+  function gateBusyOn(on) {
+    if (!gateGo) return;
+
+    if (on) {
+      gateGo.classList.add('is-busy');
+      gateGo.disabled = true;
+      gateGo.textContent = labels.email_saving || '';
+    } else {
+      gateGo.classList.remove('is-busy');
+      gateGo.disabled = false;
+      gateGo.textContent = gateGo.getAttribute('data-label') || '';
+    }
+  }
+
+  function validEmail(value) {
+    return /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(value);
+  }
 
   if (gate) {
     gate.addEventListener('submit', function (event) {
       event.preventDefault();
-      rememberEmail((emailField && emailField.value) || '', true);
+      saveEmail();
     });
+  }
+
+  function saveEmail() {
+    if (gateBusy) return;
+
+    var value = emailField ? String(emailField.value || '').trim() : '';
+
+    if (!validEmail(value)) {
+      gateError(labels.email_invalid || '');
+      focusEmail();
+      return;
+    }
+
+    gateError('');
+
+    /* no endpoint to save through (the module routes are off): the address is
+       still kept in the browser and travels with the first question */
+    if (!emailEndpoint) {
+      rememberEmail(value, true);
+      return;
+    }
+
+    gateBusy = true;
+    gateBusyOn(true);
+
+    var payload = new URLSearchParams();
+    payload.set('_token', csrf());
+    payload.set('email', value);
+
+    fetch(emailEndpoint, {
+      method: 'POST',
+      credentials: 'same-origin',
+      headers: {
+        'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8',
+        'X-Requested-With': 'XMLHttpRequest'
+      },
+      body: payload.toString()
+    })
+      .then(function (response) {
+        return response.json().catch(function () { return null; });
+      })
+      .then(function (body) {
+        gateBusy = false;
+        gateBusyOn(false);
+
+        if (!body || body.success !== true) {
+          gateError((body && body.message) || labels.email_err || '');
+          focusEmail();
+          return;
+        }
+
+        rememberEmail(value, false);
+
+        /* what the chat answers with is the server's own sentence - the right
+           language, and true (the address is stored on our side by now) */
+        say('bot', (body.data && body.data.text) || labels.email_saved || '');
+
+        if (input) input.focus();
+      })
+      .catch(function () {
+        gateBusy = false;
+        gateBusyOn(false);
+        gateError(labels.email_err || '');
+      });
   }
 
   var skip = root.querySelector('[data-assistant-skip]');
 
   if (skip) {
     skip.addEventListener('click', function () {
+      gateSkipped = true;
       if (gate) gate.hidden = true;
+      gateError('');
       if (input) input.focus();
     });
   }
@@ -385,12 +552,15 @@
     var clean = String(value || '').trim();
 
     if (clean !== '') {
+      gateSkipped = false;
       try {
         window.localStorage.setItem(EMAIL_KEY, clean);
       } catch (error) { /* private mode */ }
     }
 
     if (gate) gate.hidden = true;
+
+    updateLock();
 
     if (announce && clean !== '') {
       say('bot', labels.email_saved || '');
@@ -668,6 +838,15 @@
     send();
   });
 
+  /* a tap on the locked compose row is a sentence about to be written into the
+     wrong field: it goes to the gate instead */
+  form.addEventListener('click', function (event) {
+    if (!isGated()) return;
+
+    event.preventDefault();
+    focusEmail();
+  });
+
   if (input) {
     input.addEventListener('keydown', function (event) {
       if (event.key === 'Enter' && !event.shiftKey) {
@@ -688,10 +867,18 @@
 
     if (question === '' && !photo && !fromProduct && !pick) return;
 
-    if (askEmail && !email()) {
-      if (gate) gate.hidden = false;
-      if (input) input.focus();
+    /* not identified yet: the gate comes forward, takes the focus, and the
+       words stay in the field - nothing looks sent, nothing is lost */
+    if (isGated()) {
+      updateLock();
+      focusEmail();
       return;
+    }
+
+    if (askEmail && !email() && gate && !gateSkipped) {
+      /* the soft ask (address optional): it stands in front of the first
+         answer, but it may not block the send itself */
+      gate.hidden = false;
     }
 
     busy = true;
@@ -877,6 +1064,14 @@
 
   Array.prototype.forEach.call(root.querySelectorAll('[data-assistant-chip]'), function (chip) {
     chip.addEventListener('click', function () {
+      /* a chip is a shortcut into the conversation: while the visitor is not
+         identified the shortcut leads to the field that unblocks the chat */
+      if (isGated()) {
+        updateLock();
+        focusEmail();
+        return;
+      }
+
       var productId = chip.getAttribute('data-assistant-chip-product');
 
       if (productId) {
@@ -902,7 +1097,63 @@
     send('', 0, { id: button.getAttribute('data-assistant-choice') || '', label: button.textContent.trim() });
   });
 
+  /* ---------- the broom: start the talk over ---------- */
+
+  /* Two taps, not a confirm box: the first arms the button (it says so
+     itself), the second sweeps. The address is *not* swept away - it is the
+     visitor's identity, not part of the conversation. */
+  if (clearButton) {
+    var clearTimer = null;
+
+    var disarmClear = function () {
+      clearButton.classList.remove('is-armed');
+      clearButton.setAttribute('title', clearButton.getAttribute('data-aichat-clear-label') || '');
+      if (clearTimer) {
+        window.clearTimeout(clearTimer);
+        clearTimer = null;
+      }
+    };
+
+    clearButton.addEventListener('click', function () {
+      if (!clearButton.classList.contains('is-armed')) {
+        clearButton.classList.add('is-armed');
+        clearButton.setAttribute('title', clearButton.getAttribute('data-aichat-clear-confirm') || '');
+        clearTimer = window.setTimeout(disarmClear, 2600);
+        return;
+      }
+
+      disarmClear();
+      clearChat();
+    });
+  }
+
+  function clearChat() {
+    history.length = 0;
+    thread = null;
+
+    try {
+      window.localStorage.removeItem(HISTORY_KEY);
+    } catch (error) { /* private mode: the next save rebuilds what it can */ }
+
+    if (log) log.innerHTML = '';
+
+    /* the welcome (and, with it, the address question when the visitor is not
+       identified) is the face of an empty chat */
+    if (welcome && welcome.parentNode) welcome.hidden = false;
+
+    updateLock();
+    note(labels.cleared || '');
+    scrollLog();
+
+    if (isGated()) {
+      focusEmail();
+    } else if (input) {
+      input.focus();
+    }
+  }
+
   restore();
+  updateLock();
   paintBoxLinks();
 
   /* a piece saved anywhere on the page: the link to the box follows the token

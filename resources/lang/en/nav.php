@@ -14,6 +14,13 @@ return [
     'contact' => 'Contact',
     'search' => 'Search the catalogue',
     'search_placeholder' => 'Search architectural fixtures, magnetic, silia...',
+    /* the moods the placeholder types out, one character at a time, when the
+       field is empty and idle (the static line above stays the no-script
+       fallback and the first thing shown) */
+    'search_mood_1' => 'Try: a wall-hung toilet',
+    'search_mood_2' => 'Try: a small washbasin',
+    'search_mood_3' => 'Try: a chrome shower set',
+    'search_mood_4' => 'Try: a sensor tap',
     'planner' => 'Bathroom planner',
     'favorites' => 'Saved list',
     'box' => 'Box',

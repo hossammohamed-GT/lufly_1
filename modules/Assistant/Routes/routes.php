@@ -18,5 +18,11 @@ return function (Router $router): void {
         /* one question: a description, a photo, or both */
         $router->localized('POST', 'assistant.ask', [AssistantController::class, 'ask'])
             ->name('assistant.ask');
+
+        /* the gate: the visitor left an address before the first question, so
+           the chat can say "saved" honestly instead of only tucking the address
+           into the browser and hoping the first question arrives */
+        $router->localized('POST', 'assistant/email', [AssistantController::class, 'email'])
+            ->name('assistant.email');
     });
 };

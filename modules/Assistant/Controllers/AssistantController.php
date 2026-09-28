@@ -15,12 +15,13 @@ use Modules\Assistant\Services\AssistantService;
  * The finder — "I am looking for something like this".
  *
  * POST /{locale}/assistant/ask    a description, a photo, or both
+ * POST /{locale}/assistant/email  the address the gate asked for, saved at once
  *
- * One endpoint, because the visitor's question is one thing: the browser sends
- * the words — or a tap on one of the choices the chat offered — and, when there
- * is one, the picture (base64 in a normal field, so nothing depends on multipart
- * parsing behind a proxy). The answer is either a sentence with a few choices
- * (the chat is talking) or the bank of cards from our own catalogue.
+ * One endpoint per thing the visitor does: ask() is the question (the browser
+ * sends the words — or a tap on one of the choices the chat offered — and,
+ * when there is one, the picture); email() is the gate, so the moment the
+ * visitor presses "start" the address is validated and kept on our side, and
+ * the chat can honestly say it was.
  */
 class AssistantController extends Controller
 {
@@ -85,6 +86,36 @@ class AssistantController extends Controller
         }
 
         return ApiResponse::success($result);
+    }
+
+    /**
+     * The gate: the address, saved the moment the visitor presses start.
+     *
+     * The answer is spoken in the visitor's language, because it is printed
+     * under the field it belongs to.
+     */
+    public function email(Request $request): JsonResponse
+    {
+        if (!$this->assistant->enabled()) {
+            return ApiResponse::error(trans('assistant.off'), [], 404);
+        }
+
+        $result = $this->assistant->registerEmail(
+            (string) $request->input('email', ''),
+            $this->translator->getLocale(),
+        );
+
+        if (!($result['ok'] ?? false)) {
+            $reason = (string) ($result['reason'] ?? 'error');
+
+            return ApiResponse::error(
+                (string) ($result['text'] ?? trans('assistant.err')),
+                [],
+                $reason === 'limit' ? 429 : ($reason === 'invalid' ? 422 : 503),
+            );
+        }
+
+        return ApiResponse::success($result, (string) ($result['text'] ?? ''));
     }
 
 }

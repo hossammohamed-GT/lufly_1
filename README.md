@@ -189,6 +189,8 @@ ASSISTANT_GOOD_SCORE=24         # above this, the model is not even asked
 ASSISTANT_DAILY=20              # answers per visitor per day
 ASSISTANT_PHOTO=true
 ASSISTANT_ASK_EMAIL=true        # ask for the address before the first answer
+ASSISTANT_REQUIRE_EMAIL=true    # the address is required: the chat is locked until it is saved
+ASSISTANT_GATE_DAILY=8          # addresses one visitor may save per day (the gate endpoint)
 ASSISTANT_LEAD_MAIL=hossam545mohamed@gmail.com
 ASSISTANT_LEAD_DEFAULT=hossam545mohamed@gmail.com
 ```

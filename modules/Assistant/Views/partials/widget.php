@@ -40,6 +40,11 @@ $plannerTab = feature('planner', true)
     && (bool) config('planner.chat.enabled', true);
 $plannerSoon = $plannerTab && (bool) config('planner.coming_soon', true);
 
+/* the address is the visitor's identity: with `require_email` on, the compose
+   row stays locked until it is saved — the eye lands on the e-mail field first,
+   never on a chat input that would silently refuse to send */
+$requireEmail = (bool) config('assistant.lead.require_email', true);
+
 $waiting = $assistant->waiting($locale);
 
 /* The box is the one list the chat feeds: a card carries its box button only.
@@ -75,17 +80,27 @@ if ($boxOn) {
 <div class="aichat" data-aichat data-assistant
      data-assistant-build="<?= e((string) config('assistant.build', '')) ?>"
      data-assistant-endpoint="<?= e(route('assistant.ask')) ?>"
+     data-assistant-email-endpoint="<?= e(route('assistant.email')) ?>"
      data-assistant-waiting="<?= e((string) json_encode($waiting, JSON_UNESCAPED_UNICODE)) ?>"
      data-assistant-context="<?= e((string) json_encode($context, JSON_UNESCAPED_UNICODE)) ?>"
      data-assistant-photos="<?= $photos ? '1' : '0' ?>"
      data-assistant-max-kb="<?= (int) config('assistant.photo.max_kb', 4096) ?>"
      data-assistant-ask-email="<?= ((bool) config('assistant.lead.ask_email', true) && (bool) config('assistant.lead.email', '')) ? '1' : '0' ?>"
+     data-assistant-require-email="<?= ($requireEmail && (bool) config('assistant.lead.ask_email', true)) ? '1' : '0' ?>"
      data-assistant-planner-soon="<?= $plannerSoon ? '1' : '0' ?>"
      data-assistant-box="<?= $boxOn ? e(route('box.add')) : '' ?>"
      data-assistant-box-remove="<?= $boxOn ? e(route('box.remove')) : '' ?>"
      data-assistant-box-page="<?= $boxOn ? e(route('box.index')) : '' ?>"
      data-assistant-labels="<?= e((string) json_encode([
          'email_saved' => trans('assistant.ask_saved'),
+         'email_saving' => trans('assistant.ask_saving'),
+         'email_invalid' => trans('assistant.ask_invalid'),
+         'email_err' => trans('assistant.ask_err'),
+         'email_needed' => trans('assistant.ask_needed'),
+         'locked_placeholder' => trans('assistant.locked_placeholder'),
+         'clear' => trans('assistant.clear'),
+         'clear_confirm' => trans('assistant.clear_confirm'),
+         'cleared' => trans('assistant.cleared'),
          'photo_ready' => trans('assistant.photo_ready'),
          'photo_error' => trans('assistant.note_photo_rejected'),
          'err' => trans('assistant.err'),
@@ -132,6 +147,19 @@ if ($boxOn) {
                 <strong id="lufly-chat-title"><?= e(trans('assistant.title')) ?></strong>
                 <em><?= e(trans('assistant.subtitle')) ?></em>
             </span>
+            <button type="button" class="aichat-icon-btn" data-aichat-clear
+                    title="<?= e(trans('assistant.clear')) ?>"
+                    data-aichat-clear-label="<?= e(trans('assistant.clear')) ?>"
+                    data-aichat-clear-confirm="<?= e(trans('assistant.clear_confirm')) ?>">
+                <span class="visually-hidden"><?= e(trans('assistant.clear')) ?></span>
+                <!-- an eraser, not a bin: the talk is wiped away, the address stays -->
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"
+                     stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                    <path d="m7 21-4.3-4.3c-1-1-1-2.5 0-3.4l9.6-9.6c1-1 2.5-1 3.4 0l5.6 5.6c1 1 1 2.5 0 3.4L13 21"/>
+                    <path d="M22 21H7"/>
+                    <path d="m5 11 9 9"/>
+                </svg>
+            </button>
             <button type="button" class="aichat-icon-btn" data-aichat-grow
                     aria-pressed="false" title="<?= e(trans('assistant.grow')) ?>"
                     data-aichat-grow-label="<?= e(trans('assistant.grow')) ?>"
@@ -171,7 +199,7 @@ if ($boxOn) {
         <div class="aichat-body" data-aichat-body>
             <div class="aichat-pane" id="lufly-chat-find" role="tabpanel" data-assistant-pane="find">
                 <div class="aichat-welcome" data-assistant-welcome>
-                    <p class="aichat-hello"><?= e(trans('assistant.ask_text')) ?></p>
+                    <p class="aichat-hello"><?= e($requireEmail ? trans('assistant.ask_text_required') : trans('assistant.ask_text')) ?></p>
 
                     <div class="aichat-chips" data-assistant-chips
                          data-chips-label="<?= e(trans('assistant.chips_label')) ?>">
@@ -188,18 +216,34 @@ if ($boxOn) {
                             </button>
                         <?php endfor; ?>
                     </div>
-
-                    <form class="aichat-gate" data-assistant-gate hidden>
-                        <label class="aichat-gate-label" for="lufly-chat-email"><?= e(trans('assistant.ask_label')) ?></label>
-                        <div class="aichat-gate-row">
-                            <input type="email" id="lufly-chat-email" name="email" inputmode="email"
-                                   autocomplete="email" placeholder="<?= e(trans('assistant.ask_placeholder')) ?>"
-                                   data-assistant-email>
-                            <button type="submit" class="aichat-gate-go"><?= e(trans('assistant.ask_start')) ?></button>
-                        </div>
-                        <button type="button" class="aichat-gate-skip" data-assistant-skip><?= e(trans('assistant.ask_skip')) ?></button>
-                    </form>
                 </div>
+
+                <?php /* The gate is a sibling of the welcome, not a child of it:
+                       a visitor who comes back to a restored conversation sees
+                       the welcome hidden - the address question must still be
+                       able to appear in front of him, or the chat would
+                       silently refuse to send what he types. */ ?>
+                <?php /* novalidate: the bubble a browser draws over an invalid
+                           address is out of the chat's control and out of its
+                           language - the gate shows its own line instead */ ?>
+                <form class="aichat-gate" data-assistant-gate hidden novalidate>
+                    <label class="aichat-gate-label" for="lufly-chat-email"><?= e(trans('assistant.ask_label')) ?></label>
+                    <div class="aichat-gate-row">
+                        <input type="email" id="lufly-chat-email" name="email" inputmode="email"
+                               autocomplete="email" placeholder="<?= e(trans('assistant.ask_placeholder')) ?>"
+                               aria-describedby="lufly-chat-gate-err"
+                               data-assistant-email>
+                        <button type="submit" class="aichat-gate-go"
+                                data-aichat-gate-go data-label="<?= e(trans('assistant.ask_start')) ?>">
+                            <?= e(trans('assistant.ask_start')) ?>
+                        </button>
+                    </div>
+                    <?php if (!$requireEmail): ?>
+                        <button type="button" class="aichat-gate-skip" data-assistant-skip><?= e(trans('assistant.ask_skip')) ?></button>
+                    <?php endif; ?>
+                    <p class="aichat-gate-err" id="lufly-chat-gate-err"
+                       data-assistant-gate-err role="alert" hidden></p>
+                </form>
 
                 <div class="aichat-log-list" data-assistant-log role="log" aria-live="polite"></div>
             </div>

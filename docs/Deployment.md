@@ -92,6 +92,8 @@ ASSISTANT_DAILY=20              # answers per visitor per day
 ASSISTANT_PHOTO=true
 ASSISTANT_PHOTO_KB=4096
 ASSISTANT_ASK_EMAIL=true        # ask for the address before the first answer
+ASSISTANT_REQUIRE_EMAIL=true    # the address is required: the chat is locked until it is saved
+ASSISTANT_GATE_DAILY=8          # addresses one visitor may save per day (the gate endpoint)
 ASSISTANT_LEAD_MAIL=hossam545mohamed@gmail.com
 ASSISTANT_LEAD_DEFAULT=hossam545mohamed@gmail.com
 ASSISTANT_CACHE_HOURS=168
@@ -112,6 +114,16 @@ ASSISTANT_CACHE_HOURS=168
   visitor who skips the field is stored with `ASSISTANT_LEAD_DEFAULT` so the team
   always has somewhere to answer. Photos are mailed every time (a human has to
   look at them), text questions once per visitor per day.
+- **The gate is an endpoint of its own** (`POST /{locale}/assistant/email`): the
+  moment the visitor presses start the address is validated server-side and kept
+  as a `source = "gate"` row (no message, never mailed — one row per visitor per
+  day, capped by `ASSISTANT_GATE_DAILY`), and the chat answers with a sentence
+  from the server instead of a silent nothing. With `ASSISTANT_REQUIRE_EMAIL=true`
+  the compose row stays locked until that happens: the focus goes to the e-mail
+  field, the chips are inert, and a locked field cannot look like it sent
+  something it refused. The eraser in the chat header clears the conversation
+  (two taps) but never the address — the address is the visitor's identity, not
+  part of the talk.
 - Test after deploying: send a description in each language, send a photo, then
   check the inbox and the row in `assistant_leads`. From a terminal,
   `php cli assistant:find "a wall hung toilet"` prints the words it kept and

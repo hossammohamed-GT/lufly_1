@@ -39,11 +39,23 @@ return [
     /* the address, asked once before the first answer */
     'ask_title' => 'Before we start',
     'ask_text' => 'Leave your e-mail and our team can follow up. With a photo we always look at it ourselves and answer you directly.',
+    'ask_text_required' => 'One thing first: your e-mail. The chat opens the moment it is saved — and with a photo we always look at it ourselves and answer you directly.',
     'ask_label' => 'Your e-mail',
     'ask_placeholder' => 'you@example.com',
     'ask_start' => 'Start',
     'ask_skip' => 'Continue without it',
     'ask_saved' => 'Thank you — ask away.',
+    'ask_saving' => 'Saving…',
+    'ask_invalid' => 'That does not look like an e-mail address — check it and try again.',
+    'ask_limit' => 'Too many attempts from this connection. Write to us directly and the team takes it from here.',
+    'ask_err' => 'The address did not save. Please try again in a moment.',
+    'ask_needed' => 'Your e-mail first — then the chat is yours.',
+    'locked_placeholder' => 'Enter your e-mail above to start…',
+
+    /* the broom in the header */
+    'clear' => 'Clear the conversation',
+    'clear_confirm' => 'Tap again to clear',
+    'cleared' => 'Conversation cleared — ask away.',
 
     /* answers */
     'found_1' => 'I found :n pieces close to what you described.',
