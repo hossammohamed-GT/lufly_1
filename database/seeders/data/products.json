@@ -7612,6 +7612,11 @@
         "images": [
             {
                 "type": "main",
+                "path": "/images/products/prod_2853_lufly-studio.jpg",
+                "available": true
+            },
+            {
+                "type": "gallery",
                 "path": "/images/products/prod_2853_Screenshot-2026-07-17-162858.png",
                 "available": true,
                 "legacy_file": "2026/07/Screenshot-2026-07-17-162858.png",
@@ -7662,6 +7667,11 @@
         "images": [
             {
                 "type": "main",
+                "path": "/images/products/prod_2858_lufly-studio.jpg",
+                "available": true
+            },
+            {
+                "type": "gallery",
                 "path": "/images/products/prod_2858_Screenshot-2026-07-17-163220.png",
                 "available": true,
                 "legacy_file": "2026/07/Screenshot-2026-07-17-163220.png",
@@ -7705,6 +7715,11 @@
         "images": [
             {
                 "type": "main",
+                "path": "/images/products/prod_2861_lufly-studio.jpg",
+                "available": true
+            },
+            {
+                "type": "gallery",
                 "path": "/images/products/prod_2861_Screenshot-2026-07-17-163418.png",
                 "available": true,
                 "legacy_file": "2026/07/Screenshot-2026-07-17-163418.png",
@@ -7755,6 +7770,11 @@
         "images": [
             {
                 "type": "main",
+                "path": "/images/products/prod_2866_lufly-studio.jpg",
+                "available": true
+            },
+            {
+                "type": "gallery",
                 "path": "/images/products/prod_2866_Screenshot-2026-07-17-163837.png",
                 "available": true,
                 "legacy_file": "2026/07/Screenshot-2026-07-17-163837.png",
@@ -7798,6 +7818,11 @@
         "images": [
             {
                 "type": "main",
+                "path": "/images/products/prod_2870_lufly-studio.jpg",
+                "available": true
+            },
+            {
+                "type": "gallery",
                 "path": "/images/products/prod_2870_Screenshot-2026-07-17-164116.png",
                 "available": true,
                 "legacy_file": "2026/07/Screenshot-2026-07-17-164116.png",
@@ -7841,6 +7866,11 @@
         "images": [
             {
                 "type": "main",
+                "path": "/images/products/prod_2873_lufly-studio.jpg",
+                "available": true
+            },
+            {
+                "type": "gallery",
                 "path": "/images/products/prod_2873_Screenshot-2026-07-17-164345.png",
                 "available": true,
                 "legacy_file": "2026/07/Screenshot-2026-07-17-164345.png",
@@ -7884,6 +7914,11 @@
         "images": [
             {
                 "type": "main",
+                "path": "/images/products/prod_2876_lufly-studio.jpg",
+                "available": true
+            },
+            {
+                "type": "gallery",
                 "path": "/images/products/prod_2876_Screenshot-2026-07-17-164533.png",
                 "available": true,
                 "legacy_file": "2026/07/Screenshot-2026-07-17-164533.png",
@@ -7927,6 +7962,11 @@
         "images": [
             {
                 "type": "main",
+                "path": "/images/products/prod_2880_lufly-studio.jpg",
+                "available": true
+            },
+            {
+                "type": "gallery",
                 "path": "/images/products/prod_2880_Screenshot-2026-07-17-164755.png",
                 "available": true,
                 "legacy_file": "2026/07/Screenshot-2026-07-17-164755.png",
@@ -7970,6 +8010,11 @@
         "images": [
             {
                 "type": "main",
+                "path": "/images/products/prod_2884_lufly-studio.jpg",
+                "available": true
+            },
+            {
+                "type": "gallery",
                 "path": "/images/products/prod_2884_Screenshot-2026-07-17-165041.png",
                 "available": true,
                 "legacy_file": "2026/07/Screenshot-2026-07-17-165041.png",
@@ -8013,6 +8058,11 @@
         "images": [
             {
                 "type": "main",
+                "path": "/images/products/prod_2888_lufly-studio.jpg",
+                "available": true
+            },
+            {
+                "type": "gallery",
                 "path": "/images/products/prod_2888_Screenshot-2026-07-17-165404.png",
                 "available": true,
                 "legacy_file": "2026/07/Screenshot-2026-07-17-165404.png",
