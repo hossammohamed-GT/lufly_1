@@ -4,7 +4,8 @@
  *
  * Quality policy (2026-09-29, owner decision): no image on this site is ever
  * served at reduced quality. The old downscaled-WebP rendition ladder
- * (`<name>.jpg@<width>w.webp`, built by tools/media_audit/optimize_images.py)
+ * (`<name>.jpg@<width>w.webp`, built by the image-optimisation pipeline —
+ * see docs/Deployment.md)
  * and the .htaccess WebP negotiation were removed: every screen now fetches
  * the untouched original file, whatever its width. This partial keeps its
  * props API for callers but simply renders a plain <img>.

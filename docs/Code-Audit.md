@@ -20,11 +20,14 @@ touched.
 | Server rendering | `tools/php-wasm/render.mjs` for home in en/tr/cs and the catalogue |
 | Manual review | Router, View, Autoloader, Container/Application, Session, CsrfGuard, SecurityHeaders, UploadService, Database\Connection, heuristic scan for classic PHP bug patterns (loose `== 0`, assignment-in-condition, `eval`, unguarded `extract`, md5-for-passwords, user `unserialize`) |
 
-The two new tools are permanent: re-run them after any change.
+The audit tools (`tools/php-wasm/`, `tools/code_audit/`, `tools/frontend_audit/`)
+were removed from the project after the audit closed — the repository ships
+code + docs only; copies live in the project's external tools backup. The
+table above is the record of how this audit ran, not a runbook.
 
 ```bash
-node tools/php-wasm/syntax_check.mjs          # all php files parse
-python3 tools/code_audit/xref_check.py        # 0 failures, 0 warnings expected
+node syntax_check.mjs                         # all php files parse (from the backup copy)
+python3 xref_check.py                         # 0 failures, 0 warnings expected
 ```
 
 ## Findings and fixes
@@ -122,12 +125,15 @@ scans — all resolved inside `xref_check.py`.)*
 
 ## Re-running everything
 
+From the external tools backup (the scripts are no longer in the repository —
+copy them into a scratch folder outside the repo and run from the project root):
+
 ```bash
 npm install --no-save @php-wasm/node @php-wasm/universal jsdom   # tooling only
-node tools/php-wasm/syntax_check.mjs                             # 395 files
-python3 tools/code_audit/xref_check.py                           # 0 / 0
-node tools/php-wasm/render.mjs home en                           # + tr, cs
-node tools/frontend_audit/finishes_lab_test.cjs                  # 36/36
-node tools/frontend_audit/hero_engine_test.mjs                   # etc.
-python3 tools/frontend_audit/locale_data_test.py
+node syntax_check.mjs                                            # 395 files
+python3 xref_check.py                                            # 0 / 0
+node render.mjs home en                                          # + tr, cs
+node finishes_lab_test.cjs                                       # 36/36
+node hero_engine_test.mjs                                        # etc.
+python3 locale_data_test.py
 ```

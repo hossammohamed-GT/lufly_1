@@ -53,12 +53,14 @@ mis-filed as a photo, so nothing moved into the photo section.
 
 ## How the split is detected (tooling, not runtime)
 
-`tools/media_audit/` re-runs the analysis at any time (needs `pillow` + `numpy`,
-never needed by the application itself):
+The split was produced and verified by the `media_audit` pipeline (needs
+`pillow` + `numpy`, never needed by the application itself). That tooling is
+**not part of the repository** — it lives in the project's external tools
+backup; the methodology it used, and how to read its output:
 
 ```bash
-python3 tools/media_audit/build_report.py                        # report only
-python3 tools/media_audit/build_report.py --apply --patch-sql    # write sqlite + MySQL export
+python3 build_report.py                        # report only
+python3 build_report.py --apply --patch-sql    # write sqlite + MySQL export
 ```
 
 The classifier measures **stroke survival** of the file attached to the row:
@@ -72,7 +74,8 @@ The classifier measures **stroke survival** of the file attached to the row:
 
 Two files sit between the two populations and are pinned by name in
 `classify.py` (`FORCE_DRAWING` / `FORCE_PHOTO`); both were confirmed by eye on a
-contact sheet rendered with `tools/media_audit/contact_sheet.py`.
+contact sheet rendered with the pipeline's `contact_sheet.py` (external
+backup — not in the repository).
 
 Every decision, with its score, is written to
 `storage/reports/media-classification.csv` (one row per attachment, including

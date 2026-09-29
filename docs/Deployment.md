@@ -233,30 +233,33 @@ Notes that save a support ticket:
 - [ ] `MAIL_TRANSPORT=smtp` + credentials set, and one saved list mailed end to end
 - [ ] `php cli ai:doctor --image` answers on all five keys, and the planner's
       picture button draws once (spends one image from the day's allowance)
-- [ ] Images optimised: `python3 tools/media_audit/optimize_images.py --variants 480,960,1440 public/images/lifestyle`
-      (see below — without it the site ships ~46 MB of JPEG/PNG)
+- [ ] Images optimised: every new JPEG/PNG in `public/images/` ships with its
+      `.webp` twin (and `@480w/@960w/@1440w` renditions where the responsive
+      component is used) — see *Images* below
 - [ ] `DB_LOG=false` on production (it defaults to off; turning it on writes
       every query to `storage/logs/database.log` with a blocking lock)
 
 ## Images
 
-`public/images/` is committed as-is, but the raw JPEG/PNG originals are heavy
-(~46 MB, and ~2 MB of that is on the home page alone). Two things fix this, and
-both are non-destructive — the originals are never modified:
+`public/images/` is committed with the WebP twins and downscaled renditions
+already generated (~8 MB total, from ~46 MB of JPEG/PNG originals; ~2 MB of
+that was on the home page alone). The originals are never modified — the
+optimisation pipeline is non-destructive and incremental, but the script that
+generated them (`optimize_images.py`, needs `Pillow`) is **not part of the
+repository**; it lives in the project's external tools backup. When it is
+available, its contract is:
 
 ```bash
-pip install Pillow
-
 # WebP twin next to every JPEG/PNG (<name>.jpg.webp). ~46 MB -> ~8 MB.
-python3 tools/media_audit/optimize_images.py
+python3 optimize_images.py
 
 # plus downscaled renditions for srcset (<name>.jpg@480w.webp, @960w, @1440w)
-python3 tools/media_audit/optimize_images.py --variants 480,960,1440 public/images/lifestyle
+python3 optimize_images.py --variants 480,960,1440 public/images/lifestyle
 
 # renditions for images referenced from CSS (background-image). These must be
 # JPEGs: a stylesheet names one file and cannot negotiate on Accept, so the
 # rule needs a .jpg that .htaccess can swap for its .jpg.webp twin.
-python3 tools/media_audit/optimize_images.py --filter backdrop \
+python3 optimize_images.py --filter backdrop \
     --variants 760,1440 --variant-format both
 
 # --filter restricts a run to filenames containing the text, so one group of

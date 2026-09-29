@@ -205,20 +205,11 @@ type steps down; at `max-height: 680` the paragraph and the scroll cue go; on
 phones (`max-width: 760`) the selector becomes a full-width swipeable rail above
 a 2x2 trust strip, and landscape phones drop the paragraph.
 
-Verify changes without a browser:
-
-```bash
-node tools/php-wasm/render.mjs home                       # render the page with php-wasm
-node tools/php-wasm/render.mjs lint                       # eval-parse every changed .php file
-node tools/frontend_audit/hero_engine_test.mjs            # the crossfade engine, virtual clock
-node tools/frontend_audit/navbar_engine_test.mjs          # the navbar controller, stubbed DOM
-node tools/frontend_audit/css_audit.mjs                   # cascade + overflow sweep
-node tools/frontend_audit/static_preview.mjs --render storage/reports/_home-render.html --port 4173
-```
-
-The last one serves the php-wasm snapshot with the real `frontend/` assets, which
-is how a change can be reviewed visually without a PHP runtime: render first, then
-open the preview URL.
+The dev-only verification tooling that was used while building the page
+(php-wasm renderer/linter, jsdom engine tests, CSS audit, static preview) is
+**not part of the repository** — it was removed to keep the project at
+code + docs only. The section above is the contract those tools enforced;
+verify changes in a browser, against those invariants.
 
 Other home-page invariants worth keeping: the announcement bar exposes its height
 as `--luann-h` and every sticky/oversized element subtracts it; the mobile
@@ -302,8 +293,9 @@ a photo band never relies on the veil alone:
   (`.lfc-inner::before`): the daylight scenes are near-white exactly where the
   copy sits and the soft 0.62 scrim left the kicker at 1.7:1.
 
-`node tools/frontend_audit/band_audit.mjs` checks all of the above against the
-render order read from `home/index.php`: a plain band that starts painting a
+The `band_audit` check (in the external tools backup, not the repository)
+verifies all of the above against the render order read from
+`home/index.php`: a plain band that starts painting a
 photograph, a photo band whose backdrop stops resolving, a missing veil layer or
 lifted container, and two neighbouring photo bands all fail it.
 
