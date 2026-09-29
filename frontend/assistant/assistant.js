@@ -36,6 +36,7 @@
   var shotImage = root.querySelector('[data-assistant-shot-img]');
   var shotName = root.querySelector('[data-assistant-shot-name]');
   var welcome = root.querySelector('[data-assistant-welcome]');
+  var hello = root.querySelector('.aichat-hello');
   var endpoint = root.getAttribute('data-assistant-endpoint') || '';
   var emailEndpoint = root.getAttribute('data-assistant-email-endpoint') || '';
   var context = parseJSON(root.getAttribute('data-assistant-context'));
@@ -440,6 +441,13 @@
       /* the question about the address never stands alone: its context (what
          the chat is and what it can do) is right above it */
       if (welcome && welcome.parentNode) welcome.hidden = false;
+    } else if (!gated && email() !== '') {
+      /* Once identified, never show the e-mail request again. The same welcome
+         area becomes the concise product-finder guide; on an existing thread
+         restore() keeps it hidden so it does not interrupt the conversation. */
+      if (gate) gate.hidden = true;
+      if (hello) hello.textContent = labels.email_saved || '';
+      if (welcome && history.length === 0) welcome.hidden = false;
     }
 
     if (input) {
@@ -511,7 +519,7 @@
     /* no endpoint to save through (the module routes are off): the address is
        still kept in the browser and travels with the first question */
     if (!emailEndpoint) {
-      rememberEmail(value, true);
+      rememberEmail(value);
       return;
     }
 
@@ -544,11 +552,10 @@
           return;
         }
 
-        rememberEmail(value, false);
-
-        /* what the chat answers with is the server's own sentence - the right
-           language, and true (the address is stored on our side by now) */
-        say('bot', (body.data && body.data.text) || labels.email_saved || '');
+        /* updateLock turns the former e-mail introduction into the translated
+           usage guide. It stays in one predictable place instead of adding a
+           duplicate bot message below it. */
+        rememberEmail(value);
 
         if (input) input.focus();
       })
@@ -570,7 +577,7 @@
     });
   }
 
-  function rememberEmail(value, announce) {
+  function rememberEmail(value) {
     var clean = String(value || '').trim();
 
     if (clean !== '') {
@@ -584,10 +591,8 @@
 
     updateLock();
 
-    if (announce && clean !== '') {
-      say('bot', labels.email_saved || '');
-    }
-
+    /* updateLock has already replaced the e-mail request with the usage guide;
+       do not repeat that guide as a second chat bubble. */
     if (input) input.focus();
   }
 
