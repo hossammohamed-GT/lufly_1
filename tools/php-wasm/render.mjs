@@ -26,11 +26,14 @@ import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 
 const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '../..');
-process.chdir(path.join(ROOT, 'node_modules/@php-wasm/node/asyncify'));
+process.chdir(path.join(ROOT, 'node_modules/@php-wasm/node-8-3/asyncify'));
 
 const { loadNodeRuntime } = await import('@php-wasm/node');
 const { PHP } = await import('@php-wasm/universal');
-const runtime = await loadNodeRuntime('8.3', { persist: false });
+const runtime = await loadNodeRuntime('8.3', {
+  persist: false,
+  emscriptenOptions: { processId: 1 },
+});
 const php = new PHP(runtime);
 
 process.chdir(ROOT);
