@@ -39,11 +39,6 @@
   var frames = Array.prototype.slice.call(root.querySelectorAll('.hero-frame'));
   var panels = Array.prototype.slice.call(root.querySelectorAll('[data-hero-panel]'));
   var tabs = Array.prototype.slice.call(root.querySelectorAll('[data-hero-tab]'));
-  var track = root.querySelector('[data-hero-track]');
-  var dots = Array.prototype.slice.call(root.querySelectorAll('[data-hero-dot]'));
-  var mqPhone = window.matchMedia
-    ? window.matchMedia('(max-width: 760px)')
-    : null;
   var N = frames.length;
 
   if (N === 0) {
@@ -296,43 +291,6 @@
         panel.classList.remove('is-active');
       }
     }
-
-    for (var d = 0; d < dots.length; d++) {
-      dots[d].classList.toggle('is-active', d === next);
-    }
-
-    positionTrack();
-  }
-
-  /* On phones the four cards ride a sliding track. Centre the active card in
-     the viewport, but clamp so the track always covers the bar - the first and
-     last cards rest against the end gutter rather than leaving a blank strip.
-     The maths is pure pixel geometry, so it is correct in both LTR and RTL. On
-     wider screens the track is display:contents and needs no transform. */
-  function positionTrack() {
-    if (!track) {
-      return;
-    }
-
-    if (mqPhone && !mqPhone.matches) {
-      track.style.transform = '';
-      return;
-    }
-
-    var el = panels[current];
-    var viewport = track.parentNode;
-
-    if (!el || !viewport) {
-      return;
-    }
-
-    var containerW = viewport.clientWidth;
-    var trackW = track.scrollWidth;
-    var raw = (containerW / 2) - (el.offsetLeft + el.offsetWidth / 2);
-    var min = Math.min(0, containerW - trackW);
-    var offset = Math.max(min, Math.min(0, raw));
-
-    track.style.transform = 'translateX(' + offset + 'px)';
   }
 
   function settle() {
@@ -600,29 +558,6 @@
   if (theme === 'light') {
     theme = 'dark';
     applyTheme('light');
-  }
-
-  /* keep the phone carousel centred through rotation, resize and the
-     desktop/phone boundary */
-  if (track) {
-    var reflowTimer = null;
-
-    var reflow = function () {
-      window.clearTimeout(reflowTimer);
-      reflowTimer = window.setTimeout(positionTrack, 120);
-    };
-
-    window.addEventListener('resize', reflow, { passive: true });
-    window.addEventListener('orientationchange', reflow, { passive: true });
-    window.addEventListener('load', positionTrack);
-
-    if (mqPhone) {
-      if (typeof mqPhone.addEventListener === 'function') {
-        mqPhone.addEventListener('change', positionTrack);
-      } else if (typeof mqPhone.addListener === 'function') {
-        mqPhone.addListener(positionTrack);
-      }
-    }
   }
 
   paintTabs(0);

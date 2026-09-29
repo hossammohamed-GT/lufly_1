@@ -406,18 +406,6 @@
   box-shadow: 0 24px 60px rgba(2, 8, 9, 0.45);
 }
 
-/* On desktop the track is invisible to layout (display:contents), so the four
-   cards remain direct flex children of .hero-tabs exactly as before. It only
-   becomes a real, sliding flex track on phones (see the phone breakpoint). */
-.hero-tabs-track {
-  display: contents;
-}
-
-/* The dot indicator belongs to the phone carousel; on desktop it is not shown. */
-.hero-dots {
-  display: none;
-}
-
 .hero-tab {
   position: relative;
   border-radius: 15px;
@@ -790,13 +778,6 @@
     transition: none;
     transform: none;
   }
-
-  /* the carousel still repositions instantly, it just does not glide */
-  .hero-tabs-track,
-  .hero-tab,
-  .hero-dot {
-    transition: none;
-  }
 }
 
 /* ==========================================================================
@@ -899,79 +880,12 @@
   .hero-cta-play { inline-size: 48px; block-size: 48px; }
   .hero-cta-story-text { max-inline-size: 10ch; line-height: 1.5; }
 
-  /* A swipeable peek carousel instead of four cramped cards. The bar becomes a
-     clipping viewport; .hero-tabs-track is the row that slides (positioned by
-     hero.js so the active card sits centred with a sliver of its neighbours).
-     One clear card at a time is far calmer than four tiny ones side by side. */
+  /* On phones the four category cards are dropped entirely: they crowded the
+     hero and competed with the copy. The background scenes still autoplay and
+     respond to a swipe on the photo — the cards were only ever a shortcut into
+     each collection, and the primary CTA already leads to the catalogue. */
   .hero-tabs {
-    grid-column: 1 / -1;
-    justify-self: stretch;
-    max-inline-size: none;
-    margin-inline: 0;
-    margin-block-end: 0;
-    display: block;
-    overflow: hidden;
-    padding: 14px 0 12px;
-    border-radius: 0;
-    border: 0;
-    border-block-start: 1px solid rgba(255, 255, 255, 0.08);
-    background: rgba(4, 11, 13, 0.66);
-    backdrop-filter: none;
-    -webkit-backdrop-filter: none;
-    box-shadow: none;
-  }
-
-  .hero-tabs-track {
-    display: flex;
-    position: relative;
-    gap: 14px;
-    /* leave room on both ends so the first and last cards can still show a
-       neighbour sliver rather than sitting flush against the screen edge */
-    padding-inline: 12px;
-    will-change: transform;
-    transition: transform 460ms var(--hero-ease);
-  }
-
-  /* one big card + a peek of the next: 78% of the viewport width */
-  .hero-tab {
-    flex: 0 0 78%;
-    min-inline-size: 0;
-    /* dim the neighbours so the centred card is clearly the one in focus */
-    opacity: 0.5;
-    transition: opacity 360ms var(--hero-ease), transform 300ms var(--hero-ease);
-  }
-
-  .hero-tab.is-active { opacity: 1; }
-
-  .hero-tab-thumb { inline-size: 100%; aspect-ratio: 16 / 10; }
-
-  .hero-tab.is-active::before { inset: -5px; border-radius: 16px; }
-  .hero-tab-thumb img { transform: none; }
-  .hero-tab:hover .hero-tab-thumb img { transform: none; }
-  .hero-tab-label { font-size: 11px; letter-spacing: 0.08em; padding-inline-end: 34px; }
-  .hero-tab-arrow { inline-size: 26px; block-size: 26px; }
-
-  /* position indicator: a dot per scene, the active one stretched into a pill */
-  .hero-dots {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    gap: 7px;
-    margin-block-start: 12px;
-  }
-
-  .hero-dot {
-    inline-size: 7px;
-    block-size: 7px;
-    border-radius: 50%;
-    background: rgba(255, 255, 255, 0.3);
-    transition: inline-size 320ms var(--hero-ease), background-color 320ms linear;
-  }
-
-  .hero-dot.is-active {
-    inline-size: 20px;
-    border-radius: 4px;
-    background: var(--hero-accent-bright);
+    display: none;
   }
 
   /* trust strip: the compact 2x2 from <=1024, a size smaller */
