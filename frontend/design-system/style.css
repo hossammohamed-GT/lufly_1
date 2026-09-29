@@ -402,10 +402,18 @@
 html {
   -webkit-text-size-adjust: 100%;
   scroll-behavior: smooth;
+  /* The document root is the viewport's scrolling box in several mobile and
+     tablet browsers. Clipping only body therefore still allowed decorative
+     transforms and fixed widgets to create a horizontal page scrollbar. */
+  max-inline-size: 100%;
+  overflow-x: hidden; /* fallback for browsers without overflow: clip */
+  overflow-x: clip;
 }
 
 body {
   margin: 0;
+  min-inline-size: 0;
+  max-inline-size: 100%;
   background: var(--ds-bg);
   color: var(--ds-text);
   font-family: var(--font-body);
@@ -414,7 +422,22 @@ body {
   line-height: var(--leading-normal);
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+  overflow-x: hidden; /* Safari/iPad fallback */
   overflow-x: clip;
+}
+
+/* Grid/flex descendants default to min-width:auto and can force the page wider
+   than the viewport when they contain long localized text. Keep the shell and
+   its standard containers shrinkable; intentional carousels retain their own
+   local overflow-x:auto behavior. */
+.ds-main,
+.ds-main > *,
+.container,
+.container-narrow,
+.lufly-mega-footer,
+.footer-grid {
+  min-inline-size: 0;
+  max-inline-size: 100%;
 }
 
 h1, h2, h3, h4, h5, h6 {
