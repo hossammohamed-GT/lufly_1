@@ -127,32 +127,45 @@ $heroScenes = [
     </a>
 
     <!-- Category selector -->
+    <?php /* On phones the four cards become a swipeable peek carousel: one big
+             card centred with a sliver of its neighbours, driven by the same
+             engine (tap / swipe / autoplay). The track is display:contents on
+             desktop, so the row of cards is untouched there. The dots are the
+             mobile position indicator. */ ?>
     <nav class="hero-tabs" data-hero-tabs aria-label="<?= e(trans('home.hero_tabs_label')) ?>">
-        <?php foreach ($heroScenes as $i => $s): ?>
-            <div class="hero-tab<?= $i === 0 ? ' is-active' : '' ?>" data-hero-panel="<?= (int) $i ?>">
-                <button type="button"
-                        class="hero-tab-switch"
-                        data-hero-tab="<?= (int) $i ?>"
-                        aria-pressed="<?= $i === 0 ? 'true' : 'false' ?>"
-                        title="<?= e(trans('home.' . $s['label'])) ?>">
-                    <span class="hero-tab-thumb">
-                        <img src="<?= e(asset('images/hero/hero-' . $s['key'] . '-thumb.webp') . '?v=' . $heroImgV) ?>"
-                             data-thumb-light="<?= e(asset('images/hero/hero-' . $s['key'] . '-light-thumb.webp') . '?v=' . $heroImgV) ?>"
-                             alt=""
-                             width="150" height="100"
-                             loading="lazy"
-                             decoding="async">
-                        <i class="hero-tab-tick" aria-hidden="true"></i>
-                    </span>
-                    <span class="hero-tab-label"><?= e(trans('home.' . $s['label'])) ?></span>
-                </button>
-                <a class="hero-tab-arrow"
-                   href="<?= e($s['url']) ?>"
-                   aria-label="<?= e(trans('home.hero_tab_go', ['name' => trans('home.' . $s['label'])])) ?>">
-                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14"/><path d="m13 6 6 6-6 6"/></svg>
-                </a>
-            </div>
-        <?php endforeach; ?>
+        <div class="hero-tabs-track" data-hero-track>
+            <?php foreach ($heroScenes as $i => $s): ?>
+                <div class="hero-tab<?= $i === 0 ? ' is-active' : '' ?>" data-hero-panel="<?= (int) $i ?>">
+                    <button type="button"
+                            class="hero-tab-switch"
+                            data-hero-tab="<?= (int) $i ?>"
+                            aria-pressed="<?= $i === 0 ? 'true' : 'false' ?>"
+                            title="<?= e(trans('home.' . $s['label'])) ?>">
+                        <span class="hero-tab-thumb">
+                            <img src="<?= e(asset('images/hero/hero-' . $s['key'] . '-thumb.webp') . '?v=' . $heroImgV) ?>"
+                                 data-thumb-light="<?= e(asset('images/hero/hero-' . $s['key'] . '-light-thumb.webp') . '?v=' . $heroImgV) ?>"
+                                 alt=""
+                                 width="150" height="100"
+                                 loading="lazy"
+                                 decoding="async">
+                            <i class="hero-tab-tick" aria-hidden="true"></i>
+                        </span>
+                        <span class="hero-tab-label"><?= e(trans('home.' . $s['label'])) ?></span>
+                    </button>
+                    <a class="hero-tab-arrow"
+                       href="<?= e($s['url']) ?>"
+                       aria-label="<?= e(trans('home.hero_tab_go', ['name' => trans('home.' . $s['label'])])) ?>">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14"/><path d="m13 6 6 6-6 6"/></svg>
+                    </a>
+                </div>
+            <?php endforeach; ?>
+        </div>
+
+        <div class="hero-dots" data-hero-dots aria-hidden="true">
+            <?php foreach ($heroScenes as $i => $s): ?>
+                <span class="hero-dot<?= $i === 0 ? ' is-active' : '' ?>" data-hero-dot="<?= (int) $i ?>"></span>
+            <?php endforeach; ?>
+        </div>
     </nav>
 
     <!-- Trust strip -->
