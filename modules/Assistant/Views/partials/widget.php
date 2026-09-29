@@ -130,6 +130,27 @@ if ($boxOn) {
         </span>
     </button>
 
+    <?php /* The search mark is the single origin of the experience. These
+             paths are decorative energy lines drawn from that point while the
+             circle grows into the glass panel. */ ?>
+    <svg class="aichat-flow" viewBox="0 0 360 520" aria-hidden="true"
+         preserveAspectRatio="none" focusable="false">
+        <defs>
+            <linearGradient id="aichat-flow-main" x1="1" y1="1" x2="0" y2="0">
+                <stop offset="0" stop-color="#8ffcff" stop-opacity="1"/>
+                <stop offset="0.32" stop-color="#13cbd0" stop-opacity=".88"/>
+                <stop offset="0.72" stop-color="#1c8b8b" stop-opacity=".34"/>
+                <stop offset="1" stop-color="#1c8b8b" stop-opacity="0"/>
+            </linearGradient>
+        </defs>
+        <path class="aichat-flow-path is-main"
+              d="M332 492 C278 470 292 382 252 338 C210 292 116 340 72 276 C38 226 65 132 18 72"/>
+        <path class="aichat-flow-path is-echo"
+              d="M332 492 C250 455 278 374 224 350 C165 324 94 360 43 315"/>
+        <path class="aichat-flow-path is-soft"
+              d="M332 492 C310 414 272 392 205 391 C137 390 90 416 31 390"/>
+    </svg>
+
     <section class="aichat-panel" id="lufly-chat-panel" data-aichat-panel hidden
              role="dialog" aria-modal="false" aria-labelledby="lufly-chat-title">
         <span class="aichat-grip" data-aichat-resize aria-hidden="true"
