@@ -974,6 +974,40 @@
    expanded or dragged to any size, remembered per browser.
    ========================================================================== */
 
+/* Entering the assistant is a focused site mode, not a popup appearing over an
+   unrelated page. This layer softly defocuses the page while staying below the
+   launcher and panel (z 92/94). */
+body::after {
+  content: '';
+  position: fixed;
+  inset: 0;
+  z-index: 91;
+  background: color-mix(in srgb, var(--lu-ink-950) 16%, transparent);
+  backdrop-filter: blur(0) brightness(1);
+  -webkit-backdrop-filter: blur(0) brightness(1);
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 460ms ease, backdrop-filter 620ms ease, -webkit-backdrop-filter 620ms ease;
+}
+
+body.is-ai-experience::after {
+  opacity: 1;
+  backdrop-filter: blur(8px) brightness(.75);
+  -webkit-backdrop-filter: blur(8px) brightness(.75);
+}
+
+/* One quiet breath from the scene reinforces the transition without moving the
+   page layout. */
+body.is-ai-experience .hero-frame.is-active {
+  animation: aichat-scene-breathe 1000ms cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
+@keyframes aichat-scene-breathe {
+  0% { transform: scale(1.06); }
+  45% { transform: scale(1.08); }
+  100% { transform: scale(1.06); }
+}
+
 .aichat {
   --aichat-w: 396px;
   --aichat-h: min(620px, calc(100vh - 148px));
@@ -1016,6 +1050,13 @@
 .aichat.is-open .aichat-fab {
   max-width: calc(100vw - 40px);
   border-color: var(--ds-primary-line);
+  animation: aichat-fab-tap 300ms cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
+@keyframes aichat-fab-tap {
+  0% { transform: scale(1); }
+  32% { transform: scale(.95); }
+  100% { transform: scale(1); }
 }
 
 .aichat-fab:hover {
@@ -1647,8 +1688,13 @@ body.is-chat-resizing {
 
 /* a visitor who asked for less motion gets a plain show and hide */
 @media (prefers-reduced-motion: reduce) {
+  body::after,
   .aichat-fab {
     transition: none !important;
+  }
+
+  body.is-ai-experience .hero-frame.is-active {
+    animation: none !important;
   }
 
   .aichat-panel,

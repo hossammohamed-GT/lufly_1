@@ -238,6 +238,7 @@
     }
 
     root.classList.remove('is-closing');
+    document.body.classList.remove('is-ai-experience');
     panel.hidden = true;
   }
 
@@ -248,6 +249,7 @@
         closingTimer = null;
       }
       root.classList.remove('is-closing');
+      document.body.classList.add('is-ai-experience');
       panel.hidden = false;
     } else if (panel.hidden) {
       return;
