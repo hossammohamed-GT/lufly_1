@@ -44,7 +44,7 @@ return [
     'ask_placeholder' => 'you@example.com',
     'ask_start' => 'Start',
     'ask_skip' => 'Continue without it',
-    'ask_saved' => 'Thank you — ask away.',
+    'ask_saved' => 'You’re ready. Type what you are looking for in the box below — for example “a matte black basin mixer” — or tap the photo button and send a picture. Then press Send and I’ll show the closest LUFLY products.',
     'ask_saving' => 'Saving…',
     'ask_invalid' => 'That does not look like an e-mail address — check it and try again.',
     'ask_limit' => 'Too many attempts from this connection. Write to us directly and the team takes it from here.',

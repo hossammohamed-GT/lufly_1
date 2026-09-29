@@ -1473,15 +1473,19 @@ body.is-chat-resizing {
 
   .aichat-panel,
   .aichat.is-wide .aichat-panel {
-    inset: 0;
-    inset-block-end: 0;
-    inset-inline-end: 0;
+    /* A compact bottom sheet leaves visual context around the chat and keeps
+       the header, first instructions and composer in one comfortable view. */
+    inset: auto 0 0;
     width: 100%;
-    height: 100%;
+    height: min(88vh, 680px);
+    height: min(88dvh, 680px);
     max-width: none;
-    max-height: none;
+    max-height: calc(100vh - 12px);
+    max-height: calc(100dvh - max(12px, env(safe-area-inset-top)));
     border: 0;
-    border-radius: 0;
+    border-block-start: 1px solid var(--ds-border);
+    border-radius: var(--radius-xl) var(--radius-xl) 0 0;
+    box-shadow: 0 -14px 44px color-mix(in srgb, var(--lu-ink-950) 24%, transparent);
   }
 
   .aichat-grip {

@@ -33,7 +33,7 @@ return [
     'ask_placeholder' => 'vy@example.com',
     'ask_start' => 'Začít',
     'ask_skip' => 'Pokračovat bez e-mailu',
-    'ask_saved' => 'Děkujeme — ptejte se.',
+    'ask_saved' => 'Vše je připraveno. Do pole níže napište, co hledáte — například „matně černá umyvadlová baterie“ — nebo klepněte na tlačítko fotografie a pošlete obrázek. Potom stiskněte Odeslat a ukážu vám nejbližší produkty LUFLY.',
     'ask_saving' => 'Ukládání…',
     'ask_invalid' => 'To nevypadá jako e-mailová adresa — zkontrolujte ji a zkuste to znovu.',
     'ask_limit' => 'Z této adresy bylo příliš mnoho pokusů. Napište nám přímo, tým to převezme.',

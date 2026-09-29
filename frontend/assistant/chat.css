@@ -315,6 +315,17 @@
   color: var(--ds-text);
 }
 
+/* A completed answer replaces the waiting glow with a gentle, directional
+   entrance. It moves only a few pixels so cards and text remain easy to track. */
+.aichat-say.is-bot.is-arriving {
+  animation: aichat-answer-in 420ms cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
+@keyframes aichat-answer-in {
+  from { opacity: 0; transform: translateY(12px) scale(0.985); }
+  to { opacity: 1; transform: translateY(0) scale(1); }
+}
+
 /* ---------- while the answer is being written ------------------------------- */
 
 /* The visitor watches this bubble for a second or two, so it may as well be
@@ -870,12 +881,34 @@
 /* ---------- small screens ---------- */
 
 @media (max-width: 720px) {
+  /* While the e-mail gate is active the suggestion chips cannot be used. Hiding
+     them keeps the complete explanation and form visible without an initial
+     scroll on short phones. They return as soon as the address is saved. */
+  .aichat.is-gated .aichat-chips {
+    display: none;
+  }
+
   .aichat-tabs {
     padding-inline: 10px;
   }
 
+  .aichat-body {
+    padding: 14px;
+  }
+
+  .aichat-hello {
+    margin-bottom: 10px;
+    font-size: 13px;
+    line-height: 1.5;
+  }
+
+  .aichat-gate {
+    margin-bottom: 10px;
+    padding: 12px;
+  }
+
   .aichat-compose {
-    padding-inline: var(--space-4, 16px);
+    padding-inline: 12px;
   }
 
   .aichat-bank {
@@ -894,7 +927,8 @@
     transform: none;
   }
 
-  .aichat-say.is-waiting p {
+  .aichat-say.is-waiting p,
+  .aichat-say.is-bot.is-arriving {
     animation: none;
   }
 }

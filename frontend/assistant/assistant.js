@@ -135,6 +135,26 @@
     if (body) body.scrollTop = body.scrollHeight;
   }
 
+  /* Put the beginning of a new answer at the top of the conversation window.
+     Product banks can be long; scrolling to the bottom made the visitor land on
+     the final card and forced them to hunt upwards for the actual answer. */
+  function scrollToMessage(message, smooth) {
+    var body = root.querySelector('[data-aichat-body]');
+    if (!body || !message) return;
+
+    window.requestAnimationFrame(function () {
+      var bodyBox = body.getBoundingClientRect();
+      var messageBox = message.getBoundingClientRect();
+      var top = body.scrollTop + messageBox.top - bodyBox.top - 10;
+
+      if (typeof body.scrollTo === 'function') {
+        body.scrollTo({ top: Math.max(0, top), behavior: smooth ? 'smooth' : 'auto' });
+      } else {
+        body.scrollTop = Math.max(0, top);
+      }
+    });
+  }
+
   function email() {
     try {
       return window.localStorage.getItem(EMAIL_KEY) || '';
@@ -962,6 +982,7 @@
 
   function answer(data) {
     var bubble = say('bot', data.text || '', null, false);
+    bubble.classList.add('is-arriving');
 
     if (data.cards && data.cards.length > 0) bubble.appendChild(bank(data.cards));
 
@@ -999,7 +1020,9 @@
 
     if (welcome && welcome.parentNode) welcome.hidden = true;
 
-    scrollLog();
+    /* The whole answer is now laid out, so its first line can be positioned
+       accurately. The entrance animation and smooth move happen together. */
+    scrollToMessage(bubble, true);
   }
 
   /* what was said on the previous page, put back the way it was */

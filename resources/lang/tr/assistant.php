@@ -33,7 +33,7 @@ return [
     'ask_placeholder' => 'siz@ornek.com',
     'ask_start' => 'Başla',
     'ask_skip' => 'E-posta olmadan devam et',
-    'ask_saved' => 'Teşekkürler — buyurun.',
+    'ask_saved' => 'Hazırsınız. Aşağıdaki kutuya aradığınız ürünü yazın — örneğin “mat siyah lavabo bataryası” — veya fotoğraf düğmesine dokunup bir görsel gönderin. Ardından Gönder’e basın; size en yakın LUFLY ürünlerini göstereyim.',
     'ask_saving' => 'Kaydediliyor…',
     'ask_invalid' => 'Bu bir e-posta adresi gibi görünmüyor — kontrol edip tekrar deneyin.',
     'ask_limit' => 'Bu bağlantıdan çok fazla deneme oldu. Bize doğrudan yazın, ekibimiz devam etsin.',
