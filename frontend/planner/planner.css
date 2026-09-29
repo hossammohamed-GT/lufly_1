@@ -1112,50 +1112,167 @@ body.has-favmail .aichat-fab {
   background: var(--ds-surface);
   box-shadow: var(--shadow-3, var(--shadow-2));
   overflow: hidden;
-  /* It is unrolled out of the launcher: the bar under it is already the panel's
-     own width, and the panel's bottom edge is where the bar is, so revealing it
-     from that edge upward reads as the chat being formed out of the button.
-     Nothing inside is scaled, so no text is ever squashed on the way in. */
-  animation: aichat-in 460ms cubic-bezier(0.16, 1, 0.3, 1) both;
+  /* The panel starts as the launcher's teal light and grows from that exact
+     corner into the finished window. The content has its own short sequence
+     below, so nothing flashes before the surface is ready. */
+  animation: aichat-in 680ms cubic-bezier(0.16, 1, 0.3, 1) both;
 }
 
 .aichat-panel[hidden] {
   display: none;
 }
 
+/* Brand-light layer: bright at the button, then dissolves into the surface. */
+.aichat-panel::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  z-index: 20;
+  border-radius: inherit;
+  background:
+    radial-gradient(circle at 100% 100%,
+      color-mix(in srgb, var(--ds-primary) 98%, #fff) 0 7%,
+      color-mix(in srgb, var(--ds-primary) 72%, transparent) 22%,
+      color-mix(in srgb, var(--ds-primary) 20%, transparent) 48%,
+      transparent 72%);
+  pointer-events: none;
+  animation: aichat-light-in 680ms ease-out both;
+}
+
+[dir='rtl'] .aichat-panel::before {
+  transform: scaleX(-1);
+}
+
 @keyframes aichat-in {
   0% {
-    clip-path: inset(100% 0 0 0 round var(--radius-xl));
-    transform: translateY(10px);
-    opacity: 0.5;
+    clip-path: circle(25px at calc(100% - 27px) calc(100% - 27px));
+    transform: translateY(7px) scale(0.985);
+    border-color: transparent;
+    box-shadow: 0 0 0 0 var(--ds-primary-glow);
+    opacity: 0.78;
   }
-  45% { opacity: 1; }
+  42% {
+    border-color: color-mix(in srgb, var(--ds-primary) 45%, transparent);
+    box-shadow: 0 0 38px 8px var(--ds-primary-glow);
+    opacity: 1;
+  }
   100% {
-    clip-path: inset(0 0 0 0 round var(--radius-xl));
-    transform: translateY(0);
+    clip-path: circle(150% at calc(100% - 27px) calc(100% - 27px));
+    transform: translateY(0) scale(1);
+    border-color: var(--ds-border);
+    box-shadow: var(--shadow-3, var(--shadow-2));
     opacity: 1;
   }
 }
 
-/* Closing is the same move backwards: the top edge comes down and the panel is
-   rolled back into the bar, which then returns to its own size. The class stays
-   on until the frame is over — frontend/assistant/assistant.js hides the panel
-   on animationend, and keeps a timer as the safety net. */
+@keyframes aichat-light-in {
+  0%, 22% { opacity: 1; filter: saturate(145%) brightness(1.12); }
+  66% { opacity: 0.38; }
+  100% { opacity: 0; filter: none; }
+}
+
+/* In RTL the launcher is in the opposite corner, so the light follows it. */
+[dir='rtl'] .aichat-panel {
+  animation-name: aichat-in-rtl;
+}
+
+[dir='rtl'] .aichat.is-closing .aichat-panel {
+  animation-name: aichat-out-rtl;
+}
+
+@keyframes aichat-in-rtl {
+  0% {
+    clip-path: circle(25px at 27px calc(100% - 27px));
+    transform: translateY(7px) scale(0.985);
+    border-color: transparent;
+    box-shadow: 0 0 0 0 var(--ds-primary-glow);
+    opacity: 0.78;
+  }
+  42% {
+    border-color: color-mix(in srgb, var(--ds-primary) 45%, transparent);
+    box-shadow: 0 0 38px 8px var(--ds-primary-glow);
+    opacity: 1;
+  }
+  100% {
+    clip-path: circle(150% at 27px calc(100% - 27px));
+    transform: translateY(0) scale(1);
+    border-color: var(--ds-border);
+    box-shadow: var(--shadow-3, var(--shadow-2));
+    opacity: 1;
+  }
+}
+
+@keyframes aichat-out-rtl {
+  0% {
+    clip-path: circle(150% at 27px calc(100% - 27px));
+    transform: translateY(0) scale(1);
+    border-color: var(--ds-border);
+    opacity: 1;
+  }
+  100% {
+    clip-path: circle(25px at 27px calc(100% - 27px));
+    transform: translateY(7px) scale(0.985);
+    border-color: transparent;
+    opacity: 0.82;
+  }
+}
+
+/* Header → content → composer: a restrained cascade after the circle opens. */
+.aichat-panel > .aichat-head,
+.aichat-panel > .aichat-tabs,
+.aichat-panel > .aichat-body,
+.aichat-panel > .aichat-compose,
+.aichat-panel > .aichat-foot {
+  animation: aichat-piece-in 420ms cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
+.aichat-panel > .aichat-head { animation-delay: 170ms; }
+.aichat-panel > .aichat-tabs { animation-delay: 230ms; }
+.aichat-panel > .aichat-body { animation-delay: 290ms; }
+.aichat-panel > .aichat-compose { animation-delay: 360ms; }
+.aichat-panel > .aichat-foot { animation-delay: 410ms; }
+
+@keyframes aichat-piece-in {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+/* Closing reverses the story: content leaves first, then the surface contracts
+   back into the same teal point beside the launcher. */
 .aichat.is-closing .aichat-panel {
-  animation: aichat-out 320ms cubic-bezier(0.4, 0, 0.7, 0.3) both;
+  animation: aichat-out 520ms cubic-bezier(0.55, 0, 0.85, 0.42) both;
   pointer-events: none;
+}
+
+.aichat.is-closing .aichat-panel::before {
+  animation: aichat-light-out 520ms ease-in both;
+}
+
+.aichat.is-closing .aichat-panel > * {
+  animation: aichat-piece-out 170ms ease-in both;
+}
+
+@keyframes aichat-piece-out {
+  to { opacity: 0; transform: translateY(7px); }
+}
+
+@keyframes aichat-light-out {
+  0%, 34% { opacity: 0; }
+  100% { opacity: 1; filter: saturate(145%) brightness(1.12); }
 }
 
 @keyframes aichat-out {
   0% {
-    clip-path: inset(0 0 0 0 round var(--radius-xl));
-    transform: translateY(0);
+    clip-path: circle(150% at calc(100% - 27px) calc(100% - 27px));
+    transform: translateY(0) scale(1);
+    border-color: var(--ds-border);
     opacity: 1;
   }
   100% {
-    clip-path: inset(100% 0 0 0 round var(--radius-xl));
-    transform: translateY(8px);
-    opacity: 0.75;
+    clip-path: circle(25px at calc(100% - 27px) calc(100% - 27px));
+    transform: translateY(7px) scale(0.985);
+    border-color: transparent;
+    opacity: 0.82;
   }
 }
 
@@ -1536,10 +1653,18 @@ body.is-chat-resizing {
 /* a visitor who asked for less motion gets a plain show and hide */
 @media (prefers-reduced-motion: reduce) {
   .aichat-panel,
-  .aichat.is-closing .aichat-panel {
+  .aichat-panel::before,
+  .aichat-panel > .aichat-head,
+  .aichat-panel > .aichat-tabs,
+  .aichat-panel > .aichat-body,
+  .aichat-panel > .aichat-compose,
+  .aichat-panel > .aichat-foot,
+  .aichat.is-closing .aichat-panel,
+  .aichat.is-closing .aichat-panel > * {
     animation: none !important;
   }
 
+  .aichat-panel::before,
   .aichat.is-closing .aichat-panel {
     opacity: 0;
   }

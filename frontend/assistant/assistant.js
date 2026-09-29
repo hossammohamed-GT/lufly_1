@@ -260,7 +260,7 @@
       /* the animation says when it is done; the timer is only the safety net for
          a browser that never fires the event (or a visitor who asked for less
          motion, where there is no animation at all) */
-      closingTimer = window.setTimeout(finishClosing, 400);
+      closingTimer = window.setTimeout(finishClosing, 620);
       return;
     }
 
@@ -283,7 +283,9 @@
   }
 
   panel.addEventListener('animationend', function (event) {
-    if (event.target === panel && event.animationName === 'aichat-out') finishClosing();
+    if (event.target === panel && (event.animationName === 'aichat-out' || event.animationName === 'aichat-out-rtl')) {
+      finishClosing();
+    }
   });
 
   rememberSize();
