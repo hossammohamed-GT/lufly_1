@@ -137,12 +137,19 @@ if ($boxOn) {
          preserveAspectRatio="none" focusable="false">
         <defs>
             <linearGradient id="aichat-flow-main" x1="1" y1="1" x2="0" y2="0">
-                <stop offset="0" stop-color="#8ffcff" stop-opacity="1"/>
-                <stop offset="0.32" stop-color="#13cbd0" stop-opacity=".88"/>
-                <stop offset="0.72" stop-color="#1c8b8b" stop-opacity=".34"/>
+                <stop offset="0" stop-color="#d7ffff" stop-opacity="1"/>
+                <stop offset="0.24" stop-color="#20e7ec" stop-opacity=".96"/>
+                <stop offset="0.68" stop-color="#1c8b8b" stop-opacity=".5"/>
                 <stop offset="1" stop-color="#1c8b8b" stop-opacity="0"/>
             </linearGradient>
+            <linearGradient id="aichat-flow-glass" x1="1" y1="1" x2="0" y2="0">
+                <stop offset="0" stop-color="#0cbec4" stop-opacity=".30"/>
+                <stop offset="0.42" stop-color="#123f43" stop-opacity=".22"/>
+                <stop offset="1" stop-color="#071719" stop-opacity=".05"/>
+            </linearGradient>
         </defs>
+        <path class="aichat-flow-surface"
+              d="M332 492 C278 470 292 382 252 338 C210 292 116 340 72 276 C38 226 65 132 18 72 L18 20 L350 20 L350 500 Z"/>
         <path class="aichat-flow-path is-main"
               d="M332 492 C278 470 292 382 252 338 C210 292 116 340 72 276 C38 226 65 132 18 72"/>
         <path class="aichat-flow-path is-echo"
