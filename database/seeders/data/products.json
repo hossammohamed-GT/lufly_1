@@ -433,9 +433,9 @@
         "description": "Stojící skříňka, vybrat umyvadlo.",
         "specifications": [],
         "categories": [
-            "accessories"
+            "bathroom-furniture"
         ],
-        "category": "accessories",
+        "category": "bathroom-furniture",
         "status": "active",
         "images": [
             {
@@ -460,9 +460,9 @@
         "description": "Závěsná vysoká skříň (2 dveře)",
         "specifications": [],
         "categories": [
-            "accessories"
+            "bathroom-furniture"
         ],
-        "category": "accessories",
+        "category": "bathroom-furniture",
         "status": "active",
         "images": [
             {
@@ -494,9 +494,9 @@
         "description": "1695-209 nástěnná skříňka (šuplík, dvířka)",
         "specifications": [],
         "categories": [
-            "accessories"
+            "bathroom-furniture"
         ],
-        "category": "accessories",
+        "category": "bathroom-furniture",
         "status": "active",
         "images": [
             {
@@ -528,9 +528,9 @@
         "description": "Podlahová skříňka pro umyvadla: MERO 55, ARNO, EBRO, MARANO.\n1695-209 Podlahová skříňka (2 zásuvky)",
         "specifications": [],
         "categories": [
-            "accessories"
+            "bathroom-furniture"
         ],
-        "category": "accessories",
+        "category": "bathroom-furniture",
         "status": "active",
         "images": [
             {
@@ -601,9 +601,9 @@
         "description": "měkké zavírání sedadla, duroplast",
         "specifications": [],
         "categories": [
-            "accessories"
+            "toilet-seats"
         ],
-        "category": "accessories",
+        "category": "toilet-seats",
         "status": "active",
         "images": [
             {
@@ -4946,9 +4946,9 @@
         "description": "Control panel.\nMechanic control.\nSingle flush.",
         "specifications": [],
         "categories": [
-            "kids"
+            "accessories"
         ],
-        "category": "kids",
+        "category": "accessories",
         "status": "active",
         "images": [
             {
@@ -4980,9 +4980,9 @@
         "description": "Sensor basin mixer. chrome - green, Battery, chrome - green, Powerbox, chrome - green. 6V battery/6V DC mains connection.\nDistance between faucet and beginning of washbasin\nbowl area must be max 70mm.",
         "specifications": [],
         "categories": [
-            "kids"
+            "sensor-products"
         ],
-        "category": "kids",
+        "category": "sensor-products",
         "status": "active",
         "images": [
             {
@@ -8227,9 +8227,9 @@
             }
         ],
         "categories": [
-            "accessories"
+            "toilet-seats"
         ],
-        "category": "accessories",
+        "category": "toilet-seats",
         "status": "active",
         "images": [
             {
@@ -8266,9 +8266,9 @@
             }
         ],
         "categories": [
-            "accessories"
+            "toilet-seats"
         ],
-        "category": "accessories",
+        "category": "toilet-seats",
         "status": "active",
         "images": [
             {
@@ -8467,9 +8467,9 @@
         "description": "Toilet Seat Cover, UF Soft-closing toilet seat, Hygienic certificate of the National Institute of Hygiene confirming the product's compliance with safety standards",
         "specifications": [],
         "categories": [
-            "accessories"
+            "toilet-seats"
         ],
-        "category": "accessories",
+        "category": "toilet-seats",
         "status": "active",
         "images": [
             {
@@ -9674,9 +9674,9 @@
             }
         ],
         "categories": [
-            "accessories"
+            "bathtubs-shower-trays"
         ],
-        "category": "accessories",
+        "category": "bathtubs-shower-trays",
         "status": "active",
         "images": [
             {
@@ -9721,9 +9721,9 @@
             }
         ],
         "categories": [
-            "accessories"
+            "bathtubs-shower-trays"
         ],
-        "category": "accessories",
+        "category": "bathtubs-shower-trays",
         "status": "active",
         "images": [
             {
@@ -9772,9 +9772,9 @@
             }
         ],
         "categories": [
-            "accessories"
+            "bathtubs-shower-trays"
         ],
-        "category": "accessories",
+        "category": "bathtubs-shower-trays",
         "status": "active",
         "images": [
             {
@@ -9837,9 +9837,9 @@
             }
         ],
         "categories": [
-            "accessories"
+            "bathtubs-shower-trays"
         ],
-        "category": "accessories",
+        "category": "bathtubs-shower-trays",
         "status": "active",
         "images": [
             {
@@ -9895,9 +9895,9 @@
             }
         ],
         "categories": [
-            "accessories"
+            "bathtubs-shower-trays"
         ],
-        "category": "accessories",
+        "category": "bathtubs-shower-trays",
         "status": "active",
         "images": [
             {
