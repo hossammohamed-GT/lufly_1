@@ -999,10 +999,13 @@
   color: var(--ds-text);
   box-shadow: var(--shadow-2);
   cursor: pointer;
-  /* the width is part of the motion: the button stretches out to the width of
-     the panel it is about to become */
-  width: auto;
-  transition: width 420ms cubic-bezier(0.22, 1, 0.36, 1), transform 240ms cubic-bezier(0.16, 1, 0.3, 1),
+  /* Keep width numeric in both states. `auto` cannot be interpolated, which is
+     why the old launcher jumped horizontally on click. The visible resting
+     width is controlled by max-width; opening releases that cap smoothly. */
+  width: var(--aichat-fab-w, var(--aichat-w));
+  max-width: min(220px, calc(100vw - 40px));
+  overflow: hidden;
+  transition: max-width 520ms cubic-bezier(0.16, 1, 0.3, 1), transform 240ms cubic-bezier(0.16, 1, 0.3, 1),
               box-shadow 240ms ease, border-color 200ms ease, opacity 200ms ease;
 }
 
@@ -1010,7 +1013,6 @@
    would keep the stretched state after a tap. */
 @media (hover: hover) {
   .aichat-fab:hover {
-    width: var(--aichat-fab-w, var(--aichat-w));
     max-width: calc(100vw - 40px);
   }
 }
@@ -1018,7 +1020,6 @@
 /* and it stays that wide for as long as the chat is open — the panel grows out
    of it, so the bar is the chat's own base */
 .aichat.is-open .aichat-fab {
-  width: var(--aichat-fab-w, var(--aichat-w));
   max-width: calc(100vw - 40px);
   border-color: var(--ds-primary-line);
 }
@@ -1652,6 +1653,10 @@ body.is-chat-resizing {
 
 /* a visitor who asked for less motion gets a plain show and hide */
 @media (prefers-reduced-motion: reduce) {
+  .aichat-fab {
+    transition: none !important;
+  }
+
   .aichat-panel,
   .aichat-panel::before,
   .aichat-panel > .aichat-head,
