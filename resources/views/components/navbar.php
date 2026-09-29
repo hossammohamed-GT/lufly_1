@@ -11,7 +11,8 @@
  * Row: Lufly logo (inline-start) - centre index links (desktop, glass state
  * only) - the expanding search field - theme toggle | search | box, wishlist,
  * account | language switcher (inline-end), thin dividers between groups.
- * Below 1024px the links fold into the bloom sheet.
+ * Below 1024px the links fold into the bloom sheet. Saved list and Box live
+ * only in the top bar (icon buttons), never repeated in the sheet.
  *
  * Contracts kept for other scripts:
  *   [data-theme-toggle]      app.js swaps the theme
@@ -69,11 +70,6 @@ if ($boxOn) {
     $boxCount = app(\Modules\Box\Services\BoxService::class)->count();
 }
 
-/* the planner only gets a place in the menu once it is actually open */
-$plannerOn = feature('planner', true)
-    && !(bool) config('planner.coming_soon', true)
-    && class_exists(\Modules\Planner\Services\PlannerService::class);
-
 $indexLinks = [
     ['key' => 'bathroom', 'url' => route('products.index', ['category' => 'bathroom-ceramics'])],
     ['key' => 'kitchen', 'url' => route('products.index', ['category' => 'sink-mixers'])],
@@ -89,37 +85,10 @@ $exploreLinks = [
     ['key' => 'news', 'url' => route('home') . '#corporate'],
 ];
 
-$toolLinks = [];
-
-if ($favoritesOn) {
-    $toolLinks[] = ['key' => 'favorites', 'url' => route('favorites.index')];
-}
-
-if ($boxOn) {
-    $toolLinks[] = ['key' => 'box', 'url' => route('box.index')];
-}
-
-if ($plannerOn) {
-    $toolLinks[] = ['key' => 'planner', 'url' => route('planner.index')];
-}
-
-/* The centre rail keeps the places a visitor actually goes; everything
-   editorial folds into a single "More" button. */
-$barLinks = $indexLinks;
-$foldLinks = array_merge($exploreLinks, $toolLinks);
-
-/* The "More" button lights up when the page you are on is inside it. */
-$moreActive = false;
-
-foreach ($foldLinks as $link) {
-    $moreActive = $moreActive || $isActive($link['url']);
-}
-
 /* every link, for the mobile sheet */
 $sheetLinks = array_merge(
     [$indexLinks[0], $indexLinks[1], $indexLinks[2], $indexLinks[3]],
     $exploreLinks,
-    $toolLinks,
     [$indexLinks[4]]
 );
 
@@ -169,49 +138,12 @@ foreach ($supported as $code => $name) {
 
             <!-- centre index links: desktop + glass state only -->
             <nav class="mnav-links" aria-label="<?= e(trans('nav.index', [], $currentLocale)) ?>">
-                <?php foreach ($barLinks as $link): ?>
+                <?php foreach ($indexLinks as $link): ?>
                     <a class="mnav-link<?= $isActive($link['url']) ? ' is-active' : '' ?>"
                        href="<?= e($link['url']) ?>"
                        <?= external_link_attrs($link['url']) ?>
                        <?= $isActive($link['url']) ? 'aria-current="page"' : '' ?>><?= e(trans('nav.' . $link['key'], [], $currentLocale)) ?></a>
                 <?php endforeach; ?>
-
-                <?php if ($foldLinks): ?>
-                    <div class="mnav-more" data-more-menu>
-                        <button type="button"
-                                class="mnav-link mnav-more-btn<?= $moreActive ? ' is-active' : '' ?>"
-                                data-more-toggle
-                                aria-expanded="false"
-                                aria-haspopup="true"
-                                aria-controls="mnav-more-menu">
-                            <?= e(trans('nav.more', [], $currentLocale)) ?>
-                            <svg class="icon mnav-more-chevron" viewBox="0 0 24 24" aria-hidden="true">
-                                <polyline points="6 9 12 15 18 9"></polyline>
-                            </svg>
-                        </button>
-
-                        <div class="mnav-more-menu" id="mnav-more-menu" role="menu"
-                             aria-label="<?= e(trans('nav.more', [], $currentLocale)) ?>">
-                            <div class="mnav-more-title"><?= e(trans('nav.more_explore', [], $currentLocale)) ?></div>
-                            <?php foreach ($exploreLinks as $link): ?>
-                                <a class="mnav-more-link<?= $isActive($link['url']) ? ' is-active' : '' ?>"
-                                   href="<?= e($link['url']) ?>"
-                                   role="menuitem"
-                                   <?= external_link_attrs($link['url']) ?>><?= e(trans('nav.' . $link['key'], [], $currentLocale)) ?></a>
-                            <?php endforeach; ?>
-
-                            <?php if ($toolLinks): ?>
-                                <div class="mnav-more-title"><?= e(trans('nav.more_tools', [], $currentLocale)) ?></div>
-                                <?php foreach ($toolLinks as $link): ?>
-                                    <a class="mnav-more-link<?= $isActive($link['url']) ? ' is-active' : '' ?>"
-                                       href="<?= e($link['url']) ?>"
-                                       role="menuitem"
-                                       <?= external_link_attrs($link['url']) ?>><?= e(trans('nav.' . $link['key'], [], $currentLocale)) ?></a>
-                                <?php endforeach; ?>
-                            <?php endif; ?>
-                        </div>
-                    </div>
-                <?php endif; ?>
             </nav>
 
             <!-- expanding search: a field that grows out of the search icon -->
@@ -421,16 +353,6 @@ foreach ($supported as $code => $name) {
                         </a>
                     <?php endif; ?>
                 <?php endforeach; ?>
-
-                <?php if ($favoritesOn): ?>
-                    <a class="mnav-util-link" href="<?= e(route('favorites.index')) ?>">
-                        <svg class="icon icon-sm" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
-                             stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-                            <path d="M12 20.6 4.2 12.8a5.1 5.1 0 0 1 0-7.2 5.1 5.1 0 0 1 7.2 0l.6.6.6-.6a5.1 5.1 0 0 1 7.2 0 5.1 5.1 0 0 1 0 7.2Z"></path>
-                        </svg>
-                        <?= e(trans('nav.favorites', [], $currentLocale)) ?>
-                    </a>
-                <?php endif; ?>
 
                 <a class="mnav-util-link" href="<?= auth()->check() ? e(route('admin.dashboard')) : e(route('login')) ?>">
                     <?= e(trans('nav.account', [], $currentLocale)) ?>

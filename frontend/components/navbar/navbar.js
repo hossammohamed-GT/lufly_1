@@ -7,7 +7,7 @@
      * the expanding search: opens with a width+fade animation, runs the
        instant product search (debounced, aborts stale requests, caches)
        and types its placeholder moods while idle
-     * language menu, "More" fold, bloom sheet (scroll lock, focus trap,
+     * language menu, bloom sheet (scroll lock, focus trap,
        swipe-down to close), keyboard shortcuts (/ and Cmd/Ctrl+K)
    No dependencies, no layout reads on every frame, listeners are passive.
    ========================================================================== */
@@ -90,8 +90,6 @@
   var resultsBox = searchWrap ? searchWrap.querySelector('[data-search-results]') : null;
   var langMenu = header.querySelector('[data-lang-menu]');
   var langToggle = header.querySelector('[data-lang-toggle]');
-  var moreMenu = header.querySelector('[data-more-menu]');
-  var moreToggle = header.querySelector('[data-more-toggle]');
 
   function setSheet(open) {
     header.classList.toggle('is-sheet-open', open);
@@ -109,7 +107,6 @@
     if (open) {
       closeSearch();
       closeLang();
-      closeMore();
       window.requestAnimationFrame(function () {
         focusFirst(sheet);
       });
@@ -128,7 +125,6 @@
     if (open) {
       setSheet(false);
       closeLang();
-      closeMore();
       focusElement(searchInput);
     } else {
       hideResults();
@@ -152,19 +148,6 @@
 
   function closeLang() {
     setLang(false);
-  }
-
-  function setMore(open) {
-    if (!moreMenu || !moreToggle) {
-      return;
-    }
-
-    moreMenu.classList.toggle('is-open', open);
-    moreToggle.setAttribute('aria-expanded', open ? 'true' : 'false');
-  }
-
-  function closeMore() {
-    setMore(false);
   }
 
   /* ---------- 3. the expanding search + instant results ---------- */
@@ -476,7 +459,7 @@
     }, 2400);
   })();
 
-  /* ---------- 5. language menu + More fold ---------- */
+  /* ---------- 5. language menu ---------- */
 
   if (langToggle) {
     langToggle.addEventListener('click', function (event) {
@@ -484,27 +467,7 @@
       event.stopPropagation();
       var currentlyOpen = langMenu && langMenu.classList.contains('is-open');
       closeSearch();
-      closeMore();
       setLang(!currentlyOpen);
-    });
-  }
-
-  if (moreToggle) {
-    moreToggle.addEventListener('click', function (event) {
-      event.stopPropagation();
-      closeSearch();
-      closeLang();
-      setMore(!moreMenu.classList.contains('is-open'));
-    });
-  }
-
-  if (moreMenu) {
-    /* Following a link must close the fold, whichever way the loader
-       decides to move to the page. */
-    moreMenu.addEventListener('click', function (event) {
-      if (event.target.closest('a')) {
-        closeMore();
-      }
     });
   }
 
@@ -516,7 +479,6 @@
       event.stopPropagation();
       closeSearch();
       closeLang();
-      closeMore();
       setSheet(!header.classList.contains('is-sheet-open'));
     });
   }
@@ -575,10 +537,6 @@
       closeLang();
     }
 
-    if (moreMenu && !moreMenu.contains(event.target)) {
-      closeMore();
-    }
-
     if (searchWrap && !searchWrap.contains(event.target) &&
       !(searchToggle && searchToggle.contains(event.target))) {
       hideResults();
@@ -598,7 +556,6 @@
       }
 
       closeLang();
-      closeMore();
       return;
     }
 
@@ -651,7 +608,6 @@
       setSheet(false);
     }
 
-    closeMore();
     hideResults();
   });
 
