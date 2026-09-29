@@ -1827,6 +1827,24 @@ body.is-chat-resizing {
     box-shadow: 0 -14px 44px color-mix(in srgb, var(--lu-ink-950) 24%, transparent);
   }
 
+  /* The e-mail gate is a full-width bottom sheet on phones too. Its desktop
+     size (a 360px card pinned to the corner) has a higher specificity than the
+     sheet rule above, so it must be restated here or the address step is left
+     stranded in the corner — a small card with empty space beside it and its
+     own inner scroll. Height follows the content: the gate is short. */
+  .aichat.is-gated:not(.is-wide) .aichat-panel {
+    inset: auto 0 0;
+    width: 100%;
+    max-width: none;
+    height: auto;
+    max-height: calc(100vh - 12px);
+    max-height: calc(100dvh - max(12px, env(safe-area-inset-top)));
+    border: 0;
+    border-block-start: 1px solid var(--ds-border);
+    border-radius: var(--radius-xl) var(--radius-xl) 0 0;
+    box-shadow: 0 -14px 44px color-mix(in srgb, var(--lu-ink-950) 24%, transparent);
+  }
+
   .aichat-grip {
     display: none;
   }
