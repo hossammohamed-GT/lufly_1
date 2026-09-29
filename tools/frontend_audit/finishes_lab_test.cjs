@@ -3,8 +3,7 @@
  * Renders resources/views/home/finishes/finishes.php with a tiny PHP-subset
  * renderer (trans/e/asset/route/component + the two foreach loops), loads
  * frontend/home/finishes/finishes.js into jsdom, and asserts the rail, the
- * scene cross-fade, the callout, the spec sheet, the deep link, the compare
- * drawer and the hotspots.
+ * scene cross-fade, the callout, the deep link and the compare drawer.
  *
  * Run: node tools/frontend_audit/finishes_lab_test.cjs  (needs jsdom: npm i jsdom)
  */
@@ -58,24 +57,14 @@ const FINISHES = [
   { key: 'gun-gray', sphere: 'images/finishes/sphere-gun-gray.jpg', scene: 'images/finishes/scene-gun-gray.jpg', label: 'Gun Gray', tech: 'PVD', phrase: 'finishes_phrase_gun_gray', story: 'finishes_story_gun_gray', rates: ['high', 'medium', 'medium'] },
 ];
 
-/* --------------------------------------------------- responsive <picture> -- */
-function renderRespic(args) {
-  const found = [];
-  const srcset = [];
-  args.widths.forEach((w) => {
-    const candidate = args.src + '@' + w + 'w.webp';
-    if (fs.existsSync(path.join(REPO, 'public', candidate))) {
-      srcset.push('/' + candidate + ' ' + w + 'w');
-      found.push(w);
-    }
-  });
-  const imgAttrs = ' src="/' + args.src + '" alt="' + esc(args.alt || '') + '"' +
+/* --------------------------------------------- plain full-quality <img> -- */
+/* the responsive-image partial renders an untouched original <img> (owner
+   decision 2026-09-29: no quality reduction, no rendition ladder) */
+function renderPhoto(args) {
+  return '<img src="/' + args.src + '" alt="' + esc(args.alt || '') + '"' +
     ' class="' + args.class + '"' +
     ' width="' + args.width + '" height="' + args.height + '"' +
-    ' loading="lazy" decoding="async" data-respic-widths="' + found.join(',') + '"';
-  if (!srcset.length) { return '<img' + imgAttrs + '>'; }
-  return '<picture class="respic"><source type="image/webp" srcset="' + srcset.join(', ') + '" sizes="' + esc(args.sizes || '100vw') + '">' +
-    '<img' + imgAttrs + '></picture>';
+    ' loading="lazy" decoding="async">';
 }
 
 /* --------------------------------------------------------------- renderer -- */
@@ -83,14 +72,9 @@ function renderTemplate() {
   const src = fs.readFileSync(path.join(REPO, 'resources/views/home/finishes/finishes.php'), 'utf8');
   let html = src.slice(src.indexOf('<section'));
 
-  /* the two scene <picture>s (src is $finishes[0]['scene']) */
+  /* the two scene <img>s (src is $finishes[0]['scene']) */
   html = html.replace(/<\?=\s*\$view->component\('responsive-image',\s*\[([\s\S]*?)\]\)\s*\?>/g, (whole, argsBlob) => {
     const pick = (name) => {
-      if (name === 'widths') {
-        const m = argsBlob.match(/'widths'\s*=>\s*\[([0-9,\s]*)\]/);
-        if (!m) { throw new Error('responsive-image arg missing: widths'); }
-        return '[' + m[1].replace(/\s/g, '') + ']';
-      }
       /* line-anchored: values like $finishes[0]['scene'] contain ] and , */
       const m = argsBlob.match(new RegExp("'" + name + "'\\s*=>\\s*(.+)$", 'm'));
       if (!m) { throw new Error('responsive-image arg missing: ' + name); }
@@ -99,15 +83,11 @@ function renderTemplate() {
     const val = (raw) => {
       if (/^\$finishes\[0\]\['scene'\]$/.test(raw)) { return FINISHES[0].scene; }
       if (/^'/.test(raw)) { return raw.slice(1, -1); }
-      if (/^\[/.test(raw)) {
-        return raw.slice(1, -1).split(',').map((n) => parseInt(n, 10));
-      }
       return parseInt(raw, 10);
     };
-    return renderRespic({
+    return renderPhoto({
       src: val(pick('src')), alt: val(pick('alt')), class: val(pick('class')),
       width: val(pick('width')), height: val(pick('height')),
-      sizes: val(pick('sizes')), widths: val(pick('widths')),
     });
   });
 
@@ -195,9 +175,9 @@ function boot(url) {
   const imgA = doc.querySelector('.fs-scene-img-a');
   const imgB = doc.querySelector('.fs-scene-img-b');
   ok(!!imgA && !!imgB, 'two stacked scene layers exist');
-  ok(imgA.parentNode.tagName === 'PICTURE' && !!imgA.parentNode.querySelector('source[type="image/webp"]'),
-    'scene layers are responsive <picture>s with webp sources');
-  ok(imgA.getAttribute('data-respic-widths') === '480,960,1280', 'scene publishes its rendition widths');
+  ok(imgA.tagName === 'IMG' && imgB.tagName === 'IMG' && imgA.getAttribute('decoding') === 'async',
+    'scene layers are plain full-quality <img>s (no rendition ladder)');
+  ok(imgA.getAttribute('src') === '/' + FINISHES[0].scene, 'layer A starts on the first finish scene');
   ok(imgA.classList.contains('is-on') && !imgB.classList.contains('is-on'), 'layer A is the initially visible photo');
   ok(doc.querySelectorAll('#finish-desc').length === 1 && doc.querySelectorAll('#fs-story').length === 1,
     'no duplicate ids (finish-desc / fs-story)');
@@ -212,19 +192,13 @@ function boot(url) {
   await sleep(350);
   ok(chromeCard.classList.contains('is-active') && !cards[0].classList.contains('is-active'),
     'active state moves to chrome');
-  ok(doc.getElementById('finish-index').textContent === '02', 'counter shows 02');
-  ok(doc.getElementById('finish-title').textContent === 'Polished Mirror Chrome' &&
-     doc.getElementById('fs-caption-title').textContent === 'Polished Mirror Chrome',
-    'spec title + scene callout title follow');
+  ok(doc.getElementById('fs-caption-title').textContent === 'Polished Mirror Chrome',
+    'scene callout title follows');
   ok(doc.getElementById('fs-phrase').textContent === 'Reflect Perfection', 'headline phrase follows');
   ok(doc.getElementById('fs-story').textContent === 'Pure Reflection. Timeless Design.', 'callout story follows');
   ok(doc.getElementById('finish-desc').textContent.indexOf('The quintessential') === 0, 'description follows');
-  ok(doc.getElementById('finish-tag').textContent.indexOf('12-MICRON') === 0, 'process pill follows');
-  ok(doc.getElementById('finish-base').textContent === 'Low-Lead Architectural Brass', 'base spec follows');
   ok(imgB.classList.contains('is-on') && !imgA.classList.contains('is-on'), 'scene cross-fades onto layer B');
   ok(imgB.src.endsWith('/images/finishes/scene-chrome.jpg'), 'layer B now wears the chrome scene');
-  ok(imgB.parentNode.querySelector('source').srcset.indexOf('scene-chrome.jpg@480w.webp') !== -1,
-    'layer B srcset rebuilt for the chrome renditions');
   ok(dom.window.location.search === '?finish=chrome', 'URL carries ?finish=chrome');
   ok(doc.querySelector('.finishes-section').getAttribute('data-finish') === 'chrome', 'section data-finish follows');
 
@@ -235,17 +209,6 @@ function boot(url) {
   let threw = false;
   try { prev.click(); next.click(); } catch (e) { threw = true; }
   ok(!threw, 'chevron clicks never throw');
-
-  console.log('-- hotspots --');
-  const spots = Array.from(doc.querySelectorAll('.fs-hotspot'));
-  ok(spots.length === 3, 'three hotspots ride the faucet');
-  ok(spots.every((s) => s.getAttribute('data-x') && s.getAttribute('data-y')), 'hotspots carry photo-relative coordinates');
-  spots[0].click();
-  ok(spots[0].classList.contains('is-open'), 'hotspot opens');
-  spots[1].click();
-  ok(!spots[0].classList.contains('is-open') && spots[1].classList.contains('is-open'), 'one hotspot open at a time');
-  dom.window.document.dispatchEvent(new dom.window.KeyboardEvent('keydown', { key: 'Escape', bubbles: true }));
-  ok(spots.every((s) => !s.classList.contains('is-open')), 'Escape closes hotspots');
 
   console.log('-- compare drawer --');
   const drawer = doc.querySelector('[data-fs-drawer]');
@@ -265,7 +228,6 @@ function boot(url) {
   await sleep(300);
   const deepActive = deep.window.document.querySelector('.fs-card.is-active');
   ok(deepActive && deepActive.dataset.finish === 'gunmetal', '?finish=gunmetal pre-selects gunmetal');
-  ok(deep.window.document.getElementById('finish-index').textContent === '07', 'deep link counter is 07');
   ok(deep.window.document.getElementById('fs-phrase').textContent === 'Engineer Atmosphere', 'deep link phrase follows');
 
   console.log('-- css guards --');
@@ -273,6 +235,8 @@ function boot(url) {
   ok(/overflow-x:\s*(auto|scroll)/.test(CSS) && /scrollbar-width:\s*none/.test(CSS),
     'the rail is a horizontal scroller with its scrollbar hidden');
   ok(/scroll-snap/.test(CSS), 'the rail snaps to cards');
+  ok(!/\.fs-specs|\.finish-counter|\.tech-spec-item|\.fs-hotspot/.test(CSS),
+    'no styles for the retired spec-sheet / counter / hotspot ui remain');
 
   console.log('\n' + pass + ' passed, ' + fail + ' failed');
   process.exit(fail ? 1 : 0);

@@ -8,6 +8,7 @@ return [
     'users' => 'Kullanıcılar',
     'languages' => 'Diller',
     'media_library' => 'Medya kütüphanesi',
+    'file' => 'Dosya',
     'settings' => 'Ayarlar',
     'seo' => 'SEO',
     'roles_permissions' => 'Roller ve yetkiler',

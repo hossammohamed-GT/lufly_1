@@ -10,10 +10,9 @@
  * no macro textures. The left column carries the headline, the description,
  * the horizontally scrolling finish rail (round prev/next chevrons) and the
  * CTAs. The finish's name and story ride the scene as a white callout next
- * to the faucet, the interactive hotspots sit on the faucet itself, and the
- * spec sheet floats as a glass card beside the product. Every text that
- * changes per finish is a translation key; the per-finish copy rides on the
- * cards as data attributes so the script never hardcodes copy.
+ * to the faucet. Every text that changes per finish is a translation key;
+ * the per-finish copy rides on the cards as data attributes so the script
+ * never hardcodes copy.
  *
  * Finish list confirmed with the factory (management review): every finish
  * below is currently available, "Brushed Steel" is renamed to "Brushed

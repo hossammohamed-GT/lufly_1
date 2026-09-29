@@ -295,7 +295,6 @@ html:not([data-theme="light"]) .fs-desc {
 .fs-phrase,
 .fs-story,
 .fs-callout b,
-.finish-title,
 .fs-desc {
   transition: opacity 180ms ease;
 }
@@ -630,133 +629,6 @@ html:not([data-theme="light"]) .fs-cta-ghost:hover {
 }
 
 /* ==========================================================================
-   The spec sheet: a glass card floating beside the product.
-   ========================================================================== */
-
-.fs-right {
-  display: flex;
-  align-items: flex-end;
-  justify-content: flex-end;
-}
-
-.fs-specs {
-  width: min(400px, 100%);
-  padding: 20px 22px 18px;
-  border-radius: 18px;
-  border: 1px solid color-mix(in srgb, #ffffff 55%, transparent);
-  background: color-mix(in srgb, #faf7f1 78%, transparent);
-  backdrop-filter: blur(14px);
-  -webkit-backdrop-filter: blur(14px);
-  box-shadow: 0 24px 50px color-mix(in srgb, #141311 18%, transparent);
-}
-
-[data-theme="dark"] .fs-specs,
-html:not([data-theme="light"]) .fs-specs {
-  border-color: color-mix(in srgb, var(--lu-ink-100) 16%, transparent);
-  background: color-mix(in srgb, #141311 55%, transparent);
-  box-shadow: 0 24px 50px color-mix(in srgb, #0c0b0a 46%, transparent);
-}
-
-.fs-specs-head {
-  display: flex;
-  align-items: baseline;
-  justify-content: space-between;
-  gap: 12px;
-  margin-bottom: 10px;
-}
-
-.finish-title {
-  margin: 0;
-  color: var(--ds-band-text);
-  font-family: var(--font-display);
-  font-size: 18px;
-  font-weight: var(--weight-bold);
-  line-height: 1.15;
-}
-
-.finish-counter {
-  font-family: var(--font-mono);
-  font-size: 10px;
-  letter-spacing: 0.18em;
-  color: color-mix(in srgb, #1f1e1b 55%, transparent);
-  white-space: nowrap;
-}
-
-.finish-counter b {
-  font-size: 15px;
-  font-weight: var(--weight-bold);
-  color: #1f1e1b;
-}
-
-[data-theme="dark"] .finish-counter,
-html:not([data-theme="light"]) .finish-counter {
-  color: color-mix(in srgb, var(--lu-ink-100) 55%, transparent);
-}
-
-[data-theme="dark"] .finish-counter b,
-html:not([data-theme="light"]) .finish-counter b {
-  color: var(--lu-ink-100, #e9e6de);
-}
-
-.finish-spec-pill {
-  display: inline-block;
-  margin: 0 0 14px;
-  max-width: 100%;
-  padding: 5px 12px;
-  border-radius: 14px;
-  border: 1px solid color-mix(in srgb, #8a6240 25%, transparent);
-  background: color-mix(in srgb, #8a6240 12%, transparent);
-  font-family: var(--font-mono);
-  font-size: 9px;
-  font-weight: var(--weight-bold);
-  letter-spacing: 0.14em;
-  text-transform: uppercase;
-  color: #8a6240;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-}
-
-[data-theme="dark"] .finish-spec-pill,
-html:not([data-theme="light"]) .finish-spec-pill {
-  border-color: color-mix(in srgb, var(--lu-mint) 25%, transparent);
-  background: color-mix(in srgb, var(--lu-teal-500) 14%, transparent);
-  color: var(--lu-mint);
-}
-
-.finish-tech-specs {
-  display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: 8px 18px;
-}
-
-.tech-spec-item {
-  display: grid;
-  gap: 1px;
-  padding-bottom: 8px;
-  border-bottom: 1px solid var(--ds-band-hairline);
-}
-
-.tech-spec-item span {
-  font-family: var(--font-mono);
-  font-size: 8.5px;
-  letter-spacing: 0.12em;
-  text-transform: uppercase;
-  color: color-mix(in srgb, #1f1e1b 52%, transparent);
-}
-
-.tech-spec-item b {
-  font-size: 12px;
-  font-weight: var(--weight-bold);
-  color: var(--ds-band-text);
-}
-
-[data-theme="dark"] .tech-spec-item span,
-html:not([data-theme="light"]) .tech-spec-item span {
-  color: color-mix(in srgb, var(--lu-ink-100) 52%, transparent);
-}
-
-/* ==========================================================================
    The factory strip rides the bottom of the band.
    ========================================================================== */
 
@@ -1006,8 +878,7 @@ html:not([data-theme="light"]) .fs-rate-low {
 
 .fs-card:focus-visible,
 .fs-nav:focus-visible,
-.fs-cta:focus-visible,
-.fs-hotspot:focus-visible {
+.fs-cta:focus-visible {
   outline: 2px solid #8a6240;
   outline-offset: 3px;
 }
@@ -1017,15 +888,13 @@ html:not([data-theme="light"]) .fs-card:focus-visible,
 [data-theme="dark"] .fs-nav:focus-visible,
 html:not([data-theme="light"]) .fs-nav:focus-visible,
 [data-theme="dark"] .fs-cta:focus-visible,
-html:not([data-theme="light"]) .fs-cta:focus-visible,
-[data-theme="dark"] .fs-hotspot:focus-visible,
-html:not([data-theme="light"]) .fs-hotspot:focus-visible {
+html:not([data-theme="light"]) .fs-cta:focus-visible {
   outline-color: var(--lu-mint);
 }
 
 /* ==========================================================================
-   Entrance choreography: title up, the scene settling in, cards one by one,
-   then the hotspots.
+   Entrance choreography: title up, the scene settling in, cards one by
+   one, then the rail.
    ========================================================================== */
 
 @media (min-width: 981px) {

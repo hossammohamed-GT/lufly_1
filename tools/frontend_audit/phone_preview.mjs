@@ -43,8 +43,10 @@ const headScripts = [...page.matchAll(/<script>([\s\S]*?)<\/script>/gi)]
 const sheets = [...page.matchAll(/<link[^>]+rel="stylesheet"[^>]*>/gi)].map((tag) => {
   const href = (tag[0].match(/href="([^"]+)"/) || [, ''])[1];
   const local = href.replace(/^https?:\/\/[^/]+/, '');
+  /* asset() stamps stylesheets with ?v=<mtime> - the file on disk has no query */
+  const file = local.split('?')[0];
   return /^\/?(frontend|css)\//.test(local)
-    ? { inline: fs.readFileSync(path.join(ROOT, local.replace(/^\//, '')), 'utf8') }
+    ? { inline: fs.readFileSync(path.join(ROOT, file.replace(/^\//, '')), 'utf8') }
     : { href };
 });
 
@@ -81,12 +83,19 @@ ${scriptTags}
 </html>`;
 
 /* ---------- the numbers, straight from the harness ---------- */
-const measured = JSON.parse(
-  execFileSync(process.execPath, [path.join(ROOT, 'tools/frontend_audit/hero_fit_test.mjs'), '--json'], {
-    encoding: 'utf8',
-    maxBuffer: 32 * 1024 * 1024,
-  }),
-);
+/* hero_fit_test.mjs is a sandbox-only one-off (see the README: "Related
+   one-off scripts (not in the repo)") - when it is absent the phone sheet
+   still renders, just without the per-device pixel captions. */
+let measured = { rows: [] };
+const fitScript = path.join(ROOT, 'tools/frontend_audit/hero_fit_test.mjs');
+if (fs.existsSync(fitScript)) {
+  measured = JSON.parse(
+    execFileSync(process.execPath, [fitScript, '--json'], {
+      encoding: 'utf8',
+      maxBuffer: 32 * 1024 * 1024,
+    }),
+  );
+}
 
 const bySize = new Map(measured.rows.map((row) => [`${row.width}x${row.height}`, row]));
 

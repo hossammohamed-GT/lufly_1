@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 return [
     'server_error' => 'Something went wrong. Please try again later.',
+    'unauthorized' => 'You are not authorized to perform this action.',
     'page_not_found_title' => 'Page not found',
     'page_not_found_message' => 'The page you are looking for may have been moved, renamed, or never existed. Let us guide you back.',
     'page_not_found_hint' => 'or use the menu above to keep exploring',

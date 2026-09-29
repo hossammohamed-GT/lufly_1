@@ -8,6 +8,7 @@ return [
     'users' => 'Uživatelé',
     'languages' => 'Jazyky',
     'media_library' => 'Knihovna médií',
+    'file' => 'Soubor',
     'settings' => 'Nastavení',
     'seo' => 'SEO',
     'roles_permissions' => 'Role a oprávnění',

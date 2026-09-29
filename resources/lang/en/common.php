@@ -8,6 +8,7 @@ return [
     'users' => 'Users',
     'languages' => 'Languages',
     'media_library' => 'Media library',
+    'file' => 'File',
     'settings' => 'Settings',
     'seo' => 'SEO',
     'roles_permissions' => 'Roles & permissions',

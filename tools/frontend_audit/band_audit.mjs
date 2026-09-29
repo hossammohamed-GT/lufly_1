@@ -23,9 +23,9 @@ const asJson = process.argv.includes('--json');
 /* band => how its background is produced.
    `photo`  = a photograph is painted behind the band (file must exist)
    `plain`  = no photograph at all
-   `hero`   = the hero artwork, chosen at runtime by hero-cinema.js */
+   `hero`   = the hero artwork, chosen at runtime by hero.js */
 const BANDS = {
-  'hero-cinema': { kind: 'hero' },
+  'hero': { kind: 'hero' },
   'trust-bar': { kind: 'plain' },
   finishes: { kind: 'plain' },
   categories: { kind: 'photo', file: 'images/lifestyle/categories-backdrop.jpg' },
@@ -80,15 +80,18 @@ for (const band of order) {
   }
 
   if (intent.kind === 'hero') {
-    /* the hero picks its artwork in JS from the data-img* attributes the view
-       renders, so the template lives in the PHP and the masters on disk */
-    const view = read('resources/views/home/hero-cinema/hero-cinema.php');
-    const template = /images\/lifestyle\/heroc-/.test(view);
-    const masters = ['heroc-1.webp', 'heroc-1-m.webp', 'heroc-1-p.webp']
-      .every((f) => fs.existsSync(path.join(root, 'images/lifestyle', f)));
-    if (!template) problems.push('hero-cinema: the view no longer references images/lifestyle/heroc-*');
-    if (!masters) problems.push('hero-cinema: a heroc-1 artwork master is missing from images/lifestyle/');
-    rows.push([band, 'photo', template && masters ? 'images/lifestyle/heroc-*' : 'MISSING']);
+    /* the hero picks its artwork in JS from the data-hero-src/data-thumb
+       attributes the view renders, so the template lives in the PHP and the
+       masters on disk (four scenes x base/-light/-thumb/-light-thumb) */
+    const view = read('resources/views/home/hero/hero.php');
+    const template = /images\/hero\/hero-/.test(view);
+    const scenes = ['bathroom', 'kitchen', 'shower', 'smart'];
+    const variants = ['', '-light', '-thumb', '-light-thumb'];
+    const masters = scenes.every((s) =>
+      variants.every((v) => fs.existsSync(path.join(root, 'images/hero', `hero-${s}${v}.webp`))));
+    if (!template) problems.push('hero: the view no longer references images/hero/hero-*');
+    if (!masters) problems.push('hero: a scene artwork master is missing from images/hero/');
+    rows.push([band, 'photo', template && masters ? 'images/hero/hero-{scene}[-light][-thumb].webp' : 'MISSING']);
     continue;
   }
 
