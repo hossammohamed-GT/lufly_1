@@ -1009,16 +1009,10 @@
               box-shadow 240ms ease, border-color 200ms ease, opacity 200ms ease;
 }
 
-/* Pointing at it is enough to show what it becomes. Mouse only: a touch screen
-   would keep the stretched state after a tap. */
-@media (hover: hover) {
-  .aichat-fab:hover {
-    max-width: calc(100vw - 40px);
-  }
-}
+/* Hover only lifts and lights the launcher; its dimensions stay stable. The
+   horizontal expansion belongs exclusively to an intentional click/open. */
 
-/* and it stays that wide for as long as the chat is open — the panel grows out
-   of it, so the bar is the chat's own base */
+/* It grows to the panel width only while the chat is opening/open. */
 .aichat.is-open .aichat-fab {
   max-width: calc(100vw - 40px);
   border-color: var(--ds-primary-line);
