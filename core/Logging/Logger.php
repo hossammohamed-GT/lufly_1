@@ -112,10 +112,28 @@ class Logger implements LoggerInterface
         }
 
         try {
-            return ' ' . json_encode($this->normalize($context), JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE);
+            return ' ' . json_encode($this->normalize($this->redact($context)), JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE);
         } catch (Throwable) {
             return '';
         }
+    }
+
+    /** Remove credentials and direct identifiers before they reach disk. */
+    private function redact(array $context): array
+    {
+        $sensitive = ['password', 'password_confirmation', 'token', '_token', 'authorization', 'cookie', 'api_key', 'secret'];
+        foreach ($context as $key => $value) {
+            $normalized = strtolower((string) $key);
+            if (in_array($normalized, $sensitive, true) || str_ends_with($normalized, '_token') || str_ends_with($normalized, '_key')) {
+                $context[$key] = '[REDACTED]';
+            } elseif (is_array($value)) {
+                $context[$key] = $this->redact($value);
+            } elseif ($normalized === 'email' && is_string($value)) {
+                $context[$key] = hash('sha256', strtolower(trim($value)));
+            }
+        }
+
+        return $context;
     }
 
     /** @param array<string|int, mixed> $value */

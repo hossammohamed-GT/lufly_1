@@ -742,7 +742,7 @@ INSERT INTO `languages` (`id`, `code`, `name`, `native_name`, `dir`, `active`, `
 INSERT INTO `languages` (`id`, `code`, `name`, `native_name`, `dir`, `active`, `sort_order`, `created_at`, `updated_at`, `deleted_at`) VALUES (3, 'cs', 'Czech', 'Čeština', 'ltr', 1, 3, '2026-09-18 22:04:38', '2026-09-18 22:04:38', NULL);
 
 -- data: users (1 rows)
-INSERT INTO `users` (`id`, `name`, `email`, `password`, `phone`, `locale`, `status`, `created_at`, `updated_at`, `deleted_at`) VALUES (1, 'Lufly Admin', 'admin@lufly.test', '$2y$12$07DVfa4wEmNVv7dZMEN4S.iBnlynbS.hhJbZtWxklcEsVNkxVFkOK', NULL, 'en', 'active', '2026-09-18 22:04:38', '2026-09-18 22:04:38', NULL);
+INSERT INTO `users` (`id`, `name`, `email`, `password`, `phone`, `locale`, `status`, `created_at`, `updated_at`, `deleted_at`) VALUES (1, 'Lufly Admin', 'admin@lufly.test', '$2y$12$07DVfa4wEmNVv7dZMEN4S.iBnlynbS.hhJbZtWxklcEsVNkxVFkOK', NULL, 'en', 'inactive', '2026-09-18 22:04:38', '2026-09-18 22:04:38', NULL);
 
 -- data: roles (3 rows)
 INSERT INTO `roles` (`id`, `name`, `description`, `created_at`, `updated_at`, `deleted_at`) VALUES (1, 'admin', 'Full access to every module.', '2026-09-18 22:04:38', '2026-09-18 22:04:38', NULL);

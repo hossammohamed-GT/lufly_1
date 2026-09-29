@@ -7,7 +7,7 @@ $view->pushDeferredStyle('frontend/home/corporate/corporate.css');
         <div class="corporate-box scroll-reveal">
             <div class="corporate-info">
                 <span class="corporate-legal-badge"><?= e(trans('home.corporate_badge')) ?></span>
-                <h3>LUFLY İNŞAAT SANAYİ VE TİCARET LİMİTED ŞİRKETİ</h3>
+                <h2>LUFLY İNŞAAT SANAYİ VE TİCARET LİMİTED ŞİRKETİ</h2>
                 <p><?= e(trans('home.corporate_desc')) ?></p>
 
                 <ul class="corporate-details-list">
@@ -21,7 +21,7 @@ $view->pushDeferredStyle('frontend/home/corporate/corporate.css');
             <div class="spec-desk-col">
                 <div class="glass-panel spec-desk">
                     <div class="spec-desk-badge" aria-hidden="true">CAD / BIM</div>
-                    <h4 class="spec-desk-title"><?= e(trans('home.spec_desk_title')) ?></h4>
+                    <h3 class="spec-desk-title"><?= e(trans('home.spec_desk_title')) ?></h3>
                     <p class="spec-desk-text">
                         <?= e(trans('home.spec_desk_desc')) ?>
                     </p>

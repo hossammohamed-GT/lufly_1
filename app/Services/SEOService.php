@@ -137,7 +137,7 @@ class SEOService
 
         $description = trim(preg_replace('/\s+/', ' ', strip_tags((string) ($product['short_description'] ?? $product['description'] ?? ''))) ?? '');
 
-        return $this->addStructuredData('Product', [
+        $schema = [
             '@id' => $canonicalUrl . '#product',
             'name' => (string) ($product['name'] ?? ''),
             'description' => $description !== '' ? mb_substr($description, 0, 500) : (string) ($product['name'] ?? ''),
@@ -148,15 +148,26 @@ class SEOService
             'category' => (string) ($product['category_slug'] ?? ''),
             'brand' => ['@type' => 'Brand', 'name' => 'LUFLY'],
             'manufacturer' => ['@id' => url('/#organization')],
-            'countryOfOrigin' => ['@type' => 'Country', 'name' => 'TR'],
-            'offers' => [
+        ];
+
+        /* A zero placeholder is not a real commercial offer. Emit Offer only
+           when the catalog has an explicit positive price and currency. */
+        $price = isset($product['price']) ? (float) $product['price'] : 0.0;
+        $currency = strtoupper(trim((string) ($product['currency'] ?? '')));
+        if ($price > 0 && preg_match('/^[A-Z]{3}$/', $currency) === 1) {
+            $schema['offers'] = [
                 '@type' => 'Offer',
                 'url' => $canonicalUrl,
-                'priceCurrency' => 'EUR',
-                'price' => (float) ($product['price'] ?? 0),
-                'availability' => 'https://schema.org/' . (($product['stock_status'] ?? 'in_stock') === 'out_of_stock' ? 'OutOfStock' : 'InStock'),
-            ],
-        ]);
+                'priceCurrency' => $currency,
+                'price' => $price,
+            ];
+            if (isset($product['stock_status'])) {
+                $schema['offers']['availability'] = 'https://schema.org/'
+                    . ($product['stock_status'] === 'out_of_stock' ? 'OutOfStock' : 'InStock');
+            }
+        }
+
+        return $this->addStructuredData('Product', $schema);
     }
 
     /** @param list<array{url: string, name: string, image?: string}> $items */

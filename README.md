@@ -64,8 +64,9 @@ config/                    app, database, modules, localization, seo, securityâ€
 - Login page: `/{locale}/login` (e.g. `/en/login`)
 - Panel root: `/admin` (requires login)
 - Modules: **Products, Media, Settings, SEO, Users, Permissions, Languages, Notifications, Announcements**
-- The admin account is created by `UserSeeder` (see `database/seeders/UserSeeder.php` for the email; the password
-  is bcrypt-hashed â€” rotate it after first login on any real deployment).
+- No active administrator is shipped. To create one during seeding, set `ADMIN_EMAIL` and a unique
+  `ADMIN_PASSWORD` of at least 14 characters, run the seeder, then remove those values from `.env`.
+  The inactive `admin@lufly.test` fixture cannot sign in.
 
 ## Saved products (favorites) & e-mail
 

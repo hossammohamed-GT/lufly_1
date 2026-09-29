@@ -17,7 +17,7 @@
 
             <!-- Collections -->
             <div class="footer-col">
-                <h5><?= e(trans('common.footer_sanitary')) ?></h5>
+                <h2><?= e(trans('common.footer_sanitary')) ?></h2>
                 <ul>
                     <li><a href="<?= e(route('products.index', ['category' => 'bathroom-ceramics'])) ?>"><?= e(trans('home.category_toilets')) ?></a></li>
                     <li><a href="<?= e(route('products.index', ['category' => 'washbasin-mixers'])) ?>"><?= e(trans('home.category_basins')) ?></a></li>
@@ -29,7 +29,7 @@
 
             <!-- Brassware & Finishes -->
             <div class="footer-col">
-                <h5><?= e(trans('common.footer_finishes')) ?></h5>
+                <h2><?= e(trans('common.footer_finishes')) ?></h2>
                 <ul>
                     <li><a href="<?= e(route('home')) ?>#finishes"><?= e(trans('home.finish_rose_title')) ?></a></li>
                     <li><a href="<?= e(route('home')) ?>#finishes"><?= e(trans('home.finish_gold_title')) ?></a></li>
@@ -41,7 +41,7 @@
 
             <!-- Technical & Specifiers -->
             <div class="footer-col">
-                <h5><?= e(trans('common.footer_technical')) ?></h5>
+                <h2><?= e(trans('common.footer_technical')) ?></h2>
                 <ul>
                     <li><a href="<?= e(route('contact')) ?>"><?= e(trans('nav.download_catalog')) ?></a></li>
                     <li><a href="<?= e(route('contact')) ?>"><?= e(trans('nav.tender_pack')) ?></a></li>
@@ -53,7 +53,7 @@
 
             <!-- Legal Entity -->
             <div class="footer-col">
-                <h5><?= e(trans('common.footer_factory')) ?></h5>
+                <h2><?= e(trans('common.footer_factory')) ?></h2>
                 <p class="footer-legal-name">
                     LUFLY İNŞAAT SANAYİ VE TİCARET LİMİTED ŞİRKETİ
                 </p>

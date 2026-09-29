@@ -34,7 +34,7 @@ $searchTerms = ['Bath Mixer', 'Washbasin Mixer', 'Washbasin', 'Sink Mixer'];
                 </div>
                 <div class="inspiration-body">
                     <span class="inspiration-tag"><?= e(trans('home.inspiration_1_tag')) ?></span>
-                    <h4><?= e(trans('home.inspiration_1_title')) ?></h4>
+                    <h3><?= e(trans('home.inspiration_1_title')) ?></h3>
                     <p><?= e(trans('home.inspiration_1_desc')) ?></p>
                 </div>
             </a>
@@ -57,7 +57,7 @@ $searchTerms = ['Bath Mixer', 'Washbasin Mixer', 'Washbasin', 'Sink Mixer'];
                 </div>
                 <div class="inspiration-body">
                     <span class="inspiration-tag"><?= e(trans('home.inspiration_2_tag')) ?></span>
-                    <h4><?= e(trans('home.inspiration_2_title')) ?></h4>
+                    <h3><?= e(trans('home.inspiration_2_title')) ?></h3>
                     <p><?= e(trans('home.inspiration_2_desc')) ?></p>
                 </div>
             </a>
@@ -80,7 +80,7 @@ $searchTerms = ['Bath Mixer', 'Washbasin Mixer', 'Washbasin', 'Sink Mixer'];
                 </div>
                 <div class="inspiration-body">
                     <span class="inspiration-tag"><?= e(trans('home.inspiration_3_tag')) ?></span>
-                    <h4><?= e(trans('home.inspiration_3_title')) ?></h4>
+                    <h3><?= e(trans('home.inspiration_3_title')) ?></h3>
                     <p><?= e(trans('home.inspiration_3_desc')) ?></p>
                 </div>
             </a>
@@ -103,7 +103,7 @@ $searchTerms = ['Bath Mixer', 'Washbasin Mixer', 'Washbasin', 'Sink Mixer'];
                 </div>
                 <div class="inspiration-body">
                     <span class="inspiration-tag"><?= e(trans('home.inspiration_4_tag')) ?></span>
-                    <h4><?= e(trans('home.inspiration_4_title')) ?></h4>
+                    <h3><?= e(trans('home.inspiration_4_title')) ?></h3>
                     <p><?= e(trans('home.inspiration_4_desc')) ?></p>
                 </div>
             </a>

@@ -1,0 +1,111 @@
+openapi: 3.1.0
+info:
+  title: LUFLY API
+  version: 1.0.0
+  description: Public catalog reads and authenticated administration operations.
+servers:
+  - url: /api
+paths:
+  /health:
+    get:
+      summary: Liveness check
+      responses:
+        '200':
+          description: Process is accepting requests
+  /locales:
+    get:
+      summary: Supported locales
+      responses:
+        '200': { $ref: '#/components/responses/Success' }
+  /products:
+    get:
+      summary: List products
+      parameters:
+        - { name: page, in: query, schema: { type: integer, minimum: 1 } }
+        - { name: per_page, in: query, schema: { type: integer, minimum: 1, maximum: 100 } }
+        - { name: q, in: query, schema: { type: string, maxLength: 200 } }
+        - { name: locale, in: query, schema: { type: string, enum: [en, tr, cs] } }
+      responses:
+        '200': { $ref: '#/components/responses/Success' }
+    post:
+      summary: Create product
+      security: [{ sessionCookie: [], csrfToken: [] }]
+      responses:
+        '201': { $ref: '#/components/responses/Success' }
+        '401': { $ref: '#/components/responses/Error' }
+        '403': { $ref: '#/components/responses/Error' }
+        '419': { $ref: '#/components/responses/Error' }
+  /products/search:
+    get:
+      summary: Search products
+      responses:
+        '200': { $ref: '#/components/responses/Success' }
+  /products/{id}:
+    parameters:
+      - { name: id, in: path, required: true, schema: { type: integer, minimum: 1 } }
+    get:
+      summary: Get product
+      responses:
+        '200': { $ref: '#/components/responses/Success' }
+        '404': { $ref: '#/components/responses/Error' }
+    put:
+      summary: Update product
+      security: [{ sessionCookie: [], csrfToken: [] }]
+      responses:
+        '200': { $ref: '#/components/responses/Success' }
+    delete:
+      summary: Soft-delete product
+      security: [{ sessionCookie: [], csrfToken: [] }]
+      responses:
+        '200': { $ref: '#/components/responses/Success' }
+  /media:
+    get:
+      summary: List media (permission required)
+      security: [{ sessionCookie: [] }]
+      responses:
+        '200': { $ref: '#/components/responses/Success' }
+    post:
+      summary: Upload media (permission and CSRF required)
+      security: [{ sessionCookie: [], csrfToken: [] }]
+      requestBody:
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              required: [file]
+              properties:
+                file: { type: string, format: binary }
+                collection: { type: string, maxLength: 50 }
+      responses:
+        '201': { $ref: '#/components/responses/Success' }
+components:
+  securitySchemes:
+    sessionCookie: { type: apiKey, in: cookie, name: lufly_session }
+    csrfToken: { type: apiKey, in: header, name: X-CSRF-TOKEN }
+  responses:
+    Success:
+      description: Standard success envelope
+      content:
+        application/json:
+          schema: { $ref: '#/components/schemas/Success' }
+    Error:
+      description: Standard error envelope
+      content:
+        application/json:
+          schema: { $ref: '#/components/schemas/Error' }
+  schemas:
+    Success:
+      type: object
+      required: [success, message, data]
+      properties:
+        success: { const: true }
+        message: { type: string }
+        data: {}
+    Error:
+      type: object
+      required: [success, message, errors]
+      properties:
+        success: { const: false }
+        message: { type: string }
+        errors: { type: object }
+        error_code: { type: string }

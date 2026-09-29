@@ -16,7 +16,7 @@ return [
     'url' => env('APP_URL', ''),
     'timezone' => env('APP_TIMEZONE', 'UTC'),
     'version' => '1.0.0',
-    'key' => env('APP_KEY', 'lufly'),
+    'key' => env('APP_KEY', ''),
 
     'providers' => [
         App\Providers\AppServiceProvider::class,

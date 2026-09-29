@@ -67,7 +67,7 @@
   align-items: center;
 }
 
-.corporate-info h3 {
+.corporate-info h2 {
   font-family: var(--font-display);
   font-size: var(--text-2xl);
   font-weight: var(--weight-bold);

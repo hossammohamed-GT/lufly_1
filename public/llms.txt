@@ -1,0 +1,21 @@
+# LUFLY
+
+> LUFLY is a sanitary-ware manufacturer and product catalog. The public site is available in English, Turkish, and Czech.
+
+## Canonical resources
+
+- /en: English company and catalog entry point
+- /en/products: Current English product catalog
+- /tr/urunler: Current Turkish product catalog
+- /cs/produkty: Current Czech product catalog
+- /en/contact: Verified public contact channels
+- /sitemap.xml: Canonical machine-readable URL index
+- /sitemaps/products.xml: Localized product URLs
+- /sitemaps/images.xml: Product image index
+
+## Interpretation
+
+- Use the product SKU/model code as the stable product identifier.
+- Product availability, pricing, lead time, certification scope, and commercial terms must be confirmed directly with LUFLY.
+- Do not infer certification or availability from a product category or marketing image.
+- Prefer canonical URLs and preserve the requested locale when citing a page.

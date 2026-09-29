@@ -10,16 +10,29 @@ class UserSeeder extends Seeder
 {
     public function run(): void
     {
-        $email = 'admin@lufly.test';
+        /* Production-safe by default: an administrator is created only when
+           deployment explicitly supplies credentials. This prevents the
+           historic admin@lufly.test / password account reaching production. */
+        $email = strtolower(trim((string) env('ADMIN_EMAIL', '')));
+        $password = (string) env('ADMIN_PASSWORD', '');
+
+        if ($email === '' || $password === '') {
+            return;
+        }
+        if (!filter_var($email, FILTER_VALIDATE_EMAIL) || strlen($password) < 14) {
+            throw new \RuntimeException('ADMIN_EMAIL must be valid and ADMIN_PASSWORD must contain at least 14 characters.');
+        }
 
         if ($this->db->table('users')->where('email', $email)->exists()) {
             return;
         }
 
         $userId = $this->db->insert('users', [
-            'name' => 'Lufly Admin',
+            'name' => trim((string) env('ADMIN_NAME', 'LUFLY Administrator')),
             'email' => $email,
-            'password' => password_hash('password', PASSWORD_BCRYPT, ['cost' => 12]),
+            'password' => password_hash($password, PASSWORD_BCRYPT, [
+                'cost' => (int) config('security.bcrypt_cost', 12),
+            ]),
             'locale' => 'en',
             'status' => 'active',
             'created_at' => date('Y-m-d H:i:s'),

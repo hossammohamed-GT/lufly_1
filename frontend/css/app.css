@@ -57,7 +57,7 @@
 .footer-brand-text { margin: 0 0 var(--space-5); color: var(--ds-text-muted); font-size: var(--text-sm); line-height: var(--leading-relaxed); }
 .footer-brand-note { color: var(--ds-accent-text); font-size: var(--text-caption); font-weight: var(--weight-semibold); letter-spacing: var(--tracking-wide); text-transform: uppercase; }
 
-.footer-col h5 {
+.footer-col h2 {
   margin: 0 0 var(--space-4);
   color: var(--ds-text);
   font-family: var(--font-display);

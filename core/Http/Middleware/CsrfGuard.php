@@ -36,20 +36,10 @@ final class CsrfGuard implements MiddlewareInterface
                 return $next($request);
             }
 
-            // Also permit same-origin AJAX requests containing the custom XMLHttpRequest header
-            $isAjax = $request->header('X-Requested-With') === 'XMLHttpRequest';
-            if ($isAjax) {
-                $origin = (string) ($request->header('Origin') ?? $request->header('Referer') ?? '');
-                $appHost = parse_url((string) config('app.url', ''), PHP_URL_HOST)
-                    ?: parse_url((string) ($request->server('HTTP_HOST') ?? ''), PHP_URL_HOST)
-                    ?: (string) ($request->server('HTTP_HOST') ?? '');
-
-                $reqHost = parse_url($origin, PHP_URL_HOST) ?: '';
-                if ($reqHost !== '' && $appHost !== '' && strtolower($reqHost) === strtolower($appHost)) {
-                    return $next($request);
-                }
-            }
-
+            /* X-Requested-With and Origin are useful signals, not CSRF secrets.
+               Every cookie-authenticated mutation must prove possession of the
+               session token. Bearer-only clients were exempted above because
+               browsers do not attach that credential automatically. */
             throw (new AppException('CSRF token mismatch.', 419, 'csrf_token_invalid'))
                 ->withExtra(['path' => $request->path()]);
         }

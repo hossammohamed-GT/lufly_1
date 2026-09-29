@@ -18,7 +18,22 @@ return [
         'X-Frame-Options' => 'SAMEORIGIN',
         'X-Content-Type-Options' => 'nosniff',
         'Referrer-Policy' => 'strict-origin-when-cross-origin',
-        'X-XSS-Protection' => '1; mode=block',
+        'Permissions-Policy' => 'camera=(), microphone=(), geolocation=(), payment=(), usb=()',
+        'Cross-Origin-Opener-Policy' => 'same-origin-allow-popups',
+    ],
+
+    /* Start in report-only mode because this site intentionally contains some
+       inline boot/analytics snippets. Review browser reports before setting
+       SECURITY_CSP_REPORT_ONLY=false. A nonce-based policy is the end state. */
+    'csp' => [
+        'policy' => (string) env('SECURITY_CSP', "default-src 'self'; base-uri 'self'; object-src 'none'; frame-ancestors 'self'; form-action 'self'; img-src 'self' data: https:; font-src 'self' https://fonts.gstatic.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; script-src 'self' 'unsafe-inline' https://www.googletagmanager.com https://www.clarity.ms; connect-src 'self' https://www.google-analytics.com https://*.clarity.ms"),
+        'report_only' => (bool) env('SECURITY_CSP_REPORT_ONLY', true),
+    ],
+
+    /* Enable only after every production/subdomain request is HTTPS. */
+    'hsts' => [
+        'enabled' => (bool) env('SECURITY_HSTS', false),
+        'value' => 'max-age=31536000; includeSubDomains',
     ],
 
     'uploads' => [

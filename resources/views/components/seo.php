@@ -11,9 +11,6 @@ $meta = $seo !== null ? $seo->toArray() : $defaults;
 
 $pageTitle = !empty($title) ? $title : ($meta['title'] ?? 'LUFLY | European Architectural Sanitary Ware');
 $description = (string) ($meta['description'] ?? $defaults['description'] ?? '');
-$keywords = is_array($meta['keywords'] ?? null)
-    ? implode(', ', $meta['keywords'])
-    : (string) ($meta['keywords'] ?? implode(', ', (array) ($defaults['keywords'] ?? [])));
 
 $currentUrl = (string) request()->url();
 $canonical = $meta['canonical'] ?? $currentUrl;
@@ -73,9 +70,6 @@ $siteId = url('/#website');
 ?>
 <title><?= e($pageTitle) ?></title>
 <meta name="description" content="<?= e($description) ?>">
-<?php if ($keywords !== ''): ?>
-<meta name="keywords" content="<?= e($keywords) ?>">
-<?php endif; ?>
 <meta name="robots" content="<?= e($robots) ?>">
 <meta name="author" content="<?= e($business['legal_name'] ?? 'LUFLY') ?>">
 <meta name="publisher" content="LUFLY">
