@@ -148,14 +148,17 @@ if ($boxOn) {
                 <stop offset="1" stop-color="#071719" stop-opacity=".05"/>
             </linearGradient>
         </defs>
+        <?php /* Architectural right-angle geometry: a horizontal baseline and
+                 a vertical right edge joined by one fluid, rolled diagonal.
+                 It deliberately resembles a CAD/CNC tool path—not a circle. */ ?>
         <path class="aichat-flow-surface"
-              d="M332 492 C278 470 292 382 252 338 C210 292 116 340 72 276 C38 226 65 132 18 72 L18 20 L350 20 L350 500 Z"/>
-        <path class="aichat-flow-path is-main"
-              d="M332 492 C278 470 292 382 252 338 C210 292 116 340 72 276 C38 226 65 132 18 72"/>
-        <path class="aichat-flow-path is-echo"
-              d="M332 492 C250 455 278 374 224 350 C165 324 94 360 43 315"/>
-        <path class="aichat-flow-path is-soft"
-              d="M332 492 C310 414 272 392 205 391 C137 390 90 416 31 390"/>
+              d="M320 492 L40 492 Q20 492 28 470 C86 454 135 461 180 425 C234 382 214 309 268 264 C310 229 307 132 312 28 Q332 28 332 48 L332 480 Q332 492 320 492 Z"/>
+        <path class="aichat-flow-path is-main" pathLength="1"
+              d="M320 492 L40 492 Q20 492 28 470 C86 454 135 461 180 425 C234 382 214 309 268 264 C310 229 307 132 312 28 Q332 28 332 48 L332 480 Q332 492 320 492"/>
+        <path class="aichat-flow-path is-echo" pathLength="1"
+              d="M55 468 C106 438 145 444 190 407 C236 369 226 306 277 264 C313 234 320 168 324 96"/>
+        <path class="aichat-flow-path is-soft" pathLength="1"
+              d="M84 449 C128 428 162 430 201 397 C240 364 238 313 283 276 C306 257 314 218 318 176"/>
     </svg>
 
     <section class="aichat-panel" id="lufly-chat-panel" data-aichat-panel hidden

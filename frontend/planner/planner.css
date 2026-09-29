@@ -1226,8 +1226,10 @@ body.has-favmail .aichat-fab {
   stroke: url(#aichat-flow-main);
   stroke-linecap: round;
   vector-effect: non-scaling-stroke;
-  stroke-dasharray: 820;
-  stroke-dashoffset: 820;
+  /* pathLength="1" keeps the complete CAD outline and the shorter parallel
+     paths drawing at the same visual rate. */
+  stroke-dasharray: 1;
+  stroke-dashoffset: 1;
   transition: stroke-dashoffset 760ms cubic-bezier(0.22, 1, 0.36, 1);
 }
 
