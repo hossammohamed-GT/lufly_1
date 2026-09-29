@@ -1209,13 +1209,16 @@ body.has-favmail .aichat-fab {
   opacity: 0;
   pointer-events: none;
   filter: drop-shadow(0 0 8px color-mix(in srgb, #20e7ec 56%, transparent));
+  transition: opacity 320ms ease;
 }
 
 .aichat-flow-surface {
   fill: url(#aichat-flow-glass);
   stroke: none;
   opacity: 0;
+  transform: scale(.08);
   transform-origin: 92% 94%;
+  transition: opacity 380ms ease, transform 720ms cubic-bezier(0.22, 1, 0.36, 1);
 }
 
 .aichat-flow-path {
@@ -1225,11 +1228,37 @@ body.has-favmail .aichat-fab {
   vector-effect: non-scaling-stroke;
   stroke-dasharray: 820;
   stroke-dashoffset: 820;
+  transition: stroke-dashoffset 760ms cubic-bezier(0.22, 1, 0.36, 1);
 }
 
 .aichat-flow-path.is-main { stroke-width: 1.5; }
 .aichat-flow-path.is-echo { stroke-width: 1; opacity: .48; }
 .aichat-flow-path.is-soft { stroke-width: .75; opacity: .25; }
+
+/* Desktop preview: because the SVG is the launcher's immediate sibling, hover
+   can generate the same geometry without JavaScript or opening the dialog. It
+   remains fully formed while the pointer stays over the source icon and fades
+   back into it on mouse-leave. */
+@media (hover: hover) {
+  .aichat:not(.is-open) > .aichat-fab:hover + .aichat-flow,
+  .aichat:not(.is-open) > .aichat-fab:focus-visible + .aichat-flow {
+    opacity: 1;
+  }
+
+  .aichat:not(.is-open) > .aichat-fab:hover + .aichat-flow .aichat-flow-surface,
+  .aichat:not(.is-open) > .aichat-fab:focus-visible + .aichat-flow .aichat-flow-surface {
+    opacity: .58;
+    transform: scale(1);
+  }
+
+  .aichat:not(.is-open) > .aichat-fab:hover + .aichat-flow .aichat-flow-path,
+  .aichat:not(.is-open) > .aichat-fab:focus-visible + .aichat-flow .aichat-flow-path {
+    stroke-dashoffset: 0;
+  }
+
+  .aichat-flow-path.is-echo { transition-duration: 840ms; }
+  .aichat-flow-path.is-soft { transition-duration: 920ms; }
+}
 
 .aichat.is-open .aichat-flow {
   animation: aichat-flow-stage 1180ms ease-out both;
@@ -1844,7 +1873,10 @@ body.is-chat-resizing {
   .aichat-fab,
   .aichat-fab-text,
   .aichat-fab-icon,
-  .aichat-fab-icon svg {
+  .aichat-fab-icon svg,
+  .aichat-flow,
+  .aichat-flow-surface,
+  .aichat-flow-path {
     transition: none !important;
   }
 
