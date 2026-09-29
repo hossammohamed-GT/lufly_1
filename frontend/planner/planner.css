@@ -1017,7 +1017,8 @@ body.is-ai-experience .hero-frame.is-active {
   position: fixed;
   inset-block-end: 24px;
   inset-inline-end: 24px;
-  z-index: 92;
+  /* Above the geometric preview so the icon remains its visible origin. */
+  z-index: 96;
   display: inline-flex;
   align-items: center;
   justify-content: flex-end;
@@ -1198,13 +1199,15 @@ body.has-favmail .aichat-fab {
    browser only animates dash offset and opacity (compositor-friendly). */
 .aichat-flow {
   position: fixed;
-  inset-inline-end: 18px;
-  inset-block-end: 28px;
+  /* Flush to the viewport edges, exactly like an architectural overlay drawn
+     from the screen's bottom-right datum. */
+  inset-inline-end: 0;
+  inset-block-end: 0;
   /* Above the forming panel during the short transformation; it is decorative,
      pointer-free and fades before the interface becomes interactive. */
   z-index: 95;
-  width: min(390px, 78vw);
-  height: min(520px, 72vh);
+  width: min(520px, 92vw);
+  height: min(720px, 88vh);
   overflow: visible;
   opacity: 0;
   pointer-events: none;

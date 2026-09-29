@@ -152,13 +152,13 @@ if ($boxOn) {
                  a vertical right edge joined by one fluid, rolled diagonal.
                  It deliberately resembles a CAD/CNC tool path—not a circle. */ ?>
         <path class="aichat-flow-surface"
-              d="M320 492 L40 492 Q20 492 28 470 C86 454 135 461 180 425 C234 382 214 309 268 264 C310 229 307 132 312 28 Q332 28 332 48 L332 480 Q332 492 320 492 Z"/>
+              d="M348 520 L36 520 Q10 520 24 492 C86 470 139 477 184 438 C238 391 218 318 272 270 C316 231 326 135 330 42 Q360 42 360 70 L360 500 Q360 520 348 520 Z"/>
         <path class="aichat-flow-path is-main" pathLength="1"
-              d="M320 492 L40 492 Q20 492 28 470 C86 454 135 461 180 425 C234 382 214 309 268 264 C310 229 307 132 312 28 Q332 28 332 48 L332 480 Q332 492 320 492"/>
+              d="M348 520 L36 520 Q10 520 24 492 C86 470 139 477 184 438 C238 391 218 318 272 270 C316 231 326 135 330 42 Q360 42 360 70 L360 500 Q360 520 348 520"/>
         <path class="aichat-flow-path is-echo" pathLength="1"
-              d="M55 468 C106 438 145 444 190 407 C236 369 226 306 277 264 C313 234 320 168 324 96"/>
+              d="M48 493 C106 454 151 461 196 421 C242 380 232 314 282 270 C321 236 332 166 338 92"/>
         <path class="aichat-flow-path is-soft" pathLength="1"
-              d="M84 449 C128 428 162 430 201 397 C240 364 238 313 283 276 C306 257 314 218 318 176"/>
+              d="M78 474 C128 444 168 447 207 411 C247 374 246 319 290 281 C318 257 329 215 334 164"/>
     </svg>
 
     <section class="aichat-panel" id="lufly-chat-panel" data-aichat-panel hidden
