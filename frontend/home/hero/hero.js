@@ -29,7 +29,7 @@
   }
 
   var DWELL = 2000;                       /* hold per scene (ms)            */
-  var FADE = 1050;                        /* side handoff (ms)              */
+  var FADE = 780;                         /* side handoff (ms)              */
   var PRELOAD_IDLE = 900;                 /* before the queue starts (ms)   */
 
   var reduceMotion = window.matchMedia
