@@ -86,6 +86,7 @@
   var sheetTrigger = header.querySelector('[data-nav-open]');
   var searchWrap = header.querySelector('[data-search]');
   var searchToggles = Array.prototype.slice.call(header.querySelectorAll('[data-search-toggle]'));
+  var searchToggle = searchToggles[0] || null;
   var searchInput = searchWrap ? searchWrap.querySelector('[data-search-input]') : null;
   var resultsBox = searchWrap ? searchWrap.querySelector('[data-search-results]') : null;
   var langMenu = header.querySelector('[data-lang-menu]');

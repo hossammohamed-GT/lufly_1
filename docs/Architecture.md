@@ -214,7 +214,7 @@ verify changes in a browser, against those invariants.
 Other home-page invariants worth keeping: the announcement bar exposes its height
 as `--luann-h` and every sticky/oversized element subtracts it; the mobile
 rail/drawer use `100dvh` (not `100vh`, which ends under the browser toolbar);
-`body.ready` must not re-enable horizontal scrolling (`overflow-y: auto` only);
+`body.ready` must leave vertical scrolling to the viewport (do not turn `body` into an `overflow-y: auto` ancestor, or the sticky navbar can scroll away);
 and `content-visibility: auto` sections need a `contain-intrinsic-size` close to
 their real height, otherwise the document grows section by section while scrolling.
 

@@ -17,12 +17,12 @@ body.ld-loading {
 }
 
 body.ready {
-  /* the design system clips horizontal overflow globally; a bare
-     `overflow: auto` here undid that for the whole site once the loader
-     exited (any too-wide element then scrolled the page sideways) */
-  overflow-y: auto;
-  overflow-x: clip;
-  overflow-x: hidden; /* fallback for browsers without `clip` */
+  /* Keep the document itself as the scroll owner. Setting overflow-y:auto on
+     body makes it a non-scrolling overflow ancestor in some browsers, which
+     prevents a sticky navbar from sticking after the first scroll. The
+     viewport/html still owns vertical scrolling; html clips the decorative
+     horizontal overflow globally. */
+  overflow: visible;
 }
 
 /* Last-resort safety net, pure CSS so it works even if the script dies.
@@ -38,7 +38,9 @@ body.ready {
 }
 
 @keyframes ldRestoreScroll {
-  to { overflow: auto !important; }
+  /* Failsafe for a script error: restore viewport scrolling without creating
+     the overflow ancestor that breaks sticky positioning. */
+  to { overflow: visible !important; }
 }
 
 body.ld-loading {
