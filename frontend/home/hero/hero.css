@@ -8,8 +8,8 @@
    House rules:
    * the hero pulls itself up under the sticky navbar, so the photo really
      runs underneath it while the navbar is transparent;
-   * only transform / opacity are animated (the cross-dissolve, the Ken
-     Burns drift, the entrance cascade) - all compositor work;
+   * only transform / opacity are animated (the side handoff, the Ken
+   Burns drift, the entrance cascade) - all compositor work;
    * prefers-reduced-motion: no autoplay zoom, no entrance cascade, a short
      plain fade only;
    * logical properties throughout, so a future RTL locale mirrors itself.
@@ -65,7 +65,7 @@
 }
 
 /* ==========================================================================
-   1. Scene stack - the cross-dissolve
+   1. Scene stack - a side-to-side handoff
    ========================================================================== */
 
 .hero-frame {
@@ -77,23 +77,46 @@
   /* anchored on the product: right side, slightly above centre */
   object-position: 64% 42%;
   opacity: 0;
-  transform: scale(1.001);
+  transform: translate3d(100%, 0, 0) scale(1.06);
   transition:
     opacity var(--hero-fade) var(--hero-ease),
-    transform var(--hero-drift) linear;
+    transform var(--hero-fade) var(--hero-ease);
   backface-visibility: hidden;
+  will-change: transform, opacity;
 }
 
+/* The active frame settles in while the outgoing frame keeps its place until
+   the incoming photo is visible. Keeping both layers alive removes the blank
+   flash that a simple opacity cross-fade can create. */
 .hero-frame.is-active {
+  z-index: 0;
   opacity: 1;
-  /* the slow Ken Burns drift on the incoming image */
-  transform: scale(1.06);
+  transform: translate3d(0, 0, 0) scale(1.06);
 }
+
+.hero-frame.is-entering-left,
+.hero-frame.is-entering-right {
+  z-index: 0;
+  opacity: 1;
+}
+
+.hero-frame.is-entering-left { transform: translate3d(-100%, 0, 0) scale(1.06); }
+.hero-frame.is-entering-right { transform: translate3d(100%, 0, 0) scale(1.06); }
+
+.hero-frame.is-leaving-left,
+.hero-frame.is-leaving-right {
+  z-index: 0;
+  opacity: 0;
+}
+
+.hero-frame.is-leaving-left { transform: translate3d(-100%, 0, 0) scale(1.06); }
+.hero-frame.is-leaving-right { transform: translate3d(100%, 0, 0) scale(1.06); }
 
 /* Readability gradients: navbar strip, copy side, tabs + trust strip */
 .hero-shade {
   position: absolute;
   inset: 0;
+  z-index: 1;
   background:
     linear-gradient(to top,
       rgba(3, 10, 12, 0.9) 0%,
@@ -148,6 +171,9 @@
   inline-size: 100%;
   padding-block: clamp(24px, 4.4vh, 48px) clamp(14px, 2.2vh, 26px);
   padding-inline: max(var(--container-gutter, 24px), calc((100% - var(--container-max, 1450px)) / 2 + var(--container-gutter)));
+  /* The lower controls now need very little room, so bring the copy toward
+     the visual centre of the full hero instead of leaving it top-heavy. */
+  transform: translateY(clamp(6px, 2.4vh, 24px));
   pointer-events: none;
 }
 
@@ -758,7 +784,11 @@
     transition: opacity 220ms linear;
   }
 
-  .hero-frame.is-active {
+  .hero-frame.is-active,
+  .hero-frame.is-entering-left,
+  .hero-frame.is-entering-right,
+  .hero-frame.is-leaving-left,
+  .hero-frame.is-leaving-right {
     transform: none;
   }
 
@@ -901,13 +931,8 @@
   .hero-cta-play { inline-size: 48px; block-size: 48px; }
   .hero-cta-story-text { max-inline-size: 10ch; line-height: 1.5; }
 
-  /* On phones the four category cards are dropped entirely: they crowded the
-     hero and competed with the copy. The background scenes still autoplay and
-     respond to a swipe on the photo — the cards were only ever a shortcut into
-     each collection, and the primary CTA already leads to the catalogue. */
-  .hero-tabs {
-    display: none;
-  }
+  /* The scene selector stays available on phones as the compact dot rail
+     declared below; it no longer competes with the copy or the trust strip. */
 
   /* trust strip: the compact 2x2 from <=1024, a size smaller */
   .hero-trust {
@@ -947,6 +972,109 @@
 
 @media (max-width: 760px) {
   .hero-frame { object-position: 72% 38%; }
+}
+
+/* ==========================================================================
+   12.5 Scene progress dots
+   --------------------------------------------------------------------------
+   The old thumbnail cards took too much room and pulled the copy upward.
+   Keep the selector as four small, keyboard-accessible controls: the active
+   dot stretches into a progress line and contracts until the next scene is
+   ready. */
+.hero-tabs {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 10px;
+  padding: 0;
+  margin-block-end: clamp(20px, 3vh, 30px);
+  border: 0;
+  border-radius: 0;
+  background: none;
+  backdrop-filter: none;
+  -webkit-backdrop-filter: none;
+  box-shadow: none;
+}
+
+.hero-tab {
+  flex: 0 0 8px;
+  inline-size: 8px;
+  block-size: 4px;
+  border-radius: 999px;
+  transition: flex-basis 360ms var(--hero-ease), inline-size 360ms var(--hero-ease);
+}
+
+.hero-tab.is-active {
+  flex-basis: 56px;
+  inline-size: 56px;
+}
+
+.hero-tab-switch {
+  display: block;
+  inline-size: 100%;
+  block-size: 4px;
+  padding: 0;
+  border: 0;
+  border-radius: inherit;
+  background: none;
+  color: inherit;
+  cursor: pointer;
+}
+
+.hero-tab-switch:focus-visible {
+  outline: 2px solid var(--hero-accent-bright);
+  outline-offset: 6px;
+}
+
+.hero-tab-tick {
+  position: relative;
+  inset: auto;
+  display: block;
+  inline-size: 100%;
+  block-size: 4px;
+  border-radius: inherit;
+  background: rgba(255, 255, 255, 0.42);
+  opacity: 1;
+  overflow: hidden;
+}
+
+.hero-tab-tick::after {
+  inset: 0;
+  inline-size: 100%;
+  block-size: 100%;
+  border-radius: inherit;
+  background: var(--hero-accent-bright);
+  opacity: 0;
+  transform: scaleX(1);
+  transform-origin: inline-start;
+  animation: none;
+}
+
+.hero-tab.is-active::before {
+  display: none;
+}
+
+.hero-tab.is-active .hero-tab-tick {
+  background: rgba(255, 255, 255, 0.2);
+}
+
+.hero-tab.is-active .hero-tab-tick::after {
+  opacity: 1;
+  animation: heroTick var(--hero-dwell, 3050ms) linear forwards;
+}
+
+@keyframes heroTick {
+  from { transform: scaleX(1); }
+  to { transform: scaleX(0); }
+}
+
+@media (max-width: 1024px) {
+  .hero-tabs {
+    grid-column: 1 / -1;
+    justify-self: center;
+    justify-content: center;
+    margin-inline-end: 0;
+  }
 }
 
 /* ==========================================================================

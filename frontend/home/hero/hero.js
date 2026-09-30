@@ -3,9 +3,8 @@
    --------------------------------------------------------------------------
    Vanilla JS, zero dependencies. Handles:
 
-     * the scene stack: five full-bleed frames, cross-dissolved by toggling
-       a single class (opacity + slow Ken Burns drift live in CSS, on the
-       compositor)
+     * the scene stack: five full-bleed frames, handed off from the side
+       with two compositor-friendly layers (transform + opacity)
      * the progressive image queue: frame 1 ships in the HTML, frames 2..5
        are promoted one by one after the first paint, so the visit never
        waits for five photographs
@@ -30,7 +29,7 @@
   }
 
   var DWELL = 2000;                       /* hold per scene (ms)            */
-  var FADE = 1050;                        /* cross-dissolve (ms)            */
+  var FADE = 1050;                        /* side handoff (ms)              */
   var PRELOAD_IDLE = 900;                 /* before the queue starts (ms)   */
 
   var reduceMotion = window.matchMedia
@@ -252,8 +251,8 @@
 
   /* ------------------------------------------------------------------
      2. scene switching
-     A switch only starts once the incoming photo is decoded, so the fade
-     is always a real cross-dissolve, never a blank flash. */
+     A switch only starts once the incoming photo is decoded, so the two
+     frames can hand off side-to-side without exposing a blank flash. */
   function ready(frame) {
     var empty = !frame.getAttribute('src')
       && !frame.getAttribute(attrName('data-hero-src'));
@@ -325,12 +324,38 @@
     window.clearTimeout(timer);
 
     ready(frames[next]).then(function () {
-      frames[current].classList.remove('is-active');
-      frames[next].classList.add('is-active');
+      var previous = frames[current];
+      var incoming = frames[next];
+      var forward = next > current || (current === N - 1 && next === 0);
+      var rtl = (document.documentElement.dir || 'ltr') === 'rtl';
+
+      /* Mirror the handoff in RTL so the new scene still arrives from the
+         reading-direction side. */
+      if (rtl) {
+        forward = !forward;
+      }
+
+      var enteringClass = forward ? 'is-entering-right' : 'is-entering-left';
+      var leavingClass = forward ? 'is-leaving-left' : 'is-leaving-right';
+
+      incoming.classList.remove('is-leaving-left', 'is-leaving-right');
+      incoming.classList.add(enteringClass);
+      previous.classList.add(leavingClass);
+
+      /* Capture the incoming off-canvas state, then let the active state
+         transition it into place. The old frame remains underneath until
+         this movement is complete, so there is never a blank frame. */
+      void incoming.offsetWidth;
+      incoming.classList.add('is-active');
+      incoming.classList.remove('is-entering-left', 'is-entering-right');
+
       current = next;
       paintTabs(next);
 
-      window.setTimeout(settle, reduceMotion ? 220 : FADE);
+      window.setTimeout(function () {
+        previous.classList.remove('is-active', 'is-leaving-left', 'is-leaving-right');
+        settle();
+      }, reduceMotion ? 220 : FADE);
     });
   }
 

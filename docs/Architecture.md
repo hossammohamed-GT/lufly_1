@@ -102,7 +102,7 @@ mosaic went missing); with `APP_DEBUG=true` the component leaves a
 ## The home hero ("Crafting Water")
 
 `frontend/home/hero/` is a cinematic full-bleed hero: one photograph per
-collection (bathroom, kitchen, shower, smart), cross-dissolved by
+collection (bathroom, kitchen, shower, smart), handed off from the side by
 `hero.js`. The navbar is part of the composition - the hero pulls itself up
 under the sticky bar (`margin-block-start: calc(-1 * var(--mnav-row1))`), so the
 photo runs underneath a transparent navbar while the hero is on screen, and the
@@ -134,10 +134,11 @@ Invariants when touching it:
   the lower ~44% of the frame), so the strip reads as part of the scene's own
   darkening, the way the reference composes it. Do not give it a panel
   treatment again.
-- **The cross-dissolve is one class.** `.hero-frame.is-active` flips opacity and
-  a slow `scale(1.001 -> 1.06)` Ken Burns drift; both are compositor-only.
-  Switching waits for the incoming photo to decode (`img.decode()`), so the fade
-  is always a real cross-dissolve, never a blank flash.
+- **The scene handoff uses two layers.** `.hero-frame.is-active` settles the
+  incoming photo from the reading-direction side while the outgoing frame keeps
+  sliding away; both use compositor-friendly transform and opacity. Switching
+  waits for the incoming photo to decode (`img.decode()`), so the handoff never
+  exposes a blank flash.
 - **The image queue is sequential.** Frame 1 ships in the HTML (eager,
   `fetchpriority="high"`, preloaded with a matching `imagesrcset`); frames 2..5
   carry `data-hero-src/-srcset` and are promoted one by one after the first

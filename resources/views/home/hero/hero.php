@@ -6,9 +6,9 @@
  *
  * One 100vh photograph runs under the navbar (the navbar is transparent while
  * the hero is on screen). Everything floats above the photo: the copy column
- * on the left, the scroll cue, the category selector on the right and the
- * trust strip along the bottom. The five scenes cross-dissolve (hero.js);
- * the tab thumbnail is a small version of the same artwork.
+ * on the left, the scroll cue, the scene progress dots and the trust strip.
+ * The four scenes slide in from the side (hero.js), while the active dot
+ * contracts until the next scene takes over.
  *
  * Trans keys: home.hero_* (en / tr / cs).
  */
@@ -57,9 +57,10 @@ $heroScenes = [
 
 <section class="hero" id="lufly-hero" data-hero aria-label="<?= e(trans('home.hero_tabs_label')) ?>">
 
-    <!-- Scene stack: every frame is in the DOM; the engine fades between them.
-         Only the first one ships a real src - the rest is promoted one by one
-         after the first paint, so the visit never waits for five photos. -->
+    <!-- Scene stack: every frame is in the DOM; the engine hands scenes off
+         from the side without exposing a blank frame. Only the first one ships
+         a real src - the rest is promoted one by one after the first paint,
+         so the visit never waits for five photos. -->
     <div class="hero-media" aria-hidden="true">
         <?php foreach ($heroScenes as $i => $s): ?>
             <?php if ($i === 0): ?>
@@ -126,7 +127,10 @@ $heroScenes = [
         <span class="hero-scroll-text"><?= e(trans('home.hero_scroll')) ?></span>
     </a>
 
-    <!-- Category selector -->
+    <!-- Scene selector: four compact progress dots replace the thumbnail cards.
+         The active dot stretches into a line, then contracts until the next
+         scene enters from the side. The labels stay available to screen
+         readers and keyboard users. -->
     <nav class="hero-tabs" data-hero-tabs aria-label="<?= e(trans('home.hero_tabs_label')) ?>">
         <?php foreach ($heroScenes as $i => $s): ?>
             <div class="hero-tab<?= $i === 0 ? ' is-active' : '' ?>" data-hero-panel="<?= (int) $i ?>">
@@ -134,23 +138,11 @@ $heroScenes = [
                         class="hero-tab-switch"
                         data-hero-tab="<?= (int) $i ?>"
                         aria-pressed="<?= $i === 0 ? 'true' : 'false' ?>"
+                        aria-label="<?= e(trans('home.' . $s['label'])) ?>"
                         title="<?= e(trans('home.' . $s['label'])) ?>">
-                    <span class="hero-tab-thumb">
-                        <img src="<?= e(asset('images/hero/hero-' . $s['key'] . '-thumb.webp') . '?v=' . $heroImgV) ?>"
-                             data-thumb-light="<?= e(asset('images/hero/hero-' . $s['key'] . '-light-thumb.webp') . '?v=' . $heroImgV) ?>"
-                             alt=""
-                             width="150" height="100"
-                             loading="lazy"
-                             decoding="async">
-                        <i class="hero-tab-tick" aria-hidden="true"></i>
-                    </span>
-                    <span class="hero-tab-label"><?= e(trans('home.' . $s['label'])) ?></span>
+                    <span class="hero-tab-tick" aria-hidden="true"></span>
+                    <span class="visually-hidden"><?= e(trans('home.' . $s['label'])) ?></span>
                 </button>
-                <a class="hero-tab-arrow"
-                   href="<?= e($s['url']) ?>"
-                   aria-label="<?= e(trans('home.hero_tab_go', ['name' => trans('home.' . $s['label'])])) ?>">
-                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14"/><path d="m13 6 6 6-6 6"/></svg>
-                </a>
             </div>
         <?php endforeach; ?>
     </nav>
