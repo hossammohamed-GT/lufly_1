@@ -7,17 +7,11 @@
 -- product record when present (and therefore preserves its numeric ID), clears
 -- all WC-specific catalog data, and writes the supplied sink mixer details.
 --
--- Images are files, not MySQL blobs. Copy the originals without conversion
--- BEFORE running this script:
---   public/deleted/1.png
---     -> public/images/products/prod_1620-003-main.png
---   public/deleted/WhatsApp Image 2026-10-01 at 5.21.59 PM.jpeg
---     -> public/images/products/prod_1620-003-drawing.jpeg
---
--- In this repository use:
---   bash scripts/import-1620-003-images.sh
--- The script uses a byte-for-byte copy and verifies it with cmp; it does not
--- resize, recompress, convert, or strip image metadata.
+-- Images are files, not MySQL blobs. Their original binary files are
+-- versioned in this project and must be deployed unchanged at:
+--   public/images/products/prod_1620-003-main.png       (1.png, 863 x 1119 px)
+--   public/images/products/prod_1620-003-drawing.jpeg   (WhatsApp image, 1309 x 1201 px)
+-- The SQL below registers those exact paths; it does not depend on a staging folder.
 -- ============================================================================
 
 SET NAMES utf8mb4;
@@ -150,7 +144,7 @@ INSERT INTO media (
 ) VALUES (
     UUID(), 'sink-mixers', 'prod_1620-003-main.png', '1.png',
     '/images/products/prod_1620-003-main.png', 'image/png', 'png',
-    0, NULL, NULL,
+    356858, 863, 1119,
     JSON_OBJECT('source', 'manual-catalog-entry', 'source_filename', '1.png', 'role', 'main'),
     NULL, 'active', @catalog_now, @catalog_now, NULL
 );
@@ -163,7 +157,7 @@ INSERT INTO media (
     UUID(), 'sink-mixers', 'prod_1620-003-drawing.jpeg',
     'WhatsApp Image 2026-10-01 at 5.21.59 PM.jpeg',
     '/images/products/prod_1620-003-drawing.jpeg', 'image/jpeg', 'jpeg',
-    0, NULL, NULL,
+    129456, 1309, 1201,
     JSON_OBJECT(
         'source', 'manual-catalog-entry',
         'source_filename', 'WhatsApp Image 2026-10-01 at 5.21.59 PM.jpeg',
