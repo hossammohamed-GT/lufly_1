@@ -42,8 +42,7 @@
   color: var(--ds-text);
   box-shadow:
     0 18px 42px color-mix(in srgb, var(--lu-ink-950) 28%, transparent),
-    0 0 0 1px color-mix(in srgb, #8ffcff 10%, transparent),
-    0 0 32px color-mix(in srgb, var(--ds-primary) 15%, transparent);
+    0 0 0 1px color-mix(in srgb, #8ffcff 10%, transparent);
   backdrop-filter: var(--ds-glass-blur);
   -webkit-backdrop-filter: var(--ds-glass-blur);
   isolation: isolate;
@@ -54,22 +53,30 @@
   transition: opacity 280ms ease, transform 520ms cubic-bezier(0.16, 1, 0.3, 1);
 }
 
-/* A single luminous trace rotates around the card rather than flashing the
-   whole surface. The outer edge stays quiet while the teal highlight travels. */
+/* One crisp border trace travels around the card. Masking keeps the color
+   on the one-pixel edge instead of turning the whole card into a glow. */
 .aichat-intro::before {
   content: '';
   position: absolute;
-  inset: -2px;
+  inset: -1px;
   z-index: -1;
-  border-radius: 22px;
+  padding: 1px;
+  border-radius: 21px;
   background: conic-gradient(
     from 0deg,
-    transparent 0deg 205deg,
-    color-mix(in srgb, #8ffcff 78%, var(--ds-primary)) 238deg,
-    var(--ds-primary) 276deg,
-    color-mix(in srgb, #8ffcff 58%, transparent) 304deg,
-    transparent 338deg 360deg
+    transparent 0deg 218deg,
+    #8ffcff 246deg,
+    var(--ds-primary) 274deg,
+    transparent 305deg 360deg
   );
+  -webkit-mask:
+    linear-gradient(#000 0 0) content-box,
+    linear-gradient(#000 0 0);
+  -webkit-mask-composite: xor;
+  mask:
+    linear-gradient(#000 0 0) content-box,
+    linear-gradient(#000 0 0);
+  mask-composite: exclude;
   opacity: 0;
   transform: rotate(0deg);
   pointer-events: none;
