@@ -427,9 +427,13 @@ body {
 }
 
 /* Grid/flex descendants default to min-width:auto and can force the page wider
-   than the viewport when they contain long localized text. Keep the shell and
-   its standard containers shrinkable; intentional carousels retain their own
-   local overflow-x:auto behavior. */
+   than the viewport when they contain long localized text. Full-bleed home
+   bands and their motion layers are contained at the main boundary; intentional
+   carousels retain their own local overflow-x:auto behavior. */
+.ds-main {
+  overflow-x: hidden;
+}
+
 .ds-main,
 .ds-main > *,
 .container,
