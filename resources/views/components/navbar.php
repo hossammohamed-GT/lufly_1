@@ -13,6 +13,9 @@
  * account | language switcher (inline-end), thin dividers between groups.
  * Below 1024px the links fold into the bloom sheet. Saved list and Box live
  * only in the top bar (icon buttons), never repeated in the sheet.
+ * On the home hero the search field is held open beside its icon (navbar.js,
+ * desktop only) while the bar is part of the photograph, and folds back into
+ * the icon as the glass takes over.
  *
  * Contracts kept for other scripts:
  *   [data-theme-toggle]      app.js swaps the theme

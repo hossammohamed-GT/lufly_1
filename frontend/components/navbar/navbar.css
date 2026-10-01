@@ -199,7 +199,9 @@
 
 /* The field sits between the links and the actions. Closed it is 0px wide;
    opened it grows leftward into the room the folding links hand over, so
-   the icons never move while the field expands. (On <1024px the links are
+   the icons never move while the field expands. On the home hero navbar.js
+   holds it open while the bar is still part of the photograph, then folds
+   it back into the icon as the glass takes over. (On <1024px the links are
    gone and the actions carry the auto margin instead - see the mobile
    block.) */
 .mnav-search {

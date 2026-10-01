@@ -7,6 +7,10 @@
      * the expanding search: opens with a width+fade animation, runs the
        instant product search (debounced, aborts stale requests, caches)
        and types its placeholder moods while idle
+     * the hero field (home, desktop): while the bar is still part of the
+       hero photograph the search field sits open beside its icon - no
+       focus stolen, moods typing away - and folds back into the icon in
+       the same frame the glass + centre links take over
      * language menu, bloom sheet (scroll lock, focus trap,
        swipe-down to close), keyboard shortcuts (/ and Cmd/Ctrl+K)
    No dependencies, no layout reads on every frame, listeners are passive.
@@ -51,11 +55,15 @@
     if (overlay && hero) {
       /* how much of the hero is still under the bar (0..1) */
       var t = Math.min(1, Math.max(0, y / heroEdge));
+      var settled = t >= 0.42;
       header.style.setProperty('--nav-glass', Math.pow(t, 0.6).toFixed(3));
-      header.classList.toggle('is-scrolled', t >= 0.42);
+      header.classList.toggle('is-scrolled', settled);
       /* the glass is nearly solid here: safe for the ink + layer to join
          the theme (see the two-stage rules in navbar.css) */
       header.classList.toggle('is-solid', t >= 0.8);
+      /* the bar is still a piece of the photograph => the hero field shows */
+      overHero = !settled;
+      syncHeroField();
     } else {
       header.classList.toggle('is-scrolled', y > 8);
     }
@@ -69,9 +77,6 @@
     frameQueued = true;
     window.requestAnimationFrame(paintScroll);
   }
-
-  measureHero();
-  paintScroll();
 
   window.addEventListener('scroll', queueScrollPaint, { passive: true });
   window.addEventListener('resize', queueScrollPaint, { passive: true });
@@ -116,7 +121,7 @@
     }
   }
 
-  function setSearch(open) {
+  function setSearch(open, opts) {
     header.classList.toggle('is-search-open', open);
 
     searchToggles.forEach(function (toggle) {
@@ -126,9 +131,54 @@
     if (open) {
       setSheet(false);
       closeLang();
-      focusElement(searchInput);
+      /* the hero field opens silently: stealing focus on load would be rude
+         (and would pop the hint panel + keyboard before the visitor asked) */
+      if (!opts || opts.focus !== false) {
+        focusElement(searchInput);
+      }
     } else {
       hideResults();
+    }
+  }
+
+  /* ---------- 2b. the hero field: open with the hero, fold into the icon -- */
+
+  /* On the storefront home page the search field is part of the hero
+     presentation: it sits open beside its icon while the bar is still a
+     piece of the photograph (its placeholder keeps typing the moods), then
+     folds back into the icon with the same width+fade handover the manual
+     toggle uses, in the same frame the centre links fade in. Only the
+     hero<->glass TRANSITIONS act, so a field the visitor is typing into is
+     never yanked away (it simply stays open until he closes it), and phones
+     are left out entirely: there the search is a drop panel under the bar,
+     not a bar field, and it stays closed until asked for. */
+  var overHero = true;            /* last hero state painted by paintScroll */
+  var heroFieldWanted = null;     /* what the hero state last asked of it */
+
+  function searchInUse() {
+    return !!(searchInput &&
+      (searchInput.value !== '' || document.activeElement === searchInput));
+  }
+
+  function syncHeroField() {
+    if (!overlay || !hero) {
+      return;
+    }
+
+    var wanted = overHero && !(mobileQuery && mobileQuery.matches);
+
+    if (heroFieldWanted === wanted) {
+      return;
+    }
+
+    heroFieldWanted = wanted;
+
+    if (wanted) {
+      if (!header.classList.contains('is-search-open')) {
+        setSearch(true, { focus: false });
+      }
+    } else if (header.classList.contains('is-search-open') && !searchInUse()) {
+      setSearch(false);
     }
   }
 
@@ -150,6 +200,10 @@
   function closeLang() {
     setLang(false);
   }
+
+  /* first paint - done here, after every panel helper above exists */
+  measureHero();
+  paintScroll();
 
   /* ---------- 3. the expanding search + instant results ---------- */
 
@@ -618,7 +672,13 @@
       if (!event.matches) {
         setSheet(false);
         setSearch(false);
+      } else if (header.classList.contains('is-search-open') && !searchInUse()) {
+        /* the auto-opened hero field must not survive into the phone layout
+           as a drop panel; one the visitor is typing into may */
+        setSearch(false);
       }
+
+      syncHeroField();
     });
   }
 
