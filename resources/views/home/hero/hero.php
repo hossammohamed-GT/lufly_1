@@ -17,7 +17,7 @@ $view->pushScript('frontend/home/hero/hero.js');
 
 /* The artwork is cached for a year: bump this with every image re-shoot so
    returning visitors actually receive the new files. */
-$heroImgV = '2026-10-01.1';
+$heroImgV = '2026-10-01.2';
 
 /* LCP: the first scene is the largest paint. One master-quality lossless
    file serves every screen - no rendition ladder, no reduced variants. */
