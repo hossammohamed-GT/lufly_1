@@ -429,9 +429,16 @@ body {
 /* Grid/flex descendants default to min-width:auto and can force the page wider
    than the viewport when they contain long localized text. Full-bleed home
    bands and their motion layers are contained at the main boundary; intentional
-   carousels retain their own local overflow-x:auto behavior. */
+   carousels retain their own local overflow-x:auto behavior.
+   clip, never hidden: hidden computes the block axis to auto, which (a) clips
+   the hero's photo bleed that runs up under the transparent navbar and (b)
+   turns main into a scroll container, killing the sticky side panels
+   (favorites, planner). clip keeps the block axis visible. No `hidden`
+   fallback either - on browsers without clip support it would reintroduce
+   both regressions; those browsers keep the viewport-level containment
+   html/body already provide. */
 .ds-main {
-  overflow-x: hidden;
+  overflow-x: clip;
 }
 
 .ds-main,
