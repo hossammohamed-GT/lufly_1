@@ -17,7 +17,7 @@ $view->pushScript('frontend/home/hero/hero.js');
 
 /* The artwork is cached for a year: bump this with every image re-shoot so
    returning visitors actually receive the new files. */
-$heroImgV = '2026-10-01.2';
+$heroImgV = '2026-10-01.3';
 
 /* LCP: the first scene is the largest paint. One master-quality lossless
    file serves every screen - no rendition ladder, no reduced variants. */
@@ -68,14 +68,14 @@ $heroScenes = [
                      src="<?= e(asset('images/hero/hero-' . $s['key'] . '.webp') . '?v=' . $heroImgV) ?>"
                      data-hero-src="<?= e(asset('images/hero/hero-' . $s['key'] . '.webp') . '?v=' . $heroImgV) ?>"
                      alt=""
-                     width="1376" height="768"
+                     width="4300" height="2400"
                      fetchpriority="high"
                      decoding="async">
             <?php else: ?>
                 <img class="hero-frame"
                      data-hero-src="<?= e(asset('images/hero/hero-' . $s['key'] . '.webp') . '?v=' . $heroImgV) ?>"
                      alt=""
-                     width="1376" height="768"
+                     width="4300" height="2400"
                      decoding="async">
             <?php endif; ?>
         <?php endforeach; ?>
