@@ -46,11 +46,42 @@
     0 0 32px color-mix(in srgb, var(--ds-primary) 15%, transparent);
   backdrop-filter: var(--ds-glass-blur);
   -webkit-backdrop-filter: var(--ds-glass-blur);
+  isolation: isolate;
   opacity: 0;
   transform: translateY(12px) scale(.96);
   transform-origin: bottom center;
   pointer-events: none;
   transition: opacity 280ms ease, transform 520ms cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+/* A single luminous trace rotates around the card rather than flashing the
+   whole surface. The outer edge stays quiet while the teal highlight travels. */
+.aichat-intro::before {
+  content: '';
+  position: absolute;
+  inset: -2px;
+  z-index: -1;
+  border-radius: 22px;
+  background: conic-gradient(
+    from 0deg,
+    transparent 0deg 205deg,
+    color-mix(in srgb, #8ffcff 78%, var(--ds-primary)) 238deg,
+    var(--ds-primary) 276deg,
+    color-mix(in srgb, #8ffcff 58%, transparent) 304deg,
+    transparent 338deg 360deg
+  );
+  opacity: 0;
+  transform: rotate(0deg);
+  pointer-events: none;
+}
+
+.aichat-intro.is-visible::before {
+  opacity: 1;
+  animation: aichat-intro-border-spin 4.8s linear infinite;
+}
+
+@keyframes aichat-intro-border-spin {
+  to { transform: rotate(360deg); }
 }
 
 .aichat-intro::after {
@@ -212,6 +243,10 @@ body.has-favmail .aichat-intro {
 @media (prefers-reduced-motion: reduce) {
   .aichat-intro {
     transition: none;
+  }
+
+  .aichat-intro::before {
+    animation: none;
   }
 
   .aichat-intro-action svg,
