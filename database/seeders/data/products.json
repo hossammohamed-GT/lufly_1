@@ -8183,38 +8183,67 @@
         "updated_at": "2026-07-22 12:29:46"
     },
     {
-        "legacy_id": 2916,
-        "slug": "wall-hung-water-closet-1620-003",
+        "legacy_id": null,
+        "slug": "sink-mixer-1620-003",
         "model_code": "1620-003",
         "sku": "1620-003",
         "locale": "en",
-        "name": "Wall Hung Water Closet 1620-003",
-        "short_description": "Wall Hung Water Closet (WC), Size 560*360*350mm (LxWxH), P-trap, white color, outlet height 350mm, including all necessary fixing accessories, compliant with project specifications.",
-        "description": "Wall Hung Water Closet (WC), Size 560*360*350mm (LxWxH), P-trap, white color, outlet height 350mm, including all necessary fixing accessories, compliant with project specifications.",
-        "specifications": [],
-        "categories": [
-            "bathroom-ceramics"
+        "name": "Sink Mixer 1620-003",
+        "short_description": "Sink Mixer, Brass Faucet, Ceramic Cartridge, Brass Spout, 1/2\" × 35 cm.",
+        "description": "Sink Mixer\nBrass Faucet\nCeramic Cartridge\nBrass Spout\n1/2\" × 35 cm\n\nFinish: Chrome\nMixer Type: Single-Handle Mixer\nInstallation Method: Standing",
+        "specifications": [
+            {
+                "key": "Faucet",
+                "value": "Brass"
+            },
+            {
+                "key": "Cartridge",
+                "value": "Ceramic"
+            },
+            {
+                "key": "Spout",
+                "value": "Brass"
+            },
+            {
+                "key": "Connection",
+                "value": "1/2\" × 35 cm"
+            },
+            {
+                "key": "Finish",
+                "value": "Chrome"
+            },
+            {
+                "key": "Mixer Type",
+                "value": "Single-Handle Mixer"
+            },
+            {
+                "key": "Installation Method",
+                "value": "Standing"
+            }
         ],
-        "category": "bathroom-ceramics",
+        "categories": [
+            "sink-mixers"
+        ],
+        "category": "sink-mixers",
         "status": "active",
         "images": [
             {
                 "type": "main",
-                "path": "/images/products/prod_2916_Screenshot-2026-07-22-163111.png",
+                "path": "/images/products/prod_1620-003-main.png",
                 "available": true,
-                "legacy_file": "2026/07/Screenshot-2026-07-22-163111.png",
-                "legacy_attachment_id": 2917
+                "legacy_file": "1.png",
+                "legacy_attachment_id": null
             },
             {
                 "type": "drawing",
-                "path": "/images/products/prod_2916_Screenshot-2026-07-22-163220.png",
+                "path": "/images/products/prod_1620-003-drawing.jpeg",
                 "available": true,
-                "legacy_file": "2026/07/Screenshot-2026-07-22-163220.png",
-                "legacy_attachment_id": 2918
+                "legacy_file": "WhatsApp Image 2026-10-01 at 5.21.59 PM.jpeg",
+                "legacy_attachment_id": null
             }
         ],
-        "created_at": "2026-07-22 12:32:38",
-        "updated_at": "2026-07-22 12:32:38"
+        "created_at": "2026-10-01 00:00:00",
+        "updated_at": "2026-10-01 00:00:00"
     },
     {
         "legacy_id": 2920,
