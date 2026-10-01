@@ -531,7 +531,7 @@
 }
 
 .hero-tab.is-active .hero-tab-tick::after {
-  animation: heroTick var(--hero-dwell, 3050ms) linear forwards;
+  animation: heroTick var(--hero-dwell, 4280ms) linear forwards;
 }
 
 /* the hairline holds its breath while the visitor aims at a tab */
@@ -1053,7 +1053,7 @@
 
 .hero-tab.is-active .hero-tab-tick::after {
   opacity: 1;
-  animation: heroTick var(--hero-dwell, 3050ms) linear forwards;
+  animation: heroTick var(--hero-dwell, 4280ms) linear forwards;
 }
 
 @keyframes heroTick {

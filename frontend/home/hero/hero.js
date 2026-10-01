@@ -28,7 +28,7 @@
     return;
   }
 
-  var DWELL = 2000;                       /* hold per scene (ms)            */
+  var DWELL = 3500;                       /* hold per scene (ms)            */
   var FADE = 780;                         /* side handoff (ms)              */
   var PRELOAD_IDLE = 900;                 /* before the queue starts (ms)   */
 
