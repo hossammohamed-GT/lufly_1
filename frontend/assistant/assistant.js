@@ -289,6 +289,7 @@
 
     root.classList.remove('is-closing');
     document.body.classList.remove('is-ai-experience');
+    document.documentElement.classList.remove('is-ai-experience');
     panel.hidden = true;
   }
 
@@ -302,6 +303,7 @@
       }
       root.classList.remove('is-closing');
       document.body.classList.add('is-ai-experience');
+      document.documentElement.classList.add('is-ai-experience');
       panel.hidden = false;
     } else if (panel.hidden) {
       return;

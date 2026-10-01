@@ -1797,6 +1797,14 @@ body.is-chat-resizing {
 /* ---------- phones: the chat takes the screen ---------- */
 
 @media (max-width: 720px) {
+  /* The sheet owns the scroll on phones. Lock both possible document scroll
+     owners so the page underneath cannot move behind the open conversation. */
+  html.is-ai-experience,
+  body.is-ai-experience {
+    overflow: hidden;
+    overscroll-behavior: none;
+  }
+
   .aichat-fab,
   .aichat.is-open .aichat-fab {
     inset-block-end: 18px;
@@ -1808,6 +1816,14 @@ body.is-chat-resizing {
 
   .aichat-fab-text {
     display: none;
+  }
+
+  /* Once the panel is open, it must sit above its launcher. The launcher stays
+     in the DOM for the close animation but can no longer cover the sheet or
+     intercept a tap meant for the chat. */
+  .aichat.is-open .aichat-fab {
+    z-index: 93;
+    pointer-events: none;
   }
 
   .aichat-panel,
