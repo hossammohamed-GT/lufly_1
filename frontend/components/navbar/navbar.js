@@ -8,9 +8,10 @@
        instant product search (debounced, aborts stale requests, caches)
        and types its placeholder moods while idle
      * the hero field (home, desktop): while the bar is still part of the
-       hero photograph the search field sits open beside its icon - no
-       focus stolen, moods typing away - and folds back into the icon in
-       the same frame the glass + centre links take over
+       hero photograph the search field is presented OPEN at the centre of
+       the bar - no focus stolen, moods typing away, a deep readable pill
+       over any artwork - and it folds in place at the centre line in the
+       same frame the glass + centre links take over
      * language menu, bloom sheet (scroll lock, focus trap,
        swipe-down to close), keyboard shortcuts (/ and Cmd/Ctrl+K)
    No dependencies, no layout reads on every frame, listeners are passive.
@@ -141,17 +142,20 @@
     }
   }
 
-  /* ---------- 2b. the hero field: open with the hero, fold into the icon -- */
+  /* ---------- 2b. the hero field: the centrepiece of the home bar ------- */
 
   /* On the storefront home page the search field is part of the hero
-     presentation: it sits open beside its icon while the bar is still a
-     piece of the photograph (its placeholder keeps typing the moods), then
-     folds back into the icon with the same width+fade handover the manual
-     toggle uses, in the same frame the centre links fade in. Only the
-     hero<->glass TRANSITIONS act, so a field the visitor is typing into is
-     never yanked away (it simply stays open until he closes it), and phones
-     are left out entirely: there the search is a drop panel under the bar,
-     not a bar field, and it stays closed until asked for. */
+     presentation: it sits OPEN at the exact centre of the bar (is-hero-field
+     pulls it out of the flex flow) while the bar is still a piece of the
+     photograph - opened silently, no focus stolen, its placeholder typing
+     the moods. When the glass takes over (the same is-scrolled beat where
+     the centre links fade in) it folds in place at the centre line with the
+     same width+fade animation, and grows back when the visitor returns to
+     the hero. Only the hero<->glass TRANSITIONS act, so a field the visitor
+     is typing into is never yanked away (it simply stays open until he
+     closes it), and phones are left out entirely: there the search is a
+     drop panel under the bar, not a bar field, and it stays closed until
+     asked for. */
   var overHero = true;            /* last hero state painted by paintScroll */
   var heroFieldWanted = null;     /* what the hero state last asked of it */
 
@@ -165,7 +169,12 @@
       return;
     }
 
-    var wanted = overHero && !(mobileQuery && mobileQuery.matches);
+    var desktop = !(mobileQuery && mobileQuery.matches);
+
+    /* the home bar presents its field at the centre line (desktop only) */
+    header.classList.toggle('is-hero-field', desktop);
+
+    var wanted = overHero && desktop;
 
     if (heroFieldWanted === wanted) {
       return;

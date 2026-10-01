@@ -199,9 +199,9 @@
 
 /* The field sits between the links and the actions. Closed it is 0px wide;
    opened it grows leftward into the room the folding links hand over, so
-   the icons never move while the field expands. On the home hero navbar.js
-   holds it open while the bar is still part of the photograph, then folds
-   it back into the icon as the glass takes over. (On <1024px the links are
+   the icons never move while the field expands. On the home page the
+   controller instead presents it at the centre of the bar while the hero
+   is on screen - see the hero-field block below. (On <1024px the links are
    gone and the actions carry the auto margin instead - see the mobile
    block.) */
 .mnav-search {
@@ -350,6 +350,66 @@
 @keyframes mnavResultsIn {
   from { opacity: 0; transform: translateY(-8px) scale(0.99); }
   to { opacity: 1; transform: none; }
+}
+
+/* ---------- 4b. the hero field: the centrepiece of the home bar ---------- */
+
+/* On the home page (desktop) the field is presented at the exact centre of
+   the bar while the hero is on screen: it is pulled out of the row's flex
+   flow (absolute, translated onto the centre line), so the logo and the
+   icon cluster never reflow around it and it grows / folds symmetrically
+   in place. Being out of flow is also what lets the centre links hand over
+   with it without a single jump - the two never share flex space. */
+@media (min-width: 1024px) {
+  .mnav.is-hero-field .mnav-search {
+    position: absolute;
+    inset-block-start: 50%;
+    inset-inline-start: 50%;
+    transform: translate(-50%, -50%);
+  }
+
+  [dir='rtl'] .mnav.is-hero-field .mnav-search {
+    transform: translate(50%, -50%);
+  }
+
+  .mnav.is-hero-field.is-search-open .mnav-search {
+    /* the width keeps clear of the icon cluster: the field is centred on the
+       page centreline, and past the logo the end side is the narrow one */
+    inline-size: min(560px, calc(100vw - 660px));
+  }
+
+  /* The pill itself: deep photographic glass with its own light ink, so it
+     reads over any artwork. A near-invisible white wash read like an egg on
+     glass against bright photography; the bar's own ink state must not
+     leak into the field either - the typed text and the placeholder stay
+     light even once the bar has joined the theme. */
+  .mnav.is-hero-field .mnav-field {
+    color: #edf6f5;
+    background: rgba(6, 15, 17, 0.78);
+    border-color: rgba(255, 255, 255, 0.22);
+    box-shadow:
+      0 12px 32px rgba(3, 10, 12, 0.38),
+      inset 0 1px 0 rgba(255, 255, 255, 0.07);
+  }
+
+  .mnav.is-hero-field .mnav-input::placeholder {
+    color: rgba(224, 239, 238, 0.75);
+  }
+
+  .mnav.is-hero-field .mnav-field:focus-within {
+    border-color: var(--lu-teal-300);
+    background: rgba(6, 15, 17, 0.88);
+  }
+
+  .mnav.is-hero-field .mnav-field:focus-within .mnav-field-icon {
+    color: var(--lu-teal-300);
+  }
+
+  /* the results panel centres under the field */
+  .mnav.is-hero-field .mnav-results {
+    inset-inline: 0;
+    margin-inline: auto;
+  }
 }
 
 /* ---------- 5. actions cluster ---------- */
