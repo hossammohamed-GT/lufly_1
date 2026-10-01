@@ -33,11 +33,11 @@ python3 xref_check.py                         # 0 failures, 0 warnings expected
 ## Findings and fixes
 
 1. **`band_audit` still expected the retired `hero-cinema` band** — the hero
-   was redesigned (4 scenes, `hero-<scene>{,-light,-thumb,-light-thumb}.webp`)
-   but the audit's band map and its template checks still pointed at
+   was redesigned around four scene masters (`hero-<scene>.webp`) but the
+   audit's band map and its template checks still pointed at
    `resources/views/home/hero-cinema/hero-cinema.php` and `heroc-*` artwork.
    It reported "hero: not listed in this audit". Fixed: the tool now audits
-   `resources/views/home/hero/hero.php` and verifies all 16 scene masters.
+   `resources/views/home/hero/hero.php` and verifies the four scene masters.
 
 2. **The finishes lab carried a whole retired spec-sheet UI in its code.**
    The markup ships a scene, a callout, a rail, CTAs, a factory strip and a

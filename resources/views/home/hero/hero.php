@@ -17,7 +17,7 @@ $view->pushScript('frontend/home/hero/hero.js');
 
 /* The artwork is cached for a year: bump this with every image re-shoot so
    returning visitors actually receive the new files. */
-$heroImgV = '2026-09-29.1';
+$heroImgV = '2026-10-01.1';
 
 /* LCP: the first scene is the largest paint. One master-quality lossless
    file serves every screen - no rendition ladder, no reduced variants. */
@@ -28,28 +28,28 @@ $view->pushPreload(asset('images/hero/' . $firstImg . '.webp') . '?v=' . $heroIm
     'fetchpriority' => 'high',
 ]);
 
-/* The five scenes, in autoplay order. Each tab links to the catalogue page
-   of that world; the thumbnail switches only the artwork. */
+/* The four core worlds, in autoplay order. The hero focuses on fittings,
+   mirrors and installed hardware rather than ceramic products. */
 $heroScenes = [
     [
         'key' => 'bathroom', 'label' => 'hero_tab_bathroom',
-        'url' => route('products.index', ['category' => 'bathroom-ceramics']),
-        'alt' => 'LUFLY champagne-gold basin mixer pouring water into a black marble vessel basin, open-air villa bathroom at sunset',
+        'url' => route('products.index', ['category' => 'washbasin-mixers']),
+        'alt' => 'Luxury bathroom fittings with a sculptural basin mixer and mirror',
     ],
     [
         'key' => 'kitchen', 'label' => 'hero_tab_kitchen',
         'url' => route('products.index', ['category' => 'sink-mixers']),
-        'alt' => 'LUFLY brushed steel pull-down kitchen faucet running over a black quartz undermount sink',
+        'alt' => 'Luxury kitchen with a sculptural pull-down mixer and sink hardware',
     ],
     [
-        'key' => 'shower', 'label' => 'hero_tab_shower',
-        'url' => route('products.index', ['category' => 'shower-sets']),
-        'alt' => 'LUFLY chrome square rain shower head pouring a glittering curtain of water in a dark slate spa shower',
+        'key' => 'handicap', 'label' => 'hero_tab_accessible',
+        'url' => route('products.index', ['category' => 'accessible-range']),
+        'alt' => 'Elegant accessible bathroom with refined grab rails and comfortable fittings',
     ],
     [
-        'key' => 'smart', 'label' => 'hero_tab_smart',
-        'url' => route('products.index', ['category' => 'sensor-products']),
-        'alt' => 'LUFLY matte black digital thermostatic control with a glowing teal touchscreen in a futuristic smart bathroom',
+        'key' => 'kids', 'label' => 'hero_tab_kids',
+        'url' => route('products.index', ['category' => 'kids']),
+        'alt' => 'Premium child-friendly bathroom fittings with a colorful mixer and mirror',
     ],
 ];
 
@@ -60,14 +60,13 @@ $heroScenes = [
     <!-- Scene stack: every frame is in the DOM; the engine hands scenes off
          from the side without exposing a blank frame. Only the first one ships
          a real src - the rest is promoted one by one after the first paint,
-         so the visit never waits for five photos. -->
+         so the visit never waits for four photos. -->
     <div class="hero-media" aria-hidden="true">
         <?php foreach ($heroScenes as $i => $s): ?>
             <?php if ($i === 0): ?>
                 <img class="hero-frame is-active"
                      src="<?= e(asset('images/hero/hero-' . $s['key'] . '.webp') . '?v=' . $heroImgV) ?>"
                      data-hero-src="<?= e(asset('images/hero/hero-' . $s['key'] . '.webp') . '?v=' . $heroImgV) ?>"
-                     data-hero-src-light="<?= e(asset('images/hero/hero-' . $s['key'] . '-light.webp') . '?v=' . $heroImgV) ?>"
                      alt=""
                      width="1376" height="768"
                      fetchpriority="high"
@@ -75,7 +74,6 @@ $heroScenes = [
             <?php else: ?>
                 <img class="hero-frame"
                      data-hero-src="<?= e(asset('images/hero/hero-' . $s['key'] . '.webp') . '?v=' . $heroImgV) ?>"
-                     data-hero-src-light="<?= e(asset('images/hero/hero-' . $s['key'] . '-light.webp') . '?v=' . $heroImgV) ?>"
                      alt=""
                      width="1376" height="768"
                      decoding="async">

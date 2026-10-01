@@ -177,6 +177,8 @@ return [
     'hero_tab_kitchen' => 'Mutfak',
     'hero_tab_shower' => 'Duş',
     'hero_tab_accessories' => 'Aksesuarlar',
+    'hero_tab_accessible' => 'Erişilebilir',
+    'hero_tab_kids' => 'Çocuklar',
     'hero_tab_smart' => 'Akıllı',
     'hero_tab_go' => ':name koleksiyonunu aç',
     'hero_trust_1_title' => 'Premium Malzemeler',

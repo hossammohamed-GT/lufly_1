@@ -177,6 +177,8 @@ return [
     'hero_tab_kitchen' => 'Kuchyně',
     'hero_tab_shower' => 'Sprcha',
     'hero_tab_accessories' => 'Příslušenství',
+    'hero_tab_accessible' => 'Bezbariérové',
+    'hero_tab_kids' => 'Děti',
     'hero_tab_smart' => 'Chytré',
     'hero_tab_go' => 'Otevřít kolekci :name',
     'hero_trust_1_title' => 'Prémiové materiály',

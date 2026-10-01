@@ -142,25 +142,6 @@
       rgba(4, 11, 13, 0) 16%);
 }
 
-/* The copy column flips to the other side in RTL - so does its gradient. */
-[dir='rtl'] .hero-shade {
-  background:
-    linear-gradient(to top,
-      rgba(3, 10, 12, 0.9) 0%,
-      rgba(3, 10, 12, 0.58) 12%,
-      rgba(3, 10, 12, 0.26) 26%,
-      rgba(3, 10, 12, 0) 44%),
-    linear-gradient(to left,
-      rgba(4, 11, 13, 0.8) 0%,
-      rgba(4, 11, 13, 0.46) 24%,
-      rgba(4, 11, 13, 0.12) 44%,
-      rgba(4, 11, 13, 0) 60%),
-    linear-gradient(to bottom,
-      rgba(4, 11, 13, 0.2) 0%,
-      rgba(4, 11, 13, 0.07) 8%,
-      rgba(4, 11, 13, 0) 16%);
-}
-
 /* ==========================================================================
    2. Copy column
    ========================================================================== */
@@ -188,6 +169,15 @@
 .hero-copy {
   max-inline-size: 620px;
   pointer-events: auto;
+}
+
+/* The artwork keeps its fixed product-side composition in RTL too: keep the
+   copy in the quiet left field, while its own content remains RTL. This
+   prevents the reading-direction gradient from ever veiling the fittings. */
+[dir='rtl'] .hero-body { direction: ltr; }
+[dir='rtl'] .hero-copy {
+  direction: rtl;
+  text-align: start;
 }
 
 /* kicker ------------------------------------------------------------------ */
@@ -814,13 +804,8 @@
     animation: none;
   }
 
-  .hero-tab.is-active .hero-tab-tick {
-    display: none;
-  }
-
-  .hero-tab-thumb img {
-    transition: none;
-    transform: none;
+  .hero-tab-tick::after {
+    animation: none !important;
   }
 }
 
@@ -1101,11 +1086,9 @@
 /* ==========================================================================
    14. Theme (dark / light)
    --------------------------------------------------------------------------
-   The artwork comes in two moods: the dark masters ship in the HTML, the
-   bright daylight renditions live in data-hero-src-light / -srcset-light and
-   hero.js crossfades to them when the site theme is light. The overlay UI
-   stays dark glass in both themes (it sits on a photograph, like the
-   reference); only the base colour and the readability gradients tune.
+   One high-quality image master serves each scene. The site theme changes
+   the copy-side wash and typography instead of downloading a second image;
+   the product and fitting details stay untouched in both themes.
    ========================================================================== */
 
 /* a light visitor should never flash dark while the first photo decodes */
@@ -1114,46 +1097,43 @@
   background: #d9e7e7;
 }
 
-/* bright photography: the veils work a little harder so the white copy,
-   the navbar icons and the glass panels keep their contrast */
+/* One image serves both themes. In light mode the copy side becomes a soft
+   daylight wash and the copy switches to deep teal; the product side stays
+   untouched so the fittings remain the visual focus. */
+[data-theme='light'] .hero {
+  --hero-ink: #102a2a;
+  --hero-ink-soft: rgba(16, 42, 42, 0.78);
+}
+
 [data-theme='light'] .hero-shade {
   background:
     linear-gradient(to top,
-      rgba(10, 22, 24, 0.88) 0%,
-      rgba(10, 22, 24, 0.55) 12%,
-      rgba(10, 22, 24, 0.24) 26%,
-      rgba(10, 22, 24, 0) 44%),
+      rgba(3, 10, 12, 0.82) 0%,
+      rgba(3, 10, 12, 0.48) 12%,
+      rgba(3, 10, 12, 0.18) 26%,
+      rgba(3, 10, 12, 0) 44%),
     linear-gradient(to right,
-      rgba(8, 20, 22, 0.72) 0%,
-      rgba(8, 20, 22, 0.42) 24%,
-      rgba(8, 20, 22, 0.14) 44%,
-      rgba(8, 20, 22, 0) 60%),
+      rgba(255, 255, 255, 0.9) 0%,
+      rgba(255, 255, 255, 0.62) 30%,
+      rgba(255, 255, 255, 0.16) 53%,
+      rgba(255, 255, 255, 0) 70%),
     linear-gradient(to bottom,
-      rgba(8, 20, 22, 0.22) 0%,
-      rgba(8, 20, 22, 0.08) 8%,
-      rgba(8, 20, 22, 0) 16%);
+      rgba(255, 255, 255, 0.22) 0%,
+      rgba(255, 255, 255, 0.08) 10%,
+      rgba(255, 255, 255, 0) 18%);
 }
 
-[dir='rtl'] [data-theme='light'] .hero-shade {
-  background:
-    linear-gradient(to top,
-      rgba(10, 22, 24, 0.88) 0%,
-      rgba(10, 22, 24, 0.55) 12%,
-      rgba(10, 22, 24, 0.24) 26%,
-      rgba(10, 22, 24, 0) 44%),
-    linear-gradient(to left,
-      rgba(8, 20, 22, 0.72) 0%,
-      rgba(8, 20, 22, 0.42) 24%,
-      rgba(8, 20, 22, 0.14) 44%,
-      rgba(8, 20, 22, 0) 60%),
-    linear-gradient(to bottom,
-      rgba(8, 20, 22, 0.22) 0%,
-      rgba(8, 20, 22, 0.08) 8%,
-      rgba(8, 20, 22, 0) 16%);
+[data-theme='light'] .hero-kicker-text {
+  color: rgba(16, 42, 42, 0.84);
 }
 
-/* the frozen copy of the outgoing artwork while the theme swaps underneath
-   (see applyTheme in hero.js) */
+[data-theme='light'] .hero-cta-play {
+  border-color: rgba(16, 42, 42, 0.42);
+  background: rgba(255, 255, 255, 0.2);
+}
+
+/* the frozen copy of the outgoing artwork during a scene handoff
+   (see goTo in hero.js) */
 .hero-frame-ghost {
   opacity: 1;
   transform: none;

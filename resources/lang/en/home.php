@@ -177,6 +177,8 @@ return [
     'hero_tab_kitchen' => 'Kitchen',
     'hero_tab_shower' => 'Shower',
     'hero_tab_accessories' => 'Accessories',
+    'hero_tab_accessible' => 'Accessible',
+    'hero_tab_kids' => 'Kids',
     'hero_tab_smart' => 'Smart',
     'hero_tab_go' => 'Open the :name collection',
     'hero_trust_1_title' => 'Premium Materials',

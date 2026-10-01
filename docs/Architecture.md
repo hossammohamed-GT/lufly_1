@@ -154,14 +154,13 @@ Invariants when touching it:
   restarting it is a class remove/reflow/add, no timers in JS.
 - **`prefers-reduced-motion`** keeps the hero fully readable: no autoplay, no
   zoom, a 220ms plain fade, no entrance cascade.
-- **The artwork follows the site theme.** Every scene exists twice: the dark
-  masters (`data-hero-src...`, shipped in the HTML) and a bright daylight set
-  (`data-hero-src-light...`). Frames not yet promoted simply promote the
-  variant the visitor is on; promoted ones are re-pointed, and the visible
-  frame crossfades through a frozen copy of the outgoing photo
-  (`.hero-frame-ghost`). The engine listens for the site's `lufly:theme`
-  event and mirrors `data-theme` with a MutationObserver. A light visitor
-  swaps at boot, before the first paint when possible.
+- **The artwork is one master per scene.** The same high-quality image is used
+  in both themes; the copy-side wash and typography change with `data-theme`,
+  leaving the fittings and mirror details untouched. This keeps the hero at
+  four image downloads instead of shipping a second light variant for every
+  scene. CSS follows the site's `data-theme` attribute directly; JavaScript
+  only sequences the four image masters and never swaps artwork on a theme
+  change.
 - **The Explore Collections CTA is the one showpiece - and a fast one.** A
   plain left click is intercepted (hero.js): the arrow ignites (bright ink
   with a teal halo, so it reads over the photograph), then follows a tight
@@ -175,11 +174,10 @@ Invariants when touching it:
   ever sits on the section root and is cleared when the back button
   (bfcache) returns.
 
-Artwork: `public/images/hero/hero-<scene>{,-light}.webp` plus `-thumb.webp`
-tab thumbnails. **These lossless files ARE the masters** (2026-09-29
-cleanup): the separate PNG masters and the build toolkit in
-`tools/hero-masters/` were deleted - the public files are pixel-identical
-to them, so nothing was lost.
+Artwork: `public/images/hero/hero-<scene>.webp` — four lossless masters for
+`bathroom`, `kitchen`, `handicap` and `kids`. The thumbnail/card artwork was
+removed when the selector became four progress dots. **These WebP files ARE
+the masters**; no light duplicate is downloaded for the alternate theme.
 **Quality policy (2026-09-29): every hero file is LOSSLESS WebP -
 pixel-identical on every screen.** There is no rendition ladder (the old
 `@480w/@760w/@1024w` q92 files are gone) and no lossy quality setting; a
