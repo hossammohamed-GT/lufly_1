@@ -24,6 +24,8 @@ return [
     'view_situ' => 'Installed',
     'view_prev' => 'Previous image',
     'view_next' => 'Next image',
+    'zoom_image' => 'Open :image in full screen',
+    'zoom_close' => 'Close full-screen image',
     'sheet_title' => 'Technical sheet',
     'sheet_scale' => 'Scale NTS',
     'sheet_dims_on_request' => 'Exact dimensions on technical request',

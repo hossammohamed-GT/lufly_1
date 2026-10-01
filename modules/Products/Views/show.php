@@ -125,10 +125,20 @@ if (feature('planner', true) && (bool) config('planner.enabled', true)) {
                                      alt="<?= e(($product['name'] ?? '') . ' - ' . $v['label']) ?>"
                                      class="pdp-view-img<?= $v['key'] === 'situ' ? ' pdp-view-img-cover' : '' ?><?= $iIndex === 0 ? ' is-on' : '' ?>"
                                      data-pdp-slide="<?= (int) $iIndex ?>"
+                                     data-pdp-zoom
+                                     data-pdp-zoom-caption="<?= e($v['label']) ?>"
+                                     role="button"
+                                     tabindex="0"
+                                     aria-haspopup="dialog"
+                                     aria-label="<?= e(trans('products.zoom_image', ['image' => $v['label']])) ?>"
                                      width="900" height="700"
                                      <?= $vIndex === 0 && $iIndex === 0 ? 'decoding="async"' : 'loading="lazy" decoding="async"' ?>
                                      onerror="this.onerror=null; this.remove();">
                             <?php endforeach; ?>
+
+                            <span class="pdp-zoom-affordance" aria-hidden="true">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" width="18" height="18"><circle cx="11" cy="11" r="5.5"/><path d="m16 16 4 4"/><path d="M11 8.5v5M8.5 11h5"/></svg>
+                            </span>
 
                             <?php if ($v['key'] === 'drawing'): ?>
                                 <!-- blueprint title block: keeps the drawing reading
@@ -292,3 +302,18 @@ if (feature('planner', true) && (bool) config('planner.enabled', true)) {
         </div>
     </div>
 </main>
+
+<!-- Full-screen preview: populated from the image the visitor selected. -->
+<div class="pdp-lightbox" data-pdp-lightbox hidden aria-hidden="true">
+    <div class="pdp-lightbox-dialog" role="dialog" aria-modal="true"
+         aria-labelledby="pdp-lightbox-caption" tabindex="-1">
+        <button type="button" class="pdp-lightbox-close" data-pdp-lightbox-close
+                aria-label="<?= e(trans('products.zoom_close')) ?>">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" width="24" height="24" aria-hidden="true"><path d="M6 6l12 12M18 6 6 18"/></svg>
+        </button>
+        <figure class="pdp-lightbox-figure">
+            <img class="pdp-lightbox-image" data-pdp-lightbox-image src="" alt="">
+            <figcaption class="pdp-lightbox-caption" id="pdp-lightbox-caption" data-pdp-lightbox-caption></figcaption>
+        </figure>
+    </div>
+</div>

@@ -24,6 +24,8 @@ return [
     'view_situ' => 'Instalace',
     'view_prev' => 'Předchozí obrázek',
     'view_next' => 'Další obrázek',
+    'zoom_image' => 'Otevřít :image na celé obrazovce',
+    'zoom_close' => 'Zavřít obrázek na celé obrazovce',
     'sheet_title' => 'Technický list',
     'sheet_scale' => 'Měřítko NTS',
     'sheet_dims_on_request' => 'Přesné rozměry na technický požadavek',

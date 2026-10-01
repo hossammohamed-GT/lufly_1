@@ -55,12 +55,99 @@
     return { step: function (d) { show(index + d); } };
   }
 
+  function initLightbox(stage) {
+    var lightbox = document.querySelector('[data-pdp-lightbox]');
+    if (!lightbox) return;
+
+    var dialog = lightbox.querySelector('.pdp-lightbox-dialog');
+    var image = lightbox.querySelector('[data-pdp-lightbox-image]');
+    var caption = lightbox.querySelector('[data-pdp-lightbox-caption]');
+    var closeButton = lightbox.querySelector('[data-pdp-lightbox-close]');
+    var activeTrigger = null;
+    var isOpen = false;
+
+    if (!dialog || !image || !caption || !closeButton) return;
+
+    function open(trigger) {
+      var source = trigger.currentSrc || trigger.getAttribute('src');
+      if (!source) return;
+
+      activeTrigger = trigger;
+      image.src = source;
+      image.alt = trigger.getAttribute('alt') || '';
+      caption.textContent = trigger.getAttribute('data-pdp-zoom-caption') || '';
+      lightbox.hidden = false;
+      lightbox.setAttribute('aria-hidden', 'false');
+      document.documentElement.classList.add('pdp-lightbox-open');
+      document.body.classList.add('pdp-lightbox-open');
+      isOpen = true;
+
+      window.requestAnimationFrame(function () {
+        lightbox.classList.add('is-open');
+        closeButton.focus();
+      });
+    }
+
+    function close() {
+      if (!isOpen) return;
+
+      isOpen = false;
+      lightbox.classList.remove('is-open');
+      lightbox.hidden = true;
+      lightbox.setAttribute('aria-hidden', 'true');
+      document.documentElement.classList.remove('pdp-lightbox-open');
+      document.body.classList.remove('pdp-lightbox-open');
+      image.removeAttribute('src');
+
+      if (activeTrigger && document.contains(activeTrigger)) {
+        activeTrigger.focus();
+      }
+      activeTrigger = null;
+    }
+
+    stage.querySelectorAll('[data-pdp-zoom]').forEach(function (trigger) {
+      trigger.addEventListener('click', function () { open(trigger); });
+      trigger.addEventListener('keydown', function (event) {
+        if (event.key !== 'Enter' && event.key !== ' ') return;
+        event.preventDefault();
+        open(trigger);
+      });
+    });
+
+    closeButton.addEventListener('click', close);
+    lightbox.addEventListener('click', function (event) {
+      if (event.target === lightbox) close();
+    });
+    dialog.addEventListener('click', function (event) {
+      /* The empty area around the image behaves like the backdrop. */
+      if (event.target === dialog) close();
+    });
+    lightbox.addEventListener('keydown', function (event) {
+      if (event.key === 'Escape') {
+        event.preventDefault();
+        close();
+      } else if (event.key === 'Tab') {
+        /* The close control is the only focusable element in the preview. */
+        event.preventDefault();
+        closeButton.focus();
+      }
+    });
+    document.addEventListener('keydown', function (event) {
+      if (isOpen && event.key === 'Escape') {
+        event.preventDefault();
+        close();
+      }
+    });
+  }
+
   function init() {
     var stage = document.querySelector('.pdp-stage');
     if (!stage) return;
 
     var views = stage.querySelectorAll('[data-pdp-view]');
     if (views.length === 0) return;
+
+    initLightbox(stage);
 
     var sliders = {};
     views.forEach(function (view) {

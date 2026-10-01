@@ -185,6 +185,42 @@
   object-fit: cover;
 }
 
+/* Every product image can open in a full-screen, no-crop preview. */
+.pdp-view-img[data-pdp-zoom] {
+  cursor: zoom-in;
+  touch-action: manipulation;
+}
+
+.pdp-view-img[data-pdp-zoom]:focus-visible {
+  outline: 3px solid var(--ds-primary);
+  outline-offset: -3px;
+}
+
+.pdp-zoom-affordance {
+  position: absolute;
+  inset-inline-end: 14px;
+  bottom: 14px;
+  z-index: 3;
+  display: grid;
+  place-items: center;
+  width: 36px;
+  height: 36px;
+  color: var(--ds-text);
+  border: 1px solid var(--ds-border);
+  border-radius: 999px;
+  background: color-mix(in srgb, var(--ds-surface) 88%, transparent);
+  box-shadow: var(--shadow-1);
+  pointer-events: none;
+  opacity: 0.78;
+  transition: opacity 160ms ease, transform 160ms ease;
+}
+
+.pdp-frameplate:hover .pdp-zoom-affordance,
+.pdp-view-img[data-pdp-zoom]:focus-visible ~ .pdp-zoom-affordance {
+  opacity: 1;
+  transform: scale(1.06);
+}
+
 .pdp-view-tag {
   position: absolute;
   top: 28px;
@@ -575,6 +611,101 @@
   to { opacity: 1; transform: translateY(0); }
 }
 
+/* ---------- full-screen image preview ---------- */
+
+html.pdp-lightbox-open,
+body.pdp-lightbox-open {
+  overflow: hidden;
+}
+
+.pdp-lightbox[hidden] { display: none; }
+
+.pdp-lightbox {
+  position: fixed;
+  z-index: 10000;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  padding: clamp(16px, 3vw, 42px);
+  background: rgba(8, 15, 16, 0.93);
+  backdrop-filter: blur(10px);
+  opacity: 0;
+  transition: opacity 180ms ease;
+}
+
+.pdp-lightbox.is-open { opacity: 1; }
+
+.pdp-lightbox-dialog {
+  position: relative;
+  display: grid;
+  place-items: center;
+  width: min(100%, 1440px);
+  height: 100%;
+  outline: none;
+}
+
+.pdp-lightbox-figure {
+  display: grid;
+  justify-items: center;
+  gap: 11px;
+  max-width: 100%;
+  max-height: 100%;
+  margin: 0;
+}
+
+.pdp-lightbox-image {
+  display: block;
+  max-width: 100%;
+  max-height: calc(100svh - clamp(94px, 11vw, 136px));
+  width: auto;
+  height: auto;
+  object-fit: contain;
+  border-radius: min(14px, 2vw);
+  background: #fff;
+  box-shadow: 0 24px 80px rgba(0, 0, 0, 0.42);
+  cursor: zoom-out;
+}
+
+.pdp-lightbox-caption {
+  max-width: min(100%, 70ch);
+  color: rgba(255, 255, 255, 0.78);
+  font-family: var(--font-mono);
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.16em;
+  text-align: center;
+  text-transform: uppercase;
+}
+
+.pdp-lightbox-close {
+  position: absolute;
+  z-index: 1;
+  top: 0;
+  inset-inline-end: 0;
+  display: grid;
+  place-items: center;
+  width: 46px;
+  height: 46px;
+  padding: 0;
+  border: 1px solid rgba(255, 255, 255, 0.32);
+  border-radius: 999px;
+  background: rgba(0, 0, 0, 0.25);
+  color: #fff;
+  cursor: pointer;
+  transition: background 160ms ease, transform 160ms ease;
+}
+
+.pdp-lightbox-close:hover,
+.pdp-lightbox-close:focus-visible {
+  background: rgba(255, 255, 255, 0.16);
+  transform: scale(1.06);
+}
+
+.pdp-lightbox-close:focus-visible {
+  outline: 3px solid var(--lu-mint, #8fe3c1);
+  outline-offset: 3px;
+}
+
 /* ---------- responsive ---------- */
 
 @media (max-width: 960px) {
@@ -598,7 +729,10 @@
   .pdp-cta,
   .pdp-viewtab,
   .pdp-back,
-  .pdp-crumb a { transition: none; }
+  .pdp-crumb a,
+  .pdp-zoom-affordance,
+  .pdp-lightbox,
+  .pdp-lightbox-close { transition: none; }
 }
 
 

@@ -24,6 +24,8 @@ return [
     'view_situ' => 'Montajlı',
     'view_prev' => 'Önceki görsel',
     'view_next' => 'Sonraki görsel',
+    'zoom_image' => ':image görselini tam ekranda aç',
+    'zoom_close' => 'Tam ekran görseli kapat',
     'sheet_title' => 'Teknik föy',
     'sheet_scale' => 'Ölçek NTS',
     'sheet_dims_on_request' => 'Kesin ölçüler teknik talep üzerine',
