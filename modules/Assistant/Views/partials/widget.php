@@ -112,6 +112,33 @@ if ($boxOn) {
          'box_err' => $boxOn ? trans('box.err') : '',
      ], JSON_UNESCAPED_UNICODE)) ?>">
 
+    <aside class="aichat-intro" data-aichat-intro hidden aria-live="polite">
+        <span class="aichat-intro-beam" aria-hidden="true"></span>
+        <span class="aichat-intro-orb" aria-hidden="true">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"
+                 stroke-linecap="round" stroke-linejoin="round">
+                <circle cx="11" cy="11" r="7"/>
+                <path d="m20 20-3.6-3.6"/>
+            </svg>
+        </span>
+        <span class="aichat-intro-copy">
+            <span class="aichat-intro-eyebrow"><?= e(trans('assistant.intro_eyebrow')) ?></span>
+            <strong><?= e(trans('assistant.intro_text')) ?></strong>
+            <button type="button" class="aichat-intro-action" data-aichat-intro-open>
+                <?= e(trans('assistant.intro_action')) ?>
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"
+                     stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                    <path d="M5 12h14"/><path d="m13 6 6 6-6 6"/>
+                </svg>
+            </button>
+        </span>
+        <button type="button" class="aichat-intro-close" data-aichat-intro-dismiss
+                aria-label="<?= e(trans('assistant.intro_close')) ?>">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"
+                 stroke-linecap="round" aria-hidden="true"><path d="M6 6l12 12M18 6 6 18"/></svg>
+        </button>
+    </aside>
+
     <button type="button" class="aichat-fab" data-aichat-toggle
             aria-expanded="false" aria-controls="lufly-chat-panel">
         <!-- the words first, the mark last: the bar is anchored to the right, so

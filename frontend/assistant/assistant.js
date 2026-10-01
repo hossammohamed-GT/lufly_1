@@ -62,6 +62,7 @@
      every screen, so what was said on the home page is still there on a product
      page — same browser, same shop, one chat */
   var HISTORY_KEY = 'lufly-chat-history';
+  var INTRO_KEY = 'lufly-ai-intro-seen';
   var HISTORY_MAX = 24;
   var photo = null;
   var busy = false;
@@ -164,6 +165,55 @@
     }
   }
 
+  /* The first-visit hint is deliberately separate from chat history: clearing
+     a conversation must not make the same welcome tip return. Mark it seen as
+     soon as it is shown, then let the visitor dismiss it or open the finder. */
+  var intro = root.querySelector('[data-aichat-intro]');
+  var introOpen = root.querySelector('[data-aichat-intro-open]');
+  var introDismiss = root.querySelector('[data-aichat-intro-dismiss]');
+
+  function rememberIntro() {
+    try {
+      window.localStorage.setItem(INTRO_KEY, '1');
+    } catch (error) { /* private mode: the hint remains harmless */ }
+  }
+
+  function hideIntro() {
+    if (!intro || intro.hidden) return;
+
+    intro.classList.remove('is-visible');
+    intro.classList.add('is-dismissed');
+    intro.setAttribute('aria-hidden', 'true');
+    rememberIntro();
+
+    window.setTimeout(function () {
+      if (intro) intro.hidden = true;
+    }, 280);
+  }
+
+  function initIntro() {
+    if (!intro) return;
+
+    var seen = false;
+
+    try {
+      seen = window.localStorage.getItem(INTRO_KEY) === '1';
+    } catch (error) { /* show it once for this load */ }
+
+    if (seen) {
+      intro.hidden = true;
+      return;
+    }
+
+    rememberIntro();
+    intro.hidden = false;
+    intro.setAttribute('aria-hidden', 'false');
+
+    window.requestAnimationFrame(function () {
+      intro.classList.add('is-visible');
+    });
+  }
+
   /* ---------- the shell: open, close, expand, drag ---------- */
 
   var toggle = root.querySelector('[data-aichat-toggle]');
@@ -244,6 +294,8 @@
 
   function openPanel(open) {
     if (open) {
+      hideIntro();
+
       if (closingTimer) {
         window.clearTimeout(closingTimer);
         closingTimer = null;
@@ -296,6 +348,18 @@
   labelGrow();
 
   if (toggle) toggle.addEventListener('click', function () { openPanel(panel.hidden); });
+
+  if (introDismiss) {
+    introDismiss.addEventListener('click', hideIntro);
+  }
+
+  if (introOpen) {
+    introOpen.addEventListener('click', function () {
+      openPanel(true);
+    });
+  }
+
+  initIntro();
 
   /* a link that lands on ?chat=1 opens the chat by itself — that is where the
      promise page's "find a piece in the meantime" button points */
