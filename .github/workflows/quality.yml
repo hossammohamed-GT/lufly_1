@@ -32,7 +32,7 @@ jobs:
           APP_KEY: base64:CI-only-not-a-production-key-000000000000
           DB_CONNECTION: sqlite
           DB_SQLITE_PATH: database/lufly.sqlite
-        run: php cli migrate:status
+        run: php cli migrate
 
   security:
     name: Secret and sensitive-file scan
