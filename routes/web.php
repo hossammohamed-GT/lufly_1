@@ -24,5 +24,9 @@ return function (Router $router): void {
         // Contact page: /en/contact, /tr/iletisim, /cs/kontakt
         $router->localized('GET', 'contact', [HomeController::class, 'contact'], 'contact')
             ->name('contact');
+
+        // Central Vacuum page: /en/central-vacuum, /tr/merkezi-supurge, /cs/centralni-vysavac
+        $router->localized('GET', 'central-vacuum', [HomeController::class, 'centralVacuum'], 'central-vacuum')
+            ->name('central-vacuum');
     });
 };

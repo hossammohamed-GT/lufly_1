@@ -202,6 +202,36 @@ class HomeController extends Controller
         ]);
     }
 
+    public function centralVacuum(): Response
+    {
+        $locale = $this->translator->getLocale();
+
+        $pageTitle = trans('central_vacuum.seo_title');
+        $pageDesc = trans('central_vacuum.seo_desc');
+
+        $this->seo->setTitle($pageTitle);
+        $this->seo->setDescription($pageDesc);
+        $this->seo->setCanonical(route('central-vacuum'));
+        $this->seo->setImage(url('/og-image?title=' . rawurlencode($pageTitle) . '&subtitle=' . rawurlencode($pageDesc)));
+        $this->seo->setAlternatesFor('central-vacuum');
+        $this->seo->addWebPageSchema([
+            'name' => $pageTitle,
+            'description' => $pageDesc,
+            'url' => route('central-vacuum'),
+            'inLanguage' => $locale,
+        ]);
+        $this->seo->addBreadcrumb([
+            ['name' => 'LUFLY', 'url' => route('home')],
+            ['name' => trans('central_vacuum.nav_label'), 'url' => route('central-vacuum')],
+        ]);
+
+        return $this->view('central-vacuum.index', [
+            'title' => $pageTitle,
+            'locale' => $locale,
+            'seo' => $this->seo,
+        ]);
+    }
+
     public function contact(): Response
     {
         $locale = $this->translator->getLocale();

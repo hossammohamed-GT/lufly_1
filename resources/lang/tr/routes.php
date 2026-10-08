@@ -8,6 +8,7 @@ return [
     'products.show' => 'urunler/{slug}',
     'login' => 'giris',
     'contact' => 'iletisim',
+    'central-vacuum' => 'merkezi-supurge',
     'favorites.index' => 'favoriler',
     'favorites.claim' => 'favoriler/{token}',
     'favorites.toggle' => 'favoriler/kaydet',

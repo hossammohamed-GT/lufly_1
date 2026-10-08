@@ -1,11 +1,14 @@
 <?php
 /** @var Core\View\View $view */
 $view->layout('layouts.frontend');
+$view->pushStyle('frontend/home/text-reveal.css');
+$view->pushScript('frontend/home/text-reveal.js');
 $component = static fn (string $name, array $data = []): string => $view->renderFile(
     $view->resolvePath('home.' . $name . '.' . $name),
     $data,
 );
 ?>
+<div class="home-animation-scope">
 <?= $component('hero') ?>
 <?= $component('trust-bar') ?>
 <?= $component('finishes') ?>
@@ -17,5 +20,7 @@ $component = static fn (string $name, array $data = []): string => $view->render
 <?= $component('categories', ['categories' => $categories ?? []]) ?>
 <?= $component('inspiration') ?>
 <?= $component('rituals') ?>
+<?= $component('central-vacuum') ?>
 <?= $component('masterpieces', ['featuredProducts' => $featuredProducts]) ?>
 <?= $component('corporate') ?>
+</div>

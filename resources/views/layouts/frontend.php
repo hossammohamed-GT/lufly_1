@@ -148,7 +148,7 @@ $clarity = trim((string) ($analytics['clarity'] ?? ''));
 <?= $assistantChat ?>
 <script defer src="<?= e(asset('frontend/js/app.js')) ?>"></script>
 <?php foreach ($scripts as $script): ?>
-<script defer src="<?= e(asset($script)) ?>"></script>
+<script defer<?= str_ends_with((string) $script, 'home.js') ? ' type="module"' : '' ?> src="<?= e(asset($script)) ?>"></script>
 <?php endforeach; ?>
 </body>
 </html>

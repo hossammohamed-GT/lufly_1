@@ -8,6 +8,7 @@ return [
     'products.show' => 'products/{slug}',
     'login' => 'login',
     'contact' => 'contact',
+    'central-vacuum' => 'central-vacuum',
     'favorites.index' => 'favorites',
     'favorites.claim' => 'favorites/{token}',
     'favorites.toggle' => 'favorites/toggle',

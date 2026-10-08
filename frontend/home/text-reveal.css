@@ -1,0 +1,5 @@
+/* Shared, lightweight copy reveal for the storefront home. */
+.home-animation-scope .home-copy-target{opacity:0;transform:translate3d(0,24px,0)}
+.home-animation-scope .home-copy-target.home-copy-visible{animation:homeCopyIn .78s cubic-bezier(.16,1,.3,1) both;animation-delay:var(--home-copy-delay,0ms)}
+@keyframes homeCopyIn{from{opacity:0;transform:translate3d(var(--home-copy-x,0),24px,0);filter:blur(5px)}to{opacity:1;transform:none;filter:none}}
+@media(prefers-reduced-motion:reduce){.home-animation-scope .home-copy-target{opacity:1;transform:none;filter:none}.home-animation-scope .home-copy-target.home-copy-visible{animation:none}}

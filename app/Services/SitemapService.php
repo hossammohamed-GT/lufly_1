@@ -21,6 +21,7 @@ class SitemapService
     private const STATIC_PAGES = [
         ['key' => 'home',            'priority' => '1.0', 'changefreq' => 'daily'],
         ['key' => 'products.index',  'priority' => '0.9', 'changefreq' => 'daily'],
+        ['key' => 'central-vacuum',  'priority' => '0.8', 'changefreq' => 'monthly'],
         ['key' => 'contact',         'priority' => '0.7', 'changefreq' => 'monthly'],
     ];
 

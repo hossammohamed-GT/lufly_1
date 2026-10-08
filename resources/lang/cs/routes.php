@@ -8,6 +8,7 @@ return [
     'products.show' => 'produkty/{slug}',
     'login' => 'prihlaseni',
     'contact' => 'kontakt',
+    'central-vacuum' => 'centralni-vysavac',
     'favorites.index' => 'oblibene',
     'favorites.claim' => 'oblibene/{token}',
     'favorites.toggle' => 'oblibene/ulozit',
