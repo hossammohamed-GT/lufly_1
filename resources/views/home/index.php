@@ -20,7 +20,7 @@ $component = static fn (string $name, array $data = []): string => $view->render
 <?= $component('categories', ['categories' => $categories ?? []]) ?>
 <?= $component('inspiration') ?>
 <?= $component('rituals') ?>
-<?= $component('central-vacuum') ?>
+<!-- <?= $component('central-vacuum') ?> -->
 <?= $component('masterpieces', ['featuredProducts' => $featuredProducts]) ?>
 <?= $component('corporate') ?>
 </div>
