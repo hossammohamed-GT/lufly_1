@@ -52,9 +52,9 @@ $view->pushScript('frontend/home/central-vacuum/central-vacuum.js');
                     <path class="cvh-house" d="M74 284V116l206-70 206 70v168Z"></path>
                     <path class="cvh-room" d="M74 174h412M204 94v190M344 94v190"></path>
 
-                    <path id="cvh-route-living" class="cvh-pipe" data-cvh-draw pathLength="1" d="M128 226 C174 226 182 185 226 185 S282 189 306 204 360 238 432 238"></path>
-                    <path id="cvh-route-bedroom" class="cvh-pipe" data-cvh-draw pathLength="1" d="M138 142 C176 126 208 142 236 162 S285 212 432 238"></path>
-                    <path id="cvh-route-kitchen" class="cvh-pipe" data-cvh-draw pathLength="1" d="M404 143 C388 164 373 186 361 207 S387 238 432 238"></path>
+                    <path id="cvh-route-living" class="cvh-pipe" data-cvh-draw pathLength="1" d="M128 226 C174 226 182 185 226 185 S282 189 306 204 360 238 432 238 C468 248 482 264 490 296"></path>
+                    <path id="cvh-route-bedroom" class="cvh-pipe" data-cvh-draw pathLength="1" d="M138 142 C176 126 208 142 236 162 S285 212 432 238 C468 248 482 264 490 296"></path>
+                    <path id="cvh-route-kitchen" class="cvh-pipe" data-cvh-draw pathLength="1" d="M404 143 C388 164 373 186 361 207 S387 238 432 238 C468 248 482 264 490 296"></path>
                     <path class="cvh-pipe cvh-pipe--main" data-cvh-draw pathLength="1" d="M432 238 C468 248 482 264 490 296"></path>
 
                     <g class="cvh-unit" transform="translate(456 264)">
@@ -69,6 +69,9 @@ $view->pushScript('frontend/home/central-vacuum/central-vacuum.js');
                         <circle cx="404" cy="143" r="9"></circle>
                     </g>
 
+                    <path class="cvh-flow-line" d="M128 226 C174 226 182 185 226 185 S282 189 306 204 360 238 432 238 C468 248 482 264 490 296"></path>
+                    <path class="cvh-flow-line" d="M138 142 C176 126 208 142 236 162 S285 212 432 238 C468 248 482 264 490 296"></path>
+                    <path class="cvh-flow-line" d="M404 143 C388 164 373 186 361 207 S387 238 432 238 C468 248 482 264 490 296"></path>
                     <g class="cvh-flow" filter="url(#cvh-glow)">
                         <circle r="4"><animateMotion dur="4.2s" repeatCount="indefinite" rotate="auto"><mpath href="#cvh-route-living"></mpath></animateMotion></circle>
                         <circle r="3"><animateMotion dur="5.1s" begin=".8s" repeatCount="indefinite" rotate="auto"><mpath href="#cvh-route-bedroom"></mpath></animateMotion></circle>
