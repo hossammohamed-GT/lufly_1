@@ -305,3 +305,22 @@
 
   .cvh-pipe { stroke-dashoffset: 0; }
 }
+
+/* 3D cutaway (central-vacuum-3d.js). The SVG drawing stays as the fallback. */
+.cv-home-3d {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  touch-action: pan-y;
+}
+
+.cv-home-3d canvas {
+  display: block;
+  width: 100% !important;
+  height: 100% !important;
+  outline: none;
+}
+
+.cv-home-visual.is-3d .cv-home-svg,
+.cv-home-visual.is-3d .cv-home-console,
+.cv-home-visual.is-3d .cv-home-label { display: none; }
