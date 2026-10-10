@@ -137,4 +137,13 @@ return [
     'cta_desc' => 'LUFLY can help define inlet locations, unit placement and the technical path that matches the home layout.',
     'cta_primary' => 'Request consultation',
     'cta_secondary' => 'Explore LUFLY collections',
+
+    'story_aria' => 'How LUFLY central vacuum works',
+    'story_image_alt' => 'Cutaway of a modern villa showing the concealed LUFLY central vacuum network',
+    'story_intro_kicker' => 'What it is',
+    'story_intro_title' => 'One hidden system. Every room clean.',
+    'story_intro_desc' => 'A central power unit sits away from your living spaces. Hidden pipes run through the walls to a small inlet in each room. Plug in the hose, and the dust leaves the house.',
+    'story_scroll_hint' => 'Scroll to explore',
+    'story_quiet_label' => 'Quiet room',
+    'label_study' => 'Study',
 ];

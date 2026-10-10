@@ -1,0 +1,96 @@
+/* Central vacuum: one sticky cutaway house, seven chapters (intro + six benefits). */
+.lcs { position: relative; background: #1c1a17; color: #f5f1ea; }
+.lcs.is-js { height: 700vh; }
+
+.lcs-stage { position: relative; height: 100vh; min-height: 560px; overflow: hidden; }
+.lcs.is-js .lcs-stage { position: sticky; top: 0; }
+
+.lcs-camera { position: absolute; inset: 0; transition: transform 1.4s cubic-bezier(.22, .7, .2, 1); will-change: transform; }
+.lcs-camera img,
+.lcs-svg { position: absolute; inset: 0; width: 100%; height: 100%; }
+.lcs-camera img { object-fit: cover; object-position: center; }
+.lcs-svg { pointer-events: none; overflow: visible; }
+
+.lcs-shade {
+    position: absolute; inset: 0; pointer-events: none;
+    background:
+        linear-gradient(90deg, rgba(18, 16, 13, .84) 0%, rgba(18, 16, 13, .48) 36%, rgba(18, 16, 13, 0) 62%),
+        linear-gradient(0deg, rgba(18, 16, 13, .45), rgba(18, 16, 13, 0) 30%);
+}
+
+/* ---- copy ---- */
+.lcs-copy {
+    position: absolute; left: 0; top: 0; bottom: 0; z-index: 2;
+    display: flex; flex-direction: column; justify-content: center;
+    max-width: 520px; padding: 0 clamp(24px, 6vw, 96px);
+}
+.lcs-chapter { max-width: 440px; }
+.lcs.is-js .lcs-chapter[hidden] { display: none; }
+.lcs.is-js .lcs-chapter.is-active { animation: lcs-in .9s ease both; }
+@keyframes lcs-in { from { opacity: 0; transform: translateY(16px); } to { opacity: 1; transform: none; } }
+
+.lcs-kicker { display: block; font-size: 12px; letter-spacing: .22em; text-transform: uppercase; color: #d9c7a4; margin-bottom: 18px; }
+.lcs-chapter h1,
+.lcs-chapter h2 { font-weight: 300; font-size: clamp(36px, 4.6vw, 66px); line-height: 1.04; margin: 0 0 20px; color: #fbf8f2; }
+.lcs-chapter p { font-size: 17px; line-height: 1.62; color: rgba(245, 241, 234, .84); margin: 0; max-width: 40ch; }
+
+.lcs-dots { position: absolute; left: clamp(24px, 6vw, 96px); bottom: 36px; display: flex; gap: 10px; z-index: 3; }
+.lcs-dots button { width: 28px; height: 3px; border: 0; padding: 0; background: rgba(255, 255, 255, .3); cursor: pointer; transition: width .4s ease, background .4s ease; }
+.lcs-dots button.is-active { width: 56px; background: #e9d7b2; }
+.lcs-hint { position: absolute; right: 32px; bottom: 34px; z-index: 3; font-size: 12px; letter-spacing: .2em; text-transform: uppercase; color: rgba(255, 255, 255, .72); }
+
+/* without JS: plain stacked page, no sticky */
+.lcs:not(.is-js) .lcs-stage { height: auto; min-height: 100vh; padding: 120px 0 80px; }
+.lcs:not(.is-js) .lcs-camera { position: absolute; }
+.lcs:not(.is-js) .lcs-copy { position: relative; height: auto; }
+.lcs:not(.is-js) .lcs-chapter + .lcs-chapter { margin-top: 48px; }
+.lcs:not(.is-js) .lcs-dots,
+.lcs:not(.is-js) .lcs-hint { display: none; }
+
+/* ---- overlays (SVG, same aspect as the photo) ---- */
+.lcs-l { opacity: 0; transition: opacity .9s ease; }
+.lcs-l.is-on { opacity: 1; }
+
+.lcs-pipe {
+    fill: none; stroke: #8fd8ff; stroke-width: 7; stroke-linecap: round; stroke-linejoin: round;
+    stroke-dasharray: 1; stroke-dashoffset: 1; opacity: 0;
+    filter: drop-shadow(0 0 6px rgba(120, 210, 255, .9));
+    transition: stroke-dashoffset 1.8s cubic-bezier(.4, 0, .2, 1), opacity .6s ease;
+}
+.lcs-pipe.is-on { stroke-dashoffset: 0; opacity: 1; }
+
+.lcs-unit { fill: #e9f9ff; stroke: #7fd3ff; stroke-width: 2; filter: drop-shadow(0 0 12px #7fd3ff); }
+.lcs-halo { fill: rgba(127, 211, 255, .18); stroke: rgba(127, 211, 255, .7); stroke-width: 2; transform-origin: 820px 800px; animation: lcs-halo 2.6s ease-in-out infinite; }
+@keyframes lcs-halo { 0%, 100% { transform: scale(.85); opacity: .5; } 50% { transform: scale(1.12); opacity: 1; } }
+
+.lcs-ring { fill: none; stroke: rgba(190, 230, 255, .75); stroke-width: 2.5; stroke-dasharray: 10 12; }
+.lcs-ring--outer { stroke: rgba(190, 230, 255, .35); }
+
+.lcs-dust { fill: #bfe9ff; filter: drop-shadow(0 0 5px #7fd3ff); }
+
+.lcs-hose { fill: none; stroke: #2a2a2a; stroke-width: 9; stroke-linecap: round; }
+
+.lcs-inlet-dot { fill: #dff6ff; stroke: #7fd3ff; stroke-width: 3; filter: drop-shadow(0 0 8px #7fd3ff); animation: lcs-inlet 2.4s ease-in-out infinite; transform-box: fill-box; transform-origin: center; }
+@keyframes lcs-inlet { 0%, 100% { transform: scale(.9); opacity: .7; } 50% { transform: scale(1.25); opacity: 1; } }
+
+.lcs-label { fill: #fbf8f2; font-size: 22px; letter-spacing: .06em; paint-order: stroke; stroke: rgba(20, 18, 15, .6); stroke-width: 6px; }
+
+/* ---- mobile ---- */
+@media (max-width: 760px) {
+    .lcs-shade { background: linear-gradient(0deg, rgba(18, 16, 13, .92) 0%, rgba(18, 16, 13, .55) 46%, rgba(18, 16, 13, 0) 72%); }
+    .lcs-copy { top: auto; bottom: 0; max-width: none; padding: 0 24px 88px; }
+    .lcs-chapter p { font-size: 15px; }
+    .lcs-hint { display: none; }
+    .lcs-dots { bottom: 28px; }
+}
+
+/* ---- reduced motion: no camera push, no drawing, no pulses ---- */
+@media (prefers-reduced-motion: reduce) {
+    .lcs-camera,
+    .lcs-l,
+    .lcs-pipe,
+    .lcs-dots button { transition: none !important; }
+    .lcs-halo,
+    .lcs-inlet-dot,
+    .lcs.is-js .lcs-chapter.is-active { animation: none !important; }
+}
