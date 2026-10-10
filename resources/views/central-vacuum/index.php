@@ -10,7 +10,7 @@ $img = static fn (string $name): string => e(asset($name));
 /* One sticky story: each chapter has its own image (same framing), and the
    scroll position cross-fades between them while the copy changes. */
 $chapters = [
-    ['image' => 'chapter-00-system.jpg', 'kicker' => 'intro'],
+    ['image' => 'base-system.jpg', 'kicker' => 'intro'],
     ['image' => 'chapter-01-suction.jpg', 'kicker' => '01', 'benefit' => 1],
     ['image' => 'chapter-02-quiet.jpg',   'kicker' => '02', 'benefit' => 2],
     ['image' => 'chapter-03-air.jpg',     'kicker' => '03', 'benefit' => 3],
@@ -30,7 +30,7 @@ $total = count($chapters);
                          data-lcs-img
                          src="<?= $img('images/central-vacuum/' . $c['image']) ?>"
                          alt="<?= $i === 0 ? $tr('story_image_alt') : '' ?>"
-                         width="1568" height="882"
+                         width="1280" height="1280"
                          <?= $i === 0 ? 'fetchpriority="high"' : 'loading="lazy"' ?>
                          decoding="async"
                          aria-hidden="<?= $i === 0 ? 'false' : 'true' ?>">
