@@ -2,7 +2,6 @@
 /** @var Core\View\View $view */
 $view->pushDeferredStyle('frontend/home/central-vacuum/central-vacuum.css');
 $view->pushScript('frontend/home/central-vacuum/central-vacuum.js');
-$view->pushScript('frontend/home/central-vacuum/central-vacuum-3d.js');
 ?>
 <section class="cv-home-section" id="central-vacuum-preview" data-cv-home>
     <div class="container">
@@ -31,7 +30,6 @@ $view->pushScript('frontend/home/central-vacuum/central-vacuum-3d.js');
             </div>
 
             <div class="cv-home-visual" aria-hidden="true">
-                <div class="cv-home-3d" data-cv-3d data-cv-3d-src="<?= e(asset('vendor/three/three.module.min.js')) ?>"></div>
                 <div class="cv-home-console">
                     <span></span><span></span><span></span>
                 </div>
