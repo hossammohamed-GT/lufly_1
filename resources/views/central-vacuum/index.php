@@ -19,6 +19,9 @@ $total = 8;
             <div class="lcs-camera" data-lcs-camera>
                 <img class="lcs-img" src="<?= $img('images/central-vacuum/hero-wide.jpg') ?>"
                      alt="<?= $tr('story_image_alt') ?>" width="1376" height="768" fetchpriority="high" decoding="async">
+                <img class="lcs-img lcs-img--network" data-lcs-network
+                     src="<?= $img('images/central-vacuum/hero-network.jpg') ?>"
+                     alt="" width="1376" height="768" loading="lazy" decoding="async" aria-hidden="true">
             </div>
 
             <div class="lcs-shade" aria-hidden="true"></div>

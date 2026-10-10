@@ -39,6 +39,8 @@
   const smooth = (t) => t * t * (3 - 2 * t);
 
   /* the camera for a given scroll progress (0..1) */
+  const network = root.querySelector('[data-lcs-network]');
+
   const cameraAt = (p, width, height) => {
     const seg = p * (count - 1);
     const i = Math.min(count - 2, Math.floor(seg));
@@ -64,6 +66,13 @@
     const { tx, ty, s } = cameraAt(progress, width, height);
     const rx = reduce ? 0 : tiltX;
     const ry = reduce ? 0 : tiltY;
+    /* network variant: full strength only on chapter 02, fading out either side */
+    if (network) {
+      const seg = progress * (count - 1);
+      const o = Math.max(0, 1 - Math.abs(seg - 1));
+      network.style.opacity = o.toFixed(3);
+    }
+
     camera.style.transform =
       `translate(${tx.toFixed(1)}px, ${ty.toFixed(1)}px) scale(${s.toFixed(4)}) rotateX(${rx.toFixed(2)}deg) rotateY(${ry.toFixed(2)}deg)`;
 

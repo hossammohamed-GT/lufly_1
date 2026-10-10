@@ -21,6 +21,10 @@
     object-fit: cover; object-position: 60% 50%;
     display: block; user-select: none; -webkit-user-drag: none;
 }
+/* the network variant sits over the base and is faded in by the script
+   only while the camera is on chapter 02, so it lands under the zoom */
+.lcs-img--network { opacity: 0; pointer-events: none; }
+.lcs:not(.is-js) .lcs-img--network { display: none; }
 
 .lcs-shade {
     position: absolute; inset: 0; pointer-events: none;
