@@ -1,24 +1,31 @@
-/* Central vacuum: one sticky stage; each chapter cross-fades to its own image. */
+/* Central vacuum: one still image, a scroll-scrubbed camera (zoom and pan),
+   and a subtle pointer tilt for depth. The copy changes per chapter. */
 .lcs { position: relative; background: #1c1a17; color: #f5f1ea; }
-.lcs.is-js { height: 700vh; }
+.lcs.is-js { height: 800vh; }
 
-.lcs-stage { position: relative; height: 100vh; min-height: 560px; overflow: hidden; }
+.lcs-stage { position: relative; height: 100vh; min-height: 560px; overflow: hidden; background: #1c1a17; perspective: 1400px; }
 .lcs.is-js .lcs-stage { position: sticky; top: 0; }
 
-/* images stacked in the same box; only the active one is visible */
-.lcs-images { position: absolute; inset: 0; }
+/* the camera holds the one image; JS sets its translate/scale and a small tilt */
+.lcs-camera {
+    position: absolute; inset: 0;
+    transform-origin: 0 0;
+    transform-style: preserve-3d;
+    will-change: transform;
+    --tilt-x: 0deg; --tilt-y: 0deg;
+    transform: rotateX(var(--tilt-x)) rotateY(var(--tilt-y));
+    transition: transform .6s cubic-bezier(.22, .7, .2, 1);
+}
 .lcs-img {
     position: absolute; inset: 0; width: 100%; height: 100%;
-    object-fit: cover; object-position: center;
-    opacity: 0; transform: scale(1.04);
-    transition: opacity 1s ease, transform 2.4s cubic-bezier(.22, .7, .2, 1);
+    object-fit: cover; object-position: 60% 50%;
+    display: block; user-select: none; -webkit-user-drag: none;
 }
-.lcs-img.is-on { opacity: 1; transform: scale(1); }
 
 .lcs-shade {
     position: absolute; inset: 0; pointer-events: none;
     background:
-        linear-gradient(90deg, rgba(18, 16, 13, .84) 0%, rgba(18, 16, 13, .48) 36%, rgba(18, 16, 13, 0) 62%),
+        linear-gradient(90deg, rgba(18, 16, 13, .86) 0%, rgba(18, 16, 13, .5) 34%, rgba(18, 16, 13, 0) 60%),
         linear-gradient(0deg, rgba(18, 16, 13, .45), rgba(18, 16, 13, 0) 30%);
 }
 
@@ -27,7 +34,9 @@
     position: absolute; left: 0; top: 0; bottom: 0; z-index: 2;
     display: flex; flex-direction: column; justify-content: center;
     max-width: 520px; padding: 0 clamp(24px, 6vw, 96px);
+    pointer-events: none;
 }
+.lcs-copy a { pointer-events: auto; }
 .lcs-chapter { max-width: 440px; }
 .lcs.is-js .lcs-chapter[hidden] { display: none; }
 .lcs.is-js .lcs-chapter.is-active { animation: lcs-in .9s ease both; }
@@ -35,8 +44,8 @@
 
 .lcs-kicker { display: block; font-size: 12px; letter-spacing: .22em; text-transform: uppercase; color: #d9c7a4; margin-bottom: 18px; }
 .lcs-chapter h1,
-.lcs-chapter h2 { font-weight: 300; font-size: clamp(36px, 4.6vw, 66px); line-height: 1.04; margin: 0 0 20px; color: #fbf8f2; }
-.lcs-chapter p { font-size: 17px; line-height: 1.62; color: rgba(245, 241, 234, .84); margin: 0; max-width: 40ch; }
+.lcs-chapter h2 { font-weight: 300; font-size: clamp(36px, 4.6vw, 66px); line-height: 1.04; margin: 0 0 20px; color: #fbf8f2; text-shadow: 0 2px 24px rgba(0, 0, 0, .35); }
+.lcs-chapter p { font-size: 17px; line-height: 1.62; color: rgba(245, 241, 234, .86); margin: 0; max-width: 40ch; text-shadow: 0 1px 14px rgba(0, 0, 0, .4); }
 
 .lcs-cta { display: inline-flex; align-items: center; gap: 10px; margin-top: 28px; padding: 14px 24px; border: 1px solid rgba(233, 215, 178, .7); color: #fbf8f2; text-decoration: none; font-size: 13px; letter-spacing: .14em; text-transform: uppercase; transition: background .3s ease, color .3s ease; }
 .lcs-cta:hover { background: #e9d7b2; color: #1c1a17; }
@@ -46,12 +55,10 @@
 .lcs-dots button.is-active { width: 56px; background: #e9d7b2; }
 .lcs-hint { position: absolute; right: 32px; bottom: 34px; z-index: 3; font-size: 12px; letter-spacing: .2em; text-transform: uppercase; color: rgba(255, 255, 255, .72); }
 
-/* without JS: plain stacked page, no sticky */
+/* without JS: plain page, the image and every chapter stacked, no sticky */
 .lcs:not(.is-js) .lcs-stage { height: auto; min-height: 100vh; padding: 120px 0 80px; }
-.lcs:not(.is-js) .lcs-images { position: relative; display: grid; gap: 0; }
-.lcs:not(.is-js) .lcs-img { position: relative; opacity: 1; transform: none; }
-.lcs:not(.is-js) .lcs-img + .lcs-img { display: none; }
-.lcs:not(.is-js) .lcs-copy { position: relative; height: auto; }
+.lcs:not(.is-js) .lcs-camera { position: relative; height: 60vw; max-height: 100vh; }
+.lcs:not(.is-js) .lcs-copy { position: relative; height: auto; pointer-events: auto; }
 .lcs:not(.is-js) .lcs-chapter + .lcs-chapter { margin-top: 48px; }
 .lcs:not(.is-js) .lcs-dots,
 .lcs:not(.is-js) .lcs-hint,
@@ -59,16 +66,17 @@
 
 /* ---- mobile ---- */
 @media (max-width: 760px) {
-    .lcs-shade { background: linear-gradient(0deg, rgba(18, 16, 13, .92) 0%, rgba(18, 16, 13, .55) 46%, rgba(18, 16, 13, 0) 72%); }
+    .lcs-shade { background: linear-gradient(0deg, rgba(18, 16, 13, .94) 0%, rgba(18, 16, 13, .6) 42%, rgba(18, 16, 13, 0) 70%); }
     .lcs-copy { top: auto; bottom: 0; max-width: none; padding: 0 24px 88px; }
     .lcs-chapter p { font-size: 15px; }
     .lcs-hint { display: none; }
     .lcs-dots { bottom: 28px; }
 }
 
-/* ---- reduced motion: instant swaps, no zoom ---- */
+/* ---- reduced motion: no tilt, no animated transitions ---- */
 @media (prefers-reduced-motion: reduce) {
-    .lcs-img,
-    .lcs-dots button { transition: none !important; }
+    .lcs-camera,
+    .lcs-dots button,
+    .lcs-cta { transition: none !important; }
     .lcs.is-js .lcs-chapter.is-active { animation: none !important; }
 }

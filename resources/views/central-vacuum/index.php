@@ -7,36 +7,18 @@ $view->pushScript('lufly-central-story.js');
 $tr = static fn (string $key): string => e(trans('central_vacuum.' . $key));
 $img = static fn (string $name): string => e(asset($name));
 
-/* Eight chapters, one villa. Each chapter has its own image, derived from the
-   same base render so the framing stays consistent. Copy lives in the
-   central_vacuum.story_cNN_* keys. */
-$chapters = [
-    ['image' => 'base-system.jpg'],
-    ['image' => 'chapter-02-network.jpg'],
-    ['image' => 'chapter-03-inlet.jpg'],
-    ['image' => 'chapter-04-hose-storage.jpg'],
-    ['image' => 'chapter-05-cleaning.jpg'],
-    ['image' => 'chapter-06-power-unit.jpg'],
-    ['image' => 'chapter-07-coverage.jpg'],
-    ['image' => 'chapter-08-integrated.jpg'],
-];
-$total = count($chapters);
+/* One image for the whole story. The camera moves across it (zoom and pan)
+   as the user scrolls; the copy changes per chapter. Focus points live in the
+   script's KEYFRAMES list. */
+$total = 8;
 ?>
 <div class="lufly-central" data-lufly-central>
 
     <section class="lcs" data-lcs aria-label="<?= $tr('story_aria') ?>">
         <div class="lcs-stage">
-            <div class="lcs-images">
-                <?php foreach ($chapters as $i => $c): ?>
-                    <img class="lcs-img<?= $i === 0 ? ' is-on' : '' ?>"
-                         data-lcs-img
-                         src="<?= $img('images/central-vacuum/' . $c['image']) ?>"
-                         alt="<?= $i === 0 ? $tr('story_image_alt') : '' ?>"
-                         width="1280" height="1280"
-                         <?= $i === 0 ? 'fetchpriority="high"' : 'loading="lazy"' ?>
-                         decoding="async"
-                         aria-hidden="<?= $i === 0 ? 'false' : 'true' ?>">
-                <?php endforeach; ?>
+            <div class="lcs-camera" data-lcs-camera>
+                <img class="lcs-img" src="<?= $img('images/central-vacuum/hero-wide.jpg') ?>"
+                     alt="<?= $tr('story_image_alt') ?>" width="1376" height="768" fetchpriority="high" decoding="async">
             </div>
 
             <div class="lcs-shade" aria-hidden="true"></div>
@@ -61,9 +43,9 @@ $total = count($chapters);
             </div>
 
             <div class="lcs-dots" role="group" aria-label="<?= $tr('story_aria') ?>">
-                <?php foreach ($chapters as $i => $c): ?>
-                    <button type="button" data-lcs-dot aria-label="<?= e((string) ($i + 1)) ?>"></button>
-                <?php endforeach; ?>
+                <?php for ($n = 1; $n <= $total; $n++): ?>
+                    <button type="button" data-lcs-dot aria-label="<?= e((string) $n) ?>"></button>
+                <?php endfor; ?>
             </div>
 
             <span class="lcs-hint" aria-hidden="true"><?= $tr('story_scroll_hint') ?></span>
