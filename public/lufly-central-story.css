@@ -93,3 +93,22 @@
     .lcs-cta { transition: none !important; }
     .lcs-ch { opacity: 1; transform: none; filter: none; animation: none !important; }
 }
+
+/* ---- dark theme: a soft black glow from the left instead of a light wash, so the
+   copy stays readable and the photo keeps its colour ---- */
+html[data-theme="dark"] .lcs { background: #0b0c0b; }
+html[data-theme="dark"] .lcs-stage { background: #0b0c0b; }
+html[data-theme="dark"] .lcs-shade {
+    background:
+        linear-gradient(90deg, rgba(0, 0, 0, .78) 0%, rgba(0, 0, 0, .4) 38%, rgba(0, 0, 0, 0) 66%),
+        linear-gradient(0deg, rgba(0, 0, 0, .55), rgba(0, 0, 0, 0) 30%);
+}
+html[data-theme="dark"] .lcs-shade::before {
+    content: ""; position: absolute; inset: 0;
+    background: radial-gradient(70% 95% at 0% 50%, rgba(0, 0, 0, .9) 0%, rgba(0, 0, 0, .35) 55%, rgba(0, 0, 0, 0) 80%);
+}
+@media (max-width: 760px) {
+    html[data-theme="dark"] .lcs-shade {
+        background: linear-gradient(0deg, rgba(0, 0, 0, .94) 0%, rgba(0, 0, 0, .6) 42%, rgba(0, 0, 0, 0) 70%);
+    }
+}

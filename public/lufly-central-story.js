@@ -101,22 +101,34 @@
     const fy = a.fy + (b.fy - a.fy) * t;
     /* on narrow screens the source photo cannot carry a deep zoom without going
        soft, so the camera zooms less there and still follows the same focus */
-    const maxZoom = width < 760 ? 1.6 : 4;
+    const maxZoom = width < 760 ? 2.0 : 4;
     const s = Math.min(maxZoom, a.s + (b.s - a.s) * t);
 
-    /* centre the focus point, then keep the image edges covered */
-    let tx = width / 2 - s * fx * width;
-    let ty = height / 2 - s * fy * height;
-    tx = Math.min(0, Math.max(width - s * width, tx));
-    ty = Math.min(0, Math.max(height - s * height, ty));
-    return { tx, ty, s };
+    /* the photo's own box (16:9, covering the stage, centred). The focus point is
+       a fraction of that box, so the zoom lands on the right detail at any size. */
+    const ratio = 16 / 9;
+    const imgW = Math.max(width, height * ratio);
+    const imgH = imgW / ratio;
+    const left = (width - imgW) / 2;
+    const top = (height - imgH) / 2;
+
+    /* put the focus point in the middle of the stage, then keep the photo covering it */
+    let tx = width / 2 - left - s * fx * imgW;
+    let ty = height / 2 - top - s * fy * imgH;
+    tx = Math.min(-left, Math.max(width - left - s * imgW, tx));
+    ty = Math.min(-top, Math.max(height - top - s * imgH, ty));
+    return { tx, ty, s, imgW, imgH, left, top };
   };
 
   const render = () => {
     raf = 0;
     const width = stage.clientWidth;
     const height = stage.clientHeight;
-    const { tx, ty, s } = cameraAt(progress, width, height);
+    const { tx, ty, s, imgW, imgH, left, top } = cameraAt(progress, width, height);
+    camera.style.width = `${imgW.toFixed(1)}px`;
+    camera.style.height = `${imgH.toFixed(1)}px`;
+    camera.style.left = `${left.toFixed(1)}px`;
+    camera.style.top = `${top.toFixed(1)}px`;
     const rx = reduce ? 0 : tiltX;
     const ry = reduce ? 0 : tiltY;
     /* each variant: full strength on its own chapter, fading out either side */
