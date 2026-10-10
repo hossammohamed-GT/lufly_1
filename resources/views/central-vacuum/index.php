@@ -19,9 +19,23 @@ $total = 8;
             <div class="lcs-camera" data-lcs-camera>
                 <img class="lcs-img" src="<?= $img('images/central-vacuum/hero-wide.jpg') ?>"
                      alt="<?= $tr('story_image_alt') ?>" width="1376" height="768" fetchpriority="high" decoding="async">
-                <img class="lcs-img lcs-img--network" data-lcs-network
-                     src="<?= $img('images/central-vacuum/hero-network.jpg') ?>"
+                <?php
+                /* same-framing variants: each one is faded in only while the camera
+                   is on its chapter (index = chapter position, 0-based) */
+                $variants = [
+                    1 => 'hero-network.jpg',
+                    2 => 'chapter-03-inlet-hose.jpg',
+                    3 => 'chapter-04-hose-cabinet.jpg',
+                    4 => 'chapter-05-cleaning.jpg',
+                    5 => 'chapter-06-power-unit.jpg',
+                    6 => 'chapter-07-coverage.jpg',
+                    7 => 'chapter-08-calm.jpg',
+                ];
+                foreach ($variants as $idx => $file): ?>
+                <img class="lcs-img lcs-img--variant" data-lcs-variant="<?= (int) $idx ?>"
+                     src="<?= $img('images/central-vacuum/' . $file) ?>"
                      alt="" width="1376" height="768" loading="lazy" decoding="async" aria-hidden="true">
+                <?php endforeach; ?>
             </div>
 
             <div class="lcs-shade" aria-hidden="true"></div>
