@@ -14,6 +14,55 @@
 
   /* Camera keyframes, one per chapter. fx/fy = focus point as a fraction of the
      image, s = zoom. 0 = whole villa; higher s = closer on that detail. */
+  /* Typewriter reveal: each chapter's kicker, title and body are split into
+     characters once. Every character has a staggered delay, and the CSS
+     animation only runs while its chapter is active, so it replays each time
+     the chapter comes back. Full text stays readable for screen readers. */
+  const prefersReduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  const typeInto = (el, start, stepMs) => {
+    const text = el.textContent.replace(/\s+/g, ' ').trim();
+    const sr = document.createElement('span');
+    sr.className = 'lcs-sr';
+    sr.textContent = text;
+    el.textContent = '';
+    el.appendChild(sr);
+
+    let index = 0;
+    let delay = start;
+    text.split(' ').forEach((word, wi, words) => {
+      const wordEl = document.createElement('span');
+      wordEl.className = 'lcs-word';
+      wordEl.setAttribute('aria-hidden', 'true');
+      Array.from(word).forEach((ch) => {
+        const c = document.createElement('span');
+        c.className = 'lcs-ch';
+        c.textContent = ch;
+        delay = start + index * stepMs;
+        c.style.animationDelay = `${delay}ms`;
+        index += 1;
+        wordEl.appendChild(c);
+      });
+      el.appendChild(wordEl);
+      if (wi < words.length - 1) el.appendChild(document.createTextNode(' '));
+    });
+    return delay + stepMs * 2;
+  };
+
+  const setupTyping = (chapter) => {
+    const kicker = chapter.querySelector('.lcs-kicker');
+    const heading = chapter.querySelector('h1, h2');
+    const body = chapter.querySelector('p');
+    let t = 0;
+    if (kicker) t = typeInto(kicker, t, 14);
+    if (heading) t = typeInto(heading, t, 18);
+    if (body) typeInto(body, t, 6);
+  };
+
+  if (!prefersReduced) {
+    chapters.forEach(setupTyping);
+  }
+
   const KEYFRAMES = [
     { fx: 0.50, fy: 0.50, s: 1.00 }, // 01 the big picture
     { fx: 0.68, fy: 0.40, s: 1.80 }, // 02 the network: riser and branches

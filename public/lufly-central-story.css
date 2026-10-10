@@ -43,8 +43,14 @@
 .lcs-copy a { pointer-events: auto; }
 .lcs-chapter { max-width: 440px; }
 .lcs.is-js .lcs-chapter[hidden] { display: none; }
-.lcs.is-js .lcs-chapter.is-active { animation: lcs-in .9s ease both; }
-@keyframes lcs-in { from { opacity: 0; transform: translateY(16px); } to { opacity: 1; transform: none; } }
+.lcs-word { display: inline-block; white-space: nowrap; }
+.lcs-ch { display: inline-block; opacity: 0; transform: translateY(.45em); filter: blur(3px); }
+.lcs-chapter.is-active .lcs-ch { animation: lcs-ch .42s cubic-bezier(.2, .7, .2, 1) both; }
+@keyframes lcs-ch {
+    from { opacity: 0; transform: translateY(.45em); filter: blur(3px); }
+    to   { opacity: 1; transform: none; filter: none; }
+}
+.lcs-sr { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
 
 .lcs-kicker { display: block; font-size: 12px; letter-spacing: .22em; text-transform: uppercase; color: #d9c7a4; margin-bottom: 18px; }
 .lcs-chapter h1,
@@ -82,5 +88,5 @@
     .lcs-camera,
     .lcs-dots button,
     .lcs-cta { transition: none !important; }
-    .lcs.is-js .lcs-chapter.is-active { animation: none !important; }
+    .lcs-ch { opacity: 1; transform: none; filter: none; animation: none !important; }
 }
