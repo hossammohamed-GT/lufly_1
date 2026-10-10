@@ -73,7 +73,7 @@ $total = 8;
     </section>
 
     <section class="lc-feature lc-feature--plan lc-feature--focus-plan lc-reveal">
-        <div class="lc-feature__media"><img src="<?= $img('images/central-vacuum/installation-path.jpg') ?>" alt="LUFLY installation crew routing concealed pipes and mounting the central unit in a villa under construction" width="3000" height="1688" loading="lazy" decoding="async"></div>
+        <div class="lc-feature__media"><img src="<?= $img('images/central-vacuum/installation-path.jpg') ?>" alt="LUFLY installation crew routing concealed pipes and mounting the central unit in a villa under construction" width="2752" height="1536" loading="lazy" decoding="async"></div>
         <div class="lc-feature__copy"><span class="lc-eyebrow"><?= $tr('install_tag') ?></span><h2><?= $tr('install_title') ?></h2><p><?= $tr('install_desc') ?></p><ol><?php for ($i = 1; $i <= 5; $i++): ?><li><?= $tr('install_' . $i) ?></li><?php endfor; ?></ol></div>
     </section>
 
