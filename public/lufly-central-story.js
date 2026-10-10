@@ -16,12 +16,12 @@
      image, s = zoom. 0 = whole villa; higher s = closer on that detail. */
   const KEYFRAMES = [
     { fx: 0.50, fy: 0.50, s: 1.00 }, // 01 the big picture
-    { fx: 0.64, fy: 0.42, s: 1.80 }, // 02 the hidden network (riser and branches)
-    { fx: 0.64, fy: 0.51, s: 2.80 }, // 03 wall inlet in the living room
-    { fx: 0.72, fy: 0.80, s: 2.40 }, // 04 hose storage in the service room
-    { fx: 0.73, fy: 0.57, s: 2.30 }, // 05 cleaning the living room floor
-    { fx: 0.65, fy: 0.81, s: 3.20 }, // 06 central power unit
-    { fx: 0.60, fy: 0.50, s: 1.20 }, // 07 coverage across the home
+    { fx: 0.68, fy: 0.40, s: 1.80 }, // 02 the network: riser and branches
+    { fx: 0.48, fy: 0.52, s: 2.60 }, // 03 wall inlet in the living room
+    { fx: 0.51, fy: 0.79, s: 2.60 }, // 04 hose storage cabinet in the service room
+    { fx: 0.30, fy: 0.55, s: 2.20 }, // 05 cleaning the living room floor
+    { fx: 0.79, fy: 0.77, s: 2.80 }, // 06 central power unit
+    { fx: 0.50, fy: 0.50, s: 1.20 }, // 07 coverage across the home
     { fx: 0.50, fy: 0.50, s: 1.00 }, // 08 integrated living
   ];
 

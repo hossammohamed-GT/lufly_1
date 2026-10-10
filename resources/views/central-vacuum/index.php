@@ -17,24 +17,23 @@ $total = 8;
     <section class="lcs" data-lcs aria-label="<?= $tr('story_aria') ?>">
         <div class="lcs-stage">
             <div class="lcs-camera" data-lcs-camera>
-                <img class="lcs-img" src="<?= $img('images/central-vacuum/hero-wide.jpg') ?>"
-                     alt="<?= $tr('story_image_alt') ?>" width="1376" height="768" fetchpriority="high" decoding="async">
+                <img class="lcs-img" src="<?= $img('images/central-vacuum/villa-01.jpg') ?>"
+                     alt="<?= $tr('story_image_alt') ?>" width="3375" height="1900" fetchpriority="high" decoding="async">
                 <?php
                 /* same-framing variants: each one is faded in only while the camera
                    is on its chapter (index = chapter position, 0-based) */
                 $variants = [
-                    1 => 'hero-network.jpg',
-                    2 => 'chapter-03-inlet-hose.jpg',
-                    3 => 'chapter-04-hose-cabinet.jpg',
-                    4 => 'chapter-05-cleaning.jpg',
-                    5 => 'chapter-06-power-unit.jpg',
-                    6 => 'chapter-07-coverage.jpg',
-                    7 => 'chapter-08-calm.jpg',
+                    1 => 'villa-02.jpg', // 02 network: brighter pipes and lit main lines
+                    2 => 'villa-03.jpg', // 03 wall inlets: inlets lit in every room
+                    4 => 'villa-05.jpg', // 05 cleaning journey: hose and dust path
+                    5 => 'villa-04.jpg', // 06 power unit: canister with collected dust
+                    6 => 'villa-06.jpg', // 07 coverage: freedom to clean every room
+                    7 => 'villa-07.jpg', // 08 integrated: calm final state
                 ];
                 foreach ($variants as $idx => $file): ?>
                 <img class="lcs-img lcs-img--variant" data-lcs-variant="<?= (int) $idx ?>"
                      src="<?= $img('images/central-vacuum/' . $file) ?>"
-                     alt="" width="1376" height="768" loading="lazy" decoding="async" aria-hidden="true">
+                     alt="" width="3375" height="1900" loading="lazy" decoding="async" aria-hidden="true">
                 <?php endforeach; ?>
             </div>
 
