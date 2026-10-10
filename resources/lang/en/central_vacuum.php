@@ -171,4 +171,7 @@ return [
     'story_c08_kicker' => '08 — Integrated Living',
     'story_c08_title' => 'Invisible Technology. Exceptional Living.',
     'story_c08_body' => 'A complete system planned around your home and its needs.',
+
+    // central vacuum story (sticky scroll page)
+    'install_image_alt' => 'LUFLY installation crew routing concealed pipes and mounting the central unit in a villa under construction',
 ];
