@@ -7,17 +7,16 @@ $view->pushScript('lufly-central-story.js');
 $tr = static fn (string $key): string => e(trans('central_vacuum.' . $key));
 $img = static fn (string $name): string => e(asset($name));
 
-/* The sticky story: one cutaway house, seven chapters (intro + six benefits).
-   Each chapter sets a camera focus (percent of the stage) and the scale the
-   camera pushes to. Overlay layers carry data-ch lists, toggled by the script. */
+/* One sticky story: each chapter has its own image (same framing), and the
+   scroll position cross-fades between them while the copy changes. */
 $chapters = [
-    ['kicker' => 'intro',  'focus' => '50% 50%', 'scale' => '1'],
-    ['kicker' => '01',     'focus' => '52% 90%', 'scale' => '1.5', 'benefit' => 1],
-    ['kicker' => '02',     'focus' => '59% 68%', 'scale' => '1.35', 'benefit' => 2],
-    ['kicker' => '03',     'focus' => '66% 59%', 'scale' => '1.3', 'benefit' => 3],
-    ['kicker' => '04',     'focus' => '70% 45%', 'scale' => '1.35', 'benefit' => 4],
-    ['kicker' => '05',     'focus' => '80% 73%', 'scale' => '1.5', 'benefit' => 5],
-    ['kicker' => '06',     'focus' => '50% 50%', 'scale' => '1', 'benefit' => 6],
+    ['image' => 'chapter-00-system.jpg', 'kicker' => 'intro'],
+    ['image' => 'chapter-01-suction.jpg', 'kicker' => '01', 'benefit' => 1],
+    ['image' => 'chapter-02-quiet.jpg',   'kicker' => '02', 'benefit' => 2],
+    ['image' => 'chapter-03-air.jpg',     'kicker' => '03', 'benefit' => 3],
+    ['image' => 'chapter-04-hidden.jpg',  'kicker' => '04', 'benefit' => 4],
+    ['image' => 'chapter-05-hose.jpg',    'kicker' => '05', 'benefit' => 5],
+    ['image' => 'chapter-06-villa.jpg',   'kicker' => '06', 'benefit' => 6],
 ];
 $total = count($chapters);
 ?>
@@ -25,66 +24,24 @@ $total = count($chapters);
 
     <section class="lcs" data-lcs aria-label="<?= $tr('story_aria') ?>">
         <div class="lcs-stage">
-            <div class="lcs-camera" data-lcs-camera>
-                <img src="<?= $img('images/central-vacuum/master-cutaway.jpg') ?>" alt="<?= $tr('story_image_alt') ?>" width="1568" height="882" fetchpriority="high">
-                <svg class="lcs-svg" viewBox="0 0 1568 882" preserveAspectRatio="xMidYMid slice" aria-hidden="true" focusable="false">
-                    <!-- the water-blue network: draws itself in on chapter 03 -->
-                    <g class="lcs-pipes">
-                        <path class="lcs-pipe" data-ch="3,4,5,6" pathLength="1" d="M820 800 L1030 800 L1030 150"/>
-                        <path class="lcs-pipe" data-ch="3,4,5,6" pathLength="1" d="M1030 640 L905 640"/>
-                        <path class="lcs-pipe" data-ch="3,4,5,6" pathLength="1" d="M1030 640 L1250 640"/>
-                        <path class="lcs-pipe" data-ch="3,4,5,6" pathLength="1" d="M1030 440 L1300 440"/>
-                        <path class="lcs-pipe" data-ch="3,4,5,6" pathLength="1" d="M1030 250 L1200 250"/>
-                    </g>
-
-                    <!-- 01 power unit -->
-                    <g class="lcs-l" data-ch="1,2">
-                        <circle class="lcs-halo" cx="820" cy="800" r="48"/>
-                        <rect class="lcs-unit" x="802" y="768" width="36" height="64" rx="8"/>
-                        <text class="lcs-label" x="820" y="748" text-anchor="middle"><?= $tr('home_label_unit') ?></text>
-                    </g>
-
-                    <!-- 02 quiet -->
-                    <g class="lcs-l" data-ch="2">
-                        <ellipse class="lcs-ring" cx="930" cy="600" rx="200" ry="105"/>
-                        <ellipse class="lcs-ring lcs-ring--outer" cx="930" cy="600" rx="300" ry="160"/>
-                        <text class="lcs-label" x="930" y="462" text-anchor="middle"><?= $tr('story_quiet_label') ?></text>
-                    </g>
-
-                    <!-- 03 cleaner air: dust travels from the inlet to the unit -->
-                    <g class="lcs-l" data-ch="3">
-                        <circle class="lcs-dust" r="6"><animateMotion dur="2.6s" repeatCount="indefinite" path="M905 640 L1030 640 L1030 800 L820 800"/></circle>
-                        <circle class="lcs-dust" r="5"><animateMotion dur="2.6s" begin="0.9s" repeatCount="indefinite" path="M905 640 L1030 640 L1030 800 L820 800"/></circle>
-                        <circle class="lcs-dust" r="4"><animateMotion dur="2.6s" begin="1.8s" repeatCount="indefinite" path="M905 640 L1030 640 L1030 800 L820 800"/></circle>
-                    </g>
-
-                    <!-- 05 + 06 inlets and the hose -->
-                    <g class="lcs-l" data-ch="5,6">
-                        <path class="lcs-hose" d="M1250 640 Q1215 700 1160 742"/>
-                        <g class="lcs-inlet"><circle class="lcs-inlet-dot" cx="905" cy="640" r="10"/></g>
-                        <g class="lcs-inlet"><circle class="lcs-inlet-dot" cx="1250" cy="640" r="10"/></g>
-                        <g class="lcs-inlet"><circle class="lcs-inlet-dot" cx="1300" cy="440" r="10"/></g>
-                        <g class="lcs-inlet"><circle class="lcs-inlet-dot" cx="1200" cy="250" r="10"/></g>
-                    </g>
-
-                    <!-- 06 room names -->
-                    <g class="lcs-l" data-ch="6">
-                        <text class="lcs-label" x="905" y="612" text-anchor="middle"><?= $tr('diagram_living') ?></text>
-                        <text class="lcs-label" x="1250" y="612" text-anchor="middle"><?= $tr('diagram_kitchen') ?></text>
-                        <text class="lcs-label" x="1300" y="412" text-anchor="middle"><?= $tr('diagram_suite') ?></text>
-                        <text class="lcs-label" x="1200" y="222" text-anchor="middle"><?= $tr('label_study') ?></text>
-                    </g>
-                </svg>
+            <div class="lcs-images">
+                <?php foreach ($chapters as $i => $c): ?>
+                    <img class="lcs-img<?= $i === 0 ? ' is-on' : '' ?>"
+                         data-lcs-img
+                         src="<?= $img('images/central-vacuum/' . $c['image']) ?>"
+                         alt="<?= $i === 0 ? $tr('story_image_alt') : '' ?>"
+                         width="1568" height="882"
+                         <?= $i === 0 ? 'fetchpriority="high"' : 'loading="lazy"' ?>
+                         decoding="async"
+                         aria-hidden="<?= $i === 0 ? 'false' : 'true' ?>">
+                <?php endforeach; ?>
             </div>
 
             <div class="lcs-shade" aria-hidden="true"></div>
 
             <div class="lcs-copy">
                 <?php foreach ($chapters as $i => $c): ?>
-                    <div class="lcs-chapter"
-                         data-lcs-chapter
-                         data-focus="<?= e($c['focus']) ?>"
-                         data-scale="<?= e($c['scale']) ?>">
+                    <div class="lcs-chapter" data-lcs-chapter>
                         <span class="lcs-kicker">
                             <?php if ($c['kicker'] === 'intro'): ?>
                                 <?= $tr('story_intro_kicker') ?>

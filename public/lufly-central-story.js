@@ -1,17 +1,15 @@
-/* Central vacuum story: scroll picks the chapter; the house stays, the copy
-   and the overlays change, and the camera pushes toward each chapter's focus. */
+/* Central vacuum story: scroll picks the chapter; the image cross-fades to the
+   chapter's own picture and the copy changes. Dots jump to a chapter. */
 (() => {
   const root = document.querySelector('[data-lcs]');
   if (!root) return;
 
-  const camera = root.querySelector('[data-lcs-camera]');
+  const images = Array.from(root.querySelectorAll('[data-lcs-img]'));
   const chapters = Array.from(root.querySelectorAll('[data-lcs-chapter]'));
   const dots = Array.from(root.querySelectorAll('[data-lcs-dot]'));
-  const layers = Array.from(root.querySelectorAll('[data-ch]'));
-  const count = chapters.length;
-  if (!camera || !count) return;
+  const count = Math.min(images.length, chapters.length);
+  if (!count) return;
 
-  const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
   let current = -1;
 
   root.classList.add('is-js');
@@ -20,21 +18,17 @@
     if (index === current) return;
     current = index;
 
+    images.forEach((img, i) => {
+      img.classList.toggle('is-on', i === index);
+      img.setAttribute('aria-hidden', i === index ? 'false' : 'true');
+    });
+
     chapters.forEach((el, i) => {
       el.classList.toggle('is-active', i === index);
       el.hidden = i !== index;
     });
 
     dots.forEach((dot, i) => dot.classList.toggle('is-active', i === index));
-
-    layers.forEach((el) => {
-      const list = el.getAttribute('data-ch').split(',').map(Number);
-      el.classList.toggle('is-on', list.includes(index));
-    });
-
-    const chapter = chapters[index];
-    camera.style.transformOrigin = chapter.getAttribute('data-focus') || '50% 50%';
-    camera.style.transform = reduce ? 'none' : `scale(${chapter.getAttribute('data-scale') || '1'})`;
   };
 
   const progress = () => {
@@ -54,6 +48,7 @@
     });
   };
 
+  const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
   dots.forEach((dot, i) => {
     dot.addEventListener('click', () => {
       const span = root.offsetHeight - window.innerHeight;

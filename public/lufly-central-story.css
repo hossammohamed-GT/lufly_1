@@ -1,15 +1,19 @@
-/* Central vacuum: one sticky cutaway house, seven chapters (intro + six benefits). */
+/* Central vacuum: one sticky stage; each chapter cross-fades to its own image. */
 .lcs { position: relative; background: #1c1a17; color: #f5f1ea; }
 .lcs.is-js { height: 700vh; }
 
 .lcs-stage { position: relative; height: 100vh; min-height: 560px; overflow: hidden; }
 .lcs.is-js .lcs-stage { position: sticky; top: 0; }
 
-.lcs-camera { position: absolute; inset: 0; transition: transform 1.4s cubic-bezier(.22, .7, .2, 1); will-change: transform; }
-.lcs-camera img,
-.lcs-svg { position: absolute; inset: 0; width: 100%; height: 100%; }
-.lcs-camera img { object-fit: cover; object-position: center; }
-.lcs-svg { pointer-events: none; overflow: visible; }
+/* images stacked in the same box; only the active one is visible */
+.lcs-images { position: absolute; inset: 0; }
+.lcs-img {
+    position: absolute; inset: 0; width: 100%; height: 100%;
+    object-fit: cover; object-position: center;
+    opacity: 0; transform: scale(1.04);
+    transition: opacity 1s ease, transform 2.4s cubic-bezier(.22, .7, .2, 1);
+}
+.lcs-img.is-on { opacity: 1; transform: scale(1); }
 
 .lcs-shade {
     position: absolute; inset: 0; pointer-events: none;
@@ -41,39 +45,14 @@
 
 /* without JS: plain stacked page, no sticky */
 .lcs:not(.is-js) .lcs-stage { height: auto; min-height: 100vh; padding: 120px 0 80px; }
-.lcs:not(.is-js) .lcs-camera { position: absolute; }
+.lcs:not(.is-js) .lcs-images { position: relative; display: grid; gap: 0; }
+.lcs:not(.is-js) .lcs-img { position: relative; opacity: 1; transform: none; }
+.lcs:not(.is-js) .lcs-img + .lcs-img { display: none; }
 .lcs:not(.is-js) .lcs-copy { position: relative; height: auto; }
 .lcs:not(.is-js) .lcs-chapter + .lcs-chapter { margin-top: 48px; }
 .lcs:not(.is-js) .lcs-dots,
-.lcs:not(.is-js) .lcs-hint { display: none; }
-
-/* ---- overlays (SVG, same aspect as the photo) ---- */
-.lcs-l { opacity: 0; transition: opacity .9s ease; }
-.lcs-l.is-on { opacity: 1; }
-
-.lcs-pipe {
-    fill: none; stroke: #8fd8ff; stroke-width: 7; stroke-linecap: round; stroke-linejoin: round;
-    stroke-dasharray: 1; stroke-dashoffset: 1; opacity: 0;
-    filter: drop-shadow(0 0 6px rgba(120, 210, 255, .9));
-    transition: stroke-dashoffset 1.8s cubic-bezier(.4, 0, .2, 1), opacity .6s ease;
-}
-.lcs-pipe.is-on { stroke-dashoffset: 0; opacity: 1; }
-
-.lcs-unit { fill: #e9f9ff; stroke: #7fd3ff; stroke-width: 2; filter: drop-shadow(0 0 12px #7fd3ff); }
-.lcs-halo { fill: rgba(127, 211, 255, .18); stroke: rgba(127, 211, 255, .7); stroke-width: 2; transform-origin: 820px 800px; animation: lcs-halo 2.6s ease-in-out infinite; }
-@keyframes lcs-halo { 0%, 100% { transform: scale(.85); opacity: .5; } 50% { transform: scale(1.12); opacity: 1; } }
-
-.lcs-ring { fill: none; stroke: rgba(190, 230, 255, .75); stroke-width: 2.5; stroke-dasharray: 10 12; }
-.lcs-ring--outer { stroke: rgba(190, 230, 255, .35); }
-
-.lcs-dust { fill: #bfe9ff; filter: drop-shadow(0 0 5px #7fd3ff); }
-
-.lcs-hose { fill: none; stroke: #2a2a2a; stroke-width: 9; stroke-linecap: round; }
-
-.lcs-inlet-dot { fill: #dff6ff; stroke: #7fd3ff; stroke-width: 3; filter: drop-shadow(0 0 8px #7fd3ff); animation: lcs-inlet 2.4s ease-in-out infinite; transform-box: fill-box; transform-origin: center; }
-@keyframes lcs-inlet { 0%, 100% { transform: scale(.9); opacity: .7; } 50% { transform: scale(1.25); opacity: 1; } }
-
-.lcs-label { fill: #fbf8f2; font-size: 22px; letter-spacing: .06em; paint-order: stroke; stroke: rgba(20, 18, 15, .6); stroke-width: 6px; }
+.lcs:not(.is-js) .lcs-hint,
+.lcs:not(.is-js) .lcs-shade { display: none; }
 
 /* ---- mobile ---- */
 @media (max-width: 760px) {
@@ -84,13 +63,9 @@
     .lcs-dots { bottom: 28px; }
 }
 
-/* ---- reduced motion: no camera push, no drawing, no pulses ---- */
+/* ---- reduced motion: instant swaps, no zoom ---- */
 @media (prefers-reduced-motion: reduce) {
-    .lcs-camera,
-    .lcs-l,
-    .lcs-pipe,
+    .lcs-img,
     .lcs-dots button { transition: none !important; }
-    .lcs-halo,
-    .lcs-inlet-dot,
     .lcs.is-js .lcs-chapter.is-active { animation: none !important; }
 }
