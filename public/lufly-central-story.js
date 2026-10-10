@@ -99,7 +99,10 @@
     const b = KEYFRAMES[i + 1];
     const fx = a.fx + (b.fx - a.fx) * t;
     const fy = a.fy + (b.fy - a.fy) * t;
-    const s = a.s + (b.s - a.s) * t;
+    /* on narrow screens the source photo cannot carry a deep zoom without going
+       soft, so the camera zooms less there and still follows the same focus */
+    const maxZoom = width < 760 ? 1.6 : 4;
+    const s = Math.min(maxZoom, a.s + (b.s - a.s) * t);
 
     /* centre the focus point, then keep the image edges covered */
     let tx = width / 2 - s * fx * width;
@@ -122,8 +125,11 @@
       el.style.opacity = Math.max(0, 1 - Math.abs(seg - idx)).toFixed(3);
     });
 
+    const tilt = rx || ry
+      ? ` rotateX(${rx.toFixed(2)}deg) rotateY(${ry.toFixed(2)}deg)`
+      : '';
     camera.style.transform =
-      `translate(${tx.toFixed(1)}px, ${ty.toFixed(1)}px) scale(${s.toFixed(4)}) rotateX(${rx.toFixed(2)}deg) rotateY(${ry.toFixed(2)}deg)`;
+      `translate(${tx.toFixed(1)}px, ${ty.toFixed(1)}px) scale(${s.toFixed(4)})${tilt}`;
 
     const idx = Math.min(count - 1, Math.max(0, Math.round(progress * (count - 1))));
     if (idx !== activeChapter) {

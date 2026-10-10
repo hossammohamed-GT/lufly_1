@@ -1,19 +1,22 @@
 /* Central vacuum: one still image, a scroll-scrubbed camera (zoom and pan),
    and a subtle pointer tilt for depth. The copy changes per chapter. */
 .lcs { position: relative; background: #1c1a17; color: #f5f1ea; }
-.lcs.is-js { height: 800vh; }
+/* the first screen is exactly the viewport: the section starts under the
+   sticky navbar (the photo layer reaches up under it, as the hero does) */
+.lcs.is-js {
+    height: 800vh;
+    margin-block-start: calc(-1 * (var(--luann-h, 0px) + var(--mnav-row1, 56px)));
+}
 
-.lcs-stage { position: relative; height: 100vh; min-height: 560px; overflow: hidden; background: #1c1a17; perspective: 1400px; }
+.lcs-stage { position: relative; height: 100vh; height: 100svh; min-height: 560px; overflow: hidden; background: #1c1a17; perspective: 1400px; }
 .lcs.is-js .lcs-stage { position: sticky; top: 0; }
 
 /* the camera holds the one image; JS sets its translate/scale and a small tilt */
 .lcs-camera {
     position: absolute; inset: 0;
     transform-origin: 0 0;
-    transform-style: preserve-3d;
-    will-change: transform;
-    --tilt-x: 0deg; --tilt-y: 0deg;
-    transform: rotateX(var(--tilt-x)) rotateY(var(--tilt-y));
+    /* no will-change and no preserve-3d: those rasterise the photo at its
+       starting size and make the zoomed view look soft */
     transition: transform .6s cubic-bezier(.22, .7, .2, 1);
 }
 .lcs-img {
