@@ -7,16 +7,18 @@ $view->pushScript('lufly-central-story.js');
 $tr = static fn (string $key): string => e(trans('central_vacuum.' . $key));
 $img = static fn (string $name): string => e(asset($name));
 
-/* One sticky story: each chapter has its own image (same framing), and the
-   scroll position cross-fades between them while the copy changes. */
+/* Eight chapters, one villa. Each chapter has its own image, derived from the
+   same base render so the framing stays consistent. Copy lives in the
+   central_vacuum.story_cNN_* keys. */
 $chapters = [
-    ['image' => 'base-system.jpg', 'kicker' => 'intro'],
-    ['image' => 'chapter-01-suction.jpg', 'kicker' => '01', 'benefit' => 1],
-    ['image' => 'chapter-02-quiet.jpg',   'kicker' => '02', 'benefit' => 2],
-    ['image' => 'chapter-03-air.jpg',     'kicker' => '03', 'benefit' => 3],
-    ['image' => 'chapter-04-hidden.jpg',  'kicker' => '04', 'benefit' => 4],
-    ['image' => 'chapter-05-hose.jpg',    'kicker' => '05', 'benefit' => 5],
-    ['image' => 'chapter-06-villa.jpg',   'kicker' => '06', 'benefit' => 6],
+    ['image' => 'base-system.jpg'],
+    ['image' => 'chapter-02-network.jpg'],
+    ['image' => 'chapter-03-inlet.jpg'],
+    ['image' => 'chapter-04-hose-storage.jpg'],
+    ['image' => 'chapter-05-cleaning.jpg'],
+    ['image' => 'chapter-06-power-unit.jpg'],
+    ['image' => 'chapter-07-coverage.jpg'],
+    ['image' => 'chapter-08-integrated.jpg'],
 ];
 $total = count($chapters);
 ?>
@@ -40,24 +42,22 @@ $total = count($chapters);
             <div class="lcs-shade" aria-hidden="true"></div>
 
             <div class="lcs-copy">
-                <?php foreach ($chapters as $i => $c): ?>
+                <?php for ($n = 1; $n <= $total; $n++):
+                    $k = sprintf('story_c%02d_', $n);
+                ?>
                     <div class="lcs-chapter" data-lcs-chapter>
-                        <span class="lcs-kicker">
-                            <?php if ($c['kicker'] === 'intro'): ?>
-                                <?= $tr('story_intro_kicker') ?>
-                            <?php else: ?>
-                                <?= e($c['kicker']) ?> / <?= e(sprintf('%02d', $total - 1)) ?>
-                            <?php endif; ?>
-                        </span>
-                        <?php if ($c['kicker'] === 'intro'): ?>
-                            <h1><?= $tr('story_intro_title') ?></h1>
-                            <p><?= $tr('story_intro_desc') ?></p>
+                        <span class="lcs-kicker"><?= $tr($k . 'kicker') ?></span>
+                        <?php if ($n === 1): ?>
+                            <h1><?= $tr($k . 'title') ?></h1>
                         <?php else: ?>
-                            <h2><?= $tr('benefit_' . $c['benefit'] . '_title') ?></h2>
-                            <p><?= $tr('benefit_' . $c['benefit'] . '_desc') ?></p>
+                            <h2><?= $tr($k . 'title') ?></h2>
+                        <?php endif; ?>
+                        <p><?= $tr($k . 'body') ?></p>
+                        <?php if ($n === $total): ?>
+                            <a class="lcs-cta" href="<?= e(route('contact')) ?>"><?= $tr('cta_primary') ?><span>↗</span></a>
                         <?php endif; ?>
                     </div>
-                <?php endforeach; ?>
+                <?php endfor; ?>
             </div>
 
             <div class="lcs-dots" role="group" aria-label="<?= $tr('story_aria') ?>">

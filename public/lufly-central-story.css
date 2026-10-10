@@ -38,6 +38,9 @@
 .lcs-chapter h2 { font-weight: 300; font-size: clamp(36px, 4.6vw, 66px); line-height: 1.04; margin: 0 0 20px; color: #fbf8f2; }
 .lcs-chapter p { font-size: 17px; line-height: 1.62; color: rgba(245, 241, 234, .84); margin: 0; max-width: 40ch; }
 
+.lcs-cta { display: inline-flex; align-items: center; gap: 10px; margin-top: 28px; padding: 14px 24px; border: 1px solid rgba(233, 215, 178, .7); color: #fbf8f2; text-decoration: none; font-size: 13px; letter-spacing: .14em; text-transform: uppercase; transition: background .3s ease, color .3s ease; }
+.lcs-cta:hover { background: #e9d7b2; color: #1c1a17; }
+
 .lcs-dots { position: absolute; left: clamp(24px, 6vw, 96px); bottom: 36px; display: flex; gap: 10px; z-index: 3; }
 .lcs-dots button { width: 28px; height: 3px; border: 0; padding: 0; background: rgba(255, 255, 255, .3); cursor: pointer; transition: width .4s ease, background .4s ease; }
 .lcs-dots button.is-active { width: 56px; background: #e9d7b2; }
