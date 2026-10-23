@@ -27,11 +27,38 @@
   border-bottom: 0;
 }
 .category-explorer--catalog::before { display: none; }
-.category-explorer--home { padding: clamp(44px, 5vw, 68px) 0; }
-.category-explorer--home .category-explorer-heading { margin-bottom: clamp(20px, 2.5vw, 30px); }
-.category-explorer--home .category-explorer-heading .section-title { margin-block: 10px 12px; }
-.category-explorer--home .category-explorer-heading .section-subtitle { margin-block: 0; }
-.category-explorer--home .category-explorer-heading .category-explorer-total { margin-top: 10px; }
+.category-explorer--home { padding: clamp(44px, 4.5vw, 48px) 0; }
+.category-explorer--home .category-explorer-heading {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(240px, 0.42fr);
+  grid-template-areas:
+    "tag subtitle"
+    "title subtitle"
+    "total subtitle";
+  align-items: end;
+  column-gap: 40px;
+  max-width: none;
+  margin-bottom: clamp(20px, 2vw, 26px);
+}
+.category-explorer--home .category-explorer-heading .section-tag { grid-area: tag; }
+.category-explorer--home .category-explorer-heading .section-title {
+  grid-area: title;
+  margin: 10px 0 0;
+  font-family: 'Playfair Display', Georgia, 'Times New Roman', serif;
+  font-size: clamp(34px, 3.8vw, 56px);
+  font-weight: 560;
+  line-height: 1.05;
+  letter-spacing: -0.04em;
+}
+.category-explorer--home .category-explorer-heading .section-subtitle {
+  grid-area: subtitle;
+  align-self: center;
+  max-width: 380px;
+  margin: 0;
+  padding-inline-start: 24px;
+  border-inline-start: 1px solid var(--ce-line);
+}
+.category-explorer--home .category-explorer-heading .category-explorer-total { grid-area: total; margin-top: 10px; }
 .category-explorer-inner { position: relative; }
 
 .category-explorer-heading {
@@ -73,16 +100,19 @@
 .category-explorer-compact-head .category-explorer-kicker { color: var(--ce-accent-deep); }
 .category-explorer--catalog .category-explorer-shell { margin-bottom: 38px; }
 
-/* Nine illustrated main categories. Full-bleed arched cards keep the imagery
-   prominent while the grid and accordion remain free of horizontal scrolling. */
+/* The lead category occupies the tall left tile; eight companions form a
+   compact mosaic beside it. DOM reordering below keeps keyboard order aligned. */
 .category-root-list {
+  --root-card-height: clamp(148px, 11vw, 174px);
   display: grid;
-  grid-template-columns: repeat(9, minmax(0, 1fr));
+  grid-template-columns: minmax(0, 2fr) repeat(4, minmax(0, 1fr));
   grid-auto-flow: dense;
+  align-items: stretch;
   gap: 14px 12px;
   overflow: visible;
   padding: 2px;
 }
+.category-explorer--home .category-root-list { --root-card-height: clamp(132px, 9vw, 142px); }
 
 .category-roots-label {
   display: flex;
@@ -106,13 +136,13 @@
   justify-content: flex-end;
   align-items: flex-start;
   gap: 5px;
-  height: clamp(188px, 14vw, 218px);
+  height: var(--root-card-height);
   min-width: 0;
   min-height: 0;
   overflow: hidden;
   padding: 52px 12px 13px;
   border: 1px solid color-mix(in srgb, var(--ds-text) 16%, transparent);
-  border-radius: 999px 999px 16px 16px;
+  border-radius: var(--root-radius, 38px 8px 14px 14px);
   background: var(--ds-surface);
   color: #fff;
   text-decoration: none;
@@ -128,9 +158,11 @@
   background: linear-gradient(to bottom, rgba(12, 17, 16, 0.01) 22%, rgba(12, 17, 16, 0.12) 44%, rgba(12, 17, 16, 0.94) 100%);
   pointer-events: none;
 }
-.category-explorer--home .category-root { height: clamp(172px, 12.8vw, 198px); }
+.category-root--shape-1 { --root-radius: 38px 8px 14px 14px; }
+.category-root--shape-2 { --root-radius: 8px 38px 14px 14px; }
+.category-root--shape-3 { --root-radius: 46px 18px 14px 14px; }
+.category-root--shape-4 { --root-radius: 18px 46px 14px 14px; }
 .category-root:hover {
-  transform: translateY(-3px);
   border-color: color-mix(in srgb, var(--ce-accent) 65%, var(--ds-border));
   box-shadow: 0 12px 28px color-mix(in srgb, var(--lu-ink-950) 12%, transparent);
 }
@@ -140,6 +172,17 @@
   color: #fff;
   box-shadow: 0 12px 28px color-mix(in srgb, var(--ce-accent) 20%, transparent);
 }
+.category-root.is-lead {
+  --root-radius: 72px 18px 18px 18px;
+  grid-column: 1;
+  grid-row: 1 / span 2;
+  align-self: stretch;
+  height: auto;
+  padding: 64px 24px 24px;
+}
+.category-root--shape-2.is-lead { --root-radius: 18px 72px 18px 18px; }
+.category-root--shape-3.is-lead { --root-radius: 82px 28px 18px 18px; }
+.category-root--shape-4.is-lead { --root-radius: 28px 82px 18px 18px; }
 
 .category-root-index {
   position: relative;
@@ -232,6 +275,20 @@
   background: #fff;
   color: var(--ce-accent);
   transform: rotate(90deg);
+}
+.category-root.is-lead .category-root-index { font-size: 10px; }
+.category-root.is-lead .category-root-copy strong {
+  max-width: 14ch;
+  font-size: clamp(24px, 2.6vw, 38px);
+  line-height: 1.05;
+}
+.category-root.is-lead .category-root-copy small { padding-inline-end: 42px; font-size: 10px; }
+.category-root.is-lead .category-root-arrow {
+  inset-inline-end: 22px;
+  inset-block-end: 22px;
+  width: 18px;
+  height: 18px;
+  padding: 6px;
 }
 
 /* The selected category is a quiet editorial banner, followed by the real
@@ -703,9 +760,8 @@
 }
 
 @media (max-width: 1050px) {
-  .category-root-list { grid-template-columns: repeat(5, minmax(0, 1fr)); }
-  .category-root { height: 188px; }
-  .category-explorer--home .category-root { height: 174px; }
+  .category-root-list { --root-card-height: 168px; }
+  .category-explorer--home .category-root-list { --root-card-height: 140px; }
   .category-panel-hero { grid-template-columns: minmax(0, 1fr) 130px; }
   .category-panel-hero.has-root-context { grid-template-columns: 164px minmax(0, 1fr) 130px; }
   .category-root-context { padding-inline: 12px; }
@@ -718,13 +774,26 @@
 @media (max-width: 760px) {
   .category-explorer { padding: 58px 0; }
   .category-explorer--home { padding: 38px 0; }
-  .category-explorer--home .category-explorer-heading { margin-bottom: 18px; }
+  .category-explorer--home .category-explorer-heading { display: block; max-width: 760px; margin-bottom: 18px; }
+  .category-explorer--home .category-explorer-heading .section-title { margin: 10px 0 12px; }
+  .category-explorer--home .category-explorer-heading .section-subtitle { max-width: 590px; padding-inline-start: 0; border-inline-start: 0; }
   .category-explorer--catalog { padding: 0; }
-  .category-root-list { grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 10px 8px; }
-  .category-root { height: 164px; padding: 48px 11px 12px; }
-  .category-explorer--home .category-root { height: 154px; }
-  .category-root-copy strong { font-size: 12px; }
-  .category-root-copy small { font-size: 8px; }
+  .category-root-list { --root-card-height: 164px; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 10px 8px; }
+  .category-explorer--home .category-root-list { --root-card-height: 154px; }
+  .category-root { padding: 48px 11px 12px; }
+  .category-root.is-lead {
+    --root-radius: 42px 12px 14px 14px;
+    grid-column: 1;
+    grid-row: auto;
+    height: var(--root-card-height);
+    padding: 48px 11px 12px;
+  }
+  .category-root-copy strong,
+  .category-root.is-lead .category-root-copy strong { max-width: none; font-size: 12px; line-height: 1.15; }
+  .category-root-copy small,
+  .category-root.is-lead .category-root-copy small { padding-inline-end: 26px; font-size: 8px; }
+  .category-root.is-lead .category-root-index { font-size: 8px; }
+  .category-root.is-lead .category-root-arrow { inset-inline-end: 10px; inset-block-end: 10px; width: 15px; height: 15px; padding: 4px; }
   .category-panel-hero { grid-template-columns: minmax(0, 1fr); min-height: 0; }
   .category-panel-hero.has-root-context { grid-template-columns: minmax(0, 1fr); min-height: 0; }
   .category-panel-visual { display: none; }
@@ -765,11 +834,16 @@
 }
 
 @media (max-width: 430px) {
-  .category-root { height: 150px; padding: 44px 9px 11px; border-radius: 999px 999px 13px 13px; }
-  .category-explorer--home .category-root { height: 142px; }
-  .category-root-index { font-size: 7px; }
-  .category-root-copy small { padding-inline-end: 22px; font-size: 7px; }
-  .category-root-arrow { inset-inline-end: 8px; inset-block-end: 8px; width: 13px; height: 13px; padding: 3px; }
+  .category-root-list { --root-card-height: 150px; }
+  .category-explorer--home .category-root-list { --root-card-height: 142px; }
+  .category-root { padding: 44px 9px 11px; }
+  .category-root.is-lead { height: var(--root-card-height); padding: 44px 9px 11px; }
+  .category-root-index,
+  .category-root.is-lead .category-root-index { font-size: 7px; }
+  .category-root-copy small,
+  .category-root.is-lead .category-root-copy small { padding-inline-end: 22px; font-size: 7px; }
+  .category-root-arrow,
+  .category-root.is-lead .category-root-arrow { inset-inline-end: 8px; inset-block-end: 8px; width: 13px; height: 13px; padding: 3px; }
   .category-child-grid { grid-template-columns: minmax(0, 1fr); }
   .category-child { grid-template-columns: 104px minmax(0, 1fr); min-height: 96px; }
   .category-child-image { width: 104px; min-height: 96px; }

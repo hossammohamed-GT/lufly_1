@@ -55,6 +55,51 @@
       animation.oncancel = function () { releaseHeight(element); };
     }
 
+    function cancelRootLayoutAnimations() {
+      each(roots, function (rootLink) {
+        if (typeof rootLink.getAnimations !== 'function') {
+          return;
+        }
+        each(rootLink.getAnimations(), function (animation) {
+          if (animation.id === 'category-root-layout') {
+            animation.cancel();
+          }
+        });
+      });
+    }
+
+    function captureRootLayout() {
+      return roots.map(function (rootLink) {
+        var rect = rootLink.getBoundingClientRect();
+        return { root: rootLink, left: rect.left, top: rect.top, width: rect.width, height: rect.height };
+      });
+    }
+
+    function animateRootLayout(frames, suppressAnimation) {
+      if (suppressAnimation) {
+        return;
+      }
+      each(frames, function (frame) {
+        var rootLink = frame.root;
+        if (!canAnimate(rootLink)) {
+          return;
+        }
+        var rect = rootLink.getBoundingClientRect();
+        var deltaX = frame.left - rect.left;
+        var deltaY = frame.top - rect.top;
+        var scaleX = rect.width > 0 ? frame.width / rect.width : 1;
+        var scaleY = rect.height > 0 ? frame.height / rect.height : 1;
+        if (Math.abs(deltaX) < 0.5 && Math.abs(deltaY) < 0.5 && Math.abs(scaleX - 1) < 0.01 && Math.abs(scaleY - 1) < 0.01) {
+          return;
+        }
+        var animation = rootLink.animate([
+          { transformOrigin: '0 0', transform: 'translate(' + deltaX + 'px,' + deltaY + 'px) scale(' + scaleX + ',' + scaleY + ')' },
+          { transformOrigin: '0 0', transform: 'translate(0,0) scale(1,1)' }
+        ], { duration: 560, easing: easing });
+        animation.id = 'category-root-layout';
+      });
+    }
+
     function placePanelGroup(rootLink) {
       if (!rootLink || !rootList) {
         return;
@@ -71,18 +116,34 @@
         return;
       }
 
-      /* Keep the accordion immediately after the selected card's visible row,
-         and keep keyboard order aligned with that same visual order. */
+      /* Move the lead in the DOM as well as visually, so Tab order follows the
+         mosaic. Desktop panels sit below the two-row mosaic; compact mobile
+         panels remain directly below the selected card's first row. */
+      var restoreRootFocus = rootLink === document.activeElement || rootLink.contains(document.activeElement);
+      if (rootList.firstElementChild !== rootLink) {
+        rootList.insertBefore(rootLink, rootList.firstElementChild);
+      }
+      var orderedRoots = Array.prototype.slice.call(rootList.children).filter(function (item) {
+        return item.classList && item.classList.contains('category-root');
+      });
       var template = window.getComputedStyle(rootList).gridTemplateColumns;
       var columns = template && template !== 'none'
         ? template.split(/\s+/).filter(Boolean).length
-        : roots.length;
-      columns = Math.max(1, Math.min(columns, roots.length));
-      var rootIndex = roots.indexOf(rootLink);
-      var rowEnd = Math.min((Math.floor(rootIndex / columns) * columns) + columns, roots.length) - 1;
-      var nextNode = roots[rowEnd].nextSibling;
+        : orderedRoots.length;
+      columns = Math.max(1, Math.min(columns, orderedRoots.length));
+      var anchor = columns <= 3
+        ? orderedRoots[Math.min(columns, orderedRoots.length) - 1]
+        : orderedRoots[orderedRoots.length - 1];
+      var nextNode = anchor ? anchor.nextSibling : null;
       if (nextNode !== group) {
         rootList.insertBefore(group, nextNode);
+      }
+      if (restoreRootFocus && document.activeElement !== rootLink) {
+        try {
+          rootLink.focus({ preventScroll: true });
+        } catch (error) {
+          rootLink.focus();
+        }
       }
     }
 
@@ -178,6 +239,8 @@
       if (!target) {
         return null;
       }
+      var rootFrames = captureRootLayout();
+      cancelRootLayoutAnimations();
       var current = panelFor(explorer.getAttribute('data-selected') || '');
       var previousRoot = current ? current.getAttribute('data-root') || '' : '';
       var currentGroup = current ? current.closest('[data-category-panels-root]') : null;
@@ -200,6 +263,7 @@
       each(roots, function (rootLink) {
         var active = rootLink.getAttribute('data-category-root') === rootSlug;
         rootLink.classList.toggle('is-active', active);
+        rootLink.classList.toggle('is-lead', active);
         rootLink.setAttribute('aria-expanded', active ? 'true' : 'false');
         if (active) {
           activeRoot = rootLink;
@@ -210,6 +274,7 @@
       });
       placePanelGroup(activeRoot);
       updateSelection(slug, target, moveFocus);
+      animateRootLayout(rootFrames, suppressAnimation);
       if (changed && !suppressAnimation) {
         animatePanel(target, rootChanged, activeRoot, previousHeight);
       }

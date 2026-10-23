@@ -100,12 +100,13 @@ $isLifestyle = static fn (string $path): bool => (bool) preg_match('/\.jpe?g$/i'
                         $image = trim((string) ($root['image'] ?? '')) ?: '/images/favicon.png';
                         $children = is_array($root['children'] ?? null) ? $root['children'] : [];
                         $isActive = $selectedRoot === $rootSlug;
+                        $isLead = $selectedRoot !== '' ? $isActive : $rootIndex === 0;
                         $meta = $counts !== null
                             ? $productLabel((int) ($counts[$rootSlug] ?? 0))
                             : (count($children) > 0 ? $childLabel(count($children)) : trans('products.category_view_products'));
                         ?>
                         <a href="<?= e($categoryUrl($rootSlug)) ?>"
-                           class="category-root<?= $isActive ? ' is-active' : '' ?>"
+                           class="category-root category-root--shape-<?= ($rootIndex % 4) + 1 ?><?= $isActive ? ' is-active' : '' ?><?= $isLead ? ' is-lead' : '' ?>"
                            data-category-select="<?= e($rootSlug) ?>" data-category-root="<?= e($rootSlug) ?>"
                            aria-controls="category-panels-<?= e($mode) ?>-<?= (int) $root['id'] ?>"
                            aria-expanded="<?= $isActive ? 'true' : 'false' ?>"
