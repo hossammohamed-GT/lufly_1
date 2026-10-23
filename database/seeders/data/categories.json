@@ -165,7 +165,7 @@
     "slug": "bathroom.accessories.towel-bars",
     "parent": "bathroom.accessories",
     "sort_order": 1,
-    "image": "/images/categories/001-bathroom.jpg",
+    "image": "/images/categories/019-bathroom-accessories-towel-bars.jpg",
     "names": {
       "en": "Towel Bars"
     }
@@ -174,7 +174,7 @@
     "slug": "bathroom.accessories.towel-rings",
     "parent": "bathroom.accessories",
     "sort_order": 2,
-    "image": "/images/categories/001-bathroom.jpg",
+    "image": "/images/categories/020-bathroom-accessories-towel-rings.jpg",
     "names": {
       "en": "Towel Rings"
     }
@@ -183,7 +183,7 @@
     "slug": "bathroom.accessories.robe-hooks",
     "parent": "bathroom.accessories",
     "sort_order": 3,
-    "image": "/images/categories/001-bathroom.jpg",
+    "image": "/images/categories/021-bathroom-accessories-robe-hooks.jpg",
     "names": {
       "en": "Robe Hooks"
     }
@@ -192,7 +192,7 @@
     "slug": "bathroom.accessories.toilet-paper-holders",
     "parent": "bathroom.accessories",
     "sort_order": 4,
-    "image": "/images/categories/001-bathroom.jpg",
+    "image": "/images/categories/022-bathroom-accessories-toilet-paper-holders.jpg",
     "names": {
       "en": "Toilet Paper Holders"
     }
@@ -399,7 +399,7 @@
     "slug": "kids",
     "parent": null,
     "sort_order": 3,
-    "image": "/images/categories/001-bathroom.jpg",
+    "image": "/images/categories/045-kids.jpg",
     "names": {
       "en": "Kids"
     }
@@ -489,7 +489,7 @@
     "slug": "accessibility",
     "parent": null,
     "sort_order": 4,
-    "image": "/images/categories/001-bathroom.jpg",
+    "image": "/images/categories/055-accessibility.jpg",
     "names": {
       "en": "Accessibility"
     }
@@ -714,7 +714,7 @@
     "slug": "vanity-units",
     "parent": null,
     "sort_order": 6,
-    "image": "/images/categories/001-bathroom.jpg",
+    "image": "/images/categories/080-vanity-units.jpg",
     "names": {
       "en": "Vanity Units"
     }
@@ -795,7 +795,7 @@
     "slug": "mirrors",
     "parent": null,
     "sort_order": 7,
-    "image": "/images/categories/001-bathroom.jpg",
+    "image": "/images/categories/089-mirrors.jpg",
     "names": {
       "en": "Mirrors"
     }
@@ -867,7 +867,7 @@
     "slug": "drains",
     "parent": null,
     "sort_order": 8,
-    "image": "/images/categories/071-shower-enclosures.jpg",
+    "image": "/images/categories/097-drains.jpg",
     "names": {
       "en": "Drains"
     }
@@ -966,7 +966,7 @@
     "slug": "drinking-fountains",
     "parent": null,
     "sort_order": 9,
-    "image": "/images/categories/029-kitchen.jpg",
+    "image": "/images/categories/108-drinking-fountains.jpg",
     "names": {
       "en": "Drinking Fountains"
     }

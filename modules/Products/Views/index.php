@@ -117,7 +117,7 @@ if (feature('box', true) && class_exists(\Modules\Box\Services\BoxService::class
             data-livesearch-grid="[data-catalog-grid]"
             data-livesearch-pagination="[data-catalog-pagination]"
             data-livesearch-count=".catalog-count">
-            <div class="catalog-results-head">
+            <div class="catalog-results-head" id="catalog-results" tabindex="-1">
                 <div>
                     <span><?= e(trans('products.catalog_eyebrow')) ?></span>
                     <h2><?= e(trans('products.catalog_results_title')) ?></h2>

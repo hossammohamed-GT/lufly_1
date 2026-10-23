@@ -19,6 +19,7 @@
     var status = explorer.querySelector('[data-category-status]');
     var motion = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)');
     var easing = 'cubic-bezier(0.22, 1, 0.36, 1)';
+    var exitClones = [];
 
     function panelFor(slug) {
       for (var i = 0; i < panels.length; i += 1) {
@@ -30,11 +31,28 @@
     }
 
     function canAnimate(element) {
-      return !(motion && motion.matches) && !document.hidden && typeof element.animate === 'function';
+      return Boolean(element) && !(motion && motion.matches) && !document.hidden && typeof element.animate === 'function';
     }
 
-    function releaseGroup(group) {
-      group.style.overflow = '';
+    function releaseHeight(element) {
+      element.style.overflow = '';
+    }
+
+    function animateHeight(element, fromHeight, duration) {
+      if (!canAnimate(element) || fromHeight === null || typeof fromHeight === 'undefined') {
+        return;
+      }
+      var targetHeight = element.scrollHeight;
+      if (Math.abs(targetHeight - fromHeight) < 2) {
+        return;
+      }
+      element.style.overflow = 'hidden';
+      var animation = element.animate([
+        { height: fromHeight + 'px' },
+        { height: targetHeight + 'px' }
+      ], { duration: duration, easing: easing });
+      animation.onfinish = function () { releaseHeight(element); };
+      animation.oncancel = function () { releaseHeight(element); };
     }
 
     function placePanelGroup(rootLink) {
@@ -53,9 +71,8 @@
         return;
       }
 
-      /* Put the opening row after the last card visibly sharing this row.
-         Besides making the accordion position exact, this keeps Tab order
-         aligned with the visual order at every responsive grid size. */
+      /* Keep the accordion immediately after the selected card's visible row,
+         and keep keyboard order aligned with that same visual order. */
       var template = window.getComputedStyle(rootList).gridTemplateColumns;
       var columns = template && template !== 'none'
         ? template.split(/\s+/).filter(Boolean).length
@@ -69,83 +86,113 @@
       }
     }
 
-    function animatePanel(panel, expand, rootLink) {
-      if (!canAnimate(panel)) {
-        return;
+    function updateSelection(slug, target, moveFocus) {
+      explorer.setAttribute('data-selected', slug);
+      var heading = target.querySelector('[data-category-heading]');
+      if (status && heading) {
+        status.textContent = heading.textContent;
       }
-
-      var group = panel.closest('[data-category-panels-root]');
-      if (rootLink) {
-        var rootRect = rootLink.getBoundingClientRect();
-        var panelRect = panel.getBoundingClientRect();
-        var originX = rootRect.left + (rootRect.width / 2) - panelRect.left;
-        panel.style.setProperty('--category-origin-x', originX + 'px');
+      if (moveFocus && heading) {
+        try {
+          heading.focus({ preventScroll: true });
+        } catch (error) {
+          heading.focus();
+        }
       }
+    }
 
-      /* The grid row itself opens from zero height, so the panel feels as if
-         it unfolds out of its category rather than simply fading in later. */
-      if (expand && group && canAnimate(group)) {
-        var targetHeight = group.scrollHeight;
-        group.style.overflow = 'hidden';
-        var opening = group.animate([
-          { height: '0px' },
-          { height: targetHeight + 'px' }
-        ], { duration: 620, easing: easing });
-        opening.onfinish = function () { releaseGroup(group); };
-        opening.oncancel = function () { releaseGroup(group); };
-      }
-
-      panel.animate([
-        { opacity: 0, transform: 'translateY(-18px) scale(0.975)', filter: 'blur(4px)' },
-        { opacity: 1, transform: 'translateY(0) scale(1)', filter: 'blur(0)' }
-      ], { duration: 560, easing: easing });
-
-      var cards = panel.querySelectorAll('.category-child');
+    function animateCards(panel, delayStart) {
+      var cards = panel.querySelectorAll('.category-child:not([hidden])');
       each(cards, function (card, index) {
         if (!canAnimate(card)) {
           return;
         }
         card.animate([
-          { opacity: 0, transform: 'translateY(22px) scale(0.98)' },
+          { opacity: 0, transform: 'translateY(20px) scale(0.98)' },
           { opacity: 1, transform: 'translateY(0) scale(1)' }
         ], {
-          duration: 500,
-          delay: 70 + Math.min(index * 42, 250),
+          duration: 480,
+          delay: delayStart + Math.min(index * 40, 220),
           easing: easing,
           fill: 'backwards'
         });
       });
     }
 
-    function activate(slug, moveFocus) {
-      var target = panelFor(slug);
-      if (!target) {
+    function animatePanel(panel, expand, rootLink, previousHeight) {
+      if (!canAnimate(panel)) {
         return;
       }
-
-      var changed = explorer.getAttribute('data-selected') !== slug;
-      var previousRoot = '';
-      for (var i = 0; i < panels.length; i += 1) {
-        if (!panels[i].hidden) {
-          previousRoot = panels[i].getAttribute('data-root') || '';
-          break;
-        }
+      var group = panel.closest('[data-category-panels-root]');
+      if (rootLink) {
+        var rootRect = rootLink.getBoundingClientRect();
+        var panelRect = panel.getBoundingClientRect();
+        panel.style.setProperty('--category-origin-x', (rootRect.left + (rootRect.width / 2) - panelRect.left) + 'px');
       }
+      if (group) {
+        animateHeight(group, expand ? 0 : previousHeight, 560);
+      }
+      panel.animate([
+        { opacity: 0, transform: 'translateY(-16px) scale(0.98)', filter: 'blur(3px)' },
+        { opacity: 1, transform: 'translateY(0) scale(1)', filter: 'blur(0)' }
+      ], { duration: 520, easing: easing });
+      animateCards(panel, 60);
+    }
+
+    function restoreNestedPanels() {
+      clearExitClones();
+      var nested = Array.prototype.slice.call(explorer.querySelectorAll('.category-panel.is-nested'));
+      each(nested, function (panel) {
+        if (typeof panel.getAnimations === 'function') {
+          each(panel.getAnimations(), function (animation) { animation.cancel(); });
+        }
+        releaseHeight(panel);
+        var rootSlug = panel.getAttribute('data-root');
+        for (var i = 0; i < panelGroups.length; i += 1) {
+          if (panelGroups[i].getAttribute('data-category-panels-root') === rootSlug) {
+            panelGroups[i].appendChild(panel);
+            break;
+          }
+        }
+        panel.classList.remove('is-nested');
+        panel.hidden = true;
+      });
+      each(panels, function (panel) { panel.classList.remove('has-nested-panel'); });
+      var triggers = explorer.querySelectorAll('.category-child[data-category-select]');
+      each(triggers, function (trigger) {
+        if (typeof trigger.getAnimations === 'function') {
+          each(trigger.getAnimations(), function (animation) { animation.cancel(); });
+        }
+        trigger.hidden = false;
+        trigger.classList.remove('is-expanded');
+        trigger.setAttribute('aria-expanded', 'false');
+      });
+    }
+
+    /* Base activation handles roots and direct leaf URLs. A level-two branch
+       uses the nested activation below instead of replacing the whole panel. */
+    function activateBase(slug, moveFocus, suppressAnimation) {
+      var target = panelFor(slug);
+      if (!target) {
+        return null;
+      }
+      var current = panelFor(explorer.getAttribute('data-selected') || '');
+      var previousRoot = current ? current.getAttribute('data-root') || '' : '';
+      var currentGroup = current ? current.closest('[data-category-panels-root]') : null;
+      var previousHeight = currentGroup && !currentGroup.hidden ? currentGroup.getBoundingClientRect().height : 0;
+      var changed = explorer.getAttribute('data-selected') !== slug;
       var rootSlug = target.getAttribute('data-root') || '';
       var rootChanged = previousRoot !== rootSlug;
 
-      /* Stop an interrupted opening before moving its group in the grid. */
+      restoreNestedPanels();
       each(panelGroups, function (group) {
         if (typeof group.getAnimations === 'function') {
           each(group.getAnimations(), function (animation) { animation.cancel(); });
         }
-        releaseGroup(group);
+        releaseHeight(group);
         group.hidden = group.getAttribute('data-category-panels-root') !== rootSlug;
       });
-      each(panels, function (panel) {
-        panel.hidden = panel !== target;
-      });
-      explorer.setAttribute('data-selected', slug);
+      each(panels, function (panel) { panel.hidden = panel !== target; });
 
       var activeRoot = null;
       each(roots, function (rootLink) {
@@ -160,21 +207,163 @@
         }
       });
       placePanelGroup(activeRoot);
-
-      var heading = target.querySelector('[data-category-heading]');
-      if (status && heading) {
-        status.textContent = heading.textContent;
+      updateSelection(slug, target, moveFocus);
+      if (changed && !suppressAnimation) {
+        animatePanel(target, rootChanged, activeRoot, previousHeight);
       }
-      if (moveFocus && heading) {
-        try {
-          heading.focus({ preventScroll: true });
-        } catch (error) {
-          heading.focus();
+      return { target: target, activeRoot: activeRoot };
+    }
+
+    function childTriggerFor(rootPanel, slug) {
+      var triggers = rootPanel.querySelectorAll('.category-child[data-category-select]');
+      for (var i = 0; i < triggers.length; i += 1) {
+        if (triggers[i].getAttribute('data-category-select') === slug) {
+          return triggers[i];
         }
       }
-      if (changed) {
-        animatePanel(target, rootChanged, activeRoot);
+      return null;
+    }
+
+    function animateNestedPanel(panel, trigger) {
+      if (!canAnimate(panel)) {
+        return;
       }
+      var triggerRect = trigger.getBoundingClientRect();
+      var panelRect = panel.getBoundingClientRect();
+      panel.style.setProperty('--category-origin-x', (triggerRect.left + (triggerRect.width / 2) - panelRect.left) + 'px');
+      animateHeight(panel, 0, 540);
+      panel.animate([
+        { opacity: 0, transform: 'translateY(-14px) scale(0.985)', filter: 'blur(3px)' },
+        { opacity: 1, transform: 'translateY(0) scale(1)', filter: 'blur(0)' }
+      ], { duration: 500, easing: easing });
+      animateCards(panel, 80);
+    }
+
+    function discardExitClone(clone) {
+      var index = exitClones.indexOf(clone);
+      if (index !== -1) {
+        exitClones.splice(index, 1);
+      }
+      if (clone.parentNode) {
+        clone.parentNode.removeChild(clone);
+      }
+    }
+
+    function clearExitClones() {
+      var clones = exitClones.slice();
+      exitClones.length = 0;
+      each(clones, function (clone) {
+        if (typeof clone.getAnimations === 'function') {
+          each(clone.getAnimations(), function (animation) { animation.cancel(); });
+        }
+        if (clone.parentNode) {
+          clone.parentNode.removeChild(clone);
+        }
+      });
+    }
+
+    function animateSiblingExit(sibling, suppressAnimation) {
+      var rect = sibling.getBoundingClientRect();
+      if (suppressAnimation || !canAnimate(sibling)) {
+        sibling.hidden = true;
+        return;
+      }
+
+      /* A fixed, inert clone carries the exit motion while the real grid
+         immediately reaches its interactive nested state. No timer controls
+         navigation, focus, visibility, or which category is selected. */
+      var opacity = window.getComputedStyle(sibling).opacity;
+      var clone = sibling.cloneNode(true);
+      clone.classList.add('category-exit-clone');
+      clone.setAttribute('aria-hidden', 'true');
+      clone.setAttribute('tabindex', '-1');
+      clone.removeAttribute('id');
+      clone.removeAttribute('href');
+      clone.removeAttribute('data-category-select');
+      each(clone.querySelectorAll('[id]'), function (node) { node.removeAttribute('id'); });
+      clone.style.position = 'fixed';
+      clone.style.left = rect.left + 'px';
+      clone.style.top = rect.top + 'px';
+      clone.style.width = rect.width + 'px';
+      clone.style.height = rect.height + 'px';
+      clone.style.margin = '0';
+      clone.style.zIndex = '15';
+      clone.style.pointerEvents = 'none';
+      clone.style.transformOrigin = 'center center';
+
+      if (typeof sibling.getAnimations === 'function') {
+        each(sibling.getAnimations(), function (animation) { animation.cancel(); });
+      }
+      sibling.hidden = true;
+      document.body.appendChild(clone);
+      exitClones.push(clone);
+
+      var animation = clone.animate([
+        { opacity: opacity, transform: 'translateY(0) scale(1)' },
+        { opacity: 0, transform: 'translateY(-9px) scale(0.98)' }
+      ], { duration: 180, easing: 'ease-in', fill: 'forwards' });
+      animation.onfinish = function () { discardExitClone(clone); };
+      animation.oncancel = function () { discardExitClone(clone); };
+      window.setTimeout(function () { discardExitClone(clone); }, 500);
+    }
+
+    function activateNested(target, suppliedTrigger, moveFocus, suppressAnimation) {
+      var slug = target.getAttribute('data-category-panel');
+      var rootSlug = target.getAttribute('data-root') || '';
+      var base = activateBase(rootSlug, false, true);
+      if (!base) {
+        return;
+      }
+      var rootPanel = base.target;
+      var trigger = suppliedTrigger && rootPanel.contains(suppliedTrigger)
+        ? suppliedTrigger
+        : childTriggerFor(rootPanel, slug);
+      if (!trigger) {
+        activateBase(slug, moveFocus, suppressAnimation);
+        return;
+      }
+      var grid = trigger.closest('.category-child-grid');
+      var oldRect = trigger.getBoundingClientRect();
+      var siblings = Array.prototype.slice.call(grid.children).filter(function (item) {
+        return item.classList && item.classList.contains('category-child') && item !== trigger && !item.hidden;
+      });
+
+      each(siblings, function (sibling) { animateSiblingExit(sibling, suppressAnimation); });
+      trigger.classList.add('is-expanded');
+      trigger.setAttribute('aria-expanded', 'true');
+      target.classList.add('is-nested');
+      target.hidden = false;
+      rootPanel.classList.add('has-nested-panel');
+      grid.insertBefore(target, trigger.nextSibling);
+      updateSelection(slug, target, moveFocus);
+
+      if (!suppressAnimation && canAnimate(trigger)) {
+        var newRect = trigger.getBoundingClientRect();
+        trigger.animate([
+          { transform: 'translate(' + (oldRect.left - newRect.left) + 'px,' + (oldRect.top - newRect.top) + 'px)' },
+          { transform: 'translate(0,0)' }
+        ], { duration: 440, easing: easing });
+      }
+      if (!suppressAnimation) {
+        animateNestedPanel(target, trigger);
+      }
+    }
+
+    function activate(slug, moveFocus, suppressAnimation, trigger) {
+      var target = panelFor(slug);
+      if (!target) {
+        return;
+      }
+      if (target.getAttribute('data-depth') === '2') {
+        /* Clicking an open branch a second time returns to its siblings. */
+        if (explorer.getAttribute('data-selected') === slug && target.classList.contains('is-nested')) {
+          activateBase(target.getAttribute('data-root') || '', moveFocus, suppressAnimation);
+          return;
+        }
+        activateNested(target, trigger, moveFocus, suppressAnimation);
+        return;
+      }
+      activateBase(slug, moveFocus, suppressAnimation);
     }
 
     explorer.addEventListener('click', function (event) {
@@ -187,11 +376,10 @@
       }
       var slug = trigger.getAttribute('data-category-select');
       if (!panelFor(slug)) {
-        return; // A real catalog link remains the fallback.
+        return; // Leaf categories keep their real filtered-products link.
       }
-
       event.preventDefault();
-      activate(slug, Boolean(trigger.closest('.category-panel')));
+      activate(slug, Boolean(trigger.closest('.category-panel')), false, trigger);
     });
 
     var resizeTimer = null;
@@ -209,9 +397,9 @@
       }, 100);
     });
 
-    /* Normalize the server-rendered group position without playing an
-       entrance animation on the initial page load. */
-    activate(explorer.getAttribute('data-selected') || '', false);
+    /* Direct level-two URLs receive the same nested layout, without an
+       entrance animation on initial render. An empty selection stays empty. */
+    activate(explorer.getAttribute('data-selected') || '', false, true, null);
   }
 
   function init() {
