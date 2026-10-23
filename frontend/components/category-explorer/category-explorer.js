@@ -235,7 +235,7 @@
 
     /* Base activation handles roots and direct leaf URLs. A level-two branch
        uses the nested activation below instead of replacing the whole panel. */
-    function activateBase(slug, moveFocus, suppressAnimation) {
+    function activateBase(slug, moveFocus, suppressAnimation, revealChildren) {
       var target = panelFor(slug);
       if (!target) {
         return null;
@@ -276,6 +276,11 @@
       placePanelGroup(activeRoot);
       updateSelection(slug, target, moveFocus);
       animateRootLayout(rootFrames, suppressAnimation);
+      /* Scroll before height/overflow animations begin, so scrollIntoView
+         always moves the page rather than a temporarily clipped panel. */
+      if (revealChildren) {
+        revealChildCards(target);
+      }
       if (changed && !suppressAnimation) {
         animatePanel(target, rootChanged, activeRoot, previousHeight);
       }
@@ -374,7 +379,7 @@
       window.setTimeout(function () { discardExitClone(clone); }, 500);
     }
 
-    function activateNested(target, suppliedTrigger, moveFocus, suppressAnimation) {
+    function activateNested(target, suppliedTrigger, moveFocus, suppressAnimation, revealChildren) {
       var slug = target.getAttribute('data-category-panel');
       var rootSlug = target.getAttribute('data-root') || '';
       var base = activateBase(rootSlug, false, true);
@@ -408,9 +413,35 @@
       rootPanel.classList.add('has-nested-panel');
       grid.insertBefore(target, trigger.nextSibling);
       updateSelection(slug, target, moveFocus);
+      if (revealChildren) {
+        revealChildCards(target);
+      }
 
       if (!suppressAnimation) {
         animateNestedPanel(target, oldRect);
+      }
+    }
+
+    /* Root and branch cards reveal their next level in place. Bring that
+       level's heading and first cards into view so the large selected hero
+       does not force the visitor to hunt for the newly revealed choices.
+       Product CTAs, breadcrumbs and collapse controls keep their own behavior. */
+    function revealChildCards(target) {
+      if (!target) {
+        return;
+      }
+      var heading = target.querySelector('.category-children-head');
+      if (!heading || typeof heading.scrollIntoView !== 'function') {
+        return;
+      }
+      try {
+        heading.scrollIntoView({
+          behavior: motion && motion.matches ? 'auto' : 'smooth',
+          block: 'start',
+          inline: 'nearest'
+        });
+      } catch (error) {
+        heading.scrollIntoView();
       }
     }
 
@@ -467,16 +498,19 @@
       if (!target) {
         return false;
       }
+      var revealChildren = Boolean(trigger && (
+        trigger.classList.contains('category-root') || trigger.classList.contains('category-child')
+      ));
       if (target.getAttribute('data-depth') === '2') {
         /* Clicking an open branch a second time returns to its siblings. */
         if (explorer.getAttribute('data-selected') === slug && target.classList.contains('is-nested')) {
           activateBase(target.getAttribute('data-root') || '', moveFocus, suppressAnimation);
           return true;
         }
-        activateNested(target, trigger, moveFocus, suppressAnimation);
+        activateNested(target, trigger, moveFocus, suppressAnimation, revealChildren);
         return true;
       }
-      activateBase(slug, moveFocus, suppressAnimation);
+      activateBase(slug, moveFocus, suppressAnimation, revealChildren);
       return true;
     }
 

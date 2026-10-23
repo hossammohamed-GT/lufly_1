@@ -682,6 +682,7 @@
 }
 
 .category-children-head {
+  scroll-margin-top: 96px;
   display: flex;
   align-items: center;
   justify-content: space-between;
