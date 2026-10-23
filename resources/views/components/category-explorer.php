@@ -48,8 +48,8 @@ $walk = function (array $items, array $ancestors = [], string $rootSlug = '') us
 };
 $walk($tree);
 
-$selectedSlug = isset($nodes[$activeSlug]) ? $activeSlug : (string) ($order[0] ?? '');
-$selectedRoot = (string) ($nodes[$selectedSlug]['root'] ?? $selectedSlug);
+$selectedSlug = isset($nodes[$activeSlug]) ? $activeSlug : '';
+$selectedRoot = $selectedSlug !== '' ? (string) ($nodes[$selectedSlug]['root'] ?? '') : '';
 
 $categoryUrl = static function (string $slug) use ($urlBuilder): string {
     if (is_callable($urlBuilder)) {

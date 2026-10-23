@@ -75,7 +75,7 @@
     "slug": "bathroom.sanitary-ware.ceramic-accessories",
     "parent": "bathroom.sanitary-ware",
     "sort_order": 7,
-    "image": "/images/categories/001-bathroom.jpg",
+    "image": "/images/categories/009-bathroom-sanitary-ware-ceramic-accessories.jpg",
     "names": {
       "en": "Ceramic Accessories"
     }
@@ -84,7 +84,7 @@
     "slug": "bathroom.mixers",
     "parent": "bathroom",
     "sort_order": 2,
-    "image": "/images/categories/001-bathroom.jpg",
+    "image": "/images/categories/010-bathroom-mixers.jpg",
     "names": {
       "en": "Mixers"
     }
@@ -93,7 +93,7 @@
     "slug": "bathroom.mixers.basin-mixers",
     "parent": "bathroom.mixers",
     "sort_order": 1,
-    "image": "/images/categories/001-bathroom.jpg",
+    "image": "/images/categories/011-bathroom-mixers-basin-mixers.jpg",
     "names": {
       "en": "Basin Mixers"
     }
@@ -102,7 +102,7 @@
     "slug": "bathroom.mixers.shower-mixers",
     "parent": "bathroom.mixers",
     "sort_order": 2,
-    "image": "/images/categories/001-bathroom.jpg",
+    "image": "/images/categories/012-bathroom-mixers-shower-mixers.jpg",
     "names": {
       "en": "Shower Mixers"
     }
@@ -111,7 +111,7 @@
     "slug": "bathroom.mixers.bath-mixers",
     "parent": "bathroom.mixers",
     "sort_order": 3,
-    "image": "/images/categories/001-bathroom.jpg",
+    "image": "/images/categories/013-bathroom-mixers-bath-mixers.jpg",
     "names": {
       "en": "Bath Mixers"
     }
@@ -120,7 +120,7 @@
     "slug": "bathroom.mixers.concealed-mixers",
     "parent": "bathroom.mixers",
     "sort_order": 4,
-    "image": "/images/categories/001-bathroom.jpg",
+    "image": "/images/categories/014-bathroom-mixers-concealed-mixers.jpg",
     "names": {
       "en": "Concealed Mixers"
     }
@@ -129,7 +129,7 @@
     "slug": "bathroom.mixers.thermostatic-mixers",
     "parent": "bathroom.mixers",
     "sort_order": 5,
-    "image": "/images/categories/001-bathroom.jpg",
+    "image": "/images/categories/015-bathroom-mixers-thermostatic-mixers.jpg",
     "names": {
       "en": "Thermostatic Mixers"
     }
@@ -138,7 +138,7 @@
     "slug": "bathroom.mixers.kitchen-mixers",
     "parent": "bathroom.mixers",
     "sort_order": 6,
-    "image": "/images/categories/001-bathroom.jpg",
+    "image": "/images/categories/016-bathroom-mixers-kitchen-mixers.jpg",
     "names": {
       "en": "Kitchen Mixers"
     }
@@ -147,7 +147,7 @@
     "slug": "bathroom.mixers.special-mixers",
     "parent": "bathroom.mixers",
     "sort_order": 7,
-    "image": "/images/categories/001-bathroom.jpg",
+    "image": "/images/categories/017-bathroom-mixers-special-mixers.jpg",
     "names": {
       "en": "Special Mixers"
     }
@@ -156,7 +156,7 @@
     "slug": "bathroom.accessories",
     "parent": "bathroom",
     "sort_order": 3,
-    "image": "/images/categories/001-bathroom.jpg",
+    "image": "/images/categories/018-bathroom-accessories.jpg",
     "names": {
       "en": "Accessories"
     }
