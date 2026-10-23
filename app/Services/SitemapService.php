@@ -84,7 +84,7 @@ class SitemapService
                    INNER JOIN media m ON m.id = pm.media_id
                   WHERE pm.product_id IN ({$placeholders})
                     AND pm.variant_id IS NULL
-                    AND m.status <> 'missing'
+                    AND m.status = 'active'
                   ORDER BY pm.is_primary DESC, pm.sort_order ASC",
                 $productIds
             );
