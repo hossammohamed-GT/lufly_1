@@ -96,34 +96,12 @@
   box-shadow: 0 18px 48px rgba(3, 16, 15, 0.34), inset 0 1px 0 rgba(255, 255, 255, 0.09);
 }
 
-/* ---------- media and glass feature rail ---------- */
-
-.pcard-visual {
-  position: relative;
-  z-index: 1;
-  display: grid;
-  min-width: 0;
-}
-
-.pcard-visual.has-rail {
-  grid-template-columns: minmax(104px, 38%) minmax(0, 1fr);
-}
-
-/* The feature rail is adjacent to the image stage, never layered over it. */
-.pcard-rail {
-  display: flex;
-  min-width: 0;
-  flex-direction: column;
-  gap: 12px;
-  padding: 14px 12px;
-  border-inline-end: 1px solid rgba(255, 255, 255, 0.14);
-  background: linear-gradient(155deg, rgba(5, 29, 28, 0.78), rgba(11, 53, 48, 0.54));
-  color: #fff;
-  backdrop-filter: blur(20px) saturate(135%);
-}
+/* ---------- full-width clean media and frosted card surfaces ---------- */
 
 .pcard-stage {
   position: relative;
+  z-index: 1;
+  width: 100%;
   min-width: 0;
   background:
     radial-gradient(circle at 72% 18%, rgba(255, 255, 255, 0.92), rgba(245, 243, 237, 0.64) 46%, transparent 76%),
@@ -139,8 +117,6 @@
   overflow: hidden;
   background: transparent;
 }
-
-.has-rail .pcard-media { aspect-ratio: 1 / 1; }
 
 .pcard-media:focus-visible {
   outline: 2px solid var(--ds-primary);
@@ -182,6 +158,20 @@
   background: rgba(255, 255, 255, 0.16);
 }
 
+.pcard-feature-panel {
+  display: grid;
+  gap: 10px;
+  min-width: 0;
+  padding: 11px 12px;
+  border: 1px solid var(--pcard-line);
+  border-radius: 14px;
+  background: linear-gradient(135deg,
+    color-mix(in srgb, var(--ds-surface) 24%, transparent),
+    color-mix(in srgb, var(--ds-primary) 7%, transparent));
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.14);
+  backdrop-filter: blur(18px) saturate(140%);
+}
+
 .pcard-badge {
   position: static;
   display: inline-flex;
@@ -201,15 +191,11 @@
 }
 
 .pcard-features {
-  position: static;
-  display: flex;
-  flex: 1 1 auto;
-  flex-direction: column;
-  justify-content: center;
-  gap: 14px;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(82px, 1fr));
+  gap: 10px 12px;
   width: 100%;
-  padding: 0;
-  background: none;
+  min-width: 0;
   pointer-events: none;
 }
 
@@ -218,18 +204,17 @@
   align-items: center;
   gap: 8px;
   min-width: 0;
-  color: rgba(255, 255, 255, 0.94);
+  color: var(--pcard-text);
   font-size: 10.5px;
   font-weight: 500;
   line-height: 1.25;
-  text-shadow: 0 1px 8px rgba(0, 0, 0, 0.24);
 }
 
 .pcard-feature svg {
   flex: 0 0 20px;
   width: 20px;
   height: 20px;
-  color: var(--lu-mint);
+  color: var(--pcard-accent);
 }
 
 .pcard-feature > span {
@@ -565,28 +550,13 @@
 
 @media (max-width: 620px) {
   .catalog-grid { grid-template-columns: minmax(0, 1fr); gap: 16px; }
-  .pcard-visual.has-rail { grid-template-columns: minmax(0, 1fr); }
-  .pcard-stage { order: 0; }
-  .pcard-rail {
-    order: 1;
-    padding: 12px 14px;
-    border-inline-end: 0;
-    border-top: 1px solid rgba(255, 255, 255, 0.12);
-  }
-  .pcard-rail .pcard-features {
-    display: grid;
-    grid-template-columns: repeat(3, minmax(0, 1fr));
-    gap: 10px;
-  }
-  .pcard-rail .pcard-badge { margin-bottom: 2px; }
-  .pcard-media,
-  .has-rail .pcard-media { aspect-ratio: 1.38 / 1; }
+  .pcard-media { aspect-ratio: 1.38 / 1; }
   .pcard-body { padding: 16px 17px 18px; }
   .pcard-title { font-size: 21px; }
 }
 
 @media (max-width: 380px) {
-  .pcard-rail .pcard-features { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .pcard-features { grid-template-columns: repeat(2, minmax(0, 1fr)); }
   .pcard-feature { gap: 6px; font-size: 9.5px; }
   .pcard-feature svg { flex-basis: 18px; width: 18px; height: 18px; }
   .pcard-finishes { gap: 7px; }

@@ -484,11 +484,12 @@
           };
           var delay = (0.04 * ((index % 6) + 1)).toFixed(2);
           var features = featureList(card);
-          var hasRail = !!card.badge || features !== '';
+          var hasFeaturePanel = !!card.badge || features !== '';
+          var featurePanel = hasFeaturePanel
+            ? '<div class="pcard-feature-panel">' + (card.badge ? '<span class="pcard-badge">' + esc(card.badge) + '</span>' : '') + features + '</div>'
+            : '';
 
           return '<article class="pcard ' + (hasPrice ? 'has-price' : 'is-price-pending') + '" data-product-card data-product-id="' + esc(product.id || '') + '" style="--pcard-delay:' + delay + 's">' +
-            '<div class="pcard-visual' + (hasRail ? ' has-rail' : '') + '">' +
-            (hasRail ? '<div class="pcard-rail">' + (card.badge ? '<span class="pcard-badge">' + esc(card.badge) + '</span>' : '') + features + '</div>' : '') +
             '<div class="pcard-stage">' +
             '<a class="pcard-media" href="' + href + '"' + (slides.length > 1
               ? ' data-pcard-cycle data-pcard-kind-drawing="' + esc(g.kindDrawing) + '" data-pcard-kind-situ="' + esc(g.kindSitu) + '"'
@@ -507,11 +508,12 @@
                 }).join('') + '</span>' +
                 '<span class="pcard-kind" data-pcard-kind-label aria-hidden="true" hidden></span></div>'
               : '') +
-            '</div></div>' +
+            '</div>' +
             '<div class="pcard-body">' +
             '<div class="pcard-top"><span class="pcard-code">' + (sku || 'LUFLY') + '</span>' + favoriteButton(product, card, rawName) + '</div>' +
             '<h3 class="pcard-title"><a href="' + href + '">' + name + '</a></h3>' +
             (shortDesc ? '<p class="pcard-desc">' + shortDesc + '</p>' : '') +
+            featurePanel +
             finishList(card, href) +
             specList(card) +
             '<div class="pcard-actions"><div class="pcard-action-copy">' +
