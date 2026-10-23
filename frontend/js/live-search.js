@@ -483,8 +483,13 @@
             return kind === 'drawing' ? g.kindDrawing : kind === 'situ' ? g.kindSitu : '';
           };
           var delay = (0.04 * ((index % 6) + 1)).toFixed(2);
+          var features = featureList(card);
+          var hasRail = !!card.badge || features !== '';
 
           return '<article class="pcard ' + (hasPrice ? 'has-price' : 'is-price-pending') + '" data-product-card data-product-id="' + esc(product.id || '') + '" style="--pcard-delay:' + delay + 's">' +
+            '<div class="pcard-visual' + (hasRail ? ' has-rail' : '') + '">' +
+            (hasRail ? '<div class="pcard-rail">' + (card.badge ? '<span class="pcard-badge">' + esc(card.badge) + '</span>' : '') + features + '</div>' : '') +
+            '<div class="pcard-stage">' +
             '<a class="pcard-media" href="' + href + '"' + (slides.length > 1
               ? ' data-pcard-cycle data-pcard-kind-drawing="' + esc(g.kindDrawing) + '" data-pcard-kind-situ="' + esc(g.kindSitu) + '"'
               : '') + '>' +
@@ -495,19 +500,16 @@
                 ' data-pcard-kind="' + esc(slide.kind) + '"' +
                 ' src="' + esc(slide.src) + '" alt="' + alt + '" loading="lazy" decoding="async" width="420" height="320"' +
                 ' onerror="this.onerror=null;this.remove();">';
-            }).join('') +
-            (card.badge ? '<span class="pcard-badge">' + esc(card.badge) + '</span>' : '') +
-            featureList(card) +
+            }).join('') + '</a>' +
             (slides.length > 1
-              ? '<span class="pcard-dots" aria-hidden="true">' + slides.map(function (u, n) {
+              ? '<div class="pcard-media-meta"><span class="pcard-dots" aria-hidden="true">' + slides.map(function (u, n) {
                   return '<i class="pcard-dot' + (n === 0 ? ' is-on' : '') + '" data-pcard-dot="' + n + '"></i>';
                 }).join('') + '</span>' +
-                '<span class="pcard-kind" data-pcard-kind-label aria-hidden="true" hidden></span>'
+                '<span class="pcard-kind" data-pcard-kind-label aria-hidden="true" hidden></span></div>'
               : '') +
-            '</a>' +
-            favoriteButton(product, card, rawName) +
+            '</div></div>' +
             '<div class="pcard-body">' +
-            '<div class="pcard-top"><span class="pcard-code">' + (sku || 'LUFLY') + '</span></div>' +
+            '<div class="pcard-top"><span class="pcard-code">' + (sku || 'LUFLY') + '</span>' + favoriteButton(product, card, rawName) + '</div>' +
             '<h3 class="pcard-title"><a href="' + href + '">' + name + '</a></h3>' +
             (shortDesc ? '<p class="pcard-desc">' + shortDesc + '</p>' : '') +
             finishList(card, href) +

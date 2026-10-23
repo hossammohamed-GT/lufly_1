@@ -33,11 +33,13 @@
   border: 1px solid var(--pcard-line);
   border-radius: 20px;
   background:
-    linear-gradient(135deg, color-mix(in srgb, var(--lu-neutral-0) 17%, transparent), transparent 42%),
-    color-mix(in srgb, var(--pcard-surface) 91%, transparent);
+    linear-gradient(125deg, rgba(255, 255, 255, 0.46), rgba(255, 255, 255, 0.12) 42%, color-mix(in srgb, var(--ds-primary) 9%, transparent)),
+    color-mix(in srgb, var(--pcard-surface) 58%, transparent);
   color: var(--pcard-text);
-  box-shadow: 0 12px 34px color-mix(in srgb, var(--lu-ink-950) 8%, transparent);
-  backdrop-filter: blur(18px) saturate(135%);
+  box-shadow:
+    0 18px 45px color-mix(in srgb, var(--lu-ink-950) 10%, transparent),
+    inset 0 1px 0 rgba(255, 255, 255, 0.46);
+  backdrop-filter: blur(26px) saturate(145%);
   animation: catUp 0.65s cubic-bezier(0.16, 1, 0.3, 1) var(--pcard-delay, 0.2s) both;
   transition: transform 240ms cubic-bezier(0.16, 1, 0.3, 1), border-color 240ms ease, box-shadow 240ms ease;
 }
@@ -65,20 +67,6 @@
   transition: opacity 180ms ease;
 }
 
-.pcard::after {
-  content: "";
-  position: absolute;
-  inset: 0;
-  z-index: 6;
-  border-radius: inherit;
-  background: linear-gradient(112deg,
-    color-mix(in srgb, var(--lu-neutral-0) 12%, transparent),
-    transparent 25% 72%,
-    color-mix(in srgb, var(--ds-primary) 5%, transparent));
-  opacity: 0.5;
-  pointer-events: none;
-}
-
 .pcard:hover,
 .pcard:focus-within {
   border-color: color-mix(in srgb, var(--ds-primary) 48%, var(--ds-border));
@@ -102,40 +90,64 @@
   --pcard-muted: #b2c2bd;
   --pcard-accent: var(--lu-mint);
   --pcard-line: color-mix(in srgb, var(--lu-mint) 17%, var(--lu-neutral-700));
-  box-shadow: 0 16px 42px rgba(3, 16, 15, 0.28);
+  background:
+    linear-gradient(125deg, rgba(255, 255, 255, 0.1), rgba(255, 255, 255, 0.025) 42%, rgba(42, 157, 144, 0.08)),
+    color-mix(in srgb, var(--pcard-surface) 62%, transparent);
+  box-shadow: 0 18px 48px rgba(3, 16, 15, 0.34), inset 0 1px 0 rgba(255, 255, 255, 0.09);
 }
 
 /* ---------- media and glass feature rail ---------- */
 
-.pcard-media {
+.pcard-visual {
   position: relative;
   z-index: 1;
-  display: block;
-  flex: 0 0 auto;
-  aspect-ratio: 1.36 / 1;
-  overflow: hidden;
-  color: #fff;
-  background:
-    radial-gradient(circle at 72% 20%, #ffffff 0, #f5f3ed 42%, transparent 72%),
-    linear-gradient(145deg, #eeece5, #d9d6cc);
+  display: grid;
+  min-width: 0;
 }
 
-.pcard-media::before {
-  content: "";
-  position: absolute;
-  inset: 0;
-  z-index: 1;
-  background:
-    linear-gradient(118deg, rgba(255, 255, 255, 0.32), transparent 30%),
-    linear-gradient(to top, rgba(8, 28, 26, 0.18), transparent 42%);
-  pointer-events: none;
+.pcard-visual.has-rail {
+  grid-template-columns: minmax(104px, 38%) minmax(0, 1fr);
 }
+
+/* The feature rail is adjacent to the image stage, never layered over it. */
+.pcard-rail {
+  display: flex;
+  min-width: 0;
+  flex-direction: column;
+  gap: 12px;
+  padding: 14px 12px;
+  border-inline-end: 1px solid rgba(255, 255, 255, 0.14);
+  background: linear-gradient(155deg, rgba(5, 29, 28, 0.78), rgba(11, 53, 48, 0.54));
+  color: #fff;
+  backdrop-filter: blur(20px) saturate(135%);
+}
+
+.pcard-stage {
+  position: relative;
+  min-width: 0;
+  background:
+    radial-gradient(circle at 72% 18%, rgba(255, 255, 255, 0.92), rgba(245, 243, 237, 0.64) 46%, transparent 76%),
+    linear-gradient(145deg, rgba(238, 236, 229, 0.8), rgba(217, 214, 204, 0.62));
+  background-color: rgba(238, 236, 229, 0.96);
+  backdrop-filter: blur(20px) saturate(120%);
+}
+
+.pcard-media {
+  position: relative;
+  display: block;
+  aspect-ratio: 1.36 / 1;
+  overflow: hidden;
+  background: transparent;
+}
+
+.has-rail .pcard-media { aspect-ratio: 1 / 1; }
 
 .pcard-media:focus-visible {
   outline: 2px solid var(--ds-primary);
   outline-offset: -3px;
 }
 
+/* Only the product photographs live here: no badges, tools, text or shade. */
 .pcard-img {
   position: absolute;
   inset: 0;
@@ -143,7 +155,7 @@
   width: 100%;
   height: 100%;
   object-fit: contain;
-  padding: 20px;
+  padding: 16px;
   opacity: 0;
   mix-blend-mode: multiply;
   transition: opacity 0.35s ease, transform 0.5s cubic-bezier(0.16, 1, 0.3, 1);
@@ -159,15 +171,24 @@
   mix-blend-mode: normal;
 }
 
-.pcard-badge {
-  position: absolute;
-  inset-block-start: 14px;
-  inset-inline-start: 14px;
-  z-index: 3;
-  display: inline-flex;
-  align-items: center;
+.pcard-media-meta {
+  position: relative;
+  display: flex;
   min-height: 26px;
-  padding: 6px 11px;
+  align-items: center;
+  justify-content: center;
+  padding: 4px 10px;
+  border-top: 1px solid rgba(20, 54, 50, 0.09);
+  background: rgba(255, 255, 255, 0.16);
+}
+
+.pcard-badge {
+  position: static;
+  display: inline-flex;
+  align-self: flex-start;
+  align-items: center;
+  min-height: 24px;
+  padding: 5px 9px;
   border: 1px solid rgba(255, 255, 255, 0.38);
   border-radius: 999px;
   background: color-mix(in srgb, var(--lu-mint) 88%, transparent);
@@ -180,23 +201,16 @@
 }
 
 .pcard-features {
-  position: absolute;
-  inset-block: 0;
-  inset-inline-start: 0;
-  z-index: 2;
+  position: static;
   display: flex;
+  flex: 1 1 auto;
   flex-direction: column;
   justify-content: center;
-  gap: 15px;
-  width: 52%;
-  padding: 54px 13px 18px;
-  background: linear-gradient(to right, rgba(7, 28, 26, 0.72), rgba(7, 28, 26, 0.3) 72%, transparent);
-  backdrop-filter: blur(3px);
+  gap: 14px;
+  width: 100%;
+  padding: 0;
+  background: none;
   pointer-events: none;
-}
-
-[dir="rtl"] .pcard-features {
-  background: linear-gradient(to left, rgba(7, 28, 26, 0.72), rgba(7, 28, 26, 0.3) 72%, transparent);
 }
 
 .pcard-feature {
@@ -228,39 +242,35 @@
 }
 
 .pcard .favbtn-card {
-  inset-block-start: 14px;
-  inset-inline-end: 14px;
-  z-index: 8;
-  --fav-size: 38px;
-  border-color: rgba(255, 255, 255, 0.44);
-  background: rgba(12, 34, 32, 0.3);
-  color: #fff;
-  box-shadow: 0 5px 20px rgba(6, 25, 23, 0.12);
-  backdrop-filter: blur(14px) saturate(130%);
+  position: relative;
+  inset-block: auto;
+  inset-inline: auto;
+  z-index: 2;
+  --fav-size: 34px;
+  flex: 0 0 var(--fav-size);
+  margin-inline-start: auto;
+  border-color: var(--pcard-line);
+  background: color-mix(in srgb, var(--ds-surface) 32%, transparent);
+  color: var(--pcard-accent);
+  box-shadow: none;
+  backdrop-filter: blur(12px) saturate(130%);
 }
 
 .pcard .favbtn-card:hover,
 .pcard .favbtn-card.is-on {
-  border-color: color-mix(in srgb, var(--lu-mint) 72%, #fff);
-  background: rgba(12, 52, 48, 0.62);
-  color: var(--lu-mint);
+  border-color: color-mix(in srgb, var(--ds-primary) 54%, var(--ds-border));
+  background: color-mix(in srgb, var(--ds-primary) 13%, transparent);
+  color: var(--pcard-accent);
 }
 
 .pcard-dots {
-  position: absolute;
-  inset-inline: 0;
-  bottom: 10px;
-  z-index: 3;
+  position: static;
   display: flex;
   justify-content: center;
   gap: 5px;
-  opacity: 0;
+  opacity: 1;
   pointer-events: none;
-  transition: opacity 0.25s ease;
 }
-
-.pcard:hover .pcard-dots,
-.pcard:focus-within .pcard-dots { opacity: 1; }
 
 .pcard-dot {
   width: 5px;
@@ -278,24 +288,20 @@
 
 .pcard-kind {
   position: absolute;
-  inset-inline-end: 12px;
-  bottom: 12px;
-  z-index: 3;
-  padding: 6px 10px;
-  border: 1px solid rgba(255, 255, 255, 0.24);
+  inset-inline-end: 8px;
+  padding: 3px 6px;
+  border: 1px solid var(--pcard-line);
   border-radius: 999px;
-  background: rgba(8, 29, 27, 0.62);
-  color: #fff;
-  backdrop-filter: blur(12px);
+  background: color-mix(in srgb, var(--ds-surface) 28%, transparent);
+  color: var(--pcard-accent);
   font-family: var(--font-mono);
-  font-size: 8px;
+  font-size: 7px;
   font-weight: 700;
-  letter-spacing: 0.12em;
+  letter-spacing: 0.1em;
   text-transform: uppercase;
   opacity: 0;
-  transform: translateY(5px);
   pointer-events: none;
-  transition: opacity 0.25s ease, transform 0.25s ease;
+  transition: opacity 0.2s ease;
 }
 
 .pcard:hover .pcard-kind,
@@ -318,9 +324,12 @@
   min-width: 0;
   padding: 17px 19px 19px;
   border-top: 1px solid var(--pcard-line);
-  background: linear-gradient(155deg,
-    color-mix(in srgb, var(--ds-primary) 4%, transparent),
-    transparent 48%);
+  background: linear-gradient(155deg, rgba(255, 255, 255, 0.16), transparent 45%, color-mix(in srgb, var(--ds-primary) 6%, transparent));
+  backdrop-filter: blur(20px) saturate(130%);
+}
+
+[data-theme="dark"] .pcard-body {
+  background: linear-gradient(155deg, rgba(255, 255, 255, 0.035), transparent 48%, rgba(37, 126, 116, 0.06));
 }
 
 .pcard-top {
@@ -556,13 +565,28 @@
 
 @media (max-width: 620px) {
   .catalog-grid { grid-template-columns: minmax(0, 1fr); gap: 16px; }
-  .pcard-media { aspect-ratio: 1.38 / 1; }
+  .pcard-visual.has-rail { grid-template-columns: minmax(0, 1fr); }
+  .pcard-stage { order: 0; }
+  .pcard-rail {
+    order: 1;
+    padding: 12px 14px;
+    border-inline-end: 0;
+    border-top: 1px solid rgba(255, 255, 255, 0.12);
+  }
+  .pcard-rail .pcard-features {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 10px;
+  }
+  .pcard-rail .pcard-badge { margin-bottom: 2px; }
+  .pcard-media,
+  .has-rail .pcard-media { aspect-ratio: 1.38 / 1; }
   .pcard-body { padding: 16px 17px 18px; }
   .pcard-title { font-size: 21px; }
 }
 
 @media (max-width: 380px) {
-  .pcard-features { width: 56%; gap: 12px; padding: 50px 10px 15px; }
+  .pcard-rail .pcard-features { grid-template-columns: repeat(2, minmax(0, 1fr)); }
   .pcard-feature { gap: 6px; font-size: 9.5px; }
   .pcard-feature svg { flex-basis: 18px; width: 18px; height: 18px; }
   .pcard-finishes { gap: 7px; }

@@ -339,7 +339,11 @@
 
   function show(media, index) {
     var imgs = slides(media);
-    var dots = media.querySelectorAll('[data-pcard-dot]');
+    /* Dots and the media-kind label live below the clean product image in
+       the new glass layout. Fall back to the media itself for old markup. */
+    var stage = media.closest ? media.closest('.pcard-stage') : null;
+    var scope = stage || media;
+    var dots = scope.querySelectorAll('[data-pcard-dot]');
     if (imgs.length === 0) return;
 
     index = (index + imgs.length) % imgs.length;
@@ -349,7 +353,7 @@
 
     /* the badge only speaks up for drawings / installed shots: the label
        map lives on the card ("data-pcard-kind-drawing" and friends) */
-    var badge = media.querySelector('[data-pcard-kind-label]');
+    var badge = scope.querySelector('[data-pcard-kind-label]');
     if (badge) {
       var kind = imgs[index].getAttribute('data-pcard-kind') || '';
       var label = kind && kind !== 'photo' ? (media.getAttribute('data-pcard-kind-' + kind) || '') : '';

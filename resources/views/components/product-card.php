@@ -40,58 +40,66 @@ if ($cardSlides === []) {
 }
 $cardKinds = ['drawing' => trans('products.view_drawing'), 'situ' => trans('products.view_situ')];
 $hasPrice = !empty($card['has_price']);
+$hasVisualRail = $card['badge'] !== '' || $card['features'] !== [];
 ?>
 <article class="pcard<?= $hasPrice ? ' has-price' : ' is-price-pending' ?>"
          data-product-card data-product-id="<?= $productId ?>"
          style="--pcard-delay: <?= e((string) (0.04 * (($index % 6) + 1))) ?>s">
-    <a class="pcard-media" href="<?= e($cardUrl) ?>"
-       <?= count($cardSlides) > 1 ? 'data-pcard-cycle data-pcard-kind-drawing="' . e($cardKinds['drawing']) . '" data-pcard-kind-situ="' . e($cardKinds['situ']) . '"' : '' ?>>
-        <?php foreach ($cardSlides as $ci => $slide): ?>
-            <?php $slideKind = (string) $slide['kind']; ?>
-            <img src="<?= e(asset($slide['path'])) ?>"
-                 alt="<?= $ci === 0 ? e($cardName) : ($slideKind === 'photo' ? '' : e($cardKinds[$slideKind] ?? '') . ' — ' . e($cardName)) ?>"
-                 class="pcard-img<?= $ci === 0 ? ' is-on' : '' ?>"
-                 data-pcard-slide="<?= (int) $ci ?>"
-                 data-pcard-kind="<?= e($slideKind) ?>"
-                 loading="lazy" decoding="async" width="420" height="320"
-                 onerror="this.onerror=null; this.remove();">
-        <?php endforeach; ?>
-
-        <?php if ($card['badge'] !== ''): ?>
-            <span class="pcard-badge"><?= e($card['badge']) ?></span>
-        <?php endif; ?>
-
-        <?php if ($card['features'] !== []): ?>
-            <span class="pcard-features" role="list">
-                <?php foreach ($card['features'] as $feature): ?>
-                    <span class="pcard-feature" role="listitem">
-                        <?= $view->component('product-card-icon', ['name' => $feature['icon']]) ?>
-                        <span><?= e($feature['label']) ?></span>
+    <div class="pcard-visual<?= $hasVisualRail ? ' has-rail' : '' ?>">
+        <?php if ($hasVisualRail): ?>
+            <div class="pcard-rail">
+                <?php if ($card['badge'] !== ''): ?>
+                    <span class="pcard-badge"><?= e($card['badge']) ?></span>
+                <?php endif; ?>
+                <?php if ($card['features'] !== []): ?>
+                    <span class="pcard-features" role="list">
+                        <?php foreach ($card['features'] as $feature): ?>
+                            <span class="pcard-feature" role="listitem">
+                                <?= $view->component('product-card-icon', ['name' => $feature['icon']]) ?>
+                                <span><?= e($feature['label']) ?></span>
+                            </span>
+                        <?php endforeach; ?>
                     </span>
-                <?php endforeach; ?>
-            </span>
+                <?php endif; ?>
+            </div>
         <?php endif; ?>
 
-        <?php if (count($cardSlides) > 1): ?>
-            <span class="pcard-dots" aria-hidden="true">
-                <?php foreach ($cardSlides as $ci => $unusedDot): ?>
-                    <i class="pcard-dot<?= $ci === 0 ? ' is-on' : '' ?>" data-pcard-dot="<?= (int) $ci ?>"></i>
+        <div class="pcard-stage">
+            <a class="pcard-media" href="<?= e($cardUrl) ?>"
+               <?= count($cardSlides) > 1 ? 'data-pcard-cycle data-pcard-kind-drawing="' . e($cardKinds['drawing']) . '" data-pcard-kind-situ="' . e($cardKinds['situ']) . '"' : '' ?>>
+                <?php foreach ($cardSlides as $ci => $slide): ?>
+                    <?php $slideKind = (string) $slide['kind']; ?>
+                    <img src="<?= e(asset($slide['path'])) ?>"
+                         alt="<?= $ci === 0 ? e($cardName) : ($slideKind === 'photo' ? '' : e($cardKinds[$slideKind] ?? '') . ' — ' . e($cardName)) ?>"
+                         class="pcard-img<?= $ci === 0 ? ' is-on' : '' ?>"
+                         data-pcard-slide="<?= (int) $ci ?>"
+                         data-pcard-kind="<?= e($slideKind) ?>"
+                         loading="lazy" decoding="async" width="420" height="320"
+                         onerror="this.onerror=null; this.remove();">
                 <?php endforeach; ?>
-            </span>
-            <span class="pcard-kind" data-pcard-kind-label aria-hidden="true" hidden></span>
-        <?php endif; ?>
-    </a>
-
-    <?= $view->component('favorite-button', [
-        'product_id' => $productId,
-        'name' => $cardName,
-        'variant' => 'card',
-        'on' => (bool) ($props['saved'] ?? false),
-    ]) ?>
+            </a>
+            <?php if (count($cardSlides) > 1): ?>
+                <div class="pcard-media-meta">
+                    <span class="pcard-dots" aria-hidden="true">
+                        <?php foreach ($cardSlides as $ci => $unusedDot): ?>
+                            <i class="pcard-dot<?= $ci === 0 ? ' is-on' : '' ?>" data-pcard-dot="<?= (int) $ci ?>"></i>
+                        <?php endforeach; ?>
+                    </span>
+                    <span class="pcard-kind" data-pcard-kind-label aria-hidden="true" hidden></span>
+                </div>
+            <?php endif; ?>
+        </div>
+    </div>
 
     <div class="pcard-body">
         <div class="pcard-top">
             <span class="pcard-code"><?= e($cardCode !== '' ? $cardCode : 'LUFLY') ?></span>
+            <?= $view->component('favorite-button', [
+                'product_id' => $productId,
+                'name' => $cardName,
+                'variant' => 'card',
+                'on' => (bool) ($props['saved'] ?? false),
+            ]) ?>
         </div>
         <<?= $heading ?> class="pcard-title">
             <a href="<?= e($cardUrl) ?>"><?= e($cardName) ?></a>
