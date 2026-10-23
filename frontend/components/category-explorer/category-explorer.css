@@ -161,10 +161,10 @@
   pointer-events: none;
   transition: clip-path 520ms cubic-bezier(0.22, 1, 0.36, 1);
 }
-.category-root--shape-1 { --root-clip: polygon(26px 0, 100% 0, 100% calc(100% - 8px), calc(100% - 8px) 100%, 0 100%, 0 26px); }
-.category-root--shape-2 { --root-clip: polygon(0 0, calc(100% - 26px) 0, 100% 26px, 100% 100%, 8px 100%, 0 calc(100% - 8px)); }
-.category-root--shape-3 { --root-clip: polygon(34px 0, 100% 0, 100% 100%, 14px 100%, 0 calc(100% - 14px), 0 34px); }
-.category-root--shape-4 { --root-clip: polygon(0 0, calc(100% - 34px) 0, 100% 34px, 100% calc(100% - 14px), calc(100% - 14px) 100%, 0 100%); }
+.category-root--shape-1 { --root-clip: polygon(0 0, calc(100% - 26px) 0, 100% 26px, 100% 100%, 0 100%); }
+.category-root--shape-2 { --root-clip: polygon(0 0, calc(100% - 26px) 0, 100% 26px, 100% 100%, 0 100%); }
+.category-root--shape-3 { --root-clip: polygon(0 0, calc(100% - 34px) 0, 100% 34px, 100% 100%, 0 100%); }
+.category-root--shape-4 { --root-clip: polygon(0 0, calc(100% - 34px) 0, 100% 34px, 100% 100%, 0 100%); }
 .category-root:hover {
   background: color-mix(in srgb, var(--ce-accent) 72%, var(--ds-text));
   box-shadow: 0 12px 28px color-mix(in srgb, var(--lu-ink-950) 12%, transparent);
@@ -175,16 +175,16 @@
   box-shadow: 0 12px 28px color-mix(in srgb, var(--ce-accent) 20%, transparent);
 }
 .category-root.is-lead {
-  --root-clip: polygon(64px 0, 100% 0, 100% calc(100% - 18px), calc(100% - 18px) 100%, 0 100%, 0 64px);
+  --root-clip: polygon(0 0, calc(100% - 64px) 0, 100% 64px, 100% 100%, 0 100%);
   grid-column: 1;
   grid-row: 1 / span 2;
   align-self: stretch;
   height: auto;
   padding: 64px 24px 24px;
 }
-.category-root--shape-2.is-lead { --root-clip: polygon(0 0, calc(100% - 64px) 0, 100% 64px, 100% 100%, 18px 100%, 0 calc(100% - 18px)); }
-.category-root--shape-3.is-lead { --root-clip: polygon(76px 0, 100% 0, 100% 100%, 24px 100%, 0 calc(100% - 24px), 0 76px); }
-.category-root--shape-4.is-lead { --root-clip: polygon(0 0, calc(100% - 76px) 0, 100% 76px, 100% calc(100% - 24px), calc(100% - 24px) 100%, 0 100%); }
+.category-root--shape-2.is-lead { --root-clip: polygon(0 0, calc(100% - 64px) 0, 100% 64px, 100% 100%, 0 100%); }
+.category-root--shape-3.is-lead { --root-clip: polygon(0 0, calc(100% - 76px) 0, 100% 76px, 100% 100%, 0 100%); }
+.category-root--shape-4.is-lead { --root-clip: polygon(0 0, calc(100% - 76px) 0, 100% 76px, 100% 100%, 0 100%); }
 .category-root:focus-visible {
   outline: none;
   background: var(--ce-accent-deep);
@@ -873,15 +873,15 @@
   .category-explorer--home .category-root-list { --root-card-height: 154px; }
   .category-root { padding: 48px 11px 12px; }
   .category-root.is-lead {
-    --root-clip: polygon(26px 0, 100% 0, 100% calc(100% - 8px), calc(100% - 8px) 100%, 0 100%, 0 26px);
+    --root-clip: polygon(0 0, calc(100% - 26px) 0, 100% 26px, 100% 100%, 0 100%);
     grid-column: 1;
     grid-row: auto;
     height: var(--root-card-height);
     padding: 48px 11px 12px;
   }
-  .category-root--shape-2.is-lead { --root-clip: polygon(0 0, calc(100% - 26px) 0, 100% 26px, 100% 100%, 8px 100%, 0 calc(100% - 8px)); }
-  .category-root--shape-3.is-lead { --root-clip: polygon(34px 0, 100% 0, 100% 100%, 14px 100%, 0 calc(100% - 14px), 0 34px); }
-  .category-root--shape-4.is-lead { --root-clip: polygon(0 0, calc(100% - 34px) 0, 100% 34px, 100% calc(100% - 14px), calc(100% - 14px) 100%, 0 100%); }
+  .category-root--shape-2.is-lead { --root-clip: polygon(0 0, calc(100% - 26px) 0, 100% 26px, 100% 100%, 0 100%); }
+  .category-root--shape-3.is-lead { --root-clip: polygon(0 0, calc(100% - 34px) 0, 100% 34px, 100% 100%, 0 100%); }
+  .category-root--shape-4.is-lead { --root-clip: polygon(0 0, calc(100% - 34px) 0, 100% 34px, 100% 100%, 0 100%); }
   .category-root-copy strong,
   .category-root.is-lead .category-root-copy strong { max-width: none; font-size: 12px; line-height: 1.15; }
   .category-root-copy small,
