@@ -29,7 +29,7 @@ $locale = (string) ($locale ?? 'en');
 $shareUrl = (string) ($shareUrl ?? '');
 $maxItems = (int) ($maxItems ?? 40);
 $shopMail = (string) ($shopMail ?? 'info@lufly.tr');
-$fallbackImg = asset('/images/products/prod_146_1620-111-a.jpg');
+$fallbackImg = asset('/images/favicon.png');
 $savedEmail = (string) ($box->email ?? '');
 $savedNote = (string) ($box->note ?? '');
 

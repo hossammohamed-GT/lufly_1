@@ -47,7 +47,7 @@ $buildUrl = static function (array $overrides = []) use ($activeCategory, $searc
     return route('products.index') . (count($params) > 0 ? '?' . http_build_query($params) : '');
 };
 
-$fallbackImg = '/images/products/prod_146_1620-111-a.jpg';
+$fallbackImg = '/images/favicon.png';
 
 /* Products this visitor already saved, so every card shows the heart in the
    right state before the script runs (one query, and none at all for a visitor

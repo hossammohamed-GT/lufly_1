@@ -422,7 +422,7 @@ final class CatalogFinder
             'code' => (string) ($item['sku'] ?? $item['model_code'] ?? ''),
             'url' => route('products.show', ['slug' => (string) $product->slug]),
             /* the chat renders these cards itself, so the picture is a full URL */
-            'image' => asset($image !== '' ? $image : '/images/products/prod_146_1620-111-a.jpg'),
+            'image' => asset($image !== '' ? $image : '/images/favicon.png'),
             'cat' => (string) ($item['category_name'] ?? ''),
             'size' => $this->size($item),
         ];

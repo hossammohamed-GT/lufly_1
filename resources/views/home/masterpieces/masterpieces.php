@@ -6,7 +6,7 @@ $view->pushScript('frontend/products/catalog/catalog.js');
 $view->pushDeferredStyle('frontend/components/skeleton/skeleton.css');
 $view->pushScript('frontend/components/skeleton/skeleton.js');
 /** @var array $featuredProducts */
-$fallbackImg = '/images/products/prod_146_1620-111-a.jpg';
+$fallbackImg = '/images/favicon.png';
 $featured = is_array($featuredProducts ?? null) ? $featuredProducts : [];
 ?>
 <section class="masterpieces-section scroll-section" id="featured">

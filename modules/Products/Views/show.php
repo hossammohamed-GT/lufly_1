@@ -14,7 +14,7 @@ $view->pushScript('frontend/favorites/favorites.js');
 /** @var array<string, mixed> $product */
 /** @var string $locale */
 
-$fallbackImg = '/images/products/prod_146_1620-111-a.jpg';
+$fallbackImg = '/images/favicon.png';
 $img = (string) ($product['image'] ?? '') !== '' ? (string) $product['image'] : $fallbackImg;
 $situImg = (string) ($product['situ_image'] ?? '');
 $modelCode = (string) ($product['model_code'] ?? $product['sku'] ?? '');
