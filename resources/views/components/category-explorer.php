@@ -134,6 +134,8 @@ $isLifestyle = static fn (string $path): bool => (bool) preg_match('/\.jpe?g$/i'
                                 $description = trim((string) ($node['description'] ?? ''));
                                 $isSelected = $slug === $selectedSlug;
                                 $panelId = 'category-panel-' . $mode . '-' . (int) $node['id'];
+                                $hasRootContext = $depth === 2 && $children !== [] && isset($nodes[(string) $node['root']]);
+                                $contextRoot = $hasRootContext ? $nodes[(string) $node['root']] : null;
                                 ?>
                                 <article id="<?= e($panelId) ?>" class="category-panel"
                                          data-category-panel="<?= e($slug) ?>" data-root="<?= e((string) $node['root']) ?>" data-depth="<?= (int) $depth ?>"
@@ -155,7 +157,38 @@ $isLifestyle = static fn (string $path): bool => (bool) preg_match('/\.jpe?g$/i'
                                         <?php endforeach; ?>
                                     </nav>
 
-                                    <div class="category-panel-hero">
+                                    <div class="category-panel-hero<?= $hasRootContext ? ' has-root-context' : '' ?>">
+                                        <?php if ($hasRootContext): ?>
+                                            <?php
+                                            $contextSlug = (string) $contextRoot['slug'];
+                                            $contextName = (string) ($contextRoot['name'] ?? $contextSlug);
+                                            $contextImage = trim((string) ($contextRoot['image'] ?? '')) ?: '/images/favicon.png';
+                                            $contextChildren = is_array($contextRoot['children'] ?? null) ? $contextRoot['children'] : [];
+                                            ?>
+                                            <div class="category-root-context">
+                                                <div class="category-root-context-heading">
+                                                    <span class="category-root-context-image<?= $isLifestyle($contextImage) ? ' is-lifestyle' : '' ?>">
+                                                        <img src="<?= e(asset(ltrim($contextImage, '/'))) ?>" alt="" loading="lazy" decoding="async" width="180" height="200"
+                                                             onerror="this.onerror=null;this.src='<?= e($fallbackImage) ?>';">
+                                                    </span>
+                                                    <span class="category-root-context-title">
+                                                        <small><?= e($levelLabel(1)) ?></small>
+                                                        <strong><?= e($contextName) ?></strong>
+                                                    </span>
+                                                </div>
+                                                <div class="category-root-context-meta">
+                                                    <span><?= e($childLabel(count($contextChildren))) ?></span>
+                                                    <?php if ($counts !== null): ?>
+                                                        <span><?= e($productLabel((int) ($counts[$contextSlug] ?? 0))) ?></span>
+                                                    <?php endif; ?>
+                                                </div>
+                                                <a class="category-root-context-cta" href="<?= e($productsUrl($contextSlug)) ?>"
+                                                   aria-label="<?= e(trans('products.category_view_products')) ?>: <?= e($contextName) ?>">
+                                                    <span><?= e(trans('products.category_view_products')) ?></span>
+                                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><path d="M4 12h15m-6-6 6 6-6 6"/></svg>
+                                                </a>
+                                            </div>
+                                        <?php endif; ?>
                                         <div class="category-panel-copy">
                                             <span class="category-panel-level">
                                                 <b><?= str_pad((string) $depth, 2, '0', STR_PAD_LEFT) ?></b>
