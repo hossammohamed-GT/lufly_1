@@ -4,7 +4,7 @@
 /config.local.php
 
 # Uploads
-/uploads/*
+# /uploads/*
 !/uploads/.htaccess
 !/uploads/.gitkeep
 
