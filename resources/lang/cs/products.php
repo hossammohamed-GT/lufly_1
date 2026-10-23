@@ -4,6 +4,16 @@ declare(strict_types=1);
 
 return [
     'title' => 'Produkty',
+    'catalog_home' => 'Domů',
+    'catalog_eyebrow' => 'Naše produkty',
+    'catalog_hero_title' => 'Objevte naše',
+    'catalog_hero_accent' => 'kolekce',
+    'catalog_hero_desc' => 'Kompletní nabídka sanitární keramiky a koupelnového příslušenství pro krásné prostory a každodenní používání.',
+    'catalog_hero_note' => 'Detaily vytvářejí lepší prostory.',
+    'catalog_quality' => 'Prémiová kvalita',
+    'catalog_design' => 'Moderní design',
+    'catalog_sustainable' => 'Udržitelná řešení',
+    'catalog_results_title' => 'Kolekce',
     'empty' => 'Zatím nejsou k dispozici žádné produkty.',
     'price_label' => 'Cena',
     'view_details' => 'Zobrazit detail',

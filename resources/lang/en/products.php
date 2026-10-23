@@ -4,6 +4,16 @@ declare(strict_types=1);
 
 return [
     'title' => 'Products',
+    'catalog_home' => 'Home',
+    'catalog_eyebrow' => 'Our products',
+    'catalog_hero_title' => 'Explore our',
+    'catalog_hero_accent' => 'collections',
+    'catalog_hero_desc' => 'A complete range of sanitary ware and bathroom accessories, designed for beautiful spaces and everyday performance.',
+    'catalog_hero_note' => 'Details make better spaces.',
+    'catalog_quality' => 'Premium quality',
+    'catalog_design' => 'Modern design',
+    'catalog_sustainable' => 'Sustainable solutions',
+    'catalog_results_title' => 'The collection',
     'empty' => 'No products available yet.',
     'price_label' => 'Price',
     'view_details' => 'View details',

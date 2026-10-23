@@ -111,7 +111,7 @@ $isLifestyle = static fn (string $path): bool => (bool) preg_match('/\.jpe?g$/i'
                            aria-label="<?= e(trans('products.category_open', ['name' => $name])) ?>">
                             <span class="category-root-index"><?= str_pad((string) ($rootIndex + 1), 2, '0', STR_PAD_LEFT) ?></span>
                             <span class="category-root-image<?= $isLifestyle($image) ? ' is-lifestyle' : '' ?>">
-                                <img src="<?= e(asset(ltrim($image, '/'))) ?>" alt="" loading="lazy" decoding="async" width="96" height="96"
+                                <img src="<?= e(asset(ltrim($image, '/'))) ?>" alt="" loading="lazy" decoding="async" width="320" height="220"
                                      onerror="this.onerror=null;this.src='<?= e($fallbackImage) ?>';">
                             </span>
                             <span class="category-root-copy">
@@ -208,7 +208,7 @@ $isLifestyle = static fn (string $path): bool => (bool) preg_match('/\.jpe?g$/i'
                                         <?= $grandchildren !== [] ? 'data-category-select="' . e($childSlug) . '" aria-controls="category-panel-' . e($mode) . '-' . (int) $child['id'] . '"' : '' ?>
                                         aria-label="<?= e(trans('products.category_open', ['name' => $childName])) ?>">
                                         <span class="category-child-image<?= $isLifestyle($childImage) ? ' is-lifestyle' : '' ?>">
-                                            <img src="<?= e(asset(ltrim($childImage, '/'))) ?>" alt="" loading="lazy" decoding="async" width="420" height="315"
+                                            <img src="<?= e(asset(ltrim($childImage, '/'))) ?>" alt="" loading="lazy" decoding="async" width="480" height="310"
                                                  onerror="this.onerror=null;this.src='<?= e($fallbackImage) ?>';">
                                         </span>
                                         <span class="category-child-copy">

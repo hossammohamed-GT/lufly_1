@@ -4,6 +4,16 @@ declare(strict_types=1);
 
 return [
     'title' => 'Ürünler',
+    'catalog_home' => 'Ana sayfa',
+    'catalog_eyebrow' => 'Ürünlerimiz',
+    'catalog_hero_title' => 'Koleksiyonlarımızı',
+    'catalog_hero_accent' => 'keşfedin',
+    'catalog_hero_desc' => 'Güzel mekânlar ve günlük performans için tasarlanmış kapsamlı vitrifiye ve banyo aksesuarları koleksiyonu.',
+    'catalog_hero_note' => 'Detaylar daha iyi mekânlar yaratır.',
+    'catalog_quality' => 'Üstün kalite',
+    'catalog_design' => 'Modern tasarım',
+    'catalog_sustainable' => 'Sürdürülebilir çözümler',
+    'catalog_results_title' => 'Koleksiyon',
     'empty' => 'Henüz ürün bulunmuyor.',
     'price_label' => 'Fiyat',
     'view_details' => 'Detayları gör',

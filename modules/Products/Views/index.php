@@ -48,6 +48,15 @@ $buildUrl = static function (array $overrides = []) use ($activeCategory, $searc
 };
 
 $fallbackImg = '/images/favicon.png';
+$heroImage = '/images/categories/001-bathroom.jpg';
+$heroName = trans('products.title');
+foreach ($categories as $category) {
+    if (($category['slug'] ?? '') === 'bathroom') {
+        $heroImage = trim((string) ($category['image'] ?? '')) ?: $heroImage;
+        $heroName = (string) ($category['name'] ?? $heroName);
+        break;
+    }
+}
 
 /* Products this visitor already saved, so every card shows the heart in the
    right state before the script runs (one query, and none at all for a visitor
@@ -65,20 +74,58 @@ if (feature('box', true) && class_exists(\Modules\Box\Services\BoxService::class
 ?>
 <main class="catalog" id="main">
     <div class="catalog-inner">
-        <header class="catalog-head">
-            <div class="catalog-titles">
-                <span class="catalog-eyebrow"><?= e(trans('common.factory_direct')) ?> &middot; EN-997 / CE</span>
-                <h1 class="catalog-title"><?= e(trans('products.title')) ?></h1>
+        <header class="catalog-hero">
+            <div class="catalog-hero-copy">
+                <nav class="catalog-breadcrumb" aria-label="<?= e(trans('products.catalog_eyebrow')) ?>">
+                    <a href="<?= e(route('home')) ?>"><?= e(trans('products.catalog_home')) ?></a>
+                    <svg viewBox="0 0 12 12" fill="none" stroke="currentColor" aria-hidden="true"><path d="m4 2 4 4-4 4"/></svg>
+                    <span aria-current="page"><?= e(trans('products.title')) ?></span>
+                </nav>
+                <span class="catalog-eyebrow"><?= e(trans('products.catalog_eyebrow')) ?></span>
+                <h1 class="catalog-title"><?= e(trans('products.catalog_hero_title')) ?> <em><?= e(trans('products.catalog_hero_accent')) ?></em></h1>
+                <p class="catalog-hero-description"><?= e(trans('products.catalog_hero_desc')) ?></p>
+                <ul class="catalog-hero-features" aria-label="<?= e(trans('products.catalog_eyebrow')) ?>">
+                    <li>
+                        <span class="catalog-feature-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><path d="m12 3 8 5v8l-8 5-8-5V8l8-5Z"/><path d="m8.5 12 2.2 2.2 4.8-5"/></svg></span>
+                        <span><?= e(trans('products.catalog_quality')) ?></span>
+                    </li>
+                    <li>
+                        <span class="catalog-feature-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><path d="M4 20 20 4M7 4h13v13M4 8v12h12"/></svg></span>
+                        <span><?= e(trans('products.catalog_design')) ?></span>
+                    </li>
+                    <li>
+                        <span class="catalog-feature-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><path d="M19.5 4.5C11 4 5 8 5 14a5 5 0 0 0 5 5c6 0 10-6 9.5-14.5Z"/><path d="M4 21c2-6 6-9 12-12"/></svg></span>
+                        <span><?= e(trans('products.catalog_sustainable')) ?></span>
+                    </li>
+                </ul>
             </div>
-            <span class="catalog-count">
-                <?= e($total === 1 ? trans('products.results_one') : trans('products.results_many', ['n' => number_format($total)])) ?>
-            </span>
+            <figure class="catalog-hero-media">
+                <img src="<?= e(asset(ltrim($heroImage, '/'))) ?>" alt="<?= e($heroName) ?>" width="1536" height="1024" fetchpriority="high" decoding="async">
+                <figcaption><span aria-hidden="true"></span><?= e(trans('products.catalog_hero_note')) ?></figcaption>
+            </figure>
         </header>
+
+        <?= $view->component('category-explorer', [
+            'categories' => $categories,
+            'categoryCounts' => $categoryCounts,
+            'activeCategory' => $activeCategory,
+            'buildUrl' => $buildUrl,
+            'mode' => 'catalog',
+        ]) ?>
 
         <div class="catalog-toolbar" data-livesearch
             data-livesearch-grid="[data-catalog-grid]"
             data-livesearch-pagination="[data-catalog-pagination]"
             data-livesearch-count=".catalog-count">
+            <div class="catalog-results-head">
+                <div>
+                    <span><?= e(trans('products.catalog_eyebrow')) ?></span>
+                    <h2><?= e(trans('products.catalog_results_title')) ?></h2>
+                </div>
+                <span class="catalog-count">
+                    <?= e($total === 1 ? trans('products.results_one') : trans('products.results_many', ['n' => number_format($total)])) ?>
+                </span>
+            </div>
             <form method="GET" action="<?= e(route('products.index')) ?>" class="catalog-searchform">
                 <?php if ($activeCategory !== ''): ?>
                     <input type="hidden" name="category" value="<?= e($activeCategory) ?>">
@@ -113,14 +160,6 @@ if (feature('box', true) && class_exists(\Modules\Box\Services\BoxService::class
                 </div>
             </div>
         </div>
-
-        <?= $view->component('category-explorer', [
-            'categories' => $categories,
-            'categoryCounts' => $categoryCounts,
-            'activeCategory' => $activeCategory,
-            'buildUrl' => $buildUrl,
-            'mode' => 'catalog',
-        ]) ?>
 
         <?php if ($activeCategory !== ''): ?>
             <div class="catalog-active-filter">
