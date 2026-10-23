@@ -173,10 +173,22 @@ $isLifestyle = static fn (string $path): bool => (bool) preg_match('/\.jpe?g$/i'
                                                     <span><?= e($productLabel((int) ($counts[$slug] ?? 0))) ?></span>
                                                 <?php endif; ?>
                                             </div>
-                                            <a class="category-panel-cta" href="<?= e($productsUrl($slug)) ?>">
-                                                <span><?= e(trans('products.category_view_products')) ?></span>
-                                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><path d="M4 12h15m-6-6 6 6-6 6"/></svg>
-                                            </a>
+                                            <div class="category-panel-actions">
+                                                <a class="category-panel-cta" href="<?= e($productsUrl($slug)) ?>">
+                                                    <span><?= e(trans('products.category_view_products')) ?></span>
+                                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><path d="M4 12h15m-6-6 6 6-6 6"/></svg>
+                                                </a>
+                                                <?php if ($depth === 2 && $children !== []): ?>
+                                                    <?php $parentName = (string) ($node['lineage'][0]['name'] ?? $node['root']); ?>
+                                                    <button type="button" class="category-panel-collapse"
+                                                            data-category-select="<?= e($slug) ?>"
+                                                            aria-controls="<?= e($panelId) ?>" aria-expanded="true"
+                                                            aria-label="<?= e(trans('products.category_back', ['name' => $parentName])) ?>"
+                                                            title="<?= e(trans('products.category_back', ['name' => $parentName])) ?>">
+                                                        <svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><path d="m5 12 5-5 5 5"/></svg>
+                                                    </button>
+                                                <?php endif; ?>
+                                            </div>
                                         </div>
                                         <div class="category-panel-visual<?= $isLifestyle($image) ? ' is-lifestyle' : '' ?>">
                                             <img src="<?= e(asset(ltrim($image, '/'))) ?>" alt="<?= e($name) ?>"

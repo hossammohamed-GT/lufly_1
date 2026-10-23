@@ -158,14 +158,16 @@
         panel.hidden = true;
       });
       each(panels, function (panel) { panel.classList.remove('has-nested-panel'); });
-      var triggers = explorer.querySelectorAll('.category-child[data-category-select]');
-      each(triggers, function (trigger) {
-        if (typeof trigger.getAnimations === 'function') {
-          each(trigger.getAnimations(), function (animation) { animation.cancel(); });
+      var cards = explorer.querySelectorAll('.category-child');
+      each(cards, function (card) {
+        if (typeof card.getAnimations === 'function') {
+          each(card.getAnimations(), function (animation) { animation.cancel(); });
         }
-        trigger.hidden = false;
-        trigger.classList.remove('is-expanded');
-        trigger.setAttribute('aria-expanded', 'false');
+        card.hidden = false;
+        card.classList.remove('is-expanded');
+        if (card.hasAttribute('data-category-select')) {
+          card.setAttribute('aria-expanded', 'false');
+        }
       });
     }
 
@@ -224,13 +226,12 @@
       return null;
     }
 
-    function animateNestedPanel(panel, trigger) {
+    function animateNestedPanel(panel, originRect) {
       if (!canAnimate(panel)) {
         return;
       }
-      var triggerRect = trigger.getBoundingClientRect();
       var panelRect = panel.getBoundingClientRect();
-      panel.style.setProperty('--category-origin-x', (triggerRect.left + (triggerRect.width / 2) - panelRect.left) + 'px');
+      panel.style.setProperty('--category-origin-x', (originRect.left + (originRect.width / 2) - panelRect.left) + 'px');
       animateHeight(panel, 0, 540);
       panel.animate([
         { opacity: 0, transform: 'translateY(-14px) scale(0.985)', filter: 'blur(3px)' },
@@ -331,21 +332,19 @@
       each(siblings, function (sibling) { animateSiblingExit(sibling, suppressAnimation); });
       trigger.classList.add('is-expanded');
       trigger.setAttribute('aria-expanded', 'true');
+
+      /* The expanded hero is the single level-two card. The compact trigger
+         returns only when this branch collapses, so the two never duplicate
+         the same category or compete for vertical space. */
+      trigger.hidden = true;
       target.classList.add('is-nested');
       target.hidden = false;
       rootPanel.classList.add('has-nested-panel');
       grid.insertBefore(target, trigger.nextSibling);
       updateSelection(slug, target, moveFocus);
 
-      if (!suppressAnimation && canAnimate(trigger)) {
-        var newRect = trigger.getBoundingClientRect();
-        trigger.animate([
-          { transform: 'translate(' + (oldRect.left - newRect.left) + 'px,' + (oldRect.top - newRect.top) + 'px)' },
-          { transform: 'translate(0,0)' }
-        ], { duration: 440, easing: easing });
-      }
       if (!suppressAnimation) {
-        animateNestedPanel(target, trigger);
+        animateNestedPanel(target, oldRect);
       }
     }
 
