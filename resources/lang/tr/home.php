@@ -118,7 +118,7 @@ return [
 
     'featured_tag' => 'Öne Çıkan Ürünler',
     'featured_title' => 'İkonik Mimari Modeller',
-    'full_catalog' => 'Tüm Mimari Kataloğu Görüntüle (280+ Ürün)',
+    'full_catalog' => 'Tüm Mimari Kataloğu Görüntüle',
     'inquire_b2b' => 'B2B İhracat Talebi',
     'corporate_badge' => 'Sertifikalı Avrupa Üreticisi',
     'spec_desk_title' => 'Mimari Şartname Masası',

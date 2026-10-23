@@ -19,10 +19,10 @@
             <div class="footer-col">
                 <h2><?= e(trans('common.footer_sanitary')) ?></h2>
                 <ul>
-                    <li><a href="<?= e(route('products.index', ['category' => 'bathroom-ceramics'])) ?>"><?= e(trans('home.category_toilets')) ?></a></li>
-                    <li><a href="<?= e(route('products.index', ['category' => 'washbasin-mixers'])) ?>"><?= e(trans('home.category_basins')) ?></a></li>
-                    <li><a href="<?= e(route('products.index', ['category' => 'shower-sets'])) ?>"><?= e(trans('home.category_showers')) ?></a></li>
-                    <li><a href="<?= e(route('products.index', ['category' => 'sensor-products'])) ?>"><?= e(trans('home.category_commercial')) ?></a></li>
+                    <li><a href="<?= e(route('products.index', ['category' => 'bathroom.sanitary-ware.toilets'])) ?>"><?= e(trans('home.category_toilets')) ?></a></li>
+                    <li><a href="<?= e(route('products.index', ['category' => 'bathroom.sanitary-ware.wash-basins'])) ?>"><?= e(trans('home.category_basins')) ?></a></li>
+                    <li><a href="<?= e(route('products.index', ['category' => 'bathroom.mixers.shower-mixers'])) ?>"><?= e(trans('home.category_showers')) ?></a></li>
+                    <li><a href="<?= e(route('products.index', ['category' => 'bathroom'])) ?>"><?= e(trans('home.category_commercial')) ?></a></li>
                     <li><a href="<?= e(route('products.index', ['category' => 'kids'])) ?>"><?= e(trans('home.category_kids')) ?></a></li>
                 </ul>
             </div>

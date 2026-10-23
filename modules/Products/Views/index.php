@@ -2,8 +2,8 @@
 /**
  * Storefront catalog - machined editorial identity.
  * Coded header with result count, blueprint toolbar (search + sort),
- * category rail with counts, editorial product cards (main shot with a
- * situ crossfade on hover), machined pagination.
+ * three-level category atlas with descendant counts, editorial product cards
+ * (main shot with a situ crossfade on hover), machined pagination.
  *
  * @var Core\View\View $view
  */
@@ -114,20 +114,22 @@ if (feature('box', true) && class_exists(\Modules\Box\Services\BoxService::class
             </div>
         </div>
 
-        <nav class="catalog-rail" aria-label="<?= e(trans('common.category')) ?>">
-            <a href="<?= e($buildUrl(['category' => null])) ?>"
-               class="catalog-pill <?= $activeCategory === '' ? 'is-active' : '' ?>">
-                <?= e(trans('common.all_categories')) ?>
-                <span class="catalog-pill-n"><?= e(number_format($categoryCounts[''] ?? 0)) ?></span>
-            </a>
-            <?php foreach ($categories as $cat): ?>
-                <a href="<?= e($buildUrl(['category' => $cat['slug']])) ?>"
-                   class="catalog-pill <?= $activeCategory === $cat['slug'] ? 'is-active' : '' ?>">
-                    <?= e($cat['name'] ?: $cat['slug']) ?>
-                    <span class="catalog-pill-n"><?= e(number_format($categoryCounts[(string) $cat['slug']] ?? 0)) ?></span>
+        <?= $view->component('category-explorer', [
+            'categories' => $categories,
+            'categoryCounts' => $categoryCounts,
+            'activeCategory' => $activeCategory,
+            'buildUrl' => $buildUrl,
+            'mode' => 'catalog',
+        ]) ?>
+
+        <?php if ($activeCategory !== ''): ?>
+            <div class="catalog-active-filter">
+                <a href="<?= e($buildUrl(['category' => null, 'page' => null])) ?>">
+                    <?= e(trans('common.all_categories')) ?>
+                    <span><?= e(number_format($categoryCounts[''] ?? 0)) ?></span>
                 </a>
-            <?php endforeach; ?>
-        </nav>
+            </div>
+        <?php endif; ?>
 
         <?php if ($paginator->items() === []): ?>
             <div class="catalog-empty">

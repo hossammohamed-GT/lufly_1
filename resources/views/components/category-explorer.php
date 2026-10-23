@@ -1,0 +1,234 @@
+<?php
+/**
+ * Reusable three-level category atlas.
+ *
+ * All nodes and links are rendered by the server. JavaScript only enhances
+ * drill-down navigation; without it every category still opens its filtered
+ * product collection. Product counts, when supplied, already include all
+ * descendants through CategoryService.
+ *
+ * @var Core\View\View $view
+ * @var array<int, array<string, mixed>> $categories
+ */
+$view->pushDeferredStyle('frontend/components/category-explorer/category-explorer.css');
+$view->pushScript('frontend/components/category-explorer/category-explorer.js');
+
+$tree = is_array($categories ?? null) ? array_values($categories) : [];
+if ($tree === []) {
+    return;
+}
+
+$mode = ($mode ?? 'home') === 'catalog' ? 'catalog' : 'home';
+$activeSlug = trim((string) ($activeCategory ?? ''));
+$counts = is_array($categoryCounts ?? null) ? $categoryCounts : null;
+$urlBuilder = $buildUrl ?? null;
+$fallbackImage = asset('images/favicon.png');
+
+$nodes = [];
+$order = [];
+$walk = function (array $items, array $ancestors = [], string $rootSlug = '') use (&$walk, &$nodes, &$order): void {
+    foreach ($items as $item) {
+        $slug = trim((string) ($item['slug'] ?? ''));
+        if ($slug === '') {
+            continue;
+        }
+        $name = trim((string) ($item['name'] ?? '')) ?: $slug;
+        $children = is_array($item['children'] ?? null) ? array_values($item['children']) : [];
+        $lineage = [...$ancestors, ['slug' => $slug, 'name' => $name]];
+        $node = $item;
+        $node['slug'] = $slug;
+        $node['name'] = $name;
+        $node['children'] = $children;
+        $node['lineage'] = $lineage;
+        $node['root'] = $rootSlug !== '' ? $rootSlug : $slug;
+        $nodes[$slug] = $node;
+        $order[] = $slug;
+        $walk($children, $lineage, (string) $node['root']);
+    }
+};
+$walk($tree);
+
+$selectedSlug = isset($nodes[$activeSlug]) ? $activeSlug : (string) ($order[0] ?? '');
+$selectedRoot = (string) ($nodes[$selectedSlug]['root'] ?? $selectedSlug);
+
+$categoryUrl = static function (string $slug) use ($urlBuilder): string {
+    if (is_callable($urlBuilder)) {
+        return (string) $urlBuilder(['category' => $slug !== '' ? $slug : null, 'page' => null]);
+    }
+
+    return route('products.index', $slug !== '' ? ['category' => $slug] : []);
+};
+$childLabel = static fn (int $number): string => $number === 1
+    ? trans('products.category_children_one')
+    : trans('products.category_children_many', ['n' => number_format($number)]);
+$productLabel = static fn (int $number): string => $number === 1
+    ? trans('products.results_one')
+    : trans('products.results_many', ['n' => number_format($number)]);
+$levelLabel = static fn (int $depth): string => trans('products.category_level_' . min(3, max(1, $depth)));
+$isLifestyle = static fn (string $path): bool => (bool) preg_match('/\.jpe?g$/i', $path);
+?>
+<section class="category-explorer category-explorer--<?= e($mode) ?>"
+         id="<?= $mode === 'home' ? 'categories' : 'category-explorer' ?>"
+         data-category-explorer data-selected="<?= e($selectedSlug) ?>">
+    <div class="category-explorer-inner<?= $mode === 'home' ? ' container' : '' ?>">
+        <?php if ($mode === 'home'): ?>
+            <div class="section-header-center section-header-on-photo scroll-reveal category-explorer-heading">
+                <span class="section-tag"><?= e(trans('home.collections_tag')) ?></span>
+                <h2 class="section-title"><?= e(trans('home.design_title')) ?></h2>
+                <p class="section-subtitle"><?= e(trans('home.design_desc')) ?></p>
+                <span class="category-explorer-total"><?= e(trans('products.category_total', ['n' => number_format(count($nodes))])) ?></span>
+            </div>
+        <?php else: ?>
+            <div class="category-explorer-compact-head">
+                <span class="category-explorer-kicker"><?= e(trans('products.category_atlas')) ?></span>
+                <span class="category-explorer-total"><?= e(trans('products.category_total', ['n' => number_format(count($nodes))])) ?></span>
+            </div>
+        <?php endif; ?>
+
+        <div class="category-explorer-shell">
+            <nav class="category-roots" aria-label="<?= e(trans('products.category_atlas')) ?>">
+                <div class="category-roots-label">
+                    <span><?= e(trans('products.category_level_1')) ?></span>
+                    <span><?= str_pad((string) count($tree), 2, '0', STR_PAD_LEFT) ?></span>
+                </div>
+                <div class="category-root-list">
+                    <?php foreach ($tree as $rootIndex => $root): ?>
+                        <?php
+                        $slug = (string) $root['slug'];
+                        $name = (string) ($root['name'] ?? $slug);
+                        $image = trim((string) ($root['image'] ?? '')) ?: '/images/favicon.png';
+                        $children = is_array($root['children'] ?? null) ? $root['children'] : [];
+                        $isActive = $selectedRoot === $slug;
+                        $meta = $counts !== null
+                            ? $productLabel((int) ($counts[$slug] ?? 0))
+                            : (count($children) > 0 ? $childLabel(count($children)) : trans('products.category_view_products'));
+                        ?>
+                        <a href="<?= e($categoryUrl($slug)) ?>"
+                           class="category-root<?= $isActive ? ' is-active' : '' ?>"
+                           data-category-select="<?= e($slug) ?>" data-category-root="<?= e($slug) ?>"
+                           aria-controls="category-panel-<?= e($mode) ?>-<?= (int) $root['id'] ?>"
+                           <?= $isActive ? 'aria-current="location"' : '' ?>
+                           aria-label="<?= e(trans('products.category_open', ['name' => $name])) ?>">
+                            <span class="category-root-index"><?= str_pad((string) ($rootIndex + 1), 2, '0', STR_PAD_LEFT) ?></span>
+                            <span class="category-root-image<?= $isLifestyle($image) ? ' is-lifestyle' : '' ?>">
+                                <img src="<?= e(asset(ltrim($image, '/'))) ?>" alt="" loading="lazy" decoding="async" width="96" height="96"
+                                     onerror="this.onerror=null;this.src='<?= e($fallbackImage) ?>';">
+                            </span>
+                            <span class="category-root-copy">
+                                <strong><?= e($name) ?></strong>
+                                <small><?= e($meta) ?></small>
+                            </span>
+                            <svg class="category-root-arrow" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><path d="M4 10h11m-4-4 4 4-4 4"/></svg>
+                        </a>
+                    <?php endforeach; ?>
+                </div>
+            </nav>
+
+            <div class="category-panels">
+                <?php foreach ($order as $slug): ?>
+                    <?php
+                    $node = $nodes[$slug];
+                    $name = (string) $node['name'];
+                    $depth = (int) ($node['depth'] ?? 1);
+                    $children = $node['children'];
+                    $image = trim((string) ($node['image'] ?? '')) ?: '/images/favicon.png';
+                    $description = trim((string) ($node['description'] ?? ''));
+                    $isSelected = $slug === $selectedSlug;
+                    $panelId = 'category-panel-' . $mode . '-' . (int) $node['id'];
+                    ?>
+                    <article id="<?= e($panelId) ?>" class="category-panel"
+                             data-category-panel="<?= e($slug) ?>" data-root="<?= e((string) $node['root']) ?>"
+                             aria-labelledby="category-heading-<?= e($mode) ?>-<?= (int) $node['id'] ?>"
+                             <?= $isSelected ? '' : 'hidden' ?>>
+                        <nav class="category-breadcrumb" aria-label="<?= e(trans('products.category_atlas')) ?>">
+                            <a href="<?= e($categoryUrl('')) ?>"><?= e(trans('products.category_atlas')) ?></a>
+                            <?php foreach ($node['lineage'] as $crumbIndex => $crumb): ?>
+                                <svg viewBox="0 0 12 12" fill="none" stroke="currentColor" aria-hidden="true"><path d="m4 2 4 4-4 4"/></svg>
+                                <?php if ($crumbIndex === count($node['lineage']) - 1): ?>
+                                    <span aria-current="page"><?= e((string) $crumb['name']) ?></span>
+                                <?php else: ?>
+                                    <a href="<?= e($categoryUrl((string) $crumb['slug'])) ?>"
+                                       data-category-select="<?= e((string) $crumb['slug']) ?>"
+                                       aria-label="<?= e(trans('products.category_back', ['name' => (string) $crumb['name']])) ?>">
+                                        <?= e((string) $crumb['name']) ?>
+                                    </a>
+                                <?php endif; ?>
+                            <?php endforeach; ?>
+                        </nav>
+
+                        <div class="category-panel-hero">
+                            <div class="category-panel-copy">
+                                <span class="category-panel-level">
+                                    <b><?= str_pad((string) $depth, 2, '0', STR_PAD_LEFT) ?></b>
+                                    <?= e($levelLabel($depth)) ?>
+                                </span>
+                                <h3 id="category-heading-<?= e($mode) ?>-<?= (int) $node['id'] ?>" tabindex="-1" data-category-heading><?= e($name) ?></h3>
+                                <?php if ($description !== ''): ?>
+                                    <p><?= e($description) ?></p>
+                                <?php endif; ?>
+                                <div class="category-panel-meta">
+                                    <?php if ($children !== []): ?>
+                                        <span><?= e($childLabel(count($children))) ?></span>
+                                    <?php endif; ?>
+                                    <?php if ($counts !== null): ?>
+                                        <span><?= e($productLabel((int) ($counts[$slug] ?? 0))) ?></span>
+                                    <?php endif; ?>
+                                </div>
+                                <a class="category-panel-cta" href="<?= e($categoryUrl($slug)) ?>">
+                                    <span><?= e(trans('products.category_view_products')) ?></span>
+                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><path d="M4 12h15m-6-6 6 6-6 6"/></svg>
+                                </a>
+                            </div>
+                            <div class="category-panel-visual<?= $isLifestyle($image) ? ' is-lifestyle' : '' ?>">
+                                <img src="<?= e(asset(ltrim($image, '/'))) ?>" alt="<?= e($name) ?>"
+                                     loading="lazy" decoding="async" width="840" height="560"
+                                     onerror="this.onerror=null;this.src='<?= e($fallbackImage) ?>';">
+                                <span class="category-panel-number" aria-hidden="true">L / <?= str_pad((string) $node['id'], 3, '0', STR_PAD_LEFT) ?></span>
+                            </div>
+                        </div>
+
+                        <?php if ($children !== []): ?>
+                            <div class="category-children-head">
+                                <span><?= e($levelLabel($depth + 1)) ?></span>
+                                <span><?= str_pad((string) count($children), 2, '0', STR_PAD_LEFT) ?></span>
+                            </div>
+                            <div class="category-child-grid">
+                                <?php foreach ($children as $child): ?>
+                                    <?php
+                                    $childSlug = (string) $child['slug'];
+                                    $childName = (string) ($child['name'] ?? $childSlug);
+                                    $childImage = trim((string) ($child['image'] ?? '')) ?: '/images/favicon.png';
+                                    $grandchildren = is_array($child['children'] ?? null) ? $child['children'] : [];
+                                    $childMeta = $counts !== null
+                                        ? $productLabel((int) ($counts[$childSlug] ?? 0))
+                                        : ($grandchildren !== [] ? $childLabel(count($grandchildren)) : trans('products.category_view_products'));
+                                    ?>
+                                    <a href="<?= e($categoryUrl($childSlug)) ?>"
+                                        class="category-child"
+                                        <?= $grandchildren !== [] ? 'data-category-select="' . e($childSlug) . '" aria-controls="category-panel-' . e($mode) . '-' . (int) $child['id'] . '"' : '' ?>
+                                        aria-label="<?= e(trans('products.category_open', ['name' => $childName])) ?>">
+                                        <span class="category-child-image<?= $isLifestyle($childImage) ? ' is-lifestyle' : '' ?>">
+                                            <img src="<?= e(asset(ltrim($childImage, '/'))) ?>" alt="" loading="lazy" decoding="async" width="420" height="315"
+                                                 onerror="this.onerror=null;this.src='<?= e($fallbackImage) ?>';">
+                                        </span>
+                                        <span class="category-child-copy">
+                                            <strong><?= e($childName) ?></strong>
+                                            <small><?= e($childMeta) ?></small>
+                                        </span>
+                                        <svg class="category-child-arrow" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><path d="M4 10h11m-4-4 4 4-4 4"/></svg>
+                                    </a>
+                                <?php endforeach; ?>
+                            </div>
+                        <?php else: ?>
+                            <div class="category-leaf-note">
+                                <span aria-hidden="true"></span>
+                                <p><?= e(trans('products.category_leaf')) ?></p>
+                            </div>
+                        <?php endif; ?>
+                    </article>
+                <?php endforeach; ?>
+                <p class="sr-only" aria-live="polite" data-category-status></p>
+            </div>
+        </div>
+    </div>
+</section>

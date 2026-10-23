@@ -118,7 +118,7 @@ return [
 
     'featured_tag' => 'Signature Portfolio',
     'featured_title' => 'Featured Masterpiece Fixtures',
-    'full_catalog' => 'Explore Full Architectural Catalog (280+ Fixtures)',
+    'full_catalog' => 'Explore Full Architectural Catalog',
     'inquire_b2b' => 'Inquire B2B Export',
     'corporate_badge' => 'Certified European Manufacturer',
     'spec_desk_title' => 'Architectural Specification Desk',

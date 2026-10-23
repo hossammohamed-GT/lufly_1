@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Modules\Products\Controllers;
 
 use App\Http\Controllers\Controller;
+use App\Services\CategoryService;
 use App\Services\SEOService;
 use Core\Http\RedirectResponse;
 use Core\Http\Request;
@@ -21,6 +22,7 @@ class ProductController extends Controller
         private readonly ProductService $products,
         private readonly ProductMediaService $media,
         private readonly SEOService $seo,
+        private readonly CategoryService $categories,
         private readonly Translator $translator,
     ) {
     }
@@ -46,29 +48,8 @@ class ProductController extends Controller
             'sort' => $sort,
         ], (int) $request->query('page', '1'), 12);
 
-        $connection = \Modules\Products\Models\Product::query()->connection();
-        $categories = $connection->select(
-            "SELECT c.id, c.slug, c.image, COALESCE(ct.name, ctf.name) AS name FROM categories c
-             LEFT JOIN category_translations ct ON ct.category_id = c.id AND ct.locale = ?
-             LEFT JOIN category_translations ctf ON ctf.category_id = c.id AND ctf.locale = ?
-             WHERE c.deleted_at IS NULL AND c.status = 'active'
-             ORDER BY c.id ASC",
-            [$locale, $fallback]
-        );
-
-        /* per-category counts for the coded category rail */
-        $categoryCounts = [];
-        foreach ($connection->select(
-            "SELECT c.slug AS slug, COUNT(p.id) AS n
-             FROM categories c
-             LEFT JOIN products p ON p.category_id = c.id AND p.deleted_at IS NULL AND p.status = 'active'
-             WHERE c.deleted_at IS NULL AND c.status = 'active'
-             GROUP BY c.id, c.slug",
-            []
-        ) as $row) {
-            $categoryCounts[(string) $row['slug']] = (int) $row['n'];
-        }
-        $categoryCounts[''] = array_sum($categoryCounts);
+        $categories = $this->categories->tree($locale, $fallback);
+        $categoryCounts = $this->categories->productCounts();
 
         $pageTitle = trans('products.title');
         $catalogDescs = [

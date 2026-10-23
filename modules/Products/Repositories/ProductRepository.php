@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Modules\Products\Repositories;
 
 use App\Repositories\Repository;
+use App\Services\CategoryService;
 use Core\Database\Paginator;
 use Modules\Products\Models\Product;
 
@@ -27,9 +28,8 @@ class ProductRepository extends Repository
     /**
      * Storefront search + filter + sort.
      *
-     * Bindings follow placeholder order: joins first, then WHERE, then sort
-     * join (earlier builds appended the search bindings before the category
-     * join, which broke every filtered/searched listing).
+     * Bindings follow placeholder order: joins first, then WHERE. Category
+     * slugs are expanded to the selected id and all active descendant ids.
      *
      * @param array{
      *     status?: string,
@@ -48,7 +48,6 @@ class ProductRepository extends Repository
 
         $joins = [
             'name' => ' INNER JOIN product_translations pt ON pt.product_id = p.id AND pt.locale = ?',
-            'cat' => ' INNER JOIN categories c ON c.id = p.category_id AND c.slug = ?',
         ];
         $usedJoins = [];
         $joinBindings = [];
@@ -60,14 +59,17 @@ class ProductRepository extends Repository
             $whereBindings[] = $filters['status'];
         }
 
-        if (!empty($filters['category_id'])) {
-            $where[] = 'p.category_id = ?';
-            $whereBindings[] = (int) $filters['category_id'];
-        }
-
-        if (!empty($filters['category_slug'])) {
-            $usedJoins[] = 'cat';
-            $joinBindings[] = (string) $filters['category_slug'];
+        $hasCategoryFilter = !empty($filters['category_id']) || !empty($filters['category_slug']);
+        $categoryIds = !empty($filters['category_id'])
+            ? app(CategoryService::class)->descendantIds((int) $filters['category_id'])
+            : app(CategoryService::class)->descendantIdsBySlug((string) ($filters['category_slug'] ?? ''));
+        if ($hasCategoryFilter) {
+            if ($categoryIds === []) {
+                $where[] = '1 = 0';
+            } else {
+                $where[] = 'p.category_id IN (' . implode(',', array_fill(0, count($categoryIds), '?')) . ')';
+                $whereBindings = [...$whereBindings, ...$categoryIds];
+            }
         }
 
         if (($filters['search'] ?? '') !== '') {
@@ -147,18 +149,20 @@ class ProductRepository extends Repository
         $like = '%' . $searchValue . '%';
 
         $categoryClause = '';
-        if ($categorySlug !== '') {
-            $categoryClause = ' AND EXISTS (
-                   SELECT 1 FROM categories c
-                   WHERE c.id = p.category_id
-                     AND c.deleted_at IS NULL
-                     AND c.slug = ?
-               )';
+        $categoryIds = $categorySlug !== ''
+            ? app(CategoryService::class)->descendantIdsBySlug($categorySlug)
+            : [];
+        if ($categorySlug !== '' && $categoryIds === []) {
+            return [];
+        }
+        if ($categoryIds !== []) {
+            $categoryClause = ' AND p.category_id IN ('
+                . implode(',', array_fill(0, count($categoryIds), '?')) . ')';
         }
 
         $params = [$status, $like, $like, $like, $like, $like];
-        if ($categoryClause !== '') {
-            $params[] = $categorySlug;
+        if ($categoryIds !== []) {
+            $params = [...$params, ...$categoryIds];
         }
         $params[] = (int) $limit;
 

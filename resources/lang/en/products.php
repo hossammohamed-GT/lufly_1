@@ -48,6 +48,19 @@ return [
     'scope_category' => 'This category',
     'scope_all' => 'All products',
 
+    /* three-level category atlas */
+    'category_atlas' => 'Category atlas',
+    'category_total' => ':n categories',
+    'category_level_1' => 'Main category',
+    'category_level_2' => 'Subcategory',
+    'category_level_3' => 'Sub-subcategory',
+    'category_children_one' => '1 subcategory',
+    'category_children_many' => ':n subcategories',
+    'category_view_products' => 'View products',
+    'category_leaf' => 'A focused collection, ready to explore.',
+    'category_open' => 'Open :name',
+    'category_back' => 'Back to :name',
+
     /* admin - product image sections (photos / drawings / installed) */
     'images_title' => 'Product images',
     'images_intro' => 'Every image belongs to one of three sections, and those sections are the tabs of the product page. Order inside a section is the order visitors see.',

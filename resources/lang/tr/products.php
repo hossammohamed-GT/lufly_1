@@ -48,6 +48,19 @@ return [
     'scope_category' => 'Bu kategoride',
     'scope_all' => 'Tüm ürünler',
 
+    /* üç seviyeli kategori atlası */
+    'category_atlas' => 'Kategori atlası',
+    'category_total' => ':n kategori',
+    'category_level_1' => 'Ana kategori',
+    'category_level_2' => 'Alt kategori',
+    'category_level_3' => 'Alt alt kategori',
+    'category_children_one' => '1 alt kategori',
+    'category_children_many' => ':n alt kategori',
+    'category_view_products' => 'Ürünleri görüntüle',
+    'category_leaf' => 'Keşfedilmeye hazır, odaklanmış bir koleksiyon.',
+    'category_open' => ':name koleksiyonunu aç',
+    'category_back' => ':name kategorisine dön',
+
     /* yönetim - ürün görsel bölümleri (fotoğraf / çizim / montaj) */
     'images_title' => 'Ürün görselleri',
     'images_intro' => 'Her görsel üç bölümden birine aittir ve bu bölümler ürün sayfasındaki sekmelerdir. Bölüm içindeki sıra, ziyaretçinin gördüğü sıradır.',

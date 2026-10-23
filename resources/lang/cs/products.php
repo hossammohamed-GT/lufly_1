@@ -48,6 +48,19 @@ return [
     'scope_category' => 'Této kategorii',
     'scope_all' => 'Všech produktech',
 
+    /* tříúrovňový atlas kategorií */
+    'category_atlas' => 'Atlas kategorií',
+    'category_total' => ':n kategorií',
+    'category_level_1' => 'Hlavní kategorie',
+    'category_level_2' => 'Podkategorie',
+    'category_level_3' => 'Pod-podkategorie',
+    'category_children_one' => '1 podkategorie',
+    'category_children_many' => ':n podkategorií',
+    'category_view_products' => 'Zobrazit produkty',
+    'category_leaf' => 'Cílená kolekce připravená k prozkoumání.',
+    'category_open' => 'Otevřít :name',
+    'category_back' => 'Zpět na :name',
+
     /* administrace - sekce obrázků produktu (fotografie / výkresy / instalace) */
     'images_title' => 'Obrázky produktu',
     'images_intro' => 'Každý obrázek patří do jedné ze tří sekcí a tyto sekce jsou záložkami na stránce produktu. Pořadí v sekci je pořadím, které vidí návštěvník.',

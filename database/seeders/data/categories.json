@@ -1,1 +1,974 @@
-[]
+[
+  {
+    "slug": "bathroom",
+    "parent": null,
+    "sort_order": 1,
+    "image": "/images/categories/001-bathroom.webp",
+    "names": {
+      "en": "Bathroom"
+    }
+  },
+  {
+    "slug": "bathroom.sanitary-ware",
+    "parent": "bathroom",
+    "sort_order": 1,
+    "image": "/images/categories/002-bathroom-sanitary-ware.webp",
+    "names": {
+      "en": "Sanitary Ware"
+    }
+  },
+  {
+    "slug": "bathroom.sanitary-ware.toilets",
+    "parent": "bathroom.sanitary-ware",
+    "sort_order": 1,
+    "image": "/images/categories/003-bathroom-sanitary-ware-toilets.webp",
+    "names": {
+      "en": "Toilets"
+    }
+  },
+  {
+    "slug": "bathroom.sanitary-ware.wash-basins",
+    "parent": "bathroom.sanitary-ware",
+    "sort_order": 2,
+    "image": "/images/categories/004-bathroom-sanitary-ware-wash-basins.webp",
+    "names": {
+      "en": "Wash Basins"
+    }
+  },
+  {
+    "slug": "bathroom.sanitary-ware.bidets",
+    "parent": "bathroom.sanitary-ware",
+    "sort_order": 3,
+    "image": "/images/categories/005-bathroom-sanitary-ware-bidets.webp",
+    "names": {
+      "en": "Bidets"
+    }
+  },
+  {
+    "slug": "bathroom.sanitary-ware.urinals",
+    "parent": "bathroom.sanitary-ware",
+    "sort_order": 4,
+    "image": "/images/categories/006-bathroom-sanitary-ware-urinals.webp",
+    "names": {
+      "en": "Urinals"
+    }
+  },
+  {
+    "slug": "bathroom.sanitary-ware.squatting-pans",
+    "parent": "bathroom.sanitary-ware",
+    "sort_order": 5,
+    "image": "/images/categories/007-bathroom-sanitary-ware-squatting-pans.webp",
+    "names": {
+      "en": "Squatting Pans"
+    }
+  },
+  {
+    "slug": "bathroom.sanitary-ware.cisterns",
+    "parent": "bathroom.sanitary-ware",
+    "sort_order": 6,
+    "image": "/images/categories/008-bathroom-sanitary-ware-cisterns.webp",
+    "names": {
+      "en": "Cisterns"
+    }
+  },
+  {
+    "slug": "bathroom.sanitary-ware.ceramic-accessories",
+    "parent": "bathroom.sanitary-ware",
+    "sort_order": 7,
+    "image": "/images/categories/009-bathroom-sanitary-ware-ceramic-accessories.webp",
+    "names": {
+      "en": "Ceramic Accessories"
+    }
+  },
+  {
+    "slug": "bathroom.mixers",
+    "parent": "bathroom",
+    "sort_order": 2,
+    "image": "/images/categories/010-bathroom-mixers.webp",
+    "names": {
+      "en": "Mixers"
+    }
+  },
+  {
+    "slug": "bathroom.mixers.basin-mixers",
+    "parent": "bathroom.mixers",
+    "sort_order": 1,
+    "image": "/images/categories/011-bathroom-mixers-basin-mixers.webp",
+    "names": {
+      "en": "Basin Mixers"
+    }
+  },
+  {
+    "slug": "bathroom.mixers.shower-mixers",
+    "parent": "bathroom.mixers",
+    "sort_order": 2,
+    "image": "/images/categories/012-bathroom-mixers-shower-mixers.webp",
+    "names": {
+      "en": "Shower Mixers"
+    }
+  },
+  {
+    "slug": "bathroom.mixers.bath-mixers",
+    "parent": "bathroom.mixers",
+    "sort_order": 3,
+    "image": "/images/categories/013-bathroom-mixers-bath-mixers.webp",
+    "names": {
+      "en": "Bath Mixers"
+    }
+  },
+  {
+    "slug": "bathroom.mixers.concealed-mixers",
+    "parent": "bathroom.mixers",
+    "sort_order": 4,
+    "image": "/images/categories/014-bathroom-mixers-concealed-mixers.webp",
+    "names": {
+      "en": "Concealed Mixers"
+    }
+  },
+  {
+    "slug": "bathroom.mixers.thermostatic-mixers",
+    "parent": "bathroom.mixers",
+    "sort_order": 5,
+    "image": "/images/categories/015-bathroom-mixers-thermostatic-mixers.webp",
+    "names": {
+      "en": "Thermostatic Mixers"
+    }
+  },
+  {
+    "slug": "bathroom.mixers.kitchen-mixers",
+    "parent": "bathroom.mixers",
+    "sort_order": 6,
+    "image": "/images/categories/016-bathroom-mixers-kitchen-mixers.webp",
+    "names": {
+      "en": "Kitchen Mixers"
+    }
+  },
+  {
+    "slug": "bathroom.mixers.special-mixers",
+    "parent": "bathroom.mixers",
+    "sort_order": 7,
+    "image": "/images/categories/017-bathroom-mixers-special-mixers.webp",
+    "names": {
+      "en": "Special Mixers"
+    }
+  },
+  {
+    "slug": "bathroom.accessories",
+    "parent": "bathroom",
+    "sort_order": 3,
+    "image": "/images/categories/018-bathroom-accessories.webp",
+    "names": {
+      "en": "Accessories"
+    }
+  },
+  {
+    "slug": "bathroom.accessories.towel-bars",
+    "parent": "bathroom.accessories",
+    "sort_order": 1,
+    "image": "/images/categories/019-bathroom-accessories-towel-bars.webp",
+    "names": {
+      "en": "Towel Bars"
+    }
+  },
+  {
+    "slug": "bathroom.accessories.towel-rings",
+    "parent": "bathroom.accessories",
+    "sort_order": 2,
+    "image": "/images/categories/020-bathroom-accessories-towel-rings.webp",
+    "names": {
+      "en": "Towel Rings"
+    }
+  },
+  {
+    "slug": "bathroom.accessories.robe-hooks",
+    "parent": "bathroom.accessories",
+    "sort_order": 3,
+    "image": "/images/categories/021-bathroom-accessories-robe-hooks.webp",
+    "names": {
+      "en": "Robe Hooks"
+    }
+  },
+  {
+    "slug": "bathroom.accessories.toilet-paper-holders",
+    "parent": "bathroom.accessories",
+    "sort_order": 4,
+    "image": "/images/categories/022-bathroom-accessories-toilet-paper-holders.webp",
+    "names": {
+      "en": "Toilet Paper Holders"
+    }
+  },
+  {
+    "slug": "bathroom.accessories.soap-dispensers",
+    "parent": "bathroom.accessories",
+    "sort_order": 5,
+    "image": "/images/categories/023-bathroom-accessories-soap-dispensers.webp",
+    "names": {
+      "en": "Soap Dispensers"
+    }
+  },
+  {
+    "slug": "bathroom.accessories.soap-dishes",
+    "parent": "bathroom.accessories",
+    "sort_order": 6,
+    "image": "/images/categories/024-bathroom-accessories-soap-dishes.webp",
+    "names": {
+      "en": "Soap Dishes"
+    }
+  },
+  {
+    "slug": "bathroom.accessories.toilet-brushes",
+    "parent": "bathroom.accessories",
+    "sort_order": 7,
+    "image": "/images/categories/025-bathroom-accessories-toilet-brushes.webp",
+    "names": {
+      "en": "Toilet Brushes"
+    }
+  },
+  {
+    "slug": "bathroom.accessories.shelves",
+    "parent": "bathroom.accessories",
+    "sort_order": 8,
+    "image": "/images/categories/026-bathroom-accessories-shelves.webp",
+    "names": {
+      "en": "Shelves"
+    }
+  },
+  {
+    "slug": "bathroom.accessories.grab-bars",
+    "parent": "bathroom.accessories",
+    "sort_order": 9,
+    "image": "/images/categories/027-bathroom-accessories-grab-bars.webp",
+    "names": {
+      "en": "Grab Bars"
+    }
+  },
+  {
+    "slug": "bathroom.accessories.other-accessories",
+    "parent": "bathroom.accessories",
+    "sort_order": 10,
+    "image": "/images/categories/028-bathroom-accessories-other-accessories.webp",
+    "names": {
+      "en": "Other Accessories"
+    }
+  },
+  {
+    "slug": "kitchen",
+    "parent": null,
+    "sort_order": 2,
+    "image": "/images/categories/029-kitchen.webp",
+    "names": {
+      "en": "Kitchen"
+    }
+  },
+  {
+    "slug": "kitchen.sinks",
+    "parent": "kitchen",
+    "sort_order": 1,
+    "image": "/images/categories/030-kitchen-sinks.webp",
+    "names": {
+      "en": "Sinks"
+    }
+  },
+  {
+    "slug": "kitchen.sinks.granite-sinks",
+    "parent": "kitchen.sinks",
+    "sort_order": 1,
+    "image": "/images/categories/031-kitchen-sinks-granite-sinks.webp",
+    "names": {
+      "en": "Granite Sinks"
+    }
+  },
+  {
+    "slug": "kitchen.sinks.stainless-steel-sinks",
+    "parent": "kitchen.sinks",
+    "sort_order": 2,
+    "image": "/images/categories/032-kitchen-sinks-stainless-steel-sinks.webp",
+    "names": {
+      "en": "Stainless Steel Sinks"
+    }
+  },
+  {
+    "slug": "kitchen.sinks.undermount-sinks",
+    "parent": "kitchen.sinks",
+    "sort_order": 3,
+    "image": "/images/categories/033-kitchen-sinks-undermount-sinks.webp",
+    "names": {
+      "en": "Undermount Sinks"
+    }
+  },
+  {
+    "slug": "kitchen.sinks.topmount-sinks",
+    "parent": "kitchen.sinks",
+    "sort_order": 4,
+    "image": "/images/categories/034-kitchen-sinks-topmount-sinks.webp",
+    "names": {
+      "en": "Topmount Sinks"
+    }
+  },
+  {
+    "slug": "kitchen.sinks.workstation-sinks",
+    "parent": "kitchen.sinks",
+    "sort_order": 5,
+    "image": "/images/categories/035-kitchen-sinks-workstation-sinks.webp",
+    "names": {
+      "en": "Workstation Sinks"
+    }
+  },
+  {
+    "slug": "kitchen.sinks.kitchen-accessories",
+    "parent": "kitchen.sinks",
+    "sort_order": 6,
+    "image": "/images/categories/036-kitchen-sinks-kitchen-accessories.webp",
+    "names": {
+      "en": "Kitchen Accessories"
+    }
+  },
+  {
+    "slug": "kitchen.sinks.other-sinks",
+    "parent": "kitchen.sinks",
+    "sort_order": 7,
+    "image": "/images/categories/037-kitchen-sinks-other-sinks.webp",
+    "names": {
+      "en": "Other Sinks"
+    }
+  },
+  {
+    "slug": "kitchen.kitchen-mixers",
+    "parent": "kitchen",
+    "sort_order": 2,
+    "image": "/images/categories/038-kitchen-kitchen-mixers.webp",
+    "names": {
+      "en": "Kitchen Mixers"
+    }
+  },
+  {
+    "slug": "kitchen.kitchen-mixers.pull-out-mixers",
+    "parent": "kitchen.kitchen-mixers",
+    "sort_order": 1,
+    "image": "/images/categories/039-kitchen-kitchen-mixers-pull-out-mixers.webp",
+    "names": {
+      "en": "Pull-out Mixers"
+    }
+  },
+  {
+    "slug": "kitchen.kitchen-mixers.single-handle-mixers",
+    "parent": "kitchen.kitchen-mixers",
+    "sort_order": 2,
+    "image": "/images/categories/040-kitchen-kitchen-mixers-single-handle-mixers.webp",
+    "names": {
+      "en": "Single Handle Mixers"
+    }
+  },
+  {
+    "slug": "kitchen.kitchen-mixers.dual-handle-mixers",
+    "parent": "kitchen.kitchen-mixers",
+    "sort_order": 3,
+    "image": "/images/categories/041-kitchen-kitchen-mixers-dual-handle-mixers.webp",
+    "names": {
+      "en": "Dual Handle Mixers"
+    }
+  },
+  {
+    "slug": "kitchen.kitchen-mixers.filtered-water-mixers",
+    "parent": "kitchen.kitchen-mixers",
+    "sort_order": 4,
+    "image": "/images/categories/042-kitchen-kitchen-mixers-filtered-water-mixers.webp",
+    "names": {
+      "en": "Filtered Water Mixers"
+    }
+  },
+  {
+    "slug": "kitchen.kitchen-mixers.pot-fillers",
+    "parent": "kitchen.kitchen-mixers",
+    "sort_order": 5,
+    "image": "/images/categories/043-kitchen-kitchen-mixers-pot-fillers.webp",
+    "names": {
+      "en": "Pot Fillers"
+    }
+  },
+  {
+    "slug": "kitchen.kitchen-mixers.other-kitchen-mixers",
+    "parent": "kitchen.kitchen-mixers",
+    "sort_order": 6,
+    "image": "/images/categories/044-kitchen-kitchen-mixers-other-kitchen-mixers.webp",
+    "names": {
+      "en": "Other Kitchen Mixers"
+    }
+  },
+  {
+    "slug": "kids",
+    "parent": null,
+    "sort_order": 3,
+    "image": "/images/categories/045-kids.webp",
+    "names": {
+      "en": "Kids"
+    }
+  },
+  {
+    "slug": "kids.kids-sanitary-ware",
+    "parent": "kids",
+    "sort_order": 1,
+    "image": "/images/categories/046-kids-kids-sanitary-ware.png",
+    "names": {
+      "en": "Kids Sanitary Ware"
+    }
+  },
+  {
+    "slug": "kids.kids-sanitary-ware.kids-toilets",
+    "parent": "kids.kids-sanitary-ware",
+    "sort_order": 1,
+    "image": "/images/categories/047-kids-kids-sanitary-ware-kids-toilets.webp",
+    "names": {
+      "en": "Kids Toilets"
+    }
+  },
+  {
+    "slug": "kids.kids-sanitary-ware.kids-wash-basins",
+    "parent": "kids.kids-sanitary-ware",
+    "sort_order": 2,
+    "image": "/images/categories/048-kids-kids-sanitary-ware-kids-wash-basins.png",
+    "names": {
+      "en": "Kids Wash Basins"
+    }
+  },
+  {
+    "slug": "kids.kids-sanitary-ware.kids-urinals",
+    "parent": "kids.kids-sanitary-ware",
+    "sort_order": 3,
+    "image": "/images/categories/049-kids-kids-sanitary-ware-kids-urinals.png",
+    "names": {
+      "en": "Kids Urinals"
+    }
+  },
+  {
+    "slug": "kids.kids-sanitary-ware.kids-bathroom-sets",
+    "parent": "kids.kids-sanitary-ware",
+    "sort_order": 4,
+    "image": "/images/categories/050-kids-kids-sanitary-ware-kids-bathroom-sets.png",
+    "names": {
+      "en": "Kids Bathroom Sets"
+    }
+  },
+  {
+    "slug": "kids.kids-mixers",
+    "parent": "kids",
+    "sort_order": 2,
+    "image": "/images/categories/051-kids-kids-mixers.webp",
+    "names": {
+      "en": "Kids Mixers"
+    }
+  },
+  {
+    "slug": "kids.kids-mixers.kids-basin-mixers",
+    "parent": "kids.kids-mixers",
+    "sort_order": 1,
+    "image": "/images/categories/052-kids-kids-mixers-kids-basin-mixers.webp",
+    "names": {
+      "en": "Kids Basin Mixers"
+    }
+  },
+  {
+    "slug": "kids.kids-mixers.kids-shower-mixers",
+    "parent": "kids.kids-mixers",
+    "sort_order": 2,
+    "image": "/images/categories/053-kids-kids-mixers-kids-shower-mixers.webp",
+    "names": {
+      "en": "Kids Shower Mixers"
+    }
+  },
+  {
+    "slug": "kids.kids-mixers.kids-accessories",
+    "parent": "kids.kids-mixers",
+    "sort_order": 3,
+    "image": "/images/categories/054-kids-kids-mixers-kids-accessories.webp",
+    "names": {
+      "en": "Kids Accessories"
+    }
+  },
+  {
+    "slug": "accessibility",
+    "parent": null,
+    "sort_order": 4,
+    "image": "/images/categories/055-accessibility.webp",
+    "names": {
+      "en": "Accessibility"
+    }
+  },
+  {
+    "slug": "accessibility.accessible-sanitary-ware",
+    "parent": "accessibility",
+    "sort_order": 1,
+    "image": "/images/categories/056-accessibility-accessible-sanitary-ware.webp",
+    "names": {
+      "en": "Accessible Sanitary Ware"
+    }
+  },
+  {
+    "slug": "accessibility.accessible-sanitary-ware.accessible-toilets",
+    "parent": "accessibility.accessible-sanitary-ware",
+    "sort_order": 1,
+    "image": "/images/categories/057-accessibility-accessible-sanitary-ware-accessible-toilets.webp",
+    "names": {
+      "en": "Accessible Toilets"
+    }
+  },
+  {
+    "slug": "accessibility.accessible-sanitary-ware.accessible-wash-basins",
+    "parent": "accessibility.accessible-sanitary-ware",
+    "sort_order": 2,
+    "image": "/images/categories/058-accessibility-accessible-sanitary-ware-accessible-wash-basins.webp",
+    "names": {
+      "en": "Accessible Wash Basins"
+    }
+  },
+  {
+    "slug": "accessibility.accessible-sanitary-ware.accessible-showers",
+    "parent": "accessibility.accessible-sanitary-ware",
+    "sort_order": 3,
+    "image": "/images/categories/059-accessibility-accessible-sanitary-ware-accessible-showers.webp",
+    "names": {
+      "en": "Accessible Showers"
+    }
+  },
+  {
+    "slug": "accessibility.accessible-sanitary-ware.accessible-urinals",
+    "parent": "accessibility.accessible-sanitary-ware",
+    "sort_order": 4,
+    "image": "/images/categories/060-accessibility-accessible-sanitary-ware-accessible-urinals.webp",
+    "names": {
+      "en": "Accessible Urinals"
+    }
+  },
+  {
+    "slug": "accessibility.kids-bars-supports",
+    "parent": "accessibility",
+    "sort_order": 2,
+    "image": "/images/categories/061-accessibility-kids-bars-supports.webp",
+    "names": {
+      "en": "Kids Bars & Supports"
+    }
+  },
+  {
+    "slug": "accessibility.kids-bars-supports.grab-bars",
+    "parent": "accessibility.kids-bars-supports",
+    "sort_order": 1,
+    "image": "/images/categories/062-accessibility-kids-bars-supports-grab-bars.webp",
+    "names": {
+      "en": "Grab Bars"
+    }
+  },
+  {
+    "slug": "accessibility.kids-bars-supports.foldable-supports",
+    "parent": "accessibility.kids-bars-supports",
+    "sort_order": 2,
+    "image": "/images/categories/063-accessibility-kids-bars-supports-foldable-supports.webp",
+    "names": {
+      "en": "Foldable Supports"
+    }
+  },
+  {
+    "slug": "accessibility.kids-bars-supports.shower-seats",
+    "parent": "accessibility.kids-bars-supports",
+    "sort_order": 3,
+    "image": "/images/categories/064-accessibility-kids-bars-supports-shower-seats.webp",
+    "names": {
+      "en": "Shower Seats"
+    }
+  },
+  {
+    "slug": "accessibility.kids-bars-supports.other-supports",
+    "parent": "accessibility.kids-bars-supports",
+    "sort_order": 4,
+    "image": "/images/categories/065-accessibility-kids-bars-supports-other-supports.webp",
+    "names": {
+      "en": "Other Supports"
+    }
+  },
+  {
+    "slug": "accessibility.accessible-accessories",
+    "parent": "accessibility",
+    "sort_order": 3,
+    "image": "/images/categories/066-accessibility-accessible-accessories.webp",
+    "names": {
+      "en": "Accessible Accessories"
+    }
+  },
+  {
+    "slug": "accessibility.accessible-accessories.accessible-mixers",
+    "parent": "accessibility.accessible-accessories",
+    "sort_order": 1,
+    "image": "/images/categories/067-accessibility-accessible-accessories-accessible-mixers.webp",
+    "names": {
+      "en": "Accessible Mixers"
+    }
+  },
+  {
+    "slug": "accessibility.accessible-accessories.accessible-shower-systems",
+    "parent": "accessibility.accessible-accessories",
+    "sort_order": 2,
+    "image": "/images/categories/068-accessibility-accessible-accessories-accessible-shower-systems.webp",
+    "names": {
+      "en": "Accessible Shower Systems"
+    }
+  },
+  {
+    "slug": "accessibility.accessible-accessories.accessible-mirrors",
+    "parent": "accessibility.accessible-accessories",
+    "sort_order": 3,
+    "image": "/images/categories/069-accessibility-accessible-accessories-accessible-mirrors.webp",
+    "names": {
+      "en": "Accessible Mirrors"
+    }
+  },
+  {
+    "slug": "accessibility.accessible-accessories.other-accessories",
+    "parent": "accessibility.accessible-accessories",
+    "sort_order": 4,
+    "image": "/images/categories/070-accessibility-accessible-accessories-other-accessories.webp",
+    "names": {
+      "en": "Other Accessories"
+    }
+  },
+  {
+    "slug": "shower-enclosures",
+    "parent": null,
+    "sort_order": 5,
+    "image": "/images/categories/071-shower-enclosures.jpg",
+    "names": {
+      "en": "Shower Enclosures"
+    }
+  },
+  {
+    "slug": "shower-enclosures.sliding-enclosures",
+    "parent": "shower-enclosures",
+    "sort_order": 1,
+    "image": "/images/categories/072-shower-enclosures-sliding-enclosures.jpg",
+    "names": {
+      "en": "Sliding Enclosures"
+    }
+  },
+  {
+    "slug": "shower-enclosures.hinged-enclosures",
+    "parent": "shower-enclosures",
+    "sort_order": 2,
+    "image": "/images/categories/073-shower-enclosures-hinged-enclosures.jpg",
+    "names": {
+      "en": "Hinged Enclosures"
+    }
+  },
+  {
+    "slug": "shower-enclosures.walk-in-enclosures",
+    "parent": "shower-enclosures",
+    "sort_order": 3,
+    "image": "/images/categories/074-shower-enclosures-walk-in-enclosures.jpg",
+    "names": {
+      "en": "Walk-in Enclosures"
+    }
+  },
+  {
+    "slug": "shower-enclosures.corner-enclosures",
+    "parent": "shower-enclosures",
+    "sort_order": 4,
+    "image": "/images/categories/075-shower-enclosures-corner-enclosures.jpg",
+    "names": {
+      "en": "Corner Enclosures"
+    }
+  },
+  {
+    "slug": "shower-enclosures.frameless-enclosures",
+    "parent": "shower-enclosures",
+    "sort_order": 5,
+    "image": "/images/categories/076-shower-enclosures-frameless-enclosures.jpg",
+    "names": {
+      "en": "Frameless Enclosures"
+    }
+  },
+  {
+    "slug": "shower-enclosures.semi-framed-enclosures",
+    "parent": "shower-enclosures",
+    "sort_order": 6,
+    "image": "/images/categories/077-shower-enclosures-semi-framed-enclosures.jpg",
+    "names": {
+      "en": "Semi-Framed Enclosures"
+    }
+  },
+  {
+    "slug": "shower-enclosures.profiles-hardware",
+    "parent": "shower-enclosures",
+    "sort_order": 7,
+    "image": "/images/categories/078-shower-enclosures-profiles-hardware.jpg",
+    "names": {
+      "en": "Profiles & Hardware"
+    }
+  },
+  {
+    "slug": "shower-enclosures.other-enclosures",
+    "parent": "shower-enclosures",
+    "sort_order": 8,
+    "image": "/images/categories/079-shower-enclosures-other-enclosures.jpg",
+    "names": {
+      "en": "Other Enclosures"
+    }
+  },
+  {
+    "slug": "vanity-units",
+    "parent": null,
+    "sort_order": 6,
+    "image": "/images/categories/080-vanity-units.jpg",
+    "names": {
+      "en": "Vanity Units"
+    }
+  },
+  {
+    "slug": "vanity-units.solid-wood-vanity",
+    "parent": "vanity-units",
+    "sort_order": 1,
+    "image": "/images/categories/081-vanity-units-solid-wood-vanity.jpg",
+    "names": {
+      "en": "Solid Wood Vanity"
+    }
+  },
+  {
+    "slug": "vanity-units.pvc-vanity",
+    "parent": "vanity-units",
+    "sort_order": 2,
+    "image": "/images/categories/082-vanity-units-pvc-vanity.jpg",
+    "names": {
+      "en": "PVC Vanity"
+    }
+  },
+  {
+    "slug": "vanity-units.mdf-vanity",
+    "parent": "vanity-units",
+    "sort_order": 3,
+    "image": "/images/categories/083-vanity-units-mdf-vanity.jpg",
+    "names": {
+      "en": "MDF Vanity"
+    }
+  },
+  {
+    "slug": "vanity-units.wall-hung-vanity",
+    "parent": "vanity-units",
+    "sort_order": 4,
+    "image": "/images/categories/084-vanity-units-wall-hung-vanity.jpg",
+    "names": {
+      "en": "Wall Hung Vanity"
+    }
+  },
+  {
+    "slug": "vanity-units.floor-standing-vanity",
+    "parent": "vanity-units",
+    "sort_order": 5,
+    "image": "/images/categories/085-vanity-units-floor-standing-vanity.jpg",
+    "names": {
+      "en": "Floor Standing Vanity"
+    }
+  },
+  {
+    "slug": "vanity-units.countertop-vanity",
+    "parent": "vanity-units",
+    "sort_order": 6,
+    "image": "/images/categories/086-vanity-units-countertop-vanity.jpg",
+    "names": {
+      "en": "Countertop Vanity"
+    }
+  },
+  {
+    "slug": "vanity-units.vanity-tops",
+    "parent": "vanity-units",
+    "sort_order": 7,
+    "image": "/images/categories/087-vanity-units-vanity-tops.jpg",
+    "names": {
+      "en": "Vanity Tops"
+    }
+  },
+  {
+    "slug": "vanity-units.other-vanity-units",
+    "parent": "vanity-units",
+    "sort_order": 8,
+    "image": "/images/categories/088-vanity-units-other-vanity-units.jpg",
+    "names": {
+      "en": "Other Vanity Units"
+    }
+  },
+  {
+    "slug": "mirrors",
+    "parent": null,
+    "sort_order": 7,
+    "image": "/images/categories/089-mirrors.webp",
+    "names": {
+      "en": "Mirrors"
+    }
+  },
+  {
+    "slug": "mirrors.led-mirrors",
+    "parent": "mirrors",
+    "sort_order": 1,
+    "image": "/images/categories/090-mirrors-led-mirrors.webp",
+    "names": {
+      "en": "LED Mirrors"
+    }
+  },
+  {
+    "slug": "mirrors.framed-mirrors",
+    "parent": "mirrors",
+    "sort_order": 2,
+    "image": "/images/categories/091-mirrors-framed-mirrors.webp",
+    "names": {
+      "en": "Framed Mirrors"
+    }
+  },
+  {
+    "slug": "mirrors.frameless-mirrors",
+    "parent": "mirrors",
+    "sort_order": 3,
+    "image": "/images/categories/092-mirrors-frameless-mirrors.webp",
+    "names": {
+      "en": "Frameless Mirrors"
+    }
+  },
+  {
+    "slug": "mirrors.cabinet-mirrors",
+    "parent": "mirrors",
+    "sort_order": 4,
+    "image": "/images/categories/093-mirrors-cabinet-mirrors.webp",
+    "names": {
+      "en": "Cabinet Mirrors"
+    }
+  },
+  {
+    "slug": "mirrors.magnifying-mirrors",
+    "parent": "mirrors",
+    "sort_order": 5,
+    "image": "/images/categories/094-mirrors-magnifying-mirrors.webp",
+    "names": {
+      "en": "Magnifying Mirrors"
+    }
+  },
+  {
+    "slug": "mirrors.smart-mirrors",
+    "parent": "mirrors",
+    "sort_order": 6,
+    "image": "/images/categories/095-mirrors-smart-mirrors.webp",
+    "names": {
+      "en": "Smart Mirrors"
+    }
+  },
+  {
+    "slug": "mirrors.other-mirrors",
+    "parent": "mirrors",
+    "sort_order": 7,
+    "image": "/images/categories/096-mirrors-other-mirrors.webp",
+    "names": {
+      "en": "Other Mirrors"
+    }
+  },
+  {
+    "slug": "drains",
+    "parent": null,
+    "sort_order": 8,
+    "image": "/images/categories/097-drains.webp",
+    "names": {
+      "en": "Drains"
+    }
+  },
+  {
+    "slug": "drains.shower-drains",
+    "parent": "drains",
+    "sort_order": 1,
+    "image": "/images/categories/098-drains-shower-drains.webp",
+    "names": {
+      "en": "Shower Drains"
+    }
+  },
+  {
+    "slug": "drains.floor-drains",
+    "parent": "drains",
+    "sort_order": 2,
+    "image": "/images/categories/099-drains-floor-drains.webp",
+    "names": {
+      "en": "Floor Drains"
+    }
+  },
+  {
+    "slug": "drains.by-application",
+    "parent": "drains",
+    "sort_order": 3,
+    "image": "/images/categories/100-drains-by-application.webp",
+    "names": {
+      "en": "By Application"
+    }
+  },
+  {
+    "slug": "drains.by-application.indoor",
+    "parent": "drains.by-application",
+    "sort_order": 1,
+    "image": "/images/categories/101-drains-by-application-indoor.webp",
+    "names": {
+      "en": "Indoor"
+    }
+  },
+  {
+    "slug": "drains.by-application.outdoor",
+    "parent": "drains.by-application",
+    "sort_order": 2,
+    "image": "/images/categories/102-drains-by-application-outdoor.webp",
+    "names": {
+      "en": "Outdoor"
+    }
+  },
+  {
+    "slug": "drains.by-mounting-type",
+    "parent": "drains",
+    "sort_order": 4,
+    "image": "/images/categories/103-drains-by-mounting-type.webp",
+    "names": {
+      "en": "By Mounting Type"
+    }
+  },
+  {
+    "slug": "drains.by-mounting-type.wall-hung",
+    "parent": "drains.by-mounting-type",
+    "sort_order": 1,
+    "image": "/images/categories/104-drains-by-mounting-type-wall-hung.webp",
+    "names": {
+      "en": "Wall Hung"
+    }
+  },
+  {
+    "slug": "drains.by-mounting-type.floor-standing",
+    "parent": "drains.by-mounting-type",
+    "sort_order": 2,
+    "image": "/images/categories/105-drains-by-mounting-type-floor-standing.webp",
+    "names": {
+      "en": "Floor Standing"
+    }
+  },
+  {
+    "slug": "drains.by-mounting-type.free-standing",
+    "parent": "drains.by-mounting-type",
+    "sort_order": 3,
+    "image": "/images/categories/106-drains-by-mounting-type-free-standing.webp",
+    "names": {
+      "en": "Free Standing"
+    }
+  },
+  {
+    "slug": "drains.by-mounting-type.other-drains",
+    "parent": "drains.by-mounting-type",
+    "sort_order": 4,
+    "image": "/images/categories/107-drains-by-mounting-type-other-drains.webp",
+    "names": {
+      "en": "Other Drains"
+    }
+  },
+  {
+    "slug": "drinking-fountains",
+    "parent": null,
+    "sort_order": 9,
+    "image": "/images/categories/108-drinking-fountains.webp",
+    "names": {
+      "en": "Drinking Fountains"
+    }
+  }
+]
