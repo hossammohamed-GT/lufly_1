@@ -17,6 +17,8 @@ $view->pushStyle('frontend/components/skeleton/skeleton.css');
 $view->pushScript('frontend/components/skeleton/skeleton.js');
 $view->pushStyle('frontend/favorites/favorites.css');
 $view->pushScript('frontend/favorites/favorites.js');
+$view->pushStyle('frontend/box/box.css');
+$view->pushScript('frontend/box/box.js');
 /** @var Core\Database\Paginator $paginator */
 /** @var array $categories */
 /** @var array $categoryCounts */
@@ -48,7 +50,6 @@ $buildUrl = static function (array $overrides = []) use ($activeCategory, $searc
     return route('products.index') . (count($params) > 0 ? '?' . http_build_query($params) : '');
 };
 
-$fallbackImg = '/images/favicon.png';
 $heroImage = '/images/categories/001-bathroom.jpg';
 $heroName = trans('products.title');
 foreach ($categories as $category) {
@@ -117,7 +118,9 @@ if (feature('box', true) && class_exists(\Modules\Box\Services\BoxService::class
         <div class="catalog-toolbar" data-livesearch
             data-livesearch-grid="[data-catalog-grid]"
             data-livesearch-pagination="[data-catalog-pagination]"
-            data-livesearch-count=".catalog-count">
+            data-livesearch-count=".catalog-count"
+            data-favorites-endpoint="<?= feature('favorites', true) ? e(route('favorites.toggle')) : '' ?>"
+            data-box-endpoint="<?= feature('box', true) && (bool) config('box.enabled', true) ? e(route('box.add')) : '' ?>">
             <div class="catalog-results-head" id="catalog-results" tabindex="-1">
                 <div>
                     <span><?= e(trans('products.catalog_eyebrow')) ?></span>
@@ -191,80 +194,14 @@ if (feature('box', true) && class_exists(\Modules\Box\Services\BoxService::class
                            data-category-filter="" data-category-name="<?= e(trans('common.all_categories')) ?>"><?= e(trans('common.all_categories')) ?></a>
                     </div>
                 <?php else: ?>
-                <?php foreach ($paginator->items() as $index => $product):
-                    $item = $product->translate($locale);
-                    $img = (string) ($item['image'] ?? '') !== '' ? (string) $item['image'] : $fallbackImg;
-
-                    /* hover cycles through every image of the product: the
-                       photos first (main shot on top), then the technical
-                       drawings, then the installed shots */
-                    $cardSlides = [];
-                    foreach ((array) ($item['card_slides'] ?? []) as $slide) {
-                        $slidePath = (string) ($slide['path'] ?? '');
-                        if ($slidePath !== '') {
-                            $cardSlides[] = ['path' => $slidePath, 'kind' => (string) ($slide['kind'] ?? 'photo')];
-                        }
-                    }
-                    if ($cardSlides === []) {
-                        $cardSlides = [['path' => $img, 'kind' => 'photo']];
-                    }
-                    $cardKinds = ['drawing' => trans('products.view_drawing'), 'situ' => trans('products.view_situ')];
-                    $cardName = (string) ($item['name'] ?? '');
-                    $cardCode = (string) ($item['sku'] ?? $item['model_code'] ?? '');
-                    $cardNo = (int) (($paginator->page() - 1) * $paginator->perPage() + $index + 1);
-                ?>
-                    <article class="pcard" style="--pcard-delay: <?= e((string) (0.04 * (int) (($index % 6) + 1))) ?>s">
-                        <a class="pcard-media" href="<?= e(route('products.show', ['slug' => $product->slug])) ?>"
-                           <?= count($cardSlides) > 1 ? 'data-pcard-cycle data-pcard-kind-drawing="' . e($cardKinds['drawing']) . '" data-pcard-kind-situ="' . e($cardKinds['situ']) . '"' : '' ?>>
-                            <?php foreach ($cardSlides as $ci => $slide): ?>
-                                <?php $slideKind = (string) $slide['kind']; ?>
-                                <img src="<?= e(asset($slide['path'])) ?>"
-                                     alt="<?= $ci === 0 ? e($cardName) : ($slideKind === 'photo' ? '' : e($cardKinds[$slideKind] ?? '') . ' — ' . e($cardName)) ?>"
-                                     class="pcard-img<?= $ci === 0 ? ' is-on' : '' ?>"
-                                     data-pcard-slide="<?= (int) $ci ?>"
-                                     data-pcard-kind="<?= e($slideKind) ?>"
-                                     loading="lazy" decoding="async" width="420" height="320"
-                                     onerror="this.onerror=null; this.remove();">
-                            <?php endforeach; ?>
-                            <?php if (count($cardSlides) > 1): ?>
-                                <span class="pcard-dots" aria-hidden="true">
-                                    <?php foreach ($cardSlides as $ci => $unusedDot): ?>
-                                        <i class="pcard-dot<?= $ci === 0 ? ' is-on' : '' ?>" data-pcard-dot="<?= (int) $ci ?>"></i>
-                                    <?php endforeach; ?>
-                                </span>
-                                <span class="pcard-kind" data-pcard-kind-label aria-hidden="true" hidden></span>
-                            <?php endif; ?>
-                            <span class="pcard-hint" aria-hidden="true">
-                                <svg viewBox="0 0 20 20" fill="currentColor" width="13" height="13"><path fill-rule="evenodd" d="M10.293 3.293a1 1 0 011.414 0l6 6a1 1 0 010 1.414l-6 6a1 1 0 01-1.414-1.414L14.586 11H3a1 1 0 110-2h11.586l-4.293-4.293a1 1 0 010-1.414z" clip-rule="evenodd"/></svg>
-                                <?= e(trans('products.view_details')) ?>
-                            </span>
-                        </a>
-                        <?= $view->component('favorite-button', [
-                            'product_id' => (int) $product->getKey(),
-                            'name' => $cardName,
-                            'variant' => 'card',
-                            'on' => isset($savedIds[(int) $product->getKey()]),
-                        ]) ?>
-                        <?= $view->component('box-button', [
-                            'product_id' => (int) $product->getKey(),
-                            'name' => $cardName,
-                            'variant' => 'card',
-                            'on' => isset($boxIds[(int) $product->getKey()]),
-                        ]) ?>
-                        <div class="pcard-body">
-                            <div class="pcard-top">
-                                <span class="pcard-code"><?= e($cardCode) ?></span>
-                                <span class="pcard-no"><?= str_pad((string) $cardNo, 3, '0', STR_PAD_LEFT) ?></span>
-                            </div>
-                            <h2 class="pcard-title">
-                                <a href="<?= e(route('products.show', ['slug' => $product->slug])) ?>"><?= e($item['name'] ?? '') ?></a>
-                            </h2>
-                            <?php $shortDesc = trim((string) ($item['short_description'] ?? '')); ?>
-                            <?php if ($shortDesc !== ''): ?>
-                                <p class="pcard-desc"><?= e($shortDesc) ?></p>
-                            <?php endif; ?>
-                        </div>
-                    </article>
+                <?php foreach ($paginator->items() as $index => $product): ?>
+                    <?= $view->component('product-card', [
+                        'product' => $product->translate($locale),
+                        'slug' => $product->slug,
+                        'index' => $index,
+                        'saved' => isset($savedIds[(int) $product->getKey()]),
+                        'in_box' => isset($boxIds[(int) $product->getKey()]),
+                    ]) ?>
                 <?php endforeach; ?>
                 <?php endif; ?>
             </div>

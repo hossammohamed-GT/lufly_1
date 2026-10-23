@@ -61,6 +61,8 @@
       if (hiddenCategory) categorySlug = hiddenCategory.value || '';
 
       var base = document.documentElement.getAttribute('data-base') || '';
+      var favoritesEndpoint = host.getAttribute('data-favorites-endpoint') || '';
+      var boxEndpoint = host.getAttribute('data-box-endpoint') || '';
       var locale = input.getAttribute('data-locale') ||
         document.documentElement.getAttribute('lang') || 'en';
 
@@ -89,6 +91,17 @@
           empty: 'No architectural fixtures found matching ":q"',
           hint: 'Tip: try a model code like 1620 or a name like "wall-hung"',
           details: 'View details',
+          price: 'Price',
+          pricePending: 'Price pending',
+          addToCart: 'Add to cart',
+          cartPending: 'Available once a price is added',
+          availableFinishes: 'Available finishes',
+          save: 'Save product',
+          saved: 'Saved',
+          favoriteAdded: ':name saved to your list',
+          favoriteRemoved: ':name removed from your list',
+          boxAdded: 'In the box',
+          boxError: 'The cart did not answer — try again.',
           kindDrawing: 'Drawing',
           kindSitu: 'Installed',
           share: 'Copy link',
@@ -105,6 +118,17 @@
           empty: '":q" ile eşleşen ürün bulunamadı',
           hint: 'İpucu: 1620 gibi bir model kodu ya da "asma klozet" deneyin',
           details: 'Detayları gör',
+          price: 'Fiyat',
+          pricePending: 'Fiyat bekleniyor',
+          addToCart: 'Sepete ekle',
+          cartPending: 'Fiyat eklendiğinde kullanılabilir',
+          availableFinishes: 'Mevcut kaplamalar',
+          save: 'Ürünü kaydet',
+          saved: 'Kaydedildi',
+          favoriteAdded: ':name listenize kaydedildi',
+          favoriteRemoved: ':name listenizden çıkarıldı',
+          boxAdded: 'Kutuda',
+          boxError: 'Sepet yanıt vermedi — tekrar deneyin.',
           kindDrawing: 'Teknik çizim',
           kindSitu: 'Montajlı',
           share: 'Bağlantıyı kopyala',
@@ -121,6 +145,17 @@
           empty: 'Nebyly nalezeny žádné produkty odpovídající ":q"',
           hint: 'Tip: zkuste kód modelu jako 1620 nebo název "závěsné WC"',
           details: 'Zobrazit detail',
+          price: 'Cena',
+          pricePending: 'Cena bude doplněna',
+          addToCart: 'Přidat do košíku',
+          cartPending: 'Dostupné po doplnění ceny',
+          availableFinishes: 'Dostupné povrchy',
+          save: 'Uložit produkt',
+          saved: 'Uloženo',
+          favoriteAdded: ':name bylo uloženo do seznamu',
+          favoriteRemoved: ':name bylo odebráno ze seznamu',
+          boxAdded: 'V krabici',
+          boxError: 'Košík neodpověděl — zkuste to znovu.',
           kindDrawing: 'Výkres',
           kindSitu: 'Instalace',
           share: 'Kopírovat odkaz',
@@ -305,6 +340,89 @@
         return sortSelect ? sortSelect.value : 'curated';
       }
 
+      /* ---------- premium card fragments ---------- */
+
+      function cardIcon(name) {
+        var paths = {
+          installation: '<path d="M5 4h14v16H5z"/><path d="M9 8h6M9 12h6M9 16h3"/>',
+          rimless: '<ellipse cx="12" cy="9" rx="8" ry="4.5"/><path d="M4 9v4c0 3.2 3.2 5.5 8 5.5s8-2.3 8-5.5V9M8 21h8"/>',
+          'soft-close': '<path d="M4 7h16M4 12h16M4 17h16"/><path d="m8 4 8 16"/>',
+          'water-saving': '<path d="M12 3S6.5 9.2 6.5 13.4a5.5 5.5 0 0 0 11 0C17.5 9.2 12 3 12 3Z"/><path d="m9.5 13.5 1.6 1.6 3.4-3.6"/>',
+          'easy-clean': '<path d="m12 3 1.5 5.5L19 10l-5.5 1.5L12 17l-1.5-5.5L5 10l5.5-1.5L12 3Z"/><path d="m18 16 .7 2.3L21 19l-2.3.7L18 22l-.7-2.3L15 19l2.3-.7L18 16Z"/>',
+          'scratch-resistant': '<path d="m12 3 1.5 5.5L19 10l-5.5 1.5L12 17l-1.5-5.5L5 10l5.5-1.5L12 3Z"/><path d="m18 16 .7 2.3L21 19l-2.3.7L18 22l-.7-2.3L15 19l2.3-.7L18 16Z"/>',
+          cartridge: '<path d="M6 20V9a6 6 0 0 1 12 0v3"/><path d="M12 12v8M4 20h16M15 6h5"/>',
+          'single-lever': '<path d="M6 20V9a6 6 0 0 1 12 0v3"/><path d="M12 12v8M4 20h16M15 6h5"/>',
+          thermostatic: '<path d="M6 20V9a6 6 0 0 1 12 0v3"/><path d="M12 12v8M4 20h16M15 6h5"/>',
+          shower: '<path d="M12 3v5M6 12a6 6 0 0 1 12 0M5 12h14"/><path d="M8 16v1M12 16v1M16 16v1M8 20v1M12 20v1M16 20v1"/>',
+          'high-flow': '<path d="M4 8h12M4 12h16M4 16h12"/><path d="m14 5 3 3-3 3M14 13l3 3-3 3"/>',
+          'anti-odor': '<path d="M12 3 20 6v5c0 4.8-3.3 8.3-8 10-4.7-1.7-8-5.2-8-10V6l8-3Z"/><path d="m8.5 12 2.2 2.2 4.8-5"/>',
+          material: '<path d="m12 3 8 4.5v9L12 21l-8-4.5v-9L12 3Z"/><path d="m4 7.5 8 4.5 8-4.5M12 12v9"/>',
+          dimensions: '<path d="M4 5h16v14H4z"/><path d="M8 5v4M12 5v3M16 5v4M8 19v-4M12 19v-3M16 19v-4"/>',
+          spec: '<circle cx="12" cy="12" r="8.5"/><path d="m8.5 12 2.2 2.2 4.8-5"/>'
+        };
+        return '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.45" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false">' +
+          (paths[name] || paths.spec) + '</svg>';
+      }
+
+      function favoriteButton(product, card, rawName) {
+        if (!favoritesEndpoint || !product.id) return '';
+        var on = !!product.is_saved;
+        var save = card.save_label || g.save;
+        var saved = card.saved_label || g.saved;
+        var label = on ? saved : save;
+        var added = card.favorite_added || g.favoriteAdded.replace(':name', rawName);
+        var removed = card.favorite_removed || g.favoriteRemoved.replace(':name', rawName);
+        return '<button type="button" class="favbtn favbtn-card' + (on ? ' is-on' : '') + '"' +
+          ' data-fav-toggle data-fav-product="' + esc(product.id) + '" data-fav-endpoint="' + esc(favoritesEndpoint) + '"' +
+          ' data-fav-added="' + esc(added) + '" data-fav-removed="' + esc(removed) + '"' +
+          ' data-fav-label-on="' + esc(saved) + '" data-fav-label-off="' + esc(save) + '"' +
+          ' aria-pressed="' + (on ? 'true' : 'false') + '" aria-label="' + esc(label + ' — ' + rawName) + '" title="' + esc(label) + '">' +
+          '<span class="favbtn-icon" aria-hidden="true">' +
+          '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20.6 4.2 12.8a5.1 5.1 0 0 1 0-7.2 5.1 5.1 0 0 1 7.2 0l.6.6.6-.6a5.1 5.1 0 0 1 7.2 0 5.1 5.1 0 0 1 0 7.2Z"/></svg>' +
+          '<svg class="favbtn-burst" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/></svg>' +
+          '</span></button>';
+      }
+
+      function cartButton(product, card, rawName) {
+        var enabled = !!card.cart_enabled && !!boxEndpoint;
+        var on = enabled && !!product.in_box;
+        var label = enabled ? (on ? (card.box_label_on || g.boxAdded) : (card.box_label_off || g.addToCart)) : (card.cart_label || g.cartPending);
+        if (!product.id) return '';
+        return '<button type="button" class="boxbtn boxbtn-cart' + (on ? ' is-on' : '') + '" data-box-product="' + esc(product.id) + '"' +
+          (enabled
+            ? ' data-box-add data-box-endpoint="' + esc(boxEndpoint) + '" data-box-label-on="' + esc(card.box_label_on || g.boxAdded) + '"' +
+              ' data-box-label-off="' + esc(card.box_label_off || g.addToCart) + '" data-box-error="' + esc(card.box_error || g.boxError) + '"'
+            : ' disabled aria-disabled="true"') +
+          ' aria-pressed="' + (on ? 'true' : 'false') + '" aria-label="' + esc(label + ' — ' + rawName) + '" title="' + esc(label) + '">' +
+          '<span class="boxbtn-icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">' +
+          '<circle cx="9" cy="20" r="1.3"/><circle cx="18" cy="20" r="1.3"/><path d="M3 4h2l2.2 10.2a2 2 0 0 0 2 1.6h8.9a2 2 0 0 0 2-1.6L21.5 8H6"/>' +
+          '</svg></span></button>';
+      }
+
+      function featureList(card) {
+        if (!Array.isArray(card.features) || card.features.length === 0) return '';
+        return '<span class="pcard-features" role="list">' + card.features.slice(0, 3).map(function (feature) {
+          return '<span class="pcard-feature" role="listitem">' + cardIcon(feature.icon) + '<span>' + esc(feature.label || '') + '</span></span>';
+        }).join('') + '</span>';
+      }
+
+      function finishList(card, href) {
+        if (!Array.isArray(card.finishes) || card.finishes.length === 0) return '';
+        var count = card.finishes_label || String(card.finishes.length) + ' finishes';
+        return '<div class="pcard-finishes"><span class="pcard-swatches" role="list" aria-label="' + esc(card.available_finishes_label || g.availableFinishes) + '">' +
+          card.finishes.slice(0, 4).map(function (finish) {
+            var key = String(finish.key || 'neutral').toLowerCase().replace(/[^a-z-]/g, '') || 'neutral';
+            return '<span class="pcard-swatch pcard-swatch--' + key + '" role="listitem" title="' + esc(finish.label || '') + '" aria-label="' + esc(finish.label || '') + '"></span>';
+          }).join('') + '</span><a class="pcard-finish-count" href="' + href + '">' + esc(count) + ' <span aria-hidden="true">›</span></a></div>';
+      }
+
+      function specList(card) {
+        if (!Array.isArray(card.specs) || card.specs.length === 0) return '';
+        return '<div class="pcard-specs" role="list">' + card.specs.slice(0, 2).map(function (spec) {
+          return '<div class="pcard-spec" role="listitem">' + cardIcon(spec.icon) + '<div><span class="pcard-spec-label">' + esc(spec.label || '') + '</span><span class="pcard-spec-value">' + esc(spec.value || '') + '</span></div></div>';
+        }).join('') + '</div>';
+      }
+
       /* ---------- rendering ---------- */
 
       function render(matches, query) {
@@ -327,19 +445,22 @@
           return;
         }
 
-        var fallback = img(null);
-        var arrow = '<svg viewBox="0 0 20 20" fill="currentColor" width="13" height="13" aria-hidden="true"><path fill-rule="evenodd" d="M10.293 3.293a1 1 0 011.414 0l6 6a1 1 0 010 1.414l-6 6a1 1 0 01-1.414-1.414L14.586 11H3a1 1 0 110-2h11.586l-4.293-4.293a1 1 0 010-1.414z" clip-rule="evenodd"/></svg>';
-
+        var arrow = '<svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><path d="M4 10h12m-5-5 5 5-5 5"/></svg>';
         var cards = list.map(function (product, index) {
-          var name = esc(product.name || product.sku || 'LUFLY fixture');
+          var rawName = String(product.name || product.sku || product.model_code || 'LUFLY fixture');
+          var name = esc(rawName);
           var sku = esc(product.sku || product.model_code || '');
-          var shortDesc = esc(String(product.short_description || '').trim());
+          var shortDesc = esc(String(product.short_description || product.description || '').trim());
           var slug = encodeURIComponent(product.slug || product.id || '');
           var href = base + '/' + encodeURIComponent(locale) + '/products/' + slug;
-          /* hover cycles through every image of the product: the photos
-             first (main shot on top), then the technical drawings, then the
-             installed shots. Each slide keeps the section it came from so
-             the card can name it. */
+          var card = product.card && typeof product.card === 'object' ? product.card : {};
+          var hasPrice = card.has_price !== undefined ? !!card.has_price : parseFloat(product.price || 0) > 0;
+          if (card.cart_enabled === undefined) card.cart_enabled = hasPrice;
+          var priceLabel = card.price_label || (hasPrice ? String(product.price) : g.pricePending);
+          var priceCaption = card.price_caption || g.price;
+
+          /* hover cycles through every image of the product: photos first,
+             then technical drawings, then installed shots. */
           var slides = [];
           (product.card_slides || []).forEach(function (slide) {
             if (!slide || !slide.path) return;
@@ -348,7 +469,6 @@
             if (!dup) slides.push({ src: src, kind: slide.kind || 'photo' });
           });
           if (slides.length === 0) {
-            /* payload without the slide list: fall back to the plain groups */
             [['gallery', 'photo'], ['drawings', 'drawing'], ['situ_images', 'situ']].forEach(function (group) {
               (product[group[0]] || []).forEach(function (p) {
                 if (!p) return;
@@ -362,11 +482,9 @@
           var kindLabel = function (kind) {
             return kind === 'drawing' ? g.kindDrawing : kind === 'situ' ? g.kindSitu : '';
           };
+          var delay = (0.04 * ((index % 6) + 1)).toFixed(2);
 
-          var no = ('00' + (index + 1)).slice(-3);
-          var delay = (0.05 + 0.05 * (index % 6)).toFixed(2);
-
-          return '<article class="pcard" style="--pcard-delay:' + delay + 's">' +
+          return '<article class="pcard ' + (hasPrice ? 'has-price' : 'is-price-pending') + '" data-product-card data-product-id="' + esc(product.id || '') + '" style="--pcard-delay:' + delay + 's">' +
             '<a class="pcard-media" href="' + href + '"' + (slides.length > 1
               ? ' data-pcard-cycle data-pcard-kind-drawing="' + esc(g.kindDrawing) + '" data-pcard-kind-situ="' + esc(g.kindSitu) + '"'
               : '') + '>' +
@@ -378,18 +496,26 @@
                 ' src="' + esc(slide.src) + '" alt="' + alt + '" loading="lazy" decoding="async" width="420" height="320"' +
                 ' onerror="this.onerror=null;this.remove();">';
             }).join('') +
+            (card.badge ? '<span class="pcard-badge">' + esc(card.badge) + '</span>' : '') +
+            featureList(card) +
             (slides.length > 1
               ? '<span class="pcard-dots" aria-hidden="true">' + slides.map(function (u, n) {
                   return '<i class="pcard-dot' + (n === 0 ? ' is-on' : '') + '" data-pcard-dot="' + n + '"></i>';
                 }).join('') + '</span>' +
                 '<span class="pcard-kind" data-pcard-kind-label aria-hidden="true" hidden></span>'
               : '') +
-            '<span class="pcard-hint" aria-hidden="true">' + arrow + esc(g.details) + '</span>' +
             '</a>' +
+            favoriteButton(product, card, rawName) +
             '<div class="pcard-body">' +
-            '<div class="pcard-top"><span class="pcard-code">' + (sku || 'LUFLY') + '</span><span class="pcard-no">' + no + '</span></div>' +
+            '<div class="pcard-top"><span class="pcard-code">' + (sku || 'LUFLY') + '</span></div>' +
             '<h3 class="pcard-title"><a href="' + href + '">' + name + '</a></h3>' +
             (shortDesc ? '<p class="pcard-desc">' + shortDesc + '</p>' : '') +
+            finishList(card, href) +
+            specList(card) +
+            '<div class="pcard-actions"><div class="pcard-action-copy">' +
+            '<span class="pcard-price"><small>' + esc(priceCaption) + '</small><strong' + (hasPrice ? '' : ' class="is-pending"') + '>' + esc(priceLabel) + '</strong></span>' +
+            '<a class="pcard-details" href="' + href + '">' + esc(g.details) + arrow + '</a>' +
+            '</div>' + cartButton(product, card, rawName) + '</div>' +
             '</div></article>';
         }).join('');
 
