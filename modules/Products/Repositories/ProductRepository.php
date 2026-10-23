@@ -43,6 +43,8 @@ class ProductRepository extends Repository
      */
     public function search(array $filters, int $page = 1, int $perPage = 12): Paginator
     {
+        $page = max(1, $page);
+        $perPage = max(1, $perPage);
         $locale = $filters['locale'] ?? 'en';
         $connection = Product::query()->connection();
 
@@ -111,6 +113,32 @@ class ProductRepository extends Repository
             default => ' ORDER BY p.id DESC',
         };
 
+        if ($sort === 'curated') {
+            /* Discovery order is deterministic, but not an import-order dump.
+               Fetch lightweight rows, then rotate categories and model families
+               before hydrating only the products visible on this page. */
+            $discoveryRows = $connection->select(
+                "SELECT DISTINCT p.id, p.category_id, p.model_code, p.is_featured,
+                        CASE WHEN EXISTS (
+                            SELECT 1 FROM product_media pm
+                            INNER JOIN media m ON m.id = pm.media_id
+                            WHERE pm.product_id = p.id
+                              AND pm.variant_id IS NULL
+                              AND pm.type NOT IN ('drawing', 'situ')
+                              AND m.status = 'active'
+                        ) THEN 1 ELSE 0 END AS has_photo
+                 FROM products p {$searchJoin} {$whereSql}
+                 ORDER BY p.is_featured DESC, has_photo DESC, p.id DESC",
+                array_merge($joinBindings, $whereBindings),
+            );
+
+            $orderedIds = $this->diversifyDiscovery($discoveryRows);
+            $pageIds = array_slice($orderedIds, ($page - 1) * $perPage, $perPage);
+            $items = $this->hydrateOrderedIds($pageIds);
+
+            return new Paginator($items, count($orderedIds), $page, $perPage);
+        }
+
         $sql = "SELECT DISTINCT p.* FROM products p {$searchJoin} {$whereSql}{$orderBySql}";
 
         $total = (int) ($connection->selectOne(
@@ -127,6 +155,108 @@ class ProductRepository extends Repository
         Product::eagerLoad($items);
 
         return new Paginator($items, $total, $page, $perPage);
+    }
+
+    /**
+     * Round-robin categories, then model families inside each category.
+     *
+     * The source rows are already ordered by featured status, photographic
+     * media and recency. Each bucket keeps that order, while the first page
+     * cannot become a long run of adjacent colour/model variants. No random
+     * ordering is used, so pagination remains stable and every id appears once.
+     *
+     * @param array<int, array<string, mixed>> $rows
+     * @return array<int, int>
+     */
+    private function diversifyDiscovery(array $rows): array
+    {
+        $categories = [];
+        foreach ($rows as $rank => $row) {
+            $categoryKey = (string) ((int) ($row['category_id'] ?? 0));
+            $modelCode = trim((string) ($row['model_code'] ?? ''));
+            if ($modelCode !== '' && preg_match('/^[^\s-]+/u', $modelCode, $match)) {
+                $familyKey = strtoupper($match[0]);
+            } else {
+                $familyKey = $modelCode !== '' ? strtoupper($modelCode) : 'PRODUCT-' . (int) $row['id'];
+            }
+
+            if (!isset($categories[$categoryKey])) {
+                $categories[$categoryKey] = ['rank' => $rank, 'families' => []];
+            }
+            if (!isset($categories[$categoryKey]['families'][$familyKey])) {
+                $categories[$categoryKey]['families'][$familyKey] = ['rank' => $rank, 'ids' => []];
+            }
+            $categories[$categoryKey]['families'][$familyKey]['ids'][] = (int) $row['id'];
+        }
+
+        $categoryLists = [];
+        foreach ($categories as $category) {
+            $families = array_values($category['families']);
+            usort($families, static fn (array $a, array $b): int => $a['rank'] <=> $b['rank']);
+            $ids = [];
+            $hasItems = true;
+            while ($hasItems) {
+                $hasItems = false;
+                foreach ($families as &$family) {
+                    if ($family['ids'] === []) {
+                        continue;
+                    }
+                    $ids[] = array_shift($family['ids']);
+                    $hasItems = true;
+                }
+                unset($family);
+            }
+            $categoryLists[] = ['rank' => $category['rank'], 'ids' => $ids];
+        }
+
+        usort($categoryLists, static fn (array $a, array $b): int => $a['rank'] <=> $b['rank']);
+        $ordered = [];
+        $hasItems = true;
+        while ($hasItems) {
+            $hasItems = false;
+            foreach ($categoryLists as &$category) {
+                if ($category['ids'] === []) {
+                    continue;
+                }
+                $ordered[] = array_shift($category['ids']);
+                $hasItems = true;
+            }
+            unset($category);
+        }
+
+        return $ordered;
+    }
+
+    /**
+     * Hydrate a small page of ids without losing its curated sequence.
+     *
+     * @param array<int, int> $ids
+     * @return array<int, Product>
+     */
+    private function hydrateOrderedIds(array $ids): array
+    {
+        if ($ids === []) {
+            return [];
+        }
+
+        $rows = Product::query()->connection()->select(
+            'SELECT p.* FROM products p WHERE p.id IN (' . implode(',', array_fill(0, count($ids), '?')) . ')',
+            array_values($ids),
+        );
+        $products = [];
+        foreach ($rows as $row) {
+            $products[(int) $row['id']] = Product::fromRow($row);
+        }
+
+        $items = [];
+        foreach ($ids as $id) {
+            if (isset($products[$id])) {
+                $items[] = $products[$id];
+            }
+        }
+        Product::eagerLoad($items);
+
+        return $items;
     }
 
     /**

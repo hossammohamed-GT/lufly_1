@@ -279,7 +279,7 @@
         if (scope === 'category' && categorySlug) params.category = categorySlug;
         if (query) params.q = query;
         var sort = sortSelect ? sortSelect.value : '';
-        if (sort && sort !== 'newest') params.sort = sort;
+        if (sort && sort !== 'curated') params.sort = sort;
         var keys = Object.keys(params);
         var qs = keys.map(function (k) {
           return encodeURIComponent(k) + '=' + encodeURIComponent(params[k]);
@@ -302,7 +302,7 @@
       }
 
       function currentSort() {
-        return sortSelect ? sortSelect.value : 'newest';
+        return sortSelect ? sortSelect.value : 'curated';
       }
 
       /* ---------- rendering ---------- */
@@ -420,7 +420,7 @@
 
       function search(query, reveal) {
         lastQuery = query;
-        var cacheKey = locale + ':' + scope + ':' + query.toLowerCase();
+        var cacheKey = locale + ':' + scope + ':' + categorySlug + ':' + query.toLowerCase();
         if (cache[cacheKey]) {
           render(cache[cacheKey], query);
           if (reveal) revealGrid();
@@ -513,7 +513,7 @@
         form.classList.add('is-searching');
         var query = input.value.trim();
         if (query.length >= 2) {
-          var cacheKey = locale + ':' + scope + ':' + query.toLowerCase();
+          var cacheKey = locale + ':' + scope + ':' + categorySlug + ':' + query.toLowerCase();
           if (cache[cacheKey]) {
             render(cache[cacheKey], query);
           } else if (!isLive) {
@@ -537,10 +537,31 @@
         search(query, true);
       });
 
+      /* A server-rendered category/sort/page update becomes the new baseline.
+         Do not restore a previous category's saved grid on the next search. */
+      form.addEventListener('livesearch:reset', function (event) {
+        var detail = event.detail || {};
+        window.clearTimeout(debounce);
+        if (inFlight && typeof inFlight.abort === 'function') inFlight.abort();
+        categorySlug = String(detail.category || '');
+        scope = categorySlug ? 'category' : 'all';
+        cache = {};
+        lastQuery = '';
+        isLive = false;
+        input.value = String(detail.query || '');
+        form.classList.remove('is-live', 'is-searching');
+        box.classList.remove('is-open', 'is-busy');
+        savedGrid = grid ? grid.innerHTML : '';
+        savedCount = countEl ? countEl.textContent : '';
+        if (pagination) pagination.style.display = '';
+        paginationHidden = false;
+        ensureGridVisible();
+      });
+
       /* sort re-renders the live results client-side (catalog.js dispatches this) */
       form.addEventListener('livesearch:rerender', function () {
         if (isLive && lastQuery) {
-          var cacheKey = locale + ':' + scope + ':' + lastQuery.toLowerCase();
+          var cacheKey = locale + ':' + scope + ':' + categorySlug + ':' + lastQuery.toLowerCase();
           if (cache[cacheKey]) render(cache[cacheKey], lastQuery);
         }
       });

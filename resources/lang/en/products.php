@@ -50,6 +50,7 @@ return [
     'spec_note' => 'Full specification sheets and BIM files on request.',
     'results_one' => '1 item',
     'results_many' => ':n items',
+    'sort_curated' => 'Curated',
     'sort_newest' => 'Newest first',
     'sort_name' => 'Name A to Z',
     'sort_model' => 'Model code',
@@ -70,6 +71,9 @@ return [
     'category_leaf' => 'A focused collection, ready to explore.',
     'category_open' => 'Open :name',
     'category_back' => 'Back to :name',
+    'category_results_below' => 'Products are below',
+    'category_results_loading' => 'Updating products…',
+    'category_results_error' => 'We couldn’t update the products. Try again.',
 
     /* admin - product image sections (photos / drawings / installed) */
     'images_title' => 'Product images',

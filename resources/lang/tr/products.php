@@ -50,6 +50,7 @@ return [
     'spec_note' => 'Tam teknik föyler ve BIM dosyaları talep üzerine.',
     'results_one' => '1 ürün',
     'results_many' => ':n ürün',
+    'sort_curated' => 'Özenle seçilmiş',
     'sort_newest' => 'En yeni',
     'sort_name' => 'İsim A-Z',
     'sort_model' => 'Model kodu',
@@ -70,6 +71,9 @@ return [
     'category_leaf' => 'Keşfedilmeye hazır, odaklanmış bir koleksiyon.',
     'category_open' => ':name koleksiyonunu aç',
     'category_back' => ':name kategorisine dön',
+    'category_results_below' => 'Ürünler aşağıda',
+    'category_results_loading' => 'Ürünler güncelleniyor…',
+    'category_results_error' => 'Ürünler güncellenemedi. Tekrar deneyin.',
 
     /* yönetim - ürün görsel bölümleri (fotoğraf / çizim / montaj) */
     'images_title' => 'Ürün görselleri',

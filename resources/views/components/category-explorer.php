@@ -143,7 +143,7 @@ $isLifestyle = static fn (string $path): bool => (bool) preg_match('/\.jpe?g$/i'
                                          aria-labelledby="category-heading-<?= e($mode) ?>-<?= (int) $node['id'] ?>"
                                          <?= $isSelected ? '' : 'hidden' ?>>
                                     <nav class="category-breadcrumb" aria-label="<?= e(trans('products.category_atlas')) ?>">
-                                        <a href="<?= e($categoryUrl('')) ?>"><?= e(trans('products.category_atlas')) ?></a>
+                                        <a href="<?= e($categoryUrl('')) ?>"<?= $mode === 'catalog' ? ' data-category-clear' : '' ?>><?= e(trans('products.category_atlas')) ?></a>
                                         <?php foreach ($node['lineage'] as $crumbIndex => $crumb): ?>
                                             <svg viewBox="0 0 12 12" fill="none" stroke="currentColor" aria-hidden="true"><path d="m4 2 4 4-4 4"/></svg>
                                             <?php if ($crumbIndex === count($node['lineage']) - 1): ?>
@@ -184,6 +184,7 @@ $isLifestyle = static fn (string $path): bool => (bool) preg_match('/\.jpe?g$/i'
                                                     <?php endif; ?>
                                                 </div>
                                                 <a class="category-root-context-cta" href="<?= e($productsUrl($contextSlug)) ?>"
+                                                   <?= $mode === 'catalog' ? 'data-category-select="' . e($contextSlug) . '" data-category-reveal="true"' : '' ?>
                                                    aria-label="<?= e(trans('products.category_view_products')) ?>: <?= e($contextName) ?>">
                                                     <span><?= e(trans('products.category_view_products')) ?></span>
                                                     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><path d="M4 12h15m-6-6 6 6-6 6"/></svg>
@@ -208,7 +209,8 @@ $isLifestyle = static fn (string $path): bool => (bool) preg_match('/\.jpe?g$/i'
                                                 <?php endif; ?>
                                             </div>
                                             <div class="category-panel-actions">
-                                                <a class="category-panel-cta" href="<?= e($productsUrl($slug)) ?>">
+                                                <a class="category-panel-cta" href="<?= e($productsUrl($slug)) ?>"
+                                                   data-category-filter="<?= e($slug) ?>" data-category-reveal="true">
                                                     <span><?= e(trans('products.category_view_products')) ?></span>
                                                     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><path d="M4 12h15m-6-6 6 6-6 6"/></svg>
                                                 </a>
@@ -250,7 +252,8 @@ $isLifestyle = static fn (string $path): bool => (bool) preg_match('/\.jpe?g$/i'
                                                 ?>
                                                 <a href="<?= e($grandchildren !== [] ? $categoryUrl($childSlug) : $productsUrl($childSlug)) ?>"
                                                     class="category-child"
-                                                    <?= $grandchildren !== [] ? 'data-category-select="' . e($childSlug) . '" aria-controls="category-panel-' . e($mode) . '-' . (int) $child['id'] . '" aria-expanded="false"' : '' ?>
+                                                    <?= ($grandchildren !== [] || $mode === 'catalog') ? 'data-category-select="' . e($childSlug) . '" aria-controls="category-panel-' . e($mode) . '-' . (int) $child['id'] . '"' : '' ?>
+                                                    <?= $grandchildren !== [] ? 'aria-expanded="false"' : '' ?>
                                                     aria-label="<?= e(trans('products.category_open', ['name' => $childName])) ?>">
                                                     <span class="category-child-image<?= $isLifestyle($childImage) ? ' is-lifestyle' : '' ?>">
                                                         <img src="<?= e(asset(ltrim($childImage, '/'))) ?>" alt="" loading="lazy" decoding="async" width="480" height="310"
@@ -277,6 +280,22 @@ $isLifestyle = static fn (string $path): bool => (bool) preg_match('/\.jpe?g$/i'
                 </div>
                 <p class="sr-only" aria-live="polite" data-category-status></p>
             </div>
+            <?php if ($mode === 'catalog'): ?>
+                <a class="category-results-cue" href="#catalog-results" data-category-results-cue
+                   data-label-ready="<?= e(trans('products.category_results_below')) ?>"
+                   data-label-loading="<?= e(trans('products.category_results_loading')) ?>"
+                   data-label-error="<?= e(trans('products.category_results_error')) ?>" hidden>
+                    <span class="category-results-cue-symbol" aria-hidden="true">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M5 5h14M5 12h14M5 19h9"/></svg>
+                    </span>
+                    <span class="category-results-cue-copy" aria-live="polite">
+                        <small data-category-results-label><?= e(trans('products.category_results_below')) ?></small>
+                        <strong data-category-results-name></strong>
+                    </span>
+                    <span class="category-results-cue-count" data-category-results-count></span>
+                    <svg class="category-results-cue-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><path d="M12 4v15m-6-6 6 6 6-6"/></svg>
+                </a>
+            <?php endif; ?>
         </div>
     </div>
 </section>

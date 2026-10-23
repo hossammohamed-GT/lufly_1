@@ -141,48 +141,55 @@
   min-height: 0;
   overflow: hidden;
   padding: 52px 12px 13px;
-  border: 1px solid color-mix(in srgb, var(--ds-text) 16%, transparent);
-  border-radius: var(--root-radius, 38px 8px 14px 14px);
-  background: var(--ds-surface);
+  border: 0;
+  border-radius: 0;
+  clip-path: var(--root-clip);
+  background: color-mix(in srgb, var(--ds-text) 24%, transparent);
   color: #fff;
   text-decoration: none;
   box-shadow: 0 3px 12px color-mix(in srgb, var(--lu-ink-950) 5%, transparent);
-  transition: transform 280ms cubic-bezier(0.16, 1, 0.3, 1), border-color 220ms ease,
+  transition: clip-path 520ms cubic-bezier(0.22, 1, 0.36, 1),
     background-color 220ms ease, box-shadow 280ms ease;
 }
 .category-root::after {
   content: "";
   position: absolute;
-  inset: 0;
+  inset: 1px;
   z-index: 1;
+  clip-path: var(--root-clip);
   background: linear-gradient(to bottom, rgba(12, 17, 16, 0.01) 22%, rgba(12, 17, 16, 0.12) 44%, rgba(12, 17, 16, 0.94) 100%);
   pointer-events: none;
+  transition: clip-path 520ms cubic-bezier(0.22, 1, 0.36, 1);
 }
-.category-root--shape-1 { --root-radius: 38px 8px 14px 14px; }
-.category-root--shape-2 { --root-radius: 8px 38px 14px 14px; }
-.category-root--shape-3 { --root-radius: 46px 18px 14px 14px; }
-.category-root--shape-4 { --root-radius: 18px 46px 14px 14px; }
+.category-root--shape-1 { --root-clip: polygon(26px 0, 100% 0, 100% calc(100% - 8px), calc(100% - 8px) 100%, 0 100%, 0 26px); }
+.category-root--shape-2 { --root-clip: polygon(0 0, calc(100% - 26px) 0, 100% 26px, 100% 100%, 8px 100%, 0 calc(100% - 8px)); }
+.category-root--shape-3 { --root-clip: polygon(34px 0, 100% 0, 100% 100%, 14px 100%, 0 calc(100% - 14px), 0 34px); }
+.category-root--shape-4 { --root-clip: polygon(0 0, calc(100% - 34px) 0, 100% 34px, 100% calc(100% - 14px), calc(100% - 14px) 100%, 0 100%); }
 .category-root:hover {
-  border-color: color-mix(in srgb, var(--ce-accent) 65%, var(--ds-border));
+  background: color-mix(in srgb, var(--ce-accent) 72%, var(--ds-text));
   box-shadow: 0 12px 28px color-mix(in srgb, var(--lu-ink-950) 12%, transparent);
 }
 .category-root.is-active {
-  border-color: var(--ce-accent);
-  background: var(--ds-surface);
+  background: var(--ce-accent);
   color: #fff;
   box-shadow: 0 12px 28px color-mix(in srgb, var(--ce-accent) 20%, transparent);
 }
 .category-root.is-lead {
-  --root-radius: 72px 18px 18px 18px;
+  --root-clip: polygon(64px 0, 100% 0, 100% calc(100% - 18px), calc(100% - 18px) 100%, 0 100%, 0 64px);
   grid-column: 1;
   grid-row: 1 / span 2;
   align-self: stretch;
   height: auto;
   padding: 64px 24px 24px;
 }
-.category-root--shape-2.is-lead { --root-radius: 18px 72px 18px 18px; }
-.category-root--shape-3.is-lead { --root-radius: 82px 28px 18px 18px; }
-.category-root--shape-4.is-lead { --root-radius: 28px 82px 18px 18px; }
+.category-root--shape-2.is-lead { --root-clip: polygon(0 0, calc(100% - 64px) 0, 100% 64px, 100% 100%, 18px 100%, 0 calc(100% - 18px)); }
+.category-root--shape-3.is-lead { --root-clip: polygon(76px 0, 100% 0, 100% 100%, 24px 100%, 0 calc(100% - 24px), 0 76px); }
+.category-root--shape-4.is-lead { --root-clip: polygon(0 0, calc(100% - 76px) 0, 100% 76px, 100% calc(100% - 24px), calc(100% - 24px) 100%, 0 100%); }
+.category-root:focus-visible {
+  outline: none;
+  background: var(--ce-accent-deep);
+}
+.category-root:focus-visible .category-root-copy strong { text-decoration: underline; text-underline-offset: 4px; }
 
 .category-root-index {
   position: relative;
@@ -197,13 +204,15 @@
 }
 .category-root-image {
   position: absolute;
-  inset: 0;
+  inset: 1px;
   z-index: 0;
   display: block;
-  width: 100%;
-  height: 100%;
+  width: auto;
+  height: auto;
   overflow: hidden;
+  clip-path: var(--root-clip);
   background: #ece9e1;
+  transition: clip-path 520ms cubic-bezier(0.22, 1, 0.36, 1);
 }
 .category-root-image img {
   width: 100%;
@@ -290,6 +299,86 @@
   height: 18px;
   padding: 6px;
 }
+
+/* Live-results wayfinding: selecting a category never forces a scroll. This
+   compact cue appears below the atlas and lets the visitor choose when to go. */
+.category-results-cue {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr) auto auto;
+  align-items: center;
+  gap: 12px;
+  margin-top: 16px;
+  padding: 10px 12px;
+  clip-path: polygon(14px 0, 100% 0, 100% calc(100% - 10px), calc(100% - 10px) 100%, 0 100%, 0 14px);
+  border: 0;
+  background: color-mix(in srgb, var(--ce-accent) 7%, var(--ds-surface));
+  color: var(--ds-text);
+  text-decoration: none;
+  box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--ce-accent) 24%, transparent);
+  animation: categoryCueIn 320ms cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+.category-results-cue[hidden] { display: none !important; }
+.category-results-cue-symbol {
+  display: grid;
+  place-items: center;
+  width: 34px;
+  height: 34px;
+  clip-path: polygon(8px 0, 100% 0, 100% calc(100% - 8px), calc(100% - 8px) 100%, 0 100%, 0 8px);
+  background: var(--ce-accent);
+  color: #fff;
+}
+.category-results-cue-symbol svg { width: 18px; height: 18px; }
+.category-results-cue-copy { display: grid; gap: 3px; min-width: 0; }
+.category-results-cue-copy small {
+  font-family: var(--font-mono);
+  font-size: 8px;
+  font-weight: 650;
+  line-height: 1.2;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--ce-accent-deep);
+}
+.category-results-cue-copy strong {
+  overflow: hidden;
+  font-family: 'Playfair Display', Georgia, 'Times New Roman', serif;
+  font-size: 16px;
+  font-weight: 560;
+  line-height: 1.15;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.category-results-cue-count {
+  padding: 6px 10px;
+  border: 1px solid var(--ce-line);
+  border-radius: 999px;
+  font-family: var(--font-mono);
+  font-size: 9px;
+  white-space: nowrap;
+  color: var(--ds-text-muted);
+}
+.category-results-cue-arrow {
+  box-sizing: content-box;
+  width: 18px;
+  height: 18px;
+  padding: 7px;
+  border-radius: 50%;
+  background: var(--ce-accent);
+  color: #fff;
+}
+.category-results-cue.is-ready .category-results-cue-arrow { animation: categoryCueArrow 1.8s ease-in-out infinite; }
+.category-results-cue.is-loading .category-results-cue-symbol { animation: categoryCuePulse 900ms ease-in-out infinite; }
+.category-results-cue.is-error { background: color-mix(in srgb, #b42318 7%, var(--ds-surface)); }
+.category-results-cue.is-error .category-results-cue-copy small { color: #b42318; }
+.category-results-cue:hover { background: color-mix(in srgb, var(--ce-accent) 12%, var(--ds-surface)); }
+@keyframes categoryCueIn {
+  from { opacity: 0; transform: translateY(-8px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+@keyframes categoryCueArrow {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(3px); }
+}
+@keyframes categoryCuePulse { 50% { opacity: 0.5; } }
 
 /* The selected category is a quiet editorial banner, followed by the real
    next level. All 108 panels stay in the DOM for instant, accessible drill-down. */
@@ -711,6 +800,7 @@
 .category-leaf-note span { width: 28px; height: 1px; background: var(--ce-accent); }
 .category-leaf-note p { margin: 0; font-size: 12px; }
 
+.category-results-cue:focus-visible,
 .category-root:focus-visible,
 .category-child:focus-visible,
 .category-panel-cta:focus-visible,
@@ -722,6 +812,7 @@
 }
 
 .catalog-active-filter { display: flex; justify-content: flex-end; margin: -14px 0 24px; }
+.catalog-active-filter[hidden] { display: none !important; }
 .catalog-active-filter a {
   display: inline-flex;
   align-items: center;
@@ -782,12 +873,15 @@
   .category-explorer--home .category-root-list { --root-card-height: 154px; }
   .category-root { padding: 48px 11px 12px; }
   .category-root.is-lead {
-    --root-radius: 42px 12px 14px 14px;
+    --root-clip: polygon(26px 0, 100% 0, 100% calc(100% - 8px), calc(100% - 8px) 100%, 0 100%, 0 26px);
     grid-column: 1;
     grid-row: auto;
     height: var(--root-card-height);
     padding: 48px 11px 12px;
   }
+  .category-root--shape-2.is-lead { --root-clip: polygon(0 0, calc(100% - 26px) 0, 100% 26px, 100% 100%, 8px 100%, 0 calc(100% - 8px)); }
+  .category-root--shape-3.is-lead { --root-clip: polygon(34px 0, 100% 0, 100% 100%, 14px 100%, 0 calc(100% - 14px), 0 34px); }
+  .category-root--shape-4.is-lead { --root-clip: polygon(0 0, calc(100% - 34px) 0, 100% 34px, 100% calc(100% - 14px), calc(100% - 14px) 100%, 0 100%); }
   .category-root-copy strong,
   .category-root.is-lead .category-root-copy strong { max-width: none; font-size: 12px; line-height: 1.15; }
   .category-root-copy small,
@@ -849,6 +943,10 @@
   .category-child-image { width: 104px; min-height: 96px; }
   .category-child-copy { padding: 12px 30px 12px 12px; }
   .category-panel-meta { gap: 5px; }
+  .category-results-cue { grid-template-columns: auto minmax(0, 1fr) auto; gap: 8px; padding: 9px 10px; }
+  .category-results-cue-symbol { display: none; }
+  .category-results-cue-count { padding: 5px 7px; font-size: 8px; }
+  .category-results-cue-arrow { width: 16px; height: 16px; padding: 5px; }
 
   /* Seven level-three choices should not become seven full-width rows.
      The selected level-two branch remains full width above this compact grid. */

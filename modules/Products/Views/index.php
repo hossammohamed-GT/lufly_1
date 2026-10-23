@@ -28,10 +28,11 @@ $categories = $categories ?? [];
 $categoryCounts = $categoryCounts ?? [];
 $activeCategory = $activeCategory ?? '';
 $searchQuery = $searchQuery ?? '';
-$sort = $sort ?? 'newest';
+$sort = $sort ?? 'curated';
 $total = (int) $paginator->total();
 
 $sortOptions = [
+    'curated' => trans('products.sort_curated'),
     'newest' => trans('products.sort_newest'),
     'name' => trans('products.sort_name'),
     'model' => trans('products.sort_model'),
@@ -41,7 +42,7 @@ $buildUrl = static function (array $overrides = []) use ($activeCategory, $searc
     $params = array_filter(array_merge([
         'category' => $activeCategory !== '' ? $activeCategory : null,
         'q' => $searchQuery !== '' ? $searchQuery : null,
-        'sort' => $sort !== 'newest' ? $sort : null,
+        'sort' => $sort !== 'curated' ? $sort : null,
     ], $overrides), static fn ($v) => $v !== null && $v !== '');
 
     return route('products.index') . (count($params) > 0 ? '?' . http_build_query($params) : '');
@@ -127,9 +128,7 @@ if (feature('box', true) && class_exists(\Modules\Box\Services\BoxService::class
                 </span>
             </div>
             <form method="GET" action="<?= e(route('products.index')) ?>" class="catalog-searchform">
-                <?php if ($activeCategory !== ''): ?>
-                    <input type="hidden" name="category" value="<?= e($activeCategory) ?>">
-                <?php endif; ?>
+                <input type="hidden" name="category" value="<?= e($activeCategory) ?>">
 
                 <div class="catalog-search" data-catalog-field>
                     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" width="16" height="16" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg>
@@ -153,31 +152,21 @@ if (feature('box', true) && class_exists(\Modules\Box\Services\BoxService::class
             <div class="catalog-guide" data-livesearch-results aria-live="polite">
                 <div class="catalog-scope" data-livesearch-scope>
                     <span class="catalog-scope-label"><?= e(trans('products.scope_label')) ?></span>
-                    <?php if ($activeCategory !== ''): ?>
-                        <button type="button" class="catalog-scope-btn is-active" data-scope="category"><?= e(trans('products.scope_category')) ?></button>
-                    <?php endif; ?>
+                    <button type="button" class="catalog-scope-btn<?= $activeCategory !== '' ? ' is-active' : '' ?>" data-scope="category"<?= $activeCategory === '' ? ' hidden' : '' ?>><?= e(trans('products.scope_category')) ?></button>
                     <button type="button" class="catalog-scope-btn <?= $activeCategory === '' ? 'is-active' : '' ?>" data-scope="all"><?= e(trans('products.scope_all')) ?></button>
                 </div>
             </div>
         </div>
 
-        <?php if ($activeCategory !== ''): ?>
-            <div class="catalog-active-filter">
-                <a href="<?= e($buildUrl(['category' => null, 'page' => null])) ?>">
-                    <?= e(trans('common.all_categories')) ?>
-                    <span><?= e(number_format($categoryCounts[''] ?? 0)) ?></span>
-                </a>
-            </div>
-        <?php endif; ?>
+        <div class="catalog-active-filter" data-catalog-active-filter<?= $activeCategory === '' ? ' hidden' : '' ?>>
+            <a href="<?= e($buildUrl(['category' => null, 'page' => null])) ?>"
+               data-category-filter="" data-category-name="<?= e(trans('common.all_categories')) ?>">
+                <?= e(trans('common.all_categories')) ?>
+                <span><?= e(number_format($categoryCounts[''] ?? 0)) ?></span>
+            </a>
+        </div>
 
-        <?php if ($paginator->items() === []): ?>
-            <div class="catalog-empty">
-                <span class="catalog-empty-code">404 &middot; <?= e(trans('common.no_results')) ?></span>
-                <p><?= e(trans('products.empty')) ?></p>
-                <a href="<?= e(route('products.index')) ?>" class="catalog-empty-btn"><?= e(trans('common.all_categories')) ?></a>
-            </div>
-        <?php else: ?>
-            <div data-sk-host>
+        <div data-sk-host>
             <div class="sk-grid" data-sk-skeleton aria-hidden="true">
                 <?php for ($sk = 0; $sk < 8; $sk++): ?>
                     <div class="sk sk-card">
@@ -194,6 +183,14 @@ if (feature('box', true) && class_exists(\Modules\Box\Services\BoxService::class
                 <?php endfor; ?>
             </div>
             <div class="catalog-grid" data-catalog-grid data-sk-real>
+                <?php if ($paginator->items() === []): ?>
+                    <div class="catalog-empty">
+                        <span class="catalog-empty-code">404 &middot; <?= e(trans('common.no_results')) ?></span>
+                        <p><?= e(trans('products.empty')) ?></p>
+                        <a href="<?= e(route('products.index')) ?>" class="catalog-empty-btn"
+                           data-category-filter="" data-category-name="<?= e(trans('common.all_categories')) ?>"><?= e(trans('common.all_categories')) ?></a>
+                    </div>
+                <?php else: ?>
                 <?php foreach ($paginator->items() as $index => $product):
                     $item = $product->translate($locale);
                     $img = (string) ($item['image'] ?? '') !== '' ? (string) $item['image'] : $fallbackImg;
@@ -269,11 +266,12 @@ if (feature('box', true) && class_exists(\Modules\Box\Services\BoxService::class
                         </div>
                     </article>
                 <?php endforeach; ?>
+                <?php endif; ?>
             </div>
-            </div>
+        </div>
 
-            <?php if ($paginator->lastPage() > 1): ?>
-                <nav class="catpag" data-catalog-pagination aria-label="Pagination">
+        <nav class="catpag" data-catalog-pagination aria-label="Pagination"<?= $paginator->lastPage() <= 1 ? ' hidden' : '' ?>>
+                <?php if ($paginator->lastPage() > 1): ?>
                     <?php if ($paginator->page() > 1): ?>
                         <a class="catpag-arrow" href="<?= e($buildUrl(['page' => $paginator->page() - 1])) ?>" aria-label="Previous">&larr;</a>
                     <?php endif; ?>
@@ -298,8 +296,7 @@ if (feature('box', true) && class_exists(\Modules\Box\Services\BoxService::class
                     <?php if ($paginator->page() < $paginator->lastPage()): ?>
                         <a class="catpag-arrow" href="<?= e($buildUrl(['page' => $paginator->page() + 1])) ?>" aria-label="Next">&rarr;</a>
                     <?php endif; ?>
-                </nav>
-            <?php endif; ?>
-        <?php endif; ?>
+                <?php endif; ?>
+        </nav>
     </div>
 </main>

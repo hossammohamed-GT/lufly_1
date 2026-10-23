@@ -637,6 +637,12 @@
   background: none;
 }
 
+/* ---------- live filtering ---------- */
+.catalog-grid { transition: opacity 180ms ease; }
+.catalog-grid.is-filtering { opacity: 0.42; pointer-events: none; }
+.catalog-scope-btn[hidden],
+.catpag[hidden] { display: none !important; }
+
 /* ---------- responsive ---------- */
 
 @media (max-width: 900px) {
@@ -683,6 +689,7 @@
   .catalog-rail,
   .catalog-empty,
   .catpag { animation: none; }
+  .catalog-grid { transition: none; }
 }
 
 /* ---------- entrance ---------- */

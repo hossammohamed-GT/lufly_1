@@ -50,6 +50,7 @@ return [
     'spec_note' => 'Kompletní technické listy a BIM soubory na požádání.',
     'results_one' => '1 položka',
     'results_many' => ':n položek',
+    'sort_curated' => 'Kurátorovaný výběr',
     'sort_newest' => 'Nejnovější',
     'sort_name' => 'Název A-Z',
     'sort_model' => 'Kód modelu',
@@ -70,6 +71,9 @@ return [
     'category_leaf' => 'Cílená kolekce připravená k prozkoumání.',
     'category_open' => 'Otevřít :name',
     'category_back' => 'Zpět na :name',
+    'category_results_below' => 'Produkty jsou níže',
+    'category_results_loading' => 'Aktualizujeme produkty…',
+    'category_results_error' => 'Produkty se nepodařilo aktualizovat. Zkuste to znovu.',
 
     /* administrace - sekce obrázků produktu (fotografie / výkresy / instalace) */
     'images_title' => 'Obrázky produktu',

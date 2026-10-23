@@ -33,9 +33,9 @@ class ProductController extends Controller
         $categorySlug = (string) $request->query('category', '');
         $categoryId = (int) $request->query('category_id', '0');
         $searchQuery = (string) $request->query('q', '');
-        $sort = (string) $request->query('sort', 'newest');
-        if (!in_array($sort, ['newest', 'name', 'model'], true)) {
-            $sort = 'newest';
+        $sort = (string) $request->query('sort', 'curated');
+        if (!in_array($sort, ['curated', 'newest', 'name', 'model'], true)) {
+            $sort = 'curated';
         }
         $fallback = (string) config('localization.fallback', 'en');
 
@@ -66,7 +66,7 @@ class ProductController extends Controller
            canonical of the clean catalogue URL and stay out of the index:
            crawlers may follow them, but only one catalog page ranks. */
         $isFaceted = $categorySlug !== '' || $categoryId > 0 || $searchQuery !== ''
-            || $sort !== 'newest' || (int) $request->query('page', '1') > 1;
+            || $sort !== 'curated' || (int) $request->query('page', '1') > 1;
         if ($isFaceted) {
             $this->seo->setRobots('noindex, follow');
         }

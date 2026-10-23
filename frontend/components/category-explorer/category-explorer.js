@@ -16,6 +16,7 @@
     var panelGroups = Array.prototype.slice.call(explorer.querySelectorAll('[data-category-panels-root]'));
     var roots = Array.prototype.slice.call(explorer.querySelectorAll('[data-category-root]'));
     var rootList = explorer.querySelector('.category-root-list');
+    var initialNodes = rootList ? Array.prototype.slice.call(rootList.children) : [];
     var status = explorer.querySelector('[data-category-status]');
     var motion = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)');
     var easing = 'cubic-bezier(0.22, 1, 0.36, 1)';
@@ -226,7 +227,7 @@
         }
         card.hidden = false;
         card.classList.remove('is-expanded');
-        if (card.hasAttribute('data-category-select')) {
+        if (card.hasAttribute('aria-expanded')) {
           card.setAttribute('aria-expanded', 'false');
         }
       });
@@ -413,25 +414,81 @@
       }
     }
 
+    function notifySelection(slug, trigger) {
+      var target = panelFor(slug);
+      var heading = target ? target.querySelector('[data-category-heading]') : null;
+      explorer.dispatchEvent(new CustomEvent('category:activate', {
+        bubbles: true,
+        detail: {
+          slug: slug,
+          name: heading ? heading.textContent.trim() : '',
+          reveal: Boolean(trigger && trigger.getAttribute('data-category-reveal') === 'true')
+        }
+      }));
+    }
+
+    function clearSelection(suppressAnimation, moveFocus) {
+      var rootFrames = captureRootLayout();
+      cancelRootLayoutAnimations();
+      restoreNestedPanels();
+      each(panelGroups, function (group) {
+        if (typeof group.getAnimations === 'function') {
+          each(group.getAnimations(), function (animation) { animation.cancel(); });
+        }
+        releaseHeight(group);
+        group.hidden = true;
+      });
+      each(panels, function (panel) { panel.hidden = true; });
+      each(roots, function (rootLink, index) {
+        rootLink.classList.remove('is-active');
+        rootLink.classList.toggle('is-lead', index === 0);
+        rootLink.setAttribute('aria-expanded', 'false');
+        rootLink.removeAttribute('aria-current');
+      });
+      if (rootList) {
+        each(initialNodes, function (node) { rootList.appendChild(node); });
+      }
+      explorer.setAttribute('data-selected', '');
+      if (status) {
+        status.textContent = '';
+      }
+      if (moveFocus && roots[0]) {
+        try {
+          roots[0].focus({ preventScroll: true });
+        } catch (error) {
+          roots[0].focus();
+        }
+      }
+      animateRootLayout(rootFrames, suppressAnimation);
+    }
+
     function activate(slug, moveFocus, suppressAnimation, trigger) {
       var target = panelFor(slug);
       if (!target) {
-        return;
+        return false;
       }
       if (target.getAttribute('data-depth') === '2') {
         /* Clicking an open branch a second time returns to its siblings. */
         if (explorer.getAttribute('data-selected') === slug && target.classList.contains('is-nested')) {
           activateBase(target.getAttribute('data-root') || '', moveFocus, suppressAnimation);
-          return;
+          return true;
         }
         activateNested(target, trigger, moveFocus, suppressAnimation);
-        return;
+        return true;
       }
       activateBase(slug, moveFocus, suppressAnimation);
+      return true;
     }
 
     explorer.addEventListener('click', function (event) {
       if (event.defaultPrevented || event.button !== 0 || event.metaKey || event.ctrlKey || event.shiftKey || event.altKey) {
+        return;
+      }
+      var clearTrigger = event.target.closest('[data-category-clear]');
+      if (clearTrigger && explorer.contains(clearTrigger)) {
+        event.preventDefault();
+        clearSelection(false, Boolean(clearTrigger.closest('.category-panel')));
+        notifySelection('');
         return;
       }
       var trigger = event.target.closest('[data-category-select]');
@@ -440,10 +497,16 @@
       }
       var slug = trigger.getAttribute('data-category-select');
       if (!panelFor(slug)) {
-        return; // Leaf categories keep their real filtered-products link.
+        return; // Home leaf categories keep their real filtered-products link.
       }
       event.preventDefault();
-      activate(slug, Boolean(trigger.closest('.category-panel')), false, trigger);
+      if (activate(slug, Boolean(trigger.closest('.category-panel')), false, trigger)) {
+        notifySelection(slug, trigger);
+      }
+    });
+
+    explorer.addEventListener('category:clear', function () {
+      clearSelection(false, false);
     });
 
     var resizeTimer = null;
