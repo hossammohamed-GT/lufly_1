@@ -26,6 +26,7 @@ return [
     'cartridge_label' => 'Cartridge',
     'view_details' => 'View details',
     'name' => 'Product name',
+    'name_pending' => 'Name not provided',
     'description' => 'Description',
     'specs_title' => 'Technical Specifications',
     'inquire_whatsapp' => 'Request a Quote',

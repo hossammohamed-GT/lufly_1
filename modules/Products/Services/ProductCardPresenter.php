@@ -102,10 +102,7 @@ final class ProductCardPresenter
         $hasPrice = $price > 0;
         $name = trim((string) ($product['name'] ?? ''));
         if ($name === '') {
-            $name = trim((string) ($product['sku'] ?? ''));
-        }
-        if ($name === '') {
-            $name = trim((string) ($product['model_code'] ?? ''));
+            $name = trans('products.name_pending');
         }
         $status = (string) ($product['status'] ?? '');
         $badge = $status === 'coming_soon'

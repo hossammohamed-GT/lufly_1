@@ -18,6 +18,12 @@ $fallbackImg = '/images/favicon.png';
 $img = (string) ($product['image'] ?? '') !== '' ? (string) $product['image'] : $fallbackImg;
 $situImg = (string) ($product['situ_image'] ?? '');
 $modelCode = (string) ($product['model_code'] ?? $product['sku'] ?? '');
+$product['name'] = trim((string) ($product['name'] ?? ''));
+if ($product['name'] === '') {
+    /* Missing source names remain an explicit status; never use the model
+       code or an invented marketing title as the product's name. */
+    $product['name'] = trans('products.name_pending');
+}
 $variants = is_array($product['variants'] ?? null) ? $product['variants'] : [];
 $specs = is_array($product['specs'] ?? null) ? $product['specs'] : [];
 /* three independent image groups; each may hold any number of images */

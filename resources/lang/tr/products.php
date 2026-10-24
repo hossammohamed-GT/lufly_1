@@ -26,6 +26,7 @@ return [
     'cartridge_label' => 'Kartuş',
     'view_details' => 'Detayları gör',
     'name' => 'Ürün adı',
+    'name_pending' => 'Ürün adı belirtilmemiş',
     'description' => 'Açıklama',
     'specs_title' => 'Teknik Özellikler',
     'inquire_whatsapp' => 'Teklif İsteyin',

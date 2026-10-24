@@ -131,7 +131,10 @@ class ProductController extends Controller
         }
         $product['category_slug'] = $categorySlug;
 
-        $productName = (string) ($product['name'] ?? 'LUFLY Architectural Fixture');
+        $productName = trim((string) ($product['name'] ?? ''));
+        if ($productName === '') {
+            $productName = trans('products.name_pending');
+        }
         $productDesc = (string) ($product['short_description'] ?? $product['description'] ?? '');
 
         $canonical = route('products.show', ['slug' => $product['slug'] ?? $slug]);

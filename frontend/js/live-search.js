@@ -91,6 +91,7 @@
           empty: 'No architectural fixtures found matching ":q"',
           hint: 'Tip: try a model code like 1620 or a name like "wall-hung"',
           details: 'View details',
+          namePending: 'Name not provided',
           price: 'Price',
           pricePending: 'Price pending',
           addToCart: 'Add to cart',
@@ -118,6 +119,7 @@
           empty: '":q" ile eşleşen ürün bulunamadı',
           hint: 'İpucu: 1620 gibi bir model kodu ya da "asma klozet" deneyin',
           details: 'Detayları gör',
+          namePending: 'Ürün adı belirtilmemiş',
           price: 'Fiyat',
           pricePending: 'Fiyat bekleniyor',
           addToCart: 'Sepete ekle',
@@ -145,6 +147,7 @@
           empty: 'Nebyly nalezeny žádné produkty odpovídající ":q"',
           hint: 'Tip: zkuste kód modelu jako 1620 nebo název "závěsné WC"',
           details: 'Zobrazit detail',
+          namePending: 'Název produktu neuveden',
           price: 'Cena',
           pricePending: 'Cena bude doplněna',
           addToCart: 'Přidat do košíku',
@@ -419,7 +422,7 @@
       function specList(card) {
         if (!Array.isArray(card.specs) || card.specs.length === 0) return '';
         return '<div class="pcard-specs" role="list">' + card.specs.slice(0, 2).map(function (spec) {
-          return '<div class="pcard-spec" role="listitem">' + cardIcon(spec.icon) + '<div><span class="pcard-spec-label">' + esc(spec.label || '') + '</span><span class="pcard-spec-value">' + esc(spec.value || '') + '</span></div></div>';
+          return '<div class="pcard-spec' + (spec.icon === 'dimensions' ? ' pcard-spec--dimensions' : '') + '" role="listitem">' + cardIcon(spec.icon) + '<div><span class="pcard-spec-label">' + esc(spec.label || '') + '</span><span class="pcard-spec-value">' + esc(spec.value || '') + '</span></div></div>';
         }).join('') + '</div>';
       }
 
@@ -447,10 +450,13 @@
 
         var arrow = '<svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><path d="M4 10h12m-5-5 5 5-5 5"/></svg>';
         var cards = list.map(function (product, index) {
-          var rawName = String(product.name || product.sku || product.model_code || 'LUFLY fixture');
+          var rawName = String(product.name || g.namePending);
           var name = esc(rawName);
           var sku = esc(product.sku || product.model_code || '');
-          var shortDesc = esc(String(product.short_description || product.description || '').trim());
+          var shortDescText = String(product.short_description || product.description || '').trim();
+          var verifiedBlock = shortDescText.indexOf('Verified drawing dimensions:');
+          if (verifiedBlock !== -1) shortDescText = shortDescText.slice(0, verifiedBlock).trim();
+          var shortDesc = esc(shortDescText);
           var slug = encodeURIComponent(product.slug || product.id || '');
           var href = base + '/' + encodeURIComponent(locale) + '/products/' + slug;
           var card = product.card && typeof product.card === 'object' ? product.card : {};
@@ -510,8 +516,8 @@
               : '') +
             '</div>' +
             '<div class="pcard-body">' +
-            '<div class="pcard-top"><span class="pcard-code">' + (sku || 'LUFLY') + '</span>' + favoriteButton(product, card, rawName) + '</div>' +
-            '<h3 class="pcard-title"><a href="' + href + '">' + name + '</a></h3>' +
+            '<div class="pcard-top pcard-heading"><h3 class="pcard-title"><a href="' + href + '">' + name + '</a></h3>' + favoriteButton(product, card, rawName) + '</div>' +
+            (sku ? '<span class="pcard-code">' + sku + '</span>' : '') +
             (shortDesc ? '<p class="pcard-desc">' + shortDesc + '</p>' : '') +
             featurePanel +
             finishList(card, href) +

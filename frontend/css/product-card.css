@@ -324,6 +324,10 @@
   gap: 10px;
 }
 
+.pcard-heading { align-items: flex-start; }
+.pcard-heading .pcard-title { flex: 1 1 auto; min-width: 0; }
+.pcard-heading > :last-child { flex: 0 0 auto; }
+
 .pcard-code {
   color: var(--pcard-accent);
   font-family: var(--font-mono);

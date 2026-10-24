@@ -17,7 +17,7 @@ if ($cardCode === '') {
 }
 $cardName = trim((string) ($item['name'] ?? ''));
 if ($cardName === '') {
-    $cardName = $cardCode;
+    $cardName = trans('products.name_pending');
 }
 $shortDesc = trim((string) ($item['short_description'] ?? ''));
 if ($shortDesc === '') {
@@ -78,8 +78,10 @@ $hasFeaturePanel = $card['badge'] !== '' || $card['features'] !== [];
     </div>
 
     <div class="pcard-body">
-        <div class="pcard-top">
-            <span class="pcard-code"><?= e($cardCode !== '' ? $cardCode : 'LUFLY') ?></span>
+        <div class="pcard-top pcard-heading">
+            <<?= $heading ?> class="pcard-title">
+                <a href="<?= e($cardUrl) ?>"><?= e($cardName) ?></a>
+            </<?= $heading ?>>
             <?= $view->component('favorite-button', [
                 'product_id' => $productId,
                 'name' => $cardName,
@@ -87,9 +89,9 @@ $hasFeaturePanel = $card['badge'] !== '' || $card['features'] !== [];
                 'on' => (bool) ($props['saved'] ?? false),
             ]) ?>
         </div>
-        <<?= $heading ?> class="pcard-title">
-            <a href="<?= e($cardUrl) ?>"><?= e($cardName) ?></a>
-        </<?= $heading ?>>
+        <?php if ($cardCode !== ''): ?>
+            <span class="pcard-code"><?= e($cardCode) ?></span>
+        <?php endif; ?>
         <?php if ($shortDesc !== ''): ?>
             <p class="pcard-desc"><?= e($shortDesc) ?></p>
         <?php endif; ?>

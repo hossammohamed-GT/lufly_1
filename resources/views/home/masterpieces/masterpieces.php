@@ -58,8 +58,11 @@ $featured = is_array($featuredProducts ?? null) ? $featuredProducts : [];
                     $cardSlides = [['path' => $img, 'kind' => 'photo']];
                 }
                 $cardKinds = ['drawing' => trans('products.view_drawing'), 'situ' => trans('products.view_situ')];
-                $name = (string) ($product['name'] ?? ('LUFLY ' . ($product['sku'] ?? 'Sanitary Fixture')));
-                $sku = (string) ($product['sku'] ?? 'SKU-PENDING');
+                $name = trim((string) ($product['name'] ?? ''));
+                if ($name === '') {
+                    $name = trans('products.name_pending');
+                }
+                $sku = trim((string) ($product['sku'] ?? ''));
                 $desc = trim((string) ($product['short_description'] ?? ''));
                 $slug = (string) ($product['slug'] ?? ($product['id'] ?? ''));
                 $detailUrl = $slug !== '' ? route('products.show', ['slug' => $slug]) : route('products.index');
@@ -91,13 +94,15 @@ $featured = is_array($featuredProducts ?? null) ? $featuredProducts : [];
                         </span>
                     </a>
                     <div class="pcard-body">
-                        <div class="pcard-top">
-                            <span class="pcard-code"><?= e($sku) ?></span>
+                        <div class="pcard-top pcard-heading">
+                            <h3 class="pcard-title">
+                                <a href="<?= e($detailUrl) ?>"><?= e($name) ?></a>
+                            </h3>
                             <span class="pcard-no"><?= str_pad((string) ($idx + 1), 3, '0', STR_PAD_LEFT) ?></span>
                         </div>
-                        <h3 class="pcard-title">
-                            <a href="<?= e($detailUrl) ?>"><?= e($name) ?></a>
-                        </h3>
+                        <?php if ($sku !== ''): ?>
+                            <span class="pcard-code"><?= e($sku) ?></span>
+                        <?php endif; ?>
                         <?php if ($desc !== ''): ?>
                             <p class="pcard-desc"><?= e($desc) ?></p>
                         <?php endif; ?>

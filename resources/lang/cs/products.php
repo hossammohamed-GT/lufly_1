@@ -26,6 +26,7 @@ return [
     'cartridge_label' => 'Kartuše',
     'view_details' => 'Zobrazit detail',
     'name' => 'Název produktu',
+    'name_pending' => 'Název produktu neuveden',
     'description' => 'Popis',
     'specs_title' => 'Technické specifikace',
     'inquire_whatsapp' => 'Vyžádat nabídku',
