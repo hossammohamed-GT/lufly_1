@@ -4,7 +4,7 @@
 
 1. Clone under `C:\xampp\htdocs\lufly_1`.
 2. **Import the database**: phpMyAdmin → Import → `lufly-database.sql` → Go
-   (creates database `lufly`, all 42 tables, all data).
+   (creates database `lufly`, all 45 tables, all data).
 3. Copy `.env.example` → `.env` and set:
    ```dotenv
    DB_CONNECTION=mysql

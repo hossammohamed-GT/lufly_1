@@ -11,7 +11,7 @@ classic shared hosting / XAMPP and run immediately.
 ## Quick start (XAMPP / local)
 
 1. **Import the database** — `lufly-database.sql` (repo root). phpMyAdmin → **Import** → choose the file → **Go**.
-   It creates the `lufly` database, all 42 tables and all data from scratch.
+   It creates the `lufly` database, all 45 tables and all data from scratch.
 2. **Copy the environment file** and point it at MySQL:
    ```dotenv
    DB_CONNECTION=mysql

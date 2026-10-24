@@ -118,7 +118,7 @@ return [
 
     'featured_tag' => 'Výběr z portfolia',
     'featured_title' => 'Ikonické architektonické modely',
-    'full_catalog' => 'Zobrazit celý katalog (280+ produktů)',
+    'full_catalog' => 'Zobrazit celý katalog',
     'inquire_b2b' => 'Poptat B2B export',
     'corporate_badge' => 'Certifikovaný evropský výrobce',
     'spec_desk_title' => 'Oddělení architektonických specifikací',

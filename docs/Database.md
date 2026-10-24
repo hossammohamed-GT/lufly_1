@@ -8,7 +8,7 @@
 | `lufly-database.sql` | **Self-contained MySQL export** | `DB_CONNECTION=mysql` (XAMPP, production) |
 
 The SQL file creates everything from scratch: `CREATE DATABASE IF NOT EXISTS lufly`,
-`USE lufly`, `DROP TABLE IF EXISTS` + `CREATE TABLE` for all 38 tables, then row-per-row `INSERT`s.
+`USE lufly`, `DROP TABLE IF EXISTS` + `CREATE TABLE` for all 45 tables, then row-per-row `INSERT`s.
 Safe to re-import any number of times (phpMyAdmin → Import).
 
 **After changing data** (via admin panel or seeders), regenerate the export so both artifacts stay equal:
@@ -21,8 +21,8 @@ php cli db:export-mysql
 
 1. **Table definitions** — `database/schema/*.php` (`Blueprint` DSL) are the source of truth for DDL.
    They're compiled per-driver (MySQL / SQLite) by the connection layer.
-2. **Migrations** — `database/migrations/2026_01_01_*.php` (17 files) build the tables.
-   Run state is tracked in the `migrations` table; the export marks all 17 as applied,
+2. **Migrations** — `database/migrations/2026_01_01_*.php` (21 files) build the tables.
+   Run state is tracked in the `migrations` table; the export marks all 21 as applied,
    so a freshly imported MySQL database never re-runs them.
    Migrations run **only via CLI** (`php cli migrate`), never at HTTP boot.
 3. **Seeders** — `database/seeders/*` populate reference data:
@@ -37,7 +37,7 @@ php cli seed             # fill data
 php cli backup:db        # → storage/backups/
 ```
 
-## The 38 tables by domain
+## The 45 tables by domain
 
 | Domain | Tables |
 |---|---|
@@ -48,8 +48,11 @@ php cli backup:db        # → storage/backups/
 | Catalog extras | `product_variants`, `product_media`, `product_relations`, `product_dimensions`, `product_documents`, `product_specifications`, `product_search_keywords`, `product_import_logs` |
 | Attributes | `attributes`, `attribute_options`, `product_attribute_values` |
 | Media | `media` (files on disk, paths under `/images/…`) |
-| CMS (schema ready) | `pages`, `page_translations`, `blogs`, `blog_translations` — currently unused/empty |
+| CMS & announcements | `pages`, `page_translations`, `blogs`, `blog_translations`, `announcements`, `announcement_translations` |
 | SEO | `seo_meta` per `(product_id, locale)` |
+| AI & finder | `ai_cache`, `ai_usage`, `assistant_leads` |
+| Saved products | `favorites`, `favorite_items` |
+| Quotation boxes | `boxes`, `box_items` |
 
 ## Conventions that matter
 

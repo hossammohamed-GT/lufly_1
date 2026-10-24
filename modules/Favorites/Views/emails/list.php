@@ -22,7 +22,7 @@ $page = '#edf3f1';
 $surface = '#ffffff';
 
 $year = date('Y');
-$fallbackImg = asset('/images/products/prod_146_1620-111-a.jpg');
+$fallbackImg = asset('/images/favicon.png');
 ?>
 <!DOCTYPE html>
 <html lang="<?= e($locale) ?>">

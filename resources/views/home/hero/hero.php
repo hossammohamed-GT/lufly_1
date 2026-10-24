@@ -33,17 +33,17 @@ $view->pushPreload(asset('images/hero/' . $firstImg . '.webp') . '?v=' . $heroIm
 $heroScenes = [
     [
         'key' => 'bathroom', 'label' => 'hero_tab_bathroom',
-        'url' => route('products.index', ['category' => 'washbasin-mixers']),
+        'url' => route('products.index', ['category' => 'bathroom.mixers.basin-mixers']),
         'alt' => 'Luxury bathroom fittings with a sculptural basin mixer and mirror',
     ],
     [
         'key' => 'kitchen', 'label' => 'hero_tab_kitchen',
-        'url' => route('products.index', ['category' => 'sink-mixers']),
+        'url' => route('products.index', ['category' => 'kitchen.kitchen-mixers']),
         'alt' => 'Luxury kitchen with a sculptural pull-down mixer and sink hardware',
     ],
     [
         'key' => 'handicap', 'label' => 'hero_tab_accessible',
-        'url' => route('products.index', ['category' => 'accessible-range']),
+        'url' => route('products.index', ['category' => 'accessibility']),
         'alt' => 'Elegant accessible bathroom with refined grab rails and comfortable fittings',
     ],
     [

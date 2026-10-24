@@ -63,6 +63,14 @@
 .badge-style-info { background: var(--ds-info-soft); color: var(--ds-info); }
 .badge-style-warning { background: var(--ds-warning-soft); color: var(--ds-warning); }
 
+/* Product media readiness and the explicit Active/Hidden display switch. */
+.product-table-wrap { max-width: 100%; overflow-x: auto; overscroll-behavior-inline: contain; }
+.product-table-wrap .table { min-width: 1080px; }
+.product-media-flags { display: flex; flex-direction: column; align-items: flex-start; gap: var(--space-1); min-width: 112px; }
+.product-media-flags .badge { white-space: nowrap; }
+.product-visibility { display: flex; align-items: center; gap: var(--space-2); flex-wrap: wrap; min-width: 128px; }
+.product-visibility .inline-form { margin: 0; }
+
 /* ---------- admin pagination ---------- */
 .admin-pagination-wrapper {
   display: flex;

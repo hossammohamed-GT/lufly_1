@@ -9,6 +9,7 @@ use Core\Localization\Translator;
 use Modules\Favorites\Models\Favorite;
 use Modules\Favorites\Repositories\FavoriteRepository;
 use Modules\Products\Models\Product;
+use Modules\Products\Services\ProductVisibility;
 
 /**
  * The visitor's saved-products list.
@@ -186,6 +187,13 @@ class FavoriteService
         }
 
         Product::eagerLoad($ordered);
+        $ordered = array_values(array_filter(
+            $ordered,
+            static fn (Product $product): bool => ProductVisibility::isSellable($product),
+        ));
+        if ($ordered === []) {
+            return [];
+        }
 
         $items = [];
         foreach ($ordered as $index => $model) {

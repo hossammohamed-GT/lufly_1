@@ -2,8 +2,8 @@
 /**
  * Storefront catalog - machined editorial identity.
  * Coded header with result count, blueprint toolbar (search + sort),
- * category rail with counts, editorial product cards (main shot with a
- * situ crossfade on hover), machined pagination.
+ * three-level category atlas with descendant counts, editorial product cards
+ * (main shot with a situ crossfade on hover), machined pagination.
  *
  * @var Core\View\View $view
  */
@@ -12,11 +12,14 @@ $view->pushStyle('frontend/css/product-card.css');
 $view->pushStyle('frontend/css/live-search.css');
 $view->pushStyle('frontend/products/catalog/catalog.css');
 $view->pushScript('frontend/js/live-search.js');
+$view->pushScript('frontend/js/product-card-variants.js');
 $view->pushScript('frontend/products/catalog/catalog.js');
 $view->pushStyle('frontend/components/skeleton/skeleton.css');
 $view->pushScript('frontend/components/skeleton/skeleton.js');
 $view->pushStyle('frontend/favorites/favorites.css');
 $view->pushScript('frontend/favorites/favorites.js');
+$view->pushStyle('frontend/box/box.css');
+$view->pushScript('frontend/box/box.js');
 /** @var Core\Database\Paginator $paginator */
 /** @var array $categories */
 /** @var array $categoryCounts */
@@ -27,11 +30,13 @@ $view->pushScript('frontend/favorites/favorites.js');
 $categories = $categories ?? [];
 $categoryCounts = $categoryCounts ?? [];
 $activeCategory = $activeCategory ?? '';
+$categoryFallbackName = $categoryFallbackName ?? null;
 $searchQuery = $searchQuery ?? '';
-$sort = $sort ?? 'newest';
+$sort = $sort ?? 'curated';
 $total = (int) $paginator->total();
 
 $sortOptions = [
+    'curated' => trans('products.sort_curated'),
     'newest' => trans('products.sort_newest'),
     'name' => trans('products.sort_name'),
     'model' => trans('products.sort_model'),
@@ -41,13 +46,21 @@ $buildUrl = static function (array $overrides = []) use ($activeCategory, $searc
     $params = array_filter(array_merge([
         'category' => $activeCategory !== '' ? $activeCategory : null,
         'q' => $searchQuery !== '' ? $searchQuery : null,
-        'sort' => $sort !== 'newest' ? $sort : null,
+        'sort' => $sort !== 'curated' ? $sort : null,
     ], $overrides), static fn ($v) => $v !== null && $v !== '');
 
     return route('products.index') . (count($params) > 0 ? '?' . http_build_query($params) : '');
 };
 
-$fallbackImg = '/images/products/prod_146_1620-111-a.jpg';
+$heroImage = '/images/categories/001-bathroom.jpg';
+$heroName = trans('products.title');
+foreach ($categories as $category) {
+    if (($category['slug'] ?? '') === 'bathroom') {
+        $heroImage = trim((string) ($category['image'] ?? '')) ?: $heroImage;
+        $heroName = (string) ($category['name'] ?? $heroName);
+        break;
+    }
+}
 
 /* Products this visitor already saved, so every card shows the heart in the
    right state before the script runs (one query, and none at all for a visitor
@@ -62,27 +75,66 @@ $boxIds = [];
 if (feature('box', true) && class_exists(\Modules\Box\Services\BoxService::class)) {
     $boxIds = array_flip(app(\Modules\Box\Services\BoxService::class)->productIds());
 }
+$colorFamilies = app(\Modules\Products\Services\ProductColorFamilyService::class);
 ?>
 <main class="catalog" id="main">
     <div class="catalog-inner">
-        <header class="catalog-head">
-            <div class="catalog-titles">
-                <span class="catalog-eyebrow"><?= e(trans('common.factory_direct')) ?> &middot; EN-997 / CE</span>
-                <h1 class="catalog-title"><?= e(trans('products.title')) ?></h1>
+        <header class="catalog-hero">
+            <div class="catalog-hero-copy">
+                <nav class="catalog-breadcrumb" aria-label="<?= e(trans('products.catalog_eyebrow')) ?>">
+                    <a href="<?= e(route('home')) ?>"><?= e(trans('products.catalog_home')) ?></a>
+                    <svg viewBox="0 0 12 12" fill="none" stroke="currentColor" aria-hidden="true"><path d="m4 2 4 4-4 4"/></svg>
+                    <span aria-current="page"><?= e(trans('products.title')) ?></span>
+                </nav>
+                <span class="catalog-eyebrow"><?= e(trans('products.catalog_eyebrow')) ?></span>
+                <h1 class="catalog-title"><?= e(trans('products.catalog_hero_title')) ?> <em><?= e(trans('products.catalog_hero_accent')) ?></em></h1>
+                <p class="catalog-hero-description"><?= e(trans('products.catalog_hero_desc')) ?></p>
+                <ul class="catalog-hero-features" aria-label="<?= e(trans('products.catalog_eyebrow')) ?>">
+                    <li>
+                        <span class="catalog-feature-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><path d="m12 3 8 5v8l-8 5-8-5V8l8-5Z"/><path d="m8.5 12 2.2 2.2 4.8-5"/></svg></span>
+                        <span><?= e(trans('products.catalog_quality')) ?></span>
+                    </li>
+                    <li>
+                        <span class="catalog-feature-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><path d="M4 20 20 4M7 4h13v13M4 8v12h12"/></svg></span>
+                        <span><?= e(trans('products.catalog_design')) ?></span>
+                    </li>
+                    <li>
+                        <span class="catalog-feature-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><path d="M19.5 4.5C11 4 5 8 5 14a5 5 0 0 0 5 5c6 0 10-6 9.5-14.5Z"/><path d="M4 21c2-6 6-9 12-12"/></svg></span>
+                        <span><?= e(trans('products.catalog_sustainable')) ?></span>
+                    </li>
+                </ul>
             </div>
-            <span class="catalog-count">
-                <?= e($total === 1 ? trans('products.results_one') : trans('products.results_many', ['n' => number_format($total)])) ?>
-            </span>
+            <figure class="catalog-hero-media">
+                <img src="<?= e(asset(ltrim($heroImage, '/'))) ?>" alt="<?= e($heroName) ?>" width="1536" height="1024" fetchpriority="high" decoding="async">
+                <figcaption><span aria-hidden="true"></span><?= e(trans('products.catalog_hero_note')) ?></figcaption>
+            </figure>
         </header>
+
+        <?= $view->component('category-explorer', [
+            'categories' => $categories,
+            'categoryCounts' => $categoryCounts,
+            'activeCategory' => $activeCategory,
+            'buildUrl' => $buildUrl,
+            'mode' => 'catalog',
+        ]) ?>
 
         <div class="catalog-toolbar" data-livesearch
             data-livesearch-grid="[data-catalog-grid]"
             data-livesearch-pagination="[data-catalog-pagination]"
-            data-livesearch-count=".catalog-count">
+            data-livesearch-count=".catalog-count"
+            data-favorites-endpoint="<?= feature('favorites', true) ? e(route('favorites.toggle')) : '' ?>"
+            data-box-endpoint="<?= feature('box', true) && (bool) config('box.enabled', true) ? e(route('box.add')) : '' ?>">
+            <div class="catalog-results-head" id="catalog-results" tabindex="-1">
+                <div>
+                    <span><?= e(trans('products.catalog_eyebrow')) ?></span>
+                    <h2><?= e(trans('products.catalog_results_title')) ?></h2>
+                </div>
+                <span class="catalog-count">
+                    <?= e($total === 1 ? trans('products.results_one') : trans('products.results_many', ['n' => number_format($total)])) ?>
+                </span>
+            </div>
             <form method="GET" action="<?= e(route('products.index')) ?>" class="catalog-searchform">
-                <?php if ($activeCategory !== ''): ?>
-                    <input type="hidden" name="category" value="<?= e($activeCategory) ?>">
-                <?php endif; ?>
+                <input type="hidden" name="category" value="<?= e($activeCategory) ?>">
 
                 <div class="catalog-search" data-catalog-field>
                     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" width="16" height="16" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg>
@@ -106,37 +158,21 @@ if (feature('box', true) && class_exists(\Modules\Box\Services\BoxService::class
             <div class="catalog-guide" data-livesearch-results aria-live="polite">
                 <div class="catalog-scope" data-livesearch-scope>
                     <span class="catalog-scope-label"><?= e(trans('products.scope_label')) ?></span>
-                    <?php if ($activeCategory !== ''): ?>
-                        <button type="button" class="catalog-scope-btn is-active" data-scope="category"><?= e(trans('products.scope_category')) ?></button>
-                    <?php endif; ?>
+                    <button type="button" class="catalog-scope-btn<?= $activeCategory !== '' ? ' is-active' : '' ?>" data-scope="category"<?= $activeCategory === '' ? ' hidden' : '' ?>><?= e(trans('products.scope_category')) ?></button>
                     <button type="button" class="catalog-scope-btn <?= $activeCategory === '' ? 'is-active' : '' ?>" data-scope="all"><?= e(trans('products.scope_all')) ?></button>
                 </div>
             </div>
         </div>
 
-        <nav class="catalog-rail" aria-label="<?= e(trans('common.category')) ?>">
-            <a href="<?= e($buildUrl(['category' => null])) ?>"
-               class="catalog-pill <?= $activeCategory === '' ? 'is-active' : '' ?>">
+        <div class="catalog-active-filter" data-catalog-active-filter<?= $activeCategory === '' ? ' hidden' : '' ?>>
+            <a href="<?= e($buildUrl(['category' => null, 'page' => null])) ?>"
+               data-category-filter="" data-category-name="<?= e(trans('common.all_categories')) ?>">
                 <?= e(trans('common.all_categories')) ?>
-                <span class="catalog-pill-n"><?= e(number_format($categoryCounts[''] ?? 0)) ?></span>
+                <span><?= e(number_format($categoryCounts[''] ?? 0)) ?></span>
             </a>
-            <?php foreach ($categories as $cat): ?>
-                <a href="<?= e($buildUrl(['category' => $cat['slug']])) ?>"
-                   class="catalog-pill <?= $activeCategory === $cat['slug'] ? 'is-active' : '' ?>">
-                    <?= e($cat['name'] ?: $cat['slug']) ?>
-                    <span class="catalog-pill-n"><?= e(number_format($categoryCounts[(string) $cat['slug']] ?? 0)) ?></span>
-                </a>
-            <?php endforeach; ?>
-        </nav>
+        </div>
 
-        <?php if ($paginator->items() === []): ?>
-            <div class="catalog-empty">
-                <span class="catalog-empty-code">404 &middot; <?= e(trans('common.no_results')) ?></span>
-                <p><?= e(trans('products.empty')) ?></p>
-                <a href="<?= e(route('products.index')) ?>" class="catalog-empty-btn"><?= e(trans('common.all_categories')) ?></a>
-            </div>
-        <?php else: ?>
-            <div data-sk-host>
+        <div data-sk-host>
             <div class="sk-grid" data-sk-skeleton aria-hidden="true">
                 <?php for ($sk = 0; $sk < 8; $sk++): ?>
                     <div class="sk sk-card">
@@ -153,86 +189,38 @@ if (feature('box', true) && class_exists(\Modules\Box\Services\BoxService::class
                 <?php endfor; ?>
             </div>
             <div class="catalog-grid" data-catalog-grid data-sk-real>
-                <?php foreach ($paginator->items() as $index => $product):
-                    $item = $product->translate($locale);
-                    $img = (string) ($item['image'] ?? '') !== '' ? (string) $item['image'] : $fallbackImg;
-
-                    /* hover cycles through every image of the product: the
-                       photos first (main shot on top), then the technical
-                       drawings, then the installed shots */
-                    $cardSlides = [];
-                    foreach ((array) ($item['card_slides'] ?? []) as $slide) {
-                        $slidePath = (string) ($slide['path'] ?? '');
-                        if ($slidePath !== '') {
-                            $cardSlides[] = ['path' => $slidePath, 'kind' => (string) ($slide['kind'] ?? 'photo')];
-                        }
-                    }
-                    if ($cardSlides === []) {
-                        $cardSlides = [['path' => $img, 'kind' => 'photo']];
-                    }
-                    $cardKinds = ['drawing' => trans('products.view_drawing'), 'situ' => trans('products.view_situ')];
-                    $cardName = (string) ($item['name'] ?? '');
-                    $cardCode = (string) ($item['sku'] ?? $item['model_code'] ?? '');
-                    $cardNo = (int) (($paginator->page() - 1) * $paginator->perPage() + $index + 1);
-                ?>
-                    <article class="pcard" style="--pcard-delay: <?= e((string) (0.04 * (int) (($index % 6) + 1))) ?>s">
-                        <a class="pcard-media" href="<?= e(route('products.show', ['slug' => $product->slug])) ?>"
-                           <?= count($cardSlides) > 1 ? 'data-pcard-cycle data-pcard-kind-drawing="' . e($cardKinds['drawing']) . '" data-pcard-kind-situ="' . e($cardKinds['situ']) . '"' : '' ?>>
-                            <?php foreach ($cardSlides as $ci => $slide): ?>
-                                <?php $slideKind = (string) $slide['kind']; ?>
-                                <img src="<?= e(asset($slide['path'])) ?>"
-                                     alt="<?= $ci === 0 ? e($cardName) : ($slideKind === 'photo' ? '' : e($cardKinds[$slideKind] ?? '') . ' — ' . e($cardName)) ?>"
-                                     class="pcard-img<?= $ci === 0 ? ' is-on' : '' ?>"
-                                     data-pcard-slide="<?= (int) $ci ?>"
-                                     data-pcard-kind="<?= e($slideKind) ?>"
-                                     loading="lazy" decoding="async" width="420" height="320"
-                                     onerror="this.onerror=null; this.remove();">
-                            <?php endforeach; ?>
-                            <?php if (count($cardSlides) > 1): ?>
-                                <span class="pcard-dots" aria-hidden="true">
-                                    <?php foreach ($cardSlides as $ci => $unusedDot): ?>
-                                        <i class="pcard-dot<?= $ci === 0 ? ' is-on' : '' ?>" data-pcard-dot="<?= (int) $ci ?>"></i>
-                                    <?php endforeach; ?>
-                                </span>
-                                <span class="pcard-kind" data-pcard-kind-label aria-hidden="true" hidden></span>
-                            <?php endif; ?>
-                            <span class="pcard-hint" aria-hidden="true">
-                                <svg viewBox="0 0 20 20" fill="currentColor" width="13" height="13"><path fill-rule="evenodd" d="M10.293 3.293a1 1 0 011.414 0l6 6a1 1 0 010 1.414l-6 6a1 1 0 01-1.414-1.414L14.586 11H3a1 1 0 110-2h11.586l-4.293-4.293a1 1 0 010-1.414z" clip-rule="evenodd"/></svg>
-                                <?= e(trans('products.view_details')) ?>
-                            </span>
-                        </a>
-                        <?= $view->component('favorite-button', [
-                            'product_id' => (int) $product->getKey(),
-                            'name' => $cardName,
-                            'variant' => 'card',
-                            'on' => isset($savedIds[(int) $product->getKey()]),
-                        ]) ?>
-                        <?= $view->component('box-button', [
-                            'product_id' => (int) $product->getKey(),
-                            'name' => $cardName,
-                            'variant' => 'card',
-                            'on' => isset($boxIds[(int) $product->getKey()]),
-                        ]) ?>
-                        <div class="pcard-body">
-                            <div class="pcard-top">
-                                <span class="pcard-code"><?= e($cardCode) ?></span>
-                                <span class="pcard-no"><?= str_pad((string) $cardNo, 3, '0', STR_PAD_LEFT) ?></span>
-                            </div>
-                            <h2 class="pcard-title">
-                                <a href="<?= e(route('products.show', ['slug' => $product->slug])) ?>"><?= e($item['name'] ?? '') ?></a>
-                            </h2>
-                            <?php $shortDesc = trim((string) ($item['short_description'] ?? '')); ?>
-                            <?php if ($shortDesc !== ''): ?>
-                                <p class="pcard-desc"><?= e($shortDesc) ?></p>
-                            <?php endif; ?>
-                        </div>
-                    </article>
+                <?php if ($categoryFallbackName !== null): ?>
+                    <div class="catalog-category-fallback" data-category-fallback role="status">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" aria-hidden="true">
+                            <circle cx="12" cy="12" r="9"></circle>
+                            <path d="M12 10.5v6M12 7.25v.25" stroke-linecap="round"></path>
+                        </svg>
+                        <p><?= e(trans('products.category_fallback_notice', ['category' => $categoryFallbackName])) ?></p>
+                    </div>
+                <?php endif; ?>
+                <?php if ($paginator->items() === []): ?>
+                    <div class="catalog-empty">
+                        <span class="catalog-empty-code">404 &middot; <?= e(trans('common.no_results')) ?></span>
+                        <p><?= e(trans('products.empty')) ?></p>
+                        <a href="<?= e(route('products.index')) ?>" class="catalog-empty-btn"
+                           data-category-filter="" data-category-name="<?= e(trans('common.all_categories')) ?>"><?= e(trans('common.all_categories')) ?></a>
+                    </div>
+                <?php else: ?>
+                <?php foreach ($paginator->items() as $index => $product): ?>
+                    <?= $view->component('product-card', [
+                        'product' => $colorFamilies->attach($product->translate($locale), $locale, $savedIds, $boxIds),
+                        'slug' => $product->slug,
+                        'index' => $index,
+                        'saved' => isset($savedIds[(int) $product->getKey()]),
+                        'in_box' => isset($boxIds[(int) $product->getKey()]),
+                    ]) ?>
                 <?php endforeach; ?>
+                <?php endif; ?>
             </div>
-            </div>
+        </div>
 
-            <?php if ($paginator->lastPage() > 1): ?>
-                <nav class="catpag" data-catalog-pagination aria-label="Pagination">
+        <nav class="catpag" data-catalog-pagination aria-label="Pagination"<?= $paginator->lastPage() <= 1 ? ' hidden' : '' ?>>
+                <?php if ($paginator->lastPage() > 1): ?>
                     <?php if ($paginator->page() > 1): ?>
                         <a class="catpag-arrow" href="<?= e($buildUrl(['page' => $paginator->page() - 1])) ?>" aria-label="Previous">&larr;</a>
                     <?php endif; ?>
@@ -257,8 +245,7 @@ if (feature('box', true) && class_exists(\Modules\Box\Services\BoxService::class
                     <?php if ($paginator->page() < $paginator->lastPage()): ?>
                         <a class="catpag-arrow" href="<?= e($buildUrl(['page' => $paginator->page() + 1])) ?>" aria-label="Next">&rarr;</a>
                     <?php endif; ?>
-                </nav>
-            <?php endif; ?>
-        <?php endif; ?>
+                <?php endif; ?>
+        </nav>
     </div>
 </main>

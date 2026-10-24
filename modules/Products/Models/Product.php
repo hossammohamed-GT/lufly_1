@@ -302,10 +302,10 @@ class Product extends Model
      * drawing sheet, "situ" is the installed-on-location shot. See
      * docs/Media-Taxonomy.md.
      *
-     * Media rows imported from the legacy system whose file was never
-     * exported carry status "missing"; they are skipped by default so the
-     * storefront never renders a broken image. Pass $includeMissing to audit
-     * what is still outstanding.
+     * Imported media whose file was never exported carries status "missing";
+     * source-only formats such as EMF carry status "hidden". Both are skipped
+     * by default so the storefront never renders a broken or unsupported
+     * image. Pass $includeMissing to audit every attachment in Admin.
      */
     public function media(?string $type = null, bool $includeMissing = false): array
     {
@@ -323,7 +323,7 @@ class Product extends Model
 
         $filtered = [];
         foreach ($rows as $row) {
-            if (!$includeMissing && ($row['status'] ?? '') === 'missing') {
+            if (!$includeMissing && in_array((string) ($row['status'] ?? ''), ['missing', 'hidden'], true)) {
                 continue;
             }
             if ($type !== null && ($row['type'] ?? '') !== $type) {
