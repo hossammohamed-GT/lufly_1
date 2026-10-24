@@ -264,7 +264,7 @@
     "slug": "kitchen.sinks",
     "parent": "kitchen",
     "sort_order": 1,
-    "image": "/images/categories/029-kitchen.jpg",
+    "image": "/images/categories/030-kitchen-sinks.jpg",
     "names": {
       "en": "Sinks"
     }
@@ -273,7 +273,7 @@
     "slug": "kitchen.sinks.granite-sinks",
     "parent": "kitchen.sinks",
     "sort_order": 1,
-    "image": "/images/categories/029-kitchen.jpg",
+    "image": "/images/categories/031-kitchen-sinks-granite-sinks.jpg",
     "names": {
       "en": "Granite Sinks"
     }
@@ -282,7 +282,7 @@
     "slug": "kitchen.sinks.stainless-steel-sinks",
     "parent": "kitchen.sinks",
     "sort_order": 2,
-    "image": "/images/categories/029-kitchen.jpg",
+    "image": "/images/categories/032-kitchen-sinks-stainless-steel-sinks.jpg",
     "names": {
       "en": "Stainless Steel Sinks"
     }
@@ -291,7 +291,7 @@
     "slug": "kitchen.sinks.undermount-sinks",
     "parent": "kitchen.sinks",
     "sort_order": 3,
-    "image": "/images/categories/029-kitchen.jpg",
+    "image": "/images/categories/033-kitchen-sinks-undermount-sinks.jpg",
     "names": {
       "en": "Undermount Sinks"
     }
@@ -300,7 +300,7 @@
     "slug": "kitchen.sinks.topmount-sinks",
     "parent": "kitchen.sinks",
     "sort_order": 4,
-    "image": "/images/categories/029-kitchen.jpg",
+    "image": "/images/categories/034-kitchen-sinks-topmount-sinks.jpg",
     "names": {
       "en": "Topmount Sinks"
     }
@@ -309,7 +309,7 @@
     "slug": "kitchen.sinks.workstation-sinks",
     "parent": "kitchen.sinks",
     "sort_order": 5,
-    "image": "/images/categories/029-kitchen.jpg",
+    "image": "/images/categories/035-kitchen-sinks-workstation-sinks.jpg",
     "names": {
       "en": "Workstation Sinks"
     }
@@ -318,7 +318,7 @@
     "slug": "kitchen.sinks.kitchen-accessories",
     "parent": "kitchen.sinks",
     "sort_order": 6,
-    "image": "/images/categories/029-kitchen.jpg",
+    "image": "/images/categories/036-kitchen-sinks-kitchen-accessories.jpg",
     "names": {
       "en": "Kitchen Accessories"
     }
@@ -327,7 +327,7 @@
     "slug": "kitchen.sinks.other-sinks",
     "parent": "kitchen.sinks",
     "sort_order": 7,
-    "image": "/images/categories/029-kitchen.jpg",
+    "image": "/images/categories/037-kitchen-sinks-other-sinks.jpg",
     "names": {
       "en": "Other Sinks"
     }
@@ -336,7 +336,7 @@
     "slug": "kitchen.kitchen-mixers",
     "parent": "kitchen",
     "sort_order": 2,
-    "image": "/images/categories/029-kitchen.jpg",
+    "image": "/images/categories/038-kitchen-kitchen-mixers.jpg",
     "names": {
       "en": "Kitchen Mixers"
     }
@@ -345,7 +345,7 @@
     "slug": "kitchen.kitchen-mixers.pull-out-mixers",
     "parent": "kitchen.kitchen-mixers",
     "sort_order": 1,
-    "image": "/images/categories/029-kitchen.jpg",
+    "image": "/images/categories/039-kitchen-kitchen-mixers-pull-out-mixers.jpg",
     "names": {
       "en": "Pull-out Mixers"
     }
