@@ -54819,6 +54819,26 @@
     ],
     "images": [
       {
+        "manager_id": 1415,
+        "path": "/images/products/catalog/ee27501ff3b8b35533d5f90b.webp",
+        "source_path": "assets/catalog/ee27501ff3b8b35533d5f90b.webp",
+        "original_name": "image22.tiff",
+        "type": "gallery",
+        "available": true,
+        "previewable": true,
+        "mime_type": "image/webp",
+        "extension": "webp",
+        "size": 5032,
+        "width": 312,
+        "height": 312,
+        "sha256": "32bb72ca51718e36bffcbe5596b7ad514622d64ef8aa8ac5e89d7b202a3625b3",
+        "source_sha256": "ee27501ff3b8b35533d5f90bc9aabfcee0d947a0df868be5e8a5856f56bebc8d",
+        "source_column": "D",
+        "source_row": 106,
+        "source_sort_order": 1415,
+        "caption": ""
+      },
+      {
         "manager_id": 1417,
         "path": "/images/products/catalog/76f476a6f7f5fb2819e80785.webp",
         "source_path": "assets/catalog/76f476a6f7f5fb2819e80785.webp",
@@ -55135,6 +55155,26 @@
     ],
     "images": [
       {
+        "manager_id": 1423,
+        "path": "/images/products/catalog/f771ced35aea5a0a507a5026.webp",
+        "source_path": "assets/catalog/f771ced35aea5a0a507a5026.webp",
+        "original_name": "image26.tiff",
+        "type": "gallery",
+        "available": true,
+        "previewable": true,
+        "mime_type": "image/webp",
+        "extension": "webp",
+        "size": 9700,
+        "width": 263,
+        "height": 263,
+        "sha256": "728c7b418be0ea8f7885cbb82353551c1f9e81bf6692042226682f50f401f0ec",
+        "source_sha256": "f771ced35aea5a0a507a5026475a5b416b57ba11ef5c438bf07595c5a4c39886",
+        "source_column": "D",
+        "source_row": 110,
+        "source_sort_order": 1423,
+        "caption": ""
+      },
+      {
         "manager_id": 1425,
         "path": "/images/products/catalog/4f8e26ea157d628f0770dc67.webp",
         "source_path": "assets/catalog/4f8e26ea157d628f0770dc67.webp",
@@ -55450,6 +55490,26 @@
       }
     ],
     "images": [
+      {
+        "manager_id": 1431,
+        "path": "/images/products/catalog/ed4c4dcb11a51e7a0c511c6f.webp",
+        "source_path": "assets/catalog/ed4c4dcb11a51e7a0c511c6f.webp",
+        "original_name": "image30.tiff",
+        "type": "gallery",
+        "available": true,
+        "previewable": true,
+        "mime_type": "image/webp",
+        "extension": "webp",
+        "size": 6526,
+        "width": 261,
+        "height": 261,
+        "sha256": "fc14d6ba2d5785163eb4328301fa93c1d947f3acbeef90cdfa0290b7f9ad3f67",
+        "source_sha256": "ed4c4dcb11a51e7a0c511c6fa5a106edfd9e3fb768401d827a4bb3d1a5b44af3",
+        "source_column": "D",
+        "source_row": 114,
+        "source_sort_order": 1431,
+        "caption": ""
+      },
       {
         "manager_id": 1433,
         "path": "/images/products/catalog/9f121e611c0ce47bcdb3df0a.webp",
