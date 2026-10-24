@@ -388,6 +388,16 @@
   }
 
   function init() {
+    document.addEventListener('pcard:stop-cycle', function (e) {
+      var media = e.target.closest ? e.target.closest('.pcard-media') : null;
+      if (media) stop(media);
+    });
+
+    document.addEventListener('pcard:reset-cycle', function (e) {
+      var media = e.target.closest ? e.target.closest('.pcard-media') : null;
+      if (media) show(media, 0);
+    });
+
     document.addEventListener('pointerenter', function (e) {
       var media = e.target.closest ? e.target.closest('[data-pcard-cycle]') : null;
       if (media) start(media);

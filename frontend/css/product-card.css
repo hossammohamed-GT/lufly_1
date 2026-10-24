@@ -419,6 +419,35 @@
 .pcard-swatch--gray { background: linear-gradient(145deg, #e1e3e1, #858c89); }
 .pcard-swatch--beige { background: linear-gradient(145deg, #f4e8d2, #bba98a); }
 
+/* Reviewed cross-product colours are real links with an in-place enhancement.
+   The selected ring does not cover the swatch or the product imagery. */
+.pcard-color-variants { flex-wrap: wrap; }
+.pcard-color-variants .pcard-swatches {
+  flex: 1 1 auto;
+  flex-wrap: wrap;
+  row-gap: 7px;
+}
+a.pcard-swatch {
+  display: inline-flex;
+  cursor: pointer;
+  text-decoration: none;
+  transition: box-shadow 160ms ease, transform 160ms ease;
+}
+a.pcard-swatch:hover { transform: scale(1.08); }
+a.pcard-swatch:focus-visible {
+  outline: 2px solid var(--ds-primary);
+  outline-offset: 3px;
+}
+a.pcard-swatch.is-active {
+  box-shadow: 0 0 0 2px var(--ds-surface), 0 0 0 4px var(--ds-primary), 0 3px 8px rgba(9, 25, 23, 0.16);
+}
+.pcard-color-variants .pcard-finish-current {
+  flex: 0 1 auto;
+  max-width: 100%;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
 .pcard-finish-count {
   min-width: 0;
   margin-inline-start: auto;
@@ -581,11 +610,13 @@
   .pcard-img,
   .pcard-dots,
   .pcard-kind,
+  a.pcard-swatch,
   .pcard-details svg { transition: none; }
   .pcard { animation: none; }
   .pcard:hover,
   .pcard:focus-within { transform: none; }
   .pcard:hover::before,
   .pcard:focus-within::before { animation: none; }
-  .pcard:hover .pcard-img.is-on { transform: none; }
+  .pcard:hover .pcard-img.is-on,
+  a.pcard-swatch:hover { transform: none; }
 }

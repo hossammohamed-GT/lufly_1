@@ -2,6 +2,7 @@
 /** @var Core\View\View $view */
 $view->pushDeferredStyle('frontend/css/product-card.css');
 $view->pushDeferredStyle('frontend/home/masterpieces/masterpieces.css');
+$view->pushScript('frontend/js/product-card-variants.js');
 $view->pushScript('frontend/products/catalog/catalog.js');
 $view->pushDeferredStyle('frontend/components/skeleton/skeleton.css');
 $view->pushScript('frontend/components/skeleton/skeleton.js');
@@ -67,7 +68,7 @@ $featured = is_array($featuredProducts ?? null) ? $featuredProducts : [];
                 $slug = (string) ($product['slug'] ?? ($product['id'] ?? ''));
                 $detailUrl = $slug !== '' ? route('products.show', ['slug' => $slug]) : route('products.index');
             ?>
-                <article class="pcard" style="--pcard-delay: <?= e((string) (0.06 * ($idx + 1))) ?>s">
+                <article class="pcard" data-product-card data-product-id="<?= (int) ($product['id'] ?? 0) ?>" style="--pcard-delay: <?= e((string) (0.06 * ($idx + 1))) ?>s">
                     <a class="pcard-media" href="<?= e($detailUrl) ?>"
                        <?= count($cardSlides) > 1 ? 'data-pcard-cycle data-pcard-kind-drawing="' . e($cardKinds['drawing']) . '" data-pcard-kind-situ="' . e($cardKinds['situ']) . '"' : '' ?>>
                         <?php foreach ($cardSlides as $ci => $slide): ?>
@@ -106,6 +107,7 @@ $featured = is_array($featuredProducts ?? null) ? $featuredProducts : [];
                         <?php if ($desc !== ''): ?>
                             <p class="pcard-desc"><?= e($desc) ?></p>
                         <?php endif; ?>
+                        <?= $view->component('product-color-variants', ['item' => $product]) ?>
                     </div>
                 </article>
             <?php endforeach; ?>

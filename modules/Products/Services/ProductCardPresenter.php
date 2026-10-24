@@ -16,6 +16,26 @@ final class ProductCardPresenter
 {
     /** @var array<string, array{0: string, 1: string}> phrase => swatch, label */
     private const FINISHES = [
+        'satin chrome brushed' => ['chrome', 'Brushed Chrome'],
+        'chrome brushed' => ['chrome', 'Brushed Chrome'],
+        'brushed chrome' => ['chrome', 'Brushed Chrome'],
+        'chrome shinning' => ['chrome', 'Chrome'],
+        'shinning chrome' => ['chrome', 'Chrome'],
+        'mirror chrome' => ['chrome', 'Chrome'],
+        'soft bronze' => ['bronze', 'Bronze'],
+        'brush rose gold' => ['rose-gold', 'Brushed Rose Gold'],
+        'gold matt' => ['gold', 'Matt Gold'],
+        'gold matte' => ['gold', 'Matt Gold'],
+        'brush gold' => ['gold', 'Brushed Gold'],
+        'brish gold' => ['gold', 'Brushed Gold'],
+        'gun metal' => ['gunmetal', 'Gunmetal'],
+        'metal gun' => ['gunmetal', 'Gunmetal'],
+        'gold bronze' => ['bronze', 'Gold Bronze'],
+        'chrome nickel' => ['nickel', 'Chrome Nickel'],
+        'chrome nickle' => ['nickel', 'Chrome Nickel'],
+        'royal blue' => ['blue', 'Royal Blue'],
+        'dark blue' => ['blue', 'Dark Blue'],
+        'light blue' => ['blue', 'Light Blue'],
         'brushed stainless steel' => ['steel', 'Brushed Stainless Steel'],
         'stainless steel' => ['steel', 'Stainless Steel'],
         'brushed rose gold' => ['rose-gold', 'Brushed Rose Gold'],
@@ -244,16 +264,25 @@ final class ProductCardPresenter
             }
         }
         /* One ordered alternation consumes "Rose Gold" as a whole. Separate
-           searches would incorrectly add both Rose Gold and Gold. */
+           searches would incorrectly add both Rose Gold and Gold. PVD may
+           follow the colour ("Blue PVD Finish"), and a genuine two-tone
+           phrase keeps both colours in their written order. */
         $phrases = array_keys(self::FINISHES);
         usort($phrases, static fn (string $a, string $b): int => strlen($b) <=> strlen($a));
-        $pattern = '/\b(' . implode('|', array_map(
+        $alternation = implode('|', array_map(
             static fn (string $phrase): string => preg_quote($phrase, '/'),
             $phrases,
-        )) . ')\s+(?:colou?r|finish)\b/iu';
-        if (preg_match_all($pattern, $description, $matches)) {
-            foreach ($matches[1] as $phrase) {
-                $add((string) $phrase);
+        ));
+        $suffix = '(?:\s+(?:pvd|shinning|shining|brushed|brush|brish|matt|matte))*';
+        $pattern = '/\b(?:(?:pvd|shinning|shining|soft|mirror)\s+)*(' . $alternation . ')' . $suffix
+            . '(?:\s*(?:\+|\bwith\b)\s*(?:pvd\s+)?(' . $alternation . ')' . $suffix . ')?'
+            . '\s+(?:decorative\s+)?(?:colou?r(?:\s+finish)?|finish|accent)\b/iu';
+        if (preg_match_all($pattern, $description, $matches, PREG_SET_ORDER)) {
+            foreach ($matches as $match) {
+                $add((string) ($match[1] ?? ''));
+                if (trim((string) ($match[2] ?? '')) !== '') {
+                    $add((string) $match[2]);
+                }
             }
         }
 

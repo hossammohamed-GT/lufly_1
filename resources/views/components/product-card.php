@@ -47,6 +47,7 @@ if ($cardSlides === []) {
 $cardKinds = ['drawing' => trans('products.view_drawing'), 'situ' => trans('products.view_situ')];
 $hasPrice = !empty($card['has_price']);
 $hasFeaturePanel = $card['badge'] !== '' || $card['features'] !== [];
+$colorVariants = is_array($item['color_variants'] ?? null) ? $item['color_variants'] : [];
 ?>
 <article class="pcard<?= $hasPrice ? ' has-price' : ' is-price-pending' ?>"
          data-product-card data-product-id="<?= $productId ?>"
@@ -114,7 +115,9 @@ $hasFeaturePanel = $card['badge'] !== '' || $card['features'] !== [];
             </div>
         <?php endif; ?>
 
-        <?php if ($card['finishes'] !== []): ?>
+        <?php if (count($colorVariants) > 1): ?>
+            <?= $view->component('product-color-variants', ['item' => $item]) ?>
+        <?php elseif ($card['finishes'] !== []): ?>
             <div class="pcard-finishes">
                 <span class="pcard-swatches" role="list" aria-label="<?= e($card['available_finishes_label']) ?>">
                     <?php foreach ($card['finishes'] as $finish): ?>

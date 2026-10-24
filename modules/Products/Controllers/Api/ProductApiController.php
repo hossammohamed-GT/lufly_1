@@ -10,6 +10,7 @@ use Core\Http\JsonResponse;
 use Core\Http\Request;
 use Core\Localization\Translator;
 use Modules\Products\Services\ProductCardPresenter;
+use Modules\Products\Services\ProductColorFamilyService;
 use Modules\Products\Services\ProductService;
 
 class ProductApiController extends Controller
@@ -77,13 +78,14 @@ class ProductApiController extends Controller
             $boxIds = array_flip(app(\Modules\Box\Services\BoxService::class)->productIds());
         }
 
-        $items = array_map(static function (array $item) use ($savedIds, $boxIds): array {
+        $colorFamilies = app(ProductColorFamilyService::class);
+        $items = array_map(static function (array $item) use ($savedIds, $boxIds, $locale, $colorFamilies): array {
             $id = (int) ($item['id'] ?? 0);
             $item['card'] = ProductCardPresenter::make($item);
             $item['is_saved'] = isset($savedIds[$id]);
             $item['in_box'] = isset($boxIds[$id]);
 
-            return $item;
+            return $colorFamilies->attach($item, $locale, $savedIds, $boxIds);
         }, $items);
 
         return ApiResponse::success($items);

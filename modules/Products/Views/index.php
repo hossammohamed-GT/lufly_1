@@ -12,6 +12,7 @@ $view->pushStyle('frontend/css/product-card.css');
 $view->pushStyle('frontend/css/live-search.css');
 $view->pushStyle('frontend/products/catalog/catalog.css');
 $view->pushScript('frontend/js/live-search.js');
+$view->pushScript('frontend/js/product-card-variants.js');
 $view->pushScript('frontend/products/catalog/catalog.js');
 $view->pushStyle('frontend/components/skeleton/skeleton.css');
 $view->pushScript('frontend/components/skeleton/skeleton.js');
@@ -73,6 +74,7 @@ $boxIds = [];
 if (feature('box', true) && class_exists(\Modules\Box\Services\BoxService::class)) {
     $boxIds = array_flip(app(\Modules\Box\Services\BoxService::class)->productIds());
 }
+$colorFamilies = app(\Modules\Products\Services\ProductColorFamilyService::class);
 ?>
 <main class="catalog" id="main">
     <div class="catalog-inner">
@@ -196,7 +198,7 @@ if (feature('box', true) && class_exists(\Modules\Box\Services\BoxService::class
                 <?php else: ?>
                 <?php foreach ($paginator->items() as $index => $product): ?>
                     <?= $view->component('product-card', [
-                        'product' => $product->translate($locale),
+                        'product' => $colorFamilies->attach($product->translate($locale), $locale, $savedIds, $boxIds),
                         'slug' => $product->slug,
                         'index' => $index,
                         'saved' => isset($savedIds[(int) $product->getKey()]),

@@ -157,15 +157,21 @@ class CategoryService
     {
         $connection = $this->db->connection();
         $counts = array_fill_keys(array_column($this->structure(), 'slug'), 0);
-        $direct = $connection->select(
-            "SELECT category_id, COUNT(*) AS n FROM products
-             WHERE deleted_at IS NULL AND status = 'active' AND category_id IS NOT NULL
-             GROUP BY category_id",
+        $productRows = app(\Modules\Products\Services\ProductColorFamilyService::class)->collapseRows(
+            $connection->select(
+                "SELECT id, category_id FROM products
+                 WHERE deleted_at IS NULL AND status = 'active'",
+            ),
         );
-
-        foreach ($direct as $row) {
+        $direct = [];
+        foreach ($productRows as $row) {
             $id = (int) $row['category_id'];
-            $n = (int) $row['n'];
+            $direct[$id] = ($direct[$id] ?? 0) + 1;
+        }
+
+        foreach ($direct as $id => $n) {
+            $id = (int) $id;
+            $n = (int) $n;
             $visited = [];
             while (isset($this->structure()[$id]) && !isset($visited[$id])) {
                 $visited[$id] = true;
@@ -175,9 +181,7 @@ class CategoryService
             }
         }
 
-        $counts[''] = (int) ($connection->selectOne(
-            "SELECT COUNT(*) AS n FROM products WHERE deleted_at IS NULL AND status = 'active'",
-        )['n'] ?? 0);
+        $counts[''] = count($productRows);
 
         return $counts;
     }

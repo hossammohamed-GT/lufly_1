@@ -8,6 +8,7 @@ use App\Repositories\Repository;
 use App\Services\CategoryService;
 use Core\Database\Paginator;
 use Modules\Products\Models\Product;
+use Modules\Products\Services\ProductColorFamilyService;
 
 class ProductRepository extends Repository
 {
@@ -47,6 +48,9 @@ class ProductRepository extends Repository
         $perPage = max(1, $perPage);
         $locale = $filters['locale'] ?? 'en';
         $connection = Product::query()->connection();
+        $colorFamilies = in_array((string) ($filters['status'] ?? ''), ['active', 'coming_soon'], true)
+            ? app(ProductColorFamilyService::class)
+            : null;
 
         $joins = [
             'name' => ' INNER JOIN product_translations pt ON pt.product_id = p.id AND pt.locale = ?',
@@ -132,6 +136,9 @@ class ProductRepository extends Repository
                 array_merge($joinBindings, $whereBindings),
             );
 
+            if ($colorFamilies !== null) {
+                $discoveryRows = $colorFamilies->collapseRows($discoveryRows);
+            }
             $orderedIds = $this->diversifyDiscovery($discoveryRows);
             $pageIds = array_slice($orderedIds, ($page - 1) * $perPage, $perPage);
             $items = $this->hydrateOrderedIds($pageIds);
@@ -141,15 +148,28 @@ class ProductRepository extends Repository
 
         $sql = "SELECT DISTINCT p.* FROM products p {$searchJoin} {$whereSql}{$orderBySql}";
 
-        $total = (int) ($connection->selectOne(
-            "SELECT COUNT(DISTINCT p.id) AS aggregate FROM products p {$searchJoin} {$whereSql}",
-            array_merge($joinBindings, $whereBindings),
-        )['aggregate'] ?? 0);
+        if ($colorFamilies !== null) {
+            /* Collapse before counting and slicing. A search for one specific
+               colour still opens that colour first and exposes its reviewed
+               siblings through the same-card selector. */
+            $rows = $colorFamilies->collapseRows($connection->select(
+                $sql,
+                array_merge($joinBindings, $whereBindings),
+            ));
+            $total = count($rows);
+            $rows = array_slice($rows, ($page - 1) * $perPage, $perPage);
+        } else {
+            /* Administration keeps every independent product row visible. */
+            $total = (int) ($connection->selectOne(
+                "SELECT COUNT(DISTINCT p.id) AS aggregate FROM products p {$searchJoin} {$whereSql}",
+                array_merge($joinBindings, $whereBindings),
+            )['aggregate'] ?? 0);
 
-        $rows = $connection->select(
-            $sql . ' LIMIT ' . max(1, $perPage) . ' OFFSET ' . (($page - 1) * $perPage),
-            array_merge($joinBindings, $whereBindings),
-        );
+            $rows = $connection->select(
+                $sql . ' LIMIT ' . max(1, $perPage) . ' OFFSET ' . (($page - 1) * $perPage),
+                array_merge($joinBindings, $whereBindings),
+            );
+        }
 
         $items = array_map(static fn (array $row): Product => Product::fromRow($row), $rows);
         Product::eagerLoad($items);
@@ -294,8 +314,6 @@ class ProductRepository extends Repository
         if ($categoryIds !== []) {
             $params = [...$params, ...$categoryIds];
         }
-        $params[] = (int) $limit;
-
         $rows = $connection->select(
             "SELECT DISTINCT p.*
              FROM products p
@@ -324,10 +342,12 @@ class ProductRepository extends Repository
                    )
                )
                {$categoryClause}
-             ORDER BY p.id DESC
-             LIMIT ?",
+             ORDER BY p.id DESC",
             $params,
         );
+
+        $rows = app(ProductColorFamilyService::class)->collapseRows($rows);
+        $rows = array_slice($rows, 0, max(1, $limit));
 
         $items = array_map(static fn (array $row): Product => Product::fromRow($row), $rows);
         Product::eagerLoad($items);

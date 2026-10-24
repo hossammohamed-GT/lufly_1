@@ -97,6 +97,7 @@
           addToCart: 'Add to cart',
           cartPending: 'Available once a price is added',
           availableFinishes: 'Available finishes',
+          colorOptions: 'Color options',
           save: 'Save product',
           saved: 'Saved',
           favoriteAdded: ':name saved to your list',
@@ -125,6 +126,7 @@
           addToCart: 'Sepete ekle',
           cartPending: 'Fiyat eklendiğinde kullanılabilir',
           availableFinishes: 'Mevcut kaplamalar',
+          colorOptions: 'Renk seçenekleri',
           save: 'Ürünü kaydet',
           saved: 'Kaydedildi',
           favoriteAdded: ':name listenize kaydedildi',
@@ -153,6 +155,7 @@
           addToCart: 'Přidat do košíku',
           cartPending: 'Dostupné po doplnění ceny',
           availableFinishes: 'Dostupné povrchy',
+          colorOptions: 'Možnosti barev',
           save: 'Uložit produkt',
           saved: 'Uloženo',
           favoriteAdded: ':name bylo uloženo do seznamu',
@@ -409,7 +412,31 @@
         }).join('') + '</span>';
       }
 
-      function finishList(card, href) {
+      function jsonForScript(value) {
+        return JSON.stringify(value).replace(/</g, '\\u003C').replace(/>/g, '\\u003E').replace(/&/g, '\\u0026');
+      }
+
+      function finishList(card, href, product) {
+        var variants = Array.isArray(product.color_variants) ? product.color_variants : [];
+        if (variants.length > 1) {
+          var currentLabel = '';
+          var links = variants.map(function (variant) {
+            var finish = variant.finish || {};
+            var key = String(finish.key || 'neutral').toLowerCase().replace(/[^a-z-]/g, '') || 'neutral';
+            var label = String(finish.label || '');
+            var code = String(variant.sku || variant.model_code || '');
+            var selected = parseInt(variant.id, 10) === parseInt(product.id, 10);
+            if (selected) currentLabel = label;
+            var aria = label + (code ? ' — ' + code : '');
+            return '<a class="pcard-swatch pcard-swatch--' + key + (selected ? ' is-active' : '') + '"' +
+              ' role="listitem" href="' + esc(variant.url || href) + '" data-pcard-variant="' + esc(variant.id) + '"' +
+              ' title="' + esc(aria) + '" aria-label="' + esc(aria) + '"' + (selected ? ' aria-current="true"' : '') + '></a>';
+          }).join('');
+          return '<div class="pcard-finishes pcard-color-variants" data-pcard-colors>' +
+            '<span class="pcard-swatches" role="list" aria-label="' + esc(g.colorOptions) + '">' + links + '</span>' +
+            '<span class="pcard-finish-count pcard-finish-current" data-pcard-finish-label aria-live="polite" title="' + esc(currentLabel) + '">' + esc(currentLabel) + '</span></div>' +
+            '<script type="application/json" data-pcard-variant-data>' + jsonForScript(variants) + '<\/script>';
+        }
         if (!Array.isArray(card.finishes) || card.finishes.length === 0) return '';
         var count = card.finishes_label || String(card.finishes.length) + ' finishes';
         return '<div class="pcard-finishes"><span class="pcard-swatches" role="list" aria-label="' + esc(card.available_finishes_label || g.availableFinishes) + '">' +
@@ -520,7 +547,7 @@
             (sku ? '<span class="pcard-code">' + sku + '</span>' : '') +
             (shortDesc ? '<p class="pcard-desc">' + shortDesc + '</p>' : '') +
             featurePanel +
-            finishList(card, href) +
+            finishList(card, href, product) +
             specList(card) +
             '<div class="pcard-actions"><div class="pcard-action-copy">' +
             '<span class="pcard-price"><small>' + esc(priceCaption) + '</small><strong' + (hasPrice ? '' : ' class="is-pending"') + '>' + esc(priceLabel) + '</strong></span>' +

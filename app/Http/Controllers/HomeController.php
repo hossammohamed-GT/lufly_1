@@ -114,8 +114,9 @@ class HomeController extends Controller
 
         \Modules\Products\Models\Product::eagerLoad($rawFeatured);
 
-        $featuredProducts = array_map(function ($p) use ($locale) {
-            return $p->translate($locale);
+        $colorFamilies = app(\Modules\Products\Services\ProductColorFamilyService::class);
+        $featuredProducts = array_map(function ($p) use ($locale, $colorFamilies) {
+            return $colorFamilies->attach($p->translate($locale), $locale);
         }, $rawFeatured);
 
         $seoTitles = [
