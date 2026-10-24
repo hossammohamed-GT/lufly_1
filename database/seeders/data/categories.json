@@ -354,7 +354,7 @@
     "slug": "kitchen.kitchen-mixers.single-handle-mixers",
     "parent": "kitchen.kitchen-mixers",
     "sort_order": 2,
-    "image": "/images/categories/029-kitchen.jpg",
+    "image": "/images/categories/040-kitchen-kitchen-mixers-single-handle-mixers.jpg",
     "names": {
       "en": "Single Handle Mixers"
     }
@@ -363,7 +363,7 @@
     "slug": "kitchen.kitchen-mixers.dual-handle-mixers",
     "parent": "kitchen.kitchen-mixers",
     "sort_order": 3,
-    "image": "/images/categories/029-kitchen.jpg",
+    "image": "/images/categories/041-kitchen-kitchen-mixers-dual-handle-mixers.jpg",
     "names": {
       "en": "Dual Handle Mixers"
     }
@@ -372,7 +372,7 @@
     "slug": "kitchen.kitchen-mixers.filtered-water-mixers",
     "parent": "kitchen.kitchen-mixers",
     "sort_order": 4,
-    "image": "/images/categories/029-kitchen.jpg",
+    "image": "/images/categories/042-kitchen-kitchen-mixers-filtered-water-mixers.jpg",
     "names": {
       "en": "Filtered Water Mixers"
     }
@@ -381,7 +381,7 @@
     "slug": "kitchen.kitchen-mixers.pot-fillers",
     "parent": "kitchen.kitchen-mixers",
     "sort_order": 5,
-    "image": "/images/categories/029-kitchen.jpg",
+    "image": "/images/categories/043-kitchen-kitchen-mixers-pot-fillers.jpg",
     "names": {
       "en": "Pot Fillers"
     }
@@ -390,7 +390,7 @@
     "slug": "kitchen.kitchen-mixers.other-kitchen-mixers",
     "parent": "kitchen.kitchen-mixers",
     "sort_order": 6,
-    "image": "/images/categories/029-kitchen.jpg",
+    "image": "/images/categories/044-kitchen-kitchen-mixers-other-kitchen-mixers.jpg",
     "names": {
       "en": "Other Kitchen Mixers"
     }
@@ -408,7 +408,7 @@
     "slug": "kids.kids-sanitary-ware",
     "parent": "kids",
     "sort_order": 1,
-    "image": "/images/categories/001-bathroom.jpg",
+    "image": "/images/categories/046-kids-kids-sanitary-ware.jpg",
     "names": {
       "en": "Kids Sanitary Ware"
     }
@@ -417,7 +417,7 @@
     "slug": "kids.kids-sanitary-ware.kids-toilets",
     "parent": "kids.kids-sanitary-ware",
     "sort_order": 1,
-    "image": "/images/categories/001-bathroom.jpg",
+    "image": "/images/categories/047-kids-kids-sanitary-ware-kids-toilets.jpg",
     "names": {
       "en": "Kids Toilets"
     }
@@ -426,7 +426,7 @@
     "slug": "kids.kids-sanitary-ware.kids-wash-basins",
     "parent": "kids.kids-sanitary-ware",
     "sort_order": 2,
-    "image": "/images/categories/001-bathroom.jpg",
+    "image": "/images/categories/048-kids-kids-sanitary-ware-kids-wash-basins.jpg",
     "names": {
       "en": "Kids Wash Basins"
     }
@@ -435,7 +435,7 @@
     "slug": "kids.kids-sanitary-ware.kids-urinals",
     "parent": "kids.kids-sanitary-ware",
     "sort_order": 3,
-    "image": "/images/categories/001-bathroom.jpg",
+    "image": "/images/categories/049-kids-kids-sanitary-ware-kids-urinals.jpg",
     "names": {
       "en": "Kids Urinals"
     }
@@ -444,7 +444,7 @@
     "slug": "kids.kids-sanitary-ware.kids-bathroom-sets",
     "parent": "kids.kids-sanitary-ware",
     "sort_order": 4,
-    "image": "/images/categories/001-bathroom.jpg",
+    "image": "/images/categories/050-kids-kids-sanitary-ware-kids-bathroom-sets.jpg",
     "names": {
       "en": "Kids Bathroom Sets"
     }
