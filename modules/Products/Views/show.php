@@ -240,7 +240,12 @@ if (feature('planner', true) && (bool) config('planner.enabled', true)) {
                     </div>
                 </div>
 
-                <?php $desc = (string) ($product['short_description'] ?? $product['description'] ?? ''); ?>
+                <?php
+                    $desc = trim((string) ($product['short_description'] ?? ''));
+                    if ($desc === '') {
+                        $desc = (string) ($product['description'] ?? '');
+                    }
+                ?>
                 <?php if ($desc !== ''): ?>
                     <div class="pdp-desc">
                         <h3 class="pdp-block-title"><?= e(trans('products.description')) ?></h3>

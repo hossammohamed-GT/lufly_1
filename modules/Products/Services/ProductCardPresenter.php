@@ -83,14 +83,16 @@ final class ProductCardPresenter
         $finishes = self::finishes($variants, $specs, $description);
 
         $summary = [];
+        /* Drawing-verified dimensions stay visible even when the product also
+           has a material and ceramic cartridge. */
+        if ($dimensions !== '') {
+            $summary[] = ['icon' => 'dimensions', 'label' => trans('products.dimensions'), 'value' => $dimensions];
+        }
         if ($material !== '') {
             $summary[] = ['icon' => 'material', 'label' => trans('products.material_label'), 'value' => $material];
         }
         if ($hasCartridge) {
             $summary[] = ['icon' => 'cartridge', 'label' => trans('products.cartridge_label'), 'value' => 'Ceramic'];
-        }
-        if ($dimensions !== '') {
-            $summary[] = ['icon' => 'dimensions', 'label' => trans('products.dimensions'), 'value' => $dimensions];
         }
         if ($installation !== '') {
             $summary[] = ['icon' => 'installation', 'label' => trans('products.installation_label'), 'value' => $installation];
@@ -199,7 +201,7 @@ final class ProductCardPresenter
             foreach ($specs as $row) {
                 $key = (string) ($row['spec_key'] ?? '');
                 $value = trim((string) ($row['spec_value'] ?? ''));
-                if ($value === '' || preg_match('/material|finish|colou?r|dimension|size|installation|mounting|cartridge|\btype\b/iu', $key) === 1) {
+                if ($value === '' || preg_match('/^drawing\s*:|material|finish|colou?r|dimension|size|installation|mounting|cartridge|\btype\b/iu', $key) === 1) {
                     continue;
                 }
                 $add('spec', $value);
@@ -380,6 +382,24 @@ final class ProductCardPresenter
             if (count($values) >= 2) {
                 return implode(' × ', $values) . ' mm';
             }
+        }
+
+        $drawing = [];
+        foreach ($specs as $row) {
+            $key = trim((string) ($row['spec_key'] ?? ''));
+            if (preg_match('/^drawing\s*:\s*(.+)$/iu', $key, $match) !== 1) {
+                continue;
+            }
+            $label = trim((string) $match[1]);
+            $value = trim((string) ($row['spec_value'] ?? ''));
+            $unit = trim((string) ($row['unit'] ?? ''));
+            if ($label === '' || $value === '') {
+                continue;
+            }
+            $drawing[] = $label . ' ' . $value . ($unit !== '' ? ' ' . $unit : '');
+        }
+        if ($drawing !== []) {
+            return implode('; ', $drawing);
         }
 
         $structured = self::specValue($specs, '/dimension|\bsize\b/iu');

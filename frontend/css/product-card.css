@@ -444,6 +444,11 @@
   min-width: 0;
 }
 
+.pcard-spec--dimensions {
+  grid-column: 1 / -1;
+  align-items: flex-start;
+}
+
 .pcard-spec > svg {
   flex: 0 0 23px;
   width: 23px;

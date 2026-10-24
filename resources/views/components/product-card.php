@@ -23,6 +23,12 @@ $shortDesc = trim((string) ($item['short_description'] ?? ''));
 if ($shortDesc === '') {
     $shortDesc = trim((string) ($item['description'] ?? ''));
 }
+/* The structured summary below already carries the verified dimensions;
+   keep the editorial excerpt concise instead of repeating the whole block. */
+$verifiedBlock = strpos($shortDesc, 'Verified drawing dimensions:');
+if ($verifiedBlock !== false) {
+    $shortDesc = trim(substr($shortDesc, 0, $verifiedBlock));
+}
 $heading = ($props['heading'] ?? 'h2') === 'h3' ? 'h3' : 'h2';
 $index = max(0, (int) ($props['index'] ?? 0));
 $fallbackImg = '/images/favicon.png';
@@ -121,7 +127,7 @@ $hasFeaturePanel = $card['badge'] !== '' || $card['features'] !== [];
         <?php if ($card['specs'] !== []): ?>
             <div class="pcard-specs" role="list">
                 <?php foreach ($card['specs'] as $spec): ?>
-                    <div class="pcard-spec" role="listitem">
+                    <div class="pcard-spec<?= $spec['icon'] === 'dimensions' ? ' pcard-spec--dimensions' : '' ?>" role="listitem">
                         <?= $view->component('product-card-icon', ['name' => $spec['icon']]) ?>
                         <div>
                             <span class="pcard-spec-label"><?= e($spec['label']) ?></span>
