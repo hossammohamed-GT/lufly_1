@@ -117,13 +117,13 @@ return [
 
         /* the small set of things a bathroom most often needs */
         'topics' => [
-            'basin' => ['category' => 'bathroom-ceramics', 'terms' => ['washbasin']],
-            'toilet' => ['category' => 'bathroom-ceramics', 'terms' => ['wc']],
-            'shower' => ['category' => 'shower-sets', 'terms' => ['shower']],
-            'tap' => ['category' => '', 'terms' => ['mixer']],
-            'access' => ['category' => 'accessible-range', 'terms' => ['accessible']],
+            'basin' => ['category' => 'bathroom.sanitary-ware.wash-basins', 'terms' => ['washbasin']],
+            'toilet' => ['category' => 'bathroom.sanitary-ware.toilets', 'terms' => ['wc']],
+            'shower' => ['category' => 'bathroom.mixers.shower-mixers', 'terms' => ['shower']],
+            'tap' => ['category' => 'bathroom.mixers', 'terms' => ['mixer']],
+            'access' => ['category' => 'accessibility', 'terms' => ['accessible']],
             'kids' => ['category' => 'kids', 'terms' => ['children']],
-            'bath' => ['category' => '', 'terms' => ['bath']],
+            'bath' => ['category' => 'bathroom', 'terms' => ['bath']],
         ],
 
         /* what each answer means, as catalogue words */

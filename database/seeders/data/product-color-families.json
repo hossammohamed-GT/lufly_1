@@ -1,0 +1,520 @@
+{
+  "version": 1,
+  "relation_type": "color_variant",
+  "review": "Each family preserves independent products. Membership was accepted only from explicit finish evidence plus matching product specifications; ambiguous code-only and mismatched-image cases are excluded.",
+  "families": [
+    {
+      "products": [
+        "sfd-a0810",
+        "sfd-a0810b"
+      ]
+    },
+    {
+      "products": [
+        "1681-055",
+        "1681-055b"
+      ]
+    },
+    {
+      "products": [
+        "1681-084c",
+        "1681-084br",
+        "1681-084b"
+      ]
+    },
+    {
+      "products": [
+        "1681-084rg",
+        "1681-084bn"
+      ]
+    },
+    {
+      "products": [
+        "hl-st110b",
+        "hl-st110bn",
+        "hl-st110br",
+        "hl-st110rg"
+      ],
+      "review": "Same specifications and dimensions; finish sentence position reviewed."
+    },
+    {
+      "products": [
+        "hl-st106",
+        "hl-st106bro",
+        "hl-st106b",
+        "hl-st106bn",
+        "hl-st106rg"
+      ]
+    },
+    {
+      "products": [
+        "1270-0227bn",
+        "1270-0227b",
+        "1270-0227br"
+      ]
+    },
+    {
+      "products": [
+        "660-254",
+        "660-254b",
+        "660-254b-239",
+        "660-254bn"
+      ]
+    },
+    {
+      "products": [
+        "1654-2249rg",
+        "1654-2249c"
+      ]
+    },
+    {
+      "products": [
+        "1654-2131rg",
+        "1654-2131c"
+      ]
+    },
+    {
+      "products": [
+        "1654-2220c",
+        "1654-2220g",
+        "1654-2220bn"
+      ]
+    },
+    {
+      "products": [
+        "1654-2220g-268",
+        "1654-2220bn-269"
+      ]
+    },
+    {
+      "products": [
+        "1654-2133c",
+        "1654-2133bg",
+        "1654-2133gg"
+      ],
+      "review": "Same specifications; cartridge phrase order and source spelling reviewed."
+    },
+    {
+      "products": [
+        "1654-2134c",
+        "1654-2134bg",
+        "1654-2134gg"
+      ]
+    },
+    {
+      "products": [
+        "1654-2129rg",
+        "1654-2129c",
+        "1654-2129bn",
+        "1654-2129gg"
+      ]
+    },
+    {
+      "products": [
+        "1654-2130rg",
+        "1654-2130bn",
+        "1654-2130gg"
+      ]
+    },
+    {
+      "products": [
+        "1654-2131bng",
+        "1654-2131gg",
+        "1654-2131rgg"
+      ]
+    },
+    {
+      "products": [
+        "1654-2132bng",
+        "1654-2132gg",
+        "1654-2132rg"
+      ]
+    },
+    {
+      "products": [
+        "1654-8002rgb",
+        "1654-8002mb"
+      ]
+    },
+    {
+      "products": [
+        "1654-8032bn",
+        "1654-8032gg",
+        "1654-8032rg"
+      ]
+    },
+    {
+      "products": [
+        "1654-7002c",
+        "1654-7002bg",
+        "1654-7002gg"
+      ]
+    },
+    {
+      "products": [
+        "1654-7012c",
+        "1654-7012bg",
+        "1654-7012gg"
+      ]
+    },
+    {
+      "products": [
+        "1722-0911c",
+        "1722-0911bg",
+        "1722-0911gg"
+      ]
+    },
+    {
+      "products": [
+        "1654-877c",
+        "1654-877g",
+        "1654-877gg"
+      ]
+    },
+    {
+      "products": [
+        "1654-883bg",
+        "1654-883bn",
+        "1654-883gg"
+      ]
+    },
+    {
+      "products": [
+        "1654-8022b",
+        "1654-8022c"
+      ]
+    },
+    {
+      "products": [
+        "1654-8032c-326",
+        "1654-8032bn-332",
+        "1654-8032gg-333",
+        "1654-8032rg-334"
+      ]
+    },
+    {
+      "products": [
+        "1654-8039c",
+        "1654-8039b",
+        "1654-8039bn",
+        "1654-8039gg",
+        "1654-8039rg"
+      ]
+    },
+    {
+      "products": [
+        "1654-1342gb",
+        "1654-1342br"
+      ]
+    },
+    {
+      "products": [
+        "1654-1373b",
+        "1654-1373br",
+        "1654-1373bn"
+      ]
+    },
+    {
+      "products": [
+        "1644-7004g",
+        "1644-7004bn",
+        "1644-7004gg"
+      ]
+    },
+    {
+      "products": [
+        "1644-8004rg",
+        "1644-8004c",
+        "1644-8004bn",
+        "1644-8004gg"
+      ]
+    },
+    {
+      "products": [
+        "1644-7005gg",
+        "1644-7005cs",
+        "1644-7005g",
+        "1644-7005cn",
+        "1644-7005rg"
+      ]
+    },
+    {
+      "products": [
+        "1644-8035c",
+        "1644-8035bro",
+        "1644-8035b",
+        "1644-8035bn"
+      ]
+    },
+    {
+      "products": [
+        "1653-932cg",
+        "1653-932bn",
+        "1653-932gg",
+        "1653-932rg"
+      ]
+    },
+    {
+      "products": [
+        "1654-2001rg",
+        "1654-2001rg-392",
+        "1654-2001g"
+      ]
+    },
+    {
+      "products": [
+        "1722-8118",
+        "1722-8118b"
+      ]
+    },
+    {
+      "products": [
+        "1722-8122",
+        "1722-8122b"
+      ]
+    },
+    {
+      "products": [
+        "1722-8126sc",
+        "1722-8126scb",
+        "1722-8126sb",
+        "1722-8126sgg",
+        "1722-8126sgo",
+        "1722-8126srg"
+      ]
+    },
+    {
+      "products": [
+        "1722-8126c",
+        "1722-8126cb",
+        "1722-8126rg",
+        "1722-8126b"
+      ]
+    },
+    {
+      "products": [
+        "v-1733",
+        "v-1733b"
+      ]
+    },
+    {
+      "products": [
+        "1300-003-440",
+        "1300-003rg",
+        "1300-003br",
+        "1300-003b",
+        "1300-003cn",
+        "1300-003bn"
+      ]
+    },
+    {
+      "products": [
+        "1300-017",
+        "1300-017b"
+      ]
+    },
+    {
+      "products": [
+        "1300-024",
+        "1300-024bro",
+        "1300-024bn"
+      ],
+      "review": "Same 600 mm rail and material; inline and verified dimension wording reviewed."
+    },
+    {
+      "products": [
+        "1300-027",
+        "1300-027rg"
+      ]
+    },
+    {
+      "products": [
+        "1300-0106br",
+        "1300-0106bro",
+        "1300-0106bro-472"
+      ]
+    },
+    {
+      "products": [
+        "1300-039",
+        "1300-039rg"
+      ],
+      "review": "Same 85/55 mm hook and material; additional verified RG dimensions remain product-specific."
+    },
+    {
+      "products": [
+        "1300-039-478",
+        "1300-039rg-479"
+      ]
+    },
+    {
+      "products": [
+        "1300-031",
+        "1300-031b"
+      ]
+    },
+    {
+      "products": [
+        "1300-1102gb",
+        "1300-1102rgb"
+      ]
+    },
+    {
+      "products": [
+        "1300-1103gb",
+        "1300-1103rgb"
+      ]
+    },
+    {
+      "products": [
+        "1300-1104gb",
+        "1300-1104rgb"
+      ]
+    },
+    {
+      "products": [
+        "1300-1113gb",
+        "1300-1113rgb"
+      ]
+    },
+    {
+      "products": [
+        "1300-dus05",
+        "1300-dus05bro",
+        "1300-dus05b",
+        "1300-dus05bn"
+      ]
+    },
+    {
+      "products": [
+        "1610-887",
+        "1610-887b"
+      ]
+    },
+    {
+      "products": [
+        "1610-888",
+        "1610-888b"
+      ]
+    },
+    {
+      "products": [
+        "1610-889",
+        "1610-889b"
+      ]
+    },
+    {
+      "products": [
+        "1610-890",
+        "1610-890b"
+      ]
+    },
+    {
+      "products": [
+        "1300-120cb",
+        "1300-120cs"
+      ]
+    },
+    {
+      "products": [
+        "1755-1900br",
+        "1755-1900b",
+        "1755-1900cn",
+        "1755-1900bn"
+      ]
+    },
+    {
+      "products": [
+        "1755-9764c",
+        "1755-9764g",
+        "1755-9764gg"
+      ]
+    },
+    {
+      "products": [
+        "1755-0217c",
+        "1755-0217g",
+        "1755-0217gg"
+      ],
+      "review": "Same mixer/shower specification; repeated finish adjectives reviewed."
+    },
+    {
+      "products": [
+        "1755-0218g",
+        "1755-0218bn",
+        "1755-0218gg"
+      ],
+      "review": "Same mixer/shower specification and dimensions; repeated finish adjectives reviewed."
+    },
+    {
+      "products": [
+        "1755-0219bn",
+        "1755-0219cs",
+        "1755-0219gb",
+        "1755-0219gg"
+      ]
+    },
+    {
+      "products": [
+        "1755-9731cn",
+        "1755-9731bg",
+        "1755-9731bgg",
+        "1755-9731rg"
+      ]
+    },
+    {
+      "products": [
+        "1755-0220c",
+        "1755-0220b"
+      ]
+    },
+    {
+      "products": [
+        "1010-1010rb",
+        "1010-1010y",
+        "1010-1010p",
+        "1010-1010lb"
+      ]
+    },
+    {
+      "products": [
+        "1300-023b",
+        "1300-023y",
+        "1300-023p",
+        "1300-023c"
+      ]
+    },
+    {
+      "products": [
+        "1300-040b",
+        "1300-040y",
+        "1300-040p",
+        "1300-040c"
+      ]
+    },
+    {
+      "products": [
+        "1300-012b",
+        "1300-012y",
+        "1300-012p",
+        "1300-012c"
+      ]
+    },
+    {
+      "products": [
+        "gtb-18-s-b",
+        "gtb-18-s-y",
+        "gtb-18-s-p",
+        "gtb-18-s-c"
+      ]
+    },
+    {
+      "products": [
+        "1300-066b",
+        "1300-066y",
+        "1300-066p",
+        "1300-066c-706"
+      ]
+    }
+  ]
+}

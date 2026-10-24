@@ -8,6 +8,7 @@ use App\Repositories\Repository;
 use Modules\Box\Models\Box;
 use Modules\Box\Models\BoxItem;
 use Modules\Products\Models\Product;
+use Modules\Products\Services\ProductVisibility;
 
 class BoxRepository extends Repository
 {
@@ -115,6 +116,13 @@ class BoxRepository extends Repository
         }
 
         Product::eagerLoad($ordered);
+        $ordered = array_values(array_filter(
+            $ordered,
+            static fn (Product $product): bool => ProductVisibility::isSellable($product),
+        ));
+        if ($ordered === []) {
+            return [];
+        }
 
         $items = [];
         foreach ($ordered as $index => $model) {

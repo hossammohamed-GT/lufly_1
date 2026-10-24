@@ -23,7 +23,7 @@ $count = (int) ($count ?? count($items));
 /* the visitor was never asked yet -> the box is ticked */
 $notify = $notifyChoice === null ? true : (bool) $notifyChoice;
 $shareUrl = (string) ($shareUrl ?? '');
-$fallbackImg = asset('/images/products/prod_146_1620-111-a.jpg');
+$fallbackImg = asset('/images/favicon.png');
 
 $mailEndpoint = route('favorites.email');
 $clearEndpoint = route('favorites.clear');

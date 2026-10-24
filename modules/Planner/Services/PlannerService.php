@@ -504,9 +504,8 @@ class PlannerService
      *
      * "Toilet paper holder … with shelf" mentions `paper` and `holder` — more
      * than the one `toilet` the toilet slot hears — so it lands on the holder,
-     * where it belongs. A category on its own is never enough: six slots share
-     * `bathroom-ceramics`, and guessing between a toilet and a bathtub helps
-     * nobody.
+     * where it belongs. A broad category on its own is never enough: guessing
+     * between a toilet and a bathtub from the Bathroom root would help nobody.
      *
      * @param array{name?: string, text?: string, category?: string} $context
      */

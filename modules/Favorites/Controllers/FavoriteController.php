@@ -15,6 +15,7 @@ use Modules\Favorites\Models\Favorite;
 use Modules\Favorites\Services\FavoriteMailer;
 use Modules\Favorites\Services\FavoriteService;
 use Modules\Products\Models\Product;
+use Modules\Products\Services\ProductVisibility;
 
 /**
  * The storefront side of the saved-products list.
@@ -72,7 +73,7 @@ class FavoriteController extends Controller
             ? Product::query()->where('id', $productId)->where('status', 'active')->first()
             : null;
 
-        if (!$product instanceof Product) {
+        if (!$product instanceof Product || !ProductVisibility::isSellable($product)) {
             return $this->fail($request, trans('favorites.err_product'), 422, ['product_id' => [trans('favorites.err_product')]]);
         }
 

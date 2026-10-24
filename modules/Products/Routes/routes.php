@@ -46,6 +46,11 @@ return function (Router $router): void {
             ->where('id', '\d+')
             ->name('update');
 
+        $router->post('/{id}/visibility', [ProductController::class, 'adminToggleVisibility'])
+            ->middleware('permission:products.manage')
+            ->where('id', '\d+')
+            ->name('visibility');
+
         $router->post('/{id}/delete', [ProductController::class, 'adminDestroy'])
             ->middleware('permission:products.manage')
             ->where('id', '\d+')

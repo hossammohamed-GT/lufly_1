@@ -5,10 +5,12 @@ declare(strict_types=1);
 namespace App\Http\Controllers;
 
 use App\Services\CacheService;
+use App\Services\CategoryService;
 use App\Services\SEOService;
 use Core\Http\RedirectResponse;
 use Core\Http\Response;
 use Core\Localization\Translator;
+use Modules\Products\Services\ProductVisibility;
 
 class HomeController extends Controller
 {
@@ -26,6 +28,7 @@ class HomeController extends Controller
         private readonly Translator $translator,
         private readonly SEOService $seo,
         private readonly CacheService $cache,
+        private readonly CategoryService $categoryService,
     ) {
     }
 
@@ -63,74 +66,29 @@ class HomeController extends Controller
 
         $fallback = (string) config('localization.fallback', 'en');
 
-        /* These three read (or join) whole tables instead of a handful of rows,
-           which makes them the only home-page cost that grows with the
-           catalogue. The rows themselves change rarely, so they are cached;
-           the shuffling and random picking that make every visit different
-           stay in PHP and are not affected. */
-        $categories = $this->remember('home.categories.' . $locale . '.' . $fallback, static fn (): array => $connection->select(
-            "SELECT c.id, c.slug, c.image,
-                    COALESCE(ct.name, ctf.name) AS name,
-                    COALESCE(ct.description, ctf.description) AS description
-             FROM categories c
-             LEFT JOIN category_translations ct ON ct.category_id = c.id AND ct.locale = ?
-             LEFT JOIN category_translations ctf ON ctf.category_id = c.id AND ctf.locale = ?
-             WHERE c.deleted_at IS NULL AND c.status = 'active'
-             ORDER BY c.id ASC",
-            [$locale, $fallback]
-        ));
-
-        /* Category tiles lead with a real product from their own category.
-           Only photographs qualify (main / gallery media) - the technical
-           drawings stay in the product page - and one shot per product, so a
-           tile never fills up with three angles of the same fixture. The list
-           is shuffled per request, which is what makes the mosaic change from
-           visit to visit instead of always showing the same picture. */
-        $shotRows = $this->remember('home.category-shots', static fn (): array => $connection->select(
-            "SELECT p.category_id, m.path
-               FROM products p
-               JOIN product_media pm ON pm.product_id = p.id
-               JOIN media m ON m.id = pm.media_id
-              WHERE p.status = 'active' AND p.deleted_at IS NULL
-                AND m.deleted_at IS NULL AND m.status = 'active'
-                AND m.mime_type LIKE 'image/%'
-                AND pm.type IN ('main', 'gallery')
-              ORDER BY p.category_id ASC, (pm.type = 'main') DESC,
-                       pm.is_primary DESC, pm.sort_order ASC, pm.id ASC",
-        ));
-
-        $shotsByCategory = [];
-        foreach ($shotRows as $row) {
-            $categoryId = (int) $row['category_id'];
-            $path = trim((string) $row['path']);
-            if ($path !== '' && !isset($shotsByCategory[$categoryId][$path])) {
-                $shotsByCategory[$categoryId][$path] = true;
-            }
-        }
-
-        $shotsPerTile = 3;
-        foreach ($categories as &$category) {
-            /* eight candidates is plenty to draw three from */
-            $shots = array_slice(array_keys($shotsByCategory[(int) $category['id']] ?? []), 0, 8);
-            shuffle($shots);
-            $shots = array_slice($shots, 0, $shotsPerTile);
-            if ($shots === []) {
-                $own = trim((string) ($category['image'] ?? ''));
-                $shots = $own !== '' ? [$own] : [];
-            }
-            $category['shots'] = $shots;
-        }
-        unset($category);
+        /* Catalog-wide lookups change rarely, so they are cached; the random
+           featured-product picking stays in PHP and is not affected. */
+        /* The category atlas is independent of product inventory: every node
+           keeps its own image and remains browsable while collections are
+           being built. The shared service preserves all three levels. */
+        $categories = $this->remember(
+            'home.category-tree.' . $locale . '.' . $fallback,
+            fn (): array => $this->categoryService->tree($locale, $fallback),
+        );
 
         /* Rotating showcase: every visit picks ONE random product per
            category, then keeps 4 for the grid - so each reload shows a
            different mix that always spans distinct categories. Curated
            (is_featured) products win within their category when any exist. */
-        $pool = $this->remember('home.featured-pool', static fn (): array => $connection->select(
-            "SELECT id, category_id, is_featured
-               FROM products
-              WHERE status = 'active' AND deleted_at IS NULL",
-        ));
+        /* Media readiness is intentionally uncached: uploading the missing
+           photo/drawing restores a product immediately, while removing either
+           one removes it from the showcase on the very next request. */
+        $pool = $connection->select(
+            "SELECT p.id, p.category_id, p.is_featured
+               FROM products p
+              WHERE p.status = 'active' AND p.deleted_at IS NULL
+                AND " . ProductVisibility::mediaReadySql('p'),
+        );
 
         $byCategory = [];
         foreach ($pool as $row) {
@@ -161,8 +119,9 @@ class HomeController extends Controller
 
         \Modules\Products\Models\Product::eagerLoad($rawFeatured);
 
-        $featuredProducts = array_map(function ($p) use ($locale) {
-            return $p->translate($locale);
+        $colorFamilies = app(\Modules\Products\Services\ProductColorFamilyService::class);
+        $featuredProducts = array_map(function ($p) use ($locale, $colorFamilies) {
+            return $colorFamilies->attach($p->translate($locale), $locale);
         }, $rawFeatured);
 
         $seoTitles = [

@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Modules\Products\Controllers;
 
 use App\Http\Controllers\Controller;
+use App\Services\CategoryService;
 use App\Services\SEOService;
 use Core\Http\RedirectResponse;
 use Core\Http\Request;
@@ -14,6 +15,7 @@ use Modules\Products\Requests\StoreProductRequest;
 use Modules\Products\Requests\UpdateProductRequest;
 use Modules\Products\Services\ProductMediaService;
 use Modules\Products\Services\ProductService;
+use Modules\Products\Services\ProductVisibility;
 
 class ProductController extends Controller
 {
@@ -21,6 +23,7 @@ class ProductController extends Controller
         private readonly ProductService $products,
         private readonly ProductMediaService $media,
         private readonly SEOService $seo,
+        private readonly CategoryService $categories,
         private readonly Translator $translator,
     ) {
     }
@@ -31,9 +34,9 @@ class ProductController extends Controller
         $categorySlug = (string) $request->query('category', '');
         $categoryId = (int) $request->query('category_id', '0');
         $searchQuery = (string) $request->query('q', '');
-        $sort = (string) $request->query('sort', 'newest');
-        if (!in_array($sort, ['newest', 'name', 'model'], true)) {
-            $sort = 'newest';
+        $sort = (string) $request->query('sort', 'curated');
+        if (!in_array($sort, ['curated', 'newest', 'name', 'model'], true)) {
+            $sort = 'curated';
         }
         $fallback = (string) config('localization.fallback', 'en');
 
@@ -46,29 +49,8 @@ class ProductController extends Controller
             'sort' => $sort,
         ], (int) $request->query('page', '1'), 12);
 
-        $connection = \Modules\Products\Models\Product::query()->connection();
-        $categories = $connection->select(
-            "SELECT c.id, c.slug, c.image, COALESCE(ct.name, ctf.name) AS name FROM categories c
-             LEFT JOIN category_translations ct ON ct.category_id = c.id AND ct.locale = ?
-             LEFT JOIN category_translations ctf ON ctf.category_id = c.id AND ctf.locale = ?
-             WHERE c.deleted_at IS NULL AND c.status = 'active'
-             ORDER BY c.id ASC",
-            [$locale, $fallback]
-        );
-
-        /* per-category counts for the coded category rail */
-        $categoryCounts = [];
-        foreach ($connection->select(
-            "SELECT c.slug AS slug, COUNT(p.id) AS n
-             FROM categories c
-             LEFT JOIN products p ON p.category_id = c.id AND p.deleted_at IS NULL AND p.status = 'active'
-             WHERE c.deleted_at IS NULL AND c.status = 'active'
-             GROUP BY c.id, c.slug",
-            []
-        ) as $row) {
-            $categoryCounts[(string) $row['slug']] = (int) $row['n'];
-        }
-        $categoryCounts[''] = array_sum($categoryCounts);
+        $categories = $this->categories->tree($locale, $fallback);
+        $categoryCounts = $this->categories->productCounts();
 
         $pageTitle = trans('products.title');
         $catalogDescs = [
@@ -85,7 +67,7 @@ class ProductController extends Controller
            canonical of the clean catalogue URL and stay out of the index:
            crawlers may follow them, but only one catalog page ranks. */
         $isFaceted = $categorySlug !== '' || $categoryId > 0 || $searchQuery !== ''
-            || $sort !== 'newest' || (int) $request->query('page', '1') > 1;
+            || $sort !== 'curated' || (int) $request->query('page', '1') > 1;
         if ($isFaceted) {
             $this->seo->setRobots('noindex, follow');
         }
@@ -150,7 +132,10 @@ class ProductController extends Controller
         }
         $product['category_slug'] = $categorySlug;
 
-        $productName = (string) ($product['name'] ?? 'LUFLY Architectural Fixture');
+        $productName = trim((string) ($product['name'] ?? ''));
+        if ($productName === '') {
+            $productName = trans('products.name_pending');
+        }
         $productDesc = (string) ($product['short_description'] ?? $product['description'] ?? '');
 
         $canonical = route('products.show', ['slug' => $product['slug'] ?? $slug]);
@@ -259,6 +244,37 @@ class ProductController extends Controller
 
         return $this->redirect(route('admin.products.edit', ['id' => $id]))
             ->with('_success', trans('common.saved'));
+    }
+
+    public function adminToggleVisibility(Request $request, int $id): RedirectResponse
+    {
+        $product = $this->products->find($id);
+        $status = (string) $product->status;
+        $query = [
+            'page' => max(1, (int) $request->input('page', '1')),
+            'q' => trim((string) $request->input('q', '')),
+        ];
+        $target = route('admin.products.index') . '?' . http_build_query($query);
+
+        /* Active/hidden is the existing public-visibility switch. Other
+           lifecycle states stay under the full edit form so toggling display
+           never silently turns Coming soon or Discontinued into Active. */
+        if (!in_array($status, ['active', 'hidden'], true)) {
+            return $this->redirect($target)->with('_errors', [
+                'status' => [trans('products.visibility_toggle_invalid')],
+            ]);
+        }
+        if (!ProductVisibility::media($product)['ready']) {
+            return $this->redirect($target)->with('_errors', [
+                'status' => [trans('products.visibility_media_required')],
+            ]);
+        }
+
+        $this->products->update($id, [
+            'status' => $status === 'active' ? 'hidden' : 'active',
+        ]);
+
+        return $this->redirect($target)->with('_success', trans('products.visibility_updated'));
     }
 
     public function adminDestroy(int $id): RedirectResponse

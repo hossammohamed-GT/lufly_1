@@ -9,6 +9,8 @@ use Core\Http\ApiResponse;
 use Core\Http\JsonResponse;
 use Core\Http\Request;
 use Core\Localization\Translator;
+use Modules\Products\Services\ProductCardPresenter;
+use Modules\Products\Services\ProductColorFamilyService;
 use Modules\Products\Services\ProductService;
 
 class ProductApiController extends Controller
@@ -39,6 +41,7 @@ class ProductApiController extends Controller
             'locale' => (string) $request->query('locale', $this->translator->getLocale()),
             'status' => $status,
             'search' => (string) $request->query('q', ''),
+            'require_media' => !$canManage,
         ], $page, $perPage);
 
         $items = array_map(
@@ -55,7 +58,7 @@ class ProductApiController extends Controller
         $query = trim((string) $request->query('q', ''));
         $limit = min(50, max(1, (int) $request->query('limit', '8')));
         $category = trim((string) $request->query('category', ''));
-        if (!preg_match('/^[a-z0-9-]{1,150}$/', $category)) {
+        if (!preg_match('/^[a-z0-9.-]{1,150}$/', $category)) {
             $category = '';
         }
 
@@ -64,6 +67,27 @@ class ProductApiController extends Controller
         }
 
         $items = $this->products->quickSearch($query, $locale, $limit, $category !== '' ? $category : null);
+
+        /* Live-search cards carry the same real summary and visitor state as
+           their server-rendered siblings. Both lists are fetched only once. */
+        $savedIds = [];
+        if (feature('favorites', true) && class_exists(\Modules\Favorites\Services\FavoriteService::class)) {
+            $savedIds = array_flip(app(\Modules\Favorites\Services\FavoriteService::class)->productIds());
+        }
+        $boxIds = [];
+        if (feature('box', true) && class_exists(\Modules\Box\Services\BoxService::class)) {
+            $boxIds = array_flip(app(\Modules\Box\Services\BoxService::class)->productIds());
+        }
+
+        $colorFamilies = app(ProductColorFamilyService::class);
+        $items = array_map(static function (array $item) use ($savedIds, $boxIds, $locale, $colorFamilies): array {
+            $id = (int) ($item['id'] ?? 0);
+            $item['card'] = ProductCardPresenter::make($item);
+            $item['is_saved'] = isset($savedIds[$id]);
+            $item['in_box'] = isset($boxIds[$id]);
+
+            return $colorFamilies->attach($item, $locale, $savedIds, $boxIds);
+        }, $items);
 
         return ApiResponse::success($items);
     }

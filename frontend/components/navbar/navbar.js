@@ -259,7 +259,7 @@
   }
 
   function resultCard(product) {
-    var name = escapeHtml(product.name || product.sku || 'LUFLY fixture');
+    var name = escapeHtml(product.name || getGuideText('namePending'));
     var sku = escapeHtml(product.sku || '');
     var slug = product.slug || product.id || '';
     var href = base + '/' + encodeURIComponent(locale()) + '/products/' + encodeURIComponent(slug);
@@ -285,21 +285,24 @@
         busy: 'Searching for ":q"...',
         empty: 'No architectural fixtures found matching "' + escapeHtml(query) + '"',
         hint: 'Search by product name, SKU code, or category',
-        viewAll: 'View all results'
+        viewAll: 'View all results',
+        namePending: 'Name not provided'
       },
       tr: {
         minChars: 'Aramaya başlamak için lütfen en az 2 karakter girin...',
         busy: '":q" için aranıyor...',
         empty: '"' + escapeHtml(query) + '" ile eşleşen ürün bulunamadı',
         hint: 'Ürün adı, stok kodu veya kategori ile arayabilirsiniz',
-        viewAll: 'Tüm sonuçları gör'
+        viewAll: 'Tüm sonuçları gör',
+        namePending: 'Ürün adı belirtilmemiş'
       },
       cs: {
         minChars: 'Pro zahájení vyhledávání zadejte alespoň 2 znaky...',
         busy: 'Vyhledává se ":q"...',
         empty: 'Nebyly nalezeny žádné produkty odpovídající "' + escapeHtml(query) + '"',
         hint: 'Hledejte podle názvu produktu, kódu SKU nebo kategorie',
-        viewAll: 'Zobrazit všechny výsledky'
+        viewAll: 'Zobrazit všechny výsledky',
+        namePending: 'Název produktu neuveden'
       }
     };
     var d = guides[loc] || guides.en;

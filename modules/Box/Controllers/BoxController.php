@@ -14,6 +14,7 @@ use Modules\Box\Models\Box;
 use Modules\Box\Services\BoxMailer;
 use Modules\Box\Services\BoxService;
 use Modules\Products\Models\Product;
+use Modules\Products\Services\ProductVisibility;
 
 /**
  * The quotation box — "collect the pieces, ask for their prices in one go".
@@ -282,7 +283,7 @@ class BoxController extends Controller
 
         $product = Product::query()->where('id', $productId)->where('status', 'active')->first();
 
-        return $product instanceof Product ? $product : null;
+        return $product instanceof Product && ProductVisibility::isSellable($product) ? $product : null;
     }
 
     private function sameDay(Box $box): bool

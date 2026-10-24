@@ -19,7 +19,7 @@ $statusOptions = ['draft', 'active', 'hidden', 'discontinued', 'coming_soon'];
 $status = $product->status ?? 'active';
 
 $connection = \Modules\Products\Models\Product::query()->connection();
-$categories = $connection->select("SELECT id, slug FROM categories WHERE deleted_at IS NULL AND status = 'active' ORDER BY sort_order ASC, id ASC");
+$categories = app(\App\Services\CategoryService::class)->flatten($translator->getLocale(), $fallbackLocale);
 $collections = $connection->select("SELECT id, slug FROM collections WHERE deleted_at IS NULL AND status = 'active' ORDER BY sort_order ASC, id ASC");
 $brands = $connection->select("SELECT id, name FROM brands WHERE deleted_at IS NULL AND status = 'active' ORDER BY id ASC");
 
@@ -74,7 +74,7 @@ $productId = $product === null ? 0 : (int) $product->id;
             <select class="input" id="category_id" name="category_id">
                 <option value="">-</option>
                 <?php foreach ($categories as $category): ?>
-                    <option value="<?= (int) $category['id'] ?>" <?= $categoryId === (string) $category['id'] ? 'selected' : '' ?>><?= e((string) $category['slug']) ?></option>
+                    <option value="<?= (int) $category['id'] ?>" title="<?= e((string) $category['slug']) ?>" <?= $categoryId === (string) $category['id'] ? 'selected' : '' ?>><?= e((string) ($category['path'] ?? $category['slug'])) ?></option>
                 <?php endforeach; ?>
             </select>
         </div>

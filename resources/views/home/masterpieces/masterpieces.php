@@ -2,11 +2,12 @@
 /** @var Core\View\View $view */
 $view->pushDeferredStyle('frontend/css/product-card.css');
 $view->pushDeferredStyle('frontend/home/masterpieces/masterpieces.css');
+$view->pushScript('frontend/js/product-card-variants.js');
 $view->pushScript('frontend/products/catalog/catalog.js');
 $view->pushDeferredStyle('frontend/components/skeleton/skeleton.css');
 $view->pushScript('frontend/components/skeleton/skeleton.js');
 /** @var array $featuredProducts */
-$fallbackImg = '/images/products/prod_146_1620-111-a.jpg';
+$fallbackImg = '/images/favicon.png';
 $featured = is_array($featuredProducts ?? null) ? $featuredProducts : [];
 ?>
 <section class="masterpieces-section scroll-section" id="featured">
@@ -58,13 +59,16 @@ $featured = is_array($featuredProducts ?? null) ? $featuredProducts : [];
                     $cardSlides = [['path' => $img, 'kind' => 'photo']];
                 }
                 $cardKinds = ['drawing' => trans('products.view_drawing'), 'situ' => trans('products.view_situ')];
-                $name = (string) ($product['name'] ?? ('LUFLY ' . ($product['sku'] ?? 'Sanitary Fixture')));
-                $sku = (string) ($product['sku'] ?? 'SKU-PENDING');
+                $name = trim((string) ($product['name'] ?? ''));
+                if ($name === '') {
+                    $name = trans('products.name_pending');
+                }
+                $sku = trim((string) ($product['sku'] ?? ''));
                 $desc = trim((string) ($product['short_description'] ?? ''));
                 $slug = (string) ($product['slug'] ?? ($product['id'] ?? ''));
                 $detailUrl = $slug !== '' ? route('products.show', ['slug' => $slug]) : route('products.index');
             ?>
-                <article class="pcard" style="--pcard-delay: <?= e((string) (0.06 * ($idx + 1))) ?>s">
+                <article class="pcard" data-product-card data-product-id="<?= (int) ($product['id'] ?? 0) ?>" style="--pcard-delay: <?= e((string) (0.06 * ($idx + 1))) ?>s">
                     <a class="pcard-media" href="<?= e($detailUrl) ?>"
                        <?= count($cardSlides) > 1 ? 'data-pcard-cycle data-pcard-kind-drawing="' . e($cardKinds['drawing']) . '" data-pcard-kind-situ="' . e($cardKinds['situ']) . '"' : '' ?>>
                         <?php foreach ($cardSlides as $ci => $slide): ?>
@@ -91,16 +95,19 @@ $featured = is_array($featuredProducts ?? null) ? $featuredProducts : [];
                         </span>
                     </a>
                     <div class="pcard-body">
-                        <div class="pcard-top">
-                            <span class="pcard-code"><?= e($sku) ?></span>
+                        <div class="pcard-top pcard-heading">
+                            <h3 class="pcard-title">
+                                <a href="<?= e($detailUrl) ?>"><?= e($name) ?></a>
+                            </h3>
                             <span class="pcard-no"><?= str_pad((string) ($idx + 1), 3, '0', STR_PAD_LEFT) ?></span>
                         </div>
-                        <h3 class="pcard-title">
-                            <a href="<?= e($detailUrl) ?>"><?= e($name) ?></a>
-                        </h3>
+                        <?php if ($sku !== ''): ?>
+                            <span class="pcard-code"><?= e($sku) ?></span>
+                        <?php endif; ?>
                         <?php if ($desc !== ''): ?>
                             <p class="pcard-desc"><?= e($desc) ?></p>
                         <?php endif; ?>
+                        <?= $view->component('product-color-variants', ['item' => $product]) ?>
                     </div>
                 </article>
             <?php endforeach; ?>

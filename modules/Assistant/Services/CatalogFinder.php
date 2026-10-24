@@ -4,7 +4,9 @@ declare(strict_types=1);
 
 namespace Modules\Assistant\Services;
 
+use App\Services\CategoryService;
 use Modules\Products\Models\Product;
+use Modules\Products\Services\ProductVisibility;
 
 /**
  * "Something like this" — searched inside our own catalogue.
@@ -81,7 +83,8 @@ final class CatalogFinder
         }
 
         $scanned = (int) config('assistant.find.scanned', 24);
-        $categoryId = $category !== '' ? $this->categoryId($category) : 0;
+        $categoryIds = $category !== '' ? $this->categoryIds($category) : [];
+        $categoryLookup = array_fill_keys($categoryIds, true);
         $table = [];
 
         /* one query per word; a product answering two words scores both.
@@ -111,9 +114,9 @@ final class CatalogFinder
         }
 
         /* the category the visitor named outweighs any single word */
-        if ($categoryId > 0) {
+        if ($categoryLookup !== []) {
             foreach ($table as $id => $entry) {
-                if ((int) ($entry['row']['category_id'] ?? 0) === $categoryId) {
+                if (isset($categoryLookup[(int) ($entry['row']['category_id'] ?? 0)])) {
                     $table[$id]['score'] += 12;
                 }
             }
@@ -289,6 +292,9 @@ final class CatalogFinder
         foreach ($connection->select('SELECT slug FROM categories WHERE deleted_at IS NULL') as $row) {
             $this->remember($out, (string) ($row['slug'] ?? ''));
         }
+        foreach ($connection->select('SELECT name FROM category_translations LIMIT 4000') as $row) {
+            $this->remember($out, (string) ($row['name'] ?? ''));
+        }
 
         return $this->index = $out;
     }
@@ -319,8 +325,8 @@ final class CatalogFinder
     }
 
     /**
-     * The category the visitor named, as a slug — "shower" finds `shower-sets`,
-     * "mixer" finds `washbasin-mixers`, and the product's own category too.
+     * The category the visitor named, as a slug — "shower" finds the shower
+     * branch, "mixer" finds a mixer branch, and the product's own category too.
      */
     public function categorySlug(string $text): string
     {
@@ -354,11 +360,14 @@ final class CatalogFinder
     /** @return array<string, string> slug => translated name */
     public function categories(string $locale = 'en'): array
     {
+        $fallback = (string) config('localization.fallback', 'en');
         $rows = Product::query()->connection()->select(
-            'SELECT c.slug, ct.name FROM categories c
+            "SELECT c.slug, COALESCE(ct.name, ctf.name, c.slug) AS name FROM categories c
              LEFT JOIN category_translations ct ON ct.category_id = c.id AND ct.locale = ?
-             WHERE c.deleted_at IS NULL ORDER BY c.sort_order ASC, c.id ASC',
-            [$locale],
+             LEFT JOIN category_translations ctf ON ctf.category_id = c.id AND ctf.locale = ?
+             WHERE c.deleted_at IS NULL AND c.status = 'active'
+             ORDER BY c.sort_order ASC, c.id ASC",
+            [$locale, $fallback],
         );
 
         $out = [];
@@ -379,12 +388,15 @@ final class CatalogFinder
     {
         $limit = $limit ?? (int) config('assistant.find.limit', 6);
         $params = ['active'];
-        $where = "p.deleted_at IS NULL AND p.status = ?";
-        $categoryId = $category !== '' ? $this->categoryId($category) : 0;
+        $where = "p.deleted_at IS NULL AND p.status = ? AND " . ProductVisibility::mediaReadySql('p');
+        $categoryIds = $category !== '' ? $this->categoryIds($category) : [];
 
-        if ($categoryId > 0) {
-            $where .= ' AND p.category_id = ?';
-            $params[] = $categoryId;
+        if ($category !== '' && $categoryIds === []) {
+            return [];
+        }
+        if ($categoryIds !== []) {
+            $where .= ' AND p.category_id IN (' . implode(',', array_fill(0, count($categoryIds), '?')) . ')';
+            $params = [...$params, ...$categoryIds];
         }
 
         $params[] = $limit;
@@ -422,7 +434,7 @@ final class CatalogFinder
             'code' => (string) ($item['sku'] ?? $item['model_code'] ?? ''),
             'url' => route('products.show', ['slug' => (string) $product->slug]),
             /* the chat renders these cards itself, so the picture is a full URL */
-            'image' => asset($image !== '' ? $image : '/images/products/prod_146_1620-111-a.jpg'),
+            'image' => asset($image !== '' ? $image : '/images/favicon.png'),
             'cat' => (string) ($item['category_name'] ?? ''),
             'size' => $this->size($item),
         ];
@@ -461,20 +473,17 @@ final class CatalogFinder
             ) AS match_score
             FROM products p
             WHERE p.deleted_at IS NULL AND p.status = 'active'
+              AND " . ProductVisibility::mediaReadySql('p') . "
             ORDER BY match_score DESC, p.is_featured DESC, p.sort_order ASC, p.id DESC
             LIMIT ?",
             [$like, $like, $like, $term, $like, $like, $like, $limit],
         );
     }
 
-    private function categoryId(string $slug): int
+    /** @return array<int, int> */
+    private function categoryIds(string $slug): array
     {
-        $rows = Product::query()->connection()->select(
-            'SELECT id FROM categories WHERE slug = ? AND deleted_at IS NULL LIMIT 1',
-            [$slug],
-        );
-
-        return (int) ($rows[0]['id'] ?? 0);
+        return app(CategoryService::class)->descendantIdsBySlug($slug);
     }
 
     private function categorySlugOf(int $productId): string

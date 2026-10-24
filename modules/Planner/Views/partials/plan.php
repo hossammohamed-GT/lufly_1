@@ -23,7 +23,7 @@ $handoff = (array) ($handoff ?? []);
 $renderEnabled = (bool) ($renderEnabled ?? false);
 $renderSoon = (bool) ($renderSoon ?? false);
 $fit = is_array($fit ?? null) ? $fit : null;
-$fallbackImg = asset('/images/products/prod_146_1620-111-a.jpg');
+$fallbackImg = asset('/images/favicon.png');
 ?>
 <div class="planp" data-planner-plan>
     <header class="planp-head">

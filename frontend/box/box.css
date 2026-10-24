@@ -109,6 +109,34 @@
   background: color-mix(in srgb, var(--lu-ink-950) 82%, transparent);
 }
 
+/* Catalogue cart: the same collection action, but genuinely unavailable until
+   the presenter finds a positive price. Disabled buttons carry no data-box-add. */
+.boxbtn-cart {
+  position: relative;
+  flex: 0 0 46px;
+  --box-size: 46px;
+  border-color: color-mix(in srgb, var(--ds-primary) 48%, var(--ds-border));
+  background: color-mix(in srgb, var(--ds-primary) 9%, transparent);
+  color: var(--ds-accent-text);
+}
+
+.boxbtn-cart:hover {
+  border-color: var(--ds-primary);
+  background: color-mix(in srgb, var(--ds-primary) 15%, transparent);
+  box-shadow: 0 0 22px color-mix(in srgb, var(--ds-primary) 18%, transparent);
+}
+
+.boxbtn-cart:disabled,
+.boxbtn-cart:disabled:hover {
+  cursor: not-allowed;
+  opacity: 0.62;
+  transform: none;
+  border-color: var(--ds-border);
+  background: color-mix(in srgb, var(--ds-surface-alt) 54%, transparent);
+  color: color-mix(in srgb, var(--ds-text-muted) 82%, var(--ds-text));
+  box-shadow: none;
+}
+
 /* on the product page it is a pill, next to the save button */
 .boxbtn-pill {
   --box-size: auto;

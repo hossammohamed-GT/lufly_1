@@ -14,10 +14,16 @@ $view->pushScript('frontend/favorites/favorites.js');
 /** @var array<string, mixed> $product */
 /** @var string $locale */
 
-$fallbackImg = '/images/products/prod_146_1620-111-a.jpg';
+$fallbackImg = '/images/favicon.png';
 $img = (string) ($product['image'] ?? '') !== '' ? (string) $product['image'] : $fallbackImg;
 $situImg = (string) ($product['situ_image'] ?? '');
 $modelCode = (string) ($product['model_code'] ?? $product['sku'] ?? '');
+$product['name'] = trim((string) ($product['name'] ?? ''));
+if ($product['name'] === '') {
+    /* Missing source names remain an explicit status; never use the model
+       code or an invented marketing title as the product's name. */
+    $product['name'] = trans('products.name_pending');
+}
 $variants = is_array($product['variants'] ?? null) ? $product['variants'] : [];
 $specs = is_array($product['specs'] ?? null) ? $product['specs'] : [];
 /* three independent image groups; each may hold any number of images */
@@ -240,7 +246,12 @@ if (feature('planner', true) && (bool) config('planner.enabled', true)) {
                     </div>
                 </div>
 
-                <?php $desc = (string) ($product['short_description'] ?? $product['description'] ?? ''); ?>
+                <?php
+                    $desc = trim((string) ($product['short_description'] ?? ''));
+                    if ($desc === '') {
+                        $desc = (string) ($product['description'] ?? '');
+                    }
+                ?>
                 <?php if ($desc !== ''): ?>
                     <div class="pdp-desc">
                         <h3 class="pdp-block-title"><?= e(trans('products.description')) ?></h3>
