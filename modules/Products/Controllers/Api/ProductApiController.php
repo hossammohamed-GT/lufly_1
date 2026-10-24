@@ -41,6 +41,7 @@ class ProductApiController extends Controller
             'locale' => (string) $request->query('locale', $this->translator->getLocale()),
             'status' => $status,
             'search' => (string) $request->query('q', ''),
+            'require_media' => !$canManage,
         ], $page, $perPage);
 
         $items = array_map(

@@ -102,6 +102,8 @@ return [
     'drawing_missing' => 'Teknik çizim yok',
     'visibility_updated' => 'Ürün görünürlüğü güncellendi.',
     'visibility_toggle_invalid' => 'Önce düzenleme formundan bu yaşam döngüsü durumunu değiştirin.',
+    'hidden_media_incomplete' => 'Gizli — görsel + çizim ekleyin',
+    'visibility_media_required' => 'Ürün görünürlüğünü değiştirmeden önce kullanılabilir bir ana görsel ve teknik çizim ekleyin.',
     'images_title' => 'Ürün görselleri',
     'images_intro' => 'Her görsel üç bölümden birine aittir ve bu bölümler ürün sayfasındaki sekmelerdir. Bölüm içindeki sıra, ziyaretçinin gördüğü sıradır.',
     'images_after_create' => 'Önce ürünü kaydedin - fotoğraf, teknik çizim ve montaj görsellerini buradan ekleyebilirsiniz.',

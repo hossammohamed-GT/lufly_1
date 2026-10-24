@@ -6,6 +6,7 @@ namespace Modules\Assistant\Services;
 
 use App\Services\CategoryService;
 use Modules\Products\Models\Product;
+use Modules\Products\Services\ProductVisibility;
 
 /**
  * "Something like this" — searched inside our own catalogue.
@@ -387,7 +388,7 @@ final class CatalogFinder
     {
         $limit = $limit ?? (int) config('assistant.find.limit', 6);
         $params = ['active'];
-        $where = "p.deleted_at IS NULL AND p.status = ?";
+        $where = "p.deleted_at IS NULL AND p.status = ? AND " . ProductVisibility::mediaReadySql('p');
         $categoryIds = $category !== '' ? $this->categoryIds($category) : [];
 
         if ($category !== '' && $categoryIds === []) {
@@ -472,6 +473,7 @@ final class CatalogFinder
             ) AS match_score
             FROM products p
             WHERE p.deleted_at IS NULL AND p.status = 'active'
+              AND " . ProductVisibility::mediaReadySql('p') . "
             ORDER BY match_score DESC, p.is_featured DESC, p.sort_order ASC, p.id DESC
             LIMIT ?",
             [$like, $like, $like, $term, $like, $like, $like, $limit],

@@ -53,7 +53,7 @@ class ProductService
     public function findTranslatedBySlug(string $slug, string $locale): array
     {
         $product = $this->products->findBySlug($slug);
-        if ($product === null || !in_array((string) $product->status, ['active', 'coming_soon'], true)) {
+        if ($product === null || !ProductVisibility::isPublic($product)) {
             throw new NotFoundException(trans('errors.product_not_found'));
         }
 
@@ -74,7 +74,7 @@ class ProductService
     public function findPublic(int $id): Product
     {
         $product = $this->find($id);
-        if (!in_array((string) $product->status, ['active', 'coming_soon'], true)) {
+        if (!ProductVisibility::isPublic($product)) {
             throw new NotFoundException(trans('errors.product_not_found'));
         }
 

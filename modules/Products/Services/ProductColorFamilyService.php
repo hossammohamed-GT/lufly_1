@@ -81,10 +81,10 @@ final class ProductColorFamilyService
             if (!isset($models[$memberId])) {
                 continue;
             }
-            /* Hiding one colour must not leak it through a visible sibling's
-               same-card selector. Keep the graph intact for the remaining
-               public members, but hydrate only products visitors may open. */
-            if (!in_array((string) $models[$memberId]->status, ['active', 'coming_soon'], true)) {
+            /* Hidden or media-incomplete colours must not leak through a
+               visible sibling's same-card selector. Keep the graph intact for
+               the remaining public members, but hydrate only openable items. */
+            if (!ProductVisibility::isPublic($models[$memberId])) {
                 continue;
             }
 

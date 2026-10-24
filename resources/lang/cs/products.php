@@ -102,6 +102,8 @@ return [
     'drawing_missing' => 'Chybí výkres',
     'visibility_updated' => 'Viditelnost produktu byla upravena.',
     'visibility_toggle_invalid' => 'Nejprve změňte tento stav životního cyklu v editačním formuláři.',
+    'hidden_media_incomplete' => 'Skryto — doplňte foto + výkres',
+    'visibility_media_required' => 'Před změnou viditelnosti produktu doplňte použitelný hlavní obrázek a výkres.',
     'images_title' => 'Obrázky produktu',
     'images_intro' => 'Každý obrázek patří do jedné ze tří sekcí a tyto sekce jsou záložkami na stránce produktu. Pořadí v sekci je pořadím, které vidí návštěvník.',
     'images_after_create' => 'Nejprve produkt uložte - fotografie, technické výkresy a snímky instalace pak přidáte přímo zde.',

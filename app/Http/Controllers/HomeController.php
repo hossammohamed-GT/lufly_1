@@ -10,6 +10,7 @@ use App\Services\SEOService;
 use Core\Http\RedirectResponse;
 use Core\Http\Response;
 use Core\Localization\Translator;
+use Modules\Products\Services\ProductVisibility;
 
 class HomeController extends Controller
 {
@@ -79,11 +80,15 @@ class HomeController extends Controller
            category, then keeps 4 for the grid - so each reload shows a
            different mix that always spans distinct categories. Curated
            (is_featured) products win within their category when any exist. */
-        $pool = $this->remember('home.featured-pool', static fn (): array => $connection->select(
-            "SELECT id, category_id, is_featured
-               FROM products
-              WHERE status = 'active' AND deleted_at IS NULL",
-        ));
+        /* Media readiness is intentionally uncached: uploading the missing
+           photo/drawing restores a product immediately, while removing either
+           one removes it from the showcase on the very next request. */
+        $pool = $connection->select(
+            "SELECT p.id, p.category_id, p.is_featured
+               FROM products p
+              WHERE p.status = 'active' AND p.deleted_at IS NULL
+                AND " . ProductVisibility::mediaReadySql('p'),
+        );
 
         $byCategory = [];
         foreach ($pool as $row) {

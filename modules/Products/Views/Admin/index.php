@@ -1,4 +1,6 @@
 <?php
+use Modules\Products\Services\ProductVisibility;
+
 /** @var Core\View\View $view */
 $view->layout('layouts.admin');
 /** @var Core\Database\Paginator $paginator */
@@ -39,10 +41,13 @@ foreach ($paginator->items() as $product) {
             $productImage = !empty($data['image']) ? asset((string) $data['image']) : null;
             $productName = (string) ($names[(int) $product->id] ?? $product->model_code ?? '');
             $status = (string) $product->status;
-            $hasMainImage = $product->gallery() !== [];
-            $hasDrawing = !empty($data['drawings']);
-            $isPublic = in_array($status, ['active', 'coming_soon'], true);
-            $canToggleVisibility = in_array($status, ['active', 'hidden'], true);
+            $media = ProductVisibility::media($product);
+            $hasMainImage = $media['photo'];
+            $hasDrawing = $media['drawing'];
+            $lifecyclePublic = in_array($status, ProductVisibility::PUBLIC_STATUSES, true);
+            $isPublic = $lifecyclePublic && $media['ready'];
+            $hiddenForMedia = $lifecyclePublic && !$media['ready'];
+            $canToggleVisibility = $media['ready'] && in_array($status, ['active', 'hidden'], true);
             ?>
             <tr>
                 <td><?= (int) $product->id ?></td>
@@ -75,7 +80,7 @@ foreach ($paginator->items() as $product) {
                 <td>
                     <div class="product-visibility">
                         <span class="badge badge-<?= $isPublic ? 'active' : 'inactive' ?>">
-                            <?= e(trans($isPublic ? 'products.visible' : 'products.hidden')) ?>
+                            <?= e(trans($isPublic ? 'products.visible' : ($hiddenForMedia ? 'products.hidden_media_incomplete' : 'products.hidden'))) ?>
                         </span>
                         <?php if ($canToggleVisibility): ?>
                             <form method="post" action="<?= e(route('admin.products.visibility', ['id' => $product->id])) ?>" class="inline-form">

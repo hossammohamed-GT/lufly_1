@@ -9,6 +9,7 @@ use App\Services\CategoryService;
 use Core\Database\Paginator;
 use Modules\Products\Models\Product;
 use Modules\Products\Services\ProductColorFamilyService;
+use Modules\Products\Services\ProductVisibility;
 
 class ProductRepository extends Repository
 {
@@ -40,6 +41,7 @@ class ProductRepository extends Repository
      *     category_id?: int|string,
      *     featured?: bool,
      *     sort?: string,
+     *     require_media?: bool,
      * } $filters
      */
     public function search(array $filters, int $page = 1, int $perPage = 12): Paginator
@@ -48,7 +50,9 @@ class ProductRepository extends Repository
         $perPage = max(1, $perPage);
         $locale = $filters['locale'] ?? 'en';
         $connection = Product::query()->connection();
-        $colorFamilies = in_array((string) ($filters['status'] ?? ''), ['active', 'coming_soon'], true)
+        $publicStatus = in_array((string) ($filters['status'] ?? ''), ProductVisibility::PUBLIC_STATUSES, true);
+        $requireMedia = (bool) ($filters['require_media'] ?? $publicStatus);
+        $colorFamilies = $publicStatus
             ? app(ProductColorFamilyService::class)
             : null;
 
@@ -63,6 +67,9 @@ class ProductRepository extends Repository
         if (($filters['status'] ?? '') !== '') {
             $where[] = 'p.status = ?';
             $whereBindings[] = $filters['status'];
+        }
+        if ($requireMedia) {
+            $where[] = ProductVisibility::mediaReadySql('p');
         }
 
         $hasCategoryFilter = !empty($filters['category_id']) || !empty($filters['category_slug']);
@@ -319,6 +326,7 @@ class ProductRepository extends Repository
              FROM products p
              WHERE p.deleted_at IS NULL
                AND p.status = ?
+               AND " . ProductVisibility::mediaReadySql('p') . "
                AND (
                    LOWER(p.model_code) LIKE LOWER(?)
                    OR EXISTS (

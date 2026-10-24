@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Services;
 
 use App\Services\Seo\UrlLocalizer;
+use Modules\Products\Services\ProductVisibility;
 
 /**
  * Dynamic XML sitemap generation. Every public URL is derived from the
@@ -62,10 +63,11 @@ class SitemapService
 
         while (true) {
             $products = (array) $connection->select(
-                "SELECT id, slug, updated_at
-                   FROM products
-                  WHERE status = 'active' AND deleted_at IS NULL AND id > ?
-                  ORDER BY id ASC
+                "SELECT p.id, p.slug, p.updated_at
+                   FROM products p
+                  WHERE p.status = 'active' AND p.deleted_at IS NULL AND p.id > ?
+                    AND " . ProductVisibility::mediaReadySql('p') . "
+                  ORDER BY p.id ASC
                   LIMIT ?",
                 [$lastId, $chunkSize]
             );

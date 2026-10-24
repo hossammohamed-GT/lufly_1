@@ -15,6 +15,7 @@ use Modules\Products\Requests\StoreProductRequest;
 use Modules\Products\Requests\UpdateProductRequest;
 use Modules\Products\Services\ProductMediaService;
 use Modules\Products\Services\ProductService;
+use Modules\Products\Services\ProductVisibility;
 
 class ProductController extends Controller
 {
@@ -250,8 +251,8 @@ class ProductController extends Controller
         $product = $this->products->find($id);
         $status = (string) $product->status;
         $query = [
-            'page' => max(1, (int) $request->query('page', '1')),
-            'q' => trim((string) $request->query('q', '')),
+            'page' => max(1, (int) $request->input('page', '1')),
+            'q' => trim((string) $request->input('q', '')),
         ];
         $target = route('admin.products.index') . '?' . http_build_query($query);
 
@@ -261,6 +262,11 @@ class ProductController extends Controller
         if (!in_array($status, ['active', 'hidden'], true)) {
             return $this->redirect($target)->with('_errors', [
                 'status' => [trans('products.visibility_toggle_invalid')],
+            ]);
+        }
+        if (!ProductVisibility::media($product)['ready']) {
+            return $this->redirect($target)->with('_errors', [
+                'status' => [trans('products.visibility_media_required')],
             ]);
         }
 

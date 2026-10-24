@@ -102,6 +102,8 @@ return [
     'drawing_missing' => 'No drawing',
     'visibility_updated' => 'Product visibility updated.',
     'visibility_toggle_invalid' => 'Change this lifecycle status from the edit form first.',
+    'hidden_media_incomplete' => 'Hidden — add photo + drawing',
+    'visibility_media_required' => 'Add a usable main image and drawing before changing product visibility.',
     'images_title' => 'Product images',
     'images_intro' => 'Every image belongs to one of three sections, and those sections are the tabs of the product page. Order inside a section is the order visitors see.',
     'images_after_create' => 'Save the product first - photos, technical drawings and installed shots can be added right here afterwards.',

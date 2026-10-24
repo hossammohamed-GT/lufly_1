@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Services;
 
 use Core\Database\DatabaseManager;
+use Modules\Products\Services\ProductVisibility;
 
 /**
  * Single source for the public category tree and descendant-aware filtering.
@@ -159,8 +160,9 @@ class CategoryService
         $counts = array_fill_keys(array_column($this->structure(), 'slug'), 0);
         $productRows = app(\Modules\Products\Services\ProductColorFamilyService::class)->collapseRows(
             $connection->select(
-                "SELECT id, category_id FROM products
-                 WHERE deleted_at IS NULL AND status = 'active'",
+                "SELECT p.id, p.category_id FROM products p
+                 WHERE p.deleted_at IS NULL AND p.status = 'active'
+                   AND " . ProductVisibility::mediaReadySql('p'),
             ),
         );
         $direct = [];
