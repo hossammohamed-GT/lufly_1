@@ -5,7 +5,6 @@
             <div class="footer-col">
                 <div class="footer-brand">
                     <img class="footer-brand-logo" src="<?= e(asset('images/logo.png')) ?>" alt="LUFLY" width="510" height="325" loading="lazy" decoding="async">
-                    <span class="footer-brand-name">LUFLY</span>
                 </div>
                 <p class="footer-brand-text">
                     <?= e(trans('common.footer_brand_desc')) ?>
