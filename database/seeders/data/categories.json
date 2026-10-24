@@ -831,7 +831,7 @@
     "slug": "mirrors.cabinet-mirrors",
     "parent": "mirrors",
     "sort_order": 4,
-    "image": "/images/categories/001-bathroom.jpg",
+    "image": "/images/categories/093-mirrors-cabinet-mirrors.jpg",
     "names": {
       "en": "Cabinet Mirrors"
     }
@@ -840,7 +840,7 @@
     "slug": "mirrors.magnifying-mirrors",
     "parent": "mirrors",
     "sort_order": 5,
-    "image": "/images/categories/001-bathroom.jpg",
+    "image": "/images/categories/094-mirrors-magnifying-mirrors.jpg",
     "names": {
       "en": "Magnifying Mirrors"
     }
@@ -849,7 +849,7 @@
     "slug": "mirrors.smart-mirrors",
     "parent": "mirrors",
     "sort_order": 6,
-    "image": "/images/categories/001-bathroom.jpg",
+    "image": "/images/categories/095-mirrors-smart-mirrors.jpg",
     "names": {
       "en": "Smart Mirrors"
     }
@@ -858,7 +858,7 @@
     "slug": "mirrors.other-mirrors",
     "parent": "mirrors",
     "sort_order": 7,
-    "image": "/images/categories/001-bathroom.jpg",
+    "image": "/images/categories/096-mirrors-other-mirrors.jpg",
     "names": {
       "en": "Other Mirrors"
     }
@@ -876,7 +876,7 @@
     "slug": "drains.shower-drains",
     "parent": "drains",
     "sort_order": 1,
-    "image": "/images/categories/071-shower-enclosures.jpg",
+    "image": "/images/categories/098-drains-shower-drains.jpg",
     "names": {
       "en": "Shower Drains"
     }
@@ -885,7 +885,7 @@
     "slug": "drains.floor-drains",
     "parent": "drains",
     "sort_order": 2,
-    "image": "/images/categories/071-shower-enclosures.jpg",
+    "image": "/images/categories/099-drains-floor-drains.jpg",
     "names": {
       "en": "Floor Drains"
     }
@@ -894,7 +894,7 @@
     "slug": "drains.by-application",
     "parent": "drains",
     "sort_order": 3,
-    "image": "/images/categories/071-shower-enclosures.jpg",
+    "image": "/images/categories/100-drains-by-application.jpg",
     "names": {
       "en": "By Application"
     }
@@ -903,7 +903,7 @@
     "slug": "drains.by-application.indoor",
     "parent": "drains.by-application",
     "sort_order": 1,
-    "image": "/images/categories/071-shower-enclosures.jpg",
+    "image": "/images/categories/101-drains-by-application-indoor.jpg",
     "names": {
       "en": "Indoor"
     }
@@ -912,7 +912,7 @@
     "slug": "drains.by-application.outdoor",
     "parent": "drains.by-application",
     "sort_order": 2,
-    "image": "/images/categories/071-shower-enclosures.jpg",
+    "image": "/images/categories/102-drains-by-application-outdoor.jpg",
     "names": {
       "en": "Outdoor"
     }
@@ -921,7 +921,7 @@
     "slug": "drains.by-mounting-type",
     "parent": "drains",
     "sort_order": 4,
-    "image": "/images/categories/071-shower-enclosures.jpg",
+    "image": "/images/categories/103-drains-by-mounting-type.jpg",
     "names": {
       "en": "By Mounting Type"
     }
