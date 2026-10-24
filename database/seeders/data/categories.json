@@ -201,7 +201,7 @@
     "slug": "bathroom.accessories.soap-dispensers",
     "parent": "bathroom.accessories",
     "sort_order": 5,
-    "image": "/images/categories/001-bathroom.jpg",
+    "image": "/images/categories/023-bathroom-accessories-soap-dispensers.jpg",
     "names": {
       "en": "Soap Dispensers"
     }
@@ -210,7 +210,7 @@
     "slug": "bathroom.accessories.soap-dishes",
     "parent": "bathroom.accessories",
     "sort_order": 6,
-    "image": "/images/categories/001-bathroom.jpg",
+    "image": "/images/categories/024-bathroom-accessories-soap-dishes.jpg",
     "names": {
       "en": "Soap Dishes"
     }
@@ -219,7 +219,7 @@
     "slug": "bathroom.accessories.toilet-brushes",
     "parent": "bathroom.accessories",
     "sort_order": 7,
-    "image": "/images/categories/001-bathroom.jpg",
+    "image": "/images/categories/025-bathroom-accessories-toilet-brushes.jpg",
     "names": {
       "en": "Toilet Brushes"
     }
@@ -228,7 +228,7 @@
     "slug": "bathroom.accessories.shelves",
     "parent": "bathroom.accessories",
     "sort_order": 8,
-    "image": "/images/categories/001-bathroom.jpg",
+    "image": "/images/categories/026-bathroom-accessories-shelves.jpg",
     "names": {
       "en": "Shelves"
     }
@@ -237,7 +237,7 @@
     "slug": "bathroom.accessories.grab-bars",
     "parent": "bathroom.accessories",
     "sort_order": 9,
-    "image": "/images/categories/001-bathroom.jpg",
+    "image": "/images/categories/027-bathroom-accessories-grab-bars.jpg",
     "names": {
       "en": "Grab Bars"
     }
@@ -246,7 +246,7 @@
     "slug": "bathroom.accessories.other-accessories",
     "parent": "bathroom.accessories",
     "sort_order": 10,
-    "image": "/images/categories/001-bathroom.jpg",
+    "image": "/images/categories/028-bathroom-accessories-other-accessories.jpg",
     "names": {
       "en": "Other Accessories"
     }
