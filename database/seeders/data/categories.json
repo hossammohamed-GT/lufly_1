@@ -552,7 +552,7 @@
     "slug": "accessibility.kids-bars-supports.grab-bars",
     "parent": "accessibility.kids-bars-supports",
     "sort_order": 1,
-    "image": "/images/categories/001-bathroom.jpg",
+    "image": "/images/categories/062-accessibility-kids-bars-supports-grab-bars.jpg",
     "names": {
       "en": "Grab Bars"
     }
@@ -561,7 +561,7 @@
     "slug": "accessibility.kids-bars-supports.foldable-supports",
     "parent": "accessibility.kids-bars-supports",
     "sort_order": 2,
-    "image": "/images/categories/001-bathroom.jpg",
+    "image": "/images/categories/063-accessibility-kids-bars-supports-foldable-supports.jpg",
     "names": {
       "en": "Foldable Supports"
     }
@@ -570,7 +570,7 @@
     "slug": "accessibility.kids-bars-supports.shower-seats",
     "parent": "accessibility.kids-bars-supports",
     "sort_order": 3,
-    "image": "/images/categories/001-bathroom.jpg",
+    "image": "/images/categories/064-accessibility-kids-bars-supports-shower-seats.jpg",
     "names": {
       "en": "Shower Seats"
     }
@@ -579,7 +579,7 @@
     "slug": "accessibility.kids-bars-supports.other-supports",
     "parent": "accessibility.kids-bars-supports",
     "sort_order": 4,
-    "image": "/images/categories/001-bathroom.jpg",
+    "image": "/images/categories/065-accessibility-kids-bars-supports-other-supports.jpg",
     "names": {
       "en": "Other Supports"
     }
@@ -588,7 +588,7 @@
     "slug": "accessibility.accessible-accessories",
     "parent": "accessibility",
     "sort_order": 3,
-    "image": "/images/categories/001-bathroom.jpg",
+    "image": "/images/categories/066-accessibility-accessible-accessories.jpg",
     "names": {
       "en": "Accessible Accessories"
     }
@@ -597,7 +597,7 @@
     "slug": "accessibility.accessible-accessories.accessible-mixers",
     "parent": "accessibility.accessible-accessories",
     "sort_order": 1,
-    "image": "/images/categories/001-bathroom.jpg",
+    "image": "/images/categories/067-accessibility-accessible-accessories-accessible-mixers.jpg",
     "names": {
       "en": "Accessible Mixers"
     }
@@ -606,7 +606,7 @@
     "slug": "accessibility.accessible-accessories.accessible-shower-systems",
     "parent": "accessibility.accessible-accessories",
     "sort_order": 2,
-    "image": "/images/categories/001-bathroom.jpg",
+    "image": "/images/categories/068-accessibility-accessible-accessories-accessible-shower-systems.jpg",
     "names": {
       "en": "Accessible Shower Systems"
     }
@@ -615,7 +615,7 @@
     "slug": "accessibility.accessible-accessories.accessible-mirrors",
     "parent": "accessibility.accessible-accessories",
     "sort_order": 3,
-    "image": "/images/categories/001-bathroom.jpg",
+    "image": "/images/categories/069-accessibility-accessible-accessories-accessible-mirrors.jpg",
     "names": {
       "en": "Accessible Mirrors"
     }
@@ -624,7 +624,7 @@
     "slug": "accessibility.accessible-accessories.other-accessories",
     "parent": "accessibility.accessible-accessories",
     "sort_order": 4,
-    "image": "/images/categories/001-bathroom.jpg",
+    "image": "/images/categories/070-accessibility-accessible-accessories-other-accessories.jpg",
     "names": {
       "en": "Other Accessories"
     }
@@ -642,7 +642,7 @@
     "slug": "shower-enclosures.sliding-enclosures",
     "parent": "shower-enclosures",
     "sort_order": 1,
-    "image": "/images/categories/071-shower-enclosures.jpg",
+    "image": "/images/categories/072-shower-enclosures-sliding-enclosures.jpg",
     "names": {
       "en": "Sliding Enclosures"
     }

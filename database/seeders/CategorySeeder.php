@@ -29,11 +29,13 @@ class CategorySeeder extends Seeder
         }
 
         $categoryIds = [];
+        $categoryImages = [];
         $depths = [];
         foreach ($this->db->table('categories')->get() as $category) {
             $slug = (string) $category['slug'];
             $id = (int) $category['id'];
             $categoryIds[$slug] = $id;
+            $categoryImages[$slug] = trim((string) ($category['image'] ?? ''));
             $depths[$slug] = $this->depth($id);
         }
 
@@ -47,7 +49,20 @@ class CategorySeeder extends Seeder
                     throw new \RuntimeException('Every seeded category needs a slug.');
                 }
 
+                $image = trim((string) ($category['image'] ?? ''));
+
                 if (isset($categoryIds[$slug])) {
+                    /* Existing categories still need their curated visual
+                       synchronized; skipping them leaves the storefront on
+                       the old shared fallback after an image-only update. */
+                    if (($categoryImages[$slug] ?? '') !== $image) {
+                        $this->db->table('categories')->where('id', $categoryIds[$slug])->update([
+                            'image' => $image !== '' ? $image : null,
+                            'updated_at' => date('Y-m-d H:i:s'),
+                        ]);
+                        $categoryImages[$slug] = $image;
+                    }
+
                     unset($pending[$index]);
                     $progress = true;
                     continue;
@@ -68,7 +83,7 @@ class CategorySeeder extends Seeder
                 $categoryId = (int) $this->db->insert('categories', [
                     'parent_id' => $parentSlug === '' ? null : $categoryIds[$parentSlug],
                     'slug' => $slug,
-                    'image' => trim((string) ($category['image'] ?? '')) ?: null,
+                    'image' => $image !== '' ? $image : null,
                     'icon' => null,
                     'is_featured' => $depth === 1 ? 1 : 0,
                     'sort_order' => (int) ($category['sort_order'] ?? 0),
