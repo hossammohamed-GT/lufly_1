@@ -7,6 +7,7 @@ namespace Core\Console\Commands;
 use Core\Console\Command;
 use Core\Console\SchemaDiscovery;
 use Core\Database\DatabaseManager;
+use Core\Database\Schema\SchemaBuilder;
 
 /**
  * Builds lufly-database.sql - a phpMyAdmin / XAMPP ready MySQL dump with the
@@ -69,8 +70,11 @@ final class ExportMysqlCommand extends Command
         'announcement_translations',
         'ai_cache',
         'ai_usage',
+        'assistant_leads',
         'favorites',
         'favorite_items',
+        'boxes',
+        'box_items',
     ];
 
     public function handle(array $args, array $options): int
@@ -106,7 +110,27 @@ final class ExportMysqlCommand extends Command
             $definitions[$definition->tableName()] = $definition;
         }
 
-        foreach (self::TABLE_ORDER as $table) {
+        $definitionTables = array_keys($definitions);
+        $unlistedDefinitions = array_diff($definitionTables, self::TABLE_ORDER);
+        $missingDefinitions = array_diff(self::TABLE_ORDER, ['migrations'], $definitionTables);
+        if ($unlistedDefinitions !== [] || $missingDefinitions !== []) {
+            throw new \RuntimeException(sprintf(
+                'MySQL export table map is incomplete. Unlisted: [%s]; missing definitions: [%s].',
+                implode(', ', $unlistedDefinitions),
+                implode(', ', $missingDefinitions),
+            ));
+        }
+
+        $sourceTables = (new SchemaBuilder($source))->listTables();
+        $unlistedSourceTables = array_diff($sourceTables, self::TABLE_ORDER);
+        if ($unlistedSourceTables !== []) {
+            throw new \RuntimeException(
+                'Refusing an incomplete MySQL export. Add these source tables to TABLE_ORDER: '
+                . implode(', ', $unlistedSourceTables),
+            );
+        }
+
+        foreach (array_reverse(self::TABLE_ORDER) as $table) {
             $sql[] = 'DROP TABLE IF EXISTS `' . $table . '`;';
         }
         $sql[] = '';
@@ -126,12 +150,7 @@ DDL;
                 continue;
             }
 
-            $definition = $definitions[$table] ?? null;
-            if ($definition === null) {
-                $this->line("-- skipping {$table} (no schema definition)");
-                continue;
-            }
-
+            $definition = $definitions[$table];
             $sql[] = '-- table: ' . $table;
             foreach ($definition->blueprint()->toStatements('mysql') as $statement) {
                 $sql[] = $statement . ' ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;';
@@ -146,22 +165,12 @@ DDL;
         $sql[] = '-- =====================================================================';
 
         foreach (self::TABLE_ORDER as $table) {
-            $exists = $table === 'migrations'
-                ? $source->selectOne("SELECT name FROM sqlite_master WHERE type = 'table' AND name = ?", [$table]) !== null
-                || $source->selectOne('SHOW TABLES LIKE ?', [$table]) !== null
-                : true;
-
-            if (!$exists) {
+            if (!in_array($table, $sourceTables, true)) {
+                $this->line("-- no data exported for {$table} (source table is absent)");
                 continue;
             }
 
-            try {
-                $rows = $source->select("SELECT * FROM {$table} ORDER BY id ASC");
-            } catch (\Throwable) {
-                $this->line("-- no data exported for {$table}");
-                continue;
-            }
-
+            $rows = $source->select("SELECT * FROM {$table} ORDER BY id ASC");
             if ($rows === []) {
                 continue;
             }
@@ -179,7 +188,9 @@ DDL;
         $sql[] = '';
         $sql[] = '-- End of lufly-database.sql';
 
-        file_put_contents($out, implode(PHP_EOL, $sql) . PHP_EOL);
+        if (file_put_contents($out, implode(PHP_EOL, $sql) . PHP_EOL) === false) {
+            throw new \RuntimeException('Unable to write MySQL export to ' . $out);
+        }
 
         $this->success('Wrote MySQL export to ' . $out);
 
