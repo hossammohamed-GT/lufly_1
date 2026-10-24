@@ -413,6 +413,10 @@
 .pcard-swatch--steel { background: linear-gradient(135deg, #e8e8e2, #858b87 40%, #c4c7c1 62%, #606864); }
 .pcard-swatch--pink { background: linear-gradient(145deg, #ffd8e2, #d88ea3); }
 .pcard-swatch--blue { background: linear-gradient(145deg, #bfe4f4, #427c9c); }
+/* Royal Blue is a deep saturated blue; Light Blue is the pale cyan-blue
+   finish. Separate keys keep both static and same-card option swatches true. */
+.pcard-swatch--royal-blue { background: linear-gradient(145deg, #7387c5, #314f9a 48%, #172e67); }
+.pcard-swatch--light-blue { background: linear-gradient(145deg, #d5f7fb, #79d5e8 52%, #3da9c7); }
 .pcard-swatch--green { background: linear-gradient(145deg, #c7e5d4, #4f8267); }
 .pcard-swatch--yellow { background: linear-gradient(145deg, #fff3a9, #d3ad32); }
 .pcard-swatch--cyan { background: linear-gradient(145deg, #c5f1ef, #4d9e9d); }
