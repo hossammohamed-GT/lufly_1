@@ -431,6 +431,7 @@
 }
 .category-root-context {
   position: relative;
+  isolation: isolate;
   display: flex;
   flex-direction: column;
   justify-content: center;
@@ -438,12 +439,23 @@
   min-width: 0;
   padding: 14px 18px;
   border-inline-end: 1px solid var(--ce-line);
-  background: color-mix(in srgb, var(--ce-accent) 6%, var(--ce-soft));
+  color: #fff;
+  background: #102d2c;
+}
+.category-root-context::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  background:
+    linear-gradient(180deg, rgba(3, 18, 18, 0.24) 0%, rgba(3, 18, 18, 0.84) 100%),
+    linear-gradient(90deg, rgba(3, 18, 18, 0.38) 0%, rgba(3, 18, 18, 0.1) 100%);
+  pointer-events: none;
 }
 .category-root-context::after {
   content: "";
   position: absolute;
-  z-index: 2;
+  z-index: 3;
   inset-inline-end: -5px;
   inset-block-start: calc(50% - 5px);
   width: 10px;
@@ -452,6 +464,12 @@
   transform: rotate(45deg);
   pointer-events: none;
 }
+.category-root-context-heading,
+.category-root-context-meta,
+.category-root-context-cta {
+  position: relative;
+  z-index: 2;
+}
 .category-root-context-heading {
   display: flex;
   align-items: center;
@@ -459,18 +477,21 @@
   min-width: 0;
 }
 .category-root-context-image {
-  flex: 0 0 52px;
-  width: 52px;
-  height: 58px;
-  padding: 1px;
-  clip-path: polygon(25% 0, 75% 0, 100% 50%, 75% 100%, 25% 100%, 0 50%);
-  background: color-mix(in srgb, var(--ce-accent) 72%, var(--ds-border));
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  display: block;
+  padding: 0;
+  background: #102d2c;
+  pointer-events: none;
 }
 .category-root-context-image img {
+  display: block;
   width: 100%;
   height: 100%;
   object-fit: cover;
-  clip-path: inherit;
+  object-position: center;
+  filter: saturate(0.86) contrast(1.04);
 }
 .category-root-context-title { min-width: 0; }
 .category-root-context-title small {
@@ -482,7 +503,7 @@
   line-height: 1.35;
   letter-spacing: 0.11em;
   text-transform: uppercase;
-  color: var(--ds-text-muted);
+  color: rgba(255, 255, 255, 0.76);
 }
 .category-root-context-title strong {
   display: block;
@@ -492,26 +513,27 @@
   font-weight: 560;
   line-height: 1.05;
   letter-spacing: -0.035em;
-  color: var(--ds-text);
+  color: #fff;
 }
 .category-root-context-meta { display: flex; flex-wrap: wrap; gap: 4px; }
 .category-root-context-meta span {
   padding: 4px 5px;
-  border: 1px solid var(--ce-line);
+  border: 1px solid rgba(255, 255, 255, 0.26);
   border-radius: 3px;
+  background: rgba(3, 18, 18, 0.24);
   font-family: var(--font-mono);
   font-size: 7px;
   line-height: 1;
   letter-spacing: 0.04em;
   text-transform: uppercase;
-  color: var(--ds-text-muted);
+  color: rgba(255, 255, 255, 0.82);
 }
 .category-root-context-cta {
   display: inline-flex;
   align-items: center;
   align-self: flex-start;
   gap: 7px;
-  color: var(--ds-text);
+  color: #fff;
   text-decoration: none;
   font-size: 10px;
   font-weight: 650;
@@ -519,7 +541,7 @@
   transition: color 180ms ease;
 }
 .category-root-context-cta svg { width: 15px; height: 15px; transition: transform 220ms ease; }
-.category-root-context-cta:hover { color: var(--ce-accent); }
+.category-root-context-cta:hover { color: #b9f3ec; }
 .category-root-context-cta:hover svg { transform: translateX(3px); }
 .category-panel-hero.has-root-context .category-panel-level b {
   border-radius: 0;
@@ -811,6 +833,7 @@
   outline: 2px solid var(--ce-accent);
   outline-offset: 3px;
 }
+.category-root-context-cta:focus-visible { outline-color: #fff; }
 
 .catalog-active-filter { display: flex; justify-content: flex-end; margin: -14px 0 24px; }
 .catalog-active-filter[hidden] { display: none !important; }
@@ -858,7 +881,6 @@
   .category-panel-hero.has-root-context { grid-template-columns: 164px minmax(0, 1fr) 130px; }
   .category-root-context { padding-inline: 12px; }
   .category-root-context-heading { gap: 8px; }
-  .category-root-context-image { flex-basis: 46px; width: 46px; height: 52px; }
   .category-root-context-title strong { font-size: 18px; }
   .category-child-grid { grid-template-columns: repeat(3, minmax(0, 1fr)); }
 }
@@ -911,7 +933,6 @@
     inset-block-end: -5px;
   }
   .category-root-context-heading { grid-area: heading; gap: 9px; }
-  .category-root-context-image { flex-basis: 42px; width: 42px; height: 47px; }
   .category-root-context-title small { margin-bottom: 3px; }
   .category-root-context-title strong { font-size: 18px; }
   .category-root-context-meta { grid-area: meta; align-self: start; }

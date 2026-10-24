@@ -167,11 +167,11 @@ $isLifestyle = static fn (string $path): bool => (bool) preg_match('/\.jpe?g$/i'
                                             $contextChildren = is_array($contextRoot['children'] ?? null) ? $contextRoot['children'] : [];
                                             ?>
                                             <div class="category-root-context">
+                                                <span class="category-root-context-image<?= $isLifestyle($contextImage) ? ' is-lifestyle' : '' ?>" aria-hidden="true">
+                                                    <img src="<?= e(asset(ltrim($contextImage, '/'))) ?>" alt="" loading="lazy" decoding="async" width="320" height="220"
+                                                         onerror="this.onerror=null;this.src='<?= e($fallbackImage) ?>';">
+                                                </span>
                                                 <div class="category-root-context-heading">
-                                                    <span class="category-root-context-image<?= $isLifestyle($contextImage) ? ' is-lifestyle' : '' ?>">
-                                                        <img src="<?= e(asset(ltrim($contextImage, '/'))) ?>" alt="" loading="lazy" decoding="async" width="180" height="200"
-                                                             onerror="this.onerror=null;this.src='<?= e($fallbackImage) ?>';">
-                                                    </span>
                                                     <span class="category-root-context-title">
                                                         <small><?= e($levelLabel(1)) ?></small>
                                                         <strong><?= e($contextName) ?></strong>
