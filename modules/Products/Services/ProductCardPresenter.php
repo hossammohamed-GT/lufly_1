@@ -34,7 +34,7 @@ final class ProductCardPresenter
         'chrome nickel' => ['nickel', 'Chrome Nickel'],
         'chrome nickle' => ['nickel', 'Chrome Nickel'],
         'royal blue' => ['royal-blue', 'Royal Blue'],
-        'dark blue' => ['blue', 'Dark Blue'],
+        'dark blue' => ['dark-blue', 'Dark Blue'],
         'light blue' => ['light-blue', 'Light Blue'],
         'brushed stainless steel' => ['steel', 'Brushed Stainless Steel'],
         'stainless steel' => ['steel', 'Stainless Steel'],
@@ -233,7 +233,28 @@ final class ProductCardPresenter
     {
         $finishes = [];
         $seen = [];
-        $add = static function (string $value, bool $knownOnly = false) use (&$finishes, &$seen): void {
+        $add = static function (string $value, bool $knownOnly = false) use (&$add, &$finishes, &$seen): void {
+            /* Slash-separated finishes are compound colours too (White/Blue).
+               Parse each written tone instead of silently keeping only the first. */
+            $parts = preg_split('#\s*/\s*#u', $value) ?: [$value];
+            if (count($parts) > 1) {
+                $knownParts = [];
+                foreach ($parts as $part) {
+                    $candidate = self::finish((string) $part);
+                    if ($candidate['key'] === 'neutral' || $candidate['label'] === '') {
+                        $knownParts = [];
+                        break;
+                    }
+                    $knownParts[] = $part;
+                }
+                if ($knownParts !== []) {
+                    foreach ($knownParts as $part) {
+                        $add((string) $part, $knownOnly);
+                    }
+                    return;
+                }
+            }
+
             $finish = self::finish($value);
             $key = strtolower($finish['label']);
             if ($finish['label'] === '' || ($knownOnly && $finish['key'] === 'neutral') || isset($seen[$key])) {
