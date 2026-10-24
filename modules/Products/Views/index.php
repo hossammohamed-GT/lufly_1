@@ -30,6 +30,7 @@ $view->pushScript('frontend/box/box.js');
 $categories = $categories ?? [];
 $categoryCounts = $categoryCounts ?? [];
 $activeCategory = $activeCategory ?? '';
+$categoryFallbackName = $categoryFallbackName ?? null;
 $searchQuery = $searchQuery ?? '';
 $sort = $sort ?? 'curated';
 $total = (int) $paginator->total();
@@ -188,6 +189,15 @@ $colorFamilies = app(\Modules\Products\Services\ProductColorFamilyService::class
                 <?php endfor; ?>
             </div>
             <div class="catalog-grid" data-catalog-grid data-sk-real>
+                <?php if ($categoryFallbackName !== null): ?>
+                    <div class="catalog-category-fallback" data-category-fallback role="status">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" aria-hidden="true">
+                            <circle cx="12" cy="12" r="9"></circle>
+                            <path d="M12 10.5v6M12 7.25v.25" stroke-linecap="round"></path>
+                        </svg>
+                        <p><?= e(trans('products.category_fallback_notice', ['category' => $categoryFallbackName])) ?></p>
+                    </div>
+                <?php endif; ?>
                 <?php if ($paginator->items() === []): ?>
                     <div class="catalog-empty">
                         <span class="catalog-empty-code">404 &middot; <?= e(trans('common.no_results')) ?></span>

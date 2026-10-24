@@ -88,6 +88,7 @@ return [
     'category_results_below' => 'Ürünler aşağıda',
     'category_results_loading' => 'Ürünler güncelleniyor…',
     'category_results_error' => 'Ürünler güncellenemedi. Tekrar deneyin.',
+    'category_fallback_notice' => 'Bu bölümdeki ürünleri sınıflandırıyoruz. Şimdilik :category koleksiyonunun tamamını görüntülüyorsunuz.',
 
     /* yönetim - ürün görsel bölümleri (fotoğraf / çizim / montaj) */
     'media_status' => 'Medya',

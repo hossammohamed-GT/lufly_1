@@ -88,6 +88,7 @@ return [
     'category_results_below' => 'Products are below',
     'category_results_loading' => 'Updating products…',
     'category_results_error' => 'We couldn’t update the products. Try again.',
+    'category_fallback_notice' => 'We’re organizing products into this section. For now, you’re viewing the full :category collection.',
 
     /* admin - product image sections (photos / drawings / installed) */
     'media_status' => 'Media',

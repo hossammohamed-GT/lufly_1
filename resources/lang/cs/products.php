@@ -88,6 +88,7 @@ return [
     'category_results_below' => 'Produkty jsou níže',
     'category_results_loading' => 'Aktualizujeme produkty…',
     'category_results_error' => 'Produkty se nepodařilo aktualizovat. Zkuste to znovu.',
+    'category_fallback_notice' => 'Produkty v této sekci právě třídíme. Prozatím zobrazujeme celou kolekci hlavní kategorie: :category.',
 
     /* administrace - sekce obrázků produktu (fotografie / výkresy / instalace) */
     'media_status' => 'Média',

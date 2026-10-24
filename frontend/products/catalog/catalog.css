@@ -637,6 +637,34 @@
   background: none;
 }
 
+/* ---------- empty-branch collection notice ---------- */
+.catalog-grid .catalog-category-fallback {
+  grid-column: 1 / -1;
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  min-width: 0;
+  padding: 11px 14px;
+  color: var(--ds-text-muted);
+  font-size: 12px;
+  line-height: 1.55;
+  background: color-mix(in srgb, var(--ds-primary) 5%, var(--ds-surface));
+  border: 1px solid color-mix(in srgb, var(--ds-primary) 18%, var(--ds-border));
+  border-radius: 12px;
+}
+.catalog-category-fallback svg {
+  flex: 0 0 auto;
+  width: 16px;
+  height: 16px;
+  margin-top: 2px;
+  color: var(--ds-primary);
+}
+.catalog-category-fallback p {
+  min-width: 0;
+  margin: 0;
+  overflow-wrap: anywhere;
+}
+
 /* ---------- live filtering ---------- */
 .catalog-grid { transition: opacity 180ms ease; }
 .catalog-grid.is-filtering { opacity: 0.42; pointer-events: none; }

@@ -39,6 +39,9 @@ class ProductController extends Controller
             $sort = 'curated';
         }
         $fallback = (string) config('localization.fallback', 'en');
+        $categoryFallback = $categorySlug !== '' && $categoryId === 0
+            ? $this->categories->rootFallbackBySlug($categorySlug, 'active', true)
+            : null;
 
         $paginator = $this->products->paginate([
             'locale' => $locale,
@@ -51,6 +54,16 @@ class ProductController extends Controller
 
         $categories = $this->categories->tree($locale, $fallback);
         $categoryCounts = $this->categories->productCounts();
+        $categoryFallbackName = null;
+        if ($categoryFallback !== null) {
+            $categoryFallbackName = (string) $categoryFallback['slug'];
+            foreach ($categories as $rootCategory) {
+                if ((int) $rootCategory['id'] === (int) $categoryFallback['id']) {
+                    $categoryFallbackName = (string) $rootCategory['name'];
+                    break;
+                }
+            }
+        }
 
         $pageTitle = trans('products.title');
         $catalogDescs = [
@@ -108,6 +121,7 @@ class ProductController extends Controller
             'categories' => $categories,
             'categoryCounts' => $categoryCounts,
             'activeCategory' => $categorySlug,
+            'categoryFallbackName' => $categoryFallbackName,
             'searchQuery' => $searchQuery,
             'sort' => $sort,
             'locale' => $locale,

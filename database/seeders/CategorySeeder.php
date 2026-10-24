@@ -50,6 +50,7 @@ class CategorySeeder extends Seeder
                 }
 
                 $image = trim((string) ($category['image'] ?? ''));
+                $names = is_array($category['names'] ?? null) ? $category['names'] : [];
 
                 if (isset($categoryIds[$slug])) {
                     /* Existing categories still need their curated visual
@@ -62,6 +63,7 @@ class CategorySeeder extends Seeder
                         ]);
                         $categoryImages[$slug] = $image;
                     }
+                    $this->syncNames($categoryIds[$slug], $names);
 
                     unset($pending[$index]);
                     $progress = true;
@@ -78,7 +80,6 @@ class CategorySeeder extends Seeder
                     throw new \RuntimeException("Category [{$slug}] exceeds the three-level catalog limit.");
                 }
 
-                $names = is_array($category['names'] ?? null) ? $category['names'] : [];
                 $now = date('Y-m-d H:i:s');
                 $categoryId = (int) $this->db->insert('categories', [
                     'parent_id' => $parentSlug === '' ? null : $categoryIds[$parentSlug],
@@ -93,18 +94,7 @@ class CategorySeeder extends Seeder
                     'updated_at' => $now,
                 ]);
 
-                foreach ($names as $locale => $name) {
-                    $name = trim((string) $name);
-                    if ($name === '') {
-                        continue;
-                    }
-                    $this->db->insert('category_translations', [
-                        'category_id' => $categoryId,
-                        'locale' => (string) $locale,
-                        'name' => $name,
-                        'description' => null,
-                    ]);
-                }
+                $this->syncNames($categoryId, $names);
 
                 $categoryIds[$slug] = $categoryId;
                 $depths[$slug] = $depth;
@@ -117,6 +107,37 @@ class CategorySeeder extends Seeder
             }
 
             $pending = array_values($pending);
+        }
+    }
+
+    /** @param array<string, mixed> $names */
+    private function syncNames(int $categoryId, array $names): void
+    {
+        foreach ($names as $locale => $name) {
+            $locale = trim((string) $locale);
+            $name = trim((string) $name);
+            if ($locale === '' || $name === '') {
+                continue;
+            }
+
+            $translations = $this->db->table('category_translations');
+            $existing = $translations
+                ->where('category_id', $categoryId)
+                ->where('locale', $locale)
+                ->first();
+            if ($existing === null) {
+                $translations->insert([
+                    'category_id' => $categoryId,
+                    'locale' => $locale,
+                    'name' => $name,
+                    'description' => null,
+                ]);
+            } elseif ((string) $existing['name'] !== $name) {
+                $this->db->table('category_translations')
+                    ->where('category_id', $categoryId)
+                    ->where('locale', $locale)
+                    ->update(['name' => $name]);
+            }
         }
     }
 

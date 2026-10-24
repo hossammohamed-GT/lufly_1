@@ -50,7 +50,8 @@ class ProductRepository extends Repository
         $perPage = max(1, $perPage);
         $locale = $filters['locale'] ?? 'en';
         $connection = Product::query()->connection();
-        $publicStatus = in_array((string) ($filters['status'] ?? ''), ProductVisibility::PUBLIC_STATUSES, true);
+        $status = (string) ($filters['status'] ?? '');
+        $publicStatus = in_array($status, ProductVisibility::PUBLIC_STATUSES, true);
         $requireMedia = (bool) ($filters['require_media'] ?? $publicStatus);
         $colorFamilies = $publicStatus
             ? app(ProductColorFamilyService::class)
@@ -73,9 +74,17 @@ class ProductRepository extends Repository
         }
 
         $hasCategoryFilter = !empty($filters['category_id']) || !empty($filters['category_slug']);
+        $categoryService = app(CategoryService::class);
+        $categorySlug = (string) ($filters['category_slug'] ?? '');
         $categoryIds = !empty($filters['category_id'])
-            ? app(CategoryService::class)->descendantIds((int) $filters['category_id'])
-            : app(CategoryService::class)->descendantIdsBySlug((string) ($filters['category_slug'] ?? ''));
+            ? $categoryService->descendantIds((int) $filters['category_id'])
+            : $categoryService->descendantIdsBySlug($categorySlug);
+        if ($publicStatus && empty($filters['category_id']) && $categorySlug !== '' && $categoryIds !== []) {
+            $fallbackRoot = $categoryService->rootFallbackBySlug($categorySlug, $status, $requireMedia);
+            if ($fallbackRoot !== null) {
+                $categoryIds = $categoryService->descendantIds((int) $fallbackRoot['id']);
+            }
+        }
         if ($hasCategoryFilter) {
             if ($categoryIds === []) {
                 $where[] = '1 = 0';
@@ -306,11 +315,18 @@ class ProductRepository extends Repository
         $like = '%' . $searchValue . '%';
 
         $categoryClause = '';
+        $categoryService = app(CategoryService::class);
         $categoryIds = $categorySlug !== ''
-            ? app(CategoryService::class)->descendantIdsBySlug($categorySlug)
+            ? $categoryService->descendantIdsBySlug($categorySlug)
             : [];
         if ($categorySlug !== '' && $categoryIds === []) {
             return [];
+        }
+        if ($categorySlug !== '' && $categoryIds !== []) {
+            $fallbackRoot = $categoryService->rootFallbackBySlug($categorySlug, $status, true);
+            if ($fallbackRoot !== null) {
+                $categoryIds = $categoryService->descendantIds((int) $fallbackRoot['id']);
+            }
         }
         if ($categoryIds !== []) {
             $categoryClause = ' AND p.category_id IN ('

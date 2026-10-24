@@ -5,7 +5,9 @@
     "sort_order": 1,
     "image": "/images/categories/001-bathroom.jpg",
     "names": {
-      "en": "Bathroom"
+      "en": "Bathroom",
+      "tr": "Banyo",
+      "cs": "Koupelna"
     }
   },
   {
@@ -14,7 +16,9 @@
     "sort_order": 1,
     "image": "/images/categories/002-bathroom-sanitary-ware.jpg",
     "names": {
-      "en": "Sanitary Ware"
+      "en": "Sanitary Ware",
+      "tr": "Vitrifiye",
+      "cs": "Sanitární keramika"
     }
   },
   {
@@ -23,7 +27,9 @@
     "sort_order": 1,
     "image": "/images/categories/003-bathroom-sanitary-ware-toilets.jpg",
     "names": {
-      "en": "Toilets"
+      "en": "Toilets",
+      "tr": "Klozetler",
+      "cs": "Toalety"
     }
   },
   {
@@ -32,7 +38,9 @@
     "sort_order": 2,
     "image": "/images/categories/004-bathroom-sanitary-ware-wash-basins.jpg",
     "names": {
-      "en": "Wash Basins"
+      "en": "Wash Basins",
+      "tr": "Lavabolar",
+      "cs": "Umyvadla"
     }
   },
   {
@@ -41,7 +49,9 @@
     "sort_order": 3,
     "image": "/images/categories/005-bathroom-sanitary-ware-bidets.jpg",
     "names": {
-      "en": "Bidets"
+      "en": "Bidets",
+      "tr": "Bideler",
+      "cs": "Bidety"
     }
   },
   {
@@ -50,7 +60,9 @@
     "sort_order": 4,
     "image": "/images/categories/006-bathroom-sanitary-ware-urinals.jpg",
     "names": {
-      "en": "Urinals"
+      "en": "Urinals",
+      "tr": "Pisuvarlar",
+      "cs": "Pisoáry"
     }
   },
   {
@@ -59,7 +71,9 @@
     "sort_order": 5,
     "image": "/images/categories/007-bathroom-sanitary-ware-squatting-pans.jpg",
     "names": {
-      "en": "Squatting Pans"
+      "en": "Squatting Pans",
+      "tr": "Alaturka Tuvalet Taşları",
+      "cs": "Toalety na dřep"
     }
   },
   {
@@ -68,7 +82,9 @@
     "sort_order": 6,
     "image": "/images/categories/008-bathroom-sanitary-ware-cisterns.jpg",
     "names": {
-      "en": "Cisterns"
+      "en": "Cisterns",
+      "tr": "Rezervuarlar",
+      "cs": "Splachovací nádržky"
     }
   },
   {
@@ -77,7 +93,9 @@
     "sort_order": 7,
     "image": "/images/categories/009-bathroom-sanitary-ware-ceramic-accessories.jpg",
     "names": {
-      "en": "Ceramic Accessories"
+      "en": "Ceramic Accessories",
+      "tr": "Seramik Aksesuarlar",
+      "cs": "Keramické doplňky"
     }
   },
   {
@@ -86,7 +104,9 @@
     "sort_order": 2,
     "image": "/images/categories/010-bathroom-mixers.jpg",
     "names": {
-      "en": "Mixers"
+      "en": "Mixers",
+      "tr": "Bataryalar",
+      "cs": "Baterie"
     }
   },
   {
@@ -95,7 +115,9 @@
     "sort_order": 1,
     "image": "/images/categories/011-bathroom-mixers-basin-mixers.jpg",
     "names": {
-      "en": "Basin Mixers"
+      "en": "Basin Mixers",
+      "tr": "Lavabo Bataryaları",
+      "cs": "Umyvadlové baterie"
     }
   },
   {
@@ -104,7 +126,9 @@
     "sort_order": 2,
     "image": "/images/categories/012-bathroom-mixers-shower-mixers.jpg",
     "names": {
-      "en": "Shower Mixers"
+      "en": "Shower Mixers",
+      "tr": "Duş Bataryaları",
+      "cs": "Sprchové baterie"
     }
   },
   {
@@ -113,7 +137,9 @@
     "sort_order": 3,
     "image": "/images/categories/013-bathroom-mixers-bath-mixers.jpg",
     "names": {
-      "en": "Bath Mixers"
+      "en": "Bath Mixers",
+      "tr": "Küvet Bataryaları",
+      "cs": "Vanové baterie"
     }
   },
   {
@@ -122,7 +148,9 @@
     "sort_order": 4,
     "image": "/images/categories/014-bathroom-mixers-concealed-mixers.jpg",
     "names": {
-      "en": "Concealed Mixers"
+      "en": "Concealed Mixers",
+      "tr": "Ankastre Bataryalar",
+      "cs": "Podomítkové baterie"
     }
   },
   {
@@ -131,7 +159,9 @@
     "sort_order": 5,
     "image": "/images/categories/015-bathroom-mixers-thermostatic-mixers.jpg",
     "names": {
-      "en": "Thermostatic Mixers"
+      "en": "Thermostatic Mixers",
+      "tr": "Termostatik Bataryalar",
+      "cs": "Termostatické baterie"
     }
   },
   {
@@ -140,7 +170,9 @@
     "sort_order": 6,
     "image": "/images/categories/016-bathroom-mixers-kitchen-mixers.jpg",
     "names": {
-      "en": "Kitchen Mixers"
+      "en": "Kitchen Mixers",
+      "tr": "Mutfak Bataryaları",
+      "cs": "Kuchyňské baterie"
     }
   },
   {
@@ -149,7 +181,9 @@
     "sort_order": 7,
     "image": "/images/categories/017-bathroom-mixers-special-mixers.jpg",
     "names": {
-      "en": "Special Mixers"
+      "en": "Special Mixers",
+      "tr": "Özel Bataryalar",
+      "cs": "Speciální baterie"
     }
   },
   {
@@ -158,7 +192,9 @@
     "sort_order": 3,
     "image": "/images/categories/018-bathroom-accessories.jpg",
     "names": {
-      "en": "Accessories"
+      "en": "Accessories",
+      "tr": "Aksesuarlar",
+      "cs": "Doplňky"
     }
   },
   {
@@ -167,7 +203,9 @@
     "sort_order": 1,
     "image": "/images/categories/019-bathroom-accessories-towel-bars.jpg",
     "names": {
-      "en": "Towel Bars"
+      "en": "Towel Bars",
+      "tr": "Havlu Askıları",
+      "cs": "Držáky ručníků"
     }
   },
   {
@@ -176,7 +214,9 @@
     "sort_order": 2,
     "image": "/images/categories/020-bathroom-accessories-towel-rings.jpg",
     "names": {
-      "en": "Towel Rings"
+      "en": "Towel Rings",
+      "tr": "Halka Havlu Askıları",
+      "cs": "Kruhy na ručníky"
     }
   },
   {
@@ -185,7 +225,9 @@
     "sort_order": 3,
     "image": "/images/categories/021-bathroom-accessories-robe-hooks.jpg",
     "names": {
-      "en": "Robe Hooks"
+      "en": "Robe Hooks",
+      "tr": "Bornoz Askıları",
+      "cs": "Háčky na župany"
     }
   },
   {
@@ -194,7 +236,9 @@
     "sort_order": 4,
     "image": "/images/categories/022-bathroom-accessories-toilet-paper-holders.jpg",
     "names": {
-      "en": "Toilet Paper Holders"
+      "en": "Toilet Paper Holders",
+      "tr": "Tuvalet Kağıdı Tutucuları",
+      "cs": "Držáky toaletního papíru"
     }
   },
   {
@@ -203,7 +247,9 @@
     "sort_order": 5,
     "image": "/images/categories/023-bathroom-accessories-soap-dispensers.jpg",
     "names": {
-      "en": "Soap Dispensers"
+      "en": "Soap Dispensers",
+      "tr": "Sıvı Sabunluklar",
+      "cs": "Dávkovače mýdla"
     }
   },
   {
@@ -212,7 +258,9 @@
     "sort_order": 6,
     "image": "/images/categories/024-bathroom-accessories-soap-dishes.jpg",
     "names": {
-      "en": "Soap Dishes"
+      "en": "Soap Dishes",
+      "tr": "Sabunluklar",
+      "cs": "Mýdlenky"
     }
   },
   {
@@ -221,7 +269,9 @@
     "sort_order": 7,
     "image": "/images/categories/025-bathroom-accessories-toilet-brushes.jpg",
     "names": {
-      "en": "Toilet Brushes"
+      "en": "Toilet Brushes",
+      "tr": "Tuvalet Fırçaları",
+      "cs": "Toaletní kartáče"
     }
   },
   {
@@ -230,7 +280,9 @@
     "sort_order": 8,
     "image": "/images/categories/026-bathroom-accessories-shelves.jpg",
     "names": {
-      "en": "Shelves"
+      "en": "Shelves",
+      "tr": "Raflar",
+      "cs": "Police"
     }
   },
   {
@@ -239,7 +291,9 @@
     "sort_order": 9,
     "image": "/images/categories/027-bathroom-accessories-grab-bars.jpg",
     "names": {
-      "en": "Grab Bars"
+      "en": "Grab Bars",
+      "tr": "Tutunma Barları",
+      "cs": "Opěrná madla"
     }
   },
   {
@@ -248,7 +302,9 @@
     "sort_order": 10,
     "image": "/images/categories/028-bathroom-accessories-other-accessories.jpg",
     "names": {
-      "en": "Other Accessories"
+      "en": "Other Accessories",
+      "tr": "Diğer Aksesuarlar",
+      "cs": "Ostatní doplňky"
     }
   },
   {
@@ -257,7 +313,9 @@
     "sort_order": 2,
     "image": "/images/categories/029-kitchen.jpg",
     "names": {
-      "en": "Kitchen"
+      "en": "Kitchen",
+      "tr": "Mutfak",
+      "cs": "Kuchyně"
     }
   },
   {
@@ -266,7 +324,9 @@
     "sort_order": 1,
     "image": "/images/categories/030-kitchen-sinks.jpg",
     "names": {
-      "en": "Sinks"
+      "en": "Sinks",
+      "tr": "Eviyeler",
+      "cs": "Dřezy"
     }
   },
   {
@@ -275,7 +335,9 @@
     "sort_order": 1,
     "image": "/images/categories/031-kitchen-sinks-granite-sinks.jpg",
     "names": {
-      "en": "Granite Sinks"
+      "en": "Granite Sinks",
+      "tr": "Granit Eviyeler",
+      "cs": "Granitové dřezy"
     }
   },
   {
@@ -284,7 +346,9 @@
     "sort_order": 2,
     "image": "/images/categories/032-kitchen-sinks-stainless-steel-sinks.jpg",
     "names": {
-      "en": "Stainless Steel Sinks"
+      "en": "Stainless Steel Sinks",
+      "tr": "Paslanmaz Çelik Eviyeler",
+      "cs": "Nerezové dřezy"
     }
   },
   {
@@ -293,7 +357,9 @@
     "sort_order": 3,
     "image": "/images/categories/033-kitchen-sinks-undermount-sinks.jpg",
     "names": {
-      "en": "Undermount Sinks"
+      "en": "Undermount Sinks",
+      "tr": "Tezgâh Altı Eviyeler",
+      "cs": "Dřezy pod desku"
     }
   },
   {
@@ -302,7 +368,9 @@
     "sort_order": 4,
     "image": "/images/categories/034-kitchen-sinks-topmount-sinks.jpg",
     "names": {
-      "en": "Topmount Sinks"
+      "en": "Topmount Sinks",
+      "tr": "Tezgâh Üstü Eviyeler",
+      "cs": "Dřezy na desku"
     }
   },
   {
@@ -311,7 +379,9 @@
     "sort_order": 5,
     "image": "/images/categories/035-kitchen-sinks-workstation-sinks.jpg",
     "names": {
-      "en": "Workstation Sinks"
+      "en": "Workstation Sinks",
+      "tr": "Çalışma İstasyonlu Eviyeler",
+      "cs": "Dřezy s pracovní plochou"
     }
   },
   {
@@ -320,7 +390,9 @@
     "sort_order": 6,
     "image": "/images/categories/036-kitchen-sinks-kitchen-accessories.jpg",
     "names": {
-      "en": "Kitchen Accessories"
+      "en": "Kitchen Accessories",
+      "tr": "Mutfak Aksesuarları",
+      "cs": "Kuchyňské doplňky"
     }
   },
   {
@@ -329,7 +401,9 @@
     "sort_order": 7,
     "image": "/images/categories/037-kitchen-sinks-other-sinks.jpg",
     "names": {
-      "en": "Other Sinks"
+      "en": "Other Sinks",
+      "tr": "Diğer Eviyeler",
+      "cs": "Ostatní dřezy"
     }
   },
   {
@@ -338,7 +412,9 @@
     "sort_order": 2,
     "image": "/images/categories/038-kitchen-kitchen-mixers.jpg",
     "names": {
-      "en": "Kitchen Mixers"
+      "en": "Kitchen Mixers",
+      "tr": "Mutfak Bataryaları",
+      "cs": "Kuchyňské baterie"
     }
   },
   {
@@ -347,7 +423,9 @@
     "sort_order": 1,
     "image": "/images/categories/039-kitchen-kitchen-mixers-pull-out-mixers.jpg",
     "names": {
-      "en": "Pull-out Mixers"
+      "en": "Pull-out Mixers",
+      "tr": "Spiralli Bataryalar",
+      "cs": "Baterie s výsuvnou sprškou"
     }
   },
   {
@@ -356,7 +434,9 @@
     "sort_order": 2,
     "image": "/images/categories/040-kitchen-kitchen-mixers-single-handle-mixers.jpg",
     "names": {
-      "en": "Single Handle Mixers"
+      "en": "Single Handle Mixers",
+      "tr": "Tek Kumandalı Bataryalar",
+      "cs": "Jednopákové baterie"
     }
   },
   {
@@ -365,7 +445,9 @@
     "sort_order": 3,
     "image": "/images/categories/041-kitchen-kitchen-mixers-dual-handle-mixers.jpg",
     "names": {
-      "en": "Dual Handle Mixers"
+      "en": "Dual Handle Mixers",
+      "tr": "Çift Kumandalı Bataryalar",
+      "cs": "Dvoupákové baterie"
     }
   },
   {
@@ -374,7 +456,9 @@
     "sort_order": 4,
     "image": "/images/categories/042-kitchen-kitchen-mixers-filtered-water-mixers.jpg",
     "names": {
-      "en": "Filtered Water Mixers"
+      "en": "Filtered Water Mixers",
+      "tr": "Arıtmalı Su Bataryaları",
+      "cs": "Baterie pro filtrovanou vodu"
     }
   },
   {
@@ -383,7 +467,9 @@
     "sort_order": 5,
     "image": "/images/categories/043-kitchen-kitchen-mixers-pot-fillers.jpg",
     "names": {
-      "en": "Pot Fillers"
+      "en": "Pot Fillers",
+      "tr": "Tencere Doldurma Bataryaları",
+      "cs": "Baterie pro plnění hrnců"
     }
   },
   {
@@ -392,7 +478,9 @@
     "sort_order": 6,
     "image": "/images/categories/044-kitchen-kitchen-mixers-other-kitchen-mixers.jpg",
     "names": {
-      "en": "Other Kitchen Mixers"
+      "en": "Other Kitchen Mixers",
+      "tr": "Diğer Mutfak Bataryaları",
+      "cs": "Ostatní kuchyňské baterie"
     }
   },
   {
@@ -401,7 +489,9 @@
     "sort_order": 3,
     "image": "/images/categories/045-kids.jpg",
     "names": {
-      "en": "Kids"
+      "en": "Kids",
+      "tr": "Çocuk",
+      "cs": "Děti"
     }
   },
   {
@@ -410,7 +500,9 @@
     "sort_order": 1,
     "image": "/images/categories/046-kids-kids-sanitary-ware.jpg",
     "names": {
-      "en": "Kids Sanitary Ware"
+      "en": "Kids Sanitary Ware",
+      "tr": "Çocuk Vitrifiye Ürünleri",
+      "cs": "Dětská sanitární keramika"
     }
   },
   {
@@ -419,7 +511,9 @@
     "sort_order": 1,
     "image": "/images/categories/047-kids-kids-sanitary-ware-kids-toilets.jpg",
     "names": {
-      "en": "Kids Toilets"
+      "en": "Kids Toilets",
+      "tr": "Çocuk Klozetleri",
+      "cs": "Dětské toalety"
     }
   },
   {
@@ -428,7 +522,9 @@
     "sort_order": 2,
     "image": "/images/categories/048-kids-kids-sanitary-ware-kids-wash-basins.jpg",
     "names": {
-      "en": "Kids Wash Basins"
+      "en": "Kids Wash Basins",
+      "tr": "Çocuk Lavaboları",
+      "cs": "Dětská umyvadla"
     }
   },
   {
@@ -437,7 +533,9 @@
     "sort_order": 3,
     "image": "/images/categories/049-kids-kids-sanitary-ware-kids-urinals.jpg",
     "names": {
-      "en": "Kids Urinals"
+      "en": "Kids Urinals",
+      "tr": "Çocuk Pisuvarları",
+      "cs": "Dětské pisoáry"
     }
   },
   {
@@ -446,7 +544,9 @@
     "sort_order": 4,
     "image": "/images/categories/050-kids-kids-sanitary-ware-kids-bathroom-sets.jpg",
     "names": {
-      "en": "Kids Bathroom Sets"
+      "en": "Kids Bathroom Sets",
+      "tr": "Çocuk Banyo Setleri",
+      "cs": "Dětské koupelnové sady"
     }
   },
   {
@@ -455,7 +555,9 @@
     "sort_order": 2,
     "image": "/images/categories/051-kids-kids-mixers.jpg",
     "names": {
-      "en": "Kids Mixers"
+      "en": "Kids Mixers",
+      "tr": "Çocuk Bataryaları",
+      "cs": "Dětské baterie"
     }
   },
   {
@@ -464,7 +566,9 @@
     "sort_order": 1,
     "image": "/images/categories/052-kids-kids-mixers-kids-basin-mixers.jpg",
     "names": {
-      "en": "Kids Basin Mixers"
+      "en": "Kids Basin Mixers",
+      "tr": "Çocuk Lavabo Bataryaları",
+      "cs": "Dětské umyvadlové baterie"
     }
   },
   {
@@ -473,7 +577,9 @@
     "sort_order": 2,
     "image": "/images/categories/053-kids-kids-mixers-kids-shower-mixers.jpg",
     "names": {
-      "en": "Kids Shower Mixers"
+      "en": "Kids Shower Mixers",
+      "tr": "Çocuk Duş Bataryaları",
+      "cs": "Dětské sprchové baterie"
     }
   },
   {
@@ -482,7 +588,9 @@
     "sort_order": 3,
     "image": "/images/categories/054-kids-kids-mixers-kids-accessories.jpg",
     "names": {
-      "en": "Kids Accessories"
+      "en": "Kids Accessories",
+      "tr": "Çocuk Aksesuarları",
+      "cs": "Dětské doplňky"
     }
   },
   {
@@ -491,7 +599,9 @@
     "sort_order": 4,
     "image": "/images/categories/055-accessibility.jpg",
     "names": {
-      "en": "Accessibility"
+      "en": "Accessibility",
+      "tr": "Erişilebilirlik",
+      "cs": "Bezbariérovost"
     }
   },
   {
@@ -500,7 +610,9 @@
     "sort_order": 1,
     "image": "/images/categories/056-accessibility-accessible-sanitary-ware.jpg",
     "names": {
-      "en": "Accessible Sanitary Ware"
+      "en": "Accessible Sanitary Ware",
+      "tr": "Erişilebilir Vitrifiye",
+      "cs": "Bezbariérová sanitární keramika"
     }
   },
   {
@@ -509,7 +621,9 @@
     "sort_order": 1,
     "image": "/images/categories/057-accessibility-accessible-sanitary-ware-accessible-toilets.jpg",
     "names": {
-      "en": "Accessible Toilets"
+      "en": "Accessible Toilets",
+      "tr": "Erişilebilir Klozetler",
+      "cs": "Bezbariérové toalety"
     }
   },
   {
@@ -518,7 +632,9 @@
     "sort_order": 2,
     "image": "/images/categories/058-accessibility-accessible-sanitary-ware-accessible-wash-basins.jpg",
     "names": {
-      "en": "Accessible Wash Basins"
+      "en": "Accessible Wash Basins",
+      "tr": "Erişilebilir Lavabolar",
+      "cs": "Bezbariérová umyvadla"
     }
   },
   {
@@ -527,7 +643,9 @@
     "sort_order": 3,
     "image": "/images/categories/059-accessibility-accessible-sanitary-ware-accessible-showers.jpg",
     "names": {
-      "en": "Accessible Showers"
+      "en": "Accessible Showers",
+      "tr": "Erişilebilir Duşlar",
+      "cs": "Bezbariérové sprchy"
     }
   },
   {
@@ -536,7 +654,9 @@
     "sort_order": 4,
     "image": "/images/categories/060-accessibility-accessible-sanitary-ware-accessible-urinals.jpg",
     "names": {
-      "en": "Accessible Urinals"
+      "en": "Accessible Urinals",
+      "tr": "Erişilebilir Pisuvarlar",
+      "cs": "Bezbariérové pisoáry"
     }
   },
   {
@@ -545,7 +665,9 @@
     "sort_order": 2,
     "image": "/images/categories/061-accessibility-kids-bars-supports.jpg",
     "names": {
-      "en": "Kids Bars & Supports"
+      "en": "Grab Bars & Supports",
+      "tr": "Tutunma Barları ve Destekler",
+      "cs": "Madla a opěry"
     }
   },
   {
@@ -554,7 +676,9 @@
     "sort_order": 1,
     "image": "/images/categories/062-accessibility-kids-bars-supports-grab-bars.jpg",
     "names": {
-      "en": "Grab Bars"
+      "en": "Grab Bars",
+      "tr": "Tutunma Barları",
+      "cs": "Opěrná madla"
     }
   },
   {
@@ -563,7 +687,9 @@
     "sort_order": 2,
     "image": "/images/categories/063-accessibility-kids-bars-supports-foldable-supports.jpg",
     "names": {
-      "en": "Foldable Supports"
+      "en": "Foldable Supports",
+      "tr": "Katlanabilir Destekler",
+      "cs": "Skládací opěry"
     }
   },
   {
@@ -572,7 +698,9 @@
     "sort_order": 3,
     "image": "/images/categories/064-accessibility-kids-bars-supports-shower-seats.jpg",
     "names": {
-      "en": "Shower Seats"
+      "en": "Shower Seats",
+      "tr": "Duş Oturakları",
+      "cs": "Sprchová sedátka"
     }
   },
   {
@@ -581,7 +709,9 @@
     "sort_order": 4,
     "image": "/images/categories/065-accessibility-kids-bars-supports-other-supports.jpg",
     "names": {
-      "en": "Other Supports"
+      "en": "Other Supports",
+      "tr": "Diğer Destekler",
+      "cs": "Ostatní opěry"
     }
   },
   {
@@ -590,7 +720,9 @@
     "sort_order": 3,
     "image": "/images/categories/066-accessibility-accessible-accessories.jpg",
     "names": {
-      "en": "Accessible Accessories"
+      "en": "Accessible Accessories",
+      "tr": "Erişilebilir Aksesuarlar",
+      "cs": "Bezbariérové doplňky"
     }
   },
   {
@@ -599,7 +731,9 @@
     "sort_order": 1,
     "image": "/images/categories/067-accessibility-accessible-accessories-accessible-mixers.jpg",
     "names": {
-      "en": "Accessible Mixers"
+      "en": "Accessible Mixers",
+      "tr": "Erişilebilir Bataryalar",
+      "cs": "Bezbariérové baterie"
     }
   },
   {
@@ -608,7 +742,9 @@
     "sort_order": 2,
     "image": "/images/categories/068-accessibility-accessible-accessories-accessible-shower-systems.jpg",
     "names": {
-      "en": "Accessible Shower Systems"
+      "en": "Accessible Shower Systems",
+      "tr": "Erişilebilir Duş Sistemleri",
+      "cs": "Bezbariérové sprchové systémy"
     }
   },
   {
@@ -617,7 +753,9 @@
     "sort_order": 3,
     "image": "/images/categories/069-accessibility-accessible-accessories-accessible-mirrors.jpg",
     "names": {
-      "en": "Accessible Mirrors"
+      "en": "Accessible Mirrors",
+      "tr": "Erişilebilir Aynalar",
+      "cs": "Bezbariérová zrcadla"
     }
   },
   {
@@ -626,7 +764,9 @@
     "sort_order": 4,
     "image": "/images/categories/070-accessibility-accessible-accessories-other-accessories.jpg",
     "names": {
-      "en": "Other Accessories"
+      "en": "Other Accessories",
+      "tr": "Diğer Aksesuarlar",
+      "cs": "Ostatní doplňky"
     }
   },
   {
@@ -635,7 +775,9 @@
     "sort_order": 5,
     "image": "/images/categories/071-shower-enclosures.jpg",
     "names": {
-      "en": "Shower Enclosures"
+      "en": "Shower Enclosures",
+      "tr": "Duş Kabinleri",
+      "cs": "Sprchové kouty"
     }
   },
   {
@@ -644,7 +786,9 @@
     "sort_order": 1,
     "image": "/images/categories/072-shower-enclosures-sliding-enclosures.jpg",
     "names": {
-      "en": "Sliding Enclosures"
+      "en": "Sliding Enclosures",
+      "tr": "Sürgülü Duş Kabinleri",
+      "cs": "Posuvné sprchové kouty"
     }
   },
   {
@@ -653,7 +797,9 @@
     "sort_order": 2,
     "image": "/images/categories/073-shower-enclosures-hinged-enclosures.jpg",
     "names": {
-      "en": "Hinged Enclosures"
+      "en": "Hinged Enclosures",
+      "tr": "Menteşeli Duş Kabinleri",
+      "cs": "Křídlové sprchové kouty"
     }
   },
   {
@@ -662,7 +808,9 @@
     "sort_order": 3,
     "image": "/images/categories/074-shower-enclosures-walk-in-enclosures.jpg",
     "names": {
-      "en": "Walk-in Enclosures"
+      "en": "Walk-in Enclosures",
+      "tr": "Walk-in Duş Kabinleri",
+      "cs": "Walk-in sprchové kouty"
     }
   },
   {
@@ -671,7 +819,9 @@
     "sort_order": 4,
     "image": "/images/categories/075-shower-enclosures-corner-enclosures.jpg",
     "names": {
-      "en": "Corner Enclosures"
+      "en": "Corner Enclosures",
+      "tr": "Köşe Duş Kabinleri",
+      "cs": "Rohové sprchové kouty"
     }
   },
   {
@@ -680,7 +830,9 @@
     "sort_order": 5,
     "image": "/images/categories/076-shower-enclosures-frameless-enclosures.jpg",
     "names": {
-      "en": "Frameless Enclosures"
+      "en": "Frameless Enclosures",
+      "tr": "Çerçevesiz Duş Kabinleri",
+      "cs": "Bezrámové sprchové kouty"
     }
   },
   {
@@ -689,7 +841,9 @@
     "sort_order": 6,
     "image": "/images/categories/077-shower-enclosures-semi-framed-enclosures.jpg",
     "names": {
-      "en": "Semi-Framed Enclosures"
+      "en": "Semi-Framed Enclosures",
+      "tr": "Yarı Çerçeveli Duş Kabinleri",
+      "cs": "Částečně rámové sprchové kouty"
     }
   },
   {
@@ -698,7 +852,9 @@
     "sort_order": 7,
     "image": "/images/categories/078-shower-enclosures-profiles-hardware.jpg",
     "names": {
-      "en": "Profiles & Hardware"
+      "en": "Profiles & Hardware",
+      "tr": "Profiller ve Donanım",
+      "cs": "Profily a kování"
     }
   },
   {
@@ -707,7 +863,9 @@
     "sort_order": 8,
     "image": "/images/categories/079-shower-enclosures-other-enclosures.jpg",
     "names": {
-      "en": "Other Enclosures"
+      "en": "Other Enclosures",
+      "tr": "Diğer Duş Kabinleri",
+      "cs": "Ostatní sprchové kouty"
     }
   },
   {
@@ -716,7 +874,9 @@
     "sort_order": 6,
     "image": "/images/categories/080-vanity-units.jpg",
     "names": {
-      "en": "Vanity Units"
+      "en": "Vanity Units",
+      "tr": "Banyo Dolapları",
+      "cs": "Koupelnové skříňky"
     }
   },
   {
@@ -725,7 +885,9 @@
     "sort_order": 1,
     "image": "/images/categories/081-vanity-units-solid-wood-vanity.jpg",
     "names": {
-      "en": "Solid Wood Vanity"
+      "en": "Solid Wood Vanity",
+      "tr": "Masif Ahşap Banyo Dolapları",
+      "cs": "Koupelnové skříňky z masivního dřeva"
     }
   },
   {
@@ -734,7 +896,9 @@
     "sort_order": 2,
     "image": "/images/categories/082-vanity-units-pvc-vanity.jpg",
     "names": {
-      "en": "PVC Vanity"
+      "en": "PVC Vanity",
+      "tr": "PVC Banyo Dolapları",
+      "cs": "Koupelnové skříňky z PVC"
     }
   },
   {
@@ -743,7 +907,9 @@
     "sort_order": 3,
     "image": "/images/categories/083-vanity-units-mdf-vanity.jpg",
     "names": {
-      "en": "MDF Vanity"
+      "en": "MDF Vanity",
+      "tr": "MDF Banyo Dolapları",
+      "cs": "Koupelnové skříňky z MDF"
     }
   },
   {
@@ -752,7 +918,9 @@
     "sort_order": 4,
     "image": "/images/categories/084-vanity-units-wall-hung-vanity.jpg",
     "names": {
-      "en": "Wall Hung Vanity"
+      "en": "Wall Hung Vanity",
+      "tr": "Duvara Monte Banyo Dolapları",
+      "cs": "Závěsné koupelnové skříňky"
     }
   },
   {
@@ -761,7 +929,9 @@
     "sort_order": 5,
     "image": "/images/categories/085-vanity-units-floor-standing-vanity.jpg",
     "names": {
-      "en": "Floor Standing Vanity"
+      "en": "Floor Standing Vanity",
+      "tr": "Ayaklı Banyo Dolapları",
+      "cs": "Volně stojící koupelnové skříňky"
     }
   },
   {
@@ -770,7 +940,9 @@
     "sort_order": 6,
     "image": "/images/categories/086-vanity-units-countertop-vanity.jpg",
     "names": {
-      "en": "Countertop Vanity"
+      "en": "Countertop Vanity",
+      "tr": "Tezgâhlı Banyo Dolapları",
+      "cs": "Koupelnové skříňky s deskou"
     }
   },
   {
@@ -779,7 +951,9 @@
     "sort_order": 7,
     "image": "/images/categories/087-vanity-units-vanity-tops.jpg",
     "names": {
-      "en": "Vanity Tops"
+      "en": "Vanity Tops",
+      "tr": "Banyo Dolabı Tezgâhları",
+      "cs": "Desky pro koupelnové skříňky"
     }
   },
   {
@@ -788,7 +962,9 @@
     "sort_order": 8,
     "image": "/images/categories/088-vanity-units-other-vanity-units.jpg",
     "names": {
-      "en": "Other Vanity Units"
+      "en": "Other Vanity Units",
+      "tr": "Diğer Banyo Dolapları",
+      "cs": "Ostatní koupelnové skříňky"
     }
   },
   {
@@ -797,7 +973,9 @@
     "sort_order": 7,
     "image": "/images/categories/089-mirrors.jpg",
     "names": {
-      "en": "Mirrors"
+      "en": "Mirrors",
+      "tr": "Aynalar",
+      "cs": "Zrcadla"
     }
   },
   {
@@ -806,7 +984,9 @@
     "sort_order": 1,
     "image": "/images/categories/090-mirrors-led-mirrors.jpg",
     "names": {
-      "en": "LED Mirrors"
+      "en": "LED Mirrors",
+      "tr": "LED Aynalar",
+      "cs": "LED zrcadla"
     }
   },
   {
@@ -815,7 +995,9 @@
     "sort_order": 2,
     "image": "/images/categories/091-mirrors-framed-mirrors.jpg",
     "names": {
-      "en": "Framed Mirrors"
+      "en": "Framed Mirrors",
+      "tr": "Çerçeveli Aynalar",
+      "cs": "Rámovaná zrcadla"
     }
   },
   {
@@ -824,7 +1006,9 @@
     "sort_order": 3,
     "image": "/images/categories/092-mirrors-frameless-mirrors.jpg",
     "names": {
-      "en": "Frameless Mirrors"
+      "en": "Frameless Mirrors",
+      "tr": "Çerçevesiz Aynalar",
+      "cs": "Bezrámová zrcadla"
     }
   },
   {
@@ -833,7 +1017,9 @@
     "sort_order": 4,
     "image": "/images/categories/093-mirrors-cabinet-mirrors.jpg",
     "names": {
-      "en": "Cabinet Mirrors"
+      "en": "Cabinet Mirrors",
+      "tr": "Dolaplı Aynalar",
+      "cs": "Zrcadlové skříňky"
     }
   },
   {
@@ -842,7 +1028,9 @@
     "sort_order": 5,
     "image": "/images/categories/094-mirrors-magnifying-mirrors.jpg",
     "names": {
-      "en": "Magnifying Mirrors"
+      "en": "Magnifying Mirrors",
+      "tr": "Büyüteçli Aynalar",
+      "cs": "Zvětšovací zrcadla"
     }
   },
   {
@@ -851,7 +1039,9 @@
     "sort_order": 6,
     "image": "/images/categories/095-mirrors-smart-mirrors.jpg",
     "names": {
-      "en": "Smart Mirrors"
+      "en": "Smart Mirrors",
+      "tr": "Akıllı Aynalar",
+      "cs": "Chytrá zrcadla"
     }
   },
   {
@@ -860,7 +1050,9 @@
     "sort_order": 7,
     "image": "/images/categories/096-mirrors-other-mirrors.jpg",
     "names": {
-      "en": "Other Mirrors"
+      "en": "Other Mirrors",
+      "tr": "Diğer Aynalar",
+      "cs": "Ostatní zrcadla"
     }
   },
   {
@@ -869,7 +1061,9 @@
     "sort_order": 8,
     "image": "/images/categories/097-drains.jpg",
     "names": {
-      "en": "Drains"
+      "en": "Drains",
+      "tr": "Giderler",
+      "cs": "Odpady"
     }
   },
   {
@@ -878,7 +1072,9 @@
     "sort_order": 1,
     "image": "/images/categories/098-drains-shower-drains.jpg",
     "names": {
-      "en": "Shower Drains"
+      "en": "Shower Drains",
+      "tr": "Duş Giderleri",
+      "cs": "Sprchové odpady"
     }
   },
   {
@@ -887,7 +1083,9 @@
     "sort_order": 2,
     "image": "/images/categories/099-drains-floor-drains.jpg",
     "names": {
-      "en": "Floor Drains"
+      "en": "Floor Drains",
+      "tr": "Zemin Giderleri",
+      "cs": "Podlahové odpady"
     }
   },
   {
@@ -896,7 +1094,9 @@
     "sort_order": 3,
     "image": "/images/categories/100-drains-by-application.jpg",
     "names": {
-      "en": "By Application"
+      "en": "By Application",
+      "tr": "Kullanım Alanına Göre",
+      "cs": "Podle použití"
     }
   },
   {
@@ -905,7 +1105,9 @@
     "sort_order": 1,
     "image": "/images/categories/101-drains-by-application-indoor.jpg",
     "names": {
-      "en": "Indoor"
+      "en": "Indoor",
+      "tr": "İç Mekân",
+      "cs": "Interiér"
     }
   },
   {
@@ -914,7 +1116,9 @@
     "sort_order": 2,
     "image": "/images/categories/102-drains-by-application-outdoor.jpg",
     "names": {
-      "en": "Outdoor"
+      "en": "Outdoor",
+      "tr": "Dış Mekân",
+      "cs": "Exteriér"
     }
   },
   {
@@ -923,7 +1127,9 @@
     "sort_order": 4,
     "image": "/images/categories/103-drains-by-mounting-type.jpg",
     "names": {
-      "en": "By Mounting Type"
+      "en": "By Mounting Type",
+      "tr": "Montaj Tipine Göre",
+      "cs": "Podle způsobu montáže"
     }
   },
   {
@@ -932,7 +1138,9 @@
     "sort_order": 1,
     "image": "/images/categories/104-drains-by-mounting-type-wall-hung.jpg",
     "names": {
-      "en": "Wall Hung"
+      "en": "Wall Hung",
+      "tr": "Duvara Monte",
+      "cs": "Závěsné"
     }
   },
   {
@@ -941,7 +1149,9 @@
     "sort_order": 2,
     "image": "/images/categories/105-drains-by-mounting-type-floor-standing.jpg",
     "names": {
-      "en": "Floor Standing"
+      "en": "Floor Standing",
+      "tr": "Zemine Monte",
+      "cs": "Na podlahu"
     }
   },
   {
@@ -950,7 +1160,9 @@
     "sort_order": 3,
     "image": "/images/categories/106-drains-by-mounting-type-free-standing.jpg",
     "names": {
-      "en": "Free Standing"
+      "en": "Free Standing",
+      "tr": "Serbest Ayaklı",
+      "cs": "Volně stojící"
     }
   },
   {
@@ -959,7 +1171,9 @@
     "sort_order": 4,
     "image": "/images/categories/107-drains-by-mounting-type-other-drains.jpg",
     "names": {
-      "en": "Other Drains"
+      "en": "Other Drains",
+      "tr": "Diğer Giderler",
+      "cs": "Ostatní odpady"
     }
   },
   {
@@ -968,7 +1182,9 @@
     "sort_order": 9,
     "image": "/images/categories/108-drinking-fountains.jpg",
     "names": {
-      "en": "Drinking Fountains"
+      "en": "Drinking Fountains",
+      "tr": "İçme Suyu Çeşmeleri",
+      "cs": "Pítka"
     }
   }
 ]

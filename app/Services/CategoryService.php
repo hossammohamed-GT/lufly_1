@@ -149,6 +149,81 @@ class CategoryService
     }
 
     /**
+     * Resolve the root collection for an empty public branch.
+     *
+     * Emptiness is based on products visitors can actually see, not on the
+     * current search term. A populated branch therefore keeps its normal
+     * no-search-results state, while an empty level-two or level-three branch
+     * can consistently use its root category in both page and live searches.
+     *
+     * @return array{id:int,parent_id:int|null,slug:string}|null
+     */
+    public function rootFallbackBySlug(string $slug, string $status = 'active', bool $requireMedia = true): ?array
+    {
+        $slug = trim($slug);
+        $structure = $this->structure();
+        $selectedId = null;
+        foreach ($structure as $id => $row) {
+            if ($row['slug'] === $slug) {
+                $selectedId = $id;
+                break;
+            }
+        }
+
+        if ($selectedId === null || $structure[$selectedId]['parent_id'] === null) {
+            return null;
+        }
+        if ($this->hasVisibleProducts($selectedId, $status, $requireMedia)) {
+            return null;
+        }
+
+        $rootId = $selectedId;
+        $visited = [];
+        while (
+            isset($structure[$rootId])
+            && !isset($visited[$rootId])
+            && $structure[$rootId]['parent_id'] !== null
+        ) {
+            $visited[$rootId] = true;
+            $rootId = $structure[$rootId]['parent_id'];
+        }
+
+        if (
+            $rootId === $selectedId
+            || !isset($structure[$rootId])
+            || $structure[$rootId]['parent_id'] !== null
+            || !$this->hasVisibleProducts($rootId, $status, $requireMedia)
+        ) {
+            return null;
+        }
+
+        return $structure[$rootId];
+    }
+
+    private function hasVisibleProducts(int $categoryId, string $status, bool $requireMedia): bool
+    {
+        $categoryIds = $this->descendantIds($categoryId);
+        if ($categoryIds === []) {
+            return false;
+        }
+
+        $where = [
+            'p.deleted_at IS NULL',
+            'p.status = ?',
+            'p.category_id IN (' . implode(',', array_fill(0, count($categoryIds), '?')) . ')',
+        ];
+        $bindings = [$status, ...$categoryIds];
+        if ($requireMedia) {
+            $where[] = ProductVisibility::mediaReadySql('p');
+        }
+
+        return $this->db->connection()->selectOne(
+            'SELECT p.id FROM products p WHERE ' . implode(' AND ', $where) . ' LIMIT 1',
+            $bindings,
+        ) !== null;
+    }
+
+    /**
      * Product totals include descendants, so a root and its branches never
      * appear empty merely because products are assigned to a leaf category.
      *
