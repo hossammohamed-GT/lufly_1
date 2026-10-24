@@ -930,7 +930,7 @@
     "slug": "drains.by-mounting-type.wall-hung",
     "parent": "drains.by-mounting-type",
     "sort_order": 1,
-    "image": "/images/categories/071-shower-enclosures.jpg",
+    "image": "/images/categories/104-drains-by-mounting-type-wall-hung.jpg",
     "names": {
       "en": "Wall Hung"
     }
@@ -939,7 +939,7 @@
     "slug": "drains.by-mounting-type.floor-standing",
     "parent": "drains.by-mounting-type",
     "sort_order": 2,
-    "image": "/images/categories/071-shower-enclosures.jpg",
+    "image": "/images/categories/105-drains-by-mounting-type-floor-standing.jpg",
     "names": {
       "en": "Floor Standing"
     }
@@ -948,7 +948,7 @@
     "slug": "drains.by-mounting-type.free-standing",
     "parent": "drains.by-mounting-type",
     "sort_order": 3,
-    "image": "/images/categories/071-shower-enclosures.jpg",
+    "image": "/images/categories/106-drains-by-mounting-type-free-standing.jpg",
     "names": {
       "en": "Free Standing"
     }
@@ -957,7 +957,7 @@
     "slug": "drains.by-mounting-type.other-drains",
     "parent": "drains.by-mounting-type",
     "sort_order": 4,
-    "image": "/images/categories/071-shower-enclosures.jpg",
+    "image": "/images/categories/107-drains-by-mounting-type-other-drains.jpg",
     "names": {
       "en": "Other Drains"
     }
