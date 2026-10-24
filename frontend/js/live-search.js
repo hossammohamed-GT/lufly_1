@@ -98,6 +98,8 @@
           cartPending: 'Available once a price is added',
           availableFinishes: 'Available finishes',
           colorOptions: 'Color options',
+          productFinish: 'Piece finish',
+          availableColors: 'Available colours',
           save: 'Save product',
           saved: 'Saved',
           favoriteAdded: ':name saved to your list',
@@ -127,6 +129,8 @@
           cartPending: 'Fiyat eklendiğinde kullanılabilir',
           availableFinishes: 'Mevcut kaplamalar',
           colorOptions: 'Renk seçenekleri',
+          productFinish: 'Ürün kaplaması',
+          availableColors: 'Mevcut renkler',
           save: 'Ürünü kaydet',
           saved: 'Kaydedildi',
           favoriteAdded: ':name listenize kaydedildi',
@@ -156,6 +160,8 @@
           cartPending: 'Dostupné po doplnění ceny',
           availableFinishes: 'Dostupné povrchy',
           colorOptions: 'Možnosti barev',
+          productFinish: 'Povrch výrobku',
+          availableColors: 'Dostupné barvy',
           save: 'Uložit produkt',
           saved: 'Uloženo',
           favoriteAdded: ':name bylo uloženo do seznamu',
@@ -416,34 +422,51 @@
         return JSON.stringify(value).replace(/</g, '\\u003C').replace(/>/g, '\\u003E').replace(/&/g, '\\u0026');
       }
 
+      function finishKey(finish) {
+        return String(finish && finish.key || 'neutral').toLowerCase().replace(/[^a-z-]/g, '') || 'neutral';
+      }
+
+      function toneParts(finishes) {
+        return finishes.slice(0, 4).map(function (finish) {
+          return '<i class="pcard-tone pcard-swatch--' + finishKey(finish) + '" aria-hidden="true"></i>';
+        }).join('');
+      }
+
+      function pieceFinish(card, product) {
+        var finishes = Array.isArray(card.finishes) ? card.finishes.slice(0, 4) : [];
+        if (!finishes.length && product.finish && product.finish.label) finishes = [product.finish];
+        if (!finishes.length) return '';
+        var label = String(product.finish && product.finish.label || finishes.map(function (finish) { return finish.label || ''; }).filter(Boolean).join(' / '));
+        return '<div class="pcard-finish-piece" data-pcard-piece>' +
+          '<span class="pcard-finish-caption">' + esc(g.productFinish) + '</span>' +
+          '<span class="pcard-finish-value"><span class="pcard-tone-swatch" data-pcard-piece-tones role="img" aria-label="' + esc(label) + '" title="' + esc(label) + '">' + toneParts(finishes) + '</span>' +
+          '<span class="pcard-finish-count pcard-finish-current pcard-finish-name" data-pcard-finish-label aria-live="polite" title="' + esc(label) + '">' + esc(label) + '</span></span></div>';
+      }
+
       function finishList(card, href, product) {
         var variants = Array.isArray(product.color_variants) ? product.color_variants : [];
+        var piece = pieceFinish(card, product);
         if (variants.length > 1) {
-          var currentLabel = '';
           var links = variants.map(function (variant) {
             var finish = variant.finish || {};
-            var key = String(finish.key || 'neutral').toLowerCase().replace(/[^a-z-]/g, '') || 'neutral';
-            var label = String(finish.label || '');
+            var optionFinishes = variant.card && Array.isArray(variant.card.finishes) && variant.card.finishes.length
+              ? variant.card.finishes : (finish.label ? [finish] : []);
+            var label = String(finish.label || optionFinishes.map(function (item) { return item.label || ''; }).filter(Boolean).join(' / '));
             var code = String(variant.sku || variant.model_code || '');
             var selected = parseInt(variant.id, 10) === parseInt(product.id, 10);
-            if (selected) currentLabel = label;
             var aria = label + (code ? ' — ' + code : '');
-            return '<a class="pcard-swatch pcard-swatch--' + key + (selected ? ' is-active' : '') + '"' +
+            return '<a class="pcard-swatch pcard-option' + (selected ? ' is-active' : '') + '"' +
               ' role="listitem" href="' + esc(variant.url || href) + '" data-pcard-variant="' + esc(variant.id) + '"' +
-              ' title="' + esc(aria) + '" aria-label="' + esc(aria) + '"' + (selected ? ' aria-current="true"' : '') + '></a>';
+              ' title="' + esc(aria) + '" aria-label="' + esc(aria) + '"' + (selected ? ' aria-current="true"' : '') + '>' +
+              '<span class="pcard-option-tones" aria-hidden="true">' + toneParts(optionFinishes) + '</span></a>';
           }).join('');
-          return '<div class="pcard-finishes pcard-color-variants" data-pcard-colors>' +
-            '<span class="pcard-swatches" role="list" aria-label="' + esc(g.colorOptions) + '">' + links + '</span>' +
-            '<span class="pcard-finish-count pcard-finish-current" data-pcard-finish-label aria-live="polite" title="' + esc(currentLabel) + '">' + esc(currentLabel) + '</span></div>' +
+          return '<div class="pcard-finishes pcard-finish-box" data-pcard-colors data-product-finish-label="' + esc(g.productFinish) + '" data-color-options-label="' + esc(g.availableColors) + '">' +
+            piece + '<div class="pcard-color-variants pcard-finish-choices"><span class="pcard-finish-caption">' + esc(g.availableColors) + '</span>' +
+            '<span class="pcard-swatches" role="list" aria-label="' + esc(g.availableColors) + '">' + links + '</span></div></div>' +
             '<script type="application/json" data-pcard-variant-data>' + jsonForScript(variants) + '<\/script>';
         }
-        if (!Array.isArray(card.finishes) || card.finishes.length === 0) return '';
-        var count = card.finishes_label || String(card.finishes.length) + ' finishes';
-        return '<div class="pcard-finishes"><span class="pcard-swatches" role="list" aria-label="' + esc(card.available_finishes_label || g.availableFinishes) + '">' +
-          card.finishes.slice(0, 4).map(function (finish) {
-            var key = String(finish.key || 'neutral').toLowerCase().replace(/[^a-z-]/g, '') || 'neutral';
-            return '<span class="pcard-swatch pcard-swatch--' + key + '" role="listitem" title="' + esc(finish.label || '') + '" aria-label="' + esc(finish.label || '') + '"></span>';
-          }).join('') + '</span><a class="pcard-finish-count" href="' + href + '">' + esc(count) + ' <span aria-hidden="true">›</span></a></div>';
+        if (!piece) return '';
+        return '<div class="pcard-finishes pcard-finish-box" data-pcard-colors data-product-finish-label="' + esc(g.productFinish) + '" data-color-options-label="' + esc(g.availableColors) + '">' + piece + '</div>';
       }
 
       function specList(card) {

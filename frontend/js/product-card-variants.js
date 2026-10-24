@@ -133,6 +133,54 @@
     }).join('');
   }
 
+  function finishKey(finish) {
+    return String(finish && finish.key || 'neutral').toLowerCase().replace(/[^a-z-]/g, '') || 'neutral';
+  }
+
+  function toneParts(finishes) {
+    return finishes.slice(0, 4).map(function (finish) {
+      return '<i class="pcard-tone pcard-swatch--' + finishKey(finish) + '" aria-hidden="true"></i>';
+    }).join('');
+  }
+
+  /* The piece's own two-tone finish is static information. Only the separate
+     option links below it change the card, so two colours never look like two
+     unrelated buttons. */
+  function updateFinish(card, product, cardData) {
+    var wrapper = card.querySelector('[data-pcard-colors]');
+    if (!wrapper) return;
+    var finishes = Array.isArray(cardData.finishes) ? cardData.finishes.slice(0, 4) : [];
+    if (!finishes.length && product.finish && product.finish.label) finishes = [product.finish];
+    var piece = wrapper.querySelector('[data-pcard-piece]');
+    if (!finishes.length) {
+      if (piece) piece.remove();
+      return;
+    }
+    if (!piece) {
+      piece = document.createElement('div');
+      piece.className = 'pcard-finish-piece';
+      piece.setAttribute('data-pcard-piece', '');
+      piece.innerHTML = '<span class="pcard-finish-caption">' + esc(wrapper.getAttribute('data-product-finish-label') || 'Piece finish') + '</span>' +
+        '<span class="pcard-finish-value"><span class="pcard-tone-swatch" data-pcard-piece-tones role="img"></span>' +
+        '<span class="pcard-finish-count pcard-finish-current pcard-finish-name" data-pcard-finish-label aria-live="polite"></span></span>';
+      wrapper.insertBefore(piece, wrapper.querySelector('.pcard-finish-choices') || wrapper.firstChild);
+    }
+    var label = String(product.finish && product.finish.label || finishes.map(function (finish) {
+      return finish.label || '';
+    }).filter(Boolean).join(' / '));
+    var tones = piece.querySelector('[data-pcard-piece-tones]');
+    var labelEl = piece.querySelector('[data-pcard-finish-label]');
+    if (tones) {
+      tones.innerHTML = toneParts(finishes);
+      tones.setAttribute('aria-label', label);
+      tones.setAttribute('title', label);
+    }
+    if (labelEl) {
+      labelEl.textContent = label;
+      labelEl.setAttribute('title', label);
+    }
+  }
+
   function updateMedia(card, product, name) {
     var media = card.querySelector('.pcard-media');
     if (!media) return;
@@ -332,12 +380,7 @@
       if (selected) link.setAttribute('aria-current', 'true');
       else link.removeAttribute('aria-current');
     });
-    var finishLabel = card.querySelector('[data-pcard-finish-label]');
-    var finish = product.finish || {};
-    if (finishLabel) {
-      finishLabel.textContent = finish.label || '';
-      finishLabel.setAttribute('title', finish.label || '');
-    }
+    updateFinish(card, product, cardData);
 
     card.dispatchEvent(new CustomEvent('pcard:variantchange', {
       bubbles: true,

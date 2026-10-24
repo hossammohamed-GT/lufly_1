@@ -16,6 +16,7 @@ foreach ($paginator->items() as $product) {
     <?= $view->component('button', ['label' => trans('common.create_product'), 'variant' => 'primary', 'href' => route('admin.products.create')]) ?>
 </div>
 
+<div class="product-table-wrap">
 <table class="table">
     <thead>
         <tr>
@@ -26,6 +27,8 @@ foreach ($paginator->items() as $product) {
             <th><?= e(trans('common.slug')) ?></th>
             <th><?= e(trans('common.price')) ?></th>
             <th><?= e(trans('common.status')) ?></th>
+            <th><?= e(trans('products.media_status')) ?></th>
+            <th><?= e(trans('products.visibility')) ?></th>
             <th><?= e(trans('common.actions')) ?></th>
         </tr>
     </thead>
@@ -35,6 +38,11 @@ foreach ($paginator->items() as $product) {
             $data = $product->translate($locale);
             $productImage = !empty($data['image']) ? asset((string) $data['image']) : null;
             $productName = (string) ($names[(int) $product->id] ?? $product->model_code ?? '');
+            $status = (string) $product->status;
+            $hasMainImage = $product->gallery() !== [];
+            $hasDrawing = !empty($data['drawings']);
+            $isPublic = in_array($status, ['active', 'coming_soon'], true);
+            $canToggleVisibility = in_array($status, ['active', 'hidden'], true);
             ?>
             <tr>
                 <td><?= (int) $product->id ?></td>
@@ -53,7 +61,35 @@ foreach ($paginator->items() as $product) {
                 <td><?= e($productName) ?></td>
                 <td><code><?= e((string) $product->slug) ?></code></td>
                 <td><?= e((string) ($data['price'] ?? 0)) ?></td>
-                <td><span class="badge badge-<?= e((string) $product->status) ?>"><?= e(trans('common.' . ((string) $product->status === 'active' ? 'active' : 'draft'))) ?></span></td>
+                <td><span class="badge badge-<?= e($status) ?>"><?= e(trans('common.' . $status)) ?></span></td>
+                <td>
+                    <div class="product-media-flags">
+                        <span class="badge badge-<?= $hasMainImage ? 'active' : 'draft' ?>">
+                            <?= e(trans($hasMainImage ? 'products.main_image_present' : 'products.main_image_missing')) ?>
+                        </span>
+                        <span class="badge badge-<?= $hasDrawing ? 'active' : 'draft' ?>">
+                            <?= e(trans($hasDrawing ? 'products.drawing_present' : 'products.drawing_missing')) ?>
+                        </span>
+                    </div>
+                </td>
+                <td>
+                    <div class="product-visibility">
+                        <span class="badge badge-<?= $isPublic ? 'active' : 'inactive' ?>">
+                            <?= e(trans($isPublic ? 'products.visible' : 'products.hidden')) ?>
+                        </span>
+                        <?php if ($canToggleVisibility): ?>
+                            <form method="post" action="<?= e(route('admin.products.visibility', ['id' => $product->id])) ?>" class="inline-form">
+                                <?= csrf_field() ?>
+                                <input type="hidden" name="page" value="<?= max(1, (int) request()->query('page', '1')) ?>">
+                                <input type="hidden" name="q" value="<?= e((string) request()->query('q', '')) ?>">
+                                <button type="submit" class="btn btn-sm btn-secondary"
+                                        aria-label="<?= e(trans($status === 'active' ? 'products.hide_product' : 'products.show_product') . ' — ' . $productName) ?>">
+                                    <?= e(trans($status === 'active' ? 'products.hide_product' : 'products.show_product')) ?>
+                                </button>
+                            </form>
+                        <?php endif; ?>
+                    </div>
+                </td>
                 <td class="row-actions">
                     <a class="btn btn-sm btn-secondary" href="<?= e(route('admin.products.edit', ['id' => $product->id])) ?>"><?= e(trans('common.edit')) ?></a>
                     <form method="post" action="<?= e(route('admin.products.destroy', ['id' => $product->id])) ?>" class="inline-form"
@@ -66,5 +102,6 @@ foreach ($paginator->items() as $product) {
         <?php endforeach; ?>
     </tbody>
 </table>
+</div>
 
 <?= $view->component('pagination', ['paginator' => $paginator]) ?>

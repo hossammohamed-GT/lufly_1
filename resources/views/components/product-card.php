@@ -115,18 +115,8 @@ $colorVariants = is_array($item['color_variants'] ?? null) ? $item['color_varian
             </div>
         <?php endif; ?>
 
-        <?php if (count($colorVariants) > 1): ?>
-            <?= $view->component('product-color-variants', ['item' => $item]) ?>
-        <?php elseif ($card['finishes'] !== []): ?>
-            <div class="pcard-finishes">
-                <span class="pcard-swatches" role="list" aria-label="<?= e($card['available_finishes_label']) ?>">
-                    <?php foreach ($card['finishes'] as $finish): ?>
-                        <span class="pcard-swatch pcard-swatch--<?= e($finish['key']) ?>" role="listitem"
-                              title="<?= e($finish['label']) ?>" aria-label="<?= e($finish['label']) ?>"></span>
-                    <?php endforeach; ?>
-                </span>
-                <a class="pcard-finish-count" href="<?= e($cardUrl) ?>"><?= e($card['finishes_label']) ?> <span aria-hidden="true">›</span></a>
-            </div>
+        <?php if ($card['finishes'] !== [] || count($colorVariants) > 1): ?>
+            <?= $view->component('product-color-variants', ['item' => $item, 'card' => $card]) ?>
         <?php endif; ?>
 
         <?php if ($card['specs'] !== []): ?>

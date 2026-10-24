@@ -245,6 +245,32 @@ class ProductController extends Controller
             ->with('_success', trans('common.saved'));
     }
 
+    public function adminToggleVisibility(Request $request, int $id): RedirectResponse
+    {
+        $product = $this->products->find($id);
+        $status = (string) $product->status;
+        $query = [
+            'page' => max(1, (int) $request->query('page', '1')),
+            'q' => trim((string) $request->query('q', '')),
+        ];
+        $target = route('admin.products.index') . '?' . http_build_query($query);
+
+        /* Active/hidden is the existing public-visibility switch. Other
+           lifecycle states stay under the full edit form so toggling display
+           never silently turns Coming soon or Discontinued into Active. */
+        if (!in_array($status, ['active', 'hidden'], true)) {
+            return $this->redirect($target)->with('_errors', [
+                'status' => [trans('products.visibility_toggle_invalid')],
+            ]);
+        }
+
+        $this->products->update($id, [
+            'status' => $status === 'active' ? 'hidden' : 'active',
+        ]);
+
+        return $this->redirect($target)->with('_success', trans('products.visibility_updated'));
+    }
+
     public function adminDestroy(int $id): RedirectResponse
     {
         $this->products->delete($id);

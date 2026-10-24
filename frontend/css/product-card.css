@@ -461,6 +461,111 @@ a.pcard-swatch.is-active {
 .pcard-finish-count span { color: var(--pcard-accent); }
 .pcard-finish-count:hover { color: var(--pcard-accent); }
 
+/* A small, labelled finish box prevents the two-tone finish of one physical
+   product from being mistaken for two clickable catalogue options. */
+.pcard-finishes.pcard-finish-box {
+  display: grid;
+  gap: 7px;
+  min-height: 0;
+  padding: 8px 9px;
+  border: 1px solid var(--pcard-line);
+  border-radius: 11px;
+  background: rgba(255, 255, 255, 0.2);
+}
+
+.pcard-finish-piece,
+.pcard-finish-choices {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  min-width: 0;
+}
+
+.pcard-finish-choices {
+  padding-top: 7px;
+  border-top: 1px dashed var(--pcard-line);
+}
+
+.pcard-finish-caption {
+  flex: 0 0 auto;
+  color: var(--pcard-muted);
+  font-size: 9px;
+  font-weight: 750;
+  line-height: 1.25;
+  letter-spacing: 0.035em;
+}
+
+.pcard-finish-value {
+  display: flex;
+  flex: 1 1 auto;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 7px;
+  min-width: 0;
+}
+
+.pcard-tone-swatch,
+.pcard-option-tones {
+  display: flex;
+  overflow: hidden;
+  border-radius: 50%;
+  background: linear-gradient(145deg, #e8e6df, #92968f);
+}
+
+.pcard-tone-swatch {
+  width: 20px;
+  height: 20px;
+  flex: 0 0 20px;
+  border: 2px solid rgba(255, 255, 255, 0.72);
+  box-shadow: 0 0 0 1px rgba(20, 43, 40, 0.18);
+  cursor: default;
+}
+
+.pcard-tone {
+  display: block;
+  flex: 1 1 0;
+  min-width: 0;
+  height: 100%;
+}
+
+a.pcard-swatch.pcard-option {
+  width: 26px;
+  height: 26px;
+  flex: 0 0 26px;
+  padding: 2px;
+  border: 0;
+  background: transparent;
+  box-shadow: 0 0 0 1px rgba(20, 43, 40, 0.2), 0 3px 8px rgba(9, 25, 23, 0.12);
+}
+
+a.pcard-swatch.pcard-option.is-active {
+  box-shadow: 0 0 0 2px var(--ds-surface), 0 0 0 4px var(--ds-primary), 0 3px 8px rgba(9, 25, 23, 0.16);
+}
+
+.pcard-option-tones {
+  width: 100%;
+  height: 100%;
+  border: 1px solid rgba(255, 255, 255, 0.72);
+}
+
+.pcard-finish-choices .pcard-swatches {
+  flex: 1 1 auto;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+  row-gap: 7px;
+  margin-inline-start: auto;
+}
+
+.pcard-finish-box .pcard-finish-name {
+  max-width: 100%;
+  margin-inline-start: 0;
+  overflow: hidden;
+  color: var(--pcard-ink);
+  font-size: 10px;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
 .pcard-specs {
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
@@ -598,8 +703,11 @@ a.pcard-swatch.is-active {
   .pcard-feature { gap: 6px; font-size: 9.5px; }
   .pcard-feature svg { flex-basis: 18px; width: 18px; height: 18px; }
   .pcard-finishes { gap: 7px; }
+  .pcard-finishes.pcard-finish-box { gap: 6px; padding: 7px 8px; }
   .pcard-swatches { gap: 5px; }
   .pcard-swatch { width: 20px; height: 20px; flex-basis: 20px; }
+  a.pcard-swatch.pcard-option { width: 24px; height: 24px; flex-basis: 24px; }
+  .pcard-finish-caption { font-size: 8.5px; }
   .pcard-finish-count { font-size: 9.5px; }
   .pcard-specs { gap: 8px; }
   .pcard-spec { gap: 6px; }
