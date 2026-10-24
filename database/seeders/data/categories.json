@@ -453,7 +453,7 @@
     "slug": "kids.kids-mixers",
     "parent": "kids",
     "sort_order": 2,
-    "image": "/images/categories/001-bathroom.jpg",
+    "image": "/images/categories/051-kids-kids-mixers.jpg",
     "names": {
       "en": "Kids Mixers"
     }
@@ -462,7 +462,7 @@
     "slug": "kids.kids-mixers.kids-basin-mixers",
     "parent": "kids.kids-mixers",
     "sort_order": 1,
-    "image": "/images/categories/001-bathroom.jpg",
+    "image": "/images/categories/052-kids-kids-mixers-kids-basin-mixers.jpg",
     "names": {
       "en": "Kids Basin Mixers"
     }
@@ -471,7 +471,7 @@
     "slug": "kids.kids-mixers.kids-shower-mixers",
     "parent": "kids.kids-mixers",
     "sort_order": 2,
-    "image": "/images/categories/001-bathroom.jpg",
+    "image": "/images/categories/053-kids-kids-mixers-kids-shower-mixers.jpg",
     "names": {
       "en": "Kids Shower Mixers"
     }
@@ -480,7 +480,7 @@
     "slug": "kids.kids-mixers.kids-accessories",
     "parent": "kids.kids-mixers",
     "sort_order": 3,
-    "image": "/images/categories/001-bathroom.jpg",
+    "image": "/images/categories/054-kids-kids-mixers-kids-accessories.jpg",
     "names": {
       "en": "Kids Accessories"
     }
@@ -498,7 +498,7 @@
     "slug": "accessibility.accessible-sanitary-ware",
     "parent": "accessibility",
     "sort_order": 1,
-    "image": "/images/categories/001-bathroom.jpg",
+    "image": "/images/categories/056-accessibility-accessible-sanitary-ware.jpg",
     "names": {
       "en": "Accessible Sanitary Ware"
     }
@@ -507,7 +507,7 @@
     "slug": "accessibility.accessible-sanitary-ware.accessible-toilets",
     "parent": "accessibility.accessible-sanitary-ware",
     "sort_order": 1,
-    "image": "/images/categories/001-bathroom.jpg",
+    "image": "/images/categories/057-accessibility-accessible-sanitary-ware-accessible-toilets.jpg",
     "names": {
       "en": "Accessible Toilets"
     }
@@ -516,7 +516,7 @@
     "slug": "accessibility.accessible-sanitary-ware.accessible-wash-basins",
     "parent": "accessibility.accessible-sanitary-ware",
     "sort_order": 2,
-    "image": "/images/categories/001-bathroom.jpg",
+    "image": "/images/categories/058-accessibility-accessible-sanitary-ware-accessible-wash-basins.jpg",
     "names": {
       "en": "Accessible Wash Basins"
     }
@@ -525,7 +525,7 @@
     "slug": "accessibility.accessible-sanitary-ware.accessible-showers",
     "parent": "accessibility.accessible-sanitary-ware",
     "sort_order": 3,
-    "image": "/images/categories/001-bathroom.jpg",
+    "image": "/images/categories/059-accessibility-accessible-sanitary-ware-accessible-showers.jpg",
     "names": {
       "en": "Accessible Showers"
     }
@@ -534,7 +534,7 @@
     "slug": "accessibility.accessible-sanitary-ware.accessible-urinals",
     "parent": "accessibility.accessible-sanitary-ware",
     "sort_order": 4,
-    "image": "/images/categories/001-bathroom.jpg",
+    "image": "/images/categories/060-accessibility-accessible-sanitary-ware-accessible-urinals.jpg",
     "names": {
       "en": "Accessible Urinals"
     }
@@ -543,7 +543,7 @@
     "slug": "accessibility.kids-bars-supports",
     "parent": "accessibility",
     "sort_order": 2,
-    "image": "/images/categories/001-bathroom.jpg",
+    "image": "/images/categories/061-accessibility-kids-bars-supports.jpg",
     "names": {
       "en": "Kids Bars & Supports"
     }
