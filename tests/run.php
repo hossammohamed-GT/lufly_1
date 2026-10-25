@@ -42,19 +42,21 @@ $rootHtaccess = (string) file_get_contents($root . '/.htaccess');
 $assert(!preg_match('/FilesMatch "\\\.\(css.*?immutable/s', $rootHtaccess), 'Unhashed CSS/JS are not cached as immutable');
 
 $catalogView = (string) file_get_contents($root . '/modules/Products/Views/index.php');
+$catalogPicker = (string) file_get_contents($root . '/resources/views/components/catalog-category-picker.php');
 $catalogDock = (string) file_get_contents($root . '/frontend/products/catalog/catalog-dock.js');
 $catalogLiveSearch = (string) file_get_contents($root . '/frontend/js/live-search.js');
 $catalogExplorer = (string) file_get_contents($root . '/frontend/components/category-explorer/category-explorer.js');
 $catalogCss = (string) file_get_contents($root . '/frontend/products/catalog/catalog.css');
-$assert(preg_match_all('/\\sdata-livesearch(?:\\s|=)/', $catalogView) === 1, 'Catalog keeps exactly one live-search host');
-$assert(str_contains($catalogView, 'data-catalog-dock-category') && str_contains($catalogView, '$walkDockCategories'), 'Catalog dock mirrors the canonical category tree');
+$assert(preg_match_all('/\\sdata-livesearch(?:\\s|=)/', $catalogView) === 1 && substr_count($catalogView, 'data-livesearch-input') === 1, 'Catalog keeps exactly one live-search host and input');
+$assert(str_contains($catalogView, "component('catalog-category-picker'") && str_contains($catalogView, 'data-catalog-dock-slot') && !str_contains($catalogView, 'data-catalog-dock-category'), 'The original toolbar owns the single sticky category picker');
+$assert(str_contains($catalogPicker, 'data-category-view="roots"') && str_contains($catalogPicker, 'data-category-drill') && str_contains($catalogPicker, 'data-category-back'), 'Server-rendered picker exposes roots, nested views, and back navigation');
 $assert(!str_contains($catalogDock, 'fetch(') && !str_contains($catalogDock, '.innerHTML'), 'Catalog dock does not become a competing request or rendering controller');
 $assert(str_contains($catalogDock, "event('category:select'") && str_contains($catalogExplorer, "explorer.addEventListener('category:select'"), 'Dock categories reuse the atlas activation path');
-$assert(str_contains($catalogLiveSearch, "event.detail.source === 'catalog-dock'") && str_contains($catalogLiveSearch, "'is-compact'"), 'Dock search reuses live search without moving or expanding the original toolbar');
-$assert(str_contains($catalogCss, '.catalog-dock.is-visible .catalog-dock-inner::before') && str_contains($catalogCss, '@media (prefers-reduced-motion: reduce)'), 'Visible dock sheen is disabled with reduced motion');
+$assert(str_contains($catalogLiveSearch, "form.classList.contains('is-docked')") && str_contains($catalogLiveSearch, "catalog:dockstate") && str_contains($catalogLiveSearch, "'is-compact'"), 'Docked live search keeps its results position and compact status');
+$assert(str_contains($catalogCss, '.catalog-searchform.is-docked.is-entering') && str_contains($catalogCss, '@keyframes catalogDockArrive') && str_contains($catalogCss, '@media (prefers-reduced-motion: reduce)'), 'Sticky bar has a smooth entrance and reduced-motion fallback');
 foreach (['en', 'tr', 'cs'] as $catalogLocale) {
     $catalogTranslations = (string) file_get_contents($root . "/resources/lang/{$catalogLocale}/products.php");
-    $assert(str_contains($catalogTranslations, "'catalog_dock_search'"), "Catalog dock search is localized for {$catalogLocale}");
+    $assert(str_contains($catalogTranslations, "'catalog_dock_search'") && str_contains($catalogTranslations, "'catalog_category_prompt'") && str_contains($catalogTranslations, "'catalog_category_back_to'"), "Catalog dock and category picker are localized for {$catalogLocale}");
 }
 
 if ($failures !== []) {

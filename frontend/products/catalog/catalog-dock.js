@@ -1,84 +1,116 @@
-/* Scrolled catalog dock: a compact adapter over the existing atlas and search. */
+/* Sticky catalog search bar and progressive category drill-down. */
 (function () {
   'use strict';
 
   function init() {
-    var dock = document.querySelector('[data-catalog-dock]');
-    if (!dock || dock.__catalogDock) return;
+    var form = document.querySelector('[data-catalog-dock]');
+    if (!form || form.__catalogDock) return;
 
-    var catalog = dock.closest('.catalog');
-    var select = dock.querySelector('[data-catalog-dock-category]');
-    var form = dock.querySelector('[data-catalog-dock-search]');
-    var input = dock.querySelector('[data-catalog-dock-input]');
-    var clear = dock.querySelector('[data-catalog-dock-clear]');
-    if (!catalog || !select || !form || !input || !clear) return;
+    var catalog = form.closest('.catalog');
+    var slot = form.closest('[data-catalog-dock-slot]');
+    var input = form.querySelector('[data-livesearch-input]');
+    var hiddenCategory = form.querySelector('input[name="category"]');
+    var clear = form.querySelector('[data-catalog-search-clear]');
+    var picker = form.querySelector('[data-catalog-category-picker]');
+    if (!catalog || !slot || !input || !hiddenCategory || !clear || !picker) return;
 
+    var summary = picker.querySelector('[data-catalog-category-summary]');
+    var currentName = picker.querySelector('[data-catalog-category-current-name]');
+    var currentImage = picker.querySelector('[data-catalog-category-current-image]');
+    var currentFallback = picker.querySelector('[data-catalog-category-current-fallback]');
+    var status = picker.querySelector('[data-catalog-category-status]');
+    var views = Array.prototype.slice.call(picker.querySelectorAll('[data-category-view]'));
+    var categoryLinks = Array.prototype.slice.call(picker.querySelectorAll('[data-category-slug]'));
     var explorer = catalog.querySelector('[data-category-explorer]');
-    var searchHost = catalog.querySelector('[data-livesearch]');
-    var searchForm = searchHost ? searchHost.querySelector('.catalog-searchform') : null;
-    var searchInput = searchForm ? searchForm.querySelector('[data-livesearch-input]') : null;
     var gridHost = catalog.querySelector('[data-sk-host]');
-    if (!searchHost || !searchForm || !searchInput || !gridHost) return;
+    if (!summary || !currentName || !currentImage || !currentFallback || !gridHost) return;
 
-    dock.__catalogDock = true;
+    form.__catalogDock = true;
     var frame = null;
     var resizeFrame = null;
     var resizeAnchor = null;
     var lastGridTop = null;
     var pendingGridTop = null;
+    var currentCategory = hiddenCategory.value || '';
+    var motion = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)');
 
-    function event(name, detail, cancelable) {
-      return new CustomEvent(name, {
-        bubbles: true,
-        cancelable: Boolean(cancelable),
-        detail: detail || {}
-      });
+    function event(name, detail) {
+      return new CustomEvent(name, { bubbles: true, detail: detail || {} });
     }
 
     function syncClear() {
       clear.hidden = input.value === '';
     }
 
-    function setQuery(value) {
-      input.value = String(value || '');
-      syncClear();
+    function metadataFor(slug) {
+      for (var i = 0; i < categoryLinks.length; i += 1) {
+        if (categoryLinks[i].getAttribute('data-category-slug') === slug) return categoryLinks[i];
+      }
+      return null;
     }
 
     function syncCategory(slug) {
-      select.value = String(slug || '');
-      var option = select.selectedOptions && select.selectedOptions[0];
-      select.title = option ? (option.getAttribute('aria-label') || option.textContent.trim()) : '';
-    }
-
-    function liveSearchReady() {
-      return searchHost.__livesearch === true;
-    }
-
-    function forwardInput() {
-      searchInput.value = input.value;
-      searchInput.dispatchEvent(event('input', { source: 'catalog-dock' }));
-    }
-
-    function forwardSubmit() {
-      searchInput.value = input.value;
-      searchForm.dispatchEvent(event('submit', { source: 'catalog-dock' }, true));
-    }
-
-    /* Asset failure fallback only. In normal operation both category and
-       search stay on their original controllers and no second requester runs. */
-    function navigateFallback(slug, query) {
-      var url;
-      try {
-        url = new URL(window.location.href);
-      } catch (error) {
-        return;
+      currentCategory = String(slug || '');
+      var metadata = metadataFor(currentCategory);
+      var name = metadata ? metadata.getAttribute('data-category-name') : picker.getAttribute('data-category-all-name') || '';
+      var path = metadata ? metadata.getAttribute('data-category-path') : name;
+      var image = metadata ? metadata.getAttribute('data-category-image') : '';
+      currentName.textContent = name;
+      summary.title = path || name;
+      if (image) {
+        if (currentImage.getAttribute('src') !== image) currentImage.setAttribute('src', image);
+        currentImage.hidden = false;
+        currentFallback.hidden = true;
+      } else {
+        currentImage.hidden = true;
+        currentImage.removeAttribute('src');
+        currentFallback.hidden = false;
       }
-      if (slug) url.searchParams.set('category', slug);
-      else url.searchParams.delete('category');
-      if (query) url.searchParams.set('q', query);
-      else url.searchParams.delete('q');
-      url.searchParams.delete('page');
-      catalog.dispatchEvent(event('catalog:navigate', { url: url.href, reveal: false }));
+      categoryLinks.forEach(function (link) {
+        var linkSlug = link.getAttribute('data-category-slug') || '';
+        var selected = linkSlug === currentCategory;
+        link.classList.toggle('is-active', selected);
+        if (link.hasAttribute('data-category-choice') && selected) link.setAttribute('aria-current', 'true');
+        else link.removeAttribute('aria-current');
+      });
+    }
+
+    function viewFor(id) {
+      for (var i = 0; i < views.length; i += 1) {
+        if (views[i].getAttribute('data-category-view') === id) return views[i];
+      }
+      return null;
+    }
+
+    function focusWithoutScroll(element) {
+      if (!element) return;
+      try {
+        element.focus({ preventScroll: true });
+      } catch (error) {
+        element.focus();
+      }
+    }
+
+    function showView(id, animate, moveFocus) {
+      var target = viewFor(id);
+      if (!target) return;
+      views.forEach(function (view) {
+        view.classList.remove('is-entering');
+        view.hidden = view !== target;
+      });
+      target.hidden = false;
+      if (animate && !(motion && motion.matches)) target.classList.add('is-entering');
+      if (status) status.textContent = target.getAttribute('data-category-view-label') || '';
+      if (moveFocus) {
+        var nextFocus = target.querySelector('[data-category-back]') || target.querySelector('a');
+        focusWithoutScroll(nextFocus);
+      }
+    }
+
+    function closePicker(restoreFocus) {
+      if (picker.open) picker.open = false;
+      showView('roots', false, false);
+      if (restoreFocus) focusWithoutScroll(summary);
     }
 
     function navbarHeight() {
@@ -87,46 +119,51 @@
       return window.innerWidth <= 1023 ? 52 : 56;
     }
 
-    function focusResults() {
-      var results = catalog.querySelector('#catalog-results');
-      if (!results) return;
-      try {
-        results.focus({ preventScroll: true });
-      } catch (error) {
-        results.focus();
+    function positionDock() {
+      if (!form.classList.contains('is-docked')) return;
+      var rect = slot.getBoundingClientRect();
+      form.style.left = rect.left + 'px';
+      form.style.width = rect.width + 'px';
+    }
+
+    function setDocked(docked) {
+      if (form.classList.contains('is-docked') === docked) return;
+      if (docked) {
+        var rect = slot.getBoundingClientRect();
+        slot.style.height = form.getBoundingClientRect().height + 'px';
+        form.style.left = rect.left + 'px';
+        form.style.width = rect.width + 'px';
+        form.classList.add('is-docked');
+        form.classList.remove('is-entering');
+        /* One short entrance, only when the existing bar becomes fixed. */
+        void form.offsetWidth;
+        form.classList.add('is-entering');
+      } else {
+        form.classList.remove('is-docked', 'is-entering');
+        form.style.left = '';
+        form.style.width = '';
+        slot.style.height = '';
       }
+      form.dispatchEvent(event('catalog:dockstate', { docked: docked }));
     }
 
-    function setVisible(visible) {
-      if (dock.classList.contains('is-visible') === visible) return;
-      if (!visible && dock.contains(document.activeElement)) focusResults();
-      dock.classList.toggle('is-visible', visible);
-      dock.setAttribute('aria-hidden', visible ? 'false' : 'true');
-      if (visible) dock.removeAttribute('inert');
-      else dock.setAttribute('inert', '');
-    }
-
-    function updateVisibility() {
+    function updateDock() {
       if (resizeFrame !== null) return;
       var dockTop = navbarHeight() + 8;
-      var gridRect = gridHost.getBoundingClientRect();
+      var slotRect = slot.getBoundingClientRect();
       var catalogRect = catalog.getBoundingClientRect();
-      var alreadyVisible = dock.classList.contains('is-visible');
-      /* Small hysteresis prevents a one-pixel scroll or font swap from
-         repeatedly opening and closing the dock at its entry threshold. */
-      var threshold = dockTop + (alreadyVisible ? 32 : 24);
-      var reachedProducts = gridRect.top <= threshold;
-      var insideCatalog = catalogRect.bottom > dockTop + 128;
-      var visible = reachedProducts && insideCatalog;
-      if (visible) lastGridTop = gridRect.top;
-      setVisible(visible);
+      var docked = form.classList.contains('is-docked');
+      var threshold = dockTop + (docked ? 4 : 0);
+      var shouldDock = slotRect.top <= threshold && catalogRect.bottom > dockTop + 128;
+      setDocked(shouldDock);
+      if (shouldDock) lastGridTop = gridHost.getBoundingClientRect().top;
     }
 
-    function scheduleVisibility() {
+    function scheduleDock() {
       if (frame !== null) return;
       frame = window.requestAnimationFrame(function () {
         frame = null;
-        updateVisibility();
+        updateDock();
       });
     }
 
@@ -142,109 +179,182 @@
 
     function handleScroll() {
       if (pendingGridTop !== null) {
-        if (dock.classList.contains('is-visible')) pendingGridTop = gridHost.getBoundingClientRect().top;
+        if (form.classList.contains('is-docked')) pendingGridTop = gridHost.getBoundingClientRect().top;
         else pendingGridTop = null;
       }
-      scheduleVisibility();
+      scheduleDock();
     }
 
     function handleResize() {
-      if (resizeFrame === null) resizeAnchor = dock.classList.contains('is-visible') ? lastGridTop : null;
+      if (resizeFrame === null) resizeAnchor = form.classList.contains('is-docked') ? lastGridTop : null;
       if (resizeFrame !== null) window.cancelAnimationFrame(resizeFrame);
       resizeFrame = window.requestAnimationFrame(function () {
         resizeFrame = null;
         var anchor = resizeAnchor;
+        var wasDocked = form.classList.contains('is-docked');
         resizeAnchor = null;
-        /* Responsive atlas/card rows can reflow above the reader. Preserve the
-           same product position through orientation and viewport changes. */
-        if (anchor !== null) alignGridTo(anchor);
-        updateVisibility();
+        if (wasDocked) {
+          /* Responsive changes above the toolbar can move its document
+             position. Preserve the reading anchor before evaluating the
+             sticky threshold, and include the new placeholder height. */
+          slot.style.height = form.getBoundingClientRect().height + 'px';
+          positionDock();
+          if (anchor !== null) alignGridTo(anchor);
+        }
+        updateDock();
+        if (form.classList.contains('is-docked')) {
+          slot.style.height = form.getBoundingClientRect().height + 'px';
+          positionDock();
+          if (anchor !== null) lastGridTop = gridHost.getBoundingClientRect().top;
+        }
       });
     }
 
-    select.addEventListener('change', function () {
-      var slug = select.value;
-      var keepGridPosition = dock.classList.contains('is-visible');
+    function navigateFallback(slug) {
+      var url;
+      try {
+        url = new URL(window.location.href);
+      } catch (error) {
+        return;
+      }
+      if (slug) url.searchParams.set('category', slug);
+      else url.searchParams.delete('category');
+      url.searchParams.delete('q');
+      url.searchParams.delete('page');
+      catalog.dispatchEvent(event('catalog:navigate', { url: url.href, reveal: false }));
+    }
+
+    function selectCategory(slug) {
+      if (slug === currentCategory) {
+        closePicker(true);
+        return;
+      }
+      var keepGridPosition = form.classList.contains('is-docked');
       var previousGridTop = keepGridPosition ? gridHost.getBoundingClientRect().top : 0;
       pendingGridTop = keepGridPosition ? previousGridTop : null;
       syncCategory(slug);
+      closePicker(true);
       if (explorer && explorer.getAttribute('data-atlas-ready') === 'true') {
         explorer.dispatchEvent(event('category:select', { slug: slug }));
       } else {
-        navigateFallback(slug, '');
+        navigateFallback(slug);
       }
-      /* Atlas branches above the viewport can have different heights. Their
-         activation must not push the products away or dismiss the dock while
-         the visitor is using it. Compensate only that synchronous layout shift;
-         this is not an animated scroll and the select keeps its focus. */
       if (keepGridPosition) alignGridTo(previousGridTop);
-      scheduleVisibility();
+      scheduleDock();
+    }
+
+    picker.addEventListener('toggle', function () {
+      /* Every new opening starts with the nine roots, never a stale branch. */
+      showView('roots', false, false);
     });
 
-    input.addEventListener('input', function () {
-      syncClear();
-      if (liveSearchReady()) forwardInput();
-    });
-
-    form.addEventListener('submit', function (submitEvent) {
-      submitEvent.preventDefault();
-      if (liveSearchReady()) forwardSubmit();
-      else navigateFallback(select.value, input.value.trim());
-    });
-
-    clear.addEventListener('click', function () {
-      setQuery('');
-      if (liveSearchReady()) forwardInput();
-      else navigateFallback(select.value, '');
-      try {
-        input.focus({ preventScroll: true });
-      } catch (error) {
-        input.focus();
+    picker.addEventListener('click', function (clickEvent) {
+      var back = clickEvent.target.closest('[data-category-back]');
+      if (back && picker.contains(back)) {
+        clickEvent.preventDefault();
+        var currentView = back.closest('[data-category-view]');
+        var currentId = currentView ? currentView.getAttribute('data-category-view') : '';
+        var parentId = back.getAttribute('data-category-back');
+        showView(parentId, true, false);
+        var parentView = viewFor(parentId);
+        var origin = null;
+        if (parentView) {
+          origin = Array.prototype.find.call(parentView.querySelectorAll('[data-category-drill]'), function (link) {
+            return link.getAttribute('data-category-drill') === currentId;
+          }) || null;
+        }
+        focusWithoutScroll(origin || (parentView && parentView.querySelector('a')) || summary);
+        return;
+      }
+      var drill = clickEvent.target.closest('[data-category-drill]');
+      if (drill && picker.contains(drill)) {
+        clickEvent.preventDefault();
+        showView(drill.getAttribute('data-category-drill'), true, true);
+        return;
+      }
+      var choice = clickEvent.target.closest('[data-category-choice]');
+      if (choice && picker.contains(choice)) {
+        clickEvent.preventDefault();
+        selectCategory(choice.getAttribute('data-category-slug') || '');
       }
     });
 
+    picker.addEventListener('keydown', function (keyEvent) {
+      if (keyEvent.key !== 'Escape' || !picker.open) return;
+      keyEvent.preventDefault();
+      closePicker(true);
+    });
+
+    /* The existing All-categories filter remains the reset control. While
+       docked, route it through the same anchored selection path as the
+       picker instead of letting a second controller move the results. */
+    catalog.addEventListener('click', function (clickEvent) {
+      if (clickEvent.defaultPrevented || clickEvent.button !== 0 || clickEvent.metaKey || clickEvent.ctrlKey || clickEvent.shiftKey || clickEvent.altKey) return;
+      if (!form.classList.contains('is-docked')) return;
+      var filter = clickEvent.target.closest ? clickEvent.target.closest('[data-category-filter]') : null;
+      if (!filter || !catalog.contains(filter) || (filter.getAttribute('data-category-filter') || '') !== '') return;
+      clickEvent.preventDefault();
+      clickEvent.stopPropagation();
+      selectCategory('');
+    }, true);
+
+    document.addEventListener('click', function (clickEvent) {
+      if (picker.open && !picker.contains(clickEvent.target)) closePicker(false);
+    });
+
+    input.addEventListener('focus', function () {
+      picker.setAttribute('inert', '');
+      closePicker(false);
+    });
+    input.addEventListener('blur', function () { picker.removeAttribute('inert'); });
     input.addEventListener('keydown', function (keyEvent) {
-      if (keyEvent.key !== 'Escape') return;
-      if (input.value !== '') {
-        keyEvent.preventDefault();
-        setQuery('');
-        if (liveSearchReady()) forwardInput();
-        else navigateFallback(select.value, '');
-      } else {
-        input.blur();
-      }
+      if (keyEvent.key !== 'Tab' || !keyEvent.shiftKey) return;
+      /* The collapsed picker is inert; make Shift+Tab an explicit, visible
+         route back to categories instead of skipping out of the toolbar. */
+      keyEvent.preventDefault();
+      input.blur();
+      focusWithoutScroll(summary);
+    });
+    input.addEventListener('input', syncClear);
+    clear.addEventListener('pointerdown', function (pointerEvent) {
+      /* Keep the search focused while its clear button is used by pointer. */
+      pointerEvent.preventDefault();
+    });
+    clear.addEventListener('click', function () {
+      input.value = '';
+      input.dispatchEvent(new Event('input', { bubbles: true }));
+      focusWithoutScroll(input);
     });
 
-    /* Keep both visible inputs identical without attaching live-search to the
-       dock. Programmatic events from the dock simply converge to the same value. */
-    searchInput.addEventListener('input', function () {
-      setQuery(searchInput.value);
+    form.addEventListener('submit', function () { closePicker(false); });
+    form.addEventListener('animationend', function (animationEvent) {
+      if (animationEvent.animationName === 'catalogDockArrive') form.classList.remove('is-entering');
     });
-
-    searchForm.addEventListener('livesearch:reset', function (resetEvent) {
+    form.addEventListener('livesearch:reset', function (resetEvent) {
       var detail = resetEvent.detail || {};
-      setQuery(detail.query || '');
+      syncCategory(detail.category || '');
+      syncClear();
     });
 
     catalog.addEventListener('catalog:updated', function (updatedEvent) {
       var detail = updatedEvent.detail || {};
       syncCategory(detail.category || '');
-      setQuery(searchInput.value);
+      syncClear();
       if (pendingGridTop !== null) {
-        if (dock.classList.contains('is-visible')) alignGridTo(pendingGridTop);
+        if (form.classList.contains('is-docked')) alignGridTo(pendingGridTop);
         pendingGridTop = null;
       }
-      scheduleVisibility();
+      scheduleDock();
     });
 
     window.addEventListener('scroll', handleScroll, { passive: true });
     window.addEventListener('resize', handleResize);
-    window.addEventListener('pageshow', scheduleVisibility);
-    window.addEventListener('load', scheduleVisibility);
+    window.addEventListener('pageshow', scheduleDock);
+    window.addEventListener('load', scheduleDock);
 
-    syncCategory(select.value);
+    syncCategory(currentCategory);
     syncClear();
-    scheduleVisibility();
+    scheduleDock();
   }
 
   if (document.readyState === 'loading') {

@@ -657,7 +657,7 @@
 
       function clearSearch() {
         input.value = '';
-        compactStatus = false;
+        compactStatus = form.classList.contains('is-docked');
         syncStatusMode();
         restoreGrid();
         box.classList.remove('is-busy');
@@ -686,11 +686,12 @@
 
       /* ---------- input wiring ---------- */
 
-      /* The scrolled dock is already beside the grid. Its forwarded events
-         update this controller without pulling the visitor back to a newly
-         scrolled result position; ordinary typing keeps the original reveal. */
+      /* Once this same form is fixed beside the grid, searching must not pull
+         the visitor to a new scroll position. The event-source check keeps
+         compatibility with previously forwarded dock events. */
       function shouldRevealGrid(event) {
-        return !(event && event.detail && event.detail.source === 'catalog-dock');
+        var forwardedDockEvent = event && event.detail && event.detail.source === 'catalog-dock';
+        return !forwardedDockEvent && !form.classList.contains('is-docked');
       }
 
       input.addEventListener('input', function (event) {
@@ -717,7 +718,7 @@
       });
 
       input.addEventListener('focus', function () {
-        compactStatus = false;
+        compactStatus = form.classList.contains('is-docked');
         syncStatusMode();
         form.classList.add('is-searching');
         var query = input.value.trim();
@@ -747,6 +748,15 @@
           return;
         }
         search(query, shouldRevealGrid(e));
+      });
+
+      /* The original bar can become fixed after it already has focus. Keep
+         its status compact from that point, and restore the normal panel when
+         it returns to its document position. */
+      form.addEventListener('catalog:dockstate', function (event) {
+        var detail = event.detail || {};
+        compactStatus = Boolean(detail.docked) && form.classList.contains('is-searching');
+        syncStatusMode();
       });
 
       /* A server-rendered category/sort/page update becomes the new baseline.
