@@ -14,6 +14,7 @@ $view->pushStyle('frontend/products/catalog/catalog.css');
 $view->pushScript('frontend/js/live-search.js');
 $view->pushScript('frontend/js/product-card-variants.js');
 $view->pushScript('frontend/products/catalog/catalog.js');
+$view->pushScript('frontend/products/catalog/catalog-dock.js');
 $view->pushStyle('frontend/components/skeleton/skeleton.css');
 $view->pushScript('frontend/components/skeleton/skeleton.js');
 $view->pushStyle('frontend/favorites/favorites.css');
@@ -60,6 +61,36 @@ foreach ($categories as $category) {
         $heroName = (string) ($category['name'] ?? $heroName);
         break;
     }
+}
+
+/* A compact native select mirrors the canonical atlas, including every
+   nested branch. It is only an alternative input: the dock controller routes
+   changes through the atlas itself, so there is still one category engine. */
+$dockCategoryGroups = [];
+foreach ($categories as $rootCategory) {
+    $dockOptions = [];
+    $walkDockCategories = static function (array $category, int $depth, string $parentPath = '') use (&$walkDockCategories, &$dockOptions): void {
+        $name = (string) ($category['name'] ?? '');
+        $slug = (string) ($category['slug'] ?? '');
+        if ($name === '' || $slug === '') {
+            return;
+        }
+        $path = $parentPath === '' ? $name : $parentPath . ' › ' . $name;
+        $dockOptions[] = [
+            'slug' => $slug,
+            'name' => $name,
+            'path' => $path,
+            'depth' => $depth,
+        ];
+        foreach (($category['children'] ?? []) as $childCategory) {
+            $walkDockCategories($childCategory, $depth + 1, $path);
+        }
+    };
+    $walkDockCategories($rootCategory, 0);
+    $dockCategoryGroups[] = [
+        'name' => (string) ($rootCategory['name'] ?? ''),
+        'options' => $dockOptions,
+    ];
 }
 
 /* Products this visitor already saved, so every card shows the heart in the
@@ -117,6 +148,50 @@ $colorFamilies = app(\Modules\Products\Services\ProductColorFamilyService::class
             'buildUrl' => $buildUrl,
             'mode' => 'catalog',
         ]) ?>
+
+        <aside class="catalog-dock" data-catalog-dock aria-label="<?= e(trans('products.catalog_dock_label')) ?>" aria-hidden="true" inert>
+            <div class="catalog-dock-inner">
+                <span class="catalog-dock-title" aria-hidden="true">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"><path d="M4 7h16M7 12h10M10 17h4"/></svg>
+                    <span><?= e(trans('products.catalog_dock_label')) ?></span>
+                </span>
+
+                <label class="catalog-dock-field catalog-dock-category">
+                    <span class="catalog-dock-field-label"><?= e(trans('common.category')) ?></span>
+                    <select class="catalog-dock-select" data-catalog-dock-category aria-controls="catalog-results">
+                        <option value=""><?= e(trans('common.all_categories')) ?></option>
+                        <?php foreach ($dockCategoryGroups as $dockGroup): ?>
+                            <optgroup label="<?= e($dockGroup['name']) ?>">
+                                <?php foreach ($dockGroup['options'] as $dockOption): ?>
+                                    <option value="<?= e($dockOption['slug']) ?>"
+                                        aria-label="<?= e($dockOption['path']) ?>"
+                                        <?= $activeCategory === $dockOption['slug'] ? 'selected' : '' ?>>
+                                        <?= e(str_repeat('— ', (int) $dockOption['depth']) . $dockOption['name']) ?>
+                                    </option>
+                                <?php endforeach; ?>
+                            </optgroup>
+                        <?php endforeach; ?>
+                    </select>
+                </label>
+
+                <form class="catalog-dock-search" data-catalog-dock-search role="search" aria-label="<?= e(trans('common.search')) ?>">
+                    <label class="catalog-dock-field">
+                        <span class="catalog-dock-field-label"><?= e(trans('common.search')) ?></span>
+                        <span class="catalog-dock-input-wrap">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg>
+                            <input type="text" class="catalog-dock-input" data-catalog-dock-input
+                                value="<?= e($searchQuery) ?>" placeholder="<?= e(trans('products.catalog_dock_search')) ?>"
+                                aria-label="<?= e(trans('products.catalog_dock_search')) ?>" aria-controls="catalog-results"
+                                autocomplete="off" spellcheck="false" enterkeyhint="search">
+                            <button type="button" class="catalog-dock-clear" data-catalog-dock-clear
+                                aria-label="<?= e(trans('products.catalog_dock_clear')) ?>" title="<?= e(trans('products.catalog_dock_clear')) ?>"<?= $searchQuery === '' ? ' hidden' : '' ?>>
+                                <svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" aria-hidden="true"><path d="m6 6 8 8M14 6l-8 8"/></svg>
+                            </button>
+                        </span>
+                    </label>
+                </form>
+            </div>
+        </aside>
 
         <div class="catalog-toolbar" data-livesearch
             data-livesearch-grid="[data-catalog-grid]"

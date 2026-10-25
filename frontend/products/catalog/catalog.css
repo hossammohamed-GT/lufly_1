@@ -373,6 +373,23 @@
   animation: catUp 0.28s cubic-bezier(0.16, 1, 0.3, 1) both;
 }
 
+/* Dock-originated searches keep their live region available to assistive
+   technology without opening a second status panel above the product grid. */
+.catalog-guide.is-open.is-compact {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+  border: 0;
+  white-space: nowrap;
+  animation: none;
+}
+.catalog-guide.is-compact .catalog-scope,
+.catalog-guide.is-compact .livesearch-share { display: none; }
+
 /* scope row: search in this category or the whole catalog */
 .catalog-scope {
   display: flex;
@@ -665,6 +682,213 @@
   overflow-wrap: anywhere;
 }
 
+/* ---------- scrolled catalog dock ----------
+   The announcement scrolls away; only the sticky navbar height is part of
+   this offset. The controller reveals the dock once products reach it. */
+.catalog-dock {
+  position: fixed;
+  inset-inline: 0;
+  top: calc(var(--mnav-row1, 56px) + 8px);
+  z-index: 30; /* below the navbar (40), above catalog content */
+  padding-inline: var(--container-pad, 24px);
+  opacity: 0;
+  visibility: hidden;
+  pointer-events: none;
+  transform: translateY(-18px) scale(0.985);
+  transform-origin: top center;
+  transition:
+    opacity 220ms ease,
+    transform 340ms cubic-bezier(0.16, 1, 0.3, 1),
+    visibility 0s linear 340ms;
+}
+
+.catalog-dock.is-visible {
+  opacity: 1;
+  visibility: visible;
+  pointer-events: auto;
+  transform: translateY(0) scale(1);
+  transition-delay: 0s;
+}
+
+.catalog-dock-inner {
+  position: relative;
+  isolation: isolate;
+  display: grid;
+  grid-template-columns: max-content minmax(180px, 0.82fr) minmax(260px, 1.18fr);
+  align-items: end;
+  gap: 12px;
+  width: 100%;
+  max-width: 1392px;
+  min-width: 0;
+  margin-inline: auto;
+  padding: 10px 12px;
+  border: 1px solid color-mix(in srgb, var(--ds-primary) 14%, var(--ds-border));
+  border-radius: 16px;
+  background: color-mix(in srgb, var(--ds-surface) 90%, transparent);
+  box-shadow: 0 14px 40px color-mix(in srgb, var(--ds-text) 12%, transparent),
+    inset 0 1px 0 var(--ds-glass-highlight);
+  -webkit-backdrop-filter: blur(22px) saturate(140%);
+  backdrop-filter: blur(22px) saturate(140%);
+}
+
+.catalog-dock-inner::before {
+  content: "";
+  position: absolute;
+  z-index: -1;
+  inset: 0 14px auto;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, var(--ds-primary), transparent);
+  opacity: 0;
+  transform: scaleX(0.2);
+}
+
+.catalog-dock.is-visible .catalog-dock-inner::before {
+  animation: catalogDockLine 700ms cubic-bezier(0.16, 1, 0.3, 1) 90ms both;
+}
+
+.catalog-dock-title {
+  display: inline-flex;
+  align-items: center;
+  align-self: center;
+  gap: 8px;
+  max-width: 160px;
+  padding-inline: 4px 8px;
+  color: var(--ds-primary);
+  font-family: var(--font-mono);
+  font-size: 9px;
+  font-weight: 700;
+  line-height: 1.45;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+}
+
+.catalog-dock-title svg {
+  flex: 0 0 auto;
+  width: 19px;
+  height: 19px;
+}
+
+.catalog-dock-search,
+.catalog-dock-field,
+.catalog-dock-input-wrap {
+  min-width: 0;
+}
+
+.catalog-dock-search,
+.catalog-dock-field {
+  margin: 0;
+}
+
+.catalog-dock-field {
+  display: block;
+}
+
+.catalog-dock-field-label {
+  display: block;
+  margin: 0 0 5px 2px;
+  color: var(--ds-text-muted);
+  font-family: var(--font-mono);
+  font-size: 8px;
+  font-weight: 700;
+  line-height: 1;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+}
+
+[dir="rtl"] .catalog-dock-field-label { margin: 0 2px 5px 0; }
+
+.catalog-dock-select,
+.catalog-dock-input {
+  width: 100%;
+  min-width: 0;
+  height: 40px;
+  border: 1px solid var(--ds-border);
+  border-radius: 11px;
+  background-color: color-mix(in srgb, var(--ds-bg) 88%, transparent);
+  color: var(--ds-text);
+  font-family: var(--font-body);
+  font-size: 12px;
+  transition: border-color 160ms ease, box-shadow 160ms ease, background-color 160ms ease;
+}
+
+.catalog-dock-select {
+  appearance: none;
+  -webkit-appearance: none;
+  padding: 0 34px 0 12px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  cursor: pointer;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6' viewBox='0 0 10 6'%3E%3Cpath d='M1 1l4 4 4-4' fill='none' stroke='%23617767' stroke-width='1.6' stroke-linecap='round'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 12px center;
+}
+
+[dir="rtl"] .catalog-dock-select {
+  padding: 0 12px 0 34px;
+  background-position: left 12px center;
+}
+
+.catalog-dock-input-wrap {
+  position: relative;
+  display: block;
+}
+
+.catalog-dock-input-wrap > svg {
+  position: absolute;
+  inset-inline-start: 12px;
+  top: 50%;
+  width: 16px;
+  height: 16px;
+  color: var(--ds-text-muted);
+  pointer-events: none;
+  transform: translateY(-50%);
+}
+
+.catalog-dock-input {
+  padding: 0 38px;
+  text-overflow: ellipsis;
+}
+
+.catalog-dock-input::placeholder { color: var(--ds-text-muted); }
+
+.catalog-dock-select:hover,
+.catalog-dock-input:hover {
+  border-color: color-mix(in srgb, var(--ds-primary) 38%, var(--ds-border));
+}
+
+.catalog-dock-select:focus,
+.catalog-dock-input:focus {
+  outline: none;
+  border-color: color-mix(in srgb, var(--ds-primary) 62%, var(--ds-border));
+  background-color: var(--ds-bg);
+  box-shadow: 0 0 0 3px var(--ds-primary-soft);
+}
+
+.catalog-dock-clear {
+  position: absolute;
+  inset-inline-end: 6px;
+  top: 50%;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 28px;
+  height: 28px;
+  padding: 0;
+  border: 0;
+  border-radius: 8px;
+  background: transparent;
+  color: var(--ds-text-muted);
+  cursor: pointer;
+  transform: translateY(-50%);
+  transition: color 150ms ease, background-color 150ms ease;
+}
+
+.catalog-dock-clear[hidden] { display: none; }
+.catalog-dock-clear svg { width: 16px; height: 16px; }
+.catalog-dock-clear:hover { color: var(--ds-primary); background: var(--ds-primary-soft); }
+.catalog-dock-clear:focus-visible { outline: 2px solid var(--ds-primary); outline-offset: 1px; }
+
 /* ---------- live filtering ---------- */
 .catalog-grid { transition: opacity 180ms ease; }
 .catalog-grid.is-filtering { opacity: 0.42; pointer-events: none; }
@@ -690,6 +914,13 @@
   .catalog-grid { grid-template-columns: repeat(2, 1fr); }
 }
 
+@media (max-width: 900px) {
+  .catalog-dock-inner {
+    grid-template-columns: minmax(160px, 0.82fr) minmax(0, 1.18fr);
+  }
+  .catalog-dock-title { display: none; }
+}
+
 .catalog-grid .catalog-empty { grid-column: 1 / -1; }
 
 @media (max-width: 620px) {
@@ -707,6 +938,22 @@
   .catalog-guide.is-open { margin: 0 11px 11px; }
   .catalog-sort { display: none; }
   .catalog-go { flex: 0 0 auto; padding-inline: 12px; letter-spacing: 0.08em; }
+  .catalog-dock {
+    top: calc(var(--mnav-row1, 52px) + 6px);
+    padding-inline: 12px;
+  }
+  .catalog-dock-inner {
+    grid-template-columns: minmax(104px, 0.82fr) minmax(0, 1.18fr);
+    gap: 7px;
+    padding: 6px;
+    border-radius: 14px;
+  }
+  .catalog-dock-field-label { display: none; }
+  .catalog-dock-select,
+  .catalog-dock-input { height: 40px; font-size: 12px; }
+  .catalog-dock-select { padding-inline-start: 10px; }
+  .catalog-dock-input { padding-inline-start: 34px; padding-inline-end: 34px; }
+  .catalog-dock-input-wrap > svg { inset-inline-start: 10px; width: 15px; height: 15px; }
 }
 
 @media (prefers-reduced-motion: reduce) {
@@ -716,11 +963,26 @@
   .catalog-toolbar,
   .catalog-rail,
   .catalog-empty,
+  .catalog-dock.is-visible .catalog-dock-inner::before,
   .catpag { animation: none; }
-  .catalog-grid { transition: none; }
+  .catalog-grid,
+  .catalog-dock,
+  .catalog-dock-select,
+  .catalog-dock-input,
+  .catalog-dock-clear { transition: none; }
+}
+
+@media print {
+  .catalog-dock { display: none; }
 }
 
 /* ---------- entrance ---------- */
+
+@keyframes catalogDockLine {
+  0% { opacity: 0; transform: scaleX(0.2); }
+  45% { opacity: 0.65; }
+  100% { opacity: 0; transform: scaleX(1); }
+}
 
 @keyframes catUp {
   from { opacity: 0; transform: translateY(16px); }

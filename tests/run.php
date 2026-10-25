@@ -41,6 +41,22 @@ $assert(!str_contains($schema, "'priceCurrency' => 'EUR'"), 'Product schema does
 $rootHtaccess = (string) file_get_contents($root . '/.htaccess');
 $assert(!preg_match('/FilesMatch "\\\.\(css.*?immutable/s', $rootHtaccess), 'Unhashed CSS/JS are not cached as immutable');
 
+$catalogView = (string) file_get_contents($root . '/modules/Products/Views/index.php');
+$catalogDock = (string) file_get_contents($root . '/frontend/products/catalog/catalog-dock.js');
+$catalogLiveSearch = (string) file_get_contents($root . '/frontend/js/live-search.js');
+$catalogExplorer = (string) file_get_contents($root . '/frontend/components/category-explorer/category-explorer.js');
+$catalogCss = (string) file_get_contents($root . '/frontend/products/catalog/catalog.css');
+$assert(preg_match_all('/\\sdata-livesearch(?:\\s|=)/', $catalogView) === 1, 'Catalog keeps exactly one live-search host');
+$assert(str_contains($catalogView, 'data-catalog-dock-category') && str_contains($catalogView, '$walkDockCategories'), 'Catalog dock mirrors the canonical category tree');
+$assert(!str_contains($catalogDock, 'fetch(') && !str_contains($catalogDock, '.innerHTML'), 'Catalog dock does not become a competing request or rendering controller');
+$assert(str_contains($catalogDock, "event('category:select'") && str_contains($catalogExplorer, "explorer.addEventListener('category:select'"), 'Dock categories reuse the atlas activation path');
+$assert(str_contains($catalogLiveSearch, "event.detail.source === 'catalog-dock'") && str_contains($catalogLiveSearch, "'is-compact'"), 'Dock search reuses live search without moving or expanding the original toolbar');
+$assert(str_contains($catalogCss, '.catalog-dock.is-visible .catalog-dock-inner::before') && str_contains($catalogCss, '@media (prefers-reduced-motion: reduce)'), 'Visible dock sheen is disabled with reduced motion');
+foreach (['en', 'tr', 'cs'] as $catalogLocale) {
+    $catalogTranslations = (string) file_get_contents($root . "/resources/lang/{$catalogLocale}/products.php");
+    $assert(str_contains($catalogTranslations, "'catalog_dock_search'"), "Catalog dock search is localized for {$catalogLocale}");
+}
+
 if ($failures !== []) {
     fwrite(STDERR, "\n" . count($failures) . " contract test(s) failed.\n");
     exit(1);
