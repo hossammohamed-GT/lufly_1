@@ -77,6 +77,7 @@ $assert(substr_count($databaseDump, 'CREATE TABLE `') === 45 && $dumpHasCatalogD
 $databaseConfig = (string) file_get_contents($root . '/config/database.php');
 $assert(str_contains($databaseConfig, "'default' => env('DB_CONNECTION', 'sqlite')") && preg_match('/^DB_CONNECTION=sqlite$/m', $example) === 1 && is_file($root . '/database/lufly.sqlite') && filesize($root . '/database/lufly.sqlite') > 0, 'Zero-config local runtime retains the complete bundled SQLite database');
 $assert(!is_dir($root . '/database/sql') && glob($root . '/public/.well-known/*.sql') === [], 'Canonical MySQL export has no duplicate partial SQL installation patches');
+$assert(!is_dir($root . '/public/manage_products_lufly_new') && !is_dir($root . '/docs') && !is_file($root . '/README.md'), 'Unrelated external manager tools and standalone documentation files are removed');
 $assert(!str_contains($exportCommand, "\$sql[] = 'CREATE DATABASE") && !str_contains($exportCommand, "\$sql[] = 'USE `"), 'MySQL exporter never reintroduces database creation or selection statements');
 
 $seededCategories = json_decode((string) file_get_contents($root . '/database/seeders/data/categories.json'), true);
@@ -135,6 +136,17 @@ if (extension_loaded('pdo_sqlite')) {
            )',
     )->fetchColumn();
     $assert($nonLeafAssigned === 0, 'SQLite runtime assigns every product exclusively to an active leaf category');
+
+    $sqlParityOk = true;
+    foreach (['migrations', 'categories', 'category_translations', 'products', 'product_translations', 'product_variants', 'product_media', 'media', 'product_search_keywords', 'product_import_logs'] as $parityTable) {
+        $sqliteCount = (int) $pdo->query("SELECT COUNT(*) FROM `{$parityTable}`")->fetchColumn();
+        $expectedHeader = "-- data: {$parityTable} ({$sqliteCount} rows)";
+        if (!str_contains($databaseDump, $expectedHeader) || substr_count($databaseDump, "INSERT INTO `{$parityTable}` ") !== $sqliteCount) {
+            $sqlParityOk = false;
+            break;
+        }
+    }
+    $assert($sqlParityOk, 'Root lufly-database.sql row counts match database/lufly.sqlite across all core tables');
 }
 
 $categoryServiceSrc = (string) file_get_contents($root . '/app/Services/CategoryService.php');

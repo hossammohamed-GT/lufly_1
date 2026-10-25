@@ -33,3 +33,5 @@ node_modules/
 /database/*.db
 /database/sql/
 /database/schema/*.sql
+/public/manage_products_lufly_new/
+
