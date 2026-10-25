@@ -34,8 +34,21 @@ class ProductSeeder extends Seeder
         }
 
         $catMap = [];
+        $parentIds = [];
         foreach ($this->db->table('categories')->get() as $c) {
             $catMap[(string) $c['slug']] = (int) $c['id'];
+            if ($c['parent_id'] !== null) {
+                $parentIds[(int) $c['parent_id']] = true;
+            }
+        }
+
+        $catNames = [];
+        foreach ($this->db->table('category_translations')->get() as $ct) {
+            $cId = (int) $ct['category_id'];
+            $nameVal = trim((string) ($ct['name'] ?? ''));
+            if ($nameVal !== '') {
+                $catNames[$cId][] = mb_strtolower($nameVal);
+            }
         }
 
         $brand = $this->db->table('brands')->where('slug', 'lufly')->first();
@@ -49,13 +62,49 @@ class ProductSeeder extends Seeder
 
         foreach ($items as $item) {
             $slug = trim((string) ($item['slug'] ?? ''));
-            if ($slug === '' || $this->db->table('products')->where('slug', $slug)->exists()) {
+            if ($slug === '') {
                 continue;
             }
 
             $modelCode = trim((string) ($item['model_code'] ?? ''));
-            $categorySlug = (string) ($item['category'] ?? '');
+            $categorySlug = trim((string) ($item['category'] ?? ''));
             $categoryId = $catMap[$categorySlug] ?? null;
+            if ($categorySlug !== '' && $categoryId === null) {
+                throw new \RuntimeException("Unknown category [{$categorySlug}] on product [{$slug}].");
+            }
+            if ($categoryId !== null && isset($parentIds[$categoryId])) {
+                throw new \RuntimeException("Category [{$categorySlug}] on product [{$slug}] has child categories; products must be assigned to a leaf category.");
+            }
+
+            $existingProduct = $this->db->table('products')->where('slug', $slug)->first();
+            if ($existingProduct !== null) {
+                $existingId = (int) $existingProduct['id'];
+                if ((int) ($existingProduct['category_id'] ?? 0) !== (int) ($categoryId ?? 0)) {
+                    $this->db->table('products')->where('id', $existingId)->update([
+                        'category_id' => $categoryId,
+                        'updated_at' => date('Y-m-d H:i:s'),
+                    ]);
+                    $collectionName = $categorySlug !== '' ? $categorySlug : 'products';
+                    $this->db->affect(
+                        'UPDATE media SET collection = ?, updated_at = ?
+                         WHERE id IN (SELECT media_id FROM product_media WHERE product_id = ?)',
+                        [$collectionName, date('Y-m-d H:i:s'), $existingId],
+                    );
+                    $existingName = trim((string) ($item['name'] ?? ''));
+                    if ($existingName === '') {
+                        $existingName = $modelCode !== '' ? $modelCode : 'LUFLY #' . $existingId;
+                    }
+                    $this->syncSearchKeywords(
+                        $existingId,
+                        $modelCode,
+                        $existingName,
+                        $categorySlug,
+                        $categoryId !== null ? ($catNames[$categoryId] ?? []) : [],
+                    );
+                }
+                continue;
+            }
+
             $sortCounter++;
             $managerId = (int) ($item['manager_id'] ?? 0);
             $name = trim((string) ($item['name'] ?? ''));
@@ -228,26 +277,14 @@ class ProductSeeder extends Seeder
                 'updated_at' => date('Y-m-d H:i:s'),
             ]);
 
-            /* ---- search keywords derived from real name + model code ---- */
-            $keywords = ['lufly'];
-            if ($modelCode !== '') {
-                $keywords[] = mb_strtolower($modelCode);
-            }
-            foreach (preg_split('/[^\p{L}\p{N}-]+/u', $name) ?: [] as $word) {
-                if (mb_strlen($word) >= 3) {
-                    $keywords[] = mb_strtolower($word);
-                }
-            }
-            if ($categorySlug !== '') {
-                $keywords[] = str_replace('-', ' ', $categorySlug);
-            }
-
-            foreach (array_unique($keywords) as $keyword) {
-                $this->db->insert('product_search_keywords', [
-                    'product_id' => $productId,
-                    'keyword' => mb_substr($keyword, 0, 150),
-                ]);
-            }
+            /* ---- search keywords derived from real name + model code + category ---- */
+            $this->syncSearchKeywords(
+                $productId,
+                $modelCode,
+                $name,
+                $categorySlug,
+                $categoryId !== null ? ($catNames[$categoryId] ?? []) : [],
+            );
 
             /* ---- import log (provenance back to the manager row) ---- */
             $this->db->insert('product_import_logs', [
@@ -259,6 +296,47 @@ class ProductSeeder extends Seeder
                 'raw_data' => json_encode($item, JSON_UNESCAPED_UNICODE),
                 'created_at' => date('Y-m-d H:i:s'),
                 'updated_at' => date('Y-m-d H:i:s'),
+            ]);
+        }
+    }
+
+    /** @param string[] $categoryTranslations */
+    private function syncSearchKeywords(
+        int $productId,
+        string $modelCode,
+        string $name,
+        string $categorySlug,
+        array $categoryTranslations,
+    ): void {
+        $keywords = ['lufly'];
+        if ($modelCode !== '') {
+            $keywords[] = mb_strtolower($modelCode);
+        }
+        foreach (preg_split('/[^\p{L}\p{N}-]+/u', $name) ?: [] as $word) {
+            if (mb_strlen($word) >= 3) {
+                $keywords[] = mb_strtolower($word);
+            }
+        }
+        if ($categorySlug !== '') {
+            foreach (explode('.', $categorySlug) as $segment) {
+                $segment = trim(str_replace('-', ' ', $segment));
+                if ($segment !== '') {
+                    $keywords[] = mb_strtolower($segment);
+                }
+            }
+        }
+        foreach ($categoryTranslations as $catLabel) {
+            $catLabel = trim($catLabel);
+            if ($catLabel !== '') {
+                $keywords[] = $catLabel;
+            }
+        }
+
+        $this->db->table('product_search_keywords')->where('product_id', $productId)->delete();
+        foreach (array_unique($keywords) as $keyword) {
+            $this->db->insert('product_search_keywords', [
+                'product_id' => $productId,
+                'keyword' => mb_substr($keyword, 0, 150),
             ]);
         }
     }

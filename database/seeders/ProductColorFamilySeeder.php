@@ -26,6 +26,11 @@ class ProductColorFamilySeeder extends Seeder
             throw new RuntimeException('The reviewed colour-family list is invalid.');
         }
 
+        $parentIds = [];
+        foreach ($this->db->select('SELECT parent_id FROM categories WHERE parent_id IS NOT NULL AND deleted_at IS NULL') as $catRow) {
+            $parentIds[(int) $catRow['parent_id']] = true;
+        }
+
         $products = [];
         foreach ($this->db->select('SELECT id, slug, category_id, status FROM products') as $row) {
             $products[(string) $row['slug']] = $row;
@@ -59,6 +64,9 @@ class ProductColorFamilySeeder extends Seeder
                 $productCategory = $product['category_id'] === null ? null : (int) $product['category_id'];
                 if ($category !== $productCategory) {
                     throw new RuntimeException('A colour family crosses product categories: ' . $slug);
+                }
+                if ($productCategory !== null && isset($parentIds[$productCategory])) {
+                    throw new RuntimeException('A colour family product is assigned to a non-leaf category: ' . $slug);
                 }
                 $ids[] = (int) $product['id'];
             }

@@ -135,8 +135,8 @@ class ProductController extends Controller
         $product = $this->products->findTranslatedBySlug($slug, $locale);
 
         /* Category slug drives the technical-sheet silhouette on the page. */
-        $categorySlug = '';
-        if (!empty($product['category_id'])) {
+        $categorySlug = (string) ($product['category_slug'] ?? '');
+        if ($categorySlug === '' && !empty($product['category_id'])) {
             $connection = \Modules\Products\Models\Product::query()->connection();
             $row = $connection->selectOne(
                 'SELECT slug FROM categories WHERE id = ? AND deleted_at IS NULL',
@@ -145,6 +145,7 @@ class ProductController extends Controller
             $categorySlug = (string) ($row['slug'] ?? '');
         }
         $product['category_slug'] = $categorySlug;
+        $categoryLabel = trim((string) ($product['category_name'] ?? ''));
 
         $productName = trim((string) ($product['name'] ?? ''));
         if ($productName === '') {
@@ -164,7 +165,9 @@ class ProductController extends Controller
         /* share card: dynamically rendered OG image carrying the product name */
         $this->seo->setImage(route('seo.ogimage', [
             'title' => $productName,
-            'subtitle' => $product['category_slug'] !== '' ? 'LUFLY ' . ucfirst((string) $product['category_slug']) : 'LUFLY',
+            'subtitle' => $categoryLabel !== ''
+                ? 'LUFLY ' . $categoryLabel
+                : ($product['category_slug'] !== '' ? 'LUFLY ' . ucfirst((string) $product['category_slug']) : 'LUFLY'),
         ]));
 
         $this->seo->addProductSchema($product, $canonical);

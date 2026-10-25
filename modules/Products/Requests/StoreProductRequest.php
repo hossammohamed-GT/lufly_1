@@ -10,11 +10,16 @@ class StoreProductRequest extends FormRequest
 {
     public function rules(): array
     {
+        $leafIds = app(\App\Services\CategoryService::class)->leafIds();
+        $categoryRule = $leafIds === []
+            ? 'nullable|integer'
+            : 'nullable|integer|in:' . implode(',', $leafIds);
+
         $rules = [
             'model_code' => 'required|string|max:100|unique:products,model_code',
             'slug' => 'nullable|string|max:255',
             'price' => 'nullable|numeric|min:0',
-            'category_id' => 'nullable|integer',
+            'category_id' => $categoryRule,
             'collection_id' => 'nullable|integer',
             'brand_id' => 'nullable|integer',
             'is_featured' => 'nullable|in:0,1',

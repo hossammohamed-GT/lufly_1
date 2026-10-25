@@ -38,6 +38,8 @@ class Product extends Model
     private ?array $preloadedDimensions = null;
     private bool $hasLoadedDimensions = false;
     private ?array $preloadedMedia = null;
+    private ?array $preloadedCategory = null;
+    private bool $hasLoadedCategory = false;
 
     /**
      * Eager load relations for an array of Product models to eliminate N+1 queries.
@@ -46,7 +48,7 @@ class Product extends Model
      * @param string[] $relations
      * @return Product[]
      */
-    public static function eagerLoad(array $products, array $relations = ['translations', 'variants', 'specs', 'dimensions', 'media']): array
+    public static function eagerLoad(array $products, array $relations = ['translations', 'variants', 'specs', 'dimensions', 'media', 'category']): array
     {
         if ($products === []) {
             return $products;
@@ -54,6 +56,7 @@ class Product extends Model
 
         /** @var array<int, Product> $map */
         $map = [];
+        $categoryIds = [];
         foreach ($products as $p) {
             if ($p instanceof self && $p->getKey() !== null) {
                 $id = (int) $p->getKey();
@@ -73,6 +76,13 @@ class Product extends Model
                 }
                 if (in_array('media', $relations, true)) {
                     $p->preloadedMedia = [];
+                }
+                if (in_array('category', $relations, true)) {
+                    $p->preloadedCategory = null;
+                    $p->hasLoadedCategory = true;
+                    if (!empty($p->category_id)) {
+                        $categoryIds[(int) $p->category_id] = true;
+                    }
                 }
             }
         }
@@ -158,6 +168,40 @@ class Product extends Model
             }
         }
 
+        if (in_array('category', $relations, true) && $categoryIds !== []) {
+            $cIds = array_keys($categoryIds);
+            $cPlaceholders = implode(',', array_fill(0, count($cIds), '?'));
+            $cRows = $conn->select(
+                "SELECT id, slug FROM categories WHERE id IN ({$cPlaceholders}) AND deleted_at IS NULL",
+                $cIds,
+            );
+            $catById = [];
+            foreach ($cRows as $row) {
+                $catById[(int) $row['id']] = [
+                    'slug' => (string) $row['slug'],
+                    'names' => [],
+                ];
+            }
+            if ($catById !== []) {
+                $ctRows = $conn->select(
+                    "SELECT category_id, locale, name FROM category_translations WHERE category_id IN ({$cPlaceholders})",
+                    $cIds,
+                );
+                foreach ($ctRows as $row) {
+                    $cId = (int) $row['category_id'];
+                    if (isset($catById[$cId])) {
+                        $catById[$cId]['names'][(string) $row['locale']] = (string) $row['name'];
+                    }
+                }
+                foreach ($map as $p) {
+                    $cId = (int) ($p->category_id ?? 0);
+                    if ($cId > 0 && isset($catById[$cId])) {
+                        $p->preloadedCategory = $catById[$cId];
+                    }
+                }
+            }
+        }
+
         return $products;
     }
 
@@ -202,11 +246,17 @@ class Product extends Model
         $primaryVariant = $variants[0] ?? null;
         $specs = $this->specs();
         $dimensions = $this->dimensions();
+        $category = $this->categoryInfo();
+        $categorySlug = (string) ($category['slug'] ?? '');
+        $categoryNames = is_array($category['names'] ?? null) ? $category['names'] : [];
+        $categoryName = (string) ($categoryNames[$locale] ?? $categoryNames[$fallback] ?? '');
 
         $this->resolved = array_merge($this->attributes(), [
             'name' => $translation['name'] ?? '',
             'description' => $translation['description'] ?? '',
             'short_description' => $translation['short_description'] ?? '',
+            'category_slug' => $categorySlug,
+            'category_name' => $categoryName,
 
             /* compatibility aliases for storefront views */
             'sku' => $primaryVariant['sku'] ?? (string) ($this->model_code ?? ''),
@@ -292,6 +342,39 @@ class Product extends Model
 
         $this->hasLoadedDimensions = true;
         return $this->preloadedDimensions = $row;
+    }
+
+    /** @return array{slug: string, names: array<string, string>}|null */
+    private function categoryInfo(): ?array
+    {
+        if ($this->hasLoadedCategory) {
+            return $this->preloadedCategory;
+        }
+
+        $this->hasLoadedCategory = true;
+        $categoryId = (int) ($this->category_id ?? 0);
+        if ($categoryId <= 0) {
+            return $this->preloadedCategory = null;
+        }
+
+        $conn = static::db()->connection();
+        $row = $conn->selectOne(
+            'SELECT id, slug FROM categories WHERE id = ? AND deleted_at IS NULL LIMIT 1',
+            [$categoryId],
+        );
+        if ($row === null) {
+            return $this->preloadedCategory = null;
+        }
+
+        $names = [];
+        foreach ($conn->select('SELECT locale, name FROM category_translations WHERE category_id = ?', [$categoryId]) as $tr) {
+            $names[(string) $tr['locale']] = (string) $tr['name'];
+        }
+
+        return $this->preloadedCategory = [
+            'slug' => (string) $row['slug'],
+            'names' => $names,
+        ];
     }
 
     /**

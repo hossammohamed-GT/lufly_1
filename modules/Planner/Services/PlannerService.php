@@ -540,11 +540,13 @@ class PlannerService
                 continue;
             }
 
+            $slotCategory = strtolower(trim((string) ($slot['category'] ?? '')));
             $candidates[] = [
                 'key' => (string) $key,
                 'hits' => $hits,
                 'longest' => $longest,
-                'category' => $category !== '' && strtolower((string) ($slot['category'] ?? '')) === $category,
+                'category' => $category !== '' && $slotCategory !== ''
+                    && ($category === $slotCategory || str_starts_with($category, $slotCategory . '.')),
             ];
         }
 

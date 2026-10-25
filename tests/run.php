@@ -79,6 +79,76 @@ $assert(str_contains($databaseConfig, "'default' => env('DB_CONNECTION', 'sqlite
 $assert(!is_dir($root . '/database/sql') && glob($root . '/public/.well-known/*.sql') === [], 'Canonical MySQL export has no duplicate partial SQL installation patches');
 $assert(!str_contains($exportCommand, "\$sql[] = 'CREATE DATABASE") && !str_contains($exportCommand, "\$sql[] = 'USE `"), 'MySQL exporter never reintroduces database creation or selection statements');
 
+$seededCategories = json_decode((string) file_get_contents($root . '/database/seeders/data/categories.json'), true);
+$seededProducts = json_decode((string) file_get_contents($root . '/database/seeders/data/products.json'), true);
+$seededFamilies = json_decode((string) file_get_contents($root . '/database/seeders/data/product-color-families.json'), true)['families'] ?? [];
+$seededCategorySlugs = [];
+$seededParentSlugs = [];
+foreach (is_array($seededCategories) ? $seededCategories : [] as $catRow) {
+    $cSlug = (string) ($catRow['slug'] ?? '');
+    if ($cSlug !== '') {
+        $seededCategorySlugs[$cSlug] = true;
+    }
+    $pSlug = trim((string) ($catRow['parent'] ?? ''));
+    if ($pSlug !== '') {
+        $seededParentSlugs[$pSlug] = true;
+    }
+}
+$productCategoryBySlug = [];
+$allSeedProductsInLeaves = is_array($seededProducts) && count($seededProducts) > 0;
+foreach (is_array($seededProducts) ? $seededProducts : [] as $prodRow) {
+    $pSlug = (string) ($prodRow['slug'] ?? '');
+    $cSlug = (string) ($prodRow['category'] ?? '');
+    $productCategoryBySlug[$pSlug] = $cSlug;
+    if ($cSlug === '' || !isset($seededCategorySlugs[$cSlug]) || isset($seededParentSlugs[$cSlug])) {
+        $allSeedProductsInLeaves = false;
+    }
+}
+$assert($allSeedProductsInLeaves, 'Every seeded product is assigned to a deepest leaf category');
+
+$allFamiliesShareSingleLeaf = is_array($seededFamilies) && count($seededFamilies) > 0;
+foreach (is_array($seededFamilies) ? $seededFamilies : [] as $familyRow) {
+    $memberCategories = [];
+    foreach ((array) ($familyRow['products'] ?? []) as $memberSlug) {
+        $memberCat = $productCategoryBySlug[(string) $memberSlug] ?? '';
+        if ($memberCat === '' || isset($seededParentSlugs[$memberCat])) {
+            $allFamiliesShareSingleLeaf = false;
+        }
+        $memberCategories[$memberCat] = true;
+    }
+    if (count($memberCategories) !== 1) {
+        $allFamiliesShareSingleLeaf = false;
+    }
+}
+$assert($allFamiliesShareSingleLeaf, 'Every colour family stays within one leaf category');
+
+if (extension_loaded('pdo_sqlite')) {
+    $pdo = new PDO('sqlite:' . $root . '/database/lufly.sqlite');
+    $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+    $nonLeafAssigned = (int) $pdo->query(
+        'SELECT COUNT(*) FROM products p
+         WHERE p.deleted_at IS NULL
+           AND (
+               p.category_id IS NULL
+               OR NOT EXISTS (SELECT 1 FROM categories c WHERE c.id = p.category_id AND c.deleted_at IS NULL)
+               OR EXISTS (SELECT 1 FROM categories ch WHERE ch.parent_id = p.category_id AND ch.deleted_at IS NULL)
+           )',
+    )->fetchColumn();
+    $assert($nonLeafAssigned === 0, 'SQLite runtime assigns every product exclusively to an active leaf category');
+}
+
+$categoryServiceSrc = (string) file_get_contents($root . '/app/Services/CategoryService.php');
+$storeRequestSrc = (string) file_get_contents($root . '/modules/Products/Requests/StoreProductRequest.php');
+$updateRequestSrc = (string) file_get_contents($root . '/modules/Products/Requests/UpdateProductRequest.php');
+$adminFormSrc = (string) file_get_contents($root . '/modules/Products/Views/Admin/form.php');
+$assert(
+    str_contains($categoryServiceSrc, 'function leafIds()')
+    && str_contains($storeRequestSrc, '->leafIds()')
+    && str_contains($updateRequestSrc, '->leafIds()')
+    && str_contains($adminFormSrc, "!\$isLeaf ? 'disabled' : ''"),
+    'Category service, product requests, and admin form enforce leaf-only category assignment',
+);
+
 if ($failures !== []) {
     fwrite(STDERR, "\n" . count($failures) . " contract test(s) failed.\n");
     exit(1);

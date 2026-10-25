@@ -145,7 +145,7 @@ class SEOService
             'sku' => (string) ($product['sku'] ?? $product['model_code'] ?? ''),
             'mpn' => (string) ($product['model_code'] ?? $product['sku'] ?? ''),
             'url' => $canonicalUrl,
-            'category' => (string) ($product['category_slug'] ?? ''),
+            'category' => (string) (($product['category_name'] ?? '') !== '' ? $product['category_name'] : ($product['category_slug'] ?? '')),
             'brand' => ['@type' => 'Brand', 'name' => 'LUFLY'],
             'manufacturer' => ['@id' => url('/#organization')],
         ];

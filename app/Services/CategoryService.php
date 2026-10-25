@@ -68,6 +68,7 @@ class CategoryService
             foreach ($children[$parentId] ?? [] as $node) {
                 $node['depth'] = $depth;
                 $node['children'] = $build((int) $node['id'], $depth + 1);
+                $node['is_leaf'] = $node['children'] === [];
                 $nodes[] = $node;
             }
 
@@ -90,6 +91,7 @@ class CategoryService
                 $names = [...$parents, (string) $node['name']];
                 $children = $node['children'];
                 $node['path'] = implode(' → ', $names);
+                $node['is_leaf'] = $children === [];
                 $node['children'] = [];
                 $out[] = $node;
                 $walk($children, $names);
@@ -98,6 +100,50 @@ class CategoryService
         $walk($this->tree($locale, $fallback), []);
 
         return $out;
+    }
+
+    /**
+     * Only leaf categories (categories with no active child categories) may
+     * hold products directly.
+     *
+     * @return array<int, array<string, mixed>>
+     */
+    public function flattenLeaves(string $locale, ?string $fallback = null): array
+    {
+        return array_values(array_filter(
+            $this->flatten($locale, $fallback),
+            static fn (array $node): bool => !empty($node['is_leaf']),
+        ));
+    }
+
+    /**
+     * IDs of all active leaf categories (categories without active children).
+     *
+     * @return array<int, int>
+     */
+    public function leafIds(): array
+    {
+        $structure = $this->structure();
+        $parents = [];
+        foreach ($structure as $row) {
+            if ($row['parent_id'] !== null && isset($structure[$row['parent_id']])) {
+                $parents[$row['parent_id']] = true;
+            }
+        }
+
+        $leaves = [];
+        foreach ($structure as $id => $_row) {
+            if (!isset($parents[$id])) {
+                $leaves[] = (int) $id;
+            }
+        }
+
+        return $leaves;
+    }
+
+    public function isLeaf(int $categoryId): bool
+    {
+        return in_array($categoryId, $this->leafIds(), true);
     }
 
     /** @return array<int, int> selected id followed by every active descendant */

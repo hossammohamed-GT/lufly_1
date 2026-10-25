@@ -74,7 +74,8 @@ $productId = $product === null ? 0 : (int) $product->id;
             <select class="input" id="category_id" name="category_id">
                 <option value="">-</option>
                 <?php foreach ($categories as $category): ?>
-                    <option value="<?= (int) $category['id'] ?>" title="<?= e((string) $category['slug']) ?>" <?= $categoryId === (string) $category['id'] ? 'selected' : '' ?>><?= e((string) ($category['path'] ?? $category['slug'])) ?></option>
+                    <?php $isLeaf = !empty($category['is_leaf']); ?>
+                    <option value="<?= (int) $category['id'] ?>" title="<?= e((string) $category['slug']) ?>" <?= !$isLeaf ? 'disabled' : '' ?> <?= $categoryId === (string) $category['id'] ? 'selected' : '' ?>><?= e((string) ($category['path'] ?? $category['slug'])) ?></option>
                 <?php endforeach; ?>
             </select>
         </div>

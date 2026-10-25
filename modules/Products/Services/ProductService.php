@@ -103,6 +103,12 @@ class ProductService
 
             $this->syncDefaultVariant((int) $product->id, $modelCode, (float) ($data['price'] ?? 0));
             $this->syncSeoMeta((int) $product->id, $data);
+            $this->syncCategoryArtifacts(
+                (int) $product->id,
+                isset($product->category_id) ? (int) $product->category_id : null,
+                $modelCode,
+                (string) ($translations['en']['name'] ?? $modelCode),
+            );
 
             $this->activity->created('product', $product->id, ['slug' => $product->slug]);
 
@@ -150,9 +156,18 @@ class ProductService
                 ]);
             }
 
+            $updated = $this->find($id);
+            $enName = (string) ($translations['en']['name'] ?? ($updated->translations()['en']['name'] ?? $newModelCode));
+            $this->syncCategoryArtifacts(
+                $id,
+                isset($updated->category_id) ? (int) $updated->category_id : null,
+                $newModelCode,
+                $enName,
+            );
+
             $this->activity->updated('product', $id);
 
-            return $this->find($id);
+            return $updated;
         });
     }
 
@@ -246,5 +261,66 @@ class ProductService
             'meta_description' => $metaDescription !== '' ? $metaDescription : null,
             'updated_at' => $now,
         ]);
+    }
+
+    private function syncCategoryArtifacts(
+        int $productId,
+        ?int $categoryId,
+        string $modelCode,
+        string $name,
+    ): void {
+        $connection = Product::query()->connection();
+        $categorySlug = '';
+        $categoryLabels = [];
+
+        if ($categoryId !== null && $categoryId > 0) {
+            $cat = $connection->selectOne(
+                'SELECT slug FROM categories WHERE id = ? AND deleted_at IS NULL LIMIT 1',
+                [$categoryId],
+            );
+            $categorySlug = trim((string) ($cat['slug'] ?? ''));
+            foreach ($connection->select('SELECT name FROM category_translations WHERE category_id = ?', [$categoryId]) as $tr) {
+                $label = trim((string) ($tr['name'] ?? ''));
+                if ($label !== '') {
+                    $categoryLabels[] = mb_strtolower($label);
+                }
+            }
+        }
+
+        $collectionName = $categorySlug !== '' ? $categorySlug : 'products';
+        $connection->affect(
+            'UPDATE media SET collection = ?, updated_at = ?
+             WHERE id IN (SELECT media_id FROM product_media WHERE product_id = ?)',
+            [$collectionName, date('Y-m-d H:i:s'), $productId],
+        );
+
+        $keywords = ['lufly'];
+        if ($modelCode !== '') {
+            $keywords[] = mb_strtolower($modelCode);
+        }
+        foreach (preg_split('/[^\p{L}\p{N}-]+/u', $name) ?: [] as $word) {
+            if (mb_strlen($word) >= 3) {
+                $keywords[] = mb_strtolower($word);
+            }
+        }
+        if ($categorySlug !== '') {
+            foreach (explode('.', $categorySlug) as $segment) {
+                $segment = trim(str_replace('-', ' ', $segment));
+                if ($segment !== '') {
+                    $keywords[] = mb_strtolower($segment);
+                }
+            }
+        }
+        foreach ($categoryLabels as $label) {
+            $keywords[] = $label;
+        }
+
+        $connection->table('product_search_keywords')->where('product_id', $productId)->delete();
+        foreach (array_unique($keywords) as $keyword) {
+            $connection->table('product_search_keywords')->insert([
+                'product_id' => $productId,
+                'keyword' => mb_substr($keyword, 0, 150),
+            ]);
+        }
     }
 }
