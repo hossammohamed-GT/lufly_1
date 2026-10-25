@@ -226,13 +226,12 @@
   display: grid;
   gap: 0;
   margin-bottom: 16px;
-  /* Do not retain a transformed containing block: the original search form
-     becomes viewport-fixed when this toolbar scrolls past the navbar. */
+  /* The entrance does not leave a transformed containing block behind. */
   animation: catUp 0.6s cubic-bezier(0.16, 1, 0.3, 1) 0.1s backwards;
 }
-.catalog-toolbar:has(.catalog-searchform.is-docked) { animation: none; transform: none; }
 
 .catalog-search-slot {
+  --catalog-placeholder-height: 72px;
   position: relative;
   z-index: 2;
   min-width: 0;
@@ -728,19 +727,48 @@
   overflow-wrap: anywhere;
 }
 
-/* ---------- sticky search + hierarchical category picker ---------- */
+/* ---------- navbar search + hierarchical category picker ---------- */
 .catalog-searchform.is-docked {
-  position: fixed;
-  top: calc(var(--mnav-row1, 56px) + 8px);
-  z-index: 30;
+  position: relative;
+  z-index: 2;
+  --catalog-control-gap: 6px;
+  align-items: center;
+  block-size: 44px;
   margin: 0;
-  border-color: color-mix(in srgb, var(--ds-primary) 18%, var(--ds-border));
-  background: color-mix(in srgb, var(--ds-surface) 91%, transparent);
-  box-shadow: 0 16px 44px color-mix(in srgb, var(--ds-text) 13%, transparent), inset 0 1px 0 var(--ds-glass-highlight);
-  -webkit-backdrop-filter: blur(24px) saturate(145%);
-  backdrop-filter: blur(24px) saturate(145%);
+  padding: 3px;
+  border-radius: 14px;
+  border-color: color-mix(in srgb, var(--ds-primary) 20%, var(--ds-border));
+  background: color-mix(in srgb, var(--ds-surface) 88%, transparent);
+  box-shadow: 0 5px 18px color-mix(in srgb, var(--ds-text) 9%, transparent), inset 0 1px 0 var(--ds-glass-highlight);
+  -webkit-backdrop-filter: none;
+  backdrop-filter: none;
 }
 .catalog-searchform.is-docked.is-entering { animation: catalogDockArrive 480ms cubic-bezier(0.16, 1, 0.3, 1) both; }
+.catalog-searchform.is-docked .catalog-category-picker { flex: 0 1 220px; min-width: 142px; max-width: 240px; }
+.catalog-searchform.is-docked .catalog-category-summary { block-size: 36px; min-block-size: 36px; padding-block: 2px; border-radius: 10px; }
+.catalog-searchform.is-docked .catalog-category-current-thumb { flex-basis: 28px; width: 28px; height: 28px; border-radius: 8px; }
+.catalog-searchform.is-docked .catalog-category-current-copy small { display: none; }
+.catalog-searchform.is-docked .catalog-category-current-copy strong { font-size: 11px; }
+.catalog-searchform.is-docked .catalog-search { flex-basis: 180px; block-size: 36px; }
+.catalog-searchform.is-docked .catalog-search-input { block-size: 36px; padding-block: 0; padding-inline: 34px; border-radius: 10px; font-size: 12px; }
+.catalog-searchform.is-docked .catalog-search-field > svg { inset-inline-start: 10px; width: 15px; height: 15px; }
+.catalog-searchform.is-docked .catalog-search-clear { inset-inline-end: 5px; width: 24px; height: 24px; }
+.catalog-searchform.is-docked .catalog-go { display: none; }
+.catalog-searchform.is-docked .catalog-sort { block-size: 36px; padding: 0; }
+.catalog-searchform.is-docked .catalog-sort-label { display: none; }
+.catalog-searchform.is-docked .catalog-sort-select { block-size: 36px; padding-block: 0; font-size: 11px; }
+
+/* The dropdown belongs to the viewport, not to the catalog's former
+   position. No transformed or filtered ancestor remains around the form. */
+.catalog-searchform.is-docked .catalog-category-menu {
+  position: fixed;
+  inset-inline: 24px;
+  top: calc(var(--mnav-row1, 56px) + 8px);
+  width: auto;
+  max-width: 720px;
+  max-height: calc(100svh - var(--mnav-row1, 56px) - 24px);
+  margin-inline: auto;
+}
 
 .catalog-category-picker {
   position: relative;
@@ -750,7 +778,7 @@
   margin: 0;
   opacity: 1;
   visibility: visible;
-  transform: scale(1);
+  transform: none;
   transition: flex-basis 420ms cubic-bezier(0.16, 1, 0.3, 1),
     max-width 420ms cubic-bezier(0.16, 1, 0.3, 1), min-width 420ms cubic-bezier(0.16, 1, 0.3, 1),
     margin 420ms cubic-bezier(0.16, 1, 0.3, 1), opacity 180ms ease,
@@ -979,8 +1007,15 @@
   .catalog-results-head { align-items: center; padding-top: 20px; }
   .catalog-results-head h2 { font-size: 28px; }
   .catalog-grid { grid-template-columns: 1fr; gap: 14px; }
+  .catalog-search-slot { --catalog-placeholder-height: 56px; }
   .catalog-searchform { --catalog-control-gap: 6px; padding: 7px; border-radius: 14px; }
-  .catalog-searchform.is-docked { top: calc(var(--mnav-row1, 52px) + 6px); }
+  .catalog-searchform.is-docked { block-size: 40px; }
+  .catalog-searchform.is-docked .catalog-category-picker { flex-basis: 140px; min-width: 104px; max-width: 160px; }
+  .catalog-searchform.is-docked .catalog-category-summary,
+  .catalog-searchform.is-docked .catalog-search,
+  .catalog-searchform.is-docked .catalog-search-input { block-size: 32px; }
+  .catalog-searchform.is-docked .catalog-category-summary { min-block-size: 32px; }
+  .catalog-searchform.is-docked .catalog-category-menu { inset-inline: 12px; top: calc(var(--mnav-row1, 52px) + 6px); max-height: calc(100svh - var(--mnav-row1, 52px) - 18px); }
   .catalog-guide.is-open { margin: 0 7px 7px; }
   .catalog-sort { display: none; }
   .catalog-go { flex: 0 0 auto; padding-inline: 10px; letter-spacing: 0.06em; }
@@ -1007,6 +1042,10 @@
 @media (max-width: 380px) {
   .catalog-searchform .catalog-go { display: none; }
   .catalog-category-picker { flex-basis: 124px; min-width: 104px; max-width: 132px; }
+  .catalog-searchform.is-docked .catalog-category-picker { flex: 0 0 40px; min-width: 40px; max-width: 40px; }
+  .catalog-searchform.is-docked .catalog-category-summary { padding-inline: 2px; justify-content: center; }
+  .catalog-searchform.is-docked .catalog-category-current-copy,
+  .catalog-searchform.is-docked .catalog-category-summary-chevron { display: none; }
 }
 
 @media (prefers-reduced-motion: reduce) {
@@ -1036,8 +1075,8 @@
 /* ---------- entrance ---------- */
 
 @keyframes catalogDockArrive {
-  from { opacity: 0; transform: translateY(-14px) scale(0.985); }
-  to { opacity: 1; transform: translateY(0) scale(1); }
+  from { opacity: 0; }
+  to { opacity: 1; }
 }
 
 @keyframes catalogCategoryOpen {

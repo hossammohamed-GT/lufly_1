@@ -138,10 +138,32 @@ foreach ($supported as $code => $name) {
                      height="55"
                      decoding="async"
                      fetchpriority="high">
+                <span class="mnav-brand-orbit" aria-hidden="true"></span>
             </a>
 
+            <button type="button"
+                    class="mnav-icon-btn mnav-catalog-toggle"
+                    data-catalog-nav-toggle
+                    aria-controls="mnav-index-links"
+                    aria-expanded="false"
+                    aria-label="<?= e(trans('nav.catalog_show_navigation', [], $currentLocale)) ?>"
+                    title="<?= e(trans('nav.catalog_show_navigation', [], $currentLocale)) ?>"
+                    data-label-navigation="<?= e(trans('nav.catalog_show_navigation', [], $currentLocale)) ?>"
+                    data-label-filters="<?= e(trans('nav.catalog_show_filters', [], $currentLocale)) ?>"
+                    hidden>
+                <svg class="icon mnav-catalog-icon-navigation" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" aria-hidden="true">
+                    <path d="M9 6h11M9 12h11M9 18h11"/>
+                    <circle cx="4.5" cy="6" r="1" fill="currentColor" stroke="none"/><circle cx="4.5" cy="12" r="1" fill="currentColor" stroke="none"/><circle cx="4.5" cy="18" r="1" fill="currentColor" stroke="none"/>
+                </svg>
+                <svg class="icon mnav-catalog-icon-filters" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" aria-hidden="true">
+                    <path d="M4 7h10M18 7h2M4 17h2M10 17h10M14 4v6M6 14v6"/>
+                </svg>
+            </button>
+
+            <div class="mnav-catalog-slot" data-catalog-navbar-slot></div>
+
             <!-- centre index links: desktop + glass state only -->
-            <nav class="mnav-links" aria-label="<?= e(trans('nav.index', [], $currentLocale)) ?>">
+            <nav class="mnav-links" id="mnav-index-links" aria-label="<?= e(trans('nav.index', [], $currentLocale)) ?>">
                 <?php foreach ($indexLinks as $link): ?>
                     <a class="mnav-link<?= $isActive($link['url']) ? ' is-active' : '' ?>"
                        href="<?= e($link['url']) ?>"

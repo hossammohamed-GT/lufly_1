@@ -791,7 +791,9 @@
 
       /* close the panel on outside click (grid results stay) */
       document.addEventListener('click', function (e) {
-        if (!host.contains(e.target)) {
+        /* The catalog form may temporarily live inside the navbar, outside
+           its original host, without becoming a different search controller. */
+        if (!host.contains(e.target) && !form.contains(e.target)) {
           box.classList.remove('is-open');
           form.classList.remove('is-searching');
         }
