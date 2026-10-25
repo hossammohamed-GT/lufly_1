@@ -24,3 +24,10 @@ __pycache__/
 
 # tooling installs (php-wasm, one-shot dev deps)
 node_modules/
+
+# Runtime database artifacts. The only packaged database is /lufly-database.sql.
+/database/*.sqlite
+/database/*.sqlite3
+/database/*.db
+/database/sql/
+/database/schema/*.sql

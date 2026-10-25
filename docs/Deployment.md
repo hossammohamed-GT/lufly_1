@@ -3,8 +3,9 @@
 ## XAMPP / local development
 
 1. Clone under `C:\xampp\htdocs\lufly_1`.
-2. **Import the database**: phpMyAdmin → Import → `lufly-database.sql` → Go
-   (creates database `lufly`, all 45 tables, all data).
+2. **Create/select the database and import the export**: create an empty `lufly` database in phpMyAdmin,
+   select it, then Import → `lufly-database.sql` → Go. The file rebuilds all 45 tables and all current data;
+   it does not create or select a database itself.
 3. Copy `.env.example` → `.env` and set:
    ```dotenv
    DB_CONNECTION=mysql
@@ -14,7 +15,6 @@
    APP_URL=http://localhost/lufly_1/
    ```
 4. Open `http://localhost/lufly_1/`.
-   Zero-config alternative: `DB_CONNECTION=sqlite` (uses `database/lufly.sqlite`, same content).
 
 `.htaccess` at the project root already rewrites requests to `public/index.php`,
 so the public web root can be the project folder itself — nothing else to configure in Apache/XAMPP.
@@ -22,7 +22,7 @@ so the public web root can be the project folder itself — nothing else to conf
 ## Shared hosting (cPanel-style, FTP upload)
 
 1. Upload the repository contents to the hosting folder (e.g. `public_html/`).
-2. Import `lufly-database.sql` through the hosting's phpMyAdmin.
+2. Create an empty MySQL database in the hosting panel, select it in phpMyAdmin, then import `lufly-database.sql` into it.
 3. Create `.env` with the hosting's MySQL credentials (`DB_HOST` is usually `localhost`).
 4. Production values:
    ```dotenv
@@ -61,19 +61,15 @@ the list and confirm both the visitor copy and the copy in the store inbox.
 ## Database updates on a live install (no re-import)
 
 Never re-import `lufly-database.sql` over a live database just to add a table —
-it drops and recreates everything. Each feature that adds tables ships a
-paste-ready MySQL patch next to the migration:
+it drops and recreates everything. With terminal access, run:
 
-| Patch | Adds |
-|---|---|
-| `database/sql/2026_01_01_000018_favorites_mysql.sql` | saved products (`favorites`, `favorite_items`) |
-| `database/sql/2026_01_01_000019_ai_mysql.sql` | AI foundation: cached answers + usage counters (`ai_cache`, `ai_usage`) |
-| `database/sql/2026_01_01_000020_assistant_mysql.sql` | Finder: the customers the chat collects (`assistant_leads`) |
+```bash
+php cli migrate
+```
 
-phpMyAdmin → select the database → **SQL** tab → paste the file → Go. The patch
-is safe to run twice, and it records the migration so a later `php cli migrate`
-does not try to create the tables again. With terminal access, `php cli migrate`
-does exactly the same.
+Migrations add only missing tables and preserve existing data. The repository
+keeps one packaged database artifact, `lufly-database.sql`, for fresh installs
+and deliberate full resets; separate SQL patch copies are not shipped.
 
 ## Product finder (the chat)
 

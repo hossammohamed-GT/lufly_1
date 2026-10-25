@@ -3,7 +3,7 @@
 declare(strict_types=1);
 
 return [
-    'default' => env('DB_CONNECTION', 'sqlite'),
+    'default' => env('DB_CONNECTION', 'mysql'),
 
     /* Every query is written to storage/logs/database.log with a blocking
        LOCK_EX write. On the home page that is 10 file writes per request and

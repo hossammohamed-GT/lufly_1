@@ -1,21 +1,24 @@
 # Database
 
-## Two artifacts, always in sync
+## One packaged database artifact
 
 | File | Role | Used when |
 |---|---|---|
-| `database/lufly.sqlite` | SQLite dev database | `DB_CONNECTION=sqlite` (zero-config local dev) |
-| `lufly-database.sql` | **Self-contained MySQL export** | `DB_CONNECTION=mysql` (XAMPP, production) |
+| `lufly-database.sql` | **Complete MySQL schema + all current data** | `DB_CONNECTION=mysql` (XAMPP, shared hosting, production) |
 
-The SQL file creates everything from scratch: `CREATE DATABASE IF NOT EXISTS lufly`,
-`USE lufly`, `DROP TABLE IF EXISTS` + `CREATE TABLE` for all 45 tables, then row-per-row `INSERT`s.
-Safe to re-import any number of times (phpMyAdmin → Import).
+Create an empty database in the hosting panel, select it in phpMyAdmin, then import the file.
+It intentionally contains **no `CREATE DATABASE` and no `USE` statement**. It rebuilds all 45
+application tables with `DROP TABLE IF EXISTS` + `CREATE TABLE`, followed by row-per-row `INSERT`s.
+Use it for fresh installations and deliberate full resets, not as a non-destructive live update.
 
-**After changing data** (via admin panel or seeders), regenerate the export so both artifacts stay equal:
+**After changing data** (via admin panel or seeders), regenerate the export from the active database:
 
 ```bash
 php cli db:export-mysql
 ```
+
+The exporter enforces the same single-file behavior, so database-creation statements are not
+reintroduced on the next export.
 
 ## Workflow: schema → migrations → seeders
 
@@ -64,5 +67,5 @@ php cli backup:db        # → storage/backups/
   required for the Turkish and Czech texts.
 - **Foreign keys cascade** — deleting a product removes its translations, media links,
   SEO rows etc. (`ON DELETE CASCADE`), so there are no orphans.
-- Index **names in the SQLite file can differ** from the MySQL export (SQLite has no length
-  limit) — structure and data are identical, only internal index names may be longer.
+- **No SQLite or partial SQL copies are shipped.** The application retains SQLite support for custom
+  development and isolated CI migrations, but `lufly-database.sql` is the only packaged database.

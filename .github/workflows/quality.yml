@@ -31,7 +31,7 @@ jobs:
           APP_ENV: local
           APP_KEY: base64:CI-only-not-a-production-key-000000000000
           DB_CONNECTION: sqlite
-          DB_SQLITE_PATH: database/lufly.sqlite
+          DB_SQLITE_PATH: /tmp/lufly-quality.sqlite
         run: php cli migrate
 
   security:

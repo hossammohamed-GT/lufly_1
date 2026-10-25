@@ -66,6 +66,17 @@ foreach (['en', 'tr', 'cs'] as $catalogLocale) {
     $assert(str_contains($catalogTranslations, "'catalog_dock_search'") && str_contains($catalogTranslations, "'catalog_category_prompt'") && str_contains($catalogTranslations, "'catalog_category_back_to'") && str_contains($navbarTranslations, "'catalog_show_navigation'") && str_contains($navbarTranslations, "'catalog_show_filters'"), "Catalog dock, category picker, and navbar toggle are localized for {$catalogLocale}");
 }
 
+$databaseDump = (string) file_get_contents($root . '/lufly-database.sql');
+$exportCommand = (string) file_get_contents($root . '/core/Console/Commands/ExportMysqlCommand.php');
+$assert(!str_contains(strtoupper($databaseDump), 'CREATE DATABASE') && preg_match('/^USE\s+/im', $databaseDump) === 0, 'Canonical MySQL dump imports into the selected database only');
+$dumpHasCatalogData = true;
+foreach (['products', 'categories', 'product_media', 'migrations'] as $requiredDataTable) {
+    $dumpHasCatalogData = $dumpHasCatalogData && preg_match('/^-- data: ' . preg_quote($requiredDataTable, '/') . ' \(([1-9]\d*) rows\)$/m', $databaseDump) === 1;
+}
+$assert(substr_count($databaseDump, 'CREATE TABLE `') === 45 && $dumpHasCatalogData, 'Canonical MySQL dump contains all 45 tables and current catalog data');
+$assert(!file_exists($root . '/database/lufly.sqlite') && !is_dir($root . '/database/sql') && glob($root . '/public/.well-known/*.sql') === [], 'Only the canonical MySQL export is packaged outside the protected manager');
+$assert(!str_contains($exportCommand, "\$sql[] = 'CREATE DATABASE") && !str_contains($exportCommand, "\$sql[] = 'USE `"), 'MySQL exporter never reintroduces database creation or selection statements');
+
 if ($failures !== []) {
     fwrite(STDERR, "\n" . count($failures) . " contract test(s) failed.\n");
     exit(1);

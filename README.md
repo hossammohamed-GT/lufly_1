@@ -10,8 +10,9 @@ classic shared hosting / XAMPP and run immediately.
 
 ## Quick start (XAMPP / local)
 
-1. **Import the database** — `lufly-database.sql` (repo root). phpMyAdmin → **Import** → choose the file → **Go**.
-   It creates the `lufly` database, all 45 tables and all data from scratch.
+1. **Create/select the database and import the export** — create an empty `lufly` database in phpMyAdmin,
+   select it, then choose **Import** → `lufly-database.sql` → **Go**. The file rebuilds all 45 tables and
+   imports all current data; it intentionally does not create or select a database itself.
 2. **Copy the environment file** and point it at MySQL:
    ```dotenv
    DB_CONNECTION=mysql
@@ -20,9 +21,6 @@ classic shared hosting / XAMPP and run immediately.
    DB_PASSWORD=
    ```
 3. Open `http://localhost/lufly_1/` — done.
-
-> Zero-config alternative: set `DB_CONNECTION=sqlite` and the site runs directly on `database/lufly.sqlite`
-> (identical content — both are shipped in the repo and kept in sync).
 
 ### PHP built-in server (no Apache)
 
@@ -33,16 +31,15 @@ php -S localhost:8000 server.php
 ## Requirements
 
 - PHP **8.1+** (works with the PHP bundled in any recent XAMPP)
-- PDO extension: `pdo_mysql` **or** `pdo_sqlite`
+- PDO extension: `pdo_mysql` for the packaged MySQL installation
 - No Composer, no Node, no build step — assets are plain CSS/JS
 
 ## Where things live
 
 ```
-lufly-database.sql         MySQL export (import this on hosting)
-database/lufly.sqlite      SQLite dev database (same content)
+lufly-database.sql         The only packaged database: complete MySQL schema + current data
 database/schema/*.php      Table definitions (source of truth for DDL)
-database/migrations/       Migration files (19, all applied)
+database/migrations/       Migration files (21, all applied)
 database/seeders/          Seeders (products/categories/users/roles/settings…)
 
 core/                      The mini-framework (Router, View, PDO layer, Console, Container…)
@@ -104,11 +101,10 @@ FAVORITES_EMAIL_COOLDOWN=60
 FAVORITES_EMAIL_DAILY_LIMIT=5
 ```
 
-An existing database needs one thing: the `favorites` and `favorite_items`
-tables. Either run `php cli migrate`, import the shipped `lufly-database.sql`,
-or — on a live MySQL database you would rather not re-import — paste
-`database/sql/2026_01_01_000018_favorites_mysql.sql` into phpMyAdmin (it also
-records the migration, so a later `php cli migrate` stays quiet).
+An existing database needs the `favorites` and `favorite_items` tables. Run
+`php cli migrate` to add only missing tables without replacing live data. For a
+fresh installation or a deliberate full reset, the complete `lufly-database.sql`
+already includes these tables and their current data.
 
 ## AI (Google Gemini)
 
@@ -139,9 +135,9 @@ while the text keys pass means the account simply has no picture quota — set
 `AI_IMAGE_MODEL=` (empty) and the planner hides its picture button.
 
 Every answer is cached (`ai_cache`) and counted (`ai_usage`), so a repeated
-question costs nothing and a visitor cannot burn the quota. The `ai_cache` and
-`ai_usage` tables come with migration 19; on a live MySQL database paste
-`database/sql/2026_01_01_000019_ai_mysql.sql` instead of re-importing the dump.
+question costs nothing and a visitor cannot burn the quota. Both tables are
+included in the full export; on an existing installation, run `php cli migrate`
+to add missing tables without re-importing or replacing live data.
 
 ## Product finder (the chat)
 
