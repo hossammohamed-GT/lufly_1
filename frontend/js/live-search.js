@@ -78,6 +78,7 @@
       var inFlight = null;
       var lastQuery = '';
       var isLive = false;
+      var compactStatus = false;
       var savedGrid = '';
       var savedCount = '';
       var paginationHidden = false;
@@ -200,8 +201,14 @@
         box.appendChild(statusEl);
       }
 
+      function syncStatusMode() {
+        box.classList.toggle('is-compact', compactStatus);
+        if (compactStatus) box.classList.add('is-open');
+      }
+
       function setStatus(text, withShare) {
         statusEl.innerHTML = text + (withShare ? shareButton() : '');
+        syncStatusMode();
         box.classList.add('is-open');
         form.classList.add('is-searching');
         if (withShare) bindShare();
@@ -650,6 +657,8 @@
 
       function clearSearch() {
         input.value = '';
+        compactStatus = form.classList.contains('is-docked');
+        syncStatusMode();
         restoreGrid();
         box.classList.remove('is-busy');
         showIdle();
@@ -663,6 +672,8 @@
           var btn = e.target.closest('[data-scope]');
           if (!btn || btn.getAttribute('data-scope') === scope) return;
           scope = btn.getAttribute('data-scope');
+          compactStatus = false;
+          syncStatusMode();
           scopeWrap.querySelectorAll('[data-scope]').forEach(function (b) {
             b.classList.toggle('is-active', b === btn);
           });
@@ -675,8 +686,19 @@
 
       /* ---------- input wiring ---------- */
 
-      input.addEventListener('input', function () {
+      /* Once this same form is fixed beside the grid, searching must not pull
+         the visitor to a new scroll position. The event-source check keeps
+         compatibility with previously forwarded dock events. */
+      function shouldRevealGrid(event) {
+        var forwardedDockEvent = event && event.detail && event.detail.source === 'catalog-dock';
+        return !forwardedDockEvent && !form.classList.contains('is-docked');
+      }
+
+      input.addEventListener('input', function (event) {
         var query = input.value.trim();
+        var reveal = shouldRevealGrid(event);
+        compactStatus = !reveal;
+        syncStatusMode();
         window.clearTimeout(debounce);
 
         if (query.length === 0) {
@@ -691,11 +713,13 @@
         }
 
         debounce = window.setTimeout(function () {
-          search(query, true);
+          search(query, reveal);
         }, 600);
       });
 
       input.addEventListener('focus', function () {
+        compactStatus = form.classList.contains('is-docked');
+        syncStatusMode();
         form.classList.add('is-searching');
         var query = input.value.trim();
         if (query.length >= 2) {
@@ -715,12 +739,24 @@
       /* Enter never navigates: the live grid already shows everything */
       form.addEventListener('submit', function (e) {
         e.preventDefault();
+        compactStatus = !shouldRevealGrid(e);
+        syncStatusMode();
+        window.clearTimeout(debounce);
         var query = input.value.trim();
         if (query.length < 2) {
           setStatus(esc(g.min));
           return;
         }
-        search(query, true);
+        search(query, shouldRevealGrid(e));
+      });
+
+      /* The original bar can become fixed after it already has focus. Keep
+         its status compact from that point, and restore the normal panel when
+         it returns to its document position. */
+      form.addEventListener('catalog:dockstate', function (event) {
+        var detail = event.detail || {};
+        compactStatus = Boolean(detail.docked) && form.classList.contains('is-searching');
+        syncStatusMode();
       });
 
       /* A server-rendered category/sort/page update becomes the new baseline.
@@ -734,9 +770,10 @@
         cache = {};
         lastQuery = '';
         isLive = false;
+        compactStatus = false;
         input.value = String(detail.query || '');
         form.classList.remove('is-live', 'is-searching');
-        box.classList.remove('is-open', 'is-busy');
+        box.classList.remove('is-open', 'is-busy', 'is-compact');
         savedGrid = grid ? grid.innerHTML : '';
         savedCount = countEl ? countEl.textContent : '';
         if (pagination) pagination.style.display = '';
@@ -754,7 +791,9 @@
 
       /* close the panel on outside click (grid results stay) */
       document.addEventListener('click', function (e) {
-        if (!host.contains(e.target)) {
+        /* The catalog form may temporarily live inside the navbar, outside
+           its original host, without becoming a different search controller. */
+        if (!host.contains(e.target) && !form.contains(e.target)) {
           box.classList.remove('is-open');
           form.classList.remove('is-searching');
         }

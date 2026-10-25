@@ -14,6 +14,7 @@ $view->pushStyle('frontend/products/catalog/catalog.css');
 $view->pushScript('frontend/js/live-search.js');
 $view->pushScript('frontend/js/product-card-variants.js');
 $view->pushScript('frontend/products/catalog/catalog.js');
+$view->pushScript('frontend/products/catalog/catalog-dock.js');
 $view->pushStyle('frontend/components/skeleton/skeleton.css');
 $view->pushScript('frontend/components/skeleton/skeleton.js');
 $view->pushStyle('frontend/favorites/favorites.css');
@@ -133,27 +134,41 @@ $colorFamilies = app(\Modules\Products\Services\ProductColorFamilyService::class
                     <?= e($total === 1 ? trans('products.results_one') : trans('products.results_many', ['n' => number_format($total)])) ?>
                 </span>
             </div>
-            <form method="GET" action="<?= e(route('products.index')) ?>" class="catalog-searchform">
-                <input type="hidden" name="category" value="<?= e($activeCategory) ?>">
+            <div class="catalog-search-slot" data-catalog-dock-slot>
+                <form method="GET" action="<?= e(route('products.index')) ?>" class="catalog-searchform" data-catalog-dock role="search" aria-label="<?= e(trans('products.catalog_dock_label')) ?>">
+                    <input type="hidden" name="category" value="<?= e($activeCategory) ?>">
 
-                <div class="catalog-search" data-catalog-field>
-                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" width="16" height="16" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg>
-                    <input type="text" name="q" value="<?= e($searchQuery) ?>" placeholder="<?= e(trans('common.search')) ?>" class="catalog-search-input" data-livesearch-input data-livesearch-limit="36" data-locale="<?= e($locale) ?>" autocomplete="off" aria-label="<?= e(trans('common.search')) ?>">
-                    <button type="submit" class="catalog-go" aria-label="<?= e(trans('common.search')) ?>">
-                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" width="15" height="15" aria-hidden="true"><path d="M5 12h14"/><path d="m13 6 6 6-6 6"/></svg>
-                        <span><?= e(trans('common.search')) ?></span>
-                    </button>
-                </div>
+                    <?= $view->component('catalog-category-picker', [
+                        'categories' => $categories,
+                        'categoryCounts' => $categoryCounts,
+                        'activeCategory' => $activeCategory,
+                        'buildUrl' => $buildUrl,
+                    ]) ?>
 
-                <label class="catalog-sort" data-catalog-sortwrap>
-                    <span class="catalog-sort-label"><?= e(trans('products.sort_label')) ?></span>
-                    <select name="sort" class="catalog-sort-select" data-catalog-sort>
-                        <?php foreach ($sortOptions as $value => $label): ?>
-                            <option value="<?= e($value) ?>" <?= $sort === $value ? 'selected' : '' ?>><?= e($label) ?></option>
-                        <?php endforeach; ?>
-                    </select>
-                </label>
-            </form>
+                    <div class="catalog-search" data-catalog-field>
+                        <span class="catalog-search-field">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" width="16" height="16" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg>
+                            <input type="text" name="q" value="<?= e($searchQuery) ?>" placeholder="<?= e(trans('products.catalog_dock_search')) ?>" class="catalog-search-input" data-livesearch-input data-livesearch-limit="36" data-locale="<?= e($locale) ?>" autocomplete="off" aria-label="<?= e(trans('products.catalog_dock_search')) ?>" aria-controls="catalog-results" spellcheck="false" enterkeyhint="search">
+                            <button type="button" class="catalog-search-clear" data-catalog-search-clear aria-label="<?= e(trans('products.catalog_dock_clear')) ?>" title="<?= e(trans('products.catalog_dock_clear')) ?>"<?= $searchQuery === '' ? ' hidden' : '' ?>>
+                                <svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" aria-hidden="true"><path d="m6 6 8 8M14 6l-8 8"/></svg>
+                            </button>
+                        </span>
+                        <button type="submit" class="catalog-go" aria-label="<?= e(trans('common.search')) ?>">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" width="15" height="15" aria-hidden="true"><path d="M5 12h14"/><path d="m13 6 6 6-6 6"/></svg>
+                            <span><?= e(trans('common.search')) ?></span>
+                        </button>
+                    </div>
+
+                    <label class="catalog-sort" data-catalog-sortwrap>
+                        <span class="catalog-sort-label"><?= e(trans('products.sort_label')) ?></span>
+                        <select name="sort" class="catalog-sort-select" data-catalog-sort>
+                            <?php foreach ($sortOptions as $value => $label): ?>
+                                <option value="<?= e($value) ?>" <?= $sort === $value ? 'selected' : '' ?>><?= e($label) ?></option>
+                            <?php endforeach; ?>
+                        </select>
+                    </label>
+                </form>
+            </div>
 
             <div class="catalog-guide" data-livesearch-results aria-live="polite">
                 <div class="catalog-scope" data-livesearch-scope>

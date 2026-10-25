@@ -33,4 +33,6 @@ return [
     'close' => 'Close',
     'quick_links' => 'Quick links',
     'open_index' => 'Open the navigation index',
+    'catalog_show_navigation' => 'Show site navigation',
+    'catalog_show_filters' => 'Show catalog filters',
 ];

@@ -539,6 +539,22 @@
       }
     });
 
+    /* External compact controls (the scrolled catalog dock) reuse the very
+       same activation path as an atlas click. Suppress off-screen motion and
+       never reveal the atlas: the visitor is already reading the products. */
+    explorer.addEventListener('category:select', function (event) {
+      var detail = event.detail || {};
+      var slug = String(detail.slug || '');
+      if (slug === '') {
+        clearSelection(true, false);
+        notifySelection('');
+        return;
+      }
+      if (activate(slug, false, true, null)) {
+        notifySelection(slug, null);
+      }
+    });
+
     explorer.addEventListener('category:clear', function () {
       clearSelection(false, false);
     });

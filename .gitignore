@@ -24,3 +24,12 @@ __pycache__/
 
 # tooling installs (php-wasm, one-shot dev deps)
 node_modules/
+
+# Runtime database artifacts. Keep the tracked local SQLite runtime and the
+# canonical /lufly-database.sql server import; ignore other generated copies.
+/database/*.sqlite
+!/database/lufly.sqlite
+/database/*.sqlite3
+/database/*.db
+/database/sql/
+/database/schema/*.sql

@@ -1,21 +1,29 @@
 # Database
 
-## Two artifacts, always in sync
+## Local runtime + one canonical server import
 
 | File | Role | Used when |
 |---|---|---|
-| `database/lufly.sqlite` | SQLite dev database | `DB_CONNECTION=sqlite` (zero-config local dev) |
-| `lufly-database.sql` | **Self-contained MySQL export** | `DB_CONNECTION=mysql` (XAMPP, production) |
+| `database/lufly.sqlite` | **Complete local runtime database; no import needed** | `DB_CONNECTION=sqlite` (the local default) |
+| `lufly-database.sql` | **Complete MySQL schema + all current data** | `DB_CONNECTION=mysql` (shared hosting, production, optional local MySQL) |
 
-The SQL file creates everything from scratch: `CREATE DATABASE IF NOT EXISTS lufly`,
-`USE lufly`, `DROP TABLE IF EXISTS` + `CREATE TABLE` for all 45 tables, then row-per-row `INSERT`s.
-Safe to re-import any number of times (phpMyAdmin → Import).
+These are independent runtime choices for local and server environments. The SQLite file keeps local
+setup working, while the SQL file remains the single MySQL installation/reset artifact; no partial SQL
+patch copies are shipped.
 
-**After changing data** (via admin panel or seeders), regenerate the export so both artifacts stay equal:
+For MySQL, create an empty database in the hosting panel, select it in phpMyAdmin, then import the file.
+It intentionally contains **no `CREATE DATABASE` and no `USE` statement**. It rebuilds all 45
+application tables with `DROP TABLE IF EXISTS` + `CREATE TABLE`, followed by row-per-row `INSERT`s.
+Use it for fresh installations and deliberate full resets, not as a non-destructive live update.
+
+**After changing data** (via admin panel or seeders), regenerate the export from the active database:
 
 ```bash
 php cli db:export-mysql
 ```
+
+The exporter enforces the same single-file behavior, so database-creation statements are not
+reintroduced on the next export.
 
 ## Workflow: schema → migrations → seeders
 
@@ -64,5 +72,6 @@ php cli backup:db        # → storage/backups/
   required for the Turkish and Czech texts.
 - **Foreign keys cascade** — deleting a product removes its translations, media links,
   SEO rows etc. (`ON DELETE CASCADE`), so there are no orphans.
-- Index **names in the SQLite file can differ** from the MySQL export (SQLite has no length
-  limit) — structure and data are identical, only internal index names may be longer.
+- **Local and server databases are both supported.** `database/lufly.sqlite` is the tracked local
+  runtime; `lufly-database.sql` is the only packaged MySQL import. Generated SQLite copies and partial
+  SQL patches are ignored, and CI builds an isolated temporary SQLite database from migrations.

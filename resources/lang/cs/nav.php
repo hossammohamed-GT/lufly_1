@@ -32,4 +32,6 @@ return [
     'close' => 'Zavřít',
     'quick_links' => 'Rychlé odkazy',
     'open_index' => 'Otevřít rejstřík navigace',
+    'catalog_show_navigation' => 'Zobrazit navigaci webu',
+    'catalog_show_filters' => 'Zobrazit filtry katalogu',
 ];

@@ -98,7 +98,13 @@
   var langMenu = header.querySelector('[data-lang-menu]');
   var langToggle = header.querySelector('[data-lang-toggle]');
 
+  function requestSiteNavigation() {
+    if (!header.classList.contains('is-catalog-docked')) return;
+    header.dispatchEvent(new CustomEvent('catalog:navigation-request'));
+  }
+
   function setSheet(open) {
+    if (open) requestSiteNavigation();
     header.classList.toggle('is-sheet-open', open);
 
     if (sheetTrigger) {
@@ -123,6 +129,7 @@
   }
 
   function setSearch(open, opts) {
+    if (open) requestSiteNavigation();
     header.classList.toggle('is-search-open', open);
 
     searchToggles.forEach(function (toggle) {
@@ -209,6 +216,16 @@
   function closeLang() {
     setLang(false);
   }
+
+  /* Catalog filters own the row only while they are visible. Opening any
+     native navbar panel first asks the catalog controller to restore this
+     row; taking the filters back closes those panels again. */
+  header.addEventListener('catalog:navbardock', function (event) {
+    if (!event.detail || !event.detail.docked) return;
+    closeSearch();
+    setSheet(false);
+    closeLang();
+  });
 
   /* first paint - done here, after every panel helper above exists */
   measureHero();

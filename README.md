@@ -8,41 +8,46 @@ classic shared hosting / XAMPP and run immediately.
 
 ---
 
-## Quick start (XAMPP / local)
+## Quick start — local (SQLite)
 
-1. **Import the database** — `lufly-database.sql` (repo root). phpMyAdmin → **Import** → choose the file → **Go**.
-   It creates the `lufly` database, all 45 tables and all data from scratch.
-2. **Copy the environment file** and point it at MySQL:
+The complete `database/lufly.sqlite` is included for local development; no SQL import is needed.
+
+1. Copy `.env.example` to `.env`. It already uses:
+   ```dotenv
+   DB_CONNECTION=sqlite
+   DB_SQLITE_PATH=database/lufly.sqlite
+   ```
+2. Open `http://localhost/lufly_1/` under XAMPP, or use PHP's built-in server:
+   ```bash
+   php -S localhost:8000 server.php
+   ```
+
+## Server installation (MySQL)
+
+1. Create/select the `lufly` database in phpMyAdmin, then import `lufly-database.sql`.
+   It rebuilds all 45 tables with all current data and does not create or select a database itself.
+2. In the server's `.env`, switch the connection and configure its credentials:
    ```dotenv
    DB_CONNECTION=mysql
    DB_DATABASE=lufly
    DB_USERNAME=root
    DB_PASSWORD=
    ```
-3. Open `http://localhost/lufly_1/` — done.
-
-> Zero-config alternative: set `DB_CONNECTION=sqlite` and the site runs directly on `database/lufly.sqlite`
-> (identical content — both are shipped in the repo and kept in sync).
-
-### PHP built-in server (no Apache)
-
-```bash
-php -S localhost:8000 server.php
-```
+   Set the production `APP_ENV`, `APP_DEBUG`, `APP_URL`, and unique `APP_KEY` as described in `docs/Deployment.md`.
 
 ## Requirements
 
 - PHP **8.1+** (works with the PHP bundled in any recent XAMPP)
-- PDO extension: `pdo_mysql` **or** `pdo_sqlite`
+- `pdo_sqlite` for the included local database, or `pdo_mysql` for a MySQL server installation
 - No Composer, no Node, no build step — assets are plain CSS/JS
 
 ## Where things live
 
 ```
-lufly-database.sql         MySQL export (import this on hosting)
-database/lufly.sqlite      SQLite dev database (same content)
+lufly-database.sql         Canonical MySQL server import: complete schema + current data
+database/lufly.sqlite      Complete zero-import local development database
 database/schema/*.php      Table definitions (source of truth for DDL)
-database/migrations/       Migration files (19, all applied)
+database/migrations/       Migration files (21, all applied)
 database/seeders/          Seeders (products/categories/users/roles/settings…)
 
 core/                      The mini-framework (Router, View, PDO layer, Console, Container…)
@@ -104,11 +109,10 @@ FAVORITES_EMAIL_COOLDOWN=60
 FAVORITES_EMAIL_DAILY_LIMIT=5
 ```
 
-An existing database needs one thing: the `favorites` and `favorite_items`
-tables. Either run `php cli migrate`, import the shipped `lufly-database.sql`,
-or — on a live MySQL database you would rather not re-import — paste
-`database/sql/2026_01_01_000018_favorites_mysql.sql` into phpMyAdmin (it also
-records the migration, so a later `php cli migrate` stays quiet).
+An existing database needs the `favorites` and `favorite_items` tables. Run
+`php cli migrate` to add only missing tables without replacing live data. For a
+fresh installation or a deliberate full reset, the complete `lufly-database.sql`
+already includes these tables and their current data.
 
 ## AI (Google Gemini)
 
@@ -139,9 +143,9 @@ while the text keys pass means the account simply has no picture quota — set
 `AI_IMAGE_MODEL=` (empty) and the planner hides its picture button.
 
 Every answer is cached (`ai_cache`) and counted (`ai_usage`), so a repeated
-question costs nothing and a visitor cannot burn the quota. The `ai_cache` and
-`ai_usage` tables come with migration 19; on a live MySQL database paste
-`database/sql/2026_01_01_000019_ai_mysql.sql` instead of re-importing the dump.
+question costs nothing and a visitor cannot burn the quota. Both tables are
+included in the full export; on an existing installation, run `php cli migrate`
+to add missing tables without re-importing or replacing live data.
 
 ## Product finder (the chat)
 

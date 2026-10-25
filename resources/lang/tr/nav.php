@@ -32,4 +32,6 @@ return [
     'close' => 'Kapat',
     'quick_links' => 'Hızlı bağlantılar',
     'open_index' => 'Navigasyon dizinini aç',
+    'catalog_show_navigation' => 'Site navigasyonunu göster',
+    'catalog_show_filters' => 'Katalog filtrelerini göster',
 ];

@@ -41,6 +41,44 @@ $assert(!str_contains($schema, "'priceCurrency' => 'EUR'"), 'Product schema does
 $rootHtaccess = (string) file_get_contents($root . '/.htaccess');
 $assert(!preg_match('/FilesMatch "\\\.\(css.*?immutable/s', $rootHtaccess), 'Unhashed CSS/JS are not cached as immutable');
 
+$catalogView = (string) file_get_contents($root . '/modules/Products/Views/index.php');
+$catalogPicker = (string) file_get_contents($root . '/resources/views/components/catalog-category-picker.php');
+$catalogDock = (string) file_get_contents($root . '/frontend/products/catalog/catalog-dock.js');
+$catalogLiveSearch = (string) file_get_contents($root . '/frontend/js/live-search.js');
+$catalogExplorer = (string) file_get_contents($root . '/frontend/components/category-explorer/category-explorer.js');
+$catalogCss = (string) file_get_contents($root . '/frontend/products/catalog/catalog.css');
+$navbarView = (string) file_get_contents($root . '/resources/views/components/navbar.php');
+$navbarJs = (string) file_get_contents($root . '/frontend/components/navbar/navbar.js');
+$navbarCss = (string) file_get_contents($root . '/frontend/components/navbar/navbar.css');
+$assert(preg_match_all('/\\sdata-livesearch(?:\\s|=)/', $catalogView) === 1 && substr_count($catalogView, 'data-livesearch-input') === 1, 'Catalog keeps exactly one live-search host and input');
+$assert(str_contains($catalogView, "component('catalog-category-picker'") && str_contains($catalogView, 'data-catalog-dock-slot') && !str_contains($catalogView, 'data-catalog-dock-category'), 'The original toolbar owns the single sticky category picker');
+$assert(str_contains($catalogPicker, 'data-category-view="roots"') && str_contains($catalogPicker, 'data-category-drill') && str_contains($catalogPicker, 'data-category-back'), 'Server-rendered picker exposes roots, nested views, and back navigation');
+$assert(!str_contains($catalogDock, 'fetch(') && !str_contains($catalogDock, '.innerHTML'), 'Catalog dock does not become a competing request or rendering controller');
+$assert(str_contains($catalogDock, "event('category:select'") && str_contains($catalogExplorer, "explorer.addEventListener('category:select'"), 'Dock categories reuse the atlas activation path');
+$assert(str_contains($navbarView, 'data-catalog-navbar-slot') && str_contains($navbarView, 'data-catalog-nav-toggle') && str_contains($navbarView, 'mnav-brand-orbit-runner'), 'Navbar exposes one catalog slot, a navigation toggle, and the brand edge orbit');
+$assert(str_contains($catalogDock, 'navbarSlot.appendChild(form)') && str_contains($catalogDock, 'slot.appendChild(form)') && str_contains($catalogDock, 'setNavigationPreview') && str_contains($catalogDock, 'is-catalog-preparing'), 'The same catalog form moves between its original slot and the navbar in staged transitions');
+$assert(str_contains($navbarJs, 'catalog:navigation-request') && str_contains($navbarJs, 'catalog:navbardock') && str_contains($navbarCss, '@keyframes mnavBrandOrbit') && str_contains($navbarCss, 'stroke-dashoffset'), 'Native navbar panels and the animated catalog takeover cooperate');
+$assert(str_contains($catalogLiveSearch, "form.classList.contains('is-docked')") && str_contains($catalogLiveSearch, "catalog:dockstate") && str_contains($catalogLiveSearch, "'is-compact'"), 'Docked live search keeps its results position and compact status');
+$assert(str_contains($catalogCss, '.catalog-searchform.is-docked.is-entering') && str_contains($catalogCss, '@keyframes catalogDockArrive') && str_contains($catalogCss, '@media (prefers-reduced-motion: reduce)'), 'Sticky bar has a smooth entrance and reduced-motion fallback');
+foreach (['en', 'tr', 'cs'] as $catalogLocale) {
+    $catalogTranslations = (string) file_get_contents($root . "/resources/lang/{$catalogLocale}/products.php");
+    $navbarTranslations = (string) file_get_contents($root . "/resources/lang/{$catalogLocale}/nav.php");
+    $assert(str_contains($catalogTranslations, "'catalog_dock_search'") && str_contains($catalogTranslations, "'catalog_category_prompt'") && str_contains($catalogTranslations, "'catalog_category_back_to'") && str_contains($navbarTranslations, "'catalog_show_navigation'") && str_contains($navbarTranslations, "'catalog_show_filters'"), "Catalog dock, category picker, and navbar toggle are localized for {$catalogLocale}");
+}
+
+$databaseDump = (string) file_get_contents($root . '/lufly-database.sql');
+$exportCommand = (string) file_get_contents($root . '/core/Console/Commands/ExportMysqlCommand.php');
+$assert(!str_contains(strtoupper($databaseDump), 'CREATE DATABASE') && preg_match('/^USE\s+/im', $databaseDump) === 0, 'Canonical MySQL dump imports into the selected database only');
+$dumpHasCatalogData = true;
+foreach (['products', 'categories', 'product_media', 'migrations'] as $requiredDataTable) {
+    $dumpHasCatalogData = $dumpHasCatalogData && preg_match('/^-- data: ' . preg_quote($requiredDataTable, '/') . ' \(([1-9]\d*) rows\)$/m', $databaseDump) === 1;
+}
+$assert(substr_count($databaseDump, 'CREATE TABLE `') === 45 && $dumpHasCatalogData, 'Canonical MySQL dump contains all 45 tables and current catalog data');
+$databaseConfig = (string) file_get_contents($root . '/config/database.php');
+$assert(str_contains($databaseConfig, "'default' => env('DB_CONNECTION', 'sqlite')") && preg_match('/^DB_CONNECTION=sqlite$/m', $example) === 1 && is_file($root . '/database/lufly.sqlite') && filesize($root . '/database/lufly.sqlite') > 0, 'Zero-config local runtime retains the complete bundled SQLite database');
+$assert(!is_dir($root . '/database/sql') && glob($root . '/public/.well-known/*.sql') === [], 'Canonical MySQL export has no duplicate partial SQL installation patches');
+$assert(!str_contains($exportCommand, "\$sql[] = 'CREATE DATABASE") && !str_contains($exportCommand, "\$sql[] = 'USE `"), 'MySQL exporter never reintroduces database creation or selection statements');
+
 if ($failures !== []) {
     fwrite(STDERR, "\n" . count($failures) . " contract test(s) failed.\n");
     exit(1);
