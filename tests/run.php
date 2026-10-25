@@ -74,7 +74,9 @@ foreach (['products', 'categories', 'product_media', 'migrations'] as $requiredD
     $dumpHasCatalogData = $dumpHasCatalogData && preg_match('/^-- data: ' . preg_quote($requiredDataTable, '/') . ' \(([1-9]\d*) rows\)$/m', $databaseDump) === 1;
 }
 $assert(substr_count($databaseDump, 'CREATE TABLE `') === 45 && $dumpHasCatalogData, 'Canonical MySQL dump contains all 45 tables and current catalog data');
-$assert(!file_exists($root . '/database/lufly.sqlite') && !is_dir($root . '/database/sql') && glob($root . '/public/.well-known/*.sql') === [], 'Only the canonical MySQL export is packaged outside the protected manager');
+$databaseConfig = (string) file_get_contents($root . '/config/database.php');
+$assert(str_contains($databaseConfig, "'default' => env('DB_CONNECTION', 'sqlite')") && preg_match('/^DB_CONNECTION=sqlite$/m', $example) === 1 && is_file($root . '/database/lufly.sqlite') && filesize($root . '/database/lufly.sqlite') > 0, 'Zero-config local runtime retains the complete bundled SQLite database');
+$assert(!is_dir($root . '/database/sql') && glob($root . '/public/.well-known/*.sql') === [], 'Canonical MySQL export has no duplicate partial SQL installation patches');
 $assert(!str_contains($exportCommand, "\$sql[] = 'CREATE DATABASE") && !str_contains($exportCommand, "\$sql[] = 'USE `"), 'MySQL exporter never reintroduces database creation or selection statements');
 
 if ($failures !== []) {

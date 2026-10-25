@@ -1,12 +1,17 @@
 # Database
 
-## One packaged database artifact
+## Local runtime + one canonical server import
 
 | File | Role | Used when |
 |---|---|---|
-| `lufly-database.sql` | **Complete MySQL schema + all current data** | `DB_CONNECTION=mysql` (XAMPP, shared hosting, production) |
+| `database/lufly.sqlite` | **Complete local runtime database; no import needed** | `DB_CONNECTION=sqlite` (the local default) |
+| `lufly-database.sql` | **Complete MySQL schema + all current data** | `DB_CONNECTION=mysql` (shared hosting, production, optional local MySQL) |
 
-Create an empty database in the hosting panel, select it in phpMyAdmin, then import the file.
+These are independent runtime choices for local and server environments. The SQLite file keeps local
+setup working, while the SQL file remains the single MySQL installation/reset artifact; no partial SQL
+patch copies are shipped.
+
+For MySQL, create an empty database in the hosting panel, select it in phpMyAdmin, then import the file.
 It intentionally contains **no `CREATE DATABASE` and no `USE` statement**. It rebuilds all 45
 application tables with `DROP TABLE IF EXISTS` + `CREATE TABLE`, followed by row-per-row `INSERT`s.
 Use it for fresh installations and deliberate full resets, not as a non-destructive live update.
@@ -67,5 +72,6 @@ php cli backup:db        # → storage/backups/
   required for the Turkish and Czech texts.
 - **Foreign keys cascade** — deleting a product removes its translations, media links,
   SEO rows etc. (`ON DELETE CASCADE`), so there are no orphans.
-- **No SQLite or partial SQL copies are shipped.** The application retains SQLite support for custom
-  development and isolated CI migrations, but `lufly-database.sql` is the only packaged database.
+- **Local and server databases are both supported.** `database/lufly.sqlite` is the tracked local
+  runtime; `lufly-database.sql` is the only packaged MySQL import. Generated SQLite copies and partial
+  SQL patches are ignored, and CI builds an isolated temporary SQLite database from migrations.

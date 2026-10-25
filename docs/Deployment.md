@@ -3,18 +3,14 @@
 ## XAMPP / local development
 
 1. Clone under `C:\xampp\htdocs\lufly_1`.
-2. **Create/select the database and import the export**: create an empty `lufly` database in phpMyAdmin,
-   select it, then Import → `lufly-database.sql` → Go. The file rebuilds all 45 tables and all current data;
-   it does not create or select a database itself.
-3. Copy `.env.example` → `.env` and set:
+2. Copy `.env.example` → `.env`. Its local defaults already use the included complete database:
    ```dotenv
-   DB_CONNECTION=mysql
-   DB_DATABASE=lufly
-   DB_USERNAME=root
-   DB_PASSWORD=
+   DB_CONNECTION=sqlite
+   DB_SQLITE_PATH=database/lufly.sqlite
    APP_URL=http://localhost/lufly_1/
    ```
-4. Open `http://localhost/lufly_1/`.
+3. Open `http://localhost/lufly_1/`; no SQL import is needed locally.
+   To use MySQL locally instead, import `lufly-database.sql` and change `DB_CONNECTION` to `mysql`.
 
 `.htaccess` at the project root already rewrites requests to `public/index.php`,
 so the public web root can be the project folder itself — nothing else to configure in Apache/XAMPP.
@@ -23,13 +19,19 @@ so the public web root can be the project folder itself — nothing else to conf
 
 1. Upload the repository contents to the hosting folder (e.g. `public_html/`).
 2. Create an empty MySQL database in the hosting panel, select it in phpMyAdmin, then import `lufly-database.sql` into it.
-3. Create `.env` with the hosting's MySQL credentials (`DB_HOST` is usually `localhost`).
-4. Production values:
+3. Copy `.env.example` → `.env` and set the hosting's MySQL credentials (`DB_HOST` is usually `localhost`).
+4. Production values must explicitly select MySQL rather than the local SQLite default:
    ```dotenv
    APP_ENV=production
    APP_DEBUG=false
    APP_URL=https://your-domain.com/
+   DB_CONNECTION=mysql
+   DB_HOST=localhost
+   DB_DATABASE=lufly
+   DB_USERNAME=your_hosting_user
+   DB_PASSWORD=your_hosting_password
    ```
+   Production also requires a unique `APP_KEY`; run `php cli key:generate` before opening the site.
 5. If hosting allows setting the docroot to a subfolder, point it at `public/` —
    otherwise the root `.htaccess` handles routing automatically.
 6. Make `storage/` (logs, cache, uploads, backups) writable by PHP.

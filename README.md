@@ -8,36 +8,44 @@ classic shared hosting / XAMPP and run immediately.
 
 ---
 
-## Quick start (XAMPP / local)
+## Quick start — local (SQLite)
 
-1. **Create/select the database and import the export** — create an empty `lufly` database in phpMyAdmin,
-   select it, then choose **Import** → `lufly-database.sql` → **Go**. The file rebuilds all 45 tables and
-   imports all current data; it intentionally does not create or select a database itself.
-2. **Copy the environment file** and point it at MySQL:
+The complete `database/lufly.sqlite` is included for local development; no SQL import is needed.
+
+1. Copy `.env.example` to `.env`. It already uses:
+   ```dotenv
+   DB_CONNECTION=sqlite
+   DB_SQLITE_PATH=database/lufly.sqlite
+   ```
+2. Open `http://localhost/lufly_1/` under XAMPP, or use PHP's built-in server:
+   ```bash
+   php -S localhost:8000 server.php
+   ```
+
+## Server installation (MySQL)
+
+1. Create/select the `lufly` database in phpMyAdmin, then import `lufly-database.sql`.
+   It rebuilds all 45 tables with all current data and does not create or select a database itself.
+2. In the server's `.env`, switch the connection and configure its credentials:
    ```dotenv
    DB_CONNECTION=mysql
    DB_DATABASE=lufly
    DB_USERNAME=root
    DB_PASSWORD=
    ```
-3. Open `http://localhost/lufly_1/` — done.
-
-### PHP built-in server (no Apache)
-
-```bash
-php -S localhost:8000 server.php
-```
+   Set the production `APP_ENV`, `APP_DEBUG`, `APP_URL`, and unique `APP_KEY` as described in `docs/Deployment.md`.
 
 ## Requirements
 
 - PHP **8.1+** (works with the PHP bundled in any recent XAMPP)
-- PDO extension: `pdo_mysql` for the packaged MySQL installation
+- `pdo_sqlite` for the included local database, or `pdo_mysql` for a MySQL server installation
 - No Composer, no Node, no build step — assets are plain CSS/JS
 
 ## Where things live
 
 ```
-lufly-database.sql         The only packaged database: complete MySQL schema + current data
+lufly-database.sql         Canonical MySQL server import: complete schema + current data
+database/lufly.sqlite      Complete zero-import local development database
 database/schema/*.php      Table definitions (source of truth for DDL)
 database/migrations/       Migration files (21, all applied)
 database/seeders/          Seeders (products/categories/users/roles/settings…)
