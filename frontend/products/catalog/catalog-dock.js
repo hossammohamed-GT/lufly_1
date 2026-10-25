@@ -51,6 +51,7 @@
     }
 
     function metadataFor(slug) {
+      if (!slug) return null;
       for (var i = 0; i < categoryLinks.length; i += 1) {
         if (categoryLinks[i].getAttribute('data-category-slug') === slug) return categoryLinks[i];
       }
@@ -88,6 +89,14 @@
         if (views[i].getAttribute('data-category-view') === id) return views[i];
       }
       return null;
+    }
+
+    function initialViewIdFor(slug) {
+      if (!slug) return 'roots';
+      if (viewFor(slug)) return slug;
+      var link = metadataFor(slug);
+      var parentView = link && link.closest ? link.closest('[data-category-view]') : null;
+      return parentView ? (parentView.getAttribute('data-category-view') || 'roots') : 'roots';
     }
 
     function focusWithoutScroll(element) {
@@ -300,16 +309,19 @@
       catalog.dispatchEvent(event('catalog:navigate', { url: url.href, reveal: false }));
     }
 
-    function selectCategory(slug) {
+    function selectCategory(slug, keepOpen) {
+      slug = String(slug || '');
       if (slug === currentCategory) {
-        closePicker(true);
+        if (!keepOpen) closePicker(true);
         return;
       }
       var keepGridPosition = form.classList.contains('is-docked');
       var previousGridTop = keepGridPosition ? gridHost.getBoundingClientRect().top : 0;
       pendingGridTop = keepGridPosition ? previousGridTop : null;
       syncCategory(slug);
-      closePicker(true);
+      if (!keepOpen) {
+        closePicker(true);
+      }
       if (explorer && explorer.getAttribute('data-atlas-ready') === 'true') {
         explorer.dispatchEvent(event('category:select', { slug: slug }));
       } else {
@@ -320,8 +332,11 @@
     }
 
     picker.addEventListener('toggle', function () {
-      /* Every new opening starts with the nine roots, never a stale branch. */
-      showView('roots', false, false);
+      if (picker.open) {
+        showView(initialViewIdFor(currentCategory), false, false);
+      } else {
+        showView('roots', false, false);
+      }
     });
 
     picker.addEventListener('click', function (clickEvent) {
@@ -330,7 +345,8 @@
         clickEvent.preventDefault();
         var currentView = back.closest('[data-category-view]');
         var currentId = currentView ? currentView.getAttribute('data-category-view') : '';
-        var parentId = back.getAttribute('data-category-back');
+        var parentId = back.getAttribute('data-category-back') || 'roots';
+        selectCategory(parentId === 'roots' ? '' : parentId, true);
         showView(parentId, true, false);
         var parentView = viewFor(parentId);
         var origin = null;
@@ -345,13 +361,15 @@
       var drill = clickEvent.target.closest('[data-category-drill]');
       if (drill && picker.contains(drill)) {
         clickEvent.preventDefault();
-        showView(drill.getAttribute('data-category-drill'), true, true);
+        var drillSlug = drill.getAttribute('data-category-drill') || '';
+        selectCategory(drillSlug, true);
+        showView(drillSlug, true, true);
         return;
       }
       var choice = clickEvent.target.closest('[data-category-choice]');
       if (choice && picker.contains(choice)) {
         clickEvent.preventDefault();
-        selectCategory(choice.getAttribute('data-category-slug') || '');
+        selectCategory(choice.getAttribute('data-category-slug') || '', true);
       }
     });
 

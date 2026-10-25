@@ -18,9 +18,36 @@
     var rootList = explorer.querySelector('.category-root-list');
     var initialNodes = rootList ? Array.prototype.slice.call(rootList.children) : [];
     var status = explorer.querySelector('[data-category-status]');
+    var isCatalogMode = explorer.classList.contains('category-explorer--catalog');
     var motion = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)');
     var easing = 'cubic-bezier(0.22, 1, 0.36, 1)';
     var exitClones = [];
+
+    function syncLeafCards(activeLeafSlug) {
+      var cards = explorer.querySelectorAll('.category-child');
+      each(cards, function (card) {
+        var cardSlug = card.getAttribute('data-category-select') || '';
+        var isLeaf = card.getAttribute('data-category-leaf') === 'true';
+        var active = Boolean(isCatalogMode && isLeaf && activeLeafSlug && cardSlug === activeLeafSlug);
+        card.classList.toggle('is-active', active);
+        if (active) {
+          card.setAttribute('aria-current', 'location');
+        } else if (isLeaf) {
+          card.removeAttribute('aria-current');
+        }
+      });
+    }
+
+    function parentSlugForPanel(panel) {
+      if (!panel) {
+        return '';
+      }
+      var crumbs = panel.querySelectorAll('.category-breadcrumb [data-category-select]');
+      if (crumbs.length > 0) {
+        return crumbs[crumbs.length - 1].getAttribute('data-category-select') || '';
+      }
+      return panel.getAttribute('data-root') || '';
+    }
 
     function panelFor(slug) {
       for (var i = 0; i < panels.length; i += 1) {
@@ -226,7 +253,10 @@
           each(card.getAnimations(), function (animation) { animation.cancel(); });
         }
         card.hidden = false;
-        card.classList.remove('is-expanded');
+        card.classList.remove('is-expanded', 'is-active');
+        if (card.getAttribute('data-category-leaf') === 'true') {
+          card.removeAttribute('aria-current');
+        }
         if (card.hasAttribute('aria-expanded')) {
           card.setAttribute('aria-expanded', 'false');
         }
@@ -493,23 +523,69 @@
       animateRootLayout(rootFrames, suppressAnimation);
     }
 
-    function activate(slug, moveFocus, suppressAnimation, trigger) {
+    function activate(slug, moveFocus, suppressAnimation, trigger, allowToggle) {
+      allowToggle = allowToggle !== false;
       var target = panelFor(slug);
       if (!target) {
         return false;
       }
+      var depth = parseInt(target.getAttribute('data-depth') || '1', 10);
+      var hasChildren = Boolean(target.querySelector('.category-child'));
       var revealChildren = Boolean(trigger && (
         trigger.classList.contains('category-root') || trigger.classList.contains('category-child')
       ));
-      if (target.getAttribute('data-depth') === '2') {
-        /* Clicking an open branch a second time returns to its siblings. */
-        if (explorer.getAttribute('data-selected') === slug && target.classList.contains('is-nested')) {
+
+      /* In catalog mode, selecting a non-root leaf keeps its parent subcategory
+         grid open so sibling choices remain immediately clickable while the
+         products grid updates below. */
+      if (isCatalogMode && depth >= 2 && !hasChildren) {
+        var parentSlug = parentSlugForPanel(target);
+        if (allowToggle && explorer.getAttribute('data-selected') === slug && parentSlug !== '') {
+          return activate(parentSlug, false, suppressAnimation, null, false);
+        }
+        var parentPanel = panelFor(parentSlug);
+        if (parentPanel) {
+          var parentDepth = parseInt(parentPanel.getAttribute('data-depth') || '1', 10);
+          if (parentDepth === 2) {
+            if (!parentPanel.classList.contains('is-nested') || parentPanel.hidden) {
+              activateNested(parentPanel, null, false, suppressAnimation, false);
+            }
+          } else if (parentPanel.hidden || parentPanel.classList.contains('has-nested-panel')) {
+            activateBase(parentSlug, false, suppressAnimation, false);
+          }
+        }
+        explorer.setAttribute('data-selected', slug);
+        syncLeafCards(slug);
+        var leafHeading = target.querySelector('[data-category-heading]');
+        if (status && leafHeading) {
+          status.textContent = leafHeading.textContent.trim();
+        }
+        return true;
+      }
+
+      if (depth === 2) {
+        /* Clicking an open branch's collapse control returns to its parent root. */
+        if (allowToggle && explorer.getAttribute('data-selected') === slug && target.classList.contains('is-nested')) {
+          syncLeafCards('');
           activateBase(target.getAttribute('data-root') || '', moveFocus, suppressAnimation);
           return true;
         }
+        if (target.classList.contains('is-nested') && !target.hidden) {
+          syncLeafCards('');
+          updateSelection(slug, target, moveFocus);
+          return true;
+        }
+        syncLeafCards('');
         activateNested(target, trigger, moveFocus, suppressAnimation, revealChildren);
         return true;
       }
+
+      if (allowToggle && depth === 1 && explorer.getAttribute('data-selected') === slug && !target.hidden && !target.classList.contains('has-nested-panel')) {
+        clearSelection(suppressAnimation, false);
+        return true;
+      }
+
+      syncLeafCards('');
       activateBase(slug, moveFocus, suppressAnimation, revealChildren);
       return true;
     }
@@ -534,8 +610,8 @@
         return; // Home leaf categories keep their real filtered-products link.
       }
       event.preventDefault();
-      if (activate(slug, Boolean(trigger.closest('.category-panel')), false, trigger)) {
-        notifySelection(slug, trigger);
+      if (activate(slug, Boolean(trigger.closest('.category-panel')), false, trigger, true)) {
+        notifySelection(explorer.getAttribute('data-selected') || '', trigger);
       }
     });
 
@@ -550,8 +626,8 @@
         notifySelection('');
         return;
       }
-      if (activate(slug, false, true, null)) {
-        notifySelection(slug, null);
+      if (activate(slug, false, true, null, false)) {
+        notifySelection(explorer.getAttribute('data-selected') || slug, null);
       }
     });
 
@@ -574,9 +650,9 @@
       }, 100);
     });
 
-    /* Direct level-two URLs receive the same nested layout, without an
+    /* Direct level-two and leaf URLs receive the same open layout, without an
        entrance animation on initial render. An empty selection stays empty. */
-    activate(explorer.getAttribute('data-selected') || '', false, true, null);
+    activate(explorer.getAttribute('data-selected') || '', false, true, null, false);
   }
 
   function init() {

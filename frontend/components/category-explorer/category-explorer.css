@@ -800,6 +800,14 @@
   border-color: color-mix(in srgb, var(--ce-accent) 58%, var(--ds-border));
   background: var(--ce-soft);
 }
+.category-child.is-active {
+  border-color: color-mix(in srgb, var(--ce-accent) 68%, var(--ds-border));
+  background: var(--ce-soft);
+  box-shadow: 0 10px 26px color-mix(in srgb, var(--ce-accent) 16%, transparent);
+}
+.category-child.is-active .category-child-copy strong {
+  color: var(--ce-accent);
+}
 .category-child.is-expanded .category-child-arrow,
 .category-child.is-expanded:hover .category-child-arrow { transform: rotate(90deg); }
 .category-panel.is-nested {

@@ -39,9 +39,6 @@ class ProductController extends Controller
             $sort = 'curated';
         }
         $fallback = (string) config('localization.fallback', 'en');
-        $categoryFallback = $categorySlug !== '' && $categoryId === 0
-            ? $this->categories->rootFallbackBySlug($categorySlug, 'active', true)
-            : null;
 
         $paginator = $this->products->paginate([
             'locale' => $locale,
@@ -52,18 +49,9 @@ class ProductController extends Controller
             'sort' => $sort,
         ], (int) $request->query('page', '1'), 12);
 
-        $categories = $this->categories->tree($locale, $fallback);
         $categoryCounts = $this->categories->productCounts();
+        $categories = $this->categories->nonEmptyTree($locale, $fallback, $categoryCounts);
         $categoryFallbackName = null;
-        if ($categoryFallback !== null) {
-            $categoryFallbackName = (string) $categoryFallback['slug'];
-            foreach ($categories as $rootCategory) {
-                if ((int) $rootCategory['id'] === (int) $categoryFallback['id']) {
-                    $categoryFallbackName = (string) $rootCategory['name'];
-                    break;
-                }
-            }
-        }
 
         $pageTitle = trans('products.title');
         $catalogDescs = [
@@ -146,6 +134,10 @@ class ProductController extends Controller
         }
         $product['category_slug'] = $categorySlug;
         $categoryLabel = trim((string) ($product['category_name'] ?? ''));
+        $fallback = (string) config('localization.fallback', 'en');
+        $categoryBreadcrumbs = !empty($product['category_id'])
+            ? $this->categories->breadcrumbsForCategoryId((int) $product['category_id'], $locale, $fallback)
+            : [];
 
         $productName = trim((string) ($product['name'] ?? ''));
         if ($productName === '') {
@@ -177,15 +169,23 @@ class ProductController extends Controller
             'url' => $canonical,
             'inLanguage' => $locale,
         ]);
-        $this->seo->addBreadcrumb([
+        $seoBreadcrumbs = [
             ['name' => 'LUFLY', 'url' => route('home')],
             ['name' => trans('products.title'), 'url' => route('products.index')],
-            ['name' => $productName, 'url' => $canonical],
-        ]);
+        ];
+        foreach ($categoryBreadcrumbs as $crumb) {
+            $seoBreadcrumbs[] = [
+                'name' => $crumb['name'],
+                'url' => route('products.index', ['category' => $crumb['slug']]),
+            ];
+        }
+        $seoBreadcrumbs[] = ['name' => $productName, 'url' => $canonical];
+        $this->seo->addBreadcrumb($seoBreadcrumbs);
 
         return $this->view('products::show', [
             'title' => $productName,
             'product' => $product,
+            'categoryBreadcrumbs' => $categoryBreadcrumbs,
             'locale' => $locale,
             'seo' => $this->seo,
         ]);

@@ -138,6 +138,11 @@ if (extension_loaded('pdo_sqlite')) {
 }
 
 $categoryServiceSrc = (string) file_get_contents($root . '/app/Services/CategoryService.php');
+$productRepositorySrc = (string) file_get_contents($root . '/modules/Products/Repositories/ProductRepository.php');
+$productControllerSrc = (string) file_get_contents($root . '/modules/Products/Controllers/ProductController.php');
+$homeControllerSrc = (string) file_get_contents($root . '/app/Http/Controllers/HomeController.php');
+$categoryExplorerViewSrc = (string) file_get_contents($root . '/resources/views/components/category-explorer.php');
+$productShowViewSrc = (string) file_get_contents($root . '/modules/Products/Views/show.php');
 $storeRequestSrc = (string) file_get_contents($root . '/modules/Products/Requests/StoreProductRequest.php');
 $updateRequestSrc = (string) file_get_contents($root . '/modules/Products/Requests/UpdateProductRequest.php');
 $adminFormSrc = (string) file_get_contents($root . '/modules/Products/Views/Admin/form.php');
@@ -147,6 +152,38 @@ $assert(
     && str_contains($updateRequestSrc, '->leafIds()')
     && str_contains($adminFormSrc, "!\$isLeaf ? 'disabled' : ''"),
     'Category service, product requests, and admin form enforce leaf-only category assignment',
+);
+$assert(
+    str_contains($categoryServiceSrc, 'function nonEmptyTree(')
+    && str_contains($productControllerSrc, '->nonEmptyTree(')
+    && str_contains($homeControllerSrc, '->nonEmptyTree(')
+    && str_contains($categoryExplorerViewSrc, '$pruneEmpty')
+    && str_contains($catalogPicker, '$prunePickerTree')
+    && !str_contains($productRepositorySrc, 'rootFallbackBySlug')
+    && !str_contains($productControllerSrc, 'rootFallbackBySlug'),
+    'Storefront hides empty categories across explorer and dock and never substitutes root fallback products',
+);
+$assert(
+    str_contains($catalogDock, 'selectCategory(drillSlug, true)')
+    && str_contains($catalogDock, "selectCategory(choice.getAttribute('data-category-slug') || '', true)")
+    && str_contains($catalogExplorer, 'isCatalogMode && depth >= 2 && !hasChildren')
+    && str_contains($catalogExplorer, 'syncLeafCards(slug)'),
+    'Selecting any category in the explorer or docked bar loads products immediately while keeping choices open',
+);
+$assert(
+    str_contains($categoryServiceSrc, 'function breadcrumbsForCategoryId(')
+    && str_contains($productControllerSrc, 'breadcrumbsForCategoryId(')
+    && str_contains($productShowViewSrc, '$categoryBreadcrumbs'),
+    'Product detail pages expose the full ancestor-to-leaf category trail',
+);
+$assert(
+    ($productCategoryBySlug['1620-8787'] ?? '') === 'kids.kids-sanitary-ware.kids-toilets'
+    && ($productCategoryBySlug['1685-204'] ?? '') === 'kids.kids-sanitary-ware.kids-wash-basins'
+    && ($productCategoryBySlug['1685-711'] ?? '') === 'bathroom.sanitary-ware.toilets'
+    && ($productCategoryBySlug['sfd-133-15'] ?? '') === 'drains.floor-drains'
+    && ($productCategoryBySlug['1755-9720c'] ?? '') === 'bathroom.mixers.thermostatic-mixers'
+    && ($productCategoryBySlug['1755-9720gg'] ?? '') === 'bathroom.mixers.thermostatic-mixers',
+    'Audited bathroom, drain, thermostatic, and kids sanitary ware items stay in their exact leaf categories',
 );
 
 if ($failures !== []) {

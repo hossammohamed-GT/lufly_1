@@ -79,12 +79,6 @@ class ProductRepository extends Repository
         $categoryIds = !empty($filters['category_id'])
             ? $categoryService->descendantIds((int) $filters['category_id'])
             : $categoryService->descendantIdsBySlug($categorySlug);
-        if ($publicStatus && empty($filters['category_id']) && $categorySlug !== '' && $categoryIds !== []) {
-            $fallbackRoot = $categoryService->rootFallbackBySlug($categorySlug, $status, $requireMedia);
-            if ($fallbackRoot !== null) {
-                $categoryIds = $categoryService->descendantIds((int) $fallbackRoot['id']);
-            }
-        }
         if ($hasCategoryFilter) {
             if ($categoryIds === []) {
                 $where[] = '1 = 0';
@@ -321,12 +315,6 @@ class ProductRepository extends Repository
             : [];
         if ($categorySlug !== '' && $categoryIds === []) {
             return [];
-        }
-        if ($categorySlug !== '' && $categoryIds !== []) {
-            $fallbackRoot = $categoryService->rootFallbackBySlug($categorySlug, $status, true);
-            if ($fallbackRoot !== null) {
-                $categoryIds = $categoryService->descendantIds((int) $fallbackRoot['id']);
-            }
         }
         if ($categoryIds !== []) {
             $categoryClause = ' AND p.category_id IN ('

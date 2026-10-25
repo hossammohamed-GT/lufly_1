@@ -204,7 +204,7 @@ $colorFamilies = app(\Modules\Products\Services\ProductColorFamilyService::class
                 <?php endfor; ?>
             </div>
             <div class="catalog-grid" data-catalog-grid data-sk-real>
-                <?php if ($categoryFallbackName !== null): ?>
+                <?php if (($categoryFallbackName ?? null) !== null): ?>
                     <div class="catalog-category-fallback" data-category-fallback role="status">
                         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" aria-hidden="true">
                             <circle cx="12" cy="12" r="9"></circle>

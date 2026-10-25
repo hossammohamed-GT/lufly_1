@@ -66,15 +66,8 @@ class HomeController extends Controller
 
         $fallback = (string) config('localization.fallback', 'en');
 
-        /* Catalog-wide lookups change rarely, so they are cached; the random
-           featured-product picking stays in PHP and is not affected. */
-        /* The category atlas is independent of product inventory: every node
-           keeps its own image and remains browsable while collections are
-           being built. The shared service preserves all three levels. */
-        $categories = $this->remember(
-            'home.category-tree.' . $locale . '.' . $fallback,
-            fn (): array => $this->categoryService->tree($locale, $fallback),
-        );
+        $categoryCounts = $this->categoryService->productCounts();
+        $categories = $this->categoryService->nonEmptyTree($locale, $fallback, $categoryCounts);
 
         /* Rotating showcase: every visit picks ONE random product per
            category, then keeps 4 for the grid - so each reload shows a
@@ -155,6 +148,7 @@ class HomeController extends Controller
             'title' => $pageTitle,
             'locale' => $locale,
             'categories' => $categories,
+            'categoryCounts' => $categoryCounts,
             'featuredProducts' => $featuredProducts,
             'supportedLocales' => $this->translator->supported(),
             'seo' => $this->seo,

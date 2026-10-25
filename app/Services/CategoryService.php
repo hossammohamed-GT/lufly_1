@@ -79,6 +79,70 @@ class CategoryService
     }
 
     /**
+     * Storefront tree pruned to categories/subcategories/sub-subcategories
+     * that actually contain at least one visible product.
+     *
+     * @param array<string, int>|null $counts
+     * @return array<int, array<string, mixed>>
+     */
+    public function nonEmptyTree(string $locale, ?string $fallback = null, ?array $counts = null): array
+    {
+        $counts ??= $this->productCounts();
+
+        $prune = static function (array $nodes) use (&$prune, $counts): array {
+            $filtered = [];
+            foreach ($nodes as $node) {
+                $slug = (string) ($node['slug'] ?? '');
+                if ($slug === '' || (int) ($counts[$slug] ?? 0) <= 0) {
+                    continue;
+                }
+                $children = is_array($node['children'] ?? null) ? $prune($node['children']) : [];
+                $node['children'] = $children;
+                $node['is_leaf'] = $children === [];
+                $filtered[] = $node;
+            }
+
+            return $filtered;
+        };
+
+        return $prune($this->tree($locale, $fallback));
+    }
+
+    /**
+     * Ancestor-to-leaf category trail for a single category ID.
+     *
+     * @return array<int, array{id: int, slug: string, name: string}>
+     */
+    public function breadcrumbsForCategoryId(int $categoryId, string $locale, ?string $fallback = null): array
+    {
+        if ($categoryId <= 0) {
+            return [];
+        }
+
+        $fallback ??= (string) config('localization.fallback', 'en');
+        $byId = [];
+        foreach ($this->flatten($locale, $fallback) as $node) {
+            $byId[(int) $node['id']] = $node;
+        }
+
+        $trail = [];
+        $visited = [];
+        $currentId = $categoryId;
+        while ($currentId > 0 && isset($byId[$currentId]) && !isset($visited[$currentId])) {
+            $visited[$currentId] = true;
+            $item = $byId[$currentId];
+            array_unshift($trail, [
+                'id' => (int) $item['id'],
+                'slug' => (string) $item['slug'],
+                'name' => (string) $item['name'],
+            ]);
+            $currentId = isset($item['parent_id']) && $item['parent_id'] !== null ? (int) $item['parent_id'] : 0;
+        }
+
+        return $trail;
+    }
+
+    /**
      * Flattened in display order, with a human-readable path for admin forms.
      *
      * @return array<int, array<string, mixed>>

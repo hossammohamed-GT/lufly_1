@@ -12,6 +12,24 @@ if ($tree === []) {
 }
 
 $counts = is_array($categoryCounts ?? null) ? $categoryCounts : [];
+if ($counts !== []) {
+    $prunePickerTree = static function (array $items) use (&$prunePickerTree, $counts): array {
+        $filtered = [];
+        foreach ($items as $item) {
+            $slug = trim((string) ($item['slug'] ?? ''));
+            if ($slug === '' || (int) ($counts[$slug] ?? 0) <= 0) {
+                continue;
+            }
+            $item['children'] = is_array($item['children'] ?? null) ? $prunePickerTree($item['children']) : [];
+            $filtered[] = $item;
+        }
+        return $filtered;
+    };
+    $tree = $prunePickerTree($tree);
+    if ($tree === []) {
+        return;
+    }
+}
 $activeSlug = trim((string) ($activeCategory ?? ''));
 $urlBuilder = $buildUrl ?? null;
 $nodes = [];
@@ -65,6 +83,14 @@ $imageUrl = static fn (string $path): string => $path !== '' ? asset(ltrim($path
     <div class="catalog-category-menu" data-catalog-category-menu role="group" aria-label="<?= e(trans('products.catalog_category_prompt')) ?>">
         <span class="visually-hidden" aria-live="polite" data-catalog-category-status></span>
         <div class="catalog-category-view" data-category-view="roots" data-category-view-label="<?= e(trans('products.catalog_category_prompt')) ?>">
+            <div class="catalog-category-branch-head">
+                <a href="<?= e($categoryUrl('')) ?>" class="catalog-category-branch-current<?= $selected === null ? ' is-active' : '' ?>"
+                   data-category-choice data-category-slug="" data-category-name="<?= e(trans('common.all_categories')) ?>"
+                   data-category-path="<?= e(trans('common.all_categories')) ?>" data-category-image="">
+                    <span><?= e(trans('common.all_categories')) ?></span>
+                    <svg viewBox="0 0 18 18" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><path d="M3 9h11m-4-4 4 4-4 4"/></svg>
+                </a>
+            </div>
             <div class="catalog-category-grid">
                 <?php foreach ($tree as $root): ?>
                     <?php $rootNode = $nodes[(string) $root['slug']]; ?>

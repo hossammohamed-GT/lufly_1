@@ -113,6 +113,10 @@ if (feature('planner', true) && (bool) config('planner.enabled', true)) {
             <a href="<?= e(route('home')) ?>"><?= e(trans('common.factory_direct')) ?></a>
             <span class="pdp-crumb-sep" aria-hidden="true">/</span>
             <a href="<?= e(route('products.index')) ?>"><?= e(trans('products.title')) ?></a>
+            <?php foreach (is_array($categoryBreadcrumbs ?? null) ? $categoryBreadcrumbs : [] as $crumb): ?>
+                <span class="pdp-crumb-sep" aria-hidden="true">/</span>
+                <a href="<?= e(route('products.index', ['category' => (string) $crumb['slug']])) ?>"><?= e((string) $crumb['name']) ?></a>
+            <?php endforeach; ?>
             <span class="pdp-crumb-sep" aria-hidden="true">/</span>
             <span class="pdp-crumb-here"><?= e($product['name'] ?? '') ?></span>
         </nav>
@@ -262,6 +266,13 @@ if (feature('planner', true) && (bool) config('planner.enabled', true)) {
                 <div class="pdp-specs">
                     <h3 class="pdp-block-title"><?= e(trans('products.specs_title')) ?></h3>
                     <dl class="pdp-specs-list">
+                        <?php if (!empty($categoryBreadcrumbs) && is_array($categoryBreadcrumbs)): ?>
+                            <?php $lastCrumb = $categoryBreadcrumbs[count($categoryBreadcrumbs) - 1]; ?>
+                            <div class="pdp-spec-row">
+                                <dt><?= e(trans('common.category')) ?></dt>
+                                <dd><a href="<?= e(route('products.index', ['category' => (string) $lastCrumb['slug']])) ?>"><?= e(implode(' › ', array_column($categoryBreadcrumbs, 'name'))) ?></a></dd>
+                            </div>
+                        <?php endif; ?>
                         <?php foreach ($specs as $row): ?>
                             <?php
                                 $key = (string) ($row['spec_key'] ?? '');

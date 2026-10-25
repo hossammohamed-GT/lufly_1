@@ -21,6 +21,24 @@ if ($tree === []) {
 $mode = ($mode ?? 'home') === 'catalog' ? 'catalog' : 'home';
 $activeSlug = trim((string) ($activeCategory ?? ''));
 $counts = is_array($categoryCounts ?? null) ? $categoryCounts : null;
+if ($counts !== null) {
+    $pruneEmpty = static function (array $items) use (&$pruneEmpty, $counts): array {
+        $filtered = [];
+        foreach ($items as $item) {
+            $slug = trim((string) ($item['slug'] ?? ''));
+            if ($slug === '' || (int) ($counts[$slug] ?? 0) <= 0) {
+                continue;
+            }
+            $item['children'] = is_array($item['children'] ?? null) ? $pruneEmpty($item['children']) : [];
+            $filtered[] = $item;
+        }
+        return $filtered;
+    };
+    $tree = $pruneEmpty($tree);
+    if ($tree === []) {
+        return;
+    }
+}
 $urlBuilder = $buildUrl ?? null;
 $fallbackImage = asset('images/favicon.png');
 
@@ -50,6 +68,19 @@ $walk($tree);
 
 $selectedSlug = isset($nodes[$activeSlug]) ? $activeSlug : '';
 $selectedRoot = $selectedSlug !== '' ? (string) ($nodes[$selectedSlug]['root'] ?? '') : '';
+$openPanelSlug = $selectedSlug;
+if ($mode === 'catalog' && $selectedSlug !== '' && isset($nodes[$selectedSlug])) {
+    $selectedNode = $nodes[$selectedSlug];
+    $selectedDepth = (int) ($selectedNode['depth'] ?? count($selectedNode['lineage'] ?? []));
+    $selectedChildren = is_array($selectedNode['children'] ?? null) ? $selectedNode['children'] : [];
+    if ($selectedDepth >= 2 && $selectedChildren === []) {
+        $lineage = is_array($selectedNode['lineage'] ?? null) ? $selectedNode['lineage'] : [];
+        $parentSlug = count($lineage) >= 2 ? (string) ($lineage[count($lineage) - 2]['slug'] ?? '') : '';
+        if ($parentSlug !== '' && isset($nodes[$parentSlug])) {
+            $openPanelSlug = $parentSlug;
+        }
+    }
+}
 
 $categoryUrl = static function (string $slug) use ($urlBuilder): string {
     if (is_callable($urlBuilder)) {
@@ -133,7 +164,7 @@ $isLifestyle = static fn (string $path): bool => (bool) preg_match('/\.jpe?g$/i'
                                 $children = $node['children'];
                                 $image = trim((string) ($node['image'] ?? '')) ?: '/images/favicon.png';
                                 $description = trim((string) ($node['description'] ?? ''));
-                                $isSelected = $slug === $selectedSlug;
+                                $isSelected = $slug === $openPanelSlug;
                                 $panelId = 'category-panel-' . $mode . '-' . (int) $node['id'];
                                 $hasRootContext = $depth === 2 && $children !== [] && isset($nodes[(string) $node['root']]);
                                 $contextRoot = $hasRootContext ? $nodes[(string) $node['root']] : null;
@@ -246,14 +277,18 @@ $isLifestyle = static fn (string $path): bool => (bool) preg_match('/\.jpe?g$/i'
                                                 $childName = (string) ($child['name'] ?? $childSlug);
                                                 $childImage = trim((string) ($child['image'] ?? '')) ?: '/images/favicon.png';
                                                 $grandchildren = is_array($child['children'] ?? null) ? $child['children'] : [];
+                                                $isLeafChild = $grandchildren === [];
+                                                $isChildActive = $mode === 'catalog' && $isLeafChild && $selectedSlug === $childSlug;
                                                 $childMeta = $counts !== null
                                                     ? $productLabel((int) ($counts[$childSlug] ?? 0))
                                                     : ($grandchildren !== [] ? $childLabel(count($grandchildren)) : trans('products.category_view_products'));
                                                 ?>
                                                 <a href="<?= e($grandchildren !== [] ? $categoryUrl($childSlug) : $productsUrl($childSlug)) ?>"
-                                                    class="category-child"
+                                                    class="category-child<?= $isChildActive ? ' is-active' : '' ?>"
+                                                    data-category-leaf="<?= $isLeafChild ? 'true' : 'false' ?>"
                                                     <?= ($grandchildren !== [] || $mode === 'catalog') ? 'data-category-select="' . e($childSlug) . '" aria-controls="category-panel-' . e($mode) . '-' . (int) $child['id'] . '"' : '' ?>
                                                     <?= $grandchildren !== [] ? 'aria-expanded="false"' : '' ?>
+                                                    <?= $isChildActive ? 'aria-current="location"' : '' ?>
                                                     aria-label="<?= e(trans('products.category_open', ['name' => $childName])) ?>">
                                                     <span class="category-child-image<?= $isLifestyle($childImage) ? ' is-lifestyle' : '' ?>">
                                                         <img src="<?= e(asset(ltrim($childImage, '/'))) ?>" alt="" loading="lazy" decoding="async" width="480" height="310"
