@@ -1139,33 +1139,36 @@
   position: absolute;
   inset: -7px -10px;
   z-index: 2;
-  border-radius: 16px;
+  display: block;
+  overflow: visible;
   opacity: 0;
   pointer-events: none;
-  transition: opacity 180ms ease;
+  transition: opacity 240ms ease;
 }
-.mnav-brand-orbit::before {
-  content: "";
-  position: absolute;
-  inset: 0;
-  border: 1.5px solid transparent;
-  border-top-color: var(--ds-primary);
-  border-inline-end-color: color-mix(in srgb, var(--ds-primary) 45%, transparent);
-  border-radius: inherit;
+.mnav-brand-orbit-track,
+.mnav-brand-orbit-runner,
+.mnav-brand-orbit-dot {
+  fill: none;
+  stroke-linecap: round;
+  stroke-linejoin: round;
 }
-.mnav-brand-orbit::after {
-  content: "";
-  position: absolute;
-  inset: -3px;
-  border: 1px solid color-mix(in srgb, var(--ds-primary) 22%, transparent);
-  border-radius: 19px;
-  opacity: 0;
-  transform: scale(0.92);
-  transition: opacity 240ms ease, transform 520ms var(--mnav-ease);
+.mnav-brand-orbit-track {
+  stroke: color-mix(in srgb, var(--ds-primary) 22%, transparent);
+  stroke-width: 1;
+}
+.mnav-brand-orbit-runner {
+  stroke: color-mix(in srgb, var(--ds-primary) 62%, transparent);
+  stroke-width: 1.75;
+  stroke-dasharray: 10 90;
+}
+.mnav-brand-orbit-dot {
+  stroke: var(--ds-primary);
+  stroke-width: 3.25;
+  stroke-dasharray: 0.8 99.2;
 }
 .mnav.is-catalog-switching .mnav-brand-orbit { opacity: 1; }
-.mnav.is-catalog-switching .mnav-brand-orbit::before { animation: mnavBrandOrbit 900ms linear infinite; }
-.mnav.is-catalog-switching .mnav-brand-orbit::after { opacity: 1; transform: scale(1); }
+.mnav.is-catalog-switching .mnav-brand-orbit-runner,
+.mnav.is-catalog-switching .mnav-brand-orbit-dot { animation: mnavBrandOrbit 1500ms linear infinite; }
 
 .mnav-catalog-toggle {
   flex: none;
@@ -1192,7 +1195,7 @@
   max-inline-size: 0;
   opacity: 0;
   pointer-events: none;
-  transition: flex-basis 520ms var(--mnav-ease), max-inline-size 520ms var(--mnav-ease), opacity 220ms ease;
+  transition: flex-basis 700ms cubic-bezier(0.65, 0, 0.35, 1), max-inline-size 700ms cubic-bezier(0.65, 0, 0.35, 1), opacity 300ms ease 100ms;
 }
 .mnav.is-catalog-docked .mnav-catalog-slot {
   flex: 1 1 100%;
@@ -1200,18 +1203,28 @@
   opacity: 1;
   pointer-events: auto;
 }
+/* First let the navigation withdraw into the brand. Only after that stage
+   finishes does the catalog row open in the space it leaves behind. */
+.mnav.is-catalog-preparing .mnav-catalog-slot {
+  flex: 0 0 0%;
+  max-inline-size: 0;
+  opacity: 0;
+  pointer-events: none;
+  transition-delay: 0s;
+}
 
-/* Keep both directions animated: the region widths and margins collapse
-   toward the brand, then hidden removes their flex gaps from the final row. */
+/* Keep both directions animated: each region travels toward the brand while
+   its width closes, then hidden removes its flex gap from the final row. */
 .mnav.is-catalog-ready .mnav-links,
 .mnav.is-catalog-ready .mnav-search,
 .mnav.is-catalog-ready .mnav-actions {
   max-inline-size: 100%;
   transform-origin: left center;
-  transition: max-inline-size 520ms var(--mnav-ease), inline-size 430ms var(--mnav-ease),
-    flex-basis 520ms var(--mnav-ease), margin 520ms var(--mnav-ease),
-    padding 520ms var(--mnav-ease), opacity 240ms ease 100ms,
-    transform 520ms var(--mnav-ease), visibility 0s linear 0s;
+  transition: max-inline-size 1500ms cubic-bezier(0.65, 0, 0.35, 1),
+    inline-size 430ms var(--mnav-ease), flex-basis 520ms var(--mnav-ease),
+    margin 520ms var(--mnav-ease), padding 1500ms cubic-bezier(0.65, 0, 0.35, 1),
+    opacity 900ms ease 350ms, transform 1500ms cubic-bezier(0.65, 0, 0.35, 1),
+    visibility 0s linear 0s;
 }
 [dir='rtl'] .mnav.is-catalog-ready .mnav-links,
 [dir='rtl'] .mnav.is-catalog-ready .mnav-search,
@@ -1220,27 +1233,21 @@
 .mnav.is-catalog-docked .mnav-links,
 .mnav.is-catalog-docked .mnav-search,
 .mnav.is-catalog-docked .mnav-actions {
-  flex: 0 0 0%;
-  inline-size: 0;
   min-inline-size: 0;
   max-inline-size: 0;
-  margin-inline: 0;
   padding-inline: 0;
   overflow: hidden;
   opacity: 0;
   visibility: hidden;
   pointer-events: none;
-  transform: translateX(-76px) scale(0.82);
-  transition-delay: 0s, 0s, 0s, 0s, 0s, 0s, 0s, 420ms;
+  transform: translateX(var(--mnav-catalog-pull, -76px)) scale(0.82);
+  transition-delay: 0s, 0s, 0s, 0s, 0s, 350ms, 0s, 1500ms;
 }
-[dir='rtl'] .mnav.is-catalog-docked .mnav-links,
-[dir='rtl'] .mnav.is-catalog-docked .mnav-search,
-[dir='rtl'] .mnav.is-catalog-docked .mnav-actions { transform: translateX(76px) scale(0.82); }
 .mnav.is-catalog-preview .mnav-catalog-toggle { box-shadow: 0 0 0 1px color-mix(in srgb, var(--ds-primary) 22%, transparent); }
 
 .mnav.is-catalog-docked .mnav-row { gap: 6px; }
 
-@keyframes mnavBrandOrbit { to { transform: rotate(360deg); } }
+@keyframes mnavBrandOrbit { to { stroke-dashoffset: -100; } }
 
 /* ---------- 9. reduced motion ---------- */
 

@@ -134,13 +134,33 @@
       navToggle.title = label || '';
     }
 
+    function aimNavbarRegions() {
+      var brand = navbar.querySelector('.mnav-brand');
+      if (!brand) return;
+      var brandRect = brand.getBoundingClientRect();
+      var rtl = window.getComputedStyle(navbar).direction === 'rtl';
+      navRegions.forEach(function (region) {
+        var rect = region.getBoundingClientRect();
+        /* Keep auto margins and flex layout intact while the visible region
+           travels to the brand. A signed distance works in both directions. */
+        var distance = rtl ? brandRect.right - rect.right : brandRect.left - rect.left;
+        region.style.setProperty('--mnav-catalog-pull', distance.toFixed(2) + 'px');
+      });
+    }
+
     function animateNavbar() {
-      if (motion && motion.matches) return;
       window.clearTimeout(orbitTimer);
+      if (motion && motion.matches) {
+        navbar.classList.remove('is-catalog-switching');
+        return;
+      }
       navbar.classList.remove('is-catalog-switching');
       void navbar.offsetWidth;
       navbar.classList.add('is-catalog-switching');
-      orbitTimer = window.setTimeout(function () { navbar.classList.remove('is-catalog-switching'); }, 960);
+      /* Keep the edge runner alive through the 1.5s withdrawal and the
+         catalog entrance. Restoring navigation uses the shorter return. */
+      var duration = form.classList.contains('is-docked') && !navigationPreview ? 2300 : 1600;
+      orbitTimer = window.setTimeout(function () { navbar.classList.remove('is-catalog-switching'); }, duration);
     }
 
     function setDocked(docked) {
@@ -154,6 +174,7 @@
         slot.style.height = 'var(--catalog-placeholder-height)';
         navToggle.hidden = false;
         if (navHadFocus) focusWithoutScroll(navToggle);
+        aimNavbarRegions();
         navRegions.forEach(function (region) {
           region.hidden = false;
           region.setAttribute('inert', '');
@@ -163,14 +184,20 @@
         /* Establish the collapsed slot before it takes over the row. */
         void navbarSlot.offsetWidth;
         navbar.classList.remove('is-catalog-preview');
-        navbar.classList.add('is-catalog-docked');
+        navbar.classList.add('is-catalog-docked', 'is-catalog-preparing');
+        form.classList.remove('is-entering');
         navHideTimer = window.setTimeout(function () {
           if (!form.classList.contains('is-docked')) return;
           navRegions.forEach(function (region) { region.hidden = true; });
-        }, motion && motion.matches ? 0 : 560);
-        form.classList.remove('is-entering');
-        void form.offsetWidth;
-        form.classList.add('is-entering');
+          navbar.classList.remove('is-catalog-preparing');
+          /* The search enters only after the navigation has finished its
+             visible 1.5s withdrawal, never on top of the links. */
+          if (motion && motion.matches) form.classList.remove('is-entering');
+          else {
+            void form.offsetWidth;
+            form.classList.add('is-entering');
+          }
+        }, motion && motion.matches ? 0 : 1500);
       } else {
         navRegions.forEach(function (region) { region.hidden = false; });
         /* If they were fully hidden, restart from the collapsed style before
@@ -179,7 +206,7 @@
         form.classList.remove('is-docked', 'is-entering');
         slot.appendChild(form);
         slot.style.height = '';
-        navbar.classList.remove('is-catalog-docked');
+        navbar.classList.remove('is-catalog-docked', 'is-catalog-preparing');
         navRegions.forEach(function (region) { region.removeAttribute('inert'); });
       }
       if (focused) focusWithoutScroll(focused);

@@ -743,7 +743,7 @@
   -webkit-backdrop-filter: none;
   backdrop-filter: none;
 }
-.catalog-searchform.is-docked.is-entering { animation: catalogDockArrive 480ms cubic-bezier(0.16, 1, 0.3, 1) both; }
+.catalog-searchform.is-docked.is-entering { animation: catalogDockArrive 650ms cubic-bezier(0.65, 0, 0.35, 1) both; }
 .catalog-searchform.is-docked .catalog-category-picker { flex: 0 1 220px; min-width: 142px; max-width: 240px; }
 .catalog-searchform.is-docked .catalog-category-summary { block-size: 36px; min-block-size: 36px; padding-block: 2px; border-radius: 10px; }
 .catalog-searchform.is-docked .catalog-category-current-thumb { flex-basis: 28px; width: 28px; height: 28px; border-radius: 8px; }

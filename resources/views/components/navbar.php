@@ -138,7 +138,11 @@ foreach ($supported as $code => $name) {
                      height="55"
                      decoding="async"
                      fetchpriority="high">
-                <span class="mnav-brand-orbit" aria-hidden="true"></span>
+                <svg class="mnav-brand-orbit" viewBox="0 0 106 69" preserveAspectRatio="none" aria-hidden="true" focusable="false">
+                    <rect class="mnav-brand-orbit-track" x="2" y="2" width="102" height="65" rx="14" pathLength="100" vector-effect="non-scaling-stroke"/>
+                    <rect class="mnav-brand-orbit-runner" x="2" y="2" width="102" height="65" rx="14" pathLength="100" vector-effect="non-scaling-stroke"/>
+                    <rect class="mnav-brand-orbit-dot" x="2" y="2" width="102" height="65" rx="14" pathLength="100" vector-effect="non-scaling-stroke"/>
+                </svg>
             </a>
 
             <button type="button"
