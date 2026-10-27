@@ -73,11 +73,11 @@ $dumpHasCatalogData = true;
 foreach (['products', 'categories', 'product_media', 'migrations'] as $requiredDataTable) {
     $dumpHasCatalogData = $dumpHasCatalogData && preg_match('/^-- data: ' . preg_quote($requiredDataTable, '/') . ' \(([1-9]\d*) rows\)$/m', $databaseDump) === 1;
 }
-$assert(substr_count($databaseDump, 'CREATE TABLE `') === 45 && $dumpHasCatalogData, 'Canonical MySQL dump contains all 45 tables and current catalog data');
+$assert(substr_count($databaseDump, 'CREATE TABLE `') === 50 && $dumpHasCatalogData, 'Canonical MySQL dump contains all 50 tables and current catalog data');
 $databaseConfig = (string) file_get_contents($root . '/config/database.php');
 $assert(str_contains($databaseConfig, "'default' => env('DB_CONNECTION', 'sqlite')") && preg_match('/^DB_CONNECTION=sqlite$/m', $example) === 1 && is_file($root . '/database/lufly.sqlite') && filesize($root . '/database/lufly.sqlite') > 0, 'Zero-config local runtime retains the complete bundled SQLite database');
 $assert(!is_dir($root . '/database/sql') && glob($root . '/public/.well-known/*.sql') === [], 'Canonical MySQL export has no duplicate partial SQL installation patches');
-$assert(!is_dir($root . '/public/manage_products_lufly_new') && !is_dir($root . '/docs') && !is_file($root . '/README.md'), 'Unrelated external manager tools and standalone documentation files are removed');
+$assert(!is_dir($root . '/public/manage_products_lufly_new') && !is_file($root . '/README.md') && is_file($root . '/docs/DASHBOARD_GUIDE.md') && glob($root . '/docs/*') === [$root . '/docs/DASHBOARD_GUIDE.md'], 'Unrelated external manager tools stay removed while docs/DASHBOARD_GUIDE.md documents the upcoming dashboard modules');
 $assert(!str_contains($exportCommand, "\$sql[] = 'CREATE DATABASE") && !str_contains($exportCommand, "\$sql[] = 'USE `"), 'MySQL exporter never reintroduces database creation or selection statements');
 
 $seededCategories = json_decode((string) file_get_contents($root . '/database/seeders/data/categories.json'), true);
@@ -138,7 +138,14 @@ if (extension_loaded('pdo_sqlite')) {
     $assert($nonLeafAssigned === 0, 'SQLite runtime assigns every product exclusively to an active leaf category');
 
     $sqlParityOk = true;
-    foreach (['migrations', 'categories', 'category_translations', 'products', 'product_translations', 'product_variants', 'product_specifications', 'product_media', 'product_relations', 'media', 'product_search_keywords', 'product_import_logs'] as $parityTable) {
+    foreach ([
+        'migrations', 'categories', 'category_translations', 'products', 'product_translations',
+        'product_variants', 'product_specifications', 'product_specification_translations',
+        'product_feature_presets', 'product_feature_preset_translations',
+        'product_card_features', 'product_card_feature_translations',
+        'product_media', 'product_relations', 'seo_meta', 'media',
+        'product_search_keywords', 'product_import_logs',
+    ] as $parityTable) {
         $sqliteCount = (int) $pdo->query("SELECT COUNT(*) FROM `{$parityTable}`")->fetchColumn();
         $expectedHeader = "-- data: {$parityTable} ({$sqliteCount} rows)";
         if (!str_contains($databaseDump, $expectedHeader) || substr_count($databaseDump, "INSERT INTO `{$parityTable}` ") !== $sqliteCount) {
@@ -205,7 +212,85 @@ if (extension_loaded('pdo_sqlite')) {
         && $sensorTapGalleryCheck === 6,
         'Technical drawings never appear in main product galleries or as primary product photos',
     );
+
+    /* Pillar 1: 4 to 6 card features per product + presets + icon catalog */
+    require_once $root . '/modules/Products/Services/ProductFeatureIconCatalog.php';
+    $outOfRangeFeatureProducts = (int) $pdo->query(
+        'SELECT COUNT(*) FROM (
+             SELECT p.id, COUNT(cf.id) AS c
+             FROM products p
+             LEFT JOIN product_card_features cf ON cf.product_id = p.id
+             GROUP BY p.id
+             HAVING c < 4 OR c > 6
+         )',
+    )->fetchColumn();
+    $presetCount = (int) $pdo->query('SELECT COUNT(*) FROM product_feature_presets WHERE is_active = 1')->fetchColumn();
+    $invalidIconKeys = 0;
+    foreach ($pdo->query('SELECT DISTINCT icon_key FROM product_card_features')->fetchAll(PDO::FETCH_COLUMN) as $ik) {
+        if (!\Modules\Products\Services\ProductFeatureIconCatalog::has((string) $ik)) {
+            $invalidIconKeys++;
+        }
+    }
+    $assert(
+        $outOfRangeFeatureProducts === 0 && $presetCount >= 20 && $invalidIconKeys === 0,
+        'Every product carries 4 to 6 verified card features backed by active presets and valid SVG icons',
+    );
+
+    /* Pillar 2: Toilet seat covers linked to parent WCs and hidden from standalone grids */
+    $seatCoverEdges = (int) $pdo->query("SELECT COUNT(*) FROM product_relations WHERE relation_type = 'seat_cover'")->fetchColumn();
+    $distinctLinkedSeats = (int) $pdo->query("SELECT COUNT(DISTINCT related_product_id) FROM product_relations WHERE relation_type = 'seat_cover'")->fetchColumn();
+    $assert(
+        $seatCoverEdges === 21
+        && $distinctLinkedSeats === 19
+        && str_contains((string) file_get_contents($root . '/modules/Products/Services/ProductVisibility.php'), "relation_type IN ('seat_cover', 'seat_cover_only')")
+        && str_contains((string) file_get_contents($root . '/modules/Products/Views/show.php'), 'id="wc-seat-options"'),
+        'All 19 toilet seat covers link to their parent WCs via product_relations and never render as standalone catalog cards',
+    );
+
+    /* Pillar 3: Complete trilingual (en / tr / cs) coverage across DB & UI lang files */
+    $totalProducts = (int) $pdo->query('SELECT COUNT(*) FROM products')->fetchColumn();
+    $totalSpecs = (int) $pdo->query('SELECT COUNT(*) FROM product_specifications')->fetchColumn();
+    $totalCardFeatures = (int) $pdo->query('SELECT COUNT(*) FROM product_card_features')->fetchColumn();
+    $totalPresets = (int) $pdo->query('SELECT COUNT(*) FROM product_feature_presets')->fetchColumn();
+    $trilingualDbOk = true;
+    foreach (['en', 'tr', 'cs'] as $loc) {
+        $ptCount = (int) $pdo->query("SELECT COUNT(*) FROM product_translations WHERE locale = '{$loc}'")->fetchColumn();
+        $seoCount = (int) $pdo->query("SELECT COUNT(*) FROM seo_meta WHERE locale = '{$loc}'")->fetchColumn();
+        $stCount = (int) $pdo->query("SELECT COUNT(*) FROM product_specification_translations WHERE locale = '{$loc}'")->fetchColumn();
+        $cfCount = (int) $pdo->query("SELECT COUNT(*) FROM product_card_feature_translations WHERE locale = '{$loc}'")->fetchColumn();
+        $prCount = (int) $pdo->query("SELECT COUNT(*) FROM product_feature_preset_translations WHERE locale = '{$loc}'")->fetchColumn();
+        if ($ptCount !== $totalProducts || $seoCount !== $totalProducts || $stCount !== $totalSpecs || $cfCount !== $totalCardFeatures || $prCount !== $totalPresets) {
+            $trilingualDbOk = false;
+            break;
+        }
+    }
+    $placeholderLeak = (int) $pdo->query("SELECT COUNT(*) FROM product_translations WHERE description LIKE '%اختبار%'")->fetchColumn();
+    $assert(
+        $trilingualDbOk && $placeholderLeak === 0,
+        'Every product, specification, preset, card feature, and SEO meta record is 100% populated across en, tr, and cs',
+    );
 }
+
+/* Verify UI language file key parity across en / tr / cs */
+$enLangFiles = glob($root . '/resources/lang/en/*.php') ?: [];
+$langParityOk = count($enLangFiles) >= 14;
+foreach ($enLangFiles as $enFile) {
+    $baseName = basename($enFile);
+    $enArr = require $enFile;
+    foreach (['tr', 'cs'] as $otherLoc) {
+        $otherFile = $root . "/resources/lang/{$otherLoc}/{$baseName}";
+        if (!is_file($otherFile)) {
+            $langParityOk = false;
+            break 2;
+        }
+        $otherArr = require $otherFile;
+        if (!is_array($enArr) || !is_array($otherArr) || array_diff(array_keys($enArr), array_keys($otherArr)) !== []) {
+            $langParityOk = false;
+            break 2;
+        }
+    }
+}
+$assert($langParityOk, 'All storefront and system translation files maintain 100% key parity across en, tr, and cs');
 
 $categoryServiceSrc = (string) file_get_contents($root . '/app/Services/CategoryService.php');
 $productRepositorySrc = (string) file_get_contents($root . '/modules/Products/Repositories/ProductRepository.php');

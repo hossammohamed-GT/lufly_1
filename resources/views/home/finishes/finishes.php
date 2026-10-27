@@ -26,29 +26,29 @@ $view->pushScript('frontend/home/finishes/finishes.js');
 /* Per-finish presentation data. phrase/story are translation keys; rates
    drive the comparison drawer (durability / fingerprints / luxury). */
 $finishMeta = [
-    'brushed-rose-gold'  => ['phrase' => 'finishes_phrase_brushed_rose_gold',  'story' => 'finishes_story_brushed_rose_gold',  'rates' => ['high', 'low', 'high']],
-    'chrome'             => ['phrase' => 'finishes_phrase_chrome',             'story' => 'finishes_story_chrome',             'rates' => ['medium', 'high', 'medium']],
-    'brushed-gold'       => ['phrase' => 'finishes_phrase_brushed_gold',       'story' => 'finishes_story_brushed_gold',       'rates' => ['high', 'low', 'high']],
-    'mirror-gold'        => ['phrase' => 'finishes_phrase_mirror_gold',        'story' => 'finishes_story_mirror_gold',        'rates' => ['medium', 'high', 'high']],
-    'matte-black'        => ['phrase' => 'finishes_phrase_matte_black',        'story' => 'finishes_story_matte_black',        'rates' => ['high', 'medium', 'high']],
-    'brushed-nickel'     => ['phrase' => 'finishes_phrase_brushed_nickel',     'story' => 'finishes_story_brushed_nickel',     'rates' => ['high', 'low', 'medium']],
-    'gunmetal'           => ['phrase' => 'finishes_phrase_gunmetal',           'story' => 'finishes_story_gunmetal',           'rates' => ['high', 'medium', 'high']],
-    'brushed-gunmetal'   => ['phrase' => 'finishes_phrase_brushed_gunmetal',   'story' => 'finishes_story_brushed_gunmetal',   'rates' => ['high', 'low', 'high']],
-    'gun-gray'           => ['phrase' => 'finishes_phrase_gun_gray',           'story' => 'finishes_story_gun_gray',           'rates' => ['high', 'medium', 'medium']],
+    'brushed-rose-gold'  => ['phrase' => 'finishes_phrase_brushed_rose_gold',  'story' => 'finishes_story_brushed_rose_gold',  'title' => 'finish_rose_title',             'desc' => 'finish_rose_desc',             'rates' => ['high', 'low', 'high']],
+    'chrome'             => ['phrase' => 'finishes_phrase_chrome',             'story' => 'finishes_story_chrome',             'title' => 'finish_chrome_title',           'desc' => 'finish_chrome_desc',           'rates' => ['medium', 'high', 'medium']],
+    'brushed-gold'       => ['phrase' => 'finishes_phrase_brushed_gold',       'story' => 'finishes_story_brushed_gold',       'title' => 'finish_gold_title',             'desc' => 'finish_gold_desc',             'rates' => ['high', 'low', 'high']],
+    'mirror-gold'        => ['phrase' => 'finishes_phrase_mirror_gold',        'story' => 'finishes_story_mirror_gold',        'title' => 'finish_mirror_gold_title',      'desc' => 'finish_mirror_gold_desc',      'rates' => ['medium', 'high', 'high']],
+    'matte-black'        => ['phrase' => 'finishes_phrase_matte_black',        'story' => 'finishes_story_matte_black',        'title' => 'finish_black_title',            'desc' => 'finish_black_desc',            'rates' => ['high', 'medium', 'high']],
+    'brushed-nickel'     => ['phrase' => 'finishes_phrase_brushed_nickel',     'story' => 'finishes_story_brushed_nickel',     'title' => 'finish_nickel_title',           'desc' => 'finish_nickel_desc',           'rates' => ['high', 'low', 'medium']],
+    'gunmetal'           => ['phrase' => 'finishes_phrase_gunmetal',           'story' => 'finishes_story_gunmetal',           'title' => 'finish_gunmetal_title',         'desc' => 'finish_gunmetal_desc',         'rates' => ['high', 'medium', 'high']],
+    'brushed-gunmetal'   => ['phrase' => 'finishes_phrase_brushed_gunmetal',   'story' => 'finishes_story_brushed_gunmetal',   'title' => 'finish_brushed_gunmetal_title', 'desc' => 'finish_brushed_gunmetal_desc', 'rates' => ['high', 'low', 'high']],
+    'gun-gray'           => ['phrase' => 'finishes_phrase_gun_gray',           'story' => 'finishes_story_gun_gray',           'title' => 'finish_gun_gray_title',         'desc' => 'finish_gun_gray_desc',         'rates' => ['high', 'medium', 'medium']],
 ];
 
 /* The rail the customer picks from. sphere is the material ball on the
    card; scene is the full-bleed photograph the band cross-fades into. */
 $finishes = [
-    ['key' => 'brushed-rose-gold', 'sphere' => 'images/finishes/sphere-brushed-rose-gold.jpg',  'scene' => 'images/finishes/scene-brushed-rose-gold.jpg',  'label' => 'Rose Gold',       'tech' => 'PVD'],
-    ['key' => 'chrome',            'sphere' => 'images/finishes/sphere-chrome.jpg',             'scene' => 'images/finishes/scene-chrome.jpg',             'label' => 'Chrome',          'tech' => 'Electroplated'],
-    ['key' => 'brushed-gold',      'sphere' => 'images/finishes/sphere-brushed-gold.jpg',       'scene' => 'images/finishes/scene-brushed-gold.jpg',       'label' => 'Brushed Gold',    'tech' => 'PVD'],
-    ['key' => 'mirror-gold',       'sphere' => 'images/finishes/sphere-mirror-gold.jpg',        'scene' => 'images/finishes/scene-mirror-gold.jpg',        'label' => 'Mirror Gold',     'tech' => 'PVD'],
-    ['key' => 'matte-black',       'sphere' => 'images/finishes/sphere-matte-black.jpg',        'scene' => 'images/finishes/scene-matte-black.jpg',        'label' => 'Matte Black',     'tech' => 'Powder Coat'],
-    ['key' => 'brushed-nickel',    'sphere' => 'images/finishes/sphere-brushed-nickel.jpg',     'scene' => 'images/finishes/scene-brushed-nickel.jpg',     'label' => 'Brushed Nickel',  'tech' => 'PVD'],
-    ['key' => 'gunmetal',          'sphere' => 'images/finishes/sphere-gunmetal.jpg',           'scene' => 'images/finishes/scene-gunmetal.jpg',           'label' => 'Gunmetal',        'tech' => 'PVD'],
-    ['key' => 'brushed-gunmetal',  'sphere' => 'images/finishes/sphere-brushed-gunmetal.jpg',   'scene' => 'images/finishes/scene-brushed-gunmetal.jpg',   'label' => 'Brushed Gunmetal', 'tech' => 'PVD'],
-    ['key' => 'gun-gray',          'sphere' => 'images/finishes/sphere-gun-gray.jpg',           'scene' => 'images/finishes/scene-gun-gray.jpg',           'label' => 'Gun Gray',        'tech' => 'PVD'],
+    ['key' => 'brushed-rose-gold', 'sphere' => 'images/finishes/sphere-brushed-rose-gold.jpg',  'scene' => 'images/finishes/scene-brushed-rose-gold.jpg',  'label' => trans('products.finish_rose_gold'),      'tech' => 'PVD'],
+    ['key' => 'chrome',            'sphere' => 'images/finishes/sphere-chrome.jpg',             'scene' => 'images/finishes/scene-chrome.jpg',             'label' => trans('products.finish_polished_chrome'), 'tech' => trans('home.finish_tech_electroplated')],
+    ['key' => 'brushed-gold',      'sphere' => 'images/finishes/sphere-brushed-gold.jpg',       'scene' => 'images/finishes/scene-brushed-gold.jpg',       'label' => trans('products.finish_brushed_gold'),   'tech' => 'PVD'],
+    ['key' => 'mirror-gold',       'sphere' => 'images/finishes/sphere-mirror-gold.jpg',        'scene' => 'images/finishes/scene-mirror-gold.jpg',        'label' => trans('products.finish_gold'),           'tech' => 'PVD'],
+    ['key' => 'matte-black',       'sphere' => 'images/finishes/sphere-matte-black.jpg',        'scene' => 'images/finishes/scene-matte-black.jpg',        'label' => trans('products.finish_matte_black'),    'tech' => trans('home.finish_tech_powder')],
+    ['key' => 'brushed-nickel',    'sphere' => 'images/finishes/sphere-brushed-nickel.jpg',     'scene' => 'images/finishes/scene-brushed-nickel.jpg',     'label' => trans('products.finish_brushed_nickel'), 'tech' => 'PVD'],
+    ['key' => 'gunmetal',          'sphere' => 'images/finishes/sphere-gunmetal.jpg',           'scene' => 'images/finishes/scene-gunmetal.jpg',           'label' => trans('products.finish_gunmetal'),       'tech' => 'PVD'],
+    ['key' => 'brushed-gunmetal',  'sphere' => 'images/finishes/sphere-brushed-gunmetal.jpg',   'scene' => 'images/finishes/scene-brushed-gunmetal.jpg',   'label' => trans('home.finish_brushed_gunmetal_short'), 'tech' => 'PVD'],
+    ['key' => 'gun-gray',          'sphere' => 'images/finishes/sphere-gun-gray.jpg',           'scene' => 'images/finishes/scene-gun-gray.jpg',           'label' => trans('home.finish_gun_gray_short'),     'tech' => 'PVD'],
 ];
 
 $first = $finishes[0]['key'];
@@ -122,6 +122,8 @@ $rateWord = static fn (string $r): string => trans('home.finishes_rating_' . $r)
                                     data-finish="<?= e($finish['key']) ?>"
                                     data-phrase="<?= e(trans('home.' . $meta['phrase'])) ?>"
                                     data-story="<?= e(trans('home.' . $meta['story'])) ?>"
+                                    data-title="<?= e(trans('home.' . $meta['title'])) ?>"
+                                    data-desc="<?= e(trans('home.' . $meta['desc'])) ?>"
                                     aria-pressed="<?= $i === 0 ? 'true' : 'false' ?>"
                                     style="--i: <?= (int) $i ?>">
                                 <span class="fs-card-chip">

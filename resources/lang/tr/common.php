@@ -58,6 +58,7 @@ return [
     'all_categories' => 'Tüm Kategoriler',
     'specifications' => 'Teknik Özellikler',
     'footer_brand_desc' => 'Mükemmellikle şekillenen banyo kültürü. Zarif mimari yüzeylerin ardındaki hassas mühendislik. Dünya genelindeki mimarlar, şartname hazırlayıcılar, lüks oteller ve modern konutlar için üretilmiştir.',
+    'footer_brand_note' => 'TIDAL MONOLITH SİSTEMİ · 2026 MİMARİ ŞARTNAME',
     'footer_sanitary' => 'Vitrifiye Seramik',
     'footer_finishes' => 'PVD ve Bataryalar',
     'footer_technical' => 'Teknik ve BIM',

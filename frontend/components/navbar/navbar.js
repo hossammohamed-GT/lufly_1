@@ -275,11 +275,17 @@
     return base + '/' + String(raw).replace(/^\/+/, '');
   }
 
+  function productRouteSegment(loc) {
+    var map = { en: 'products', tr: 'urunler', cs: 'produkty' };
+    return map[loc] || 'products';
+  }
+
   function resultCard(product) {
     var name = escapeHtml(product.name || getGuideText('namePending'));
     var sku = escapeHtml(product.sku || '');
     var slug = product.slug || product.id || '';
-    var href = base + '/' + encodeURIComponent(locale()) + '/products/' + encodeURIComponent(slug);
+    var loc = locale();
+    var href = product.url || (base + '/' + encodeURIComponent(loc) + '/' + productRouteSegment(loc) + '/' + encodeURIComponent(slug));
 
     return '<a class="search-result-card" href="' + href + '">' +
       '<img class="search-result-thumb" src="' + productImage(product.image || product.main_image_url) + '" alt="" loading="lazy" decoding="async" width="56" height="56">' +
@@ -355,8 +361,9 @@
   }
 
   function viewAllLink(query) {
-    var href = base + '/' + encodeURIComponent(locale()) +
-      '/products?q=' + encodeURIComponent(query);
+    var loc = locale();
+    var href = base + '/' + encodeURIComponent(loc) +
+      '/' + productRouteSegment(loc) + '?q=' + encodeURIComponent(query);
     return '<a class="livesearch-all" href="' + href + '">' +
       '<svg viewBox="0 0 20 20" fill="currentColor" width="13" height="13" aria-hidden="true"><path fill-rule="evenodd" d="M10.293 3.293a1 1 0 011.414 0l6 6a1 1 0 010 1.414l-6 6a1 1 0 01-1.414-1.414L14.586 11H3a1 1 0 110-2h11.586l-4.293-4.293a1 1 0 010-1.414z" clip-rule="evenodd"/></svg>' +
       escapeHtml(getGuideText('viewAll', query)) +

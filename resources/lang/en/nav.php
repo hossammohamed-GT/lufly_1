@@ -13,7 +13,7 @@ return [
     'news' => 'News & Projects',
     'contact' => 'Contact',
     'search' => 'Search the catalogue',
-    'search_placeholder' => 'Search architectural fixtures, magnetic, silia...',
+    'search_placeholder' => 'Search architectural fixtures, 1620, PVD...',
     /* the moods the placeholder types out, one character at a time, when the
        field is empty and idle (the static line above stays the no-script
        fallback and the first thing shown) */

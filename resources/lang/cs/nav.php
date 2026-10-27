@@ -13,11 +13,11 @@ return [
     'news' => 'Projekty & Zprávy',
     'contact' => 'Kontakt',
     'search' => 'Hledat v katalogu',
-    'search_placeholder' => 'Hledat sanitární techniku, magnetic, silia...',
+    'search_placeholder' => 'Hledat sanitární techniku, 1620, PVD...',
     /* nápady, které placeholder vypisuje znak po znaku, dokud je pole prázdné
        a nečinné (statický řádek výše zůstává fallbackem bez skriptu) */
     'search_mood_1' => 'Zkuste: závěsné WC',
-    'search_mood_2' => 'Zkuste: malý umyvadlo',
+    'search_mood_2' => 'Zkuste: malé umyvadlo',
     'search_mood_3' => 'Zkuste: chromovou sprchovou sadu',
     'search_mood_4' => 'Zkuste: senzorovou baterii',
     'favorites' => 'Uložený seznam',
@@ -28,7 +28,7 @@ return [
     'theme_toggle' => 'Přepnout motiv',
     'language' => 'Jazyk',
     'index' => 'Rejstřík',
-    'menu' => 'Menu',
+    'menu' => 'Nabídka',
     'close' => 'Zavřít',
     'quick_links' => 'Rychlé odkazy',
     'open_index' => 'Otevřít rejstřík navigace',

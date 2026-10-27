@@ -161,6 +161,11 @@ return [
     'finish_brushed_gunmetal_desc' => 'Directional brushing softens deep gunmetal into a refined matte metallic sheen.',
     'finish_gun_gray_title' => 'Gun Gray (PVD)',
     'finish_gun_gray_desc' => 'A calm satin gray metallic tone engineered for minimalist, low-glare architecture.',
+    'finish_brushed_gunmetal_short' => 'Brushed Gunmetal',
+    'finish_gun_gray_short' => 'Gun Gray',
+    'finish_tech_electroplated' => 'Electroplated',
+    'finish_tech_powder' => 'Powder Coat',
+    'corporate_hq_value' => 'Gaziantep, Türkiye (Direct European Logistics Corridor)',
 
     /* HERO - cinematic category showcase */
     'hero_kicker' => 'Architectural Sanitary Ware',

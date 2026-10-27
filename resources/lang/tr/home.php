@@ -159,8 +159,13 @@ return [
     'finish_gunmetal_desc' => 'Modern spa ve banyolar için geliştirilmiş füme antrasit titanyum yüzey.',
     'finish_brushed_gunmetal_title' => 'Fırçalanmış Gunmetal (PVD)',
     'finish_brushed_gunmetal_desc' => 'Yönlü fırça dokusu, derin gunmetal tonunu rafine mat metalik bir parlaklığa dönüştürür.',
-    'finish_gun_gray_title' => 'Gun Gray (PVD)',
+    'finish_gun_gray_title' => 'Silah Grisi (PVD)',
     'finish_gun_gray_desc' => 'Minimalist mimari için tasarlanmış, yansıma yapmayan sakin saten gri metalik ton.',
+    'finish_brushed_gunmetal_short' => 'Fırçalanmış Gunmetal',
+    'finish_gun_gray_short' => 'Silah Grisi',
+    'finish_tech_electroplated' => 'Elektrokaplama',
+    'finish_tech_powder' => 'Elektrostatik Boya',
+    'corporate_hq_value' => 'Gaziantep, Türkiye (Doğrudan Avrupa Lojistik Koridoru)',
 
     /* HERO - sinematik koleksiyon gösterimi */
     'hero_kicker' => 'Mimari Sıhhi Tesisat',

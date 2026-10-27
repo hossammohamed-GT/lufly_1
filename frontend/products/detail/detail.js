@@ -69,12 +69,12 @@
     if (!dialog || !image || !caption || !closeButton) return;
 
     function open(trigger) {
-      var source = trigger.currentSrc || trigger.getAttribute('src');
+      var source = trigger.getAttribute('data-zoom-src') || trigger.currentSrc || trigger.getAttribute('src');
       if (!source) return;
 
       activeTrigger = trigger;
       image.src = source;
-      image.alt = trigger.getAttribute('alt') || '';
+      image.alt = trigger.getAttribute('alt') || trigger.getAttribute('data-pdp-zoom-caption') || '';
       caption.textContent = trigger.getAttribute('data-pdp-zoom-caption') || '';
       lightbox.hidden = false;
       lightbox.setAttribute('aria-hidden', 'false');
@@ -105,7 +105,8 @@
       activeTrigger = null;
     }
 
-    stage.querySelectorAll('[data-pdp-zoom]').forEach(function (trigger) {
+    var zoomRoot = document.querySelector('.pdp') || stage;
+    zoomRoot.querySelectorAll('[data-pdp-zoom]').forEach(function (trigger) {
       trigger.addEventListener('click', function () { open(trigger); });
       trigger.addEventListener('keydown', function (event) {
         if (event.key !== 'Enter' && event.key !== ' ') return;

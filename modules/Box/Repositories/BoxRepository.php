@@ -128,7 +128,16 @@ class BoxRepository extends Repository
         foreach ($ordered as $index => $model) {
             $translated = $model->translate($locale);
             $translated['box_index'] = $index + 1;
-            $translated['box_url'] = route('products.show', ['slug' => (string) ($translated['slug'] ?? $model->slug)]);
+            $targetSlug = (string) ($translated['slug'] ?? $model->slug);
+            $anchor = '';
+            if (ProductVisibility::isSeatCover($model)) {
+                $parentWcSlug = ProductVisibility::parentWcSlug((int) $model->getKey());
+                if ($parentWcSlug !== null && $parentWcSlug !== '') {
+                    $targetSlug = $parentWcSlug;
+                    $anchor = '#wc-seat-options';
+                }
+            }
+            $translated['box_url'] = route('products.show', ['slug' => $targetSlug]) . $anchor;
             $items[] = $translated;
         }
 

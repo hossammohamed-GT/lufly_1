@@ -12,7 +12,7 @@ $view->pushDeferredStyle('frontend/home/corporate/corporate.css');
 
                 <ul class="corporate-details-list">
                     <li><b><?= e(trans('home.legal_name')) ?>:</b> LUFLY İNŞAAT SANAYİ VE TİCARET LİMİTED ŞİRKETİ</li>
-                    <li><b><?= e(trans('home.headquarters')) ?>:</b> Gaziantep, Turkey (Direct European Logistics Corridor)</li>
+                    <li><b><?= e(trans('home.headquarters')) ?>:</b> <?= e(trans('home.corporate_hq_value')) ?></li>
                     <li><b><?= e(trans('home.compliance')) ?>:</b> CE Mark &middot; EN 997 &middot; EN 817 &middot; ISO 9001:2015</li>
                     <li><b><?= e(trans('home.export_office')) ?>:</b> +90 850 3040 817 &middot; info@lufly.tr</li>
                 </ul>

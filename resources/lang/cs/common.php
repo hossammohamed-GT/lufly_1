@@ -58,6 +58,7 @@ return [
     'all_categories' => 'Všechny kategorie',
     'specifications' => 'Specifikace',
     'footer_brand_desc' => 'Koupelnová kultura tvořená k dokonalosti. Precizní inženýrství za vytříbeným architektonickým povrchem. Vyráběno pro architekty, luxusní hotely a moderní domovy po celém světě.',
+    'footer_brand_note' => 'SYSTÉM TIDAL MONOLITH · ARCHITEKTONICKÁ SPECIFIKACE 2026',
     'footer_sanitary' => 'Sanitární keramika',
     'footer_finishes' => 'PVD a baterie',
     'footer_technical' => 'Technická data a BIM',

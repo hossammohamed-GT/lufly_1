@@ -99,9 +99,9 @@ final class ProductColorFamilyService
             }
 
             $payload = $models[$memberId]->translate($locale);
-            $card = ProductCardPresenter::make($payload);
+            $card = ProductCardPresenter::make($payload, $locale);
             $rawName = trim((string) ($payload['name'] ?? ''));
-            $name = $rawName !== '' ? $rawName : trans('products.name_pending');
+            $name = $rawName !== '' ? $rawName : trans('products.name_pending', [], $locale);
 
             $labels = [];
             foreach ((array) ($card['finishes'] ?? []) as $finish) {
@@ -112,10 +112,12 @@ final class ProductColorFamilyService
             }
             $firstFinish = $card['finishes'][0] ?? null;
             $finishKey = (string) ($firstFinish['key'] ?? 'neutral');
-            $finishLabel = $labels !== [] ? implode(' / ', $labels) : trans('products.finish_unspecified');
+            $finishLabel = $labels !== [] ? implode(' / ', $labels) : trans('products.finish_unspecified', [], $locale);
             $payload['card'] = $card;
             $payload['display_name'] = $name;
-            $payload['url'] = route('products.show', ['slug' => (string) ($payload['slug'] ?? '')]);
+            $translatedRoute = app(\Core\Localization\Translator::class)->trans('routes.products.show', [], $locale);
+            $slugVal = rawurlencode((string) ($payload['slug'] ?? ''));
+            $payload['url'] = url('/' . $locale . '/' . str_replace('{slug}', $slugVal, ltrim($translatedRoute, '/')));
             $payload['finish'] = [
                 'key' => $finishKey,
                 'label' => $finishLabel,

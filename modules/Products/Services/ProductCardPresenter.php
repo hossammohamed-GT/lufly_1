@@ -5,16 +5,17 @@ declare(strict_types=1);
 namespace Modules\Products\Services;
 
 /**
- * Builds the small, truthful summary shown on a catalog card.
+ * Builds the truthful, localized summary shown on a catalog card.
  *
- * Structured variants/specifications always win. The legacy catalog stores
- * much of the same information in its editorial description, so conservative
- * parsers expose only explicit colours, dimensions and construction details;
- * they never infer a feature from a model-code suffix or invent a price.
+ * Per-product quick specifications / features come from `product_card_features`
+ * (4 to 6 rows per product, backed by `product_feature_presets` and
+ * `ProductFeatureIconCatalog`). When a newly created product has fewer than
+ * 4 stored rows, conservative fallbacks keep every card uniformly balanced
+ * with at least 4 localized items.
  */
 final class ProductCardPresenter
 {
-    /** @var array<string, array{0: string, 1: string}> phrase => swatch, label */
+    /** @var array<string, array{0: string, 1: string}> phrase => swatch, canonical English label */
     private const FINISHES = [
         'satin chrome brushed' => ['chrome', 'Brushed Chrome'],
         'chrome brushed' => ['chrome', 'Brushed Chrome'],
@@ -96,77 +97,219 @@ final class ProductCardPresenter
         'satin' => ['steel', 'Satin'],
     ];
 
+    /**
+     * Exact per-locale translations for every canonical finish label so colour
+     * swatches and piece-finish captions stay 1-to-1 distinct in en, tr, and cs.
+     *
+     * @var array<string, array{tr: string, cs: string}>
+     */
+    private const FINISH_TRANSLATIONS = [
+        'Brushed Chrome' => ['tr' => 'Fırçalı Krom', 'cs' => 'Kartáčovaný chrom'],
+        'Chrome' => ['tr' => 'Krom', 'cs' => 'Chrom'],
+        'Polished Chrome' => ['tr' => 'Parlak Krom', 'cs' => 'Lesklý chrom'],
+        'Mirror Polished' => ['tr' => 'Ayna Parlak', 'cs' => 'Zrcadlový lesk'],
+        'Polished' => ['tr' => 'Parlak', 'cs' => 'Leštěný'],
+        'Brushed Bronze' => ['tr' => 'Fırçalı Bronz', 'cs' => 'Kartáčovaný bronz'],
+        'Gold Bronze' => ['tr' => 'Altın Bronz', 'cs' => 'Zlatý bronz'],
+        'Brass Bronze' => ['tr' => 'Pirinç Bronz', 'cs' => 'Mosazný bronz'],
+        'Bronze' => ['tr' => 'Bronz', 'cs' => 'Bronzová'],
+        'Brushed Rose Gold' => ['tr' => 'Fırçalı Roz Altın', 'cs' => 'Kartáčované růžové zlato'],
+        'Rose Gold' => ['tr' => 'Roz Altın', 'cs' => 'Růžové zlato'],
+        'Matt Gold' => ['tr' => 'Mat Altın', 'cs' => 'Matné zlato'],
+        'Brushed Gold' => ['tr' => 'Fırçalı Altın', 'cs' => 'Kartáčované zlato'],
+        'Gold' => ['tr' => 'Altın', 'cs' => 'Zlatá'],
+        'Brushed Gunmetal' => ['tr' => 'Fırçalı Gunmetal', 'cs' => 'Kartáčovaný gunmetal'],
+        'Gun Grey' => ['tr' => 'Gunmetal Gri', 'cs' => 'Gunmetal šedá'],
+        'Gunmetal' => ['tr' => 'Gunmetal', 'cs' => 'Gunmetal'],
+        'Chrome Nickel' => ['tr' => 'Krom Nikel', 'cs' => 'Chrom-nikl'],
+        'Brass Nickel' => ['tr' => 'Pirinç Nikel', 'cs' => 'Mosaz-nikl'],
+        'Brushed Nickel' => ['tr' => 'Fırçalı Nikel', 'cs' => 'Kartáčovaný nikl'],
+        'Nickel' => ['tr' => 'Nikel', 'cs' => 'Nikl'],
+        'Royal Blue' => ['tr' => 'Kraliyet Mavisi', 'cs' => 'Královská modrá'],
+        'Dark Blue' => ['tr' => 'Lacivert', 'cs' => 'Tmavě modrá'],
+        'Light Blue' => ['tr' => 'Açık Mavi', 'cs' => 'Světle modrá'],
+        'Blue' => ['tr' => 'Mavi', 'cs' => 'Modrá'],
+        'Brushed Stainless Steel' => ['tr' => 'Fırçalı Paslanmaz Çelik', 'cs' => 'Kartáčovaná nerezová ocel'],
+        'Stainless Steel' => ['tr' => 'Paslanmaz Çelik', 'cs' => 'Nerezová ocel'],
+        'Steel' => ['tr' => 'Çelik', 'cs' => 'Ocel'],
+        'Brushed' => ['tr' => 'Fırçalı', 'cs' => 'Kartáčovaný'],
+        'Satin' => ['tr' => 'Saten', 'cs' => 'Saténový'],
+        'Alpine White' => ['tr' => 'Alp Beyazı', 'cs' => 'Alpská bílá'],
+        'Matte White' => ['tr' => 'Mat Beyaz', 'cs' => 'Matná bílá'],
+        'Matt White' => ['tr' => 'Mat Beyaz', 'cs' => 'Matná bílá'],
+        'White' => ['tr' => 'Beyaz', 'cs' => 'Bílá'],
+        'Matte Black' => ['tr' => 'Mat Siyah', 'cs' => 'Matná černá'],
+        'Matt Black' => ['tr' => 'Mat Siyah', 'cs' => 'Matná černá'],
+        'Black' => ['tr' => 'Siyah', 'cs' => 'Černá'],
+        'Pink' => ['tr' => 'Pembe', 'cs' => 'Růžová'],
+        'Green' => ['tr' => 'Yeşil', 'cs' => 'Zelená'],
+        'Yellow' => ['tr' => 'Sarı', 'cs' => 'Žlutá'],
+        'Cyan' => ['tr' => 'Turkuaz', 'cs' => 'Tyrkysová'],
+        'Grey' => ['tr' => 'Gri', 'cs' => 'Šedá'],
+        'Gray' => ['tr' => 'Gri', 'cs' => 'Šedá'],
+        'Beige' => ['tr' => 'Bej', 'cs' => 'Béžová'],
+    ];
+
     /** @param array<string, mixed> $product translated product payload */
-    public static function make(array $product): array
+    public static function make(array $product, ?string $locale = null): array
     {
-        $description = self::description($product);
+        $resolvedLocale = $locale ?? (isset($product['locale']) && is_string($product['locale']) && $product['locale'] !== ''
+            ? $product['locale']
+            : null);
+
+        $sourceDescription = self::sourceDescription($product);
         $specs = is_array($product['specs'] ?? null) ? $product['specs'] : [];
         $variants = is_array($product['variants'] ?? null) ? $product['variants'] : [];
 
-        $material = self::material($specs, $description);
-        $installation = self::installation($specs, $description);
-        $dimensions = self::dimensions($product['dimensions'] ?? null, $specs, $description);
-        $hasCartridge = preg_match('/\b(?:ceramic\s+cartridge|valve\s+core\s+material\s*[:\-]?\s*ceramic)\b/iu', $description) === 1;
-        $finishes = self::finishes($variants, $specs, $description);
+        $material = self::material($specs, $sourceDescription, $resolvedLocale);
+        $installation = self::installation($specs, $sourceDescription, $resolvedLocale);
+        $dimensions = self::dimensions($product['dimensions'] ?? null, $specs, $sourceDescription);
+        $hasCartridge = preg_match('/\b(?:ceramic\s+cartridge|valve\s+core\s+material\s*[:\-]?\s*ceramic)\b/iu', $sourceDescription) === 1;
+        $finishes = self::finishes($variants, $specs, $sourceDescription, $resolvedLocale);
 
-        $summary = [];
-        /* Drawing-verified dimensions stay visible even when the product also
-           has a material and ceramic cartridge. */
-        if ($dimensions !== '') {
-            $summary[] = ['icon' => 'dimensions', 'label' => trans('products.dimensions'), 'value' => $dimensions];
-        }
-        if ($material !== '') {
-            $summary[] = ['icon' => 'material', 'label' => trans('products.material_label'), 'value' => $material];
-        }
-        if ($hasCartridge) {
-            $summary[] = ['icon' => 'cartridge', 'label' => trans('products.cartridge_label'), 'value' => 'Ceramic'];
-        }
-        if ($installation !== '') {
-            $summary[] = ['icon' => 'installation', 'label' => trans('products.installation_label'), 'value' => $installation];
-        }
+        $summary = self::cardSpecs(
+            $product,
+            $dimensions,
+            $material,
+            $installation,
+            $hasCartridge,
+            $finishes,
+            $resolvedLocale,
+        );
 
         $price = (float) ($product['price'] ?? 0);
         $hasPrice = $price > 0;
         $name = trim((string) ($product['name'] ?? ''));
         if ($name === '') {
-            $name = trans('products.name_pending');
+            $name = trans('products.name_pending', [], $resolvedLocale);
         }
         $status = (string) ($product['status'] ?? '');
         $badge = $status === 'coming_soon'
-            ? trans('common.coming_soon')
-            : (!empty($product['is_featured']) ? trans('common.featured') : '');
+            ? trans('common.coming_soon', [], $resolvedLocale)
+            : (!empty($product['is_featured']) ? trans('common.featured', [], $resolvedLocale) : '');
 
         return [
             'badge' => $badge,
-            'features' => self::features($specs, $description, $installation),
+            'features' => self::features($specs, $sourceDescription, $installation, $resolvedLocale),
             'finishes' => array_slice($finishes, 0, 4),
             'finishes_label' => count($finishes) === 1
-                ? trans('products.finishes_one')
-                : trans('products.finishes_many', ['n' => count($finishes)]),
-            'available_finishes_label' => trans('products.available_finishes'),
-            'specs' => array_slice($summary, 0, 2),
+                ? trans('products.finishes_one', [], $resolvedLocale)
+                : trans('products.finishes_many', ['n' => count($finishes)], $resolvedLocale),
+            'available_finishes_label' => trans('products.available_finishes', [], $resolvedLocale),
+            'specs' => array_slice($summary, 0, 6),
             'has_price' => $hasPrice,
             'cart_enabled' => $hasPrice,
-            'price_caption' => trans('products.price_label'),
-            'price_label' => $hasPrice ? self::priceLabel($price, (string) ($product['currency'] ?? '')) : trans('products.price_pending'),
-            'cart_label' => $hasPrice ? trans('products.add_to_cart') : trans('products.cart_pending'),
-            'save_label' => trans('favorites.save'),
-            'saved_label' => trans('favorites.saved'),
-            'favorite_added' => trans('favorites.added_named', ['name' => $name]),
-            'favorite_removed' => trans('favorites.removed_named', ['name' => $name]),
-            'box_label_on' => trans('box.added'),
-            'box_label_off' => trans('products.add_to_cart'),
-            'box_error' => trans('box.err'),
+            'price_caption' => trans('products.price_label', [], $resolvedLocale),
+            'price_label' => $hasPrice ? self::priceLabel($price, (string) ($product['currency'] ?? '')) : trans('products.price_pending', [], $resolvedLocale),
+            'cart_label' => $hasPrice ? trans('products.add_to_cart', [], $resolvedLocale) : trans('products.cart_pending', [], $resolvedLocale),
+            'save_label' => trans('favorites.save', [], $resolvedLocale),
+            'saved_label' => trans('favorites.saved', [], $resolvedLocale),
+            'favorite_added' => trans('favorites.added_named', ['name' => $name], $resolvedLocale),
+            'favorite_removed' => trans('favorites.removed_named', ['name' => $name], $resolvedLocale),
+            'box_label_on' => trans('box.added', [], $resolvedLocale),
+            'box_label_off' => trans('products.add_to_cart', [], $resolvedLocale),
+            'box_error' => trans('box.err', [], $resolvedLocale),
         ];
     }
 
-    private static function description(array $product): string
-    {
-        $text = trim((string) ($product['short_description'] ?? '') . ' ' . (string) ($product['description'] ?? ''));
+    /**
+     * Build 4 to 6 compact specification/feature rows per product.
+     * Database-backed `card_features` rows always take precedence; fallback rows
+     * ensure even a newly created product never renders fewer than 4 items.
+     *
+     * @param array<string, mixed> $product
+     * @param array<int, array{key: string, label: string}> $finishes
+     * @return array<int, array{icon: string, label: string, value: string}>
+     */
+    private static function cardSpecs(
+        array $product,
+        string $dimensions,
+        string $material,
+        string $installation,
+        bool $hasCartridge,
+        array $finishes,
+        ?string $locale,
+    ): array {
+        $items = [];
+        $seenLabels = [];
+        $push = static function (string $icon, string $label, string $value) use (&$items, &$seenLabels): void {
+            $label = trim($label);
+            $value = trim($value);
+            if ($label === '' || $value === '' || count($items) >= 6) {
+                return;
+            }
+            $norm = mb_strtolower($label, 'UTF-8');
+            if (isset($seenLabels[$norm])) {
+                return;
+            }
+            $seenLabels[$norm] = true;
+            $items[] = [
+                'icon' => ProductFeatureIconCatalog::normalize($icon),
+                'label' => $label,
+                'value' => $value,
+            ];
+        };
 
-        /* Keep line boundaries: "Finish: steel" must not swallow the next
-           line's Length / Type / Installation attributes. */
-        return trim((string) preg_replace('/[^\S\r\n]+/u', ' ', strip_tags($text)));
+        $dbFeatures = is_array($product['card_features'] ?? null) ? $product['card_features'] : [];
+        foreach ($dbFeatures as $row) {
+            if (!is_array($row)) {
+                continue;
+            }
+            $push(
+                (string) ($row['icon'] ?? 'spec'),
+                (string) ($row['label'] ?? ''),
+                (string) ($row['value'] ?? ''),
+            );
+        }
+
+        if (count($items) >= 4) {
+            return array_slice($items, 0, 6);
+        }
+
+        /* Fallback backfill for brand-new products without 4 stored rows yet */
+        if ($dimensions !== '') {
+            $push('dimensions', trans('products.dimensions', [], $locale), $dimensions);
+        }
+        if ($material !== '') {
+            $push('material', trans('products.material_label', [], $locale), $material);
+        }
+        if ($installation !== '') {
+            $push('installation', trans('products.installation_label', [], $locale), $installation);
+        }
+        if ($hasCartridge) {
+            $push('cartridge', trans('products.cartridge_label', [], $locale), trans('products.feat_ceramic_cartridge', [], $locale));
+        }
+        if ($finishes !== []) {
+            $finishLabels = array_values(array_filter(array_map(
+                static fn (array $f): string => trim((string) ($f['label'] ?? '')),
+                $finishes,
+            )));
+            if ($finishLabels !== []) {
+                $push('finish', trans('products.finish_label', [], $locale), implode(' / ', array_slice($finishLabels, 0, 2)));
+            }
+        }
+        $categoryName = trim((string) ($product['category_name'] ?? ''));
+        if ($categoryName !== '') {
+            $push('spec', trans('products.category_label', [], $locale), $categoryName);
+        }
+        $modelCode = trim((string) ($product['model_code'] ?? $product['sku'] ?? ''));
+        if ($modelCode !== '') {
+            $push('spec', trans('products.code_label', [], $locale), $modelCode);
+        }
+        $push('certification', trans('products.standard_label', [], $locale), trans('products.standard_en_ce', [], $locale));
+        $push('warranty', trans('products.guarantee_title', [], $locale), 'LUFLY');
+
+        return array_slice($items, 0, 6);
+    }
+
+    private static function sourceDescription(array $product): string
+    {
+        $source = trim((string) ($product['source_description'] ?? ''));
+        if ($source === '') {
+            $source = trim((string) ($product['short_description'] ?? '') . ' ' . (string) ($product['description'] ?? ''));
+        }
+
+        return trim((string) preg_replace('/[^\S\r\n]+/u', ' ', strip_tags($source)));
     }
 
     private static function priceLabel(float $price, string $currency): string
@@ -179,18 +322,18 @@ final class ProductCardPresenter
     }
 
     /** @return array<int, array{icon: string, label: string}> */
-    private static function features(array $specs, string $description, string $installation): array
+    private static function features(array $specs, string $description, string $installation, ?string $locale): array
     {
         $features = [];
         $seen = [];
         $add = static function (string $icon, string $label) use (&$features, &$seen): void {
             $label = trim($label);
-            $key = strtolower($label);
+            $key = mb_strtolower($label, 'UTF-8');
             if ($label === '' || isset($seen[$key]) || count($features) >= 3) {
                 return;
             }
             $seen[$key] = true;
-            $features[] = ['icon' => $icon, 'label' => $label];
+            $features[] = ['icon' => ProductFeatureIconCatalog::normalize($icon), 'label' => $label];
         };
 
         if ($installation !== '') {
@@ -198,32 +341,32 @@ final class ProductCardPresenter
         }
 
         $rules = [
-            ['rimless', 'Rimless', '/\brimless\b/iu'],
-            ['soft-close', 'Soft Close', '/\b(?:soft|slow)[ -]?clos(?:e|ing)\b/iu'],
-            ['water-saving', 'Water Saving', '/\bwater[ -]?saving\b/iu'],
-            ['easy-clean', 'Easy Clean', '/\beasy[ -]?clean\b/iu'],
-            ['scratch-resistant', 'Scratch Resistant', '/\bscratch[ -]?resistant\b/iu'],
-            ['cartridge', 'Ceramic Cartridge', '/\bceramic\s+cartridge\b/iu'],
-            ['single-lever', 'Single Lever', '/\bsingle[ -]?(?:lever|handle)\b/iu'],
-            ['thermostatic', 'Thermostatic', '/\bthermostatic\b/iu'],
-            ['shower', 'Rain Shower', '/\brain\s+shower\b/iu'],
-            ['shower', 'Hand Shower', '/\bhand[ -]?(?:shower|spray)\b/iu'],
-            ['high-flow', 'High Flow', '/\bhigh[ -]?flow\b/iu'],
-            ['anti-odor', 'Anti-Odor', '/\banti[ -]?odou?r\b/iu'],
-            ['click-clack', 'Click-Clack', '/\bclick[ -]?clack\b/iu'],
-            ['overflow', 'With Overflow', '/\bwith\s+overflow\b/iu'],
-            ['self-closing', 'Self-Closing', '/\bself[ -]?closing\b/iu'],
-            ['dual-outlet', 'Dual Outlet', '/\bdual[ -]?outlet\b/iu'],
+            ['rimless', 'products.feat_rimless', '/\brimless\b/iu'],
+            ['soft-close', 'products.feat_soft_close', '/\b(?:soft|slow)[ -]?clos(?:e|ing)\b/iu'],
+            ['water-saving', 'products.feat_water_saving', '/\bwater[ -]?saving\b/iu'],
+            ['easy-clean', 'products.feat_easy_clean', '/\beasy[ -]?clean\b/iu'],
+            ['scratch-resistant', 'products.feat_scratch_resistant', '/\bscratch[ -]?resistant\b/iu'],
+            ['cartridge', 'products.feat_ceramic_cartridge', '/\bceramic\s+cartridge\b/iu'],
+            ['single-lever', 'products.feat_single_lever', '/\bsingle[ -]?(?:lever|handle)\b/iu'],
+            ['thermostatic', 'products.feat_thermostatic', '/\bthermostatic\b/iu'],
+            ['shower', 'products.feat_rain_shower', '/\brain\s+shower\b/iu'],
+            ['shower', 'products.feat_hand_shower', '/\bhand[ -]?(?:shower|spray)\b/iu'],
+            ['high-flow', 'products.feat_high_flow', '/\bhigh[ -]?flow\b/iu'],
+            ['anti-odor', 'products.feat_anti_odor', '/\banti[ -]?odou?r\b/iu'],
+            ['spec', 'products.feat_click_clack', '/\bclick[ -]?clack\b/iu'],
+            ['drainage', 'products.feat_with_overflow', '/\bwith\s+overflow\b/iu'],
+            ['spec', 'products.feat_self_closing', '/\bself[ -]?closing\b/iu'],
+            ['connection', 'products.feat_dual_outlet', '/\bdual[ -]?outlet\b/iu'],
         ];
-        foreach ($rules as [$icon, $label, $pattern]) {
+        foreach ($rules as [$icon, $transKey, $pattern]) {
             if (preg_match($pattern, $description) === 1) {
-                $add($icon, $label);
+                $add($icon, trans($transKey, [], $locale));
             }
         }
 
         if (count($features) < 3) {
             foreach ($specs as $row) {
-                $key = (string) ($row['spec_key'] ?? '');
+                $key = (string) ($row['raw_key'] ?? $row['spec_key'] ?? '');
                 $value = trim((string) ($row['spec_value'] ?? ''));
                 if ($value === '' || preg_match('/^drawing\s*:|material|finish|colou?r|dimension|size|installation|mounting|cartridge|\btype\b/iu', $key) === 1) {
                     continue;
@@ -236,18 +379,16 @@ final class ProductCardPresenter
     }
 
     /** @return array<int, array{key: string, label: string}> */
-    private static function finishes(array $variants, array $specs, string $description): array
+    private static function finishes(array $variants, array $specs, string $description, ?string $locale): array
     {
         $finishes = [];
         $seen = [];
-        $add = static function (string $value, bool $knownOnly = false) use (&$add, &$finishes, &$seen): void {
-            /* Slash-separated finishes are compound colours too (White/Blue).
-               Parse each written tone instead of silently keeping only the first. */
+        $add = static function (string $value, bool $knownOnly = false) use (&$add, &$finishes, &$seen, $locale): void {
             $parts = preg_split('#\s*/\s*#u', $value) ?: [$value];
             if (count($parts) > 1) {
                 $knownParts = [];
                 foreach ($parts as $part) {
-                    $candidate = self::finish((string) $part);
+                    $candidate = self::finish((string) $part, $locale);
                     if ($candidate['key'] === 'neutral' || $candidate['label'] === '') {
                         $knownParts = [];
                         break;
@@ -262,8 +403,8 @@ final class ProductCardPresenter
                 }
             }
 
-            $finish = self::finish($value);
-            $key = strtolower($finish['label']);
+            $finish = self::finish($value, $locale);
+            $key = mb_strtolower($finish['label'], 'UTF-8');
             if ($finish['label'] === '' || ($knownOnly && $finish['key'] === 'neutral') || isset($seen[$key])) {
                 return;
             }
@@ -278,8 +419,9 @@ final class ProductCardPresenter
             }
         }
         foreach ($specs as $row) {
-            if (preg_match('/finish|colou?r/iu', (string) ($row['spec_key'] ?? '')) === 1) {
-                $add((string) ($row['spec_value'] ?? ''));
+            $rawKey = (string) ($row['raw_key'] ?? $row['spec_key'] ?? '');
+            if (preg_match('/finish|colou?r/iu', $rawKey) === 1) {
+                $add((string) ($row['raw_value'] ?? $row['spec_value'] ?? ''));
             }
         }
 
@@ -291,10 +433,7 @@ final class ProductCardPresenter
                 }
             }
         }
-        /* One ordered alternation consumes "Rose Gold" as a whole. Separate
-           searches would incorrectly add both Rose Gold and Gold. PVD may
-           follow the colour ("Blue PVD Finish"), and a genuine two-tone
-           phrase keeps both colours in their written order. */
+
         $phrases = array_keys(self::FINISHES);
         usort($phrases, static fn (string $a, string $b): int => strlen($b) <=> strlen($a));
         $alternation = implode('|', array_map(
@@ -317,11 +456,13 @@ final class ProductCardPresenter
             $add((string) $match[1]);
         }
 
+        $ssLabel = self::localizeFinish('Stainless Steel', $locale);
+        $steelLabel = self::localizeFinish('Steel', $locale);
         $labels = array_column($finishes, 'label');
-        if (in_array('Stainless Steel', $labels, true) && in_array('Steel', $labels, true)) {
+        if (in_array($ssLabel, $labels, true) && in_array($steelLabel, $labels, true)) {
             $finishes = array_values(array_filter(
                 $finishes,
-                static fn (array $finish): bool => $finish['label'] !== 'Steel',
+                static fn (array $finish): bool => $finish['label'] !== $steelLabel,
             ));
         }
 
@@ -329,7 +470,7 @@ final class ProductCardPresenter
     }
 
     /** @return array{key: string, label: string} */
-    private static function finish(string $value): array
+    private static function finish(string $value, ?string $locale): array
     {
         $value = trim((string) preg_replace('/\s+/u', ' ', $value));
         $value = trim((string) preg_replace('/\s*\(\s*optional\s*\)\s*$/iu', '', $value));
@@ -340,48 +481,54 @@ final class ProductCardPresenter
 
         foreach (self::FINISHES as $phrase => [$swatch, $label]) {
             if (preg_match('/\b' . preg_quote($phrase, '/') . '\b/iu', $value) === 1) {
-                return ['key' => $swatch, 'label' => $label];
+                return ['key' => $swatch, 'label' => self::localizeFinish($label, $locale)];
             }
         }
 
-        /* Corrupted legacy bytes are not a finish name. Supported catalogue
-           locales all retain at least one ASCII letter in these labels. */
-        if (!preg_match('/[a-z]/i', $value)) {
+        if (!preg_match('/\p{L}/u', $value)) {
             return ['key' => 'neutral', 'label' => ''];
         }
 
         return ['key' => 'neutral', 'label' => $value];
     }
 
-    private static function material(array $specs, string $description): string
+    private static function localizeFinish(string $canonicalLabel, ?string $locale): string
     {
-        $structured = self::specValue($specs, '/\bmaterials?\b/iu');
+        $loc = $locale ?? app(\Core\Localization\Translator::class)->getLocale();
+        if (in_array($loc, ['tr', 'cs'], true) && isset(self::FINISH_TRANSLATIONS[$canonicalLabel][$loc])) {
+            return self::FINISH_TRANSLATIONS[$canonicalLabel][$loc];
+        }
+
+        return $canonicalLabel;
+    }
+
+    private static function material(array $specs, string $description, ?string $locale): string
+    {
+        $structured = self::specRawValue($specs, '/\bmaterials?\b/iu');
         if ($structured !== '') {
-            return self::canonicalMaterial($structured);
+            return self::canonicalMaterial($structured, $locale);
         }
 
-        /* Steel screws, braids, fittings and hoses do not identify body material. */
         if (preg_match('/\bstainless\s+steel(?:\s*(?:aisi\s*|#\s*)?304)?(?!\s*(?:screws?|fittings?|hoses?|braids?)\b)/iu', $description, $match)) {
-            return self::canonicalMaterial((string) $match[0]);
+            return self::canonicalMaterial((string) $match[0], $locale);
         }
 
-        /* "Brass body" outranks a later "Valve Core Material: Ceramic". */
         if (preg_match('/\b(vitreous\s+china|stainless\s+steel|ceramic|brass|acrylic|abs|pp|uf)\s+body\b/iu', $description, $match)) {
-            return self::canonicalMaterial((string) $match[1]);
+            return self::canonicalMaterial((string) $match[1], $locale);
         }
 
         $known = '(vitreous\s+china|stainless\s+steel(?:\s*(?:aisi\s*|#\s*)?304)?|ceramic|brass|acrylic|abs|pp|uf)';
         if (preg_match('/\bmaterials?\s*[:\-]?\s*' . $known . '/iu', $description, $match)) {
-            return self::canonicalMaterial((string) $match[1]);
+            return self::canonicalMaterial((string) $match[1], $locale);
         }
         if (preg_match('/\b(vitreous\s+china|acrylic)\b/iu', $description, $match)) {
-            return self::canonicalMaterial((string) $match[1]);
+            return self::canonicalMaterial((string) $match[1], $locale);
         }
         if (preg_match('/\bbrass\b(?=[^.]{0,30}\b(?:body|construction|material|chrome|plated|faucet)\b)/iu', $description)) {
-            return 'Brass';
+            return trans('products.mat_brass', [], $locale);
         }
         if (preg_match('/\bceramic\b(?!\s+cartridge)/iu', $description)) {
-            return 'Ceramic';
+            return trans('products.mat_ceramic', [], $locale);
         }
         if (preg_match('/\b(abs|pp|uf)\b/iu', $description, $match)) {
             return strtoupper((string) $match[1]);
@@ -390,36 +537,40 @@ final class ProductCardPresenter
         return '';
     }
 
-    private static function canonicalMaterial(string $value): string
+    private static function canonicalMaterial(string $value, ?string $locale): string
     {
-        if (preg_match('/vitreous\s+china/iu', $value)) return 'Vitreous China';
-        if (preg_match('/stainless\s+steel/iu', $value)) return preg_match('/304/', $value) ? 'Stainless Steel 304' : 'Stainless Steel';
-        if (preg_match('/\bceramic\b/iu', $value)) return 'Ceramic';
-        if (preg_match('/\bbrass\b/iu', $value)) return 'Brass';
-        if (preg_match('/\bacrylic\b/iu', $value)) return 'Acrylic';
+        if (preg_match('/vitreous\s+china/iu', $value)) return trans('products.mat_vitreous_china', [], $locale);
+        if (preg_match('/stainless\s+steel/iu', $value)) {
+            return preg_match('/304/', $value)
+                ? trans('products.mat_stainless_steel_304', [], $locale)
+                : trans('products.mat_stainless_steel', [], $locale);
+        }
+        if (preg_match('/\bceramic\b/iu', $value)) return trans('products.mat_ceramic', [], $locale);
+        if (preg_match('/\bbrass\b/iu', $value)) return trans('products.mat_brass', [], $locale);
+        if (preg_match('/\bacrylic\b/iu', $value)) return trans('products.mat_acrylic', [], $locale);
         if (preg_match('/\b(?:abs|pp|uf)\b/iu', $value, $match)) return strtoupper((string) $match[0]);
 
         return trim($value);
     }
 
-    private static function installation(array $specs, string $description): string
+    private static function installation(array $specs, string $description, ?string $locale): string
     {
-        $structured = self::specValue($specs, '/installation|mounting/iu');
+        $structured = self::specRawValue($specs, '/installation|mounting/iu');
         $source = $structured !== '' ? $structured : $description;
         $rules = [
-            ['Wall Hung', '/\bwall[ -]?hung\b/iu'],
-            ['Wall Mounted', '/\bwall[ -]?mounted\b/iu'],
-            ['Floor Standing', '/\bfloor[ -]?standing\b/iu'],
-            ['Floor Mounted', '/\bfloor[ -]?mounted\b/iu'],
-            ['Deck Mounted', '/\bdeck[ -]?mounted\b/iu'],
-            ['Countertop', '/\b(?:counter[ -]?top|over[ -]?top\s+basin)\b/iu'],
-            ['Freestanding', '/\bfree[ -]?standing\b/iu'],
-            ['Concealed', '/\bconcealed\b/iu'],
-            ['Built-in', '/\bbuilt[ -]?in\b/iu'],
+            ['products.inst_wall_hung', '/\bwall[ -]?hung\b/iu'],
+            ['products.inst_wall_mounted', '/\bwall[ -]?mounted\b/iu'],
+            ['products.inst_floor_standing', '/\bfloor[ -]?standing\b/iu'],
+            ['products.inst_floor_mounted', '/\bfloor[ -]?mounted\b/iu'],
+            ['products.inst_deck_mounted', '/\bdeck[ -]?mounted\b/iu'],
+            ['products.inst_countertop', '/\b(?:counter[ -]?top|over[ -]?top\s+basin)\b/iu'],
+            ['products.inst_freestanding', '/\bfree[ -]?standing\b/iu'],
+            ['products.inst_concealed', '/\bconcealed\b/iu'],
+            ['products.inst_built_in', '/\bbuilt[ -]?in\b/iu'],
         ];
-        foreach ($rules as [$label, $pattern]) {
+        foreach ($rules as [$transKey, $pattern]) {
             if (preg_match($pattern, $source) === 1) {
-                return $label;
+                return trans($transKey, [], $locale);
             }
         }
 
@@ -443,23 +594,27 @@ final class ProductCardPresenter
 
         $drawing = [];
         foreach ($specs as $row) {
-            $key = trim((string) ($row['spec_key'] ?? ''));
-            if (preg_match('/^drawing\s*:\s*(.+)$/iu', $key, $match) !== 1) {
+            $rawKey = trim((string) ($row['raw_key'] ?? $row['spec_key'] ?? ''));
+            if (preg_match('/^drawing\s*:\s*(.+)$/iu', $rawKey) !== 1) {
                 continue;
             }
-            $label = trim((string) $match[1]);
+            $localizedKey = trim((string) ($row['spec_key'] ?? $rawKey));
+            $label = preg_replace('/^[^:]+\s*:\s*/u', '', $localizedKey) ?: $localizedKey;
             $value = trim((string) ($row['spec_value'] ?? ''));
             $unit = trim((string) ($row['unit'] ?? ''));
             if ($label === '' || $value === '') {
                 continue;
             }
             $drawing[] = $label . ' ' . $value . ($unit !== '' ? ' ' . $unit : '');
+            if (count($drawing) >= 3) {
+                break;
+            }
         }
         if ($drawing !== []) {
-            return implode('; ', $drawing);
+            return implode(' · ', $drawing);
         }
 
-        $structured = self::specValue($specs, '/dimension|\bsize\b/iu');
+        $structured = self::specRawValue($specs, '/dimension|\bsize\b/iu');
         if ($structured !== '') {
             return $structured;
         }
@@ -475,12 +630,14 @@ final class ProductCardPresenter
         return '';
     }
 
-    private static function specValue(array $specs, string $keyPattern): string
+    private static function specRawValue(array $specs, string $keyPattern): string
     {
         foreach ($specs as $row) {
-            if (preg_match($keyPattern, (string) ($row['spec_key'] ?? '')) === 1) {
-                $value = trim((string) ($row['spec_value'] ?? ''));
+            $key = (string) ($row['raw_key'] ?? $row['spec_key'] ?? '');
+            if (preg_match($keyPattern, $key) === 1) {
+                $value = trim((string) ($row['raw_value'] ?? $row['spec_value'] ?? ''));
                 $unit = trim((string) ($row['unit'] ?? ''));
+
                 return $value . ($value !== '' && $unit !== '' ? ' ' . $unit : '');
             }
         }

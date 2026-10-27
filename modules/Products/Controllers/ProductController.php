@@ -13,6 +13,7 @@ use Core\Http\Response;
 use Core\Localization\Translator;
 use Modules\Products\Requests\StoreProductRequest;
 use Modules\Products\Requests\UpdateProductRequest;
+use Modules\Products\Services\ProductCardPresenter;
 use Modules\Products\Services\ProductColorFamilyService;
 use Modules\Products\Services\ProductMediaService;
 use Modules\Products\Services\ProductService;
@@ -121,10 +122,37 @@ class ProductController extends Controller
     public function show(string $slug): Response
     {
         $locale = $this->translator->getLocale();
+
+        /* Toilet seat covers never appear as standalone catalog pages: direct
+           visits redirect cleanly to the parent WC's #wc-seat-options block. */
+        $rawCandidate = \Modules\Products\Models\Product::query()
+            ->where('slug', $slug)
+            ->where('status', 'active')
+            ->first();
+        if ($rawCandidate instanceof \Modules\Products\Models\Product && ProductVisibility::isSeatCover($rawCandidate)) {
+            $parentWcSlug = ProductVisibility::parentWcSlug((int) $rawCandidate->getKey());
+            if ($parentWcSlug !== null && $parentWcSlug !== '') {
+                return new RedirectResponse(route('products.show', ['slug' => $parentWcSlug]) . '#wc-seat-options');
+            }
+        }
+
         $product = app(ProductColorFamilyService::class)->attach(
             $this->products->findTranslatedBySlug($slug, $locale),
             $locale,
         );
+
+        $cardPresentation = ProductCardPresenter::make($product, $locale);
+        $product['presented_features'] = $cardPresentation['features'];
+        if (!empty($product['seat_covers']) && is_array($product['seat_covers'])) {
+            $product['seat_covers'] = array_map(
+                static function (array $seat) use ($locale): array {
+                    $seatCard = ProductCardPresenter::make($seat, $locale);
+                    $seat['presented_features'] = $seatCard['features'];
+                    return $seat;
+                },
+                $product['seat_covers'],
+            );
+        }
 
         /* Category slug drives the technical-sheet silhouette on the page. */
         $categorySlug = (string) ($product['category_slug'] ?? '');

@@ -895,3 +895,253 @@ body.pdp-lightbox-open {
 @media (max-width: 560px) {
   .pdp-thumb { width: 54px; height: 54px; }
 }
+
+/* ---------- 4–6 quick feature highlights on PDP ---------- */
+
+.pdp-highlights .pcard-specs {
+  --pcard-surface: var(--ds-surface);
+  --pcard-text: var(--ds-text);
+  --pcard-ink: var(--ds-text);
+  --pcard-muted: var(--ds-text-muted);
+  --pcard-line: color-mix(in srgb, var(--ds-primary) 18%, var(--ds-border));
+  margin: 0;
+}
+
+/* ---------- Compatible Toilet Seat Cover(s) (#wc-seat-options) ---------- */
+
+.pdp-seat-section {
+  display: grid;
+  gap: 12px;
+  padding: 18px;
+  border-radius: var(--radius-md, 14px);
+  border: 1px solid color-mix(in srgb, var(--ds-primary) 30%, var(--ds-border));
+  background:
+    linear-gradient(155deg,
+      color-mix(in srgb, var(--ds-primary) 5%, var(--ds-surface)) 0%,
+      var(--ds-surface) 100%);
+  scroll-margin-top: 100px;
+}
+
+.pdp-seat-head {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.pdp-seat-badge {
+  display: inline-block;
+  margin-bottom: 4px;
+  font-family: var(--font-mono);
+  font-size: 9.5px;
+  font-weight: 700;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--ds-primary);
+}
+
+.pdp-seat-count {
+  flex: none;
+  display: inline-grid;
+  place-items: center;
+  min-width: 26px;
+  height: 26px;
+  padding: 0 8px;
+  border-radius: 999px;
+  font-family: var(--font-mono);
+  font-size: 11px;
+  font-weight: 700;
+  color: var(--ds-primary);
+  background: var(--ds-primary-soft);
+  border: 1px solid color-mix(in srgb, var(--ds-primary) 35%, transparent);
+}
+
+.pdp-seat-sub {
+  margin: 0;
+  font-size: 13px;
+  line-height: 1.5;
+  color: var(--ds-text-muted);
+}
+
+.pdp-seat-list {
+  display: grid;
+  gap: 12px;
+}
+
+.pdp-seat-card {
+  display: grid;
+  grid-template-columns: 118px minmax(0, 1fr);
+  gap: 14px;
+  padding: 14px;
+  border-radius: 12px;
+  border: 1px solid var(--ds-border);
+  background: var(--ds-bg);
+}
+
+.pdp-seat-media-col {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.pdp-seat-thumb-wrap {
+  aspect-ratio: 1 / 1;
+  border-radius: 10px;
+  border: 1px solid var(--ds-border);
+  background: #ffffff;
+  overflow: hidden;
+  display: grid;
+  place-items: center;
+  padding: 8px;
+}
+
+.pdp-seat-thumb {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  cursor: zoom-in;
+  transition: transform 180ms ease;
+}
+
+.pdp-seat-thumb:hover {
+  transform: scale(1.04);
+}
+
+.pdp-seat-drawing-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 5px;
+  padding: 6px 8px;
+  border-radius: 8px;
+  border: 1px solid var(--ds-border);
+  background: var(--ds-surface);
+  color: var(--ds-text-muted);
+  font-family: var(--font-mono);
+  font-size: 9.5px;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  cursor: pointer;
+  transition: color 150ms ease, border-color 150ms ease;
+}
+
+.pdp-seat-drawing-btn svg {
+  width: 13px;
+  height: 13px;
+  flex: none;
+}
+
+.pdp-seat-drawing-btn:hover {
+  color: var(--ds-primary);
+  border-color: color-mix(in srgb, var(--ds-primary) 45%, var(--ds-border));
+}
+
+.pdp-seat-body {
+  display: grid;
+  gap: 8px;
+  align-content: start;
+  min-width: 0;
+}
+
+.pdp-seat-title {
+  margin: 0;
+  font-family: var(--font-display);
+  font-size: 16px;
+  font-weight: 700;
+  line-height: 1.25;
+  color: var(--ds-text);
+}
+
+.pdp-seat-desc {
+  margin: 0;
+  font-size: 12.5px;
+  line-height: 1.5;
+  color: var(--ds-text-muted);
+}
+
+.pdp-seat-specs {
+  margin: 2px 0 0;
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 6px;
+}
+
+.pdp-seat-spec {
+  padding: 6px 8px;
+  border-radius: 8px;
+  border: 1px solid var(--ds-border);
+  background: var(--ds-surface);
+  min-width: 0;
+}
+
+.pdp-seat-spec dt {
+  margin: 0;
+  font-family: var(--font-mono);
+  font-size: 9px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--ds-text-muted);
+}
+
+.pdp-seat-spec dd {
+  margin: 2px 0 0;
+  font-size: 11.5px;
+  font-weight: 650;
+  color: var(--ds-text);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.pdp-seat-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 4px;
+}
+
+.pdp-seat-bundle-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  padding: 9px 14px;
+  border-radius: 999px;
+  border: 1px solid var(--ds-primary);
+  background: var(--ds-primary);
+  color: #ffffff;
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.02em;
+  cursor: pointer;
+  transition: transform 150ms ease, filter 150ms ease, background-color 150ms ease;
+}
+
+.pdp-seat-bundle-btn:hover {
+  filter: brightness(1.06);
+  transform: translateY(-1px);
+}
+
+.pdp-seat-bundle-btn.is-on {
+  background: var(--ds-primary-soft);
+  color: var(--ds-primary);
+  border-color: color-mix(in srgb, var(--ds-primary) 50%, transparent);
+}
+
+@media (max-width: 560px) {
+  .pdp-seat-card {
+    grid-template-columns: 1fr;
+  }
+  .pdp-seat-media-col {
+    flex-direction: row;
+    align-items: center;
+  }
+  .pdp-seat-thumb-wrap {
+    width: 96px;
+    flex: none;
+  }
+  .pdp-seat-specs {
+    grid-template-columns: 1fr;
+  }
+}
+

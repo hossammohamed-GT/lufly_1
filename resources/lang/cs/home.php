@@ -159,8 +159,13 @@ return [
     'finish_gunmetal_desc' => 'Tmavě antracitový metalický povrch stvořený pro špičkovou moderní architekturu.',
     'finish_brushed_gunmetal_title' => 'Broušený gunmetal (PVD)',
     'finish_brushed_gunmetal_desc' => 'Směrové kartáčování zjemňuje hluboký gunmetal do rafinovaného matného metalického lesku.',
-    'finish_gun_gray_title' => 'Gun Gray (PVD)',
+    'finish_gun_gray_title' => 'Kouřově šedá (PVD)',
     'finish_gun_gray_desc' => 'Klidný saténově šedý metalický tón navržený pro minimalistickou architekturu bez odlesků.',
+    'finish_brushed_gunmetal_short' => 'Broušený gunmetal',
+    'finish_gun_gray_short' => 'Kouřově šedá',
+    'finish_tech_electroplated' => 'Galvanické pokovení',
+    'finish_tech_powder' => 'Práškové lakování',
+    'corporate_hq_value' => 'Gaziantep, Turecko (Přímý evropský logistický koridor)',
 
     /* HERO - filmové představení kolekcí */
     'hero_kicker' => 'Architektonické sanitární vybavení',

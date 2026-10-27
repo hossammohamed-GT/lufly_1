@@ -38,6 +38,9 @@ class ProductApiController extends Controller
         $perPage = min(100, max(1, $rawPerPage));
 
         $locale = (string) $request->query('locale', $this->translator->getLocale());
+        if ($this->translator->isSupported($locale)) {
+            $this->translator->setLocale($locale);
+        }
         $paginator = $this->products->paginate([
             'locale' => $locale,
             'status' => $status,
@@ -63,6 +66,9 @@ class ProductApiController extends Controller
     public function search(Request $request): JsonResponse
     {
         $locale = (string) $request->query('locale', $this->translator->getLocale());
+        if ($this->translator->isSupported($locale)) {
+            $this->translator->setLocale($locale);
+        }
         $query = trim((string) $request->query('q', ''));
         $limit = min(50, max(1, (int) $request->query('limit', '8')));
         $category = trim((string) $request->query('category', ''));
@@ -90,7 +96,9 @@ class ProductApiController extends Controller
         $colorFamilies = app(ProductColorFamilyService::class);
         $items = array_map(static function (array $item) use ($savedIds, $boxIds, $locale, $colorFamilies): array {
             $id = (int) ($item['id'] ?? 0);
-            $item['card'] = ProductCardPresenter::make($item);
+            $slug = (string) ($item['slug'] ?? '');
+            $item['url'] = $slug !== '' ? route('products.show', ['slug' => $slug]) : '';
+            $item['card'] = ProductCardPresenter::make($item, $locale);
             $item['is_saved'] = isset($savedIds[$id]);
             $item['in_box'] = isset($boxIds[$id]);
 

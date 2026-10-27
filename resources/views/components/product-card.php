@@ -7,7 +7,9 @@
  * @var array{product?: array<string, mixed>, slug?: string, index?: int, heading?: string, saved?: bool, in_box?: bool} $props
  */
 $item = is_array($props['product'] ?? null) ? $props['product'] : [];
-$card = \Modules\Products\Services\ProductCardPresenter::make($item);
+$card = is_array($item['card'] ?? null)
+    ? $item['card']
+    : \Modules\Products\Services\ProductCardPresenter::make($item, isset($item['locale']) ? (string) $item['locale'] : null);
 $productId = (int) ($item['id'] ?? 0);
 $slug = (string) ($props['slug'] ?? $item['slug'] ?? '');
 $cardUrl = route('products.show', ['slug' => $slug]);
@@ -25,9 +27,15 @@ if ($shortDesc === '') {
 }
 /* The structured summary below already carries the verified dimensions;
    keep the editorial excerpt concise instead of repeating the whole block. */
-$verifiedBlock = strpos($shortDesc, 'Verified drawing dimensions:');
-if ($verifiedBlock !== false) {
-    $shortDesc = trim(substr($shortDesc, 0, $verifiedBlock));
+foreach ([
+    'Verified drawing dimensions:',
+    'Doğrulanmış teknik çizim ölçüleri:',
+    'Ověřené rozměry z technického výkresu:',
+] as $dimMarker) {
+    $verifiedBlock = strpos($shortDesc, $dimMarker);
+    if ($verifiedBlock !== false) {
+        $shortDesc = trim(substr($shortDesc, 0, $verifiedBlock));
+    }
 }
 $heading = ($props['heading'] ?? 'h2') === 'h3' ? 'h3' : 'h2';
 $index = max(0, (int) ($props['index'] ?? 0));
@@ -120,9 +128,10 @@ $colorVariants = is_array($item['color_variants'] ?? null) ? $item['color_varian
         <?php endif; ?>
 
         <?php if ($card['specs'] !== []): ?>
-            <div class="pcard-specs" role="list">
-                <?php foreach ($card['specs'] as $spec): ?>
-                    <div class="pcard-spec<?= $spec['icon'] === 'dimensions' ? ' pcard-spec--dimensions' : '' ?>" role="listitem">
+            <?php $specCount = count($card['specs']); ?>
+            <div class="pcard-specs<?= ($specCount % 2 === 1) ? ' pcard-specs--odd' : '' ?>" role="list" data-spec-count="<?= $specCount ?>">
+                <?php foreach ($card['specs'] as $specIndex => $spec): ?>
+                    <div class="pcard-spec<?= ($specCount % 2 === 1 && $specIndex === 0) ? ' pcard-spec--wide' : '' ?>" role="listitem">
                         <?= $view->component('product-card-icon', ['name' => $spec['icon']]) ?>
                         <div>
                             <span class="pcard-spec-label"><?= e($spec['label']) ?></span>

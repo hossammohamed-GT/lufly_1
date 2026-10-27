@@ -574,35 +574,36 @@ a.pcard-swatch.pcard-option.is-active {
 .pcard-specs {
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: 12px;
+  gap: 9px 10px;
   margin: 2px 0 0;
-  padding: 12px 0 0;
+  padding: 11px 0 0;
   border-top: 1px solid var(--pcard-line);
 }
 
 .pcard-spec {
   display: flex;
-  align-items: center;
-  gap: 8px;
+  align-items: flex-start;
+  gap: 7px;
   min-width: 0;
 }
 
-.pcard-spec--dimensions {
+.pcard-spec--dimensions,
+.pcard-spec--wide {
   grid-column: 1 / -1;
-  align-items: flex-start;
 }
 
 .pcard-spec > svg {
-  flex: 0 0 23px;
-  width: 23px;
-  height: 23px;
+  flex: 0 0 19px;
+  width: 19px;
+  height: 19px;
+  margin-top: 1px;
   color: var(--pcard-muted);
 }
 
 .pcard-spec > div { min-width: 0; }
 .pcard-spec-label {
   display: block;
-  margin: 0 0 2px;
+  margin: 0 0 1.5px;
   color: var(--pcard-muted);
   font-size: 8.5px;
   font-weight: 500;
@@ -611,9 +612,9 @@ a.pcard-swatch.pcard-option.is-active {
 .pcard-spec-value {
   display: block;
   color: var(--pcard-text);
-  font-size: 10.5px;
+  font-size: 10px;
   font-weight: 500;
-  line-height: 1.35;
+  line-height: 1.32;
   overflow-wrap: anywhere;
 }
 

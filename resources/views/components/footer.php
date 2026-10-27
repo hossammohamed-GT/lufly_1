@@ -10,7 +10,7 @@
                     <?= e(trans('common.footer_brand_desc')) ?>
                 </p>
                 <div class="footer-brand-note">
-                    TIDAL MONOLITH SYSTEM · 2026 ARCHITECTURAL SPECIFICATION
+                    <?= e(trans('common.footer_brand_note')) ?>
                 </div>
             </div>
 
@@ -64,7 +64,7 @@
                     <a class="footer-link-strong" href="<?= e(route('contact')) ?>"><?= e(trans('nav.contact')) ?></a><br>
                     <a class="footer-link-strong" href="https://wa.me/908503040817" <?= external_link_attrs('https://wa.me/908503040817') ?>>WhatsApp: +90 850 3040 817</a><br>
                     <a class="footer-link-muted" href="mailto:info@lufly.tr">
-                        Email: info@lufly.tr
+                        <?= e(trans('common.email')) ?>: info@lufly.tr
                     </a><br>
                     <a class="footer-link-muted" href="https://maps.app.goo.gl/b4syJ4YpmdgtTV7d8" <?= external_link_attrs('https://maps.app.goo.gl/b4syJ4YpmdgtTV7d8') ?>>
                         <?= e(trans('common.factory_map')) ?>

@@ -186,12 +186,83 @@
       keepToken(data.token);
       paintCount(data.count);
       paintButtons(productId, data.added, button.getAttribute('data-box-label-on'), button.getAttribute('data-box-label-off'));
+      syncBundleButtons();
       say(document.querySelector('[data-box-status]'), data.message, 'ok');
       announce({ productId: productId, added: data.added, count: data.count, message: data.message });
     }).catch(function () {
       button.classList.remove('is-busy');
       undo(productId, wasOn, before);
       announce({ productId: productId, added: false, failed: true });
+    });
+  });
+
+  function syncBundleButtons() {
+    var bundles = document.querySelectorAll('[data-box-bundle]');
+    for (var i = 0; i < bundles.length; i++) {
+      var btn = bundles[i];
+      var ids = String(btn.getAttribute('data-box-bundle') || '').split(',').filter(Boolean);
+      var allOn = ids.length > 0 && ids.every(function (pid) {
+        var single = document.querySelector('[data-box-add][data-box-product="' + pid + '"]');
+        return !!(single && single.classList.contains('is-on'));
+      });
+      btn.classList.toggle('is-on', allOn);
+      var labelNode = btn.querySelector('[data-bundle-label]');
+      if (labelNode) {
+        labelNode.textContent = allOn
+          ? (btn.getAttribute('data-bundle-label-on') || labelNode.textContent)
+          : (btn.getAttribute('data-bundle-label-off') || labelNode.textContent);
+      }
+    }
+  }
+
+  /* ---- 1b. add WC + compatible Seat Cover together in one click ---------- */
+
+  document.addEventListener('click', function (event) {
+    var bundleBtn = event.target.closest ? event.target.closest('[data-box-bundle]') : null;
+    if (!bundleBtn || bundleBtn.classList.contains('is-busy')) return;
+
+    event.preventDefault();
+    var url = bundleBtn.getAttribute('data-box-endpoint') || addEndpoint();
+    var ids = String(bundleBtn.getAttribute('data-box-bundle') || '').split(',').map(function (s) {
+      return s.trim();
+    }).filter(Boolean);
+    if (!url || !ids.length) return;
+
+    /* Only toggle pieces that are NOT yet in the box so clicking "Add WC + Seat Cover"
+       guarantees both end up IN the box rather than accidentally removing one. */
+    var missing = ids.filter(function (pid) {
+      var single = document.querySelector('[data-box-add][data-box-product="' + pid + '"]');
+      return !single || !single.classList.contains('is-on');
+    });
+    if (!missing.length) {
+      syncBundleButtons();
+      return;
+    }
+
+    bundleBtn.classList.add('is-busy');
+    var chain = Promise.resolve();
+    missing.forEach(function (pid) {
+      chain = chain.then(function () {
+        return post(url, { product_id: pid }).then(function (data) {
+          if (data && data.ok) {
+            keepToken(data.token);
+            paintCount(data.count);
+            var refBtn = document.querySelector('[data-box-add][data-box-product="' + pid + '"]');
+            paintButtons(
+              pid,
+              data.added,
+              refBtn ? refBtn.getAttribute('data-box-label-on') : null,
+              refBtn ? refBtn.getAttribute('data-box-label-off') : null
+            );
+            announce({ productId: pid, added: data.added, count: data.count, message: data.message });
+          }
+        });
+      });
+    });
+
+    chain.finally(function () {
+      bundleBtn.classList.remove('is-busy');
+      syncBundleButtons();
     });
   });
 

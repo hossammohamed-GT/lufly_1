@@ -222,9 +222,9 @@
       swapCopy({
         phrase: card.dataset.phrase,
         story: card.dataset.story,
-        captionTitle: data.title,
-        title: data.title,
-        desc: data.desc
+        captionTitle: card.dataset.title || data.title,
+        title: card.dataset.title || data.title,
+        desc: card.dataset.desc || data.desc
       });
 
       if (!options.skipImage) {

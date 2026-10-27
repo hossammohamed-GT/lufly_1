@@ -27,6 +27,8 @@ if ($product['name'] === '') {
 }
 $variants = is_array($product['variants'] ?? null) ? $product['variants'] : [];
 $specs = is_array($product['specs'] ?? null) ? $product['specs'] : [];
+$presentedFeatures = is_array($product['presented_features'] ?? null) ? $product['presented_features'] : [];
+$seatCovers = is_array($product['seat_covers'] ?? null) ? $product['seat_covers'] : [];
 /* three independent image groups; each may hold any number of images */
 $gallery = is_array($product['gallery'] ?? null) ? array_values($product['gallery']) : [];
 $drawings = is_array($product['drawings'] ?? null) ? array_values($product['drawings']) : [];
@@ -110,7 +112,7 @@ if (feature('planner', true) && (bool) config('planner.enabled', true)) {
 ?>
 <main class="pdp" id="main">
     <div class="pdp-inner">
-        <nav class="pdp-crumb" aria-label="Breadcrumb">
+        <nav class="pdp-crumb" aria-label="<?= e(trans('products.breadcrumb_label')) ?>">
             <a href="<?= e(route('home')) ?>"><?= e(trans('common.factory_direct')) ?></a>
             <span class="pdp-crumb-sep" aria-hidden="true">/</span>
             <a href="<?= e(route('products.index')) ?>"><?= e(trans('products.title')) ?></a>
@@ -156,7 +158,7 @@ if (feature('planner', true) && (bool) config('planner.enabled', true)) {
                                      as a technical document, not a photo -->
                                 <span class="pdp-plate-tick" aria-hidden="true"></span>
                                 <div class="pdp-plate-block">
-                                    <span class="pdp-plate-model">MODEL <?= e($modelCode) ?></span>
+                                    <span class="pdp-plate-model"><?= e(trans('products.model_badge')) ?> <?= e($modelCode) ?></span>
                                     <span class="pdp-plate-std">EN 997 &middot; CE</span>
                                 </div>
                             <?php endif; ?>
@@ -264,6 +266,131 @@ if (feature('planner', true) && (bool) config('planner.enabled', true)) {
                         <h3 class="pdp-block-title"><?= e(trans('products.description')) ?></h3>
                         <p><?= nl2br(e($desc)) ?></p>
                     </div>
+                <?php endif; ?>
+
+                <?php if ($presentedFeatures !== []): ?>
+                    <?php
+                        $pdpFeatureItems = array_slice($presentedFeatures, 0, 6);
+                        $pdpFeatureOdd = (count($pdpFeatureItems) % 2) === 1;
+                    ?>
+                    <div class="pdp-highlights">
+                        <dl class="pcard-specs<?= $pdpFeatureOdd ? ' pcard-specs--odd' : '' ?>">
+                            <?php foreach ($pdpFeatureItems as $pfIdx => $pf): ?>
+                                <?php $pfWide = $pdpFeatureOdd && $pfIdx === 0; ?>
+                                <div class="pcard-spec<?= $pfWide ? ' pcard-spec--wide' : '' ?>">
+                                    <span class="pcard-spec-icon" aria-hidden="true">
+                                        <?= $view->component('product-card-icon', ['name' => (string) ($pf['icon'] ?? 'spark')]) ?>
+                                    </span>
+                                    <div class="pcard-spec-copy">
+                                        <dt><?= e((string) ($pf['label'] ?? '')) ?></dt>
+                                        <dd><?= e((string) ($pf['value'] ?? '')) ?></dd>
+                                    </div>
+                                </div>
+                            <?php endforeach; ?>
+                        </dl>
+                    </div>
+                <?php endif; ?>
+
+                <?php if ($seatCovers !== []): ?>
+                    <section class="pdp-seat-section" id="wc-seat-options" aria-labelledby="wc-seat-heading">
+                        <div class="pdp-seat-head">
+                            <div>
+                                <span class="pdp-seat-badge"><?= e(trans('products.wc_seat_included_note')) ?></span>
+                                <h3 class="pdp-block-title" id="wc-seat-heading"><?= e(trans('products.wc_seat_title')) ?></h3>
+                            </div>
+                            <span class="pdp-seat-count"><?= count($seatCovers) ?></span>
+                        </div>
+                        <p class="pdp-seat-sub"><?= e(trans('products.wc_seat_subtitle')) ?></p>
+
+                        <div class="pdp-seat-list">
+                            <?php foreach ($seatCovers as $seat): ?>
+                                <?php
+                                    $seatId = (int) ($seat['id'] ?? 0);
+                                    $seatCode = (string) ($seat['model_code'] ?? $seat['sku'] ?? '');
+                                    $seatName = trim((string) ($seat['name'] ?? ''));
+                                    if ($seatName === '') {
+                                        $seatName = trans('products.name_pending');
+                                    }
+                                    $seatImg = (string) ($seat['image'] ?? $fallbackImg);
+                                    $seatDrawings = is_array($seat['drawings'] ?? null) ? array_values($seat['drawings']) : [];
+                                    $seatDesc = trim((string) ($seat['short_description'] ?? $seat['description'] ?? ''));
+                                    $seatFeatures = is_array($seat['presented_features'] ?? null) ? array_slice($seat['presented_features'], 0, 4) : [];
+                                    $seatInBox = feature('box', true)
+                                        && class_exists(\Modules\Box\Services\BoxService::class)
+                                        && app(\Modules\Box\Services\BoxService::class)->has($seatId);
+                                    $bundleBothInBox = $inBox && $seatInBox;
+                                ?>
+                                <article class="pdp-seat-card" data-seat-id="<?= $seatId ?>">
+                                    <div class="pdp-seat-media-col">
+                                        <div class="pdp-seat-thumb-wrap">
+                                            <img src="<?= e(asset($seatImg)) ?>"
+                                                 alt="<?= e($seatName) ?>"
+                                                 class="pdp-seat-thumb"
+                                                 data-pdp-zoom
+                                                 data-pdp-zoom-caption="<?= e($seatName . ($seatCode !== '' ? ' · ' . $seatCode : '')) ?>"
+                                                 role="button"
+                                                 tabindex="0"
+                                                 width="220" height="220"
+                                                 loading="lazy" decoding="async"
+                                                 onerror="this.onerror=null; this.src='<?= e(asset($fallbackImg)) ?>';">
+                                        </div>
+                                        <?php if ($seatDrawings !== []): ?>
+                                            <button type="button"
+                                                    class="pdp-seat-drawing-btn"
+                                                    data-pdp-zoom
+                                                    data-zoom-src="<?= e(asset((string) $seatDrawings[0])) ?>"
+                                                    data-pdp-zoom-caption="<?= e($seatName . ' · ' . trans('products.view_drawing')) ?>">
+                                                <?= $view->component('product-card-icon', ['name' => 'dimensions']) ?>
+                                                <span><?= e(trans('products.wc_seat_view_drawing')) ?></span>
+                                            </button>
+                                        <?php endif; ?>
+                                    </div>
+
+                                    <div class="pdp-seat-body">
+                                        <div class="pdp-seat-meta">
+                                            <span class="pdp-code-chip"><?= e(trans('products.wc_seat_model')) ?>: <?= e($seatCode) ?></span>
+                                        </div>
+                                        <h4 class="pdp-seat-title"><?= e($seatName) ?></h4>
+                                        <?php if ($seatDesc !== ''): ?>
+                                            <p class="pdp-seat-desc"><?= e($seatDesc) ?></p>
+                                        <?php endif; ?>
+
+                                        <?php if ($seatFeatures !== []): ?>
+                                            <dl class="pdp-seat-specs">
+                                                <?php foreach ($seatFeatures as $sf): ?>
+                                                    <div class="pdp-seat-spec">
+                                                        <dt><?= e((string) ($sf['label'] ?? '')) ?></dt>
+                                                        <dd><?= e((string) ($sf['value'] ?? '')) ?></dd>
+                                                    </div>
+                                                <?php endforeach; ?>
+                                            </dl>
+                                        <?php endif; ?>
+
+                                        <?php if (feature('box', true)): ?>
+                                            <div class="pdp-seat-actions">
+                                                <?= $view->component('box-button', [
+                                                    'product_id' => $seatId,
+                                                    'name' => $seatName,
+                                                    'variant' => 'pill',
+                                                    'on' => $seatInBox,
+                                                    'label' => trans('products.wc_seat_add_single'),
+                                                ]) ?>
+                                                <button type="button"
+                                                        class="pdp-seat-bundle-btn<?= $bundleBothInBox ? ' is-on' : '' ?>"
+                                                        data-box-bundle="<?= (int) ($product['id'] ?? 0) ?>,<?= $seatId ?>"
+                                                        data-box-endpoint="<?= e(route('box.add')) ?>"
+                                                        data-bundle-label-off="<?= e(trans('products.wc_seat_add_bundle')) ?>"
+                                                        data-bundle-label-on="<?= e(trans('products.wc_seat_bundle_added')) ?>">
+                                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" width="15" height="15" aria-hidden="true"><path d="M12 5v14M5 12h14"/></svg>
+                                                    <span data-bundle-label><?= e($bundleBothInBox ? trans('products.wc_seat_bundle_added') : trans('products.wc_seat_add_bundle')) ?></span>
+                                                </button>
+                                            </div>
+                                        <?php endif; ?>
+                                    </div>
+                                </article>
+                            <?php endforeach; ?>
+                        </div>
+                    </section>
                 <?php endif; ?>
 
                 <div class="pdp-specs">

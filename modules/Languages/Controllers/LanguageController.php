@@ -54,10 +54,49 @@ class LanguageController extends Controller
 
     public function switchLocale(string $code): RedirectResponse
     {
+        $translator = app(\Core\Localization\Translator::class);
+        if (!$translator->isSupported($code)) {
+            $code = (string) config('localization.default', 'en');
+        }
+
         $this->session->set('_locale', $code);
+        $translator->setLocale($code);
 
         $referer = request()->header('HTTP_REFERER');
+        if (is_string($referer) && $referer !== '') {
+            $parts = parse_url($referer) ?: [];
+            $path = (string) ($parts['path'] ?? '');
+            $supportedCodes = array_keys($translator->supported());
+            if (preg_match('#^/(' . implode('|', array_map('preg_quote', $supportedCodes)) . ')(?:/(.*))?$#', $path, $match) === 1) {
+                $fromLocale = $match[1];
+                $rest = trim((string) ($match[2] ?? ''), '/');
+                $newRest = $rest;
+                if ($rest !== '') {
+                    $segments = explode('/', $rest);
+                    $firstSeg = $segments[0];
+                    $routeKeys = ['products.index', 'contact', 'central-vacuum', 'favorites.index', 'box.index', 'planner.index', 'login'];
+                    foreach ($routeKeys as $rk) {
+                        if ($translator->trans('routes.' . $rk, [], $fromLocale) === $firstSeg) {
+                            $segments[0] = $translator->trans('routes.' . $rk, [], $code);
+                            $newRest = implode('/', $segments);
+                            break;
+                        }
+                    }
+                }
+                $rebuilt = url('/' . $code . ($newRest !== '' ? '/' . $newRest : ''));
+                if (!empty($parts['query'])) {
+                    $rebuilt .= '?' . $parts['query'];
+                }
+                if (!empty($parts['fragment'])) {
+                    $rebuilt .= '#' . $parts['fragment'];
+                }
 
-        return new RedirectResponse(is_string($referer) && $referer !== '' ? $referer : url('/'));
+                return new RedirectResponse($rebuilt);
+            }
+
+            return new RedirectResponse($referer);
+        }
+
+        return new RedirectResponse(url('/' . $code));
     }
 }

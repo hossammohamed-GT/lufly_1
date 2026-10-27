@@ -13,7 +13,7 @@ return [
     'news' => 'Haberler & Projeler',
     'contact' => 'İletişim',
     'search' => 'Katalogda ara',
-    'search_placeholder' => 'Mimari armatür, magnetic, silia ara...',
+    'search_placeholder' => 'Mimari armatür, 1620, PVD ara...',
     /* alan boş ve boşta dururken yer tutucunun harf harf yazdığı öneriler
        (yukarıdaki durgun satır betik kapalıyken ve ilk anda görünür) */
     'search_mood_1' => 'Deneyin: gömme rezervuarlı WC',

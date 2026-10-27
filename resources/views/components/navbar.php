@@ -96,8 +96,17 @@ $sheetLinks = array_merge(
     [$indexLinks[4]]
 );
 
-/* Language targets keep the current route translated per locale. */
+/* Language targets keep the current route AND active query filters translated per locale. */
 $languageLinks = [];
+$preservedQueryParams = [];
+if ($currentQuery !== '') {
+    parse_str($currentQuery, $parsedQuery);
+    if (is_array($parsedQuery)) {
+        unset($parsedQuery['locale'], $parsedQuery['lang']);
+        $preservedQueryParams = $parsedQuery;
+    }
+}
+$preservedQuerySuffix = $preservedQueryParams !== [] ? '?' . http_build_query($preservedQueryParams) : '';
 
 foreach ($supported as $code => $name) {
     if ($code === $currentLocale) {
@@ -112,7 +121,7 @@ foreach ($supported as $code => $name) {
             }
         }
 
-        $target = url($path);
+        $target = url(rtrim($path, '/') === '/' . $code ? '/' . $code : $path) . $preservedQuerySuffix;
     } else {
         $target = route('lang.switch', ['code' => $code]);
     }
