@@ -80,7 +80,7 @@ if ($currentLabel === '' && is_array($selectedVariant['finish'] ?? null)) {
                         $id = (int) ($variant['id'] ?? 0);
                         $finish = is_array($variant['finish'] ?? null) ? $variant['finish'] : [];
                         $label = trim((string) ($finish['label'] ?? ''));
-                        $optionFinishes = is_array($variant['card']['finishes'] ?? null)
+                        $optionFinishes = !empty($variant['card']['finishes']) && is_array($variant['card']['finishes'])
                             ? $variant['card']['finishes']
                             : ($finish !== [] ? [$finish] : []);
                         $code = trim((string) ($variant['sku'] ?? ''));

@@ -76,12 +76,13 @@ class HomeController extends Controller
         /* Media readiness is intentionally uncached: uploading the missing
            photo/drawing restores a product immediately, while removing either
            one removes it from the showcase on the very next request. */
-        $pool = $connection->select(
+        $colorFamilies = app(\Modules\Products\Services\ProductColorFamilyService::class);
+        $pool = $colorFamilies->collapseRows($connection->select(
             "SELECT p.id, p.category_id, p.is_featured
                FROM products p
               WHERE p.status = 'active' AND p.deleted_at IS NULL
                 AND " . ProductVisibility::mediaReadySql('p'),
-        );
+        ));
 
         $byCategory = [];
         foreach ($pool as $row) {
@@ -112,7 +113,6 @@ class HomeController extends Controller
 
         \Modules\Products\Models\Product::eagerLoad($rawFeatured);
 
-        $colorFamilies = app(\Modules\Products\Services\ProductColorFamilyService::class);
         $featuredProducts = array_map(function ($p) use ($locale, $colorFamilies) {
             return $colorFamilies->attach($p->translate($locale), $locale);
         }, $rawFeatured);

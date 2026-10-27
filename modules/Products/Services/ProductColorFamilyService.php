@@ -20,6 +20,9 @@ final class ProductColorFamilyService
     /** @var array<int, array<int, int>>|null product id => ordered family ids */
     private ?array $memberships = null;
 
+    /** @var array<int, bool>|null product id => has non-empty source name */
+    private ?array $namedIds = null;
+
     /** @var array<int, Product> */
     private array $models = [];
 
@@ -38,6 +41,7 @@ final class ProductColorFamilyService
             return array_values($rows);
         }
 
+        $namedIds = $this->namedIds();
         $seen = [];
         $collapsed = [];
         foreach ($rows as $row) {
@@ -48,9 +52,14 @@ final class ProductColorFamilyService
             $family = $memberships[$id] ?? null;
             $key = $family !== null ? 'family-' . $family[0] : 'product-' . $id;
             if (isset($seen[$key])) {
+                $slot = $seen[$key];
+                $currentId = (int) ($collapsed[$slot]['id'] ?? 0);
+                if (!isset($namedIds[$currentId]) && isset($namedIds[$id])) {
+                    $collapsed[$slot] = $row;
+                }
                 continue;
             }
-            $seen[$key] = true;
+            $seen[$key] = count($collapsed);
             $collapsed[] = $row;
         }
 
@@ -77,6 +86,7 @@ final class ProductColorFamilyService
 
         $models = $this->models($family);
         $variants = [];
+        $finishSlots = [];
         foreach ($family as $memberId) {
             if (!isset($models[$memberId])) {
                 continue;
@@ -90,10 +100,8 @@ final class ProductColorFamilyService
 
             $payload = $models[$memberId]->translate($locale);
             $card = ProductCardPresenter::make($payload);
-            $name = trim((string) ($payload['name'] ?? ''));
-            if ($name === '') {
-                $name = trans('products.name_pending');
-            }
+            $rawName = trim((string) ($payload['name'] ?? ''));
+            $name = $rawName !== '' ? $rawName : trans('products.name_pending');
 
             $labels = [];
             foreach ((array) ($card['finishes'] ?? []) as $finish) {
@@ -103,17 +111,35 @@ final class ProductColorFamilyService
                 }
             }
             $firstFinish = $card['finishes'][0] ?? null;
+            $finishKey = (string) ($firstFinish['key'] ?? 'neutral');
+            $finishLabel = $labels !== [] ? implode(' / ', $labels) : trans('products.finish_unspecified');
             $payload['card'] = $card;
             $payload['display_name'] = $name;
             $payload['url'] = route('products.show', ['slug' => (string) ($payload['slug'] ?? '')]);
             $payload['finish'] = [
-                'key' => (string) ($firstFinish['key'] ?? 'neutral'),
-                'label' => $labels !== [] ? implode(' / ', $labels) : trans('products.finish_unspecified'),
+                'key' => $finishKey,
+                'label' => $finishLabel,
             ];
             $payload['is_saved'] = isset($savedIds[$memberId]);
             $payload['in_box'] = isset($boxIds[$memberId]);
 
-            $variants[] = $this->compact($payload);
+            $compact = $this->compact($payload);
+            $rank = ($memberId === $id ? 4 : 0) + ($rawName !== '' ? 2 : 0) + (trim((string) ($payload['description'] ?? '')) !== '' ? 1 : 0);
+            $signature = $labels !== []
+                ? strtolower($finishKey . '|' . $finishLabel)
+                : 'member-' . $memberId;
+
+            if (isset($finishSlots[$signature])) {
+                $existingSlot = $finishSlots[$signature]['slot'];
+                if ($rank > $finishSlots[$signature]['rank']) {
+                    $variants[$existingSlot] = $compact;
+                    $finishSlots[$signature]['rank'] = $rank;
+                }
+                continue;
+            }
+
+            $finishSlots[$signature] = ['slot' => count($variants), 'rank' => $rank];
+            $variants[] = $compact;
         }
 
         if (count($variants) > 1) {
@@ -121,6 +147,30 @@ final class ProductColorFamilyService
         }
 
         return $product;
+    }
+
+    /** @return array<int, bool> */
+    private function namedIds(): array
+    {
+        if ($this->namedIds !== null) {
+            return $this->namedIds;
+        }
+
+        $rows = Product::query()->connection()->select(
+            "SELECT DISTINCT pt.product_id
+             FROM product_translations pt
+             WHERE TRIM(COALESCE(pt.name, '')) <> ''",
+        );
+
+        $map = [];
+        foreach ($rows as $row) {
+            $pid = (int) ($row['product_id'] ?? 0);
+            if ($pid > 0) {
+                $map[$pid] = true;
+            }
+        }
+
+        return $this->namedIds = $map;
     }
 
     /** @return array<int, array<int, int>> */

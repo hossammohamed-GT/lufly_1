@@ -418,6 +418,14 @@
   background: var(--ds-primary-soft);
 }
 
+.pdp-info .pcard-finishes {
+  --pcard-surface: var(--ds-surface);
+  --pcard-text: var(--ds-text);
+  --pcard-ink: var(--ds-text);
+  --pcard-muted: var(--ds-text-muted);
+  --pcard-line: color-mix(in srgb, var(--ds-primary) 17%, var(--ds-border));
+}
+
 .pdp-variants {
   display: flex;
   flex-wrap: wrap;

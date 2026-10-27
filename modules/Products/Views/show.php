@@ -7,6 +7,7 @@
  * @var Core\View\View $view
  */
 $view->layout('layouts.frontend');
+$view->pushStyle('frontend/css/product-card.css');
 $view->pushStyle('frontend/products/detail/detail.css');
 $view->pushScript('frontend/products/detail/detail.js');
 $view->pushStyle('frontend/favorites/favorites.css');
@@ -230,6 +231,8 @@ if (feature('planner', true) && (bool) config('planner.enabled', true)) {
                         <span class="pdp-code-chip is-teal"><?= e(trans('common.featured')) ?></span>
                     <?php endif; ?>
                 </div>
+
+                <?= $view->component('product-color-variants', ['item' => $product]) ?>
 
                 <?php if (count($variants) > 1): ?>
                     <div class="pdp-variants" aria-label="<?= e(trans('products.variants_label')) ?>">

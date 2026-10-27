@@ -138,7 +138,7 @@ if (extension_loaded('pdo_sqlite')) {
     $assert($nonLeafAssigned === 0, 'SQLite runtime assigns every product exclusively to an active leaf category');
 
     $sqlParityOk = true;
-    foreach (['migrations', 'categories', 'category_translations', 'products', 'product_translations', 'product_variants', 'product_media', 'media', 'product_search_keywords', 'product_import_logs'] as $parityTable) {
+    foreach (['migrations', 'categories', 'category_translations', 'products', 'product_translations', 'product_variants', 'product_specifications', 'product_media', 'product_relations', 'media', 'product_search_keywords', 'product_import_logs'] as $parityTable) {
         $sqliteCount = (int) $pdo->query("SELECT COUNT(*) FROM `{$parityTable}`")->fetchColumn();
         $expectedHeader = "-- data: {$parityTable} ({$sqliteCount} rows)";
         if (!str_contains($databaseDump, $expectedHeader) || substr_count($databaseDump, "INSERT INTO `{$parityTable}` ") !== $sqliteCount) {
@@ -147,6 +147,16 @@ if (extension_loaded('pdo_sqlite')) {
         }
     }
     $assert($sqlParityOk, 'Root lufly-database.sql row counts match database/lufly.sqlite across all core tables');
+
+    $expectedColorEdges = 0;
+    foreach (is_array($seededFamilies) ? $seededFamilies : [] as $familyRow) {
+        $expectedColorEdges += max(0, count((array) ($familyRow['products'] ?? [])) - 1);
+    }
+    $sqliteColorEdges = (int) $pdo->query("SELECT COUNT(*) FROM product_relations WHERE relation_type = 'color_variant'")->fetchColumn();
+    $assert(
+        count($seededFamilies) >= 105 && $sqliteColorEdges === $expectedColorEdges,
+        'SQLite product_relations stays synchronized with all reviewed colour families',
+    );
 }
 
 $categoryServiceSrc = (string) file_get_contents($root . '/app/Services/CategoryService.php');
@@ -196,6 +206,33 @@ $assert(
     && ($productCategoryBySlug['1755-9720c'] ?? '') === 'bathroom.mixers.thermostatic-mixers'
     && ($productCategoryBySlug['1755-9720gg'] ?? '') === 'bathroom.mixers.thermostatic-mixers',
     'Audited bathroom, drain, thermostatic, and kids sanitary ware items stay in their exact leaf categories',
+);
+
+$familyIndexBySlug = [];
+foreach (is_array($seededFamilies) ? $seededFamilies : [] as $fIdx => $familyRow) {
+    foreach ((array) ($familyRow['products'] ?? []) as $memberSlug) {
+        $familyIndexBySlug[(string) $memberSlug] = $fIdx;
+    }
+}
+$colorFamilyServiceSrc = (string) file_get_contents($root . '/modules/Products/Services/ProductColorFamilyService.php');
+$colorVariantsViewSrc = (string) file_get_contents($root . '/resources/views/components/product-color-variants.php');
+$assert(
+    isset($familyIndexBySlug['1654-8032c'], $familyIndexBySlug['1654-8032bn'], $familyIndexBySlug['1654-8032gg'], $familyIndexBySlug['1654-8032rg'], $familyIndexBySlug['1654-8003rgb'])
+    && $familyIndexBySlug['1654-8032c'] === $familyIndexBySlug['1654-8032rg']
+    && $familyIndexBySlug['1654-8003rgb'] === $familyIndexBySlug['1654-8032rg']
+    && isset($familyIndexBySlug['1654-8002c'], $familyIndexBySlug['1654-8002mb'])
+    && $familyIndexBySlug['1654-8002c'] === $familyIndexBySlug['1654-8002mb']
+    && isset($familyIndexBySlug['1681-084c'], $familyIndexBySlug['1681-084rg'])
+    && $familyIndexBySlug['1681-084c'] === $familyIndexBySlug['1681-084rg']
+    && isset($familyIndexBySlug['hl-st110'], $familyIndexBySlug['hl-st110rg'])
+    && $familyIndexBySlug['hl-st110'] === $familyIndexBySlug['hl-st110rg']
+    && isset($familyIndexBySlug['4000-7644a'], $familyIndexBySlug['4000-7644b'])
+    && $familyIndexBySlug['4000-7644a'] === $familyIndexBySlug['4000-7644b']
+    && str_contains($colorFamilyServiceSrc, '$finishSlots[$signature]')
+    && str_contains($colorVariantsViewSrc, "!empty(\$variant['card']['finishes'])")
+    && str_contains($productControllerSrc, 'ProductColorFamilyService::class)->attach(')
+    && str_contains($productShowViewSrc, "component('product-color-variants'"),
+    'All audited multi-colour products collapse into single family cards with deduplicated swatches across catalog and PDP',
 );
 
 if ($failures !== []) {

@@ -37,15 +37,23 @@ class ProductApiController extends Controller
         $rawPerPage = (int) $request->query('per_page', '10');
         $perPage = min(100, max(1, $rawPerPage));
 
+        $locale = (string) $request->query('locale', $this->translator->getLocale());
         $paginator = $this->products->paginate([
-            'locale' => (string) $request->query('locale', $this->translator->getLocale()),
+            'locale' => $locale,
             'status' => $status,
             'search' => (string) $request->query('q', ''),
             'require_media' => !$canManage,
         ], $page, $perPage);
 
+        $colorFamilies = !$canManage ? app(ProductColorFamilyService::class) : null;
         $items = array_map(
-            fn ($product) => $product->translate((string) $request->query('locale', $this->translator->getLocale())),
+            static function ($product) use ($locale, $colorFamilies): array {
+                $translated = $product->translate($locale);
+
+                return $colorFamilies !== null
+                    ? $colorFamilies->attach($translated, $locale)
+                    : $translated;
+            },
             $paginator->items(),
         );
 

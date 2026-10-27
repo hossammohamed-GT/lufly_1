@@ -20,8 +20,12 @@ final class ProductCardPresenter
         'chrome brushed' => ['chrome', 'Brushed Chrome'],
         'brushed chrome' => ['chrome', 'Brushed Chrome'],
         'chrome shinning' => ['chrome', 'Chrome'],
+        'chrome shining' => ['chrome', 'Chrome'],
         'shinning chrome' => ['chrome', 'Chrome'],
+        'shining chrome' => ['chrome', 'Chrome'],
+        'mirror polished' => ['chrome', 'Mirror Polished'],
         'mirror chrome' => ['chrome', 'Chrome'],
+        'brushed bronze' => ['bronze', 'Brushed Bronze'],
         'soft bronze' => ['bronze', 'Bronze'],
         'brush rose gold' => ['rose-gold', 'Brushed Rose Gold'],
         'gold matt' => ['gold', 'Matt Gold'],
@@ -84,9 +88,12 @@ final class ProductCardPresenter
         'grey' => ['gray', 'Grey'],
         'gray' => ['gray', 'Gray'],
         'beige' => ['beige', 'Beige'],
-        'brushed' => ['neutral', 'Brushed'],
-        'prushed' => ['neutral', 'Brushed'],
-        'satin' => ['neutral', 'Satin'],
+        'polished' => ['chrome', 'Polished'],
+        'shinning' => ['chrome', 'Polished'],
+        'shining' => ['chrome', 'Polished'],
+        'brushed' => ['steel', 'Brushed'],
+        'prushed' => ['steel', 'Brushed'],
+        'satin' => ['steel', 'Satin'],
     ];
 
     /** @param array<string, mixed> $product translated product payload */
@@ -276,9 +283,9 @@ final class ProductCardPresenter
             }
         }
 
-        if (preg_match_all('/\b(?:finish|colou?r)\s*[:\-]\s*([^,;.\r\n]+)/iu', $description, $matches)) {
+        if (preg_match_all('/\b(?:finish|colou?r)\s*[:\-]\s*([^,;.\r\n]+(?:\s*,\s*with\s+(?:decorative\s+)?[^,;.\r\n]+)?)/iu', $description, $matches)) {
             foreach ($matches[1] as $value) {
-                $parts = preg_split('/\s+with\s+/iu', (string) $value) ?: [(string) $value];
+                $parts = preg_split('/\s*,?\s+with\s+|\s*\+\s*/iu', (string) $value) ?: [(string) $value];
                 foreach ($parts as $index => $part) {
                     $add((string) $part, $index > 0);
                 }
@@ -297,7 +304,7 @@ final class ProductCardPresenter
         $suffix = '(?:\s+(?:pvd|shinning|shining|brushed|brush|brish|matt|matte))*';
         $pattern = '/\b(?:(?:pvd|shinning|shining|soft|mirror)\s+)*(' . $alternation . ')' . $suffix
             . '(?:\s*(?:\+|\bwith\b)\s*(?:pvd\s+)?(' . $alternation . ')' . $suffix . ')?'
-            . '\s+(?:decorative\s+)?(?:colou?r(?:\s+finish)?|finish|accent)\b/iu';
+            . '(?:\s+|-)(?:decorative\s+)?(?:colou?r(?:\s+finish)?|finish|accent)\b/iu';
         if (preg_match_all($pattern, $description, $matches, PREG_SET_ORDER)) {
             foreach ($matches as $match) {
                 $add((string) ($match[1] ?? ''));
@@ -305,6 +312,9 @@ final class ProductCardPresenter
                     $add((string) $match[2]);
                 }
             }
+        }
+        if ($finishes === [] && preg_match('/\b(' . $alternation . ')\s+plated\b/iu', $description, $match) === 1) {
+            $add((string) $match[1]);
         }
 
         $labels = array_column($finishes, 'label');

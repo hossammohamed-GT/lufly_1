@@ -8494,6 +8494,26 @@
         ],
         "images": [
             {
+                "manager_id": 216,
+                "path": "/images/products/catalog/8ff224dedec0f2e7f7b2ca9d.webp",
+                "source_path": "assets/catalog/8ff224dedec0f2e7f7b2ca9d.webp",
+                "original_name": "image130.png",
+                "type": "gallery",
+                "available": true,
+                "previewable": true,
+                "mime_type": "image/webp",
+                "extension": "webp",
+                "size": 13076,
+                "width": 1081,
+                "height": 151,
+                "sha256": "c73e74633fe59d647183041161935246bb09756d302ccf820ca683a6a8f8dc5f",
+                "source_sha256": "8ff224dedec0f2e7f7b2ca9d37c47c0fff29db01d16740264ea66bc7b3caba89",
+                "source_column": "G",
+                "source_row": 8,
+                "source_sort_order": 1,
+                "caption": ""
+            },
+            {
                 "manager_id": 214,
                 "path": "/images/products/catalog/2412d2966bc4581c48f30ebd.webp",
                 "source_path": "assets/catalog/2412d2966bc4581c48f30ebd.webp",
@@ -8510,7 +8530,27 @@
                 "source_sha256": "2412d2966bc4581c48f30ebd37257edac3a85a3d06b8c10d437aad62c120fd56",
                 "source_column": "D",
                 "source_row": 8,
-                "source_sort_order": 214,
+                "source_sort_order": 2,
+                "caption": ""
+            },
+            {
+                "manager_id": 217,
+                "path": "/images/products/catalog/7a3565fe15005e01a57d80e9.webp",
+                "source_path": "assets/catalog/7a3565fe15005e01a57d80e9.webp",
+                "original_name": "image131.png",
+                "type": "gallery",
+                "available": true,
+                "previewable": true,
+                "mime_type": "image/webp",
+                "extension": "webp",
+                "size": 42344,
+                "width": 516,
+                "height": 558,
+                "sha256": "2499243807e1bb3ccb7f8a69b1ede317b98f4ea27134c7d1eeb25f8ca8f59e5c",
+                "source_sha256": "7a3565fe15005e01a57d80e92542729796c48ba1c9feb4f9602c4873708486f6",
+                "source_column": "G",
+                "source_row": 8,
+                "source_sort_order": 3,
                 "caption": ""
             },
             {
@@ -8531,46 +8571,6 @@
                 "source_column": "E",
                 "source_row": 8,
                 "source_sort_order": 215,
-                "caption": ""
-            },
-            {
-                "manager_id": 216,
-                "path": "/images/products/catalog/8ff224dedec0f2e7f7b2ca9d.webp",
-                "source_path": "assets/catalog/8ff224dedec0f2e7f7b2ca9d.webp",
-                "original_name": "image130.png",
-                "type": "gallery",
-                "available": true,
-                "previewable": true,
-                "mime_type": "image/webp",
-                "extension": "webp",
-                "size": 13076,
-                "width": 1081,
-                "height": 151,
-                "sha256": "c73e74633fe59d647183041161935246bb09756d302ccf820ca683a6a8f8dc5f",
-                "source_sha256": "8ff224dedec0f2e7f7b2ca9d37c47c0fff29db01d16740264ea66bc7b3caba89",
-                "source_column": "G",
-                "source_row": 8,
-                "source_sort_order": 216,
-                "caption": ""
-            },
-            {
-                "manager_id": 217,
-                "path": "/images/products/catalog/7a3565fe15005e01a57d80e9.webp",
-                "source_path": "assets/catalog/7a3565fe15005e01a57d80e9.webp",
-                "original_name": "image131.png",
-                "type": "gallery",
-                "available": true,
-                "previewable": true,
-                "mime_type": "image/webp",
-                "extension": "webp",
-                "size": 42344,
-                "width": 516,
-                "height": 558,
-                "sha256": "2499243807e1bb3ccb7f8a69b1ede317b98f4ea27134c7d1eeb25f8ca8f59e5c",
-                "source_sha256": "7a3565fe15005e01a57d80e92542729796c48ba1c9feb4f9602c4873708486f6",
-                "source_column": "G",
-                "source_row": 8,
-                "source_sort_order": 217,
                 "caption": ""
             }
         ],
@@ -8706,26 +8706,6 @@
         ],
         "images": [
             {
-                "manager_id": 221,
-                "path": "/images/products/catalog/f008c7f99b4606abd72ca2c4.webp",
-                "source_path": "assets/catalog/f008c7f99b4606abd72ca2c4.webp",
-                "original_name": "image125.png",
-                "type": "gallery",
-                "available": true,
-                "previewable": true,
-                "mime_type": "image/webp",
-                "extension": "webp",
-                "size": 22130,
-                "width": 357,
-                "height": 520,
-                "sha256": "fc6141c1e427de80bdcb91d24f70e9e82ab584e43b8e9a546b8268563c6f3c8e",
-                "source_sha256": "f008c7f99b4606abd72ca2c4e07434750ac2ecc6c80760544a46140797c731be",
-                "source_column": "D",
-                "source_row": 10,
-                "source_sort_order": 221,
-                "caption": ""
-            },
-            {
                 "manager_id": 222,
                 "path": "/images/products/catalog/07c171f436fd421df79ca577.webp",
                 "source_path": "assets/catalog/07c171f436fd421df79ca577.webp",
@@ -8742,7 +8722,27 @@
                 "source_sha256": "07c171f436fd421df79ca577dcf53f09bb670d6ef8aacdf0450d88ddf1c27a83",
                 "source_column": "G",
                 "source_row": 10,
-                "source_sort_order": 222,
+                "source_sort_order": 1,
+                "caption": ""
+            },
+            {
+                "manager_id": 221,
+                "path": "/images/products/catalog/f008c7f99b4606abd72ca2c4.webp",
+                "source_path": "assets/catalog/f008c7f99b4606abd72ca2c4.webp",
+                "original_name": "image125.png",
+                "type": "gallery",
+                "available": true,
+                "previewable": true,
+                "mime_type": "image/webp",
+                "extension": "webp",
+                "size": 22130,
+                "width": 357,
+                "height": 520,
+                "sha256": "fc6141c1e427de80bdcb91d24f70e9e82ab584e43b8e9a546b8268563c6f3c8e",
+                "source_sha256": "f008c7f99b4606abd72ca2c4e07434750ac2ecc6c80760544a46140797c731be",
+                "source_column": "D",
+                "source_row": 10,
+                "source_sort_order": 2,
                 "caption": ""
             },
             {
@@ -9550,7 +9550,12 @@
         "created_at": "2026-10-18 06:05:58",
         "updated_at": "2026-10-18 06:05:58",
         "import_source": "lufly_catalog.sql",
-        "specifications": [],
+        "specifications": [
+            {
+                "key": "Finish",
+                "value": "Stainless Steel"
+            }
+        ],
         "images": [
             {
                 "manager_id": 242,
@@ -9645,6 +9650,10 @@
         "updated_at": "2026-10-20T21:37:20+00:00",
         "import_source": "lufly_catalog.sql",
         "specifications": [
+            {
+                "key": "Finish",
+                "value": "Brushed Bronze"
+            },
             {
                 "key": "Drawing: Length",
                 "value": "700 mm"
@@ -14498,6 +14507,66 @@
         ],
         "images": [
             {
+                "manager_id": 376,
+                "path": "/images/products/catalog/e362a520db0c1eedb5be3df7.webp",
+                "source_path": "assets/catalog/e362a520db0c1eedb5be3df7.webp",
+                "original_name": "image140.png",
+                "type": "gallery",
+                "available": true,
+                "previewable": true,
+                "mime_type": "image/webp",
+                "extension": "webp",
+                "size": 164224,
+                "width": 1510,
+                "height": 1042,
+                "sha256": "5b2134d1c7a10f54c718f4ae73f738df28d60687e12bc154219d1d50f8a543e2",
+                "source_sha256": "e362a520db0c1eedb5be3df70403cf2732b434339ff8f1742731ef6627355df5",
+                "source_column": "D",
+                "source_row": 87,
+                "source_sort_order": 1,
+                "caption": ""
+            },
+            {
+                "manager_id": 374,
+                "path": "/images/products/catalog/7a5cc7329bed28b53e651025.webp",
+                "source_path": "assets/catalog/7a5cc7329bed28b53e651025.webp",
+                "original_name": "image97.png",
+                "type": "gallery",
+                "available": true,
+                "previewable": true,
+                "mime_type": "image/webp",
+                "extension": "webp",
+                "size": 15448,
+                "width": 564,
+                "height": 716,
+                "sha256": "4ff72af86cee97437cfd5bac46f442820a8802bb317bac2aa41490b34fa75a21",
+                "source_sha256": "7a5cc7329bed28b53e65102592073747e4fe78cb06b3a351e694cbc56f132a4c",
+                "source_column": "G",
+                "source_row": 87,
+                "source_sort_order": 2,
+                "caption": ""
+            },
+            {
+                "manager_id": 375,
+                "path": "/images/products/catalog/c7769cc85df3248f02c49fac.webp",
+                "source_path": "assets/catalog/c7769cc85df3248f02c49fac.webp",
+                "original_name": "image98.png",
+                "type": "gallery",
+                "available": true,
+                "previewable": true,
+                "mime_type": "image/webp",
+                "extension": "webp",
+                "size": 2902,
+                "width": 738,
+                "height": 118,
+                "sha256": "dfe06c0c75bec65aec3ef7c54c831e0e4db40edc54cea9e2eaa84a0f4faeaa11",
+                "source_sha256": "c7769cc85df3248f02c49fac9222a2f8437fabafa4cf7d16195b59fb6a890b4a",
+                "source_column": "G",
+                "source_row": 87,
+                "source_sort_order": 3,
+                "caption": ""
+            },
+            {
                 "manager_id": 372,
                 "path": "/images/products/catalog/e55e65a9f4262086c14c1569.webp",
                 "source_path": "assets/catalog/e55e65a9f4262086c14c1569.webp",
@@ -14535,66 +14604,6 @@
                 "source_column": "E",
                 "source_row": 87,
                 "source_sort_order": 373,
-                "caption": ""
-            },
-            {
-                "manager_id": 374,
-                "path": "/images/products/catalog/7a5cc7329bed28b53e651025.webp",
-                "source_path": "assets/catalog/7a5cc7329bed28b53e651025.webp",
-                "original_name": "image97.png",
-                "type": "gallery",
-                "available": true,
-                "previewable": true,
-                "mime_type": "image/webp",
-                "extension": "webp",
-                "size": 15448,
-                "width": 564,
-                "height": 716,
-                "sha256": "4ff72af86cee97437cfd5bac46f442820a8802bb317bac2aa41490b34fa75a21",
-                "source_sha256": "7a5cc7329bed28b53e65102592073747e4fe78cb06b3a351e694cbc56f132a4c",
-                "source_column": "G",
-                "source_row": 87,
-                "source_sort_order": 374,
-                "caption": ""
-            },
-            {
-                "manager_id": 375,
-                "path": "/images/products/catalog/c7769cc85df3248f02c49fac.webp",
-                "source_path": "assets/catalog/c7769cc85df3248f02c49fac.webp",
-                "original_name": "image98.png",
-                "type": "gallery",
-                "available": true,
-                "previewable": true,
-                "mime_type": "image/webp",
-                "extension": "webp",
-                "size": 2902,
-                "width": 738,
-                "height": 118,
-                "sha256": "dfe06c0c75bec65aec3ef7c54c831e0e4db40edc54cea9e2eaa84a0f4faeaa11",
-                "source_sha256": "c7769cc85df3248f02c49fac9222a2f8437fabafa4cf7d16195b59fb6a890b4a",
-                "source_column": "G",
-                "source_row": 87,
-                "source_sort_order": 375,
-                "caption": ""
-            },
-            {
-                "manager_id": 376,
-                "path": "/images/products/catalog/e362a520db0c1eedb5be3df7.webp",
-                "source_path": "assets/catalog/e362a520db0c1eedb5be3df7.webp",
-                "original_name": "image140.png",
-                "type": "gallery",
-                "available": true,
-                "previewable": true,
-                "mime_type": "image/webp",
-                "extension": "webp",
-                "size": 164224,
-                "width": 1510,
-                "height": 1042,
-                "sha256": "5b2134d1c7a10f54c718f4ae73f738df28d60687e12bc154219d1d50f8a543e2",
-                "source_sha256": "e362a520db0c1eedb5be3df70403cf2732b434339ff8f1742731ef6627355df5",
-                "source_column": "D",
-                "source_row": 87,
-                "source_sort_order": 376,
                 "caption": ""
             }
         ],
@@ -15650,23 +15659,23 @@
         ],
         "images": [
             {
-                "manager_id": 408,
-                "path": "/images/products/catalog/a77c75373315a3f7a56a1449.webp",
-                "source_path": "assets/catalog/a77c75373315a3f7a56a1449.webp",
-                "original_name": "image36.png",
-                "type": "drawing",
+                "manager_id": 410,
+                "path": "/images/products/catalog/863cd9b10a50861f4cf9f983.webp",
+                "source_path": "assets/catalog/863cd9b10a50861f4cf9f983.webp",
+                "original_name": "image211.png",
+                "type": "gallery",
                 "available": true,
                 "previewable": true,
                 "mime_type": "image/webp",
                 "extension": "webp",
-                "size": 10938,
-                "width": 455,
-                "height": 463,
-                "sha256": "969aa27b9ad5b1f577219f8f06b6ab6e3474553b7877a98cb8422e6d6e8f9535",
-                "source_sha256": "a77c75373315a3f7a56a14495f539292627cee3ee1e74d15bec8a03d089fe917",
-                "source_column": "E",
+                "size": 104954,
+                "width": 1216,
+                "height": 1086,
+                "sha256": "0273f2f9308cc6c688e35842db54841327e274a21160faaea341b3197156b4f8",
+                "source_sha256": "863cd9b10a50861f4cf9f983185aca31eb514f764f19b28f6ebdfefc9af5d689",
+                "source_column": "D",
                 "source_row": 98,
-                "source_sort_order": 408,
+                "source_sort_order": 1,
                 "caption": ""
             },
             {
@@ -15686,27 +15695,27 @@
                 "source_sha256": "c69bc4411a889c5b2c3a83960b3c35f51aad2fc6e439eb7e886da155c8b246b6",
                 "source_column": "G",
                 "source_row": 98,
-                "source_sort_order": 409,
+                "source_sort_order": 2,
                 "caption": ""
             },
             {
-                "manager_id": 410,
-                "path": "/images/products/catalog/863cd9b10a50861f4cf9f983.webp",
-                "source_path": "assets/catalog/863cd9b10a50861f4cf9f983.webp",
-                "original_name": "image211.png",
-                "type": "gallery",
+                "manager_id": 408,
+                "path": "/images/products/catalog/a77c75373315a3f7a56a1449.webp",
+                "source_path": "assets/catalog/a77c75373315a3f7a56a1449.webp",
+                "original_name": "image36.png",
+                "type": "drawing",
                 "available": true,
                 "previewable": true,
                 "mime_type": "image/webp",
                 "extension": "webp",
-                "size": 104954,
-                "width": 1216,
-                "height": 1086,
-                "sha256": "0273f2f9308cc6c688e35842db54841327e274a21160faaea341b3197156b4f8",
-                "source_sha256": "863cd9b10a50861f4cf9f983185aca31eb514f764f19b28f6ebdfefc9af5d689",
-                "source_column": "D",
+                "size": 10938,
+                "width": 455,
+                "height": 463,
+                "sha256": "969aa27b9ad5b1f577219f8f06b6ab6e3474553b7877a98cb8422e6d6e8f9535",
+                "source_sha256": "a77c75373315a3f7a56a14495f539292627cee3ee1e74d15bec8a03d089fe917",
+                "source_column": "E",
                 "source_row": 98,
-                "source_sort_order": 410,
+                "source_sort_order": 408,
                 "caption": ""
             }
         ],
@@ -15746,23 +15755,23 @@
         ],
         "images": [
             {
-                "manager_id": 411,
-                "path": "/images/products/catalog/a77c75373315a3f7a56a1449.webp",
-                "source_path": "assets/catalog/a77c75373315a3f7a56a1449.webp",
-                "original_name": "image36.png",
-                "type": "drawing",
+                "manager_id": 413,
+                "path": "/images/products/catalog/69dc57d4d84a090d740be269.webp",
+                "source_path": "assets/catalog/69dc57d4d84a090d740be269.webp",
+                "original_name": "image210.png",
+                "type": "gallery",
                 "available": true,
                 "previewable": true,
                 "mime_type": "image/webp",
                 "extension": "webp",
-                "size": 10938,
-                "width": 455,
-                "height": 463,
-                "sha256": "969aa27b9ad5b1f577219f8f06b6ab6e3474553b7877a98cb8422e6d6e8f9535",
-                "source_sha256": "a77c75373315a3f7a56a14495f539292627cee3ee1e74d15bec8a03d089fe917",
-                "source_column": "E",
+                "size": 125360,
+                "width": 994,
+                "height": 942,
+                "sha256": "dd2bbf06b8e533a6f83e33bcedc6667015b274251fde9f092e8f3d0446678872",
+                "source_sha256": "69dc57d4d84a090d740be269d5e10717c697edcb714e58335f9d2f1d29e2588c",
+                "source_column": "D",
                 "source_row": 99,
-                "source_sort_order": 411,
+                "source_sort_order": 1,
                 "caption": ""
             },
             {
@@ -15782,27 +15791,27 @@
                 "source_sha256": "c69bc4411a889c5b2c3a83960b3c35f51aad2fc6e439eb7e886da155c8b246b6",
                 "source_column": "G",
                 "source_row": 99,
-                "source_sort_order": 412,
+                "source_sort_order": 2,
                 "caption": ""
             },
             {
-                "manager_id": 413,
-                "path": "/images/products/catalog/69dc57d4d84a090d740be269.webp",
-                "source_path": "assets/catalog/69dc57d4d84a090d740be269.webp",
-                "original_name": "image210.png",
-                "type": "gallery",
+                "manager_id": 411,
+                "path": "/images/products/catalog/a77c75373315a3f7a56a1449.webp",
+                "source_path": "assets/catalog/a77c75373315a3f7a56a1449.webp",
+                "original_name": "image36.png",
+                "type": "drawing",
                 "available": true,
                 "previewable": true,
                 "mime_type": "image/webp",
                 "extension": "webp",
-                "size": 125360,
-                "width": 994,
-                "height": 942,
-                "sha256": "dd2bbf06b8e533a6f83e33bcedc6667015b274251fde9f092e8f3d0446678872",
-                "source_sha256": "69dc57d4d84a090d740be269d5e10717c697edcb714e58335f9d2f1d29e2588c",
-                "source_column": "D",
+                "size": 10938,
+                "width": 455,
+                "height": 463,
+                "sha256": "969aa27b9ad5b1f577219f8f06b6ab6e3474553b7877a98cb8422e6d6e8f9535",
+                "source_sha256": "a77c75373315a3f7a56a14495f539292627cee3ee1e74d15bec8a03d089fe917",
+                "source_column": "E",
                 "source_row": 99,
-                "source_sort_order": 413,
+                "source_sort_order": 411,
                 "caption": ""
             }
         ],
@@ -15842,23 +15851,23 @@
         ],
         "images": [
             {
-                "manager_id": 414,
-                "path": "/images/products/catalog/a77c75373315a3f7a56a1449.webp",
-                "source_path": "assets/catalog/a77c75373315a3f7a56a1449.webp",
-                "original_name": "image36.png",
-                "type": "drawing",
+                "manager_id": 416,
+                "path": "/images/products/catalog/272c0217b8a68c8fb37ea59e.webp",
+                "source_path": "assets/catalog/272c0217b8a68c8fb37ea59e.webp",
+                "original_name": "image212.png",
+                "type": "gallery",
                 "available": true,
                 "previewable": true,
                 "mime_type": "image/webp",
                 "extension": "webp",
-                "size": 10938,
-                "width": 455,
-                "height": 463,
-                "sha256": "969aa27b9ad5b1f577219f8f06b6ab6e3474553b7877a98cb8422e6d6e8f9535",
-                "source_sha256": "a77c75373315a3f7a56a14495f539292627cee3ee1e74d15bec8a03d089fe917",
-                "source_column": "E",
+                "size": 171788,
+                "width": 1124,
+                "height": 1018,
+                "sha256": "5cd14176f6a47c77d351722213521e32d9b1156b2a7c887296c997a0f0c21fbc",
+                "source_sha256": "272c0217b8a68c8fb37ea59e6199588774960614a4cd43f8288695f5534f911d",
+                "source_column": "D",
                 "source_row": 100,
-                "source_sort_order": 414,
+                "source_sort_order": 1,
                 "caption": ""
             },
             {
@@ -15878,27 +15887,27 @@
                 "source_sha256": "cc2d9cc1a49cbb685261440cbe8523690bbd1a98ba07a52424794bc77311d538",
                 "source_column": "G",
                 "source_row": 100,
-                "source_sort_order": 415,
+                "source_sort_order": 2,
                 "caption": ""
             },
             {
-                "manager_id": 416,
-                "path": "/images/products/catalog/272c0217b8a68c8fb37ea59e.webp",
-                "source_path": "assets/catalog/272c0217b8a68c8fb37ea59e.webp",
-                "original_name": "image212.png",
-                "type": "gallery",
+                "manager_id": 414,
+                "path": "/images/products/catalog/a77c75373315a3f7a56a1449.webp",
+                "source_path": "assets/catalog/a77c75373315a3f7a56a1449.webp",
+                "original_name": "image36.png",
+                "type": "drawing",
                 "available": true,
                 "previewable": true,
                 "mime_type": "image/webp",
                 "extension": "webp",
-                "size": 171788,
-                "width": 1124,
-                "height": 1018,
-                "sha256": "5cd14176f6a47c77d351722213521e32d9b1156b2a7c887296c997a0f0c21fbc",
-                "source_sha256": "272c0217b8a68c8fb37ea59e6199588774960614a4cd43f8288695f5534f911d",
-                "source_column": "D",
+                "size": 10938,
+                "width": 455,
+                "height": 463,
+                "sha256": "969aa27b9ad5b1f577219f8f06b6ab6e3474553b7877a98cb8422e6d6e8f9535",
+                "source_sha256": "a77c75373315a3f7a56a14495f539292627cee3ee1e74d15bec8a03d089fe917",
+                "source_column": "E",
                 "source_row": 100,
-                "source_sort_order": 416,
+                "source_sort_order": 414,
                 "caption": ""
             }
         ],
@@ -18524,7 +18533,7 @@
         "category": "accessibility.accessible-accessories.accessible-mixers",
         "status": "active",
         "locale": "en",
-        "description": "Medical Lever Basin Faucet Deck Mounted Surgical Brass Medical Faucetlong medical handle for hygienic operation, Solid Brass Construction with PVD Rose Gold Finish, ceramic cartridge\n\nVerified drawing dimensions:\nOverall height: 207 mm\nSpout height: 125 mm\nSpout reach: 80 mm",
+        "description": "Medical Lever Basin Faucet Deck Mounted Surgical Brass Medical Faucetlong medical handle for hygienic operation, Solid Brass Construction with Chrome Finish, ceramic cartridge\n\nVerified drawing dimensions:\nOverall height: 207 mm\nSpout height: 125 mm\nSpout reach: 80 mm",
         "notes": "",
         "source_file": "AB229200_part3.xlsx",
         "source_row": 12,
@@ -21641,7 +21650,12 @@
         "created_at": "2026-10-18 06:05:58",
         "updated_at": "2026-10-19T22:31:07+00:00",
         "import_source": "lufly_catalog.sql",
-        "specifications": [],
+        "specifications": [
+            {
+                "key": "Finish",
+                "value": "Gun Grey"
+            }
+        ],
         "images": [
             {
                 "manager_id": 559,
@@ -25829,6 +25843,10 @@
         "import_source": "lufly_catalog.sql",
         "specifications": [
             {
+                "key": "Finish",
+                "value": "Gold"
+            },
+            {
                 "key": "Drawing: Overall height",
                 "value": "450 mm"
             },
@@ -25912,6 +25930,10 @@
         "updated_at": "2026-10-18 06:05:58",
         "import_source": "lufly_catalog.sql",
         "specifications": [
+            {
+                "key": "Finish",
+                "value": "Brushed Nickel"
+            },
             {
                 "key": "Drawing: Overall height",
                 "value": "450 mm"
@@ -25997,6 +26019,10 @@
         "import_source": "lufly_catalog.sql",
         "specifications": [
             {
+                "key": "Finish",
+                "value": "Gun Grey"
+            },
+            {
                 "key": "Drawing: Overall height",
                 "value": "450 mm"
             },
@@ -26066,7 +26092,7 @@
         "category": "kitchen.kitchen-mixers.pull-out-mixers",
         "status": "active",
         "locale": "en",
-        "description": "Pull-Out Kitchen Mixer, Solid brass body, Ceramic Cartridge, Brass spout, 1/2\", Finish: GunGray (Optional), with Pull-Out Handle, Mixer type: single-handle, Installation method: standing",
+        "description": "Pull-Out Kitchen Mixer, Solid brass body, Ceramic Cartridge, Brass spout, 1/2\", Finish: Chrome (Optional), with Pull-Out Handle, Mixer type: single-handle, Installation method: standing",
         "notes": "",
         "source_file": "AB229200_part3.xlsx",
         "source_row": 102,
@@ -26133,7 +26159,7 @@
         "category": "kitchen.kitchen-mixers.pull-out-mixers",
         "status": "active",
         "locale": "en",
-        "description": "Pull-Out Kitchen Mixer, Solid brass body, Ceramic Cartridge, Brass spout, 1/2\", Finish: GunGray (Optional), with Pull-Out Handle, Mixer type: single-handle, Installation method: standing",
+        "description": "Pull-Out Kitchen Mixer, Solid brass body, Ceramic Cartridge, Brass spout, 1/2\", Finish: Gold (Optional), with Pull-Out Handle, Mixer type: single-handle, Installation method: standing",
         "notes": "",
         "source_file": "AB229200_part3.xlsx",
         "source_row": 103,
@@ -26656,7 +26682,7 @@
         "category": "kitchen.kitchen-mixers.pull-out-mixers",
         "status": "active",
         "locale": "en",
-        "description": "Pull-Out Kitchen Mixer, Solid brass body, Ceramic Cartridge, Brass spout, 1/2\", Finish: لآقخىئث (Optional), with Pull-Out Handle, Mixer type: single-handle, Installation method: standing\n\nVerified drawing dimensions:\nOverall height: 450 mm\nOverall projection: 256.6 mm\nSpout reach: 218 mm\nSpout height: 233.5 mm",
+        "description": "Pull-Out Kitchen Mixer, Solid brass body, Ceramic Cartridge, Brass spout, 1/2\", Finish: Bronze (Optional), with Pull-Out Handle, Mixer type: single-handle, Installation method: standing\n\nVerified drawing dimensions:\nOverall height: 450 mm\nOverall projection: 256.6 mm\nSpout reach: 218 mm\nSpout height: 233.5 mm",
         "notes": "",
         "source_file": "AB229200_part3.xlsx",
         "source_row": 110,
@@ -27053,23 +27079,23 @@
         ],
         "images": [
             {
-                "manager_id": 694,
-                "path": "/images/products/catalog/ade9ca03506a286359226d3d.webp",
-                "source_path": "assets/catalog/ade9ca03506a286359226d3d.webp",
-                "original_name": "image119.png",
-                "type": "drawing",
+                "manager_id": 696,
+                "path": "/images/products/catalog/705fdf36657061c1fcbce6be.webp",
+                "source_path": "assets/catalog/705fdf36657061c1fcbce6be.webp",
+                "original_name": "image121.png",
+                "type": "gallery",
                 "available": true,
                 "previewable": true,
                 "mime_type": "image/webp",
                 "extension": "webp",
-                "size": 13806,
-                "width": 547,
-                "height": 431,
-                "sha256": "5a2bbdb690c569b0e8792c18eefb819de76f88242ac0958e3923e6a67c011702",
-                "source_sha256": "ade9ca03506a286359226d3da87356ee7164d381b40503daf128b27466a3c0fa",
-                "source_column": "E",
+                "size": 13278,
+                "width": 287,
+                "height": 639,
+                "sha256": "453a9ee1bdb27f1915c56a7918425e691c22d460b4a7dc208b55623e1a1363bb",
+                "source_sha256": "705fdf36657061c1fcbce6be5b3871fc29a41ae1442d6185c334e514b0c4c5de",
+                "source_column": "D",
                 "source_row": 114,
-                "source_sort_order": 694,
+                "source_sort_order": 1,
                 "caption": ""
             },
             {
@@ -27089,27 +27115,27 @@
                 "source_sha256": "acf357bc24b750cc961443a465dcb9fc32b0a102bf50a0170c746b028d00d48c",
                 "source_column": "G",
                 "source_row": 114,
-                "source_sort_order": 695,
+                "source_sort_order": 2,
                 "caption": ""
             },
             {
-                "manager_id": 696,
-                "path": "/images/products/catalog/705fdf36657061c1fcbce6be.webp",
-                "source_path": "assets/catalog/705fdf36657061c1fcbce6be.webp",
-                "original_name": "image121.png",
-                "type": "gallery",
+                "manager_id": 694,
+                "path": "/images/products/catalog/ade9ca03506a286359226d3d.webp",
+                "source_path": "assets/catalog/ade9ca03506a286359226d3d.webp",
+                "original_name": "image119.png",
+                "type": "drawing",
                 "available": true,
                 "previewable": true,
                 "mime_type": "image/webp",
                 "extension": "webp",
-                "size": 13278,
-                "width": 287,
-                "height": 639,
-                "sha256": "453a9ee1bdb27f1915c56a7918425e691c22d460b4a7dc208b55623e1a1363bb",
-                "source_sha256": "705fdf36657061c1fcbce6be5b3871fc29a41ae1442d6185c334e514b0c4c5de",
-                "source_column": "D",
+                "size": 13806,
+                "width": 547,
+                "height": 431,
+                "sha256": "5a2bbdb690c569b0e8792c18eefb819de76f88242ac0958e3923e6a67c011702",
+                "source_sha256": "ade9ca03506a286359226d3da87356ee7164d381b40503daf128b27466a3c0fa",
+                "source_column": "E",
                 "source_row": 114,
-                "source_sort_order": 696,
+                "source_sort_order": 694,
                 "caption": ""
             }
         ],
@@ -27161,23 +27187,23 @@
         ],
         "images": [
             {
-                "manager_id": 697,
-                "path": "/images/products/catalog/ade9ca03506a286359226d3d.webp",
-                "source_path": "assets/catalog/ade9ca03506a286359226d3d.webp",
-                "original_name": "image119.png",
-                "type": "drawing",
+                "manager_id": 699,
+                "path": "/images/products/catalog/e996eae7a4eb117ef8c984b7.webp",
+                "source_path": "assets/catalog/e996eae7a4eb117ef8c984b7.webp",
+                "original_name": "image122.png",
+                "type": "gallery",
                 "available": true,
                 "previewable": true,
                 "mime_type": "image/webp",
                 "extension": "webp",
-                "size": 13806,
-                "width": 547,
-                "height": 431,
-                "sha256": "5a2bbdb690c569b0e8792c18eefb819de76f88242ac0958e3923e6a67c011702",
-                "source_sha256": "ade9ca03506a286359226d3da87356ee7164d381b40503daf128b27466a3c0fa",
-                "source_column": "E",
+                "size": 16350,
+                "width": 294,
+                "height": 638,
+                "sha256": "faa0df94e77eda95bc10cfd973f49e9a57bb92f611d31ef89ab604eb11021e52",
+                "source_sha256": "e996eae7a4eb117ef8c984b74676ca4434f9e62139f9f9cca0531524585db7b9",
+                "source_column": "D",
                 "source_row": 115,
-                "source_sort_order": 697,
+                "source_sort_order": 1,
                 "caption": ""
             },
             {
@@ -27197,27 +27223,27 @@
                 "source_sha256": "acf357bc24b750cc961443a465dcb9fc32b0a102bf50a0170c746b028d00d48c",
                 "source_column": "G",
                 "source_row": 115,
-                "source_sort_order": 698,
+                "source_sort_order": 2,
                 "caption": ""
             },
             {
-                "manager_id": 699,
-                "path": "/images/products/catalog/e996eae7a4eb117ef8c984b7.webp",
-                "source_path": "assets/catalog/e996eae7a4eb117ef8c984b7.webp",
-                "original_name": "image122.png",
-                "type": "gallery",
+                "manager_id": 697,
+                "path": "/images/products/catalog/ade9ca03506a286359226d3d.webp",
+                "source_path": "assets/catalog/ade9ca03506a286359226d3d.webp",
+                "original_name": "image119.png",
+                "type": "drawing",
                 "available": true,
                 "previewable": true,
                 "mime_type": "image/webp",
                 "extension": "webp",
-                "size": 16350,
-                "width": 294,
-                "height": 638,
-                "sha256": "faa0df94e77eda95bc10cfd973f49e9a57bb92f611d31ef89ab604eb11021e52",
-                "source_sha256": "e996eae7a4eb117ef8c984b74676ca4434f9e62139f9f9cca0531524585db7b9",
-                "source_column": "D",
+                "size": 13806,
+                "width": 547,
+                "height": 431,
+                "sha256": "5a2bbdb690c569b0e8792c18eefb819de76f88242ac0958e3923e6a67c011702",
+                "source_sha256": "ade9ca03506a286359226d3da87356ee7164d381b40503daf128b27466a3c0fa",
+                "source_column": "E",
                 "source_row": 115,
-                "source_sort_order": 699,
+                "source_sort_order": 697,
                 "caption": ""
             }
         ],
@@ -27269,23 +27295,23 @@
         ],
         "images": [
             {
-                "manager_id": 700,
-                "path": "/images/products/catalog/ade9ca03506a286359226d3d.webp",
-                "source_path": "assets/catalog/ade9ca03506a286359226d3d.webp",
-                "original_name": "image119.png",
-                "type": "drawing",
+                "manager_id": 702,
+                "path": "/images/products/catalog/28a580017301040f75bda74f.webp",
+                "source_path": "assets/catalog/28a580017301040f75bda74f.webp",
+                "original_name": "image123.png",
+                "type": "gallery",
                 "available": true,
                 "previewable": true,
                 "mime_type": "image/webp",
                 "extension": "webp",
-                "size": 13806,
-                "width": 547,
-                "height": 431,
-                "sha256": "5a2bbdb690c569b0e8792c18eefb819de76f88242ac0958e3923e6a67c011702",
-                "source_sha256": "ade9ca03506a286359226d3da87356ee7164d381b40503daf128b27466a3c0fa",
-                "source_column": "E",
+                "size": 11766,
+                "width": 277,
+                "height": 635,
+                "sha256": "7c0d616b9813585f76c48c1baeb0a1e9c458fe9c4b138ba0d481b9622ea376aa",
+                "source_sha256": "28a580017301040f75bda74f99c7263b4293dcb9a421be740717ebd35362f410",
+                "source_column": "D",
                 "source_row": 116,
-                "source_sort_order": 700,
+                "source_sort_order": 1,
                 "caption": ""
             },
             {
@@ -27305,27 +27331,27 @@
                 "source_sha256": "acf357bc24b750cc961443a465dcb9fc32b0a102bf50a0170c746b028d00d48c",
                 "source_column": "G",
                 "source_row": 116,
-                "source_sort_order": 701,
+                "source_sort_order": 2,
                 "caption": ""
             },
             {
-                "manager_id": 702,
-                "path": "/images/products/catalog/28a580017301040f75bda74f.webp",
-                "source_path": "assets/catalog/28a580017301040f75bda74f.webp",
-                "original_name": "image123.png",
-                "type": "gallery",
+                "manager_id": 700,
+                "path": "/images/products/catalog/ade9ca03506a286359226d3d.webp",
+                "source_path": "assets/catalog/ade9ca03506a286359226d3d.webp",
+                "original_name": "image119.png",
+                "type": "drawing",
                 "available": true,
                 "previewable": true,
                 "mime_type": "image/webp",
                 "extension": "webp",
-                "size": 11766,
-                "width": 277,
-                "height": 635,
-                "sha256": "7c0d616b9813585f76c48c1baeb0a1e9c458fe9c4b138ba0d481b9622ea376aa",
-                "source_sha256": "28a580017301040f75bda74f99c7263b4293dcb9a421be740717ebd35362f410",
-                "source_column": "D",
+                "size": 13806,
+                "width": 547,
+                "height": 431,
+                "sha256": "5a2bbdb690c569b0e8792c18eefb819de76f88242ac0958e3923e6a67c011702",
+                "source_sha256": "ade9ca03506a286359226d3da87356ee7164d381b40503daf128b27466a3c0fa",
+                "source_column": "E",
                 "source_row": 116,
-                "source_sort_order": 702,
+                "source_sort_order": 700,
                 "caption": ""
             }
         ],
@@ -27377,23 +27403,23 @@
         ],
         "images": [
             {
-                "manager_id": 703,
-                "path": "/images/products/catalog/ade9ca03506a286359226d3d.webp",
-                "source_path": "assets/catalog/ade9ca03506a286359226d3d.webp",
-                "original_name": "image119.png",
-                "type": "drawing",
+                "manager_id": 705,
+                "path": "/images/products/catalog/ddb75704ee8f4a17b2a41c3b.webp",
+                "source_path": "assets/catalog/ddb75704ee8f4a17b2a41c3b.webp",
+                "original_name": "image124.png",
+                "type": "gallery",
                 "available": true,
                 "previewable": true,
                 "mime_type": "image/webp",
                 "extension": "webp",
-                "size": 13806,
-                "width": 547,
-                "height": 431,
-                "sha256": "5a2bbdb690c569b0e8792c18eefb819de76f88242ac0958e3923e6a67c011702",
-                "source_sha256": "ade9ca03506a286359226d3da87356ee7164d381b40503daf128b27466a3c0fa",
-                "source_column": "E",
+                "size": 15706,
+                "width": 294,
+                "height": 625,
+                "sha256": "d604ef212cc008cbaf5eec3b709c91a078be96b7dc29f8e499903bd06d8df8d2",
+                "source_sha256": "ddb75704ee8f4a17b2a41c3bfe12a71bc82e18d092bcdc7b1acce85861f18b50",
+                "source_column": "D",
                 "source_row": 117,
-                "source_sort_order": 703,
+                "source_sort_order": 1,
                 "caption": ""
             },
             {
@@ -27413,27 +27439,27 @@
                 "source_sha256": "acf357bc24b750cc961443a465dcb9fc32b0a102bf50a0170c746b028d00d48c",
                 "source_column": "G",
                 "source_row": 117,
-                "source_sort_order": 704,
+                "source_sort_order": 2,
                 "caption": ""
             },
             {
-                "manager_id": 705,
-                "path": "/images/products/catalog/ddb75704ee8f4a17b2a41c3b.webp",
-                "source_path": "assets/catalog/ddb75704ee8f4a17b2a41c3b.webp",
-                "original_name": "image124.png",
-                "type": "gallery",
+                "manager_id": 703,
+                "path": "/images/products/catalog/ade9ca03506a286359226d3d.webp",
+                "source_path": "assets/catalog/ade9ca03506a286359226d3d.webp",
+                "original_name": "image119.png",
+                "type": "drawing",
                 "available": true,
                 "previewable": true,
                 "mime_type": "image/webp",
                 "extension": "webp",
-                "size": 15706,
-                "width": 294,
-                "height": 625,
-                "sha256": "d604ef212cc008cbaf5eec3b709c91a078be96b7dc29f8e499903bd06d8df8d2",
-                "source_sha256": "ddb75704ee8f4a17b2a41c3bfe12a71bc82e18d092bcdc7b1acce85861f18b50",
-                "source_column": "D",
+                "size": 13806,
+                "width": 547,
+                "height": 431,
+                "sha256": "5a2bbdb690c569b0e8792c18eefb819de76f88242ac0958e3923e6a67c011702",
+                "source_sha256": "ade9ca03506a286359226d3da87356ee7164d381b40503daf128b27466a3c0fa",
+                "source_column": "E",
                 "source_row": 117,
-                "source_sort_order": 705,
+                "source_sort_order": 703,
                 "caption": ""
             }
         ],
@@ -27462,6 +27488,10 @@
         "updated_at": "2026-10-18 06:05:58",
         "import_source": "lufly_catalog.sql",
         "specifications": [
+            {
+                "key": "Finish",
+                "value": "Chrome / Gold"
+            },
             {
                 "key": "Drawing: Overall height",
                 "value": "532 mm"
@@ -28264,6 +28294,10 @@
         "import_source": "lufly_catalog.sql",
         "specifications": [
             {
+                "key": "Finish",
+                "value": "Gun Grey / Gold"
+            },
+            {
                 "key": "Drawing: Overall height",
                 "value": "493 mm"
             },
@@ -28351,6 +28385,10 @@
         "updated_at": "2026-10-19T23:14:06+00:00",
         "import_source": "lufly_catalog.sql",
         "specifications": [
+            {
+                "key": "Finish",
+                "value": "Brushed Nickel / Gold"
+            },
             {
                 "key": "Drawing: Overall height",
                 "value": "493 mm"
@@ -28440,6 +28478,10 @@
         "import_source": "lufly_catalog.sql",
         "specifications": [
             {
+                "key": "Finish",
+                "value": "Rose Gold / Gold"
+            },
+            {
                 "key": "Drawing: Overall height",
                 "value": "493 mm"
             },
@@ -28513,7 +28555,7 @@
         "category": "kitchen.kitchen-mixers.pull-out-mixers",
         "status": "active",
         "locale": "en",
-        "description": "Pull-Out Kitchen Sink Mixer, Solid brass body, Ceramic Cartridge, Brass spout, 1/2\", Finish: Chrome (Optional), with Pull-Out Handle, Mixer type: single-handle, Installation method: standing\n\nVerified drawing dimensions:\nOverall height: 532 mm\nOverall projection: 270 mm\nSpout reach: 224 mm\nSpout height: 249 mm",
+        "description": "Pull-Out Kitchen Sink Mixer, Solid brass body, Ceramic Cartridge, Brass spout, 1/2\", Finish: Chrome / Gold (Optional), with Pull-Out Handle, Mixer type: single-handle, Installation method: standing\n\nVerified drawing dimensions:\nOverall height: 532 mm\nOverall projection: 270 mm\nSpout reach: 224 mm\nSpout height: 249 mm",
         "notes": "",
         "source_file": "AB229200_part4.xlsx",
         "source_row": 10,
@@ -28862,7 +28904,12 @@
         "created_at": "2026-10-18 06:05:58",
         "updated_at": "2026-10-19T23:17:55+00:00",
         "import_source": "lufly_catalog.sql",
-        "specifications": [],
+        "specifications": [
+            {
+                "key": "Finish",
+                "value": "Chrome"
+            }
+        ],
         "images": [
             {
                 "manager_id": 1524,
@@ -28929,7 +28976,12 @@
         "created_at": "2026-10-18 06:05:58",
         "updated_at": "2026-10-19T23:21:47+00:00",
         "import_source": "lufly_catalog.sql",
-        "specifications": [],
+        "specifications": [
+            {
+                "key": "Finish",
+                "value": "Brushed Nickel"
+            }
+        ],
         "images": [
             {
                 "manager_id": 1527,
@@ -28996,7 +29048,12 @@
         "created_at": "2026-10-18 06:05:58",
         "updated_at": "2026-10-19T23:24:18+00:00",
         "import_source": "lufly_catalog.sql",
-        "specifications": [],
+        "specifications": [
+            {
+                "key": "Finish",
+                "value": "Gun Grey"
+            }
+        ],
         "images": [
             {
                 "manager_id": 1529,
@@ -29063,7 +29120,12 @@
         "created_at": "2026-10-18 06:05:58",
         "updated_at": "2026-10-19T23:31:01+00:00",
         "import_source": "lufly_catalog.sql",
-        "specifications": [],
+        "specifications": [
+            {
+                "key": "Finish",
+                "value": "Rose Gold"
+            }
+        ],
         "images": [
             {
                 "manager_id": 1532,
@@ -30898,23 +30960,23 @@
         ],
         "images": [
             {
-                "manager_id": 789,
-                "path": "/images/products/catalog/94cbdd79c057d0173761c74e.webp",
-                "source_path": "assets/catalog/94cbdd79c057d0173761c74e.webp",
-                "original_name": "image36.png",
-                "type": "drawing",
+                "manager_id": 791,
+                "path": "/images/products/catalog/e301a9ede3eb2b2e2c8d103b.webp",
+                "source_path": "assets/catalog/e301a9ede3eb2b2e2c8d103b.webp",
+                "original_name": "image189.png",
+                "type": "gallery",
                 "available": true,
                 "previewable": true,
                 "mime_type": "image/webp",
                 "extension": "webp",
-                "size": 10892,
-                "width": 440,
-                "height": 252,
-                "sha256": "d4d6cbb929ff3f523d199392f118b57bc1fc52443949991cf71dcce58ddbfbe0",
-                "source_sha256": "94cbdd79c057d0173761c74eae0e578c2891611cc2bdd98e4fcf574d7e371855",
-                "source_column": "E",
+                "size": 33958,
+                "width": 808,
+                "height": 836,
+                "sha256": "a2e497406c45d76b3089f99782623317523352c3de4dba314fca1b3d13f01918",
+                "source_sha256": "e301a9ede3eb2b2e2c8d103b505130af6aae015a630368801c68b046519b88ac",
+                "source_column": "D",
                 "source_row": 39,
-                "source_sort_order": 789,
+                "source_sort_order": 1,
                 "caption": ""
             },
             {
@@ -30934,27 +30996,27 @@
                 "source_sha256": "d75654f4446cc7ff2b2132f8709ba3672a47cb42b7a57c819b3d28f500a85510",
                 "source_column": "G",
                 "source_row": 39,
-                "source_sort_order": 790,
+                "source_sort_order": 2,
                 "caption": ""
             },
             {
-                "manager_id": 791,
-                "path": "/images/products/catalog/e301a9ede3eb2b2e2c8d103b.webp",
-                "source_path": "assets/catalog/e301a9ede3eb2b2e2c8d103b.webp",
-                "original_name": "image189.png",
-                "type": "gallery",
+                "manager_id": 789,
+                "path": "/images/products/catalog/94cbdd79c057d0173761c74e.webp",
+                "source_path": "assets/catalog/94cbdd79c057d0173761c74e.webp",
+                "original_name": "image36.png",
+                "type": "drawing",
                 "available": true,
                 "previewable": true,
                 "mime_type": "image/webp",
                 "extension": "webp",
-                "size": 33958,
-                "width": 808,
-                "height": 836,
-                "sha256": "a2e497406c45d76b3089f99782623317523352c3de4dba314fca1b3d13f01918",
-                "source_sha256": "e301a9ede3eb2b2e2c8d103b505130af6aae015a630368801c68b046519b88ac",
-                "source_column": "D",
+                "size": 10892,
+                "width": 440,
+                "height": 252,
+                "sha256": "d4d6cbb929ff3f523d199392f118b57bc1fc52443949991cf71dcce58ddbfbe0",
+                "source_sha256": "94cbdd79c057d0173761c74eae0e578c2891611cc2bdd98e4fcf574d7e371855",
+                "source_column": "E",
                 "source_row": 39,
-                "source_sort_order": 791,
+                "source_sort_order": 789,
                 "caption": ""
             }
         ],
@@ -41476,23 +41538,23 @@
         ],
         "images": [
             {
-                "manager_id": 1071,
-                "path": "/images/products/catalog/665f4510c2226e20971f2e5d.webp",
-                "source_path": "assets/catalog/665f4510c2226e20971f2e5d.webp",
-                "original_name": "image89.png",
-                "type": "drawing",
+                "manager_id": 1075,
+                "path": "/images/products/catalog/619b9be99caad723352dfa5e.webp",
+                "source_path": "assets/catalog/619b9be99caad723352dfa5e.webp",
+                "original_name": "image171.png",
+                "type": "gallery",
                 "available": true,
                 "previewable": true,
                 "mime_type": "image/webp",
                 "extension": "webp",
-                "size": 19034,
-                "width": 667,
-                "height": 363,
-                "sha256": "3822f8f3f208f4ecf10c1aa904d863ab5518a50749c8e511466d546ef4881bd5",
-                "source_sha256": "665f4510c2226e20971f2e5dd1c9baa41d3e67a64f93c953d6fc31aec7b9959b",
-                "source_column": "E",
+                "size": 120154,
+                "width": 1834,
+                "height": 1082,
+                "sha256": "48b31a5d1e32c739a6e974a7871e4431a28f463e62e8661eec99023d878be446",
+                "source_sha256": "619b9be99caad723352dfa5e0a906356320eb39314129501a26dcdadfe25c631",
+                "source_column": "D",
                 "source_row": 59,
-                "source_sort_order": 1071,
+                "source_sort_order": 1,
                 "caption": ""
             },
             {
@@ -41512,7 +41574,7 @@
                 "source_sha256": "5516728339473a86a8ff1e815c751c92919d04c2d60b8e7b5768dd838b83ecd0",
                 "source_column": "G",
                 "source_row": 59,
-                "source_sort_order": 1072,
+                "source_sort_order": 2,
                 "caption": ""
             },
             {
@@ -41532,7 +41594,7 @@
                 "source_sha256": "cb4400f058f1ff57b82b30e7a9b0cc5a364be718ed1e520ffd1a2130b971d5b9",
                 "source_column": "G",
                 "source_row": 59,
-                "source_sort_order": 1073,
+                "source_sort_order": 3,
                 "caption": ""
             },
             {
@@ -41552,27 +41614,27 @@
                 "source_sha256": "cb4400f058f1ff57b82b30e7a9b0cc5a364be718ed1e520ffd1a2130b971d5b9",
                 "source_column": "G",
                 "source_row": 59,
-                "source_sort_order": 1074,
+                "source_sort_order": 4,
                 "caption": ""
             },
             {
-                "manager_id": 1075,
-                "path": "/images/products/catalog/619b9be99caad723352dfa5e.webp",
-                "source_path": "assets/catalog/619b9be99caad723352dfa5e.webp",
-                "original_name": "image171.png",
-                "type": "gallery",
+                "manager_id": 1071,
+                "path": "/images/products/catalog/665f4510c2226e20971f2e5d.webp",
+                "source_path": "assets/catalog/665f4510c2226e20971f2e5d.webp",
+                "original_name": "image89.png",
+                "type": "drawing",
                 "available": true,
                 "previewable": true,
                 "mime_type": "image/webp",
                 "extension": "webp",
-                "size": 120154,
-                "width": 1834,
-                "height": 1082,
-                "sha256": "48b31a5d1e32c739a6e974a7871e4431a28f463e62e8661eec99023d878be446",
-                "source_sha256": "619b9be99caad723352dfa5e0a906356320eb39314129501a26dcdadfe25c631",
-                "source_column": "D",
+                "size": 19034,
+                "width": 667,
+                "height": 363,
+                "sha256": "3822f8f3f208f4ecf10c1aa904d863ab5518a50749c8e511466d546ef4881bd5",
+                "source_sha256": "665f4510c2226e20971f2e5dd1c9baa41d3e67a64f93c953d6fc31aec7b9959b",
+                "source_column": "E",
                 "source_row": 59,
-                "source_sort_order": 1075,
+                "source_sort_order": 1071,
                 "caption": ""
             }
         ],
@@ -49774,7 +49836,12 @@
         "created_at": "2026-10-18 06:05:58",
         "updated_at": "2026-10-18 06:05:58",
         "import_source": "lufly_catalog.sql",
-        "specifications": [],
+        "specifications": [
+            {
+                "key": "Finish",
+                "value": "Rose Gold"
+            }
+        ],
         "images": [
             {
                 "manager_id": 1293,
@@ -49821,7 +49888,12 @@
         "created_at": "2026-10-18 06:05:58",
         "updated_at": "2026-10-18 06:05:58",
         "import_source": "lufly_catalog.sql",
-        "specifications": [],
+        "specifications": [
+            {
+                "key": "Finish",
+                "value": "Chrome"
+            }
+        ],
         "images": [
             {
                 "manager_id": 1294,
@@ -49889,6 +49961,10 @@
         "updated_at": "2026-10-18 06:05:58",
         "import_source": "lufly_catalog.sql",
         "specifications": [
+            {
+                "key": "Finish",
+                "value": "Rose Gold"
+            },
             {
                 "key": "Drawing: Arm length",
                 "value": "217 mm"
@@ -49965,6 +50041,10 @@
         "updated_at": "2026-10-18 06:05:58",
         "import_source": "lufly_catalog.sql",
         "specifications": [
+            {
+                "key": "Finish",
+                "value": "Chrome"
+            },
             {
                 "key": "Drawing: Arm length",
                 "value": "217 mm"
@@ -50597,7 +50677,7 @@
         "category": "bathroom.mixers.bath-mixers",
         "status": "active",
         "locale": "en",
-        "description": "Bath Mixer, Ceramic Cartridge, gold color, Brass faucet, Brass elbow, With GunGray Sliding Shower Set, Assembly: wall-mounted, material: Brass + ABS plastic\n\nVerified drawing dimensions:\nRiser height: 650 mm\nInlet center spacing: 150 mm\nRiser diameter: 25 mm\nHand shower diameter: 28 mm",
+        "description": "Bath Mixer, Ceramic Cartridge, gold color, Brass faucet, Brass elbow, With Gold Sliding Shower Set, Assembly: wall-mounted, material: Brass + ABS plastic\n\nVerified drawing dimensions:\nRiser height: 650 mm\nInlet center spacing: 150 mm\nRiser diameter: 25 mm\nHand shower diameter: 28 mm",
         "notes": "",
         "source_file": "AB229200_part6.xlsx",
         "source_row": 57,
@@ -51654,6 +51734,10 @@
         "import_source": "lufly_catalog.sql",
         "specifications": [
             {
+                "key": "Finish",
+                "value": "Chrome / Gold"
+            },
+            {
                 "key": "Drawing: Arm length",
                 "value": "400 mm"
             },
@@ -51738,6 +51822,10 @@
         "import_source": "lufly_catalog.sql",
         "specifications": [
             {
+                "key": "Finish",
+                "value": "Brushed Gold"
+            },
+            {
                 "key": "Drawing: Arm length",
                 "value": "400 mm"
             },
@@ -51821,6 +51909,10 @@
         "updated_at": "2026-10-18 06:05:58",
         "import_source": "lufly_catalog.sql",
         "specifications": [
+            {
+                "key": "Finish",
+                "value": "Gun Grey"
+            },
             {
                 "key": "Drawing: Arm length",
                 "value": "400 mm"
@@ -52082,6 +52174,10 @@
         "import_source": "lufly_catalog.sql",
         "specifications": [
             {
+                "key": "Finish",
+                "value": "Chrome"
+            },
+            {
                 "key": "Drawing: Adjustable overall height",
                 "value": "878–1228 mm"
             },
@@ -52166,6 +52262,10 @@
         "import_source": "lufly_catalog.sql",
         "specifications": [
             {
+                "key": "Finish",
+                "value": "Matte Black"
+            },
+            {
                 "key": "Drawing: Adjustable overall height",
                 "value": "878–1228 mm"
             },
@@ -52235,7 +52335,7 @@
         "category": "bathroom.mixers.shower-mixers",
         "status": "active",
         "locale": "en",
-        "description": "Concealed shower set, with sliding bar - with a shower head, Finish: chrome\nMixer type: single-handle, mixer, Installation method: concealed\n\nVerified drawing dimensions:\nArm length: 351 mm\nOverall height: 1180 mm\nMixer width: 273 mm",
+        "description": "Concealed shower set, with sliding bar - with a shower head, Finish: Chrome / Gold\nMixer type: single-handle, mixer, Installation method: concealed\n\nVerified drawing dimensions:\nArm length: 351 mm\nOverall height: 1180 mm\nMixer width: 273 mm",
         "notes": "",
         "source_file": "AB229200_part6.xlsx",
         "source_row": 77,
@@ -52330,6 +52430,10 @@
         "import_source": "lufly_catalog.sql",
         "specifications": [
             {
+                "key": "Finish",
+                "value": "Brushed Nickel / Gold"
+            },
+            {
                 "key": "Drawing: Arm length",
                 "value": "351 mm"
             },
@@ -52409,6 +52513,10 @@
         "updated_at": "2026-10-18 06:05:58",
         "import_source": "lufly_catalog.sql",
         "specifications": [
+            {
+                "key": "Finish",
+                "value": "Chrome / Gold"
+            },
             {
                 "key": "Drawing: Arm length",
                 "value": "400 mm"
@@ -52494,6 +52602,10 @@
         "import_source": "lufly_catalog.sql",
         "specifications": [
             {
+                "key": "Finish",
+                "value": "Brushed Gold"
+            },
+            {
                 "key": "Drawing: Arm length",
                 "value": "400 mm"
             },
@@ -52578,6 +52690,10 @@
         "import_source": "lufly_catalog.sql",
         "specifications": [
             {
+                "key": "Finish",
+                "value": "Gun Grey"
+            },
+            {
                 "key": "Drawing: Arm length",
                 "value": "400 mm"
             },
@@ -52661,6 +52777,10 @@
         "updated_at": "2026-10-18 06:05:58",
         "import_source": "lufly_catalog.sql",
         "specifications": [
+            {
+                "key": "Finish",
+                "value": "Chrome"
+            },
             {
                 "key": "Drawing: Arm length",
                 "value": "477 mm"
@@ -52750,6 +52870,10 @@
         "import_source": "lufly_catalog.sql",
         "specifications": [
             {
+                "key": "Finish",
+                "value": "Matte Black / Chrome"
+            },
+            {
                 "key": "Drawing: Arm length",
                 "value": "477 mm"
             },
@@ -52823,7 +52947,7 @@
         "category": "bathroom.mixers.shower-mixers",
         "status": "active",
         "locale": "en",
-        "description": "Exposed Shower System, Solid Brass Body with Matte Black Finish and PVD Rose Gold Accent, including Square Rain Shower, Hand Shower, 2-Way Diverter, Adjustable Slider, Ceramic Cartridge, and Flexible Hose. Wall Mounted Exposed Installation.\n\nVerified drawing dimensions:\nAdjustable overall height: 877–1232 mm\nArm length: 501 mm\nShowerhead width: 284 mm\nMixer width: 269 mm\nBase depth: 86 mm",
+        "description": "Exposed Shower System, Solid Brass Body with Chrome Finish, including Square Rain Shower, Hand Shower, 2-Way Diverter, Adjustable Slider, Ceramic Cartridge, and Flexible Hose. Wall Mounted Exposed Installation.\n\nVerified drawing dimensions:\nAdjustable overall height: 877–1232 mm\nArm length: 501 mm\nShowerhead width: 284 mm\nMixer width: 269 mm\nBase depth: 86 mm",
         "notes": "",
         "source_file": "AB229200_part6.xlsx",
         "source_row": 84,

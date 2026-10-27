@@ -13,6 +13,7 @@ use Core\Http\Response;
 use Core\Localization\Translator;
 use Modules\Products\Requests\StoreProductRequest;
 use Modules\Products\Requests\UpdateProductRequest;
+use Modules\Products\Services\ProductColorFamilyService;
 use Modules\Products\Services\ProductMediaService;
 use Modules\Products\Services\ProductService;
 use Modules\Products\Services\ProductVisibility;
@@ -120,7 +121,10 @@ class ProductController extends Controller
     public function show(string $slug): Response
     {
         $locale = $this->translator->getLocale();
-        $product = $this->products->findTranslatedBySlug($slug, $locale);
+        $product = app(ProductColorFamilyService::class)->attach(
+            $this->products->findTranslatedBySlug($slug, $locale),
+            $locale,
+        );
 
         /* Category slug drives the technical-sheet silhouette on the page. */
         $categorySlug = (string) ($product['category_slug'] ?? '');
