@@ -269,10 +269,10 @@ class Product extends Model
             /* three independent image groups, each holding any number of
                images: product photos (type main/gallery), technical drawings
                (type drawing), installed shots (type situ) */
-            'gallery' => array_map(
+            'gallery' => array_values(array_unique(array_map(
                 static fn (array $row): string => (string) $row['path'],
                 $this->gallery(),
-            ),
+            ))),
             'drawings' => $this->drawings(),
             'situ_images' => $this->situImages(),
 
@@ -468,10 +468,10 @@ class Product extends Model
      */
     public function situImages(): array
     {
-        return array_map(
+        return array_values(array_unique(array_map(
             static fn (array $row): string => (string) $row['path'],
             $this->media('situ'),
-        );
+        )));
     }
 
     /**
@@ -481,10 +481,10 @@ class Product extends Model
      */
     public function drawings(): array
     {
-        return array_map(
+        return array_values(array_unique(array_map(
             static fn (array $row): string => (string) $row['path'],
             $this->media('drawing'),
-        );
+        )));
     }
 
     /**

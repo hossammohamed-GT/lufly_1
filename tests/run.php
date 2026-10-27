@@ -157,6 +157,54 @@ if (extension_loaded('pdo_sqlite')) {
         count($seededFamilies) >= 105 && $sqliteColorEdges === $expectedColorEdges,
         'SQLite product_relations stays synchronized with all reviewed colour families',
     );
+
+    $drawingPrimaryCount = (int) $pdo->query(
+        "SELECT COUNT(*) FROM product_media pm
+         INNER JOIN media m ON m.id = pm.media_id
+         WHERE pm.is_primary = 1 AND (pm.type = 'drawing' OR m.status IN ('missing', 'hidden'))",
+    )->fetchColumn();
+    $conflictingPathCount = (int) $pdo->query(
+        "SELECT COUNT(*) FROM (
+             SELECT m.path
+             FROM product_media pm
+             INNER JOIN media m ON m.id = pm.media_id
+             WHERE m.status NOT IN ('missing', 'hidden')
+             GROUP BY m.path
+             HAVING COUNT(DISTINCT pm.type) > 1
+         )",
+    )->fetchColumn();
+    $missingPrimaryPhotoProducts = (int) $pdo->query(
+        "SELECT COUNT(*) FROM products p
+         WHERE EXISTS (
+             SELECT 1 FROM product_media pm
+             INNER JOIN media m ON m.id = pm.media_id
+             WHERE pm.product_id = p.id
+               AND pm.variant_id IS NULL
+               AND pm.type != 'drawing'
+               AND m.status NOT IN ('missing', 'hidden')
+         )
+         AND (
+             SELECT COUNT(*) FROM product_media pm2
+             WHERE pm2.product_id = p.id
+               AND pm2.variant_id IS NULL
+               AND pm2.is_primary = 1
+         ) != 1",
+    )->fetchColumn();
+    $sensorTapGalleryCheck = (int) $pdo->query(
+        "SELECT COUNT(*) FROM product_media pm
+         INNER JOIN products p ON p.id = pm.product_id
+         INNER JOIN media m ON m.id = pm.media_id
+         WHERE p.slug IN ('1722-8126sc', '1722-8126scb', '1722-8126sb', '1722-8126sgg', '1722-8126sgo', '1722-8126srg')
+           AND m.status = 'active'
+           AND pm.type != 'drawing'",
+    )->fetchColumn();
+    $assert(
+        $drawingPrimaryCount === 0
+        && $conflictingPathCount === 0
+        && $missingPrimaryPhotoProducts === 0
+        && $sensorTapGalleryCheck === 6,
+        'Technical drawings never appear in main product galleries or as primary product photos',
+    );
 }
 
 $categoryServiceSrc = (string) file_get_contents($root . '/app/Services/CategoryService.php');
