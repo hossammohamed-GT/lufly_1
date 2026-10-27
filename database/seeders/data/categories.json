@@ -308,6 +308,17 @@
     }
   },
   {
+    "slug": "bathroom.angle-valves",
+    "parent": "bathroom",
+    "sort_order": 4,
+    "image": "/images/categories/109-bathroom-angle-valves.jpg",
+    "names": {
+      "en": "Angle Valves",
+      "tr": "Ara Musluklar",
+      "cs": "Rohové ventily"
+    }
+  },
+  {
     "slug": "kitchen",
     "parent": null,
     "sort_order": 2,

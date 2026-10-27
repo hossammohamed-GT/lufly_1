@@ -204,8 +204,19 @@ $assert(
     && ($productCategoryBySlug['1685-711'] ?? '') === 'bathroom.sanitary-ware.toilets'
     && ($productCategoryBySlug['sfd-133-15'] ?? '') === 'drains.floor-drains'
     && ($productCategoryBySlug['1755-9720c'] ?? '') === 'bathroom.mixers.thermostatic-mixers'
-    && ($productCategoryBySlug['1755-9720gg'] ?? '') === 'bathroom.mixers.thermostatic-mixers',
-    'Audited bathroom, drain, thermostatic, and kids sanitary ware items stay in their exact leaf categories',
+    && ($productCategoryBySlug['1755-9720gg'] ?? '') === 'bathroom.mixers.thermostatic-mixers'
+    && isset($seededCategorySlugs['bathroom.angle-valves'])
+    && !isset($seededParentSlugs['bathroom.angle-valves'])
+    && is_file($root . '/public/images/categories/109-bathroom-angle-valves.jpg')
+    && ($productCategoryBySlug['hl-st105'] ?? '') === 'bathroom.angle-valves'
+    && ($productCategoryBySlug['hl-st106'] ?? '') === 'bathroom.angle-valves'
+    && ($productCategoryBySlug['hl-st106bro'] ?? '') === 'bathroom.angle-valves'
+    && ($productCategoryBySlug['hl-st106b'] ?? '') === 'bathroom.angle-valves'
+    && ($productCategoryBySlug['hl-st106bn'] ?? '') === 'bathroom.angle-valves'
+    && ($productCategoryBySlug['hl-st106rg'] ?? '') === 'bathroom.angle-valves'
+    && ($productCategoryBySlug['hl-st110-229'] ?? '') === 'bathroom.angle-valves'
+    && ($productCategoryBySlug['hl-st133'] ?? '') === 'bathroom.angle-valves',
+    'Audited bathroom, angle valve, drain, thermostatic, and kids sanitary ware items stay in their exact leaf categories',
 );
 
 $familyIndexBySlug = [];
