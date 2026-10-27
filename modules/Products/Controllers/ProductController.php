@@ -142,12 +142,12 @@ class ProductController extends Controller
         );
 
         $cardPresentation = ProductCardPresenter::make($product, $locale);
-        $product['presented_features'] = $cardPresentation['features'];
+        $product['presented_features'] = $cardPresentation['specs'];
         if (!empty($product['seat_covers']) && is_array($product['seat_covers'])) {
             $product['seat_covers'] = array_map(
                 static function (array $seat) use ($locale): array {
                     $seatCard = ProductCardPresenter::make($seat, $locale);
-                    $seat['presented_features'] = $seatCard['features'];
+                    $seat['presented_features'] = $seatCard['specs'];
                     return $seat;
                 },
                 $product['seat_covers'],

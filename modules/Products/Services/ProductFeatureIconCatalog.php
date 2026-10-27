@@ -112,11 +112,47 @@ final class ProductFeatureIconCatalog
         ],
     ];
 
+    /**
+     * Friendly aliases mapped to canonical ICONS keys.
+     *
+     * @var array<string, string>
+     */
+    private const ALIASES = [
+        'mounting' => 'installation',
+        'water' => 'water-saving',
+        'spray' => 'shower',
+        'drain' => 'drainage',
+        'standard' => 'certification',
+        'thermostat' => 'thermostatic',
+        'capacity' => 'load-capacity',
+        'accessibility' => 'hygiene',
+        'spark' => 'easy-clean',
+        'light' => 'sensor',
+        'power' => 'sensor',
+        'shape' => 'spec',
+    ];
+
+    public static function has(string $key): bool
+    {
+        $normalized = strtolower(trim($key));
+        if ($normalized === '') {
+            return false;
+        }
+
+        return isset(self::ICONS[$normalized]) || isset(self::ALIASES[$normalized]);
+    }
+
     public static function normalize(string $key): string
     {
         $normalized = strtolower(trim($key));
+        if (isset(self::ICONS[$normalized])) {
+            return $normalized;
+        }
+        if (isset(self::ALIASES[$normalized])) {
+            return self::ALIASES[$normalized];
+        }
 
-        return isset(self::ICONS[$normalized]) ? $normalized : 'spec';
+        return 'spec';
     }
 
     public static function paths(string $key): string
@@ -150,5 +186,15 @@ final class ProductFeatureIconCatalog
         }
 
         return $out;
+    }
+
+    /**
+     * Alias of all() for Dashboard form builders.
+     *
+     * @return array<int, array{key: string, label: string, svg: string}>
+     */
+    public static function options(string $locale = 'en'): array
+    {
+        return self::all($locale);
     }
 }
