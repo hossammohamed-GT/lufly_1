@@ -32712,7 +32712,7 @@ INSERT INTO `product_media` (`id`, `product_id`, `variant_id`, `media_id`, `type
 INSERT INTO `product_media` (`id`, `product_id`, `variant_id`, `media_id`, `type`, `sort_order`, `is_primary`, `created_at`, `updated_at`) VALUES (1495, 711, NULL, 1495, 'drawing', 3, 0, '2026-10-23 09:44:39', '2026-10-23 09:44:39');
 INSERT INTO `product_media` (`id`, `product_id`, `variant_id`, `media_id`, `type`, `sort_order`, `is_primary`, `created_at`, `updated_at`) VALUES (1496, 712, NULL, 1496, 'gallery', 1, 1, '2026-10-23 09:44:39', '2026-10-23 09:44:39');
 
--- data: product_relations (246 rows)
+-- data: product_relations (245 rows)
 INSERT INTO `product_relations` (`id`, `product_id`, `related_product_id`, `relation_type`) VALUES (736, 129, 130, 'color_variant');
 INSERT INTO `product_relations` (`id`, `product_id`, `related_product_id`, `relation_type`) VALUES (737, 154, 155, 'color_variant');
 INSERT INTO `product_relations` (`id`, `product_id`, `related_product_id`, `relation_type`) VALUES (738, 142, 144, 'color_variant');
@@ -32958,7 +32958,6 @@ INSERT INTO `product_relations` (`id`, `product_id`, `related_product_id`, `rela
 INSERT INTO `product_relations` (`id`, `product_id`, `related_product_id`, `relation_type`) VALUES (978, 40, 41, 'seat_cover');
 INSERT INTO `product_relations` (`id`, `product_id`, `related_product_id`, `relation_type`) VALUES (979, 42, 43, 'seat_cover');
 INSERT INTO `product_relations` (`id`, `product_id`, `related_product_id`, `relation_type`) VALUES (980, 503, 504, 'color_variant');
-INSERT INTO `product_relations` (`id`, `product_id`, `related_product_id`, `relation_type`) VALUES (981, 504, 503, 'color_variant');
 
 -- data: seo_meta (2136 rows)
 INSERT INTO `seo_meta` (`id`, `product_id`, `locale`, `meta_title`, `meta_description`, `og_title`, `og_description`, `canonical_url`, `created_at`, `updated_at`) VALUES (1, 1, 'en', 'Name not provided | LUFLY', NULL, NULL, NULL, NULL, '2026-10-23 09:44:39', '2026-10-28 12:00:00');

@@ -10,6 +10,7 @@ $failures = [];
 $assert = static function (bool $condition, string $message) use (&$failures): void {
     if (!$condition) {
         $failures[] = $message;
+        fwrite(STDOUT, "::error title=ContractTest::FAIL: {$message}\n");
         fwrite(STDERR, "FAIL: {$message}\n");
     } else {
         fwrite(STDOUT, "PASS: {$message}\n");
