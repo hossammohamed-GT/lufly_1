@@ -8,6 +8,10 @@ use Core\Http\Kernel;
 use Core\Http\Request;
 
 $root = dirname(__DIR__);
+foreach (glob($root . '/storage/logs/*.log') ?: [] as $oldLog) {
+    @unlink($oldLog);
+}
+
 $app = require $root . '/bootstrap.php';
 
 /** @var Kernel $kernel */
@@ -48,6 +52,10 @@ $routes = [
 $failed = 0;
 
 foreach ($routes as [$method, $uri, $allowedStatuses]) {
+    foreach (glob($root . '/storage/logs/*.log') ?: [] as $oldLog) {
+        @unlink($oldLog);
+    }
+
     $parts = parse_url($uri) ?: [];
     $queryStr = (string) ($parts['query'] ?? '');
     $queryArr = [];
@@ -70,12 +78,14 @@ foreach ($routes as [$method, $uri, $allowedStatuses]) {
 
     if (!in_array($status, $allowedStatuses, true) || str_contains($body, 'Something went wrong. Please try again later.')) {
         $failed++;
-        fwrite(STDERR, "FAIL [{$method} {$uri}]: HTTP {$status}\n");
-        $logFiles = glob($root . '/storage/logs/*.log') ?: [];
-        foreach ($logFiles as $lf) {
-            $tail = array_slice(file($lf) ?: [], -25);
-            fwrite(STDERR, "--- {$lf} ---\n" . implode('', $tail) . "\n");
+        $logDump = '';
+        foreach (glob($root . '/storage/logs/*.log') ?: [] as $lf) {
+            $tail = array_slice(file($lf) ?: [], -12);
+            $logDump .= basename($lf) . ': ' . implode(' | ', array_map('trim', $tail)) . ' ';
         }
+        $cleanMsg = str_replace(["\r", "\n", '%'], [' ', ' ', '%25'], trim("FAIL [{$method} {$uri}] HTTP {$status} :: {$logDump}"));
+        fwrite(STDOUT, "::error title=HTTPSmoke::{$cleanMsg}\n");
+        fwrite(STDERR, "{$cleanMsg}\n");
     } else {
         fwrite(STDOUT, "PASS [{$method} {$uri}]: HTTP {$status}\n");
     }
