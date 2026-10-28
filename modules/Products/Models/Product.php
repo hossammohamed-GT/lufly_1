@@ -50,8 +50,8 @@ class Product extends Model
     /** @var array<int, array{preset_key: string, icon_key: string, labels: array<string, string>, defaults: array<string, ?string>}>|null */
     private static ?array $presetCache = null;
 
-    /** @var array<string, bool> */
-    private static array $tableCheckCache = [];
+    /** @var array<string, bool>|null */
+    private static ?array $existingTables = null;
 
     /**
      * Eager load relations for an array of Product models to eliminate N+1 queries.
@@ -113,58 +113,71 @@ class Product extends Model
         }
 
         $conn = static::db()->connection();
-        $placeholders = implode(',', array_fill(0, count($ids), '?'));
 
         if (in_array('translations', $relations, true)) {
-            $tRows = $conn->select(
-                "SELECT * FROM product_translations WHERE product_id IN ({$placeholders})",
-                $ids,
-            );
-            foreach ($tRows as $row) {
-                $pId = (int) $row['product_id'];
-                if (isset($map[$pId])) {
-                    $map[$pId]->preloadedTranslations[(string) $row['locale']] = $row;
+            foreach (array_chunk($ids, 400) as $idChunk) {
+                $placeholders = implode(',', array_fill(0, count($idChunk), '?'));
+                $tRows = $conn->select(
+                    "SELECT * FROM product_translations WHERE product_id IN ({$placeholders})",
+                    $idChunk,
+                );
+                foreach ($tRows as $row) {
+                    $pId = (int) $row['product_id'];
+                    if (isset($map[$pId])) {
+                        $map[$pId]->preloadedTranslations[(string) $row['locale']] = $row;
+                    }
                 }
             }
         }
 
         if (in_array('variants', $relations, true)) {
-            $vRows = $conn->select(
-                "SELECT * FROM product_variants WHERE product_id IN ({$placeholders}) AND deleted_at IS NULL ORDER BY sort_order ASC, id ASC",
-                $ids,
-            );
-            foreach ($vRows as $row) {
-                $pId = (int) $row['product_id'];
-                if (isset($map[$pId])) {
-                    $map[$pId]->preloadedVariants[] = array_merge($row, [
-                        'id' => (int) $row['id'],
-                        'price' => (float) $row['price'],
-                    ]);
+            foreach (array_chunk($ids, 400) as $idChunk) {
+                $placeholders = implode(',', array_fill(0, count($idChunk), '?'));
+                $vRows = $conn->select(
+                    "SELECT * FROM product_variants WHERE product_id IN ({$placeholders}) AND deleted_at IS NULL ORDER BY sort_order ASC, id ASC",
+                    $idChunk,
+                );
+                foreach ($vRows as $row) {
+                    $pId = (int) $row['product_id'];
+                    if (isset($map[$pId])) {
+                        $map[$pId]->preloadedVariants[] = array_merge($row, [
+                            'id' => (int) $row['id'],
+                            'price' => (float) $row['price'],
+                        ]);
+                    }
                 }
             }
         }
 
         if (in_array('specs', $relations, true)) {
-            $sRows = $conn->select(
-                "SELECT id, product_id, spec_key, spec_value, unit FROM product_specifications WHERE product_id IN ({$placeholders}) AND variant_id IS NULL ORDER BY sort_order ASC, id ASC",
-                $ids,
-            );
+            $sRows = [];
+            foreach (array_chunk($ids, 400) as $idChunk) {
+                $placeholders = implode(',', array_fill(0, count($idChunk), '?'));
+                foreach ($conn->select(
+                    "SELECT id, product_id, spec_key, spec_value, unit FROM product_specifications WHERE product_id IN ({$placeholders}) AND variant_id IS NULL ORDER BY sort_order ASC, id ASC",
+                    $idChunk,
+                ) as $sr) {
+                    $sRows[] = $sr;
+                }
+            }
             $specIds = array_values(array_filter(array_map(static fn (array $r): int => (int) ($r['id'] ?? 0), $sRows)));
             $specTranslations = [];
             if ($specIds !== [] && self::tableExists('product_specification_translations')) {
-                $sPlaceholders = implode(',', array_fill(0, count($specIds), '?'));
-                $stRows = $conn->select(
-                    "SELECT specification_id, locale, spec_key, spec_value
-                     FROM product_specification_translations
-                     WHERE specification_id IN ({$sPlaceholders})",
-                    $specIds,
-                );
-                foreach ($stRows as $st) {
-                    $sid = (int) $st['specification_id'];
-                    $specTranslations[$sid][(string) $st['locale']] = [
-                        'spec_key' => (string) $st['spec_key'],
-                        'spec_value' => (string) $st['spec_value'],
-                    ];
+                foreach (array_chunk($specIds, 400) as $specChunk) {
+                    $sPlaceholders = implode(',', array_fill(0, count($specChunk), '?'));
+                    $stRows = $conn->select(
+                        "SELECT specification_id, locale, spec_key, spec_value
+                         FROM product_specification_translations
+                         WHERE specification_id IN ({$sPlaceholders})",
+                        $specChunk,
+                    );
+                    foreach ($stRows as $st) {
+                        $sid = (int) $st['specification_id'];
+                        $specTranslations[$sid][(string) $st['locale']] = [
+                            'spec_key' => (string) $st['spec_key'],
+                            'spec_value' => (string) $st['spec_value'],
+                        ];
+                    }
                 }
             }
             foreach ($sRows as $row) {
@@ -178,29 +191,37 @@ class Product extends Model
         }
 
         if (in_array('card_features', $relations, true) && self::tableExists('product_card_features')) {
-            $fRows = $conn->select(
-                "SELECT id, product_id, preset_id, icon_key, sort_order
-                 FROM product_card_features
-                 WHERE product_id IN ({$placeholders})
-                 ORDER BY sort_order ASC, id ASC",
-                $ids,
-            );
+            $fRows = [];
+            foreach (array_chunk($ids, 400) as $idChunk) {
+                $placeholders = implode(',', array_fill(0, count($idChunk), '?'));
+                foreach ($conn->select(
+                    "SELECT id, product_id, preset_id, icon_key, sort_order
+                     FROM product_card_features
+                     WHERE product_id IN ({$placeholders})
+                     ORDER BY sort_order ASC, id ASC",
+                    $idChunk,
+                ) as $fr) {
+                    $fRows[] = $fr;
+                }
+            }
             $fIds = array_values(array_filter(array_map(static fn (array $r): int => (int) ($r['id'] ?? 0), $fRows)));
             $fTranslations = [];
             if ($fIds !== [] && self::tableExists('product_card_feature_translations')) {
-                $fPlaceholders = implode(',', array_fill(0, count($fIds), '?'));
-                $ftRows = $conn->select(
-                    "SELECT feature_id, locale, label, value
-                     FROM product_card_feature_translations
-                     WHERE feature_id IN ({$fPlaceholders})",
-                    $fIds,
-                );
-                foreach ($ftRows as $ft) {
-                    $fid = (int) $ft['feature_id'];
-                    $fTranslations[$fid][(string) $ft['locale']] = [
-                        'label' => $ft['label'] !== null ? (string) $ft['label'] : null,
-                        'value' => (string) $ft['value'],
-                    ];
+                foreach (array_chunk($fIds, 400) as $fChunk) {
+                    $fPlaceholders = implode(',', array_fill(0, count($fChunk), '?'));
+                    $ftRows = $conn->select(
+                        "SELECT feature_id, locale, label, value
+                         FROM product_card_feature_translations
+                         WHERE feature_id IN ({$fPlaceholders})",
+                        $fChunk,
+                    );
+                    foreach ($ftRows as $ft) {
+                        $fid = (int) $ft['feature_id'];
+                        $fTranslations[$fid][(string) $ft['locale']] = [
+                            'label' => $ft['label'] !== null ? (string) $ft['label'] : null,
+                            'value' => (string) $ft['value'],
+                        ];
+                    }
                 }
             }
             foreach ($fRows as $row) {
@@ -214,32 +235,38 @@ class Product extends Model
         }
 
         if (in_array('dimensions', $relations, true)) {
-            $dRows = $conn->select(
-                "SELECT product_id, width_mm, height_mm, depth_mm, weight_kg FROM product_dimensions WHERE product_id IN ({$placeholders}) AND variant_id IS NULL",
-                $ids,
-            );
-            foreach ($dRows as $row) {
-                $pId = (int) $row['product_id'];
-                if (isset($map[$pId])) {
-                    $map[$pId]->preloadedDimensions = $row;
-                    $map[$pId]->hasLoadedDimensions = true;
+            foreach (array_chunk($ids, 400) as $idChunk) {
+                $placeholders = implode(',', array_fill(0, count($idChunk), '?'));
+                $dRows = $conn->select(
+                    "SELECT product_id, width_mm, height_mm, depth_mm, weight_kg FROM product_dimensions WHERE product_id IN ({$placeholders}) AND variant_id IS NULL",
+                    $idChunk,
+                );
+                foreach ($dRows as $row) {
+                    $pId = (int) $row['product_id'];
+                    if (isset($map[$pId])) {
+                        $map[$pId]->preloadedDimensions = $row;
+                        $map[$pId]->hasLoadedDimensions = true;
+                    }
                 }
             }
         }
 
         if (in_array('media', $relations, true)) {
-            $mRows = $conn->select(
-                "SELECT pm.product_id, pm.id AS attachment_id, pm.type, pm.is_primary, pm.sort_order, m.*
-                 FROM product_media pm
-                 INNER JOIN media m ON m.id = pm.media_id
-                 WHERE pm.product_id IN ({$placeholders}) AND (pm.variant_id IS NULL)
-                 ORDER BY pm.is_primary DESC, pm.sort_order ASC, pm.id ASC",
-                $ids,
-            );
-            foreach ($mRows as $row) {
-                $pId = (int) $row['product_id'];
-                if (isset($map[$pId])) {
-                    $map[$pId]->preloadedMedia[] = $row;
+            foreach (array_chunk($ids, 400) as $idChunk) {
+                $placeholders = implode(',', array_fill(0, count($idChunk), '?'));
+                $mRows = $conn->select(
+                    "SELECT pm.product_id, pm.id AS attachment_id, pm.type, pm.is_primary, pm.sort_order, m.*
+                     FROM product_media pm
+                     INNER JOIN media m ON m.id = pm.media_id
+                     WHERE pm.product_id IN ({$placeholders}) AND (pm.variant_id IS NULL)
+                     ORDER BY pm.is_primary DESC, pm.sort_order ASC, pm.id ASC",
+                    $idChunk,
+                );
+                foreach ($mRows as $row) {
+                    $pId = (int) $row['product_id'];
+                    if (isset($map[$pId])) {
+                        $map[$pId]->preloadedMedia[] = $row;
+                    }
                 }
             }
         }
@@ -279,15 +306,21 @@ class Product extends Model
         }
 
         if (in_array('seat_covers', $relations, true)) {
-            $scRows = $conn->select(
-                "SELECT pr.product_id, pr.related_product_id
-                 FROM product_relations pr
-                 INNER JOIN products sp ON sp.id = pr.related_product_id AND sp.deleted_at IS NULL
-                 WHERE pr.product_id IN ({$placeholders})
-                   AND pr.relation_type = 'seat_cover'
-                 ORDER BY pr.id ASC",
-                $ids,
-            );
+            $scRows = [];
+            foreach (array_chunk($ids, 400) as $idChunk) {
+                $placeholders = implode(',', array_fill(0, count($idChunk), '?'));
+                foreach ($conn->select(
+                    "SELECT pr.product_id, pr.related_product_id
+                     FROM product_relations pr
+                     INNER JOIN products sp ON sp.id = pr.related_product_id AND sp.deleted_at IS NULL
+                     WHERE pr.product_id IN ({$placeholders})
+                       AND pr.relation_type = 'seat_cover'
+                     ORDER BY pr.id ASC",
+                    $idChunk,
+                ) as $scr) {
+                    $scRows[] = $scr;
+                }
+            }
             if ($scRows !== []) {
                 $seatIds = array_values(array_unique(array_map(
                     static fn (array $r): int => (int) $r['related_product_id'],
@@ -863,16 +896,24 @@ class Product extends Model
 
     private static function tableExists(string $table): bool
     {
-        if (isset(self::$tableCheckCache[$table])) {
-            return self::$tableCheckCache[$table];
+        if (self::$existingTables === null) {
+            try {
+                $names = (new SchemaBuilder(static::db()->connection()))->listTables();
+                self::$existingTables = [];
+                foreach ($names as $name) {
+                    self::$existingTables[(string) $name] = true;
+                }
+            } catch (\Throwable) {
+                self::$existingTables = [];
+            }
         }
 
-        return self::$tableCheckCache[$table] = (new SchemaBuilder(static::db()->connection()))->hasTable($table);
+        return isset(self::$existingTables[$table]);
     }
 
     public static function clearStaticCaches(): void
     {
         self::$presetCache = null;
-        self::$tableCheckCache = [];
+        self::$existingTables = null;
     }
 }

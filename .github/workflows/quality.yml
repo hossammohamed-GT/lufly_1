@@ -23,9 +23,15 @@ jobs:
           extensions: pdo_sqlite, mbstring, curl, fileinfo, gd
           coverage: none
       - name: Syntax check
-        run: find app config core database modules resources routes -type f -name '*.php' -print0 | xargs -0 -n1 php -l
+        run: find app config core database modules resources routes tests -type f -name '*.php' -print0 | xargs -0 -n1 php -l
       - name: Repository contract tests
         run: php tests/run.php
+      - name: HTTP smoke suite (SQLite)
+        env:
+          APP_ENV: local
+          APP_KEY: base64:CI-only-not-a-production-key-000000000000
+          DB_CONNECTION: sqlite
+        run: php tests/http_smoke.php
       - name: Database migration status
         env:
           APP_ENV: local
@@ -33,6 +39,58 @@ jobs:
           DB_CONNECTION: sqlite
           DB_SQLITE_PATH: /tmp/lufly-quality.sqlite
         run: php cli migrate
+
+  mysql_smoke:
+    name: MySQL 8.0 dump & HTTP smoke
+    runs-on: ubuntu-latest
+    services:
+      mysql:
+        image: mysql:8.0
+        env:
+          MYSQL_ROOT_PASSWORD: root
+          MYSQL_DATABASE: lufly_test
+        ports:
+          - 3306:3306
+        options: >-
+          --health-cmd="mysqladmin ping -h 127.0.0.1 -uroot -proot"
+          --health-interval=5s
+          --health-timeout=5s
+          --health-retries=15
+    steps:
+      - uses: actions/checkout@v4
+      - uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.2'
+          extensions: pdo_mysql, pdo_sqlite, mbstring, curl, fileinfo, gd
+          coverage: none
+      - name: Import lufly-database.sql into MySQL 8.0
+        run: |
+          mysql -h 127.0.0.1 -P 3306 -uroot -proot lufly_test < lufly-database.sql
+          mysql -h 127.0.0.1 -P 3306 -uroot -proot -e "CREATE DATABASE lufly_legacy CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;"
+          mysql -h 127.0.0.1 -P 3306 -uroot -proot lufly_legacy < lufly-database.sql
+          mysql -h 127.0.0.1 -P 3306 -uroot -proot lufly_legacy -e "DROP TABLE product_specification_translations, product_card_feature_translations, product_card_features, product_feature_preset_translations, product_feature_presets;"
+      - name: HTTP smoke suite on MySQL 8.0 (full 50-table dump)
+        env:
+          APP_ENV: local
+          APP_KEY: base64:CI-only-not-a-production-key-000000000000
+          DB_CONNECTION: mysql
+          DB_HOST: 127.0.0.1
+          DB_PORT: '3306'
+          DB_DATABASE: lufly_test
+          DB_USERNAME: root
+          DB_PASSWORD: root
+        run: php tests/http_smoke.php
+      - name: HTTP smoke suite on MySQL 8.0 (pre-migration 45-table DB)
+        env:
+          APP_ENV: local
+          APP_KEY: base64:CI-only-not-a-production-key-000000000000
+          DB_CONNECTION: mysql
+          DB_HOST: 127.0.0.1
+          DB_PORT: '3306'
+          DB_DATABASE: lufly_legacy
+          DB_USERNAME: root
+          DB_PASSWORD: root
+        run: php tests/http_smoke.php
 
   security:
     name: Secret and sensitive-file scan

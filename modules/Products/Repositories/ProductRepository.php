@@ -156,7 +156,9 @@ class ProductRepository extends Repository
             return new Paginator($items, count($orderedIds), $page, $perPage);
         }
 
-        $sql = "SELECT DISTINCT p.* FROM products p {$searchJoin} {$whereSql}{$orderBySql}";
+        /* product_translations is 1-to-1 per (product_id, locale), so omitting
+           DISTINCT avoids MySQL ONLY_FULL_GROUP_BY rejection on ORDER BY pt.name. */
+        $sql = "SELECT p.* FROM products p {$searchJoin} {$whereSql}{$orderBySql}";
 
         if ($colorFamilies !== null) {
             /* Collapse before counting and slicing. A search for one specific

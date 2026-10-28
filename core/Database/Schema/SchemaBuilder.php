@@ -45,7 +45,10 @@ class SchemaBuilder
             return $row !== null;
         }
 
-        $row = $this->connection->selectOne('SHOW TABLES LIKE ?', [$table]);
+        $row = $this->connection->selectOne(
+            'SELECT TABLE_NAME FROM information_schema.TABLES WHERE TABLE_SCHEMA = DATABASE() AND TABLE_NAME = ? LIMIT 1',
+            [$table],
+        );
         return $row !== null;
     }
 
@@ -59,7 +62,13 @@ class SchemaBuilder
             );
         }
 
-        return array_map('reset', $this->connection->select('SHOW TABLES'));
+        return array_column(
+            $this->connection->select(
+                'SELECT TABLE_NAME AS name FROM information_schema.TABLES WHERE TABLE_SCHEMA = DATABASE() AND TABLE_TYPE = ?',
+                ['BASE TABLE'],
+            ),
+            'name',
+        );
     }
 
     public function dropAllTables(): void
