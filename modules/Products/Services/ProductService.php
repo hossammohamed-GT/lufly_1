@@ -60,6 +60,20 @@ class ProductService
         return $product->translate($locale);
     }
 
+    public function datasheetUrl(int $productId, string $locale = 'en'): ?string
+    {
+        return $this->products->datasheetUrl($productId, $locale);
+    }
+
+    /**
+     * @param array<string, mixed> $product
+     * @return array{similar: Product[], complementary: Product[]}
+     */
+    public function marketplaceRecommendations(array $product, int $similarLimit = 4, int $complementaryLimit = 4): array
+    {
+        return $this->products->marketplaceRecommendations($product, $similarLimit, $complementaryLimit);
+    }
+
     public function find(int $id): Product
     {
         $product = $this->products->find($id);

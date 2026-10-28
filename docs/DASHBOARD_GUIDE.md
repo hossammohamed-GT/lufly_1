@@ -175,4 +175,24 @@
 2. **توليد تلقائي للترجمات الثلاث (`Auto-Translate Canonical Finishes`)**:
    - بمجرد اختيار الألوان من المنتقي المرئي، يولّد النظام تلقائياً صف `Finish` في `product_specifications` وصفوف `product_specification_translations` باللغات `en` و`tr` و`cs` من قاموس `ProductCardPresenter::FINISH_TRANSLATIONS`، مع إتاحة تعديلها يدوياً عند الحاجة.
 
+---
+
+## 6. ملفات البيانات الفنية (`Data Sheet`) ومحرك توصيات السوق في صفحة المنتج (`PDP Marketplace Discovery`)
+
+تمت إعادة هندسة صفحة تفاصيل المنتج (`modules/Products/Views/show.php` + `detail.css` + `detail.js`) لتعمل كمنصة تسوّق ومشاريع احترافية متكاملة (`Flagship Luxury Marketplace PDP`).
+
+### أولاً: زر `Data Sheet` وآلية تفعيله مستقبلاً من الداشبورد (`product_documents`)
+- **الحالة الحالية (غير متاح مؤقتاً مثل مربع السلة تماماً)**:
+  - طالما لا يوجد ملف PDF مرتبط بالمنتج في جدول `product_documents` (`document_type = 'datasheet'`)، يظهر زر **`Data Sheet` / `Teknik Föy` / `Technický list`** معطّلاً (`disabled aria-disabled="true"`) وبنفس التصميم البصري النظيف لمربع السلة غير المتاح (`.boxbtn-cart:disabled`) مع شارة صغيرة (`Soon` / `Yakında` / `Brzy`) وتلميح يوضّح أنه سيتفعّل فور رفع الملف الفني.
+- **التفعيل التلقائي من الداشبورد دون تعديل الكود**:
+  - يستعلم `ProductRepository::datasheetUrl(int $productId, string $locale)` تلقائياً من جدول `product_documents` المربوط بجدول `media` (`m.status = 'active'` و`pd.document_type IN ('datasheet', 'data_sheet', 'technical_sheet')`) مع أولوية مطابقة لغة الزائر ثم الإنجليزية (`en`).
+  - **عند بناء الداشبورد**: يكفي إضافة حقل رفع ملف PDF في صفحة تعديل المنتج يحفظ الملف في `media` ويدرج صفاً في `product_documents` (`product_id`, `media_id`, `document_type = 'datasheet'`, `language`)، وسيتحول الزر تلقائياً في صفحة المنتج إلى رابط تحميل مباشر (`<a class="pdp-datasheet-btn is-ready" download>`).
+
+### ثانياً: محرك توصيات السوق ثنائي المستوى أسفل كل منتج (`ProductRepository::marketplaceRecommendations`)
+1. **القسم الأول — منتجات مشابهة من نفس الفئة (`More from :category` / `data-pdp-similar`)**:
+   - يعرض حتى **4 عائلات منتجات مدمجة الألوان** من نفس الفئة الفرعية الورقية (`category_id`) مع استبعاد المنتج الحالي وجميع أشقائه اللونيين (`color_variants`) واستبعاد أغطية المقاعد (`seat_cover`)، ويرتّبها حسب تطابق سلسلة الموديل والتمييز (`is_featured`) وجودة الصور، ويكمّل تلقائياً من الفئات الشقيقة تحت نفس القسم الأب إذا قلّ عدد منتجات الفئة عن 4.
+2. **القسم الثاني — أكمل المساحة بمنتجات متناسقة (`Complete the Space` / `data-pdp-complementary`)**:
+   - يقترح **4 منتجات مكمّلة** من الأقسام المرتبطة معمارياً (مثل ربط خلاطات المطبخ بالأحواض والمحابس الزاوية، وخلاطات الحمام بالأدوات الصحية والإكسسوارات والمرايا، ومنتجات الأطفال الصحية بخلاطات الأطفال) مع **أولوية تناغم اللون/التشطيب (`Finish Harmony`)** وتنويع الفئات (`diversifyDiscovery`).
+
+
 

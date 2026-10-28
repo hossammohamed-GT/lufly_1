@@ -485,6 +485,22 @@ if (extension_loaded('pdo_sqlite')) {
     );
 }
 
+$pdpDetailCssSrc = (string) file_get_contents($root . '/frontend/products/detail/detail.css');
+$assert(
+    str_contains($productShowViewSrc, "pushStyle('frontend/box/box.css')")
+    && str_contains($productShowViewSrc, "pushScript('frontend/box/box.js')")
+    && str_contains($productShowViewSrc, "pushStyle('frontend/css/product-card.css')")
+    && str_contains($productShowViewSrc, "pushScript('frontend/js/product-card-variants.js')")
+    && str_contains($productShowViewSrc, 'class="pdp-datasheet-btn"')
+    && str_contains($productShowViewSrc, 'aria-disabled="true"')
+    && str_contains($productShowViewSrc, 'data-pdp-similar')
+    && str_contains($productShowViewSrc, 'data-pdp-complementary')
+    && str_contains($pdpDetailCssSrc, '.pdp-datasheet-btn:disabled')
+    && str_contains($productRepositorySrc, 'function marketplaceRecommendations(')
+    && str_contains($productRepositorySrc, 'function datasheetUrl('),
+    'Marketplace PDP pushes card/box assets, renders the disabled Data Sheet button cleanly, and wires two-tier related & complementary product discovery',
+);
+
 foreach (glob($root . '/resources/lang/en/*.php') ?: [] as $enLangFile) {
     $base = basename($enLangFile);
     $enKeys = array_keys(require $enLangFile);

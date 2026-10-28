@@ -108,8 +108,19 @@ foreach ($routes as [$method, $uri, $allowedStatuses]) {
             }
         }
     } elseif (in_array($uri, ['/en/products/1653-8033c', '/tr/urunler/1653-8033c', '/cs/produkty/1653-8033c'], true)) {
+        $expectedDatasheetLabel = match ($uri) {
+            '/tr/urunler/1653-8033c' => 'Teknik Föy',
+            '/cs/produkty/1653-8033c' => 'Technický list',
+            default => 'Data Sheet',
+        };
         if (!str_contains($body, 'pdp-stage is-featured') || !str_contains($body, 'pdp-code-chip is-gold')) {
             $customError = 'Featured PDP is missing golden stage or golden featured chip';
+        } elseif (!str_contains($body, 'class="pdp-datasheet-btn"') || !str_contains($body, 'aria-disabled="true"') || !str_contains($body, $expectedDatasheetLabel)) {
+            $customError = 'PDP is missing localized disabled Data Sheet button (' . $expectedDatasheetLabel . ')';
+        } elseif (!str_contains($body, 'data-pdp-similar') || !str_contains($body, 'data-pdp-complementary')) {
+            $customError = 'PDP is missing similar or complementary marketplace discovery sections';
+        } elseif (substr_count($body, 'data-product-card') < 4) {
+            $customError = 'PDP rendered fewer than 4 marketplace discovery product cards';
         }
     }
 

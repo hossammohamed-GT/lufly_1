@@ -214,9 +214,43 @@ class ProductController extends Controller
         $seoBreadcrumbs[] = ['name' => $productName, 'url' => $canonical];
         $this->seo->addBreadcrumb($seoBreadcrumbs);
 
+        $savedIds = [];
+        if (feature('favorites', true) && class_exists(\Modules\Favorites\Services\FavoriteService::class)) {
+            $savedIds = array_flip(app(\Modules\Favorites\Services\FavoriteService::class)->productIds());
+        }
+        $boxIds = [];
+        if (feature('box', true) && class_exists(\Modules\Box\Services\BoxService::class)) {
+            $boxIds = array_flip(app(\Modules\Box\Services\BoxService::class)->productIds());
+        }
+
+        $colorFamilies = app(ProductColorFamilyService::class);
+        $rawRecs = $this->products->marketplaceRecommendations($product, 4, 4);
+        $hydrateRecCards = static function (array $models) use ($colorFamilies, $locale, $savedIds, $boxIds): array {
+            $cards = [];
+            foreach ($models as $recModel) {
+                $cards[] = [
+                    'product' => $colorFamilies->attach($recModel->translate($locale), $locale, $savedIds, $boxIds),
+                    'slug' => (string) $recModel->slug,
+                    'saved' => isset($savedIds[(int) $recModel->getKey()]),
+                    'in_box' => isset($boxIds[(int) $recModel->getKey()]),
+                ];
+            }
+            return $cards;
+        };
+
+        $productId = (int) ($product['id'] ?? 0);
+
         return $this->view('products::show', [
             'title' => $productName,
             'product' => $product,
+            'card' => $cardPresentation,
+            'saved' => isset($savedIds[$productId]),
+            'inBox' => isset($boxIds[$productId]),
+            'savedIds' => $savedIds,
+            'boxIds' => $boxIds,
+            'datasheetUrl' => $this->products->datasheetUrl($productId, $locale),
+            'similarProducts' => $hydrateRecCards($rawRecs['similar']),
+            'complementaryProducts' => $hydrateRecCards($rawRecs['complementary']),
             'categoryBreadcrumbs' => $categoryBreadcrumbs,
             'locale' => $locale,
             'seo' => $this->seo,

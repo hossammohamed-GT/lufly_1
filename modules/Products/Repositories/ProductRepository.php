@@ -385,4 +385,298 @@ class ProductRepository extends Repository
 
         return $items;
     }
+
+    /**
+     * Resolve an uploaded technical datasheet PDF URL when one exists in
+     * product_documents; returns null while datasheets are not yet published.
+     */
+    public function datasheetUrl(int $productId, string $locale = 'en'): ?string
+    {
+        if ($productId <= 0) {
+            return null;
+        }
+
+        $connection = Product::query()->connection();
+        $row = $connection->selectOne(
+            "SELECT m.path
+             FROM product_documents pd
+             INNER JOIN media m ON m.id = pd.media_id
+             WHERE pd.product_id = ?
+               AND pd.variant_id IS NULL
+               AND pd.document_type IN ('datasheet', 'data_sheet', 'technical_sheet')
+               AND m.status = 'active'
+             ORDER BY CASE WHEN pd.language = ? THEN 0 WHEN pd.language = 'en' THEN 1 ELSE 2 END,
+                      pd.sort_order ASC,
+                      pd.id ASC
+             LIMIT 1",
+            [$productId, $locale],
+        );
+
+        $path = trim((string) ($row['path'] ?? ''));
+
+        return $path !== '' ? $path : null;
+    }
+
+    /**
+     * Curated two-tier marketplace discovery for a product page:
+     *  1. `similar`       — other collapsed product families in the same leaf
+     *                       (topped up from sibling leaves under the same parent/root).
+     *  2. `complementary` — finish-harmonized fixtures & accessories from
+     *                       paired categories that complete the space.
+     *
+     * @param array<string, mixed> $product
+     * @return array{similar: Product[], complementary: Product[]}
+     */
+    public function marketplaceRecommendations(
+        array $product,
+        int $similarLimit = 4,
+        int $complementaryLimit = 4,
+    ): array {
+        $productId = (int) ($product['id'] ?? 0);
+        if ($productId <= 0) {
+            return ['similar' => [], 'complementary' => []];
+        }
+
+        $excluded = [$productId => true];
+        foreach ((array) ($product['color_variants'] ?? []) as $cv) {
+            $cvId = (int) ($cv['id'] ?? 0);
+            if ($cvId > 0) {
+                $excluded[$cvId] = true;
+            }
+        }
+        foreach ((array) ($product['seat_covers'] ?? []) as $sc) {
+            $scId = (int) ($sc['id'] ?? 0);
+            if ($scId > 0) {
+                $excluded[$scId] = true;
+            }
+        }
+
+        $connection = Product::query()->connection();
+        $colorFamilies = app(ProductColorFamilyService::class);
+        $categoryService = app(CategoryService::class);
+        $categoryId = (int) ($product['category_id'] ?? 0);
+        $categorySlug = trim((string) ($product['category_slug'] ?? ''));
+        $modelCode = trim((string) ($product['model_code'] ?? ''));
+        $modelPrefix = '';
+        if ($modelCode !== '' && preg_match('/^([A-Za-z0-9]{3,5})[-]/', $modelCode, $mPrefix) === 1) {
+            $modelPrefix = strtoupper($mPrefix[1]);
+        }
+
+        $finishSpec = '';
+        foreach ((array) ($product['specs'] ?? []) as $sRow) {
+            $rk = strtolower(trim((string) ($sRow['raw_key'] ?? $sRow['spec_key'] ?? '')));
+            if (in_array($rk, ['finish', 'color', 'colour'], true)) {
+                $finishSpec = strtolower(trim((string) ($sRow['raw_value'] ?? $sRow['spec_value'] ?? '')));
+                break;
+            }
+        }
+
+        $fetchCandidates = static function (array $catIds, array $excludeMap) use ($connection, $colorFamilies): array {
+            $catIds = array_values(array_unique(array_filter(array_map('intval', $catIds), static fn (int $v): bool => $v > 0)));
+            if ($catIds === []) {
+                return [];
+            }
+
+            $catPlaceholders = implode(',', array_fill(0, count($catIds), '?'));
+            $params = ['active', ...$catIds];
+            $excludeSql = '';
+            $excludeIds = array_keys($excludeMap);
+            if ($excludeIds !== []) {
+                $excludeSql = ' AND p.id NOT IN (' . implode(',', array_fill(0, count($excludeIds), '?')) . ')';
+                $params = [...$params, ...$excludeIds];
+            }
+
+            $rows = $connection->select(
+                "SELECT p.id, p.category_id, p.model_code, p.is_featured, p.sort_order,
+                        (SELECT ps.spec_value FROM product_specifications ps
+                         WHERE ps.product_id = p.id AND ps.variant_id IS NULL AND ps.spec_key = 'Finish'
+                         ORDER BY ps.id ASC LIMIT 1) AS finish_raw,
+                        CASE WHEN EXISTS (
+                            SELECT 1 FROM product_media pm
+                            INNER JOIN media m ON m.id = pm.media_id
+                            WHERE pm.product_id = p.id
+                              AND pm.variant_id IS NULL
+                              AND pm.type NOT IN ('drawing', 'situ')
+                              AND m.status = 'active'
+                        ) THEN 1 ELSE 0 END AS has_photo
+                 FROM products p
+                 WHERE p.deleted_at IS NULL
+                   AND p.status = ?
+                   AND p.category_id IN ({$catPlaceholders})
+                   {$excludeSql}
+                   AND " . ProductVisibility::mediaReadySql('p') . "
+                 ORDER BY p.is_featured DESC, p.sort_order ASC, has_photo DESC, p.id DESC",
+                $params,
+            );
+
+            return $colorFamilies->collapseRows($rows);
+        };
+
+        /* ---- Tier 1: Similar in same leaf category (topped up from parent branch) ---- */
+        $similarIds = [];
+        if ($categoryId > 0) {
+            $sameLeafRows = $fetchCandidates([$categoryId], $excluded);
+            usort(
+                $sameLeafRows,
+                static function (array $a, array $b) use ($modelPrefix, $finishSpec): int {
+                    $aPrefix = ($modelPrefix !== '' && str_starts_with(strtoupper((string) ($a['model_code'] ?? '')), $modelPrefix . '-')) ? 1 : 0;
+                    $bPrefix = ($modelPrefix !== '' && str_starts_with(strtoupper((string) ($b['model_code'] ?? '')), $modelPrefix . '-')) ? 1 : 0;
+                    if ($aPrefix !== $bPrefix) {
+                        return $bPrefix <=> $aPrefix;
+                    }
+                    $aFin = ($finishSpec !== '' && strtolower((string) ($a['finish_raw'] ?? '')) === $finishSpec) ? 1 : 0;
+                    $bFin = ($finishSpec !== '' && strtolower((string) ($b['finish_raw'] ?? '')) === $finishSpec) ? 1 : 0;
+                    if ($aFin !== $bFin) {
+                        return $bFin <=> $aFin;
+                    }
+                    $aFeat = (int) ($a['is_featured'] ?? 0);
+                    $bFeat = (int) ($b['is_featured'] ?? 0);
+                    if ($aFeat !== $bFeat) {
+                        return $bFeat <=> $aFeat;
+                    }
+
+                    return ((int) ($b['has_photo'] ?? 0) <=> (int) ($a['has_photo'] ?? 0))
+                        ?: ((int) ($b['id'] ?? 0) <=> (int) ($a['id'] ?? 0));
+                },
+            );
+
+            foreach (array_slice($sameLeafRows, 0, $similarLimit) as $r) {
+                $rid = (int) $r['id'];
+                $similarIds[] = $rid;
+                $excluded[$rid] = true;
+            }
+        }
+
+        if (count($similarIds) < $similarLimit && $categorySlug !== '') {
+            $parts = explode('.', $categorySlug);
+            for ($len = count($parts) - 1; $len >= 1 && count($similarIds) < $similarLimit; $len--) {
+                $ancestorSlug = implode('.', array_slice($parts, 0, $len));
+                $branchCatIds = $categoryService->descendantIdsBySlug($ancestorSlug);
+                $siblingRows = $fetchCandidates($branchCatIds, $excluded);
+                foreach ($this->diversifyDiscovery($siblingRows) as $sid) {
+                    if (!isset($excluded[$sid])) {
+                        $similarIds[] = $sid;
+                        $excluded[$sid] = true;
+                        if (count($similarIds) >= $similarLimit) {
+                            break;
+                        }
+                    }
+                }
+            }
+        }
+
+        /* ---- Tier 2: Complementary pieces that complete the space ---- */
+        $compBranches = $this->complementaryCategorySlugs($categorySlug);
+        $compCatIds = [];
+        foreach ($compBranches as $bSlug) {
+            foreach ($categoryService->descendantIdsBySlug($bSlug) as $cid) {
+                if ($cid !== $categoryId) {
+                    $compCatIds[$cid] = $cid;
+                }
+            }
+        }
+
+        $complementaryIds = [];
+        if ($compCatIds !== []) {
+            $compRows = $fetchCandidates(array_values($compCatIds), $excluded);
+
+            /* Prioritize finish-harmonized pieces first so e.g. a Matte Black or
+               Rose Gold mixer pairs naturally with matching accessories/showers. */
+            $finishTokens = array_values(array_filter(
+                preg_split('#\s*/\s*#', $finishSpec) ?: [],
+                static fn (string $t): bool => $t !== '',
+            ));
+            usort(
+                $compRows,
+                static function (array $a, array $b) use ($finishTokens): int {
+                    $scoreFn = static function (string $candFin) use ($finishTokens): int {
+                        if ($candFin === '' || $finishTokens === []) {
+                            return 0;
+                        }
+                        foreach ($finishTokens as $tok) {
+                            if (str_contains($candFin, $tok)) {
+                                return 2;
+                            }
+                        }
+                        return 0;
+                    };
+                    $sa = $scoreFn(strtolower((string) ($a['finish_raw'] ?? '')));
+                    $sb = $scoreFn(strtolower((string) ($b['finish_raw'] ?? '')));
+                    if ($sa !== $sb) {
+                        return $sb <=> $sa;
+                    }
+                    $aFeat = (int) ($a['is_featured'] ?? 0);
+                    $bFeat = (int) ($b['is_featured'] ?? 0);
+                    if ($aFeat !== $bFeat) {
+                        return $bFeat <=> $aFeat;
+                    }
+
+                    return ((int) ($b['has_photo'] ?? 0) <=> (int) ($a['has_photo'] ?? 0))
+                        ?: ((int) ($a['sort_order'] ?? 0) <=> (int) ($b['sort_order'] ?? 0));
+                },
+            );
+
+            foreach (array_slice($this->diversifyDiscovery($compRows), 0, $complementaryLimit) as $cid) {
+                $complementaryIds[] = $cid;
+            }
+        }
+
+        return [
+            'similar' => $this->hydrateOrderedIds($similarIds),
+            'complementary' => $this->hydrateOrderedIds($complementaryIds),
+        ];
+    }
+
+    /**
+     * Map any category slug to complementary architectural branches.
+     *
+     * @return string[]
+     */
+    private function complementaryCategorySlugs(string $categorySlug): array
+    {
+        if (str_starts_with($categorySlug, 'kitchen.kitchen-mixers')) {
+            return ['kitchen.sinks', 'bathroom.angle-valves', 'drains'];
+        }
+        if (str_starts_with($categorySlug, 'kitchen.sinks') || str_starts_with($categorySlug, 'kitchen')) {
+            return ['kitchen.kitchen-mixers', 'drains', 'bathroom.angle-valves'];
+        }
+        if (str_starts_with($categorySlug, 'kids.kids-sanitary-ware')) {
+            return ['kids.kids-mixers', 'mirrors'];
+        }
+        if (str_starts_with($categorySlug, 'kids')) {
+            return ['kids.kids-sanitary-ware', 'mirrors'];
+        }
+        if (str_starts_with($categorySlug, 'accessibility.accessible-sanitary-ware')) {
+            return ['accessibility.kids-bars-supports', 'accessibility.accessible-accessories', 'bathroom.mixers'];
+        }
+        if (str_starts_with($categorySlug, 'accessibility')) {
+            return ['accessibility.accessible-sanitary-ware', 'accessibility.accessible-accessories', 'accessibility.kids-bars-supports'];
+        }
+        if (str_starts_with($categorySlug, 'vanity-units')) {
+            return ['mirrors', 'bathroom.mixers', 'bathroom.accessories'];
+        }
+        if (str_starts_with($categorySlug, 'mirrors')) {
+            return ['vanity-units', 'bathroom.mixers', 'bathroom.sanitary-ware', 'bathroom.accessories'];
+        }
+        if (str_starts_with($categorySlug, 'drains') || str_starts_with($categorySlug, 'shower-enclosures')) {
+            return ['bathroom.mixers', 'bathroom.sanitary-ware', 'bathroom.accessories'];
+        }
+        if (str_starts_with($categorySlug, 'drinking-fountains')) {
+            return ['bathroom.accessories', 'drains', 'kitchen.sinks'];
+        }
+        if (str_starts_with($categorySlug, 'bathroom.sanitary-ware')) {
+            return ['bathroom.mixers', 'bathroom.accessories', 'mirrors', 'bathroom.angle-valves'];
+        }
+        if (str_starts_with($categorySlug, 'bathroom.mixers')) {
+            return ['bathroom.sanitary-ware', 'bathroom.accessories', 'mirrors', 'bathroom.angle-valves'];
+        }
+        if (str_starts_with($categorySlug, 'bathroom.accessories')) {
+            return ['bathroom.mixers', 'mirrors', 'bathroom.sanitary-ware', 'vanity-units'];
+        }
+        if (str_starts_with($categorySlug, 'bathroom.angle-valves')) {
+            return ['bathroom.mixers', 'bathroom.sanitary-ware', 'kitchen.kitchen-mixers'];
+        }
+
+        return ['bathroom.mixers', 'bathroom.sanitary-ware', 'bathroom.accessories', 'mirrors'];
+    }
 }
