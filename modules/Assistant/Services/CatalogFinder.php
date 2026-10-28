@@ -19,7 +19,7 @@ use Modules\Products\Services\ProductVisibility;
  *
  * One query per word, portable across MySQL and SQLite: no FULLTEXT, no
  * collation trick, only LOWER() and LIKE — so the same code answers the same
- * way on XAMPP and in the test harness.
+ * way on local SQLite and production MySQL.
  */
 final class CatalogFinder
 {

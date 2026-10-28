@@ -380,14 +380,12 @@ final class Conversation
     private function normalize(string $text): string
     {
         $text = mb_strtolower(trim($text), 'UTF-8');
-        /* Arabic: drop the short vowels so "أحْوَاض" matches "أحواض" */
+        /* Strip short vowel diacritics so vowelled and unvowelled words match. */
         $text = (string) preg_replace('/[\x{064B}-\x{065F}\x{0670}\x{06D6}-\x{06ED}]/u', '', $text);
-        /* Arabic letters that are written differently but read the same */
+        /* Normalize orthographic letter variants into a single canonical form. */
         $text = str_replace(['أ', 'إ', 'آ', 'ى', 'ئ', 'ؤ', 'ة'], ['ا', 'ا', 'ا', 'ي', 'ي', 'و', 'ه'], $text);
         $text = (string) preg_replace('/[^\p{L}\p{N}]+/u', ' ', $text);
-        /* the Arabic article is glued to the front of the word and changes nothing:
-           "الحوض" is the same piece as "حوض", and a visitor writing it must be
-           understood without us listing every form of every word */
+        /* Strip a prefixed definite article when a three-letter stem follows. */
         $text = (string) preg_replace('/(^| )ال(?=\p{L}{3})/u', '$1', $text);
 
         return trim((string) preg_replace('/\s+/u', ' ', $text));
