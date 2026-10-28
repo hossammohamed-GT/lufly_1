@@ -27,6 +27,7 @@
 $view->layout('layouts.frontend');
 $view->pushStyle('frontend/css/product-card.css');
 $view->pushStyle('frontend/products/detail/detail.css');
+$view->pushScript('frontend/products/catalog/catalog.js');
 $view->pushScript('frontend/js/product-card-variants.js');
 $view->pushScript('frontend/products/detail/detail.js');
 if (feature('favorites', true)) {

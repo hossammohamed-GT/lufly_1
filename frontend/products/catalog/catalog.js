@@ -328,95 +328,235 @@
 (function () {
   'use strict';
 
-  /* hovering advances to the next photo straight away, then each
-     following photo is held for HOLD ms before moving on */
-  var HOLD = 3000;
-  var timers = new WeakMap();
+  if (window.__luflyPcardCycleBound) return;
+  window.__luflyPcardCycleBound = true;
 
-  function slides(media) {
-    return media.querySelectorAll('[data-pcard-slide]');
+  /* Calm luxury settle on hover before the first angle glides in,
+     followed by an unhurried HOLD window after each decoded slide. */
+  var INTENT_DELAY = 280;
+  var HOLD = 3200;
+  var LEAVE_CLEANUP_MS = 820;
+  var states = new WeakMap();
+
+  function getState(media) {
+    var st = states.get(media);
+    if (!st) {
+      st = {
+        active: false,
+        token: 0,
+        intentTimer: 0,
+        cycleTimer: 0,
+        leaveCleanTimer: 0
+      };
+      states.set(media, st);
+    }
+    return st;
   }
 
-  function show(media, index) {
+  function slides(media) {
+    return Array.prototype.slice.call(media.querySelectorAll('[data-pcard-slide]'));
+  }
+
+  function warmSlides(media) {
+    if (!media || media.__pcardSlidesWarmed) return;
+    media.__pcardSlidesWarmed = true;
+    slides(media).forEach(function (img, idx) {
+      if (idx === 0) return;
+      if (img.loading === 'lazy') img.loading = 'eager';
+      if (typeof img.decode === 'function') {
+        img.decode().catch(function () {});
+      }
+    });
+  }
+
+  function ensureDecoded(img) {
+    if (!img) return Promise.resolve(false);
+    if (img.loading === 'lazy') img.loading = 'eager';
+    if (img.complete) {
+      return Promise.resolve(img.naturalWidth > 0);
+    }
+    if (typeof img.decode === 'function') {
+      return img.decode().then(function () {
+        return img.naturalWidth > 0;
+      }).catch(function () {
+        return img.complete && img.naturalWidth > 0;
+      });
+    }
+    return new Promise(function (resolve) {
+      var done = function () {
+        img.removeEventListener('load', done);
+        img.removeEventListener('error', done);
+        resolve(img.naturalWidth > 0);
+      };
+      img.addEventListener('load', done, { once: true });
+      img.addEventListener('error', done, { once: true });
+    });
+  }
+
+  function show(media, index, opts) {
+    var options = opts && typeof opts === 'object' ? opts : {};
+    var animate = options.animate !== false;
     var imgs = slides(media);
-    /* Dots and the media-kind label live below the clean product image in
-       the new glass layout. Fall back to the media itself for old markup. */
     var stage = media.closest ? media.closest('.pcard-stage') : null;
     var scope = stage || media;
     var dots = scope.querySelectorAll('[data-pcard-dot]');
     if (imgs.length === 0) return;
 
-    index = (index + imgs.length) % imgs.length;
-    imgs.forEach(function (img, n) { img.classList.toggle('is-on', n === index); });
+    index = ((index % imgs.length) + imgs.length) % imgs.length;
+    var prevIndex = parseInt(media.getAttribute('data-pcard-index') || '0', 10);
+    var st = getState(media);
+
+    if (st.leaveCleanTimer) {
+      clearTimeout(st.leaveCleanTimer);
+      st.leaveCleanTimer = 0;
+    }
+
+    if (animate && prevIndex !== index && imgs[prevIndex]) {
+      imgs.forEach(function (img, n) {
+        if (n === index) {
+          img.classList.remove('is-leaving');
+          img.classList.add('is-on');
+        } else if (n === prevIndex) {
+          img.classList.remove('is-on');
+          img.classList.add('is-leaving');
+        } else {
+          img.classList.remove('is-on', 'is-leaving');
+        }
+      });
+      st.leaveCleanTimer = setTimeout(function () {
+        st.leaveCleanTimer = 0;
+        imgs.forEach(function (img) { img.classList.remove('is-leaving'); });
+      }, LEAVE_CLEANUP_MS);
+    } else {
+      imgs.forEach(function (img, n) {
+        img.classList.remove('is-leaving');
+        img.classList.toggle('is-on', n === index);
+      });
+    }
+
     dots.forEach(function (dot, n) { dot.classList.toggle('is-on', n === index); });
     media.setAttribute('data-pcard-index', String(index));
 
-    /* the badge only speaks up for drawings / installed shots: the label
-       map lives on the card ("data-pcard-kind-drawing" and friends) */
+    /* Smoothly fade & glide the kind badge ("DRAWING" / "INSTALLED") */
     var badge = scope.querySelector('[data-pcard-kind-label]');
     if (badge) {
       var kind = imgs[index].getAttribute('data-pcard-kind') || '';
       var label = kind && kind !== 'photo' ? (media.getAttribute('data-pcard-kind-' + kind) || '') : '';
-      badge.textContent = label;
-      badge.hidden = label === '';
+      if (label !== '') {
+        badge.textContent = label;
+        badge.hidden = false;
+        void badge.offsetWidth;
+        badge.classList.add('is-visible');
+      } else {
+        badge.classList.remove('is-visible');
+      }
     }
   }
 
-  function advance(media) {
-    show(media, parseInt(media.getAttribute('data-pcard-index') || '0', 10) + 1);
+  function cancelTimers(st) {
+    if (st.intentTimer) {
+      clearTimeout(st.intentTimer);
+      st.intentTimer = 0;
+    }
+    if (st.cycleTimer) {
+      clearTimeout(st.cycleTimer);
+      st.cycleTimer = 0;
+    }
+  }
+
+  function stepNext(media, token) {
+    var st = getState(media);
+    if (!st.active || st.token !== token) return;
+    var imgs = slides(media);
+    if (imgs.length < 2) return;
+
+    var cur = parseInt(media.getAttribute('data-pcard-index') || '0', 10);
+    var next = (cur + 1) % imgs.length;
+
+    ensureDecoded(imgs[next]).then(function (ok) {
+      if (!st.active || st.token !== token) return;
+      if (ok && imgs[next].isConnected) {
+        show(media, next, { animate: true });
+      }
+      st.cycleTimer = setTimeout(function () {
+        st.cycleTimer = 0;
+        stepNext(media, token);
+      }, HOLD);
+    });
   }
 
   function start(media) {
-    if (timers.has(media)) return;
     if (slides(media).length < 2) return;
-    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+    if (window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
 
-    /* immediate first step, so the hover feels responsive */
-    advance(media);
+    var st = getState(media);
+    if (st.active) return;
 
-    var timer = setInterval(function () { advance(media); }, HOLD);
-    timers.set(media, timer);
+    warmSlides(media);
+    cancelTimers(st);
+    st.active = true;
+    var myToken = ++st.token;
+
+    st.intentTimer = setTimeout(function () {
+      st.intentTimer = 0;
+      stepNext(media, myToken);
+    }, INTENT_DELAY);
   }
 
-  function stop(media) {
-    var timer = timers.get(media);
-    if (timer) {
-      clearInterval(timer);
-      timers.delete(media);
-    }
-    show(media, 0);
+  function stop(media, opts) {
+    var options = opts && typeof opts === 'object' ? opts : {};
+    var st = getState(media);
+    cancelTimers(st);
+    st.active = false;
+    st.token++;
+    show(media, 0, { animate: options.animate !== false });
   }
 
   function init() {
     document.addEventListener('pcard:stop-cycle', function (e) {
-      var media = e.target.closest ? e.target.closest('.pcard-media') : null;
-      if (media) stop(media);
+      var media = e.target && e.target.closest ? e.target.closest('.pcard-media') : null;
+      if (media) {
+        media.__pcardSlidesWarmed = false;
+        stop(media, { animate: false });
+      }
     });
 
     document.addEventListener('pcard:reset-cycle', function (e) {
-      var media = e.target.closest ? e.target.closest('.pcard-media') : null;
-      if (media) show(media, 0);
+      var media = e.target && e.target.closest ? e.target.closest('.pcard-media') : null;
+      if (media) show(media, 0, { animate: false });
     });
 
+    /* Pre-warm secondary slides as soon as the pointer enters any part of the card */
     document.addEventListener('pointerenter', function (e) {
-      var media = e.target.closest ? e.target.closest('[data-pcard-cycle]') : null;
-      if (media) start(media);
+      var t = e.target;
+      if (!t || !t.matches) return;
+      if (t.matches('[data-product-card]')) {
+        var cardMedia = t.querySelector('[data-pcard-cycle]');
+        if (cardMedia) warmSlides(cardMedia);
+      } else if (t.matches('[data-pcard-cycle]')) {
+        start(t);
+      }
     }, true);
 
     document.addEventListener('pointerleave', function (e) {
-      var media = e.target.closest ? e.target.closest('[data-pcard-cycle]') : null;
-      if (media) stop(media);
+      var t = e.target;
+      if (!t || !t.matches) return;
+      if (t.matches('[data-pcard-cycle]')) {
+        stop(t, { animate: true });
+      }
     }, true);
 
-    /* keyboard users get the same preview when the card link is focused */
+    /* keyboard users get the same preview when the card media link is focused */
     document.addEventListener('focusin', function (e) {
-      var media = e.target.closest ? e.target.closest('[data-pcard-cycle]') : null;
+      var media = e.target && e.target.closest ? e.target.closest('[data-pcard-cycle]') : null;
       if (media) start(media);
     });
 
     document.addEventListener('focusout', function (e) {
-      var media = e.target.closest ? e.target.closest('[data-pcard-cycle]') : null;
-      if (media) stop(media);
+      var media = e.target && e.target.closest ? e.target.closest('[data-pcard-cycle]') : null;
+      if (media && (!e.relatedTarget || !media.contains(e.relatedTarget))) {
+        stop(media, { animate: true });
+      }
     });
   }
 

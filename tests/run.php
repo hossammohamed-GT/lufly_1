@@ -526,16 +526,22 @@ $assert(
 
 $pcardCssSrc = (string) file_get_contents($root . '/frontend/css/product-card.css');
 $pcardVariantsJsSrc = (string) file_get_contents($root . '/frontend/js/product-card-variants.js');
+$catalogJsSrc = (string) file_get_contents($root . '/frontend/products/catalog/catalog.js');
 $assert(
     str_contains($pcardCssSrc, '@keyframes pcardFieldReveal')
     && str_contains($pcardCssSrc, '@keyframes pcardSwatchPop')
     && str_contains($pcardCssSrc, '.pcard-img.pcard-img--entering')
     && str_contains($pcardCssSrc, '.pcard-img.pcard-img--exiting')
+    && str_contains($pcardCssSrc, '.pcard-img.is-leaving')
+    && str_contains($pcardCssSrc, '.pcard-kind.is-visible')
     && str_contains($pcardVariantsJsSrc, 'function warmCardVariants(')
     && str_contains($pcardVariantsJsSrc, 'function commitBodySwap(')
     && str_contains($pcardVariantsJsSrc, 'is-pcard-out')
-    && str_contains($pcardVariantsJsSrc, 'is-pcard-in'),
-    'Product card colour-variant switching choreographs directional image cross-glide, swatch spring, and staggered body cascade across all changing card elements',
+    && str_contains($pcardVariantsJsSrc, 'is-pcard-in')
+    && str_contains($catalogJsSrc, 'function warmSlides(')
+    && str_contains($catalogJsSrc, 'function ensureDecoded(')
+    && str_contains($catalogJsSrc, 'INTENT_DELAY'),
+    'Product card colour-variant switching and hover slide cycling choreograph pre-decoded velvet cross-dissolves, swatch spring, and staggered body cascade across all cards',
 );
 
 foreach (glob($root . '/resources/lang/en/*.php') ?: [] as $enLangFile) {
