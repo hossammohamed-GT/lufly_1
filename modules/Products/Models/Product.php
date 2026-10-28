@@ -210,7 +210,7 @@ class Product extends Model
                 foreach (array_chunk($fIds, 400) as $fChunk) {
                     $fPlaceholders = implode(',', array_fill(0, count($fChunk), '?'));
                     $ftRows = $conn->select(
-                        "SELECT feature_id, locale, label, value
+                        "SELECT feature_id, locale, label, feature_value
                          FROM product_card_feature_translations
                          WHERE feature_id IN ({$fPlaceholders})",
                         $fChunk,
@@ -219,7 +219,7 @@ class Product extends Model
                         $fid = (int) $ft['feature_id'];
                         $fTranslations[$fid][(string) $ft['locale']] = [
                             'label' => $ft['label'] !== null ? (string) $ft['label'] : null,
-                            'value' => (string) $ft['value'],
+                            'value' => (string) $ft['feature_value'],
                         ];
                     }
                 }
@@ -555,7 +555,7 @@ class Product extends Model
             if ($fIds !== [] && self::tableExists('product_card_feature_translations')) {
                 $placeholders = implode(',', array_fill(0, count($fIds), '?'));
                 $tRows = $conn->select(
-                    "SELECT feature_id, locale, label, value
+                    "SELECT feature_id, locale, label, feature_value
                      FROM product_card_feature_translations
                      WHERE feature_id IN ({$placeholders})",
                     $fIds,
@@ -563,7 +563,7 @@ class Product extends Model
                 foreach ($tRows as $tr) {
                     $trByFeature[(int) $tr['feature_id']][(string) $tr['locale']] = [
                         'label' => $tr['label'] !== null ? (string) $tr['label'] : null,
-                        'value' => (string) $tr['value'],
+                        'value' => (string) $tr['feature_value'],
                     ];
                 }
             }
@@ -880,13 +880,13 @@ class Product extends Model
         }
 
         if ($map !== [] && self::tableExists('product_feature_preset_translations')) {
-            $tRows = $conn->select('SELECT preset_id, locale, label, default_value FROM product_feature_preset_translations');
+            $tRows = $conn->select('SELECT preset_id, locale, label, placeholder_value FROM product_feature_preset_translations');
             foreach ($tRows as $tr) {
                 $pid = (int) $tr['preset_id'];
                 if (isset($map[$pid])) {
                     $loc = (string) $tr['locale'];
                     $map[$pid]['labels'][$loc] = (string) $tr['label'];
-                    $map[$pid]['defaults'][$loc] = $tr['default_value'] !== null ? (string) $tr['default_value'] : null;
+                    $map[$pid]['defaults'][$loc] = $tr['placeholder_value'] !== null ? (string) $tr['placeholder_value'] : null;
                 }
             }
         }

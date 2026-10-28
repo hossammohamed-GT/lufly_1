@@ -19,8 +19,9 @@ class ProductFeaturePresetsSchema extends SchemaDefinition
     public function define(Blueprint $table): void
     {
         $table->id();
-        $table->string_100('preset_key')->unique();
+        $table->string('preset_key', 80)->unique();
         $table->string_50('icon_key')->default('spec');
+        $table->string_150('category_hint')->nullable()->index();
         $table->integer('sort_order')->default(0);
         $table->boolean('is_active')->default(1)->index();
         $table->timestamps();

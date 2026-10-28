@@ -14,10 +14,10 @@ class ProductCardFeatureTranslationsSchema extends SchemaDefinition
     public function define(Blueprint $table): void
     {
         $table->id();
-        $table->foreignId('feature_id');
-        $table->string_50('locale')->index();
-        $table->string_150('label')->nullable();
-        $table->string_255('value');
+        $table->foreignId('feature_id')->index();
+        $table->string('locale', 10)->index();
+        $table->string('label', 120);
+        $table->string_255('feature_value');
 
         $table->foreign('feature_id')->references('id')->on('product_card_features')->onDelete('CASCADE');
         $table->unique('feature_id', 'locale');

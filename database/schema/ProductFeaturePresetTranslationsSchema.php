@@ -14,10 +14,10 @@ class ProductFeaturePresetTranslationsSchema extends SchemaDefinition
     public function define(Blueprint $table): void
     {
         $table->id();
-        $table->foreignId('preset_id');
-        $table->string_50('locale')->index();
-        $table->string_150('label');
-        $table->string_255('default_value')->nullable();
+        $table->foreignId('preset_id')->index();
+        $table->string('locale', 10)->index();
+        $table->string('label', 120);
+        $table->string('placeholder_value', 160)->nullable();
 
         $table->foreign('preset_id')->references('id')->on('product_feature_presets')->onDelete('CASCADE');
         $table->unique('preset_id', 'locale');
