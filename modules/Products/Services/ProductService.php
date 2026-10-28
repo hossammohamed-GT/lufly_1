@@ -67,6 +67,15 @@ class ProductService
 
     /**
      * @param array<string, mixed> $product
+     * @return array{position: int, total: int, prev_slug: ?string, next_slug: ?string}|null
+     */
+    public function categoryNeighbors(array $product): ?array
+    {
+        return $this->products->categoryNeighbors($product);
+    }
+
+    /**
+     * @param array<string, mixed> $product
      * @return array{similar: Product[], complementary: Product[]}
      */
     public function marketplaceRecommendations(array $product, int $similarLimit = 4, int $complementaryLimit = 4): array

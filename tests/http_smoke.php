@@ -117,6 +117,8 @@ foreach ($routes as [$method, $uri, $allowedStatuses]) {
             $customError = 'Featured PDP is missing golden stage or golden featured chip';
         } elseif (!str_contains($body, 'class="pdp-datasheet-btn"') || !str_contains($body, 'aria-disabled="true"') || !str_contains($body, $expectedDatasheetLabel)) {
             $customError = 'PDP is missing localized disabled Data Sheet button (' . $expectedDatasheetLabel . ')';
+        } elseif (!str_contains($body, 'data-pdp-variant-cards') || !str_contains($body, 'pdp-vcard is-current')) {
+            $customError = 'Multi-color PDP is missing desktop visual variant cards band';
         } elseif (!str_contains($body, 'data-pdp-similar') || !str_contains($body, 'data-pdp-complementary')) {
             $customError = 'PDP is missing similar or complementary marketplace discovery sections';
         } elseif (substr_count($body, 'data-product-card') < 4) {

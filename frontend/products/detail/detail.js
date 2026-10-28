@@ -1,5 +1,5 @@
-/* Product detail interactive controller — multi-view studio stage, CAD quick-jump,
-   slide counter, one-click SKU/URL copy, external drawing zoom, and WC bundle add. */
+/* Product detail interactive controller — vertical/horizontal studio rail,
+   CAD quick-jump, dossier tab switcher, SKU copy, external zoom & WC bundle add. */
 (function () {
     'use strict';
 
@@ -10,7 +10,6 @@
     var slides = Array.prototype.slice.call(stage.querySelectorAll('[data-pdp-slide]'));
     var thumbs = Array.prototype.slice.call(stage.querySelectorAll('[data-pdp-thumb]'));
     var tabs = Array.prototype.slice.call(stage.querySelectorAll('[data-pdp-group]'));
-    var counter = stage.querySelector('[data-pdp-counter]');
     var prevBtn = stage.querySelector('[data-pdp-prev]');
     var nextBtn = stage.querySelector('[data-pdp-next]');
     var zoomBtns = Array.prototype.slice.call(stage.querySelectorAll('[data-pdp-zoom]'));
@@ -50,10 +49,6 @@
         if (viewport && currentGroup) {
             viewport.setAttribute('data-active-group', currentGroup);
         }
-
-        if (counter) {
-            counter.textContent = (active + 1) + ' / ' + slides.length;
-        }
     }
 
     function switchToGroup(group, scrollStageIntoView) {
@@ -89,6 +84,33 @@
     if (prevBtn) prevBtn.addEventListener('click', function () { show(active - 1); });
     if (nextBtn) nextBtn.addEventListener('click', function () { show(active + 1); });
 
+    /* Tabbed Architectural Dossier (#pdp-dossier) */
+    var dossier = document.querySelector('[data-pdp-dossier]');
+    if (dossier) {
+        var dTabs = Array.prototype.slice.call(dossier.querySelectorAll('[data-dossier-tab]'));
+        var dPanels = Array.prototype.slice.call(dossier.querySelectorAll('[data-dossier-panel]'));
+
+        dTabs.forEach(function (dTab) {
+            dTab.addEventListener('click', function () {
+                var targetKey = dTab.getAttribute('data-dossier-tab');
+                dTabs.forEach(function (t) {
+                    var on = t.getAttribute('data-dossier-tab') === targetKey;
+                    t.classList.toggle('is-active', on);
+                    t.setAttribute('aria-selected', on ? 'true' : 'false');
+                });
+                dPanels.forEach(function (p) {
+                    var on = p.getAttribute('data-dossier-panel') === targetKey;
+                    p.classList.toggle('is-active', on);
+                    if (on) {
+                        p.removeAttribute('hidden');
+                    } else {
+                        p.setAttribute('hidden', '');
+                    }
+                });
+            });
+        });
+    }
+
     function openLightboxSrc(src, alt) {
         if (!lightbox || !lightboxImg || !src) return;
         lightboxImg.src = src;
@@ -119,11 +141,11 @@
         if (img) img.addEventListener('click', openLightbox);
     });
 
-    Array.prototype.slice.call(document.querySelectorAll('[data-pdp-external-zoom]')).forEach(function (btn) {
-        btn.addEventListener('click', function () {
+    Array.prototype.slice.call(document.querySelectorAll('[data-pdp-external-zoom]')).forEach(function (el) {
+        el.addEventListener('click', function () {
             openLightboxSrc(
-                btn.getAttribute('data-pdp-external-zoom'),
-                btn.getAttribute('data-pdp-external-alt') || ''
+                el.getAttribute('data-pdp-external-zoom'),
+                el.getAttribute('data-pdp-external-alt') || ''
             );
         });
     });
@@ -147,7 +169,7 @@
         if (e.key === 'ArrowRight') show(active + 1);
     });
 
-    /* One-click copy for Model Code chip & Product Share Link */
+    /* One-click copy for Model Code chip */
     function copyText(text) {
         if (navigator.clipboard && navigator.clipboard.writeText) {
             return navigator.clipboard.writeText(text);
@@ -191,8 +213,7 @@
         });
     });
 
-    /* WC + Compatible Seat Cover one-click bundle add (delegates to [data-box-add] buttons
-       so box.js manages lufly-box-token, header counts, and button states natively) */
+    /* WC + Compatible Seat Cover one-click bundle add */
     Array.prototype.slice.call(document.querySelectorAll('[data-box-bundle-add]')).forEach(function (btn) {
         btn.addEventListener('click', function () {
             var ids = (btn.getAttribute('data-box-bundle-add') || '')

@@ -493,12 +493,18 @@ $assert(
     && str_contains($productShowViewSrc, "pushScript('frontend/js/product-card-variants.js')")
     && str_contains($productShowViewSrc, 'class="pdp-datasheet-btn"')
     && str_contains($productShowViewSrc, 'aria-disabled="true"')
+    && str_contains($productShowViewSrc, 'data-pdp-variant-cards')
+    && str_contains($productShowViewSrc, 'pdp-colors-mobile')
+    && str_contains($productShowViewSrc, 'data-pdp-dossier')
     && str_contains($productShowViewSrc, 'data-pdp-similar')
     && str_contains($productShowViewSrc, 'data-pdp-complementary')
     && str_contains($pdpDetailCssSrc, '.pdp-datasheet-btn:disabled')
+    && str_contains($pdpDetailCssSrc, '.pdp-colors-mobile.has-variant-cards')
+    && str_contains($pdpDetailCssSrc, '.pdp-variants-band')
     && str_contains($productRepositorySrc, 'function marketplaceRecommendations(')
+    && str_contains($productRepositorySrc, 'function categoryNeighbors(')
     && str_contains($productRepositorySrc, 'function datasheetUrl('),
-    'Marketplace PDP pushes card/box assets, renders the disabled Data Sheet button cleanly, and wires two-tier related & complementary product discovery',
+    'Editorial showroom PDP renders warm studio stage, responsive mobile swatches vs desktop variant cards, disabled Data Sheet button, tabbed dossier, and two-tier marketplace discovery',
 );
 
 foreach (glob($root . '/resources/lang/en/*.php') ?: [] as $enLangFile) {

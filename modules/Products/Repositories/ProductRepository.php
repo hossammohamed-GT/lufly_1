@@ -418,6 +418,66 @@ class ProductRepository extends Repository
     }
 
     /**
+     * Resolve 1-based position and prev/next product slugs within the current
+     * leaf category (collapsed by color family) for the top showroom stepper.
+     *
+     * @param array<string, mixed> $product
+     * @return array{position: int, total: int, prev_slug: ?string, next_slug: ?string}|null
+     */
+    public function categoryNeighbors(array $product): ?array
+    {
+        $productId = (int) ($product['id'] ?? 0);
+        $categoryId = (int) ($product['category_id'] ?? 0);
+        if ($productId <= 0 || $categoryId <= 0) {
+            return null;
+        }
+
+        $familyIds = [$productId => true];
+        foreach ((array) ($product['color_variants'] ?? []) as $cv) {
+            $cvId = (int) ($cv['id'] ?? 0);
+            if ($cvId > 0) {
+                $familyIds[$cvId] = true;
+            }
+        }
+
+        $connection = Product::query()->connection();
+        $rows = $connection->select(
+            "SELECT p.id, p.slug, p.is_featured, p.sort_order
+             FROM products p
+             WHERE p.deleted_at IS NULL
+               AND p.status = ?
+               AND p.category_id = ?
+               AND " . ProductVisibility::mediaReadySql('p') . "
+             ORDER BY p.is_featured DESC, p.sort_order ASC, p.id DESC",
+            ['active', $categoryId],
+        );
+
+        $collapsed = app(ProductColorFamilyService::class)->collapseRows($rows);
+        $total = count($collapsed);
+        if ($total < 1) {
+            return null;
+        }
+
+        $currentIndex = 0;
+        foreach ($collapsed as $idx => $r) {
+            if (isset($familyIds[(int) ($r['id'] ?? 0)])) {
+                $currentIndex = $idx;
+                break;
+            }
+        }
+
+        $prevSlug = $total > 1 ? (string) ($collapsed[($currentIndex - 1 + $total) % $total]['slug'] ?? '') : null;
+        $nextSlug = $total > 1 ? (string) ($collapsed[($currentIndex + 1) % $total]['slug'] ?? '') : null;
+
+        return [
+            'position' => $currentIndex + 1,
+            'total' => $total,
+            'prev_slug' => $prevSlug !== '' ? $prevSlug : null,
+            'next_slug' => $nextSlug !== '' ? $nextSlug : null,
+        ];
+    }
+
+    /**
      * Curated two-tier marketplace discovery for a product page:
      *  1. `similar`       — other collapsed product families in the same leaf
      *                       (topped up from sibling leaves under the same parent/root).
