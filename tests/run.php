@@ -416,68 +416,73 @@ $assert(
 );
 
 /* 100% Product Color / Finish Coverage across all 712 products + en/tr/cs locales */
-$finishSpecRows = $db->select(
-    "SELECT p.id, p.slug, ps.id AS spec_id, ps.spec_value
-     FROM products p
-     LEFT JOIN product_specifications ps ON ps.product_id = p.id AND ps.variant_id IS NULL AND ps.spec_key = 'Finish'
-     WHERE p.deleted_at IS NULL
-     ORDER BY p.id ASC"
-);
-$missingDbFinishes = array_filter($finishSpecRows, static fn(array $r): bool => trim((string) ($r['spec_value'] ?? '')) === '');
-$finishTrCount = (int) (($db->selectOne(
-    "SELECT COUNT(*) AS cnt
-     FROM product_specification_translations pst
-     JOIN product_specifications ps ON ps.id = pst.specification_id
-     WHERE ps.variant_id IS NULL AND ps.spec_key = 'Finish' AND TRIM(pst.spec_value) != ''"
-)['cnt'] ?? 0));
-$assert(
-    count($finishSpecRows) === 712 && $missingDbFinishes === [] && $finishTrCount === 712 * 3,
-    'Every single product (712/712) has an explicit Finish specification in product_specifications plus en/tr/cs translations',
-);
+require_once $root . '/modules/Products/Services/ProductCardPresenter.php';
+if (extension_loaded('pdo_sqlite')) {
+    $finishPdo = new PDO('sqlite:' . $root . '/database/lufly.sqlite');
+    $finishPdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+    $finishSpecRows = $finishPdo->query(
+        "SELECT p.id, p.slug, ps.id AS spec_id, ps.spec_value
+         FROM products p
+         LEFT JOIN product_specifications ps ON ps.product_id = p.id AND ps.variant_id IS NULL AND ps.spec_key = 'Finish'
+         WHERE p.deleted_at IS NULL
+         ORDER BY p.id ASC"
+    )->fetchAll(PDO::FETCH_ASSOC);
+    $missingDbFinishes = array_filter($finishSpecRows, static fn (array $r): bool => trim((string) ($r['spec_value'] ?? '')) === '');
+    $finishTrCount = (int) $finishPdo->query(
+        "SELECT COUNT(*)
+         FROM product_specification_translations pst
+         JOIN product_specifications ps ON ps.id = pst.specification_id
+         WHERE ps.variant_id IS NULL AND ps.spec_key = 'Finish' AND TRIM(pst.spec_value) != ''"
+    )->fetchColumn();
+    $assert(
+        count($finishSpecRows) === 712 && $missingDbFinishes === [] && $finishTrCount === 712 * 3,
+        'Every single product (712/712) has an explicit Finish specification in product_specifications plus en/tr/cs translations',
+    );
 
-$zeroFinishPresented = [];
-$neutralSwatchPresented = [];
-foreach (['en', 'tr', 'cs'] as $locCheck) {
-    foreach ($finishSpecRows as $fRow) {
-        $presentedFinishes = \Modules\Products\Services\ProductCardPresenter::finishes(
-            [],
-            [['raw_key' => 'Finish', 'raw_value' => (string) $fRow['spec_value'], 'spec_key' => 'Finish', 'spec_value' => (string) $fRow['spec_value']]],
-            '',
-            $locCheck,
-        );
-        if ($presentedFinishes === []) {
-            $zeroFinishPresented[] = "{$locCheck}:{$fRow['slug']}";
-        }
-        foreach ($presentedFinishes as $sw) {
-            if (($sw['key'] ?? 'neutral') === 'neutral' || trim((string) ($sw['label'] ?? '')) === '') {
-                $neutralSwatchPresented[] = "{$locCheck}:{$fRow['slug']}:" . ($sw['key'] ?? 'null');
+    $zeroFinishPresented = [];
+    $neutralSwatchPresented = [];
+    foreach (['en', 'tr', 'cs'] as $locCheck) {
+        foreach ($finishSpecRows as $fRow) {
+            $presentedFinishes = \Modules\Products\Services\ProductCardPresenter::finishes(
+                [],
+                [['raw_key' => 'Finish', 'raw_value' => (string) $fRow['spec_value'], 'spec_key' => 'Finish', 'spec_value' => (string) $fRow['spec_value']]],
+                '',
+                $locCheck,
+            );
+            if ($presentedFinishes === []) {
+                $zeroFinishPresented[] = "{$locCheck}:{$fRow['slug']}";
+            }
+            foreach ($presentedFinishes as $sw) {
+                if (($sw['key'] ?? 'neutral') === 'neutral' || trim((string) ($sw['label'] ?? '')) === '') {
+                    $neutralSwatchPresented[] = "{$locCheck}:{$fRow['slug']}:" . ($sw['key'] ?? 'null');
+                }
             }
         }
     }
-}
-$assert(
-    $zeroFinishPresented === [] && $neutralSwatchPresented === [],
-    'ProductCardPresenter resolves valid non-neutral color swatches and localized labels for 712/712 products across en, tr, and cs',
-);
+    $assert(
+        $zeroFinishPresented === [] && $neutralSwatchPresented === [],
+        'ProductCardPresenter resolves valid non-neutral color swatches and localized labels for 712/712 products across en, tr, and cs',
+    );
 
-$finishBySlug = [];
-foreach ($finishSpecRows as $fRow) {
-    $finishBySlug[(string) $fRow['slug']] = (string) $fRow['spec_value'];
+    $finishBySlug = [];
+    foreach ($finishSpecRows as $fRow) {
+        $finishBySlug[(string) $fRow['slug']] = (string) $fRow['spec_value'];
+    }
+    $assert(
+        ($finishBySlug['1520-6767'] ?? '') === 'White / Green / Yellow'
+        && ($finishBySlug['1654-1111'] ?? '') === 'Blue / Yellow / Red'
+        && ($finishBySlug['ss-9762366'] ?? '') === 'Orange'
+        && ($finishBySlug['1695-209'] ?? '') === 'Oak Wood / White'
+        && ($finishBySlug['5000-2924'] ?? '') === 'Dark Green / Stainless Steel'
+        && ($finishBySlug['1270-0299'] ?? '') === 'Anthracite / Stainless Steel'
+        && str_contains($productCardCssSrc, '.pcard-swatch--orange')
+        && str_contains($productCardCssSrc, '.pcard-swatch--red')
+        && str_contains($productCardCssSrc, '.pcard-swatch--wood')
+        && str_contains($productCardCssSrc, '.pcard-swatch--anthracite')
+        && str_contains($productCardCssSrc, '.pcard-swatch--dark-green'),
+        'Multi-tone and newly verified finishes (Orange, Red, Oak Wood, Anthracite, Dark Green) match product visuals and CSS swatches',
+    );
 }
-$assert(
-    ($finishBySlug['1520-6767'] ?? '') === 'White / Green / Yellow'
-    && ($finishBySlug['1654-1111'] ?? '') === 'Blue / Yellow / Red'
-    && ($finishBySlug['ss-9762366'] ?? '') === 'Orange'
-    && ($finishBySlug['1695-209'] ?? '') === 'Oak Wood / White'
-    && ($finishBySlug['5000-2924'] ?? '') === 'Dark Green / Stainless Steel'
-    && ($finishBySlug['1270-0299'] ?? '') === 'Anthracite / Stainless Steel'
-    && str_contains($productCardCssSrc, '.pcard-swatch--orange')
-    && str_contains($productCardCssSrc, '.pcard-swatch--red')
-    && str_contains($productCardCssSrc, '.pcard-swatch--wood')
-    && str_contains($productCardCssSrc, '.pcard-swatch--anthracite')
-    && str_contains($productCardCssSrc, '.pcard-swatch--dark-green'),
-    'Multi-tone and newly verified finishes (Orange, Red, Oak Wood, Anthracite, Dark Green) match product visuals and CSS swatches',
-);
 
 foreach (glob($root . '/resources/lang/en/*.php') ?: [] as $enLangFile) {
     $base = basename($enLangFile);
