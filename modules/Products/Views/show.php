@@ -258,6 +258,7 @@ $complementaryProducts = is_array($complementaryProducts ?? null) ? $complementa
                     <div class="pdp-cat-stepper">
                         <?php if (!empty($categoryNeighbors['prev_slug'])): ?>
                             <a class="pdp-step-btn"
+                               data-pdp-step="prev"
                                href="<?= e(route('products.show', ['slug' => (string) $categoryNeighbors['prev_slug']])) ?>"
                                aria-label="<?= e(trans('products.pdp_prev_product')) ?>"
                                title="<?= e(trans('products.pdp_prev_product')) ?>">
@@ -266,6 +267,7 @@ $complementaryProducts = is_array($complementaryProducts ?? null) ? $complementa
                         <?php endif; ?>
                         <?php if (!empty($categoryNeighbors['next_slug'])): ?>
                             <a class="pdp-step-btn"
+                               data-pdp-step="next"
                                href="<?= e(route('products.show', ['slug' => (string) $categoryNeighbors['next_slug']])) ?>"
                                aria-label="<?= e(trans('products.pdp_next_product')) ?>"
                                title="<?= e(trans('products.pdp_next_product')) ?>">
@@ -327,7 +329,7 @@ $complementaryProducts = is_array($complementaryProducts ?? null) ? $complementa
                                          data-slide-group="<?= e($sGroup) ?>"
                                          <?= $idx === 0 ? 'fetchpriority="high"' : 'loading="lazy"' ?>
                                          decoding="async"
-                                         <?= $idx === 0 ? '' : 'hidden' ?>
+                                         aria-hidden="<?= $idx === 0 ? 'false' : 'true' ?>"
                                          onerror="this.onerror=null; this.src='<?= e(asset($fallbackImg)) ?>';">
                                 <?php endforeach; ?>
 
@@ -357,7 +359,8 @@ $complementaryProducts = is_array($complementaryProducts ?? null) ? $complementa
                         ?>
                         <div class="pdp-stage-meta">
                             <?php if (count($groupsPresent) > 1): ?>
-                                <div class="pdp-views" role="tablist" aria-label="<?= e(trans('products.pdp_media_views')) ?>">
+                                <div class="pdp-views" role="tablist" data-pdp-views aria-label="<?= e(trans('products.pdp_media_views')) ?>">
+                                    <span class="pdp-views-glider" data-pdp-views-glider aria-hidden="true"></span>
                                     <?php foreach ($groupsPresent as $gi => $group): ?>
                                         <button type="button" role="tab" class="pdp-view-tab<?= $gi === 0 ? ' is-active' : '' ?>"
                                                 data-pdp-group="<?= e($group['key']) ?>"
@@ -778,7 +781,8 @@ $complementaryProducts = is_array($complementaryProducts ?? null) ? $complementa
         <!-- Tabbed Architectural Engineering, Specifications & Downloads Panel -->
         <?php if ($cleanDescription !== '' || $specs !== [] || $primaryDrawingUrl !== null): ?>
             <section class="pdp-dossier" id="pdp-dossier" data-pdp-dossier aria-label="<?= e(trans('products.pdp_dossier_title')) ?>">
-                <div class="pdp-dossier-tabs" role="tablist">
+                <div class="pdp-dossier-tabs" role="tablist" data-dossier-tabs>
+                    <span class="pdp-dossier-glider" data-dossier-glider aria-hidden="true"></span>
                     <button type="button" role="tab" class="pdp-dtab is-active" data-dossier-tab="overview" aria-selected="true">
                         <?= e(trans('products.pdp_tab_overview')) ?>
                     </button>
@@ -797,6 +801,7 @@ $complementaryProducts = is_array($complementaryProducts ?? null) ? $complementa
                     </button>
                 </div>
 
+                <div class="pdp-dossier-body" data-dossier-body>
                 <!-- Tab 1 (Default): 3-Column Architectural Overview (Drawing + Key Specs + Downloads) -->
                 <div class="pdp-dpanel is-active" data-dossier-panel="overview">
                     <div class="pdp-overview-3col<?= $primaryDrawingUrl === null ? ' no-drawing' : '' ?>">
@@ -1002,6 +1007,7 @@ $complementaryProducts = is_array($complementaryProducts ?? null) ? $complementa
                         </div>
                     </div>
                 </div>
+                </div>
             </section>
         <?php endif; ?>
 
@@ -1110,6 +1116,14 @@ $complementaryProducts = is_array($complementaryProducts ?? null) ? $complementa
                 <path d="M18 6 6 18M6 6l12 12"/>
             </svg>
         </button>
+        <button type="button" class="pdp-lightbox-nav pdp-lightbox-nav--prev" data-pdp-lightbox-prev
+                aria-label="<?= e(trans('products.view_prev')) ?>" <?= count($slides) > 1 ? '' : 'hidden' ?>>
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m15 18-6-6 6-6"/></svg>
+        </button>
         <img class="pdp-lightbox-img" data-pdp-lightbox-img src="" alt="">
+        <button type="button" class="pdp-lightbox-nav pdp-lightbox-nav--next" data-pdp-lightbox-next
+                aria-label="<?= e(trans('products.view_next')) ?>" <?= count($slides) > 1 ? '' : 'hidden' ?>>
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m9 18 6-6-6-6"/></svg>
+        </button>
     </div>
 </main>
