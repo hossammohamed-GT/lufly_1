@@ -815,10 +815,11 @@ $complementaryProducts = is_array($complementaryProducts ?? null) ? $complementa
                 </header>
 
                 <div class="pdp-market-grid">
-                    <?php foreach ($similarProducts as $simItem): ?>
+                    <?php foreach ($similarProducts as $simIdx => $simItem): ?>
                         <?= $view->component('product-card', [
-                            'item' => $simItem['product'],
+                            'product' => $simItem['product'],
                             'slug' => $simItem['slug'],
+                            'index' => $simIdx,
                             'saved' => $simItem['saved'],
                             'in_box' => $simItem['in_box'],
                         ]) ?>
@@ -846,10 +847,11 @@ $complementaryProducts = is_array($complementaryProducts ?? null) ? $complementa
                 </header>
 
                 <div class="pdp-market-grid">
-                    <?php foreach ($complementaryProducts as $compItem): ?>
+                    <?php foreach ($complementaryProducts as $compIdx => $compItem): ?>
                         <?= $view->component('product-card', [
-                            'item' => $compItem['product'],
+                            'product' => $compItem['product'],
                             'slug' => $compItem['slug'],
+                            'index' => $compIdx,
                             'saved' => $compItem['saved'],
                             'in_box' => $compItem['in_box'],
                         ]) ?>
