@@ -147,3 +147,32 @@
 3. **حقول النموذج الفردي الجاهزة حالياً (`Admin/form.php` + `StoreProductRequest` / `UpdateProductRequest`)**:
    - الحقلان `is_featured` (`0|1`) و`sort_order` (`integer >= 0`) مفعّلان ومربوطان بالفعل في `ProductController::coreFields()` وجاهزان للاستخدام الفوري.
 
+---
+
+## 5. إدارة ألوان وتشطيبات المنتجات — تغطية 100% (`Product Finishes & Multi-Color Swatches`)
+
+تضمن المنصة الآن **تغطية شاملة بنسبة 100% (`712 / 712` منتجاً)** بحيث يظهر لكل منتج لونه الدقيق أو تركيبته اللونية المتعددة (`Single / Two-Tone / Three-Tone Finishes`) كدوائر ألوان مرئية (`Swatches`) مع أسمائها المترجمة باللغات الثلاث (`en` / `tr` / `cs`) في بطاقة المنتج وصفحة التفاصيل وجدول المواصفات الفنية والبحث الحي.
+
+### أين يُحفظ لون المنتج في قاعدة البيانات؟
+- **`product_specifications`** (`variant_id IS NULL`, `spec_key = 'Finish'`):
+  - يُحفظ اللون المعياري أو الألوان المركبة مفصولةً بـ ` / ` (مثال: `Chrome`، `Matte Black`، `Brushed Stainless Steel`، `Rose Gold / Matte Black`، `Oak Wood / White`، `White / Green / Yellow`، `Blue / Yellow / Red`، `Dark Green / Stainless Steel`).
+- **`product_specification_translations`**:
+  - تُحفظ الترجمات الدقيقة لكل لون باللغات الثلاث:
+    - `en`: `Finish` (`White / Royal Blue`)
+    - `tr`: `Yüzey Kaplaması` (`Beyaz / Kraliyet Mavisi`)
+    - `cs`: `Povrchová úprava` (`Bílá / Královská modrá`)
+- **أولوية القراءة في `ProductCardPresenter::finishes()`**:
+  - تُعتمَد قيمة `Finish` المخزنة في `product_specifications` كمصدر رسمي موثوق (`Authoritative Source`) يعلو على أي تحليل نصي تلقائي للوصف، مما يمنع تداخل نصوص الوصف الخام مع اللون الحقيقي للمنتج.
+
+### كتالوج دوائر الألوان المعتمد (`24 Swatch Keys` في `product-card.css` و`ProductCardPresenter::FINISHES`)
+- **التشطيبات المعدنية (`Metallic & PVD`)**: `chrome`, `steel`, `nickel`, `gold`, `rose-gold`, `bronze`, `gunmetal`.
+- **الألوان المعمارية والخشبية (`Architectural & Wood`)**: `white`, `black`, `gray`, `anthracite`, `beige`, `wood` (`Oak Wood`).
+- **الألوان الحيوية وألوان منتجات الأطفال والطوارئ (`Accent, Kids & Safety`)**: `royal-blue`, `dark-blue`, `light-blue`, `blue`, `cyan`, `green`, `dark-green`, `yellow`, `orange`, `red`, `pink`.
+
+### تصميم أداة اختيار اللون المقترحة في الداشبورد القادمة (`Admin Finish Picker`)
+1. **منتقي ألوان مرئي متعدد الاختيار (`Multi-Swatch Visual Picker`)**:
+   - يعرض الـ 24 لوناً المعيارية كأزرار دائرية مرئية مع إمكانية اختيار لون واحد (مثل `Chrome`) أو لونين/ثلاثة ألوان للمنتجات المركبة (مثل `Rose Gold` + `Matte Black` أو `White` + `Green` + `Yellow`).
+2. **توليد تلقائي للترجمات الثلاث (`Auto-Translate Canonical Finishes`)**:
+   - بمجرد اختيار الألوان من المنتقي المرئي، يولّد النظام تلقائياً صف `Finish` في `product_specifications` وصفوف `product_specification_translations` باللغات `en` و`tr` و`cs` من قاموس `ProductCardPresenter::FINISH_TRANSLATIONS`، مع إتاحة تعديلها يدوياً عند الحاجة.
+
+

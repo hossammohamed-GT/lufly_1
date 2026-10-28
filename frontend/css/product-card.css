@@ -537,10 +537,15 @@ html[data-theme="dark"] .pcard.is-featured .pcard-feature-panel {
 .pcard-swatch--dark-blue { background: linear-gradient(145deg, #5c6f9f, #283f73 50%, #142341); }
 .pcard-swatch--light-blue { background: linear-gradient(145deg, #d5f7fb, #79d5e8 52%, #3da9c7); }
 .pcard-swatch--green { background: linear-gradient(145deg, #c7e5d4, #4f8267); }
+.pcard-swatch--dark-green { background: linear-gradient(145deg, #5d7b58, #2f492c 54%, #1b2d19); }
 .pcard-swatch--yellow { background: linear-gradient(145deg, #fff3a9, #d3ad32); }
+.pcard-swatch--orange { background: linear-gradient(145deg, #ffc58f, #ee741d 52%, #b84c05); }
+.pcard-swatch--red { background: linear-gradient(145deg, #ffa3a3, #d93636 52%, #8e1717); }
 .pcard-swatch--cyan { background: linear-gradient(145deg, #c5f1ef, #4d9e9d); }
 .pcard-swatch--gray { background: linear-gradient(145deg, #e1e3e1, #858c89); }
+.pcard-swatch--anthracite { background: linear-gradient(145deg, #67635e, #383532 54%, #22201e); }
 .pcard-swatch--beige { background: linear-gradient(145deg, #f4e8d2, #bba98a); }
+.pcard-swatch--wood { background: linear-gradient(135deg, #ebd2af 0%, #c49a6c 45%, #dcb98e 70%, #996e43 100%); }
 
 /* Reviewed cross-product colours are real links with an in-place enhancement.
    The selected ring does not cover the swatch or the product imagery. */

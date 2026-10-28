@@ -17,6 +17,10 @@ final class ProductCardPresenter
 {
     /** @var array<string, array{0: string, 1: string}> phrase => swatch, canonical English label */
     private const FINISHES = [
+        'mirror polished stainless steel' => ['chrome', 'Mirror Polished Stainless Steel'],
+        'brushed stainless steel' => ['steel', 'Brushed Stainless Steel'],
+        'polished stainless steel' => ['chrome', 'Polished Stainless Steel'],
+        'satin stainless steel' => ['steel', 'Satin Stainless Steel'],
         'satin chrome brushed' => ['chrome', 'Brushed Chrome'],
         'chrome brushed' => ['chrome', 'Brushed Chrome'],
         'brushed chrome' => ['chrome', 'Brushed Chrome'],
@@ -41,7 +45,8 @@ final class ProductCardPresenter
         'royal blue' => ['royal-blue', 'Royal Blue'],
         'dark blue' => ['dark-blue', 'Dark Blue'],
         'light blue' => ['light-blue', 'Light Blue'],
-        'brushed stainless steel' => ['steel', 'Brushed Stainless Steel'],
+        'dark green' => ['dark-green', 'Dark Green'],
+        'oak wood' => ['wood', 'Oak Wood'],
         'stainless steel' => ['steel', 'Stainless Steel'],
         'brushed rose gold' => ['rose-gold', 'Brushed Rose Gold'],
         'rose gold' => ['rose-gold', 'Rose Gold'],
@@ -66,10 +71,12 @@ final class ProductCardPresenter
         'gun grey' => ['gunmetal', 'Gun Grey'],
         'brass bronze' => ['bronze', 'Brass Bronze'],
         'alpine white' => ['white', 'Alpine White'],
+        'white alpine' => ['white', 'Alpine White'],
         'matte white' => ['white', 'Matte White'],
         'matt white' => ['white', 'Matt White'],
         'matte black' => ['black', 'Matte Black'],
         'matt black' => ['black', 'Matt Black'],
+        'anthracite' => ['anthracite', 'Anthracite'],
         'chrome' => ['chrome', 'Chrome'],
         'chrom' => ['chrome', 'Chrome'],
         'nickel' => ['nickel', 'Nickel'],
@@ -80,6 +87,8 @@ final class ProductCardPresenter
         'gunmetal' => ['gunmetal', 'Gunmetal'],
         'white' => ['white', 'White'],
         'black' => ['black', 'Black'],
+        'orange' => ['orange', 'Orange'],
+        'red' => ['red', 'Red'],
         'pink' => ['pink', 'Pink'],
         'blue' => ['blue', 'Blue'],
         'green' => ['green', 'Green'],
@@ -129,7 +138,10 @@ final class ProductCardPresenter
         'Dark Blue' => ['tr' => 'Lacivert', 'cs' => 'Tmavě modrá'],
         'Light Blue' => ['tr' => 'Açık Mavi', 'cs' => 'Světle modrá'],
         'Blue' => ['tr' => 'Mavi', 'cs' => 'Modrá'],
+        'Mirror Polished Stainless Steel' => ['tr' => 'Ayna Parlak Paslanmaz Çelik', 'cs' => 'Zrcadlově leštěná nerezová ocel'],
         'Brushed Stainless Steel' => ['tr' => 'Fırçalı Paslanmaz Çelik', 'cs' => 'Kartáčovaná nerezová ocel'],
+        'Polished Stainless Steel' => ['tr' => 'Parlak Paslanmaz Çelik', 'cs' => 'Leštěná nerezová ocel'],
+        'Satin Stainless Steel' => ['tr' => 'Saten Paslanmaz Çelik', 'cs' => 'Saténová nerezová ocel'],
         'Stainless Steel' => ['tr' => 'Paslanmaz Çelik', 'cs' => 'Nerezová ocel'],
         'Steel' => ['tr' => 'Çelik', 'cs' => 'Ocel'],
         'Brushed' => ['tr' => 'Fırçalı', 'cs' => 'Kartáčovaný'],
@@ -141,6 +153,11 @@ final class ProductCardPresenter
         'Matte Black' => ['tr' => 'Mat Siyah', 'cs' => 'Matná černá'],
         'Matt Black' => ['tr' => 'Mat Siyah', 'cs' => 'Matná černá'],
         'Black' => ['tr' => 'Siyah', 'cs' => 'Černá'],
+        'Anthracite' => ['tr' => 'Antrasit', 'cs' => 'Antracitová'],
+        'Oak Wood' => ['tr' => 'Meşe Ahşap', 'cs' => 'Dubové dřevo'],
+        'Dark Green' => ['tr' => 'Koyu Yeşil', 'cs' => 'Tmavě zelená'],
+        'Orange' => ['tr' => 'Turuncu', 'cs' => 'Oranžová'],
+        'Red' => ['tr' => 'Kırmızı', 'cs' => 'Červená'],
         'Pink' => ['tr' => 'Pembe', 'cs' => 'Růžová'],
         'Green' => ['tr' => 'Yeşil', 'cs' => 'Zelená'],
         'Yellow' => ['tr' => 'Sarı', 'cs' => 'Žlutá'],
@@ -381,7 +398,7 @@ final class ProductCardPresenter
     }
 
     /** @return array<int, array{key: string, label: string}> */
-    private static function finishes(array $variants, array $specs, string $description, ?string $locale): array
+    public static function finishes(array $variants, array $specs, string $description, ?string $locale = null): array
     {
         $finishes = [];
         $seen = [];
@@ -422,9 +439,16 @@ final class ProductCardPresenter
         }
         foreach ($specs as $row) {
             $rawKey = (string) ($row['raw_key'] ?? $row['spec_key'] ?? '');
-            if (preg_match('/finish|colou?r/iu', $rawKey) === 1) {
+            if (preg_match('/^(?:finish|colou?r)$/iu', trim($rawKey)) === 1 || preg_match('/finish|colou?r/iu', $rawKey) === 1) {
                 $add((string) ($row['raw_value'] ?? $row['spec_value'] ?? ''));
             }
+        }
+
+        /* Explicit structured Finish/Color specifications are authoritative;
+           only fall back to free-text description parsing when no structured
+           finish has been stored yet (e.g. a brand-new draft product). */
+        if ($finishes !== []) {
+            return $finishes;
         }
 
         if (preg_match_all('/\b(?:finish|colou?r)\s*[:\-]\s*([^,;.\r\n]+(?:\s*,\s*with\s+(?:decorative\s+)?[^,;.\r\n]+)?)/iu', $description, $matches)) {

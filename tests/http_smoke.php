@@ -113,6 +113,19 @@ foreach ($routes as [$method, $uri, $allowedStatuses]) {
         }
     }
 
+    if ($customError === '' && preg_match_all('/<article\s+class="pcard\b[^"]*"[^>]*data-product-card[^>]*>(.*?)<\/article>/s', $body, $allCards)) {
+        foreach ($allCards[1] as $idx => $cHtml) {
+            if (!str_contains($cHtml, 'data-pcard-colors') || !str_contains($cHtml, 'pcard-swatch--')) {
+                $customError = 'Product card #' . ($idx + 1) . ' is missing rendered finish/color swatches';
+                break;
+            }
+            if (str_contains($cHtml, 'pcard-swatch--neutral')) {
+                $customError = 'Product card #' . ($idx + 1) . ' rendered a neutral fallback swatch';
+                break;
+            }
+        }
+    }
+
     if (!in_array($status, $allowedStatuses, true) || str_contains($body, 'Something went wrong. Please try again later.') || $customError !== '') {
         $failed++;
         $logDump = $customError !== '' ? ($customError . ' ') : '';

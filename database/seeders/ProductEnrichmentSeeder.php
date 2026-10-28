@@ -148,6 +148,65 @@ class ProductEnrichmentSeeder extends Seeder
                     }
                 }
             }
+
+            /* Authoritative product finish/color specification + trilingual translations */
+            if (is_array($entry['finish'] ?? null) && trim((string) ($entry['finish']['en'] ?? '')) !== '') {
+                $finishEn = trim((string) $entry['finish']['en']);
+                $finishTr = trim((string) ($entry['finish']['tr'] ?? $finishEn));
+                $finishCs = trim((string) ($entry['finish']['cs'] ?? $finishEn));
+
+                $existingSpec = $this->db->selectOne(
+                    "SELECT id FROM product_specifications WHERE product_id = ? AND variant_id IS NULL AND LOWER(spec_key) IN ('finish', 'color', 'colour') ORDER BY id ASC LIMIT 1",
+                    [$productId],
+                );
+                if ($existingSpec !== null) {
+                    $specId = (int) $existingSpec['id'];
+                    $this->db->table('product_specifications')->where('id', $specId)->update([
+                        'spec_key' => 'Finish',
+                        'spec_value' => mb_substr($finishEn, 0, 255),
+                    ]);
+                } else {
+                    $maxSortRow = $this->db->selectOne(
+                        'SELECT COALESCE(MAX(sort_order), 0) AS max_sort FROM product_specifications WHERE product_id = ?',
+                        [$productId],
+                    );
+                    $specId = (int) $this->db->insert('product_specifications', [
+                        'product_id' => $productId,
+                        'variant_id' => null,
+                        'spec_key' => 'Finish',
+                        'spec_value' => mb_substr($finishEn, 0, 255),
+                        'unit' => null,
+                        'sort_order' => ((int) ($maxSortRow['max_sort'] ?? 0)) + 1,
+                    ]);
+                }
+
+                if ($schema->hasTable('product_specification_translations')) {
+                    $specTrRows = [
+                        'en' => ['Finish', $finishEn],
+                        'tr' => ['Yüzey Kaplaması', $finishTr],
+                        'cs' => ['Povrchová úprava', $finishCs],
+                    ];
+                    foreach ($specTrRows as $loc => [$locKey, $locVal]) {
+                        $existingSt = $this->db->selectOne(
+                            'SELECT id FROM product_specification_translations WHERE specification_id = ? AND locale = ?',
+                            [$specId, $loc],
+                        );
+                        if ($existingSt !== null) {
+                            $this->db->table('product_specification_translations')->where('id', (int) $existingSt['id'])->update([
+                                'spec_key' => $locKey,
+                                'spec_value' => mb_substr($locVal, 0, 255),
+                            ]);
+                        } else {
+                            $this->db->insert('product_specification_translations', [
+                                'specification_id' => $specId,
+                                'locale' => $loc,
+                                'spec_key' => $locKey,
+                                'spec_value' => mb_substr($locVal, 0, 255),
+                            ]);
+                        }
+                    }
+                }
+            }
         }
 
         /* 4. WC -> Toilet Seat Cover companion links */
