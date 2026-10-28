@@ -320,16 +320,15 @@ $complementaryProducts = is_array($complementaryProducts ?? null) ? $complementa
                             <?php if ($slides !== []): ?>
                                 <?php foreach ($slides as $idx => $slide): ?>
                                     <?php $sGroup = (string) ($slide['group'] ?? 'gallery'); ?>
-                                    <figure class="pdp-slide is-group-<?= e($sGroup) ?><?= $idx === 0 ? ' is-active' : '' ?>"
-                                            data-pdp-slide="<?= (int) $idx ?>"
-                                            data-slide-group="<?= e($sGroup) ?>"
-                                            <?= $idx === 0 ? '' : 'hidden' ?>>
-                                        <img src="<?= e((string) $slide['url']) ?>"
-                                             alt="<?= e((string) $slide['alt']) ?>"
-                                             <?= $idx === 0 ? 'fetchpriority="high"' : 'loading="lazy"' ?>
-                                             decoding="async"
-                                             onerror="this.onerror=null; this.src='<?= e(asset($fallbackImg)) ?>';">
-                                    </figure>
+                                    <img src="<?= e((string) $slide['url']) ?>"
+                                         alt="<?= e((string) $slide['alt']) ?>"
+                                         class="pdp-slide is-group-<?= e($sGroup) ?><?= $idx === 0 ? ' is-active' : '' ?>"
+                                         data-pdp-slide="<?= (int) $idx ?>"
+                                         data-slide-group="<?= e($sGroup) ?>"
+                                         <?= $idx === 0 ? 'fetchpriority="high"' : 'loading="lazy"' ?>
+                                         decoding="async"
+                                         <?= $idx === 0 ? '' : 'hidden' ?>
+                                         onerror="this.onerror=null; this.src='<?= e(asset($fallbackImg)) ?>';">
                                 <?php endforeach; ?>
 
                                 <?php if (count($slides) > 1): ?>

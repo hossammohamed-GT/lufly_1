@@ -127,7 +127,7 @@
 
     function openLightbox() {
         if (!slides[active]) return;
-        var img = slides[active].querySelector('img');
+        var img = slides[active].tagName === 'IMG' ? slides[active] : slides[active].querySelector('img');
         if (!img) return;
         openLightboxSrc(img.currentSrc || img.src, img.alt);
     }
@@ -142,7 +142,7 @@
         btn.addEventListener('click', openLightbox);
     });
     slides.forEach(function (slide) {
-        var img = slide.querySelector('img');
+        var img = slide.tagName === 'IMG' ? slide : slide.querySelector('img');
         if (img) img.addEventListener('click', openLightbox);
     });
 
