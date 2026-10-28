@@ -191,7 +191,7 @@
     display: flex;
     flex-direction: column;
     gap: 10px;
-    max-height: 540px;
+    max-height: 520px;
     overflow-y: auto;
     padding: 2px;
     scrollbar-width: thin;
@@ -209,17 +209,18 @@
 
 .pdp-thumb {
     position: relative;
+    display: block;
     flex: 0 0 78px;
     width: 78px;
     height: 78px;
-    padding: 7px;
+    padding: 0;
     border-radius: 14px;
     border: 1.5px solid color-mix(in srgb, var(--ds-border) 90%, transparent);
     background:
-        radial-gradient(circle at 50% 45%, #ffffff 0%, #f3f6f4 76%, #e7eeeb 100%);
+        radial-gradient(circle at 72% 18%, rgba(255, 255, 255, 0.92), rgba(245, 243, 237, 0.64) 46%, transparent 76%),
+        linear-gradient(145deg, rgba(238, 236, 229, 0.8), rgba(217, 214, 204, 0.62));
+    background-color: rgba(238, 236, 229, 0.96);
     cursor: pointer;
-    display: grid;
-    place-items: center;
     overflow: hidden;
     transition: border-color 0.18s ease, transform 0.18s ease, box-shadow 0.18s ease;
 }
@@ -235,8 +236,12 @@
 }
 
 .pdp-thumb img {
-    max-width: 100%;
-    max-height: 100%;
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    padding: 7px;
+    box-sizing: border-box;
     object-fit: contain;
     mix-blend-mode: multiply;
 }
@@ -253,6 +258,7 @@
     position: absolute;
     right: 4px;
     bottom: 4px;
+    z-index: 2;
     padding: 1px 5px;
     border-radius: 5px;
     background: var(--pdp-teal-deep);
@@ -262,165 +268,66 @@
     letter-spacing: 0.05em;
 }
 
-/* Main Architectural Gallery Viewport — Makes White Cutouts Look Like Luxury Showroom Art */
+/* Main Product Stage — Identical Clean Frame Logic to .pcard-stage + .pcard-media:
+   ONLY the complete product lives inside the viewport; zero clipping, zero overlays! */
 .pdp-stage-main {
     min-width: 0;
 }
 
-.pdp-viewport {
-    position: relative;
-    aspect-ratio: 5 / 4;
-    min-height: 420px;
-    max-height: 560px;
-    width: 100%;
+.pdp-stage-card {
     border-radius: 22px;
     border: 1px solid color-mix(in srgb, var(--ds-border) 88%, transparent);
-    /* Warm sunlit gallery niche: pure bright center preserves white ceramics
-       while warm stone-sage architectural edges dissolve harsh white JPEG boxes */
-    background:
-        radial-gradient(ellipse 64% 58% at 50% 46%, #ffffff 0%, #ffffff 42%, #f4f7f5 74%, #e5ede9 100%);
-    box-shadow:
-        inset 0 1px 0 rgba(255, 255, 255, 0.9),
-        0 24px 52px -30px rgba(16, 42, 42, 0.22);
+    background: var(--ds-surface);
+    box-shadow: 0 22px 48px -28px rgba(16, 42, 42, 0.20);
     overflow: hidden;
-    display: grid;
-    place-items: center;
-}
-
-@media (max-width: 560px) {
-    .pdp-viewport {
-        aspect-ratio: 1 / 1;
-        min-height: 320px;
-    }
 }
 
 /* Featured Golden Bezel Contract (.pdp-stage.is-featured) */
-.pdp-stage.is-featured .pdp-viewport {
+.pdp-stage.is-featured .pdp-stage-card {
     border: 2px solid #d4af37;
     box-shadow:
         0 0 0 3px rgba(212, 175, 55, 0.18),
         0 26px 54px -26px rgba(184, 137, 23, 0.34);
 }
 
-[data-theme="dark"] .pdp-stage.is-featured .pdp-viewport {
+[data-theme="dark"] .pdp-stage.is-featured .pdp-stage-card {
     border-color: #e5c158;
     box-shadow:
         0 0 0 3px rgba(229, 193, 88, 0.24),
         0 26px 54px -26px rgba(229, 193, 88, 0.3);
 }
 
-/* Warm Architectural Skylight & Grounded Pedestal Plinth */
-.pdp-studio-glow {
+.pdp-viewport {
+    position: relative;
+    display: block;
+    width: 100%;
+    aspect-ratio: 1.24 / 1;
+    overflow: hidden;
+    background:
+        radial-gradient(circle at 72% 18%, rgba(255, 255, 255, 0.92), rgba(245, 243, 237, 0.64) 46%, transparent 76%),
+        linear-gradient(145deg, rgba(238, 236, 229, 0.8), rgba(217, 214, 204, 0.62));
+    background-color: rgba(238, 236, 229, 0.96);
+}
+
+@media (max-width: 560px) {
+    .pdp-viewport {
+        aspect-ratio: 1.15 / 1;
+    }
+}
+
+/* Clean White Sheet for CAD Drawings */
+.pdp-viewport[data-active-group="drawing"] {
+    background: #ffffff;
+}
+
+/* Slides: Locked 100% to viewport bounds via position: absolute; inset: 0;
+   so tall mixers/columns NEVER overflow or crop, and wide items NEVER look tiny */
+.pdp-slide {
     position: absolute;
     inset: 0;
-    pointer-events: none;
-    background:
-        radial-gradient(420px 260px at 18% 12%, rgba(255, 248, 231, 0.72), transparent 70%),
-        linear-gradient(180deg, transparent 0%, transparent 76%, rgba(203, 216, 211, 0.34) 76.5%, rgba(218, 228, 224, 0.52) 100%);
-}
-
-.pdp-studio-plinth {
-    position: absolute;
-    bottom: 9%;
-    left: 50%;
-    transform: translateX(-50%);
-    width: 48%;
-    height: 22px;
-    border-radius: 50%;
-    background: radial-gradient(ellipse at center, rgba(16, 42, 42, 0.10) 0%, rgba(16, 42, 42, 0.03) 55%, transparent 76%);
-    pointer-events: none;
-}
-
-/* Blueprint Drafting Mode for CAD Drawings */
-.pdp-viewport[data-active-group="drawing"] {
-    background-color: #ffffff;
-    background-image:
-        linear-gradient(to right, rgba(20, 113, 116, 0.055) 1px, transparent 1px),
-        linear-gradient(to bottom, rgba(20, 113, 116, 0.055) 1px, transparent 1px);
-    background-size: 24px 24px;
-}
-
-.pdp-viewport[data-active-group="drawing"] .pdp-studio-glow,
-.pdp-viewport[data-active-group="drawing"] .pdp-studio-plinth,
-.pdp-viewport[data-active-group="situ"] .pdp-studio-glow,
-.pdp-viewport[data-active-group="situ"] .pdp-studio-plinth {
-    display: none;
-}
-
-/* Floating Top Overlay inside Viewport: Finish Aura Pill + Segmented View Switcher */
-.pdp-viewport-top {
-    position: absolute;
-    top: 14px;
-    left: 14px;
-    right: 14px;
-    z-index: 4;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    gap: 10px;
-    pointer-events: none;
-}
-
-.pdp-stage-finish-pill {
-    pointer-events: auto;
-    display: inline-flex;
-    align-items: center;
-    gap: 7px;
-    padding: 5px 12px 5px 8px;
-    border-radius: 999px;
-    background: rgba(255, 255, 255, 0.88);
-    backdrop-filter: blur(10px);
-    border: 1px solid rgba(16, 42, 42, 0.10);
-    color: #102a2a;
-    font-size: 0.75rem;
-    font-weight: 600;
-    box-shadow: 0 4px 14px rgba(16, 42, 42, 0.06);
-}
-
-.pdp-views {
-    pointer-events: auto;
-    display: inline-flex;
-    gap: 3px;
-    padding: 3px;
-    border-radius: 999px;
-    background: rgba(255, 255, 255, 0.90);
-    backdrop-filter: blur(10px);
-    border: 1px solid rgba(16, 42, 42, 0.10);
-    box-shadow: 0 4px 14px rgba(16, 42, 42, 0.07);
-}
-
-.pdp-view-tab {
-    padding: 5px 12px;
-    border: 0;
-    border-radius: 999px;
-    background: transparent;
-    color: #4f6360;
-    font: inherit;
-    font-size: 0.76rem;
-    font-weight: 600;
-    cursor: pointer;
-    transition: background-color 0.16s ease, color 0.16s ease;
-}
-
-.pdp-view-tab:hover {
-    color: #102a2a;
-}
-
-.pdp-view-tab.is-active {
-    background: var(--pdp-teal);
-    color: #ffffff;
-}
-
-/* Slides */
-.pdp-slide {
-    position: relative;
-    z-index: 2;
+    z-index: 1;
     margin: 0;
-    width: 100%;
-    height: 100%;
-    display: grid;
-    place-items: center;
-    padding: clamp(38px, 5vw, 56px) clamp(26px, 4vw, 48px) clamp(28px, 4vw, 42px);
+    padding: 0;
 }
 
 .pdp-slide[hidden] {
@@ -428,78 +335,65 @@
 }
 
 .pdp-slide img {
-    max-width: 100%;
-    max-height: 100%;
-    width: auto;
-    height: auto;
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    padding: clamp(16px, 2.4vw, 24px);
+    box-sizing: border-box;
     object-fit: contain;
     cursor: zoom-in;
-    transition: transform 0.38s cubic-bezier(0.22, 1, 0.36, 1);
+    transition: transform 0.38s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
 .pdp-slide.is-group-gallery img {
     mix-blend-mode: multiply;
-    filter: contrast(1.025);
 }
 
-.pdp-slide.is-group-situ {
-    padding: 0;
+.pdp-slide.is-group-drawing img {
+    padding: clamp(14px, 2vw, 22px);
+    mix-blend-mode: normal;
 }
 
 .pdp-slide.is-group-situ img {
-    width: 100%;
-    height: 100%;
+    padding: 0;
     object-fit: cover;
     mix-blend-mode: normal;
 }
 
 .pdp-slide:hover img {
-    transform: scale(1.03);
-}
-
-.pdp-drawing-stamp {
-    display: none;
-    position: absolute;
-    left: 16px;
-    bottom: 14px;
-    z-index: 3;
-    padding: 6px 12px;
-    border-radius: 8px;
-    background: rgba(255, 255, 255, 0.94);
-    border: 1px solid rgba(20, 113, 116, 0.22);
-    color: #102a2a;
-    font-size: 0.68rem;
-    letter-spacing: 0.06em;
-    gap: 10px;
-    align-items: center;
-}
-
-.pdp-viewport[data-active-group="drawing"] .pdp-drawing-stamp {
-    display: inline-flex;
-}
-
-.pdp-drawing-stamp span {
-    color: var(--pdp-teal-dark);
-    font-weight: 600;
+    transform: scale(1.028);
 }
 
 .pdp-nav {
     position: absolute;
     top: 50%;
     transform: translateY(-50%);
-    z-index: 4;
-    width: 40px;
-    height: 40px;
+    z-index: 3;
+    width: 38px;
+    height: 38px;
     border-radius: 50%;
     border: 1px solid rgba(16, 42, 42, 0.12);
-    background: rgba(255, 255, 255, 0.90);
+    background: rgba(255, 255, 255, 0.88);
     backdrop-filter: blur(8px);
     color: #102a2a;
     display: grid;
     place-items: center;
     cursor: pointer;
     box-shadow: 0 6px 18px rgba(16, 42, 42, 0.10);
-    transition: transform 0.16s ease, border-color 0.16s ease;
+    opacity: 0;
+    transition: opacity 0.18s ease, transform 0.16s ease, border-color 0.16s ease;
+}
+
+.pdp-viewport:hover .pdp-nav,
+.pdp-viewport:focus-within .pdp-nav {
+    opacity: 1;
+}
+
+@media (hover: none) {
+    .pdp-nav {
+        opacity: 0.92;
+    }
 }
 
 .pdp-nav:hover {
@@ -508,35 +402,99 @@
     transform: translateY(-50%) scale(1.06);
 }
 
-.pdp-nav--prev { left: 14px; }
-.pdp-nav--next { right: 14px; }
+.pdp-nav--prev { left: 12px; }
+.pdp-nav--next { right: 12px; }
 
-/* Dark Translucent Circular Fullscreen Button (bottom-right, matching image-1.png) */
-.pdp-zoom-btn {
-    position: absolute;
-    right: 16px;
-    bottom: 16px;
-    z-index: 4;
-    width: 42px;
-    height: 42px;
-    border-radius: 50%;
-    border: 1px solid rgba(255, 255, 255, 0.18);
-    background: rgba(16, 42, 42, 0.82);
-    backdrop-filter: blur(8px);
-    color: #ffffff;
-    display: grid;
-    place-items: center;
+/* Clean Stage Footer Strip BELOW the Photo (never overlaps the product!) */
+.pdp-stage-meta {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 10px;
+    flex-wrap: wrap;
+    padding: 9px 14px;
+    border-top: 1px solid color-mix(in srgb, var(--ds-border) 78%, transparent);
+    background: var(--ds-surface);
+}
+
+.pdp-stage-view-label {
+    font-size: 0.76rem;
+    font-weight: 600;
+    color: var(--ds-text-muted);
+}
+
+.pdp-views {
+    display: inline-flex;
+    gap: 3px;
+    padding: 3px;
+    border-radius: 999px;
+    background: color-mix(in srgb, var(--ds-surface-alt) 68%, transparent);
+    border: 1px solid var(--ds-border);
+}
+
+.pdp-view-tab {
+    padding: 5px 12px;
+    border: 0;
+    border-radius: 999px;
+    background: transparent;
+    color: var(--ds-text-muted);
+    font: inherit;
+    font-size: 0.76rem;
+    font-weight: 600;
     cursor: pointer;
-    box-shadow: 0 8px 20px rgba(16, 42, 42, 0.24);
-    transition: transform 0.16s ease, background-color 0.16s ease;
+    transition: background-color 0.16s ease, color 0.16s ease;
+}
+
+.pdp-view-tab:hover {
+    color: var(--ds-text);
+}
+
+.pdp-view-tab.is-active {
+    background: var(--pdp-teal);
+    color: #ffffff;
+}
+
+.pdp-stage-meta-right {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.pdp-slide-counter {
+    font-size: 0.76rem;
+    font-weight: 600;
+    font-variant-numeric: tabular-nums;
+    color: var(--ds-text-muted);
+}
+
+.pdp-zoom-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    height: 30px;
+    padding: 0 11px;
+    border-radius: 999px;
+    border: 1px solid var(--ds-border);
+    background: var(--ds-surface);
+    color: var(--ds-text);
+    font: inherit;
+    font-size: 0.75rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: border-color 0.16s ease, color 0.16s ease, background-color 0.16s ease;
 }
 
 .pdp-zoom-btn:hover {
-    background: var(--pdp-teal-dark);
-    transform: scale(1.06);
+    border-color: var(--pdp-teal);
+    color: var(--pdp-teal-dark);
+    background: var(--pdp-teal-soft);
 }
 
 .pdp-empty-media {
+    position: absolute;
+    inset: 0;
+    display: grid;
+    place-items: center;
     font-size: 0.875rem;
     letter-spacing: 0.28em;
     color: #9ca3af;
@@ -1098,45 +1056,38 @@
 
 .pdp-vcard-media {
     position: relative;
-    aspect-ratio: 16 / 10;
-    border-radius: 11px;
+    display: block;
+    width: 100%;
+    aspect-ratio: 1.36 / 1;
+    border-radius: 12px;
     background:
-        radial-gradient(circle at 50% 45%, #ffffff 0%, #ffffff 42%, #f1f5f3 80%, #e4ece8 100%);
-    border: 1px solid color-mix(in srgb, var(--ds-border) 65%, transparent);
-    padding: 12px;
-    display: grid;
-    place-items: center;
+        radial-gradient(circle at 72% 18%, rgba(255, 255, 255, 0.92), rgba(245, 243, 237, 0.64) 46%, transparent 76%),
+        linear-gradient(145deg, rgba(238, 236, 229, 0.8), rgba(217, 214, 204, 0.62));
+    background-color: rgba(238, 236, 229, 0.96);
     overflow: hidden;
     text-decoration: none;
 }
 
 .pdp-vcard-media img {
-    max-width: 100%;
-    max-height: 100%;
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    padding: 14px;
+    box-sizing: border-box;
     object-fit: contain;
     mix-blend-mode: multiply;
-    transition: transform 0.26s ease;
+    transition: transform 0.32s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
 .pdp-vcard:hover .pdp-vcard-media img {
-    transform: scale(1.05);
-}
-
-.pdp-vcard-swatch {
-    position: absolute;
-    top: 8px;
-    right: 8px;
-    padding: 3px;
-    border-radius: 999px;
-    background: rgba(255, 255, 255, 0.92);
-    border: 1px solid rgba(16, 42, 42, 0.10);
-    display: inline-flex;
+    transform: scale(1.04);
 }
 
 .pdp-vcard-body {
     display: flex;
     flex-direction: column;
-    gap: 3px;
+    gap: 4px;
     padding-top: 12px;
 }
 
@@ -1147,12 +1098,19 @@
     color: var(--ds-text-muted);
 }
 
+.pdp-vcard-title-row {
+    display: flex;
+    align-items: center;
+    gap: 7px;
+    margin-bottom: 8px;
+}
+
 .pdp-vcard-title {
     font-size: 0.92rem;
     font-weight: 700;
     color: var(--ds-text);
     line-height: 1.3;
-    margin-bottom: 8px;
+    margin: 0;
 }
 
 .pdp-vcard-btn {
@@ -1307,24 +1265,23 @@
 
 .pdp-blueprint-sheet {
     position: relative;
-    min-height: 270px;
+    display: block;
+    width: 100%;
+    aspect-ratio: 1.38 / 1;
     border-radius: 16px;
     border: 1px solid var(--ds-border);
     background-color: #ffffff;
-    background-image:
-        linear-gradient(to right, rgba(20, 113, 116, 0.045) 1px, transparent 1px),
-        linear-gradient(to bottom, rgba(20, 113, 116, 0.045) 1px, transparent 1px);
-    background-size: 20px 20px;
-    padding: 20px;
-    display: grid;
-    place-items: center;
     cursor: zoom-in;
     overflow: hidden;
 }
 
 .pdp-blueprint-sheet img {
-    max-width: 100%;
-    max-height: 260px;
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    padding: 18px;
+    box-sizing: border-box;
     object-fit: contain;
     transition: transform 0.24s ease;
 }
@@ -1472,19 +1429,25 @@
 }
 
 .pdp-drawing-sheet-lg {
+    position: relative;
+    display: block;
+    width: 100%;
+    aspect-ratio: 1.4 / 1;
     margin: 0;
-    padding: 28px;
     border-radius: 18px;
     border: 1px solid var(--ds-border);
     background: #ffffff;
-    display: grid;
-    place-items: center;
+    overflow: hidden;
     cursor: zoom-in;
 }
 
 .pdp-drawing-sheet-lg img {
-    max-width: 100%;
-    max-height: 460px;
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    padding: 24px;
+    box-sizing: border-box;
     object-fit: contain;
 }
 
@@ -1600,19 +1563,25 @@
 
 .pdp-seat-media {
     position: relative;
+    display: block;
+    width: 100%;
     aspect-ratio: 1 / 1;
     border-radius: 12px;
-    background: radial-gradient(circle at 50% 45%, #ffffff 0%, #f1f5f3 100%);
+    background:
+        radial-gradient(circle at 72% 18%, rgba(255, 255, 255, 0.92), rgba(245, 243, 237, 0.64) 46%, transparent 76%),
+        linear-gradient(145deg, rgba(238, 236, 229, 0.8), rgba(217, 214, 204, 0.62));
+    background-color: rgba(238, 236, 229, 0.96);
     border: 1px solid var(--ds-border);
-    display: grid;
-    place-items: center;
-    padding: 10px;
     overflow: hidden;
 }
 
 .pdp-seat-media img {
-    max-width: 100%;
-    max-height: 100%;
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    padding: 10px;
+    box-sizing: border-box;
     object-fit: contain;
     mix-blend-mode: multiply;
 }
@@ -1903,9 +1872,11 @@
     z-index: 1200;
     background: rgba(10, 16, 16, 0.92);
     backdrop-filter: blur(8px);
-    display: grid;
-    place-items: center;
+    display: flex;
+    align-items: center;
+    justify-content: center;
     padding: clamp(20px, 4vw, 48px);
+    box-sizing: border-box;
 }
 
 .pdp-lightbox[hidden] {
@@ -1913,12 +1884,16 @@
 }
 
 .pdp-lightbox-img {
+    display: block;
+    width: auto;
+    height: auto;
     max-width: min(1160px, 92vw);
-    max-height: 88vh;
+    max-height: 86vh;
+    box-sizing: border-box;
     object-fit: contain;
     background: #ffffff;
     border-radius: 18px;
-    padding: clamp(16px, 3vw, 32px);
+    padding: clamp(16px, 3vw, 28px);
     box-shadow: 0 28px 64px rgba(0, 0, 0, 0.45);
 }
 

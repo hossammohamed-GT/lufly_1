@@ -10,6 +10,7 @@
     var slides = Array.prototype.slice.call(stage.querySelectorAll('[data-pdp-slide]'));
     var thumbs = Array.prototype.slice.call(stage.querySelectorAll('[data-pdp-thumb]'));
     var tabs = Array.prototype.slice.call(stage.querySelectorAll('[data-pdp-group]'));
+    var counter = stage.querySelector('[data-pdp-counter]');
     var prevBtn = stage.querySelector('[data-pdp-prev]');
     var nextBtn = stage.querySelector('[data-pdp-next]');
     var zoomBtns = Array.prototype.slice.call(stage.querySelectorAll('[data-pdp-zoom]'));
@@ -48,6 +49,10 @@
 
         if (viewport && currentGroup) {
             viewport.setAttribute('data-active-group', currentGroup);
+        }
+
+        if (counter) {
+            counter.textContent = (active + 1) + ' / ' + slides.length;
         }
     }
 

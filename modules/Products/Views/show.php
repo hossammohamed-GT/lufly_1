@@ -315,9 +315,39 @@ $complementaryProducts = is_array($complementaryProducts ?? null) ? $complementa
                 <?php endif; ?>
 
                 <div class="pdp-stage-main">
-                    <div class="pdp-viewport" data-pdp-viewport data-active-group="<?= e((string) ($slides[0]['group'] ?? 'gallery')) ?>">
-                        <span class="pdp-studio-glow" aria-hidden="true"></span>
-                        <span class="pdp-studio-plinth" aria-hidden="true"></span>
+                    <div class="pdp-stage-card">
+                        <div class="pdp-viewport" data-pdp-viewport data-active-group="<?= e((string) ($slides[0]['group'] ?? 'gallery')) ?>">
+                            <?php if ($slides !== []): ?>
+                                <?php foreach ($slides as $idx => $slide): ?>
+                                    <?php $sGroup = (string) ($slide['group'] ?? 'gallery'); ?>
+                                    <figure class="pdp-slide is-group-<?= e($sGroup) ?><?= $idx === 0 ? ' is-active' : '' ?>"
+                                            data-pdp-slide="<?= (int) $idx ?>"
+                                            data-slide-group="<?= e($sGroup) ?>"
+                                            <?= $idx === 0 ? '' : 'hidden' ?>>
+                                        <img src="<?= e((string) $slide['url']) ?>"
+                                             alt="<?= e((string) $slide['alt']) ?>"
+                                             <?= $idx === 0 ? 'fetchpriority="high"' : 'loading="lazy"' ?>
+                                             decoding="async"
+                                             onerror="this.onerror=null; this.src='<?= e(asset($fallbackImg)) ?>';">
+                                    </figure>
+                                <?php endforeach; ?>
+
+                                <?php if (count($slides) > 1): ?>
+                                    <button type="button" class="pdp-nav pdp-nav--prev" data-pdp-prev
+                                            aria-label="<?= e(trans('products.view_prev')) ?>">
+                                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m15 18-6-6 6-6"/></svg>
+                                    </button>
+                                    <button type="button" class="pdp-nav pdp-nav--next" data-pdp-next
+                                            aria-label="<?= e(trans('products.view_next')) ?>">
+                                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m9 18 6-6-6-6"/></svg>
+                                    </button>
+                                <?php endif; ?>
+                            <?php else: ?>
+                                <div class="pdp-empty-media" aria-hidden="true">
+                                    <span>LUFLY</span>
+                                </div>
+                            <?php endif; ?>
+                        </div>
 
                         <?php
                         $groupsPresent = array_values(array_filter([
@@ -326,16 +356,7 @@ $complementaryProducts = is_array($complementaryProducts ?? null) ? $complementa
                             count($situImages) > 0 ? ['key' => 'situ', 'label' => trans('products.view_situ'), 'count' => count($situImages)] : null,
                         ]));
                         ?>
-                        <div class="pdp-viewport-top">
-                            <?php if ($currentFinishes !== []): ?>
-                                <span class="pdp-stage-finish-pill">
-                                    <span class="pcard-tone-swatch" aria-hidden="true"><?= $renderToneDots($currentFinishes) ?></span>
-                                    <span><?= e($currentFinishText) ?></span>
-                                </span>
-                            <?php else: ?>
-                                <span></span>
-                            <?php endif; ?>
-
+                        <div class="pdp-stage-meta">
                             <?php if (count($groupsPresent) > 1): ?>
                                 <div class="pdp-views" role="tablist" aria-label="<?= e(trans('products.pdp_media_views')) ?>">
                                     <?php foreach ($groupsPresent as $gi => $group): ?>
@@ -346,54 +367,26 @@ $complementaryProducts = is_array($complementaryProducts ?? null) ? $complementa
                                         </button>
                                     <?php endforeach; ?>
                                 </div>
-                            <?php endif; ?>
-                        </div>
-
-                        <?php if ($slides !== []): ?>
-                            <?php foreach ($slides as $idx => $slide): ?>
-                                <?php $sGroup = (string) ($slide['group'] ?? 'gallery'); ?>
-                                <figure class="pdp-slide is-group-<?= e($sGroup) ?><?= $idx === 0 ? ' is-active' : '' ?>"
-                                        data-pdp-slide="<?= (int) $idx ?>"
-                                        data-slide-group="<?= e($sGroup) ?>"
-                                        <?= $idx === 0 ? '' : 'hidden' ?>>
-                                    <img src="<?= e((string) $slide['url']) ?>"
-                                         alt="<?= e((string) $slide['alt']) ?>"
-                                         <?= $idx === 0 ? 'fetchpriority="high"' : 'loading="lazy"' ?>
-                                         decoding="async"
-                                         onerror="this.onerror=null; this.src='<?= e(asset($fallbackImg)) ?>';">
-                                </figure>
-                            <?php endforeach; ?>
-
-                            <?php if ($code !== ''): ?>
-                                <div class="pdp-drawing-stamp" aria-hidden="true">
-                                    <strong><?= e(trans('products.model_badge') . ' ' . $code) ?></strong>
-                                    <span><?= e(trans('products.standard_en_ce')) ?></span>
-                                </div>
+                            <?php else: ?>
+                                <span class="pdp-stage-view-label"><?= e(trans('products.view_main')) ?></span>
                             <?php endif; ?>
 
-                            <?php if (count($slides) > 1): ?>
-                                <button type="button" class="pdp-nav pdp-nav--prev" data-pdp-prev
-                                        aria-label="<?= e(trans('products.view_prev')) ?>">
-                                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m15 18-6-6 6-6"/></svg>
-                                </button>
-                                <button type="button" class="pdp-nav pdp-nav--next" data-pdp-next
-                                        aria-label="<?= e(trans('products.view_next')) ?>">
-                                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m9 18 6-6-6-6"/></svg>
-                                </button>
-                            <?php endif; ?>
-
-                            <button type="button" class="pdp-zoom-btn" data-pdp-zoom
-                                    aria-label="<?= e(trans('products.zoom_image', ['image' => $name])) ?>"
-                                    title="<?= e(trans('products.pdp_fullscreen')) ?>">
-                                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-                                    <path d="M15 3h6v6M9 21H3v-6M21 3l-7 7M3 21l7-7"/>
-                                </svg>
-                            </button>
-                        <?php else: ?>
-                            <div class="pdp-empty-media" aria-hidden="true">
-                                <span>LUFLY</span>
+                            <div class="pdp-stage-meta-right">
+                                <?php if (count($slides) > 1): ?>
+                                    <span class="pdp-slide-counter" data-pdp-counter>1 / <?= count($slides) ?></span>
+                                <?php endif; ?>
+                                <?php if ($slides !== []): ?>
+                                    <button type="button" class="pdp-zoom-btn" data-pdp-zoom
+                                            aria-label="<?= e(trans('products.zoom_image', ['image' => $name])) ?>"
+                                            title="<?= e(trans('products.pdp_fullscreen')) ?>">
+                                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                                            <path d="M15 3h6v6M9 21H3v-6M21 3l-7 7M3 21l7-7"/>
+                                        </svg>
+                                        <span><?= e(trans('products.pdp_fullscreen')) ?></span>
+                                    </button>
+                                <?php endif; ?>
                             </div>
-                        <?php endif; ?>
+                        </div>
                     </div>
                 </div>
             </section>
@@ -728,18 +721,18 @@ $complementaryProducts = is_array($complementaryProducts ?? null) ? $complementa
                                      loading="lazy"
                                      decoding="async"
                                      onerror="this.onerror=null; this.src='<?= e(asset($fallbackImg)) ?>';">
-                                <?php if ($vOptionFinishes !== []): ?>
-                                    <span class="pdp-vcard-swatch">
-                                        <span class="pcard-tone-swatch" aria-hidden="true"><?= $renderToneDots($vOptionFinishes) ?></span>
-                                    </span>
-                                <?php endif; ?>
                             </a>
 
                             <div class="pdp-vcard-body">
                                 <?php if ($vCode !== ''): ?>
                                     <span class="pdp-vcard-code"><?= e($vCode) ?></span>
                                 <?php endif; ?>
-                                <strong class="pdp-vcard-title"><?= e($vFinishTitle) ?></strong>
+                                <div class="pdp-vcard-title-row">
+                                    <?php if ($vOptionFinishes !== []): ?>
+                                        <span class="pcard-tone-swatch" aria-hidden="true"><?= $renderToneDots($vOptionFinishes) ?></span>
+                                    <?php endif; ?>
+                                    <strong class="pdp-vcard-title"><?= e($vFinishTitle) ?></strong>
+                                </div>
 
                                 <?php if ($isCurrentVar): ?>
                                     <span class="pdp-vcard-btn is-current"><?= e(trans('products.pdp_current_product')) ?></span>
