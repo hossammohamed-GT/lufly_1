@@ -486,6 +486,7 @@ if (extension_loaded('pdo_sqlite')) {
 }
 
 $pdpDetailCssSrc = (string) file_get_contents($root . '/frontend/products/detail/detail.css');
+$pdpDetailJsSrc = (string) file_get_contents($root . '/frontend/products/detail/detail.js');
 $assert(
     str_contains($productShowViewSrc, "pushStyle('frontend/box/box.css')")
     && str_contains($productShowViewSrc, "pushScript('frontend/box/box.js')")
@@ -494,13 +495,18 @@ $assert(
     && str_contains($productShowViewSrc, 'class="pdp-datasheet-btn"')
     && str_contains($productShowViewSrc, 'aria-disabled="true"')
     && str_contains($productShowViewSrc, 'data-pdp-variant-cards')
+    && str_contains($productShowViewSrc, 'data-pdp-vcard-url')
     && str_contains($productShowViewSrc, 'pdp-colors-mobile')
     && str_contains($productShowViewSrc, 'data-pdp-dossier')
     && str_contains($productShowViewSrc, 'data-pdp-similar')
     && str_contains($productShowViewSrc, 'data-pdp-complementary')
     && str_contains($pdpDetailCssSrc, '.pdp-datasheet-btn:disabled')
     && str_contains($pdpDetailCssSrc, '.pdp-slide.is-group-gallery')
+    && str_contains($pdpDetailCssSrc, '.pdp-fly-ghost')
+    && str_contains($pdpDetailCssSrc, '@keyframes pdpInfoReveal')
     && str_contains($pdpDetailCssSrc, 'isolation: isolate;')
+    && str_contains($pdpDetailJsSrc, 'function transitionToVariant(')
+    && str_contains($pdpDetailJsSrc, 'history.pushState')
     && !str_contains($productShowViewSrc, '<figure class="pdp-slide')
     && !str_contains($productShowViewSrc, 'pdp-studio-plinth')
     && !str_contains($productShowViewSrc, 'pdp-viewport-top')

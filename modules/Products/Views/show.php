@@ -232,7 +232,7 @@ $categoryNeighbors = is_array($categoryNeighbors ?? null) ? $categoryNeighbors :
 $similarProducts = is_array($similarProducts ?? null) ? $similarProducts : [];
 $complementaryProducts = is_array($complementaryProducts ?? null) ? $complementaryProducts : [];
 ?>
-<main class="pdp" id="main">
+<main class="pdp" id="main" data-pdp-root data-pdp-product-id="<?= $productId ?>">
     <div class="pdp-inner">
         <!-- Top Editorial Breadcrumb & Category Lookbook Stepper -->
         <div class="pdp-topbar">
@@ -713,7 +713,11 @@ $complementaryProducts = is_array($complementaryProducts ?? null) ? $complementa
                         $vImg = trim((string) ($variant['image'] ?? '')) !== '' ? trim((string) $variant['image']) : $fallbackImg;
                         $vUrl = (string) ($variant['url'] ?? route('products.show', ['slug' => (string) ($variant['slug'] ?? '')]));
                         ?>
-                        <article class="pdp-vcard<?= $isCurrentVar ? ' is-current' : '' ?>">
+                        <article class="pdp-vcard<?= $isCurrentVar ? ' is-current' : '' ?>"
+                                 data-pdp-vcard="<?= $vId ?>"
+                                 data-pdp-vcard-url="<?= e($vUrl) ?>"
+                                 data-pdp-vcard-img="<?= e(asset($vImg)) ?>"
+                                 data-pdp-vcard-alt="<?= e($vFinishTitle . ($vCode !== '' ? ' — ' . $vCode : '')) ?>">
                             <a class="pdp-vcard-media" href="<?= e($vUrl) ?>"<?= $isCurrentVar ? ' aria-current="page"' : '' ?>>
                                 <img src="<?= e(asset($vImg)) ?>"
                                      alt="<?= e($vFinishTitle . ($vCode !== '' ? ' — ' . $vCode : '')) ?>"

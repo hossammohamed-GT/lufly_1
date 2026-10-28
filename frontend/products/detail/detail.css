@@ -1921,3 +1921,220 @@
 .pdp-lightbox-close:hover {
     background: rgba(255, 255, 255, 0.24);
 }
+
+/* ============================================================================
+   Shared-Element Variant Flight & Synchronized Showroom Info Choreography
+   ============================================================================ */
+
+/* Whole variant card acts as a tactile selector on desktop */
+.pdp-vcard[data-pdp-vcard]:not(.is-current) {
+    cursor: pointer;
+}
+
+/* Source card lift-off feedback when its product takes flight upward */
+.pdp-vcard.is-launching .pdp-vcard-media img {
+    opacity: 0.16;
+    transform: scale(0.92);
+    transition: opacity 0.2s ease, transform 0.24s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+/* Subtle luxury aura pulse on the newly selected variant card */
+@keyframes pdpVcardSelectedPulse {
+    0% {
+        box-shadow: 0 0 0 0 rgba(28, 139, 139, 0.38);
+    }
+    60% {
+        box-shadow: 0 0 0 8px rgba(28, 139, 139, 0.08);
+    }
+    100% {
+        box-shadow: 0 0 0 4px rgba(28, 139, 139, 0.10);
+    }
+}
+
+.pdp-vcard.is-current.is-just-selected {
+    animation: pdpVcardSelectedPulse 0.68s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+/* Floating Studio Stage Ghost: carries its own isolated warm-stone backdrop
+   so mix-blend-mode: multiply has ZERO white box even in mid-air flight! */
+.pdp-fly-ghost {
+    position: fixed;
+    left: 0;
+    top: 0;
+    z-index: 960;
+    isolation: isolate;
+    pointer-events: none;
+    overflow: hidden;
+    box-sizing: border-box;
+    will-change: transform, width, height, opacity;
+    background:
+        radial-gradient(circle at 72% 18%, rgba(255, 255, 255, 0.94), rgba(245, 243, 237, 0.68) 46%, transparent 76%),
+        linear-gradient(145deg, rgba(238, 236, 229, 0.86), rgba(217, 214, 204, 0.68));
+    background-color: rgba(238, 236, 229, 0.98);
+    box-shadow:
+        0 30px 68px -18px rgba(16, 42, 42, 0.34),
+        0 0 0 1px rgba(28, 139, 139, 0.22),
+        inset 0 1px 0 rgba(255, 255, 255, 0.72);
+    transition: opacity 0.2s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.pdp-fly-ghost.is-dissolving {
+    opacity: 0;
+    box-shadow: none;
+}
+
+.pdp-fly-ghost-img {
+    position: absolute;
+    inset: 0;
+    z-index: 0;
+    width: 100%;
+    height: 100%;
+    padding: 16px;
+    box-sizing: border-box;
+    object-fit: contain;
+    mix-blend-mode: multiply;
+}
+
+/* Existing hero product gently steps back as incoming variant approaches */
+.pdp-viewport.is-receiving .pdp-slide.is-active {
+    opacity: 0.14;
+    transform: scale(0.93);
+    transition: opacity 0.24s ease, transform 0.28s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+/* Subtle pearlescent showroom sheen across the stage card upon landing */
+.pdp-stage-card {
+    position: relative;
+}
+
+@keyframes pdpStageSheen {
+    0% {
+        transform: translate3d(-115%, 0, 0) skewX(-18deg);
+        opacity: 0;
+    }
+    25% {
+        opacity: 0.65;
+    }
+    100% {
+        transform: translate3d(135%, 0, 0) skewX(-18deg);
+        opacity: 0;
+    }
+}
+
+.pdp-stage-card.is-landed::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    z-index: 4;
+    pointer-events: none;
+    background: linear-gradient(
+        105deg,
+        transparent 28%,
+        rgba(255, 255, 255, 0.52) 50%,
+        transparent 72%
+    );
+    animation: pdpStageSheen 0.68s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+}
+
+/* ---- Synchronized Info Panel & Thumbnail Rail Cascade ---- */
+.pdp-info.is-morphing-out > * {
+    opacity: 0;
+    transform: translate3d(0, -12px, 0);
+    filter: blur(2px);
+    transition:
+        opacity 0.19s ease,
+        transform 0.22s cubic-bezier(0.4, 0, 1, 1),
+        filter 0.19s ease;
+}
+
+.pdp-info.is-morphing-out > *:nth-child(2) { transition-delay: 18ms; }
+.pdp-info.is-morphing-out > *:nth-child(3) { transition-delay: 32ms; }
+.pdp-info.is-morphing-out > *:nth-child(n+4) { transition-delay: 46ms; }
+
+@keyframes pdpInfoReveal {
+    0% {
+        opacity: 0;
+        transform: translate3d(0, 18px, 0);
+        filter: blur(2.5px);
+    }
+    100% {
+        opacity: 1;
+        transform: translate3d(0, 0, 0);
+        filter: blur(0);
+    }
+}
+
+.pdp-info.is-morphing-in > * {
+    animation: pdpInfoReveal 0.52s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+.pdp-info.is-morphing-in > *:nth-child(1) { animation-delay: 0ms; }
+.pdp-info.is-morphing-in > *:nth-child(2) { animation-delay: 42ms; }
+.pdp-info.is-morphing-in > *:nth-child(3) { animation-delay: 84ms; }
+.pdp-info.is-morphing-in > *:nth-child(4) { animation-delay: 126ms; }
+.pdp-info.is-morphing-in > *:nth-child(5) { animation-delay: 168ms; }
+.pdp-info.is-morphing-in > *:nth-child(6) { animation-delay: 208ms; }
+.pdp-info.is-morphing-in > *:nth-child(7) { animation-delay: 248ms; }
+.pdp-info.is-morphing-in > *:nth-child(n+8) { animation-delay: 284ms; }
+
+/* Thumbnail rail exit & cascade entrance */
+.pdp-thumbs.is-morphing-out {
+    opacity: 0.25;
+    transform: translate3d(-6px, 0, 0);
+    transition: opacity 0.2s ease, transform 0.2s ease;
+}
+
+@keyframes pdpThumbReveal {
+    0% {
+        opacity: 0;
+        transform: translate3d(-10px, 6px, 0) scale(0.94);
+    }
+    100% {
+        opacity: 1;
+        transform: translate3d(0, 0, 0) scale(1);
+    }
+}
+
+.pdp-thumbs.is-morphing-in .pdp-thumb {
+    animation: pdpThumbReveal 0.44s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+.pdp-thumbs.is-morphing-in .pdp-thumb:nth-child(1) { animation-delay: 0ms; }
+.pdp-thumbs.is-morphing-in .pdp-thumb:nth-child(2) { animation-delay: 45ms; }
+.pdp-thumbs.is-morphing-in .pdp-thumb:nth-child(3) { animation-delay: 90ms; }
+.pdp-thumbs.is-morphing-in .pdp-thumb:nth-child(n+4) { animation-delay: 130ms; }
+
+/* Dossier smooth refresh */
+@keyframes pdpDossierRefresh {
+    0% {
+        opacity: 0.35;
+        transform: translate3d(0, 10px, 0);
+    }
+    100% {
+        opacity: 1;
+        transform: translate3d(0, 0, 0);
+    }
+}
+
+.pdp-dossier.is-morphing-in {
+    animation: pdpDossierRefresh 0.45s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .pdp-fly-ghost,
+    .pdp-stage-card.is-landed::after {
+        display: none !important;
+    }
+
+    .pdp-info.is-morphing-out > *,
+    .pdp-info.is-morphing-in > *,
+    .pdp-thumbs.is-morphing-in .pdp-thumb,
+    .pdp-dossier.is-morphing-in {
+        animation: none !important;
+        transition: none !important;
+        transform: none !important;
+        filter: none !important;
+        opacity: 1 !important;
+    }
+}
+
