@@ -201,9 +201,35 @@
     }
   }
 
-  function updateMedia(card, product, name) {
+  var reducedMotion = !!(window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches);
+
+  function warmCardVariants(card) {
+    if (!card || card.__pcardWarmed) return;
+    card.__pcardWarmed = true;
+    variantsFor(card).forEach(function (variant) {
+      var first = slidesFor(variant)[0];
+      if (first && first.src) {
+        var pre = new Image();
+        pre.decoding = 'async';
+        pre.src = first.src;
+      }
+    });
+  }
+
+  function handleWarmIntent(e) {
+    var t = e.target && e.target.closest ? e.target : null;
+    if (!t) return;
+    var card = t.closest('[data-product-card]');
+    if (card) warmCardVariants(card);
+  }
+  document.addEventListener('pointerenter', handleWarmIntent, true);
+  document.addEventListener('focusin', handleWarmIntent, true);
+  document.addEventListener('touchstart', handleWarmIntent, { passive: true, capture: true });
+
+  function updateMedia(card, product, name, animate) {
     var media = card.querySelector('.pcard-media');
     if (!media) return;
+    var activeBeforeStop = media.querySelector('[data-pcard-slide].is-on') || media.querySelector('[data-pcard-slide]');
     media.dispatchEvent(new CustomEvent('pcard:stop-cycle', { bubbles: true }));
 
     var slides = slidesFor(product);
@@ -211,25 +237,74 @@
     var situLabel = media.getAttribute('data-pcard-kind-situ') || 'Installed';
     var href = product.url || '#';
     media.setAttribute('href', href);
-    media.querySelectorAll('[data-pcard-slide]').forEach(function (image) { image.remove(); });
+
+    /* Remove stale exiting clones; keep the single visible image gliding out smoothly */
+    media.querySelectorAll('.pcard-img--exiting').forEach(function (stale) { stale.remove(); });
+    var currentSlides = Array.prototype.slice.call(media.querySelectorAll('[data-pcard-slide]'));
+    var outgoing = null;
+
+    if (animate && !reducedMotion) {
+      outgoing = activeBeforeStop || null;
+      currentSlides.forEach(function (im) {
+        if (im !== outgoing) {
+          im.remove();
+        }
+      });
+      if (outgoing) {
+        outgoing.removeAttribute('data-pcard-slide');
+        outgoing.classList.remove('is-on', 'pcard-img--entering');
+        outgoing.classList.add('pcard-img--exiting');
+        setTimeout(function () {
+          if (outgoing && outgoing.parentNode) outgoing.parentNode.removeChild(outgoing);
+        }, 400);
+      }
+    } else {
+      currentSlides.forEach(function (im) { im.remove(); });
+    }
 
     var fragment = document.createDocumentFragment();
+    var primaryEntering = null;
     slides.forEach(function (slide, index) {
       var image = document.createElement('img');
       var kindLabel = slide.kind === 'drawing' ? drawingLabel : slide.kind === 'situ' ? situLabel : '';
-      image.className = 'pcard-img' + (index === 0 ? ' is-on' : '');
+      var shouldEnterSmooth = index === 0 && animate && !reducedMotion;
+      image.className = 'pcard-img' + (index === 0 ? (shouldEnterSmooth ? ' pcard-img--entering' : ' is-on') : '');
       image.setAttribute('data-pcard-slide', String(index));
       image.setAttribute('data-pcard-kind', slide.kind);
       image.src = slide.src;
       image.alt = index === 0 ? name : (kindLabel ? kindLabel + ' — ' + name : '');
-      image.loading = 'lazy';
+      image.loading = index === 0 ? 'eager' : 'lazy';
       image.decoding = 'async';
       image.width = 420;
       image.height = 320;
       image.onerror = function () { this.onerror = null; this.remove(); };
+      if (shouldEnterSmooth) primaryEntering = image;
       fragment.appendChild(image);
     });
     media.insertBefore(fragment, media.firstChild);
+
+    if (primaryEntering) {
+      var ready = typeof primaryEntering.decode === 'function'
+        ? primaryEntering.decode().catch(function () {})
+        : Promise.resolve();
+      ready.then(function () {
+        if (!primaryEntering.parentNode) return;
+        void primaryEntering.offsetWidth;
+        requestAnimationFrame(function () {
+          if (!primaryEntering.parentNode) return;
+          primaryEntering.classList.remove('pcard-img--entering');
+          primaryEntering.classList.add('is-on');
+          media.dispatchEvent(new CustomEvent('pcard:reset-cycle', { bubbles: true }));
+        });
+      });
+    }
+
+    var stage = media.closest('.pcard-stage');
+    if (stage && animate && !reducedMotion) {
+      stage.classList.remove('is-variant-gliding');
+      void stage.offsetWidth;
+      stage.classList.add('is-variant-gliding');
+    }
 
     if (slides.length > 1) {
       media.setAttribute('data-pcard-cycle', '');
@@ -240,7 +315,6 @@
     }
     media.setAttribute('data-pcard-index', '0');
 
-    var stage = media.closest('.pcard-stage');
     if (stage) {
       var meta = stage.querySelector('.pcard-media-meta');
       if (slides.length > 1) {
@@ -281,7 +355,9 @@
       }
     }
 
-    media.dispatchEvent(new CustomEvent('pcard:reset-cycle', { bubbles: true }));
+    if (!primaryEntering) {
+      media.dispatchEvent(new CustomEvent('pcard:reset-cycle', { bubbles: true }));
+    }
   }
 
   function updateFavorite(card, product, cardData, name) {
@@ -333,23 +409,7 @@
     button.classList.toggle('is-on', on);
   }
 
-  function apply(card, product) {
-    var variants = variantsFor(card);
-    captureState(card, variants);
-
-    var cardData = product.card && typeof product.card === 'object' ? product.card : {};
-    var name = String(product.display_name || product.name || '');
-    var code = String(product.sku || product.model_code || '');
-    var href = product.url || '#';
-    var full = !!card.querySelector('.pcard-actions');
-    var isFeatured = !!(product.is_featured || cardData.is_featured || card.getAttribute('data-featured') === '1');
-    card.setAttribute('data-product-id', String(product.id));
-    card.classList.toggle('is-featured', isFeatured);
-    card.classList.toggle('has-price', !!cardData.has_price);
-    card.classList.toggle('is-price-pending', !cardData.has_price);
-
-    updateMedia(card, product, name);
-
+  function commitBodySwap(card, product, cardData, name, code, href, full, isFeatured) {
     card.querySelectorAll('.pcard-title a').forEach(function (link) {
       link.textContent = name;
       link.setAttribute('href', href);
@@ -396,18 +456,125 @@
       updateBox(card, product, cardData, name);
     }
 
-    card.querySelectorAll('[data-pcard-variant]').forEach(function (link) {
-      var selected = parseInt(link.getAttribute('data-pcard-variant'), 10) === parseInt(product.id, 10);
-      link.classList.toggle('is-active', selected);
-      if (selected) link.setAttribute('aria-current', 'true');
-      else link.removeAttribute('aria-current');
-    });
     updateFinish(card, product, cardData);
+  }
 
-    card.dispatchEvent(new CustomEvent('pcard:variantchange', {
-      bubbles: true,
-      detail: { productId: parseInt(product.id, 10), product: product }
-    }));
+  function apply(card, product, options) {
+    var opts = options && typeof options === 'object' ? options : {};
+    var shouldAnimate = opts.animate !== false && !reducedMotion;
+
+    if (card.__pcardOutTimer) {
+      clearTimeout(card.__pcardOutTimer);
+      card.__pcardOutTimer = 0;
+    }
+    if (card.__pcardCleanTimer) {
+      clearTimeout(card.__pcardCleanTimer);
+      card.__pcardCleanTimer = 0;
+    }
+    if (card.__pcardHeightTimer) {
+      clearTimeout(card.__pcardHeightTimer);
+      card.__pcardHeightTimer = 0;
+    }
+
+    var variants = variantsFor(card);
+    captureState(card, variants);
+
+    /* Determine directional momentum from previous active swatch -> new swatch */
+    var swatchLinks = Array.prototype.slice.call(card.querySelectorAll('[data-pcard-variant]'));
+    var prevSwatchIdx = 0;
+    var nextSwatchIdx = 0;
+    swatchLinks.forEach(function (link, idx) {
+      if (link.classList.contains('is-active')) prevSwatchIdx = idx;
+      if (parseInt(link.getAttribute('data-pcard-variant'), 10) === parseInt(product.id, 10)) nextSwatchIdx = idx;
+    });
+    var dir = nextSwatchIdx >= prevSwatchIdx ? 1 : -1;
+    card.style.setProperty('--pcard-dir', String(dir));
+
+    var cardData = product.card && typeof product.card === 'object' ? product.card : {};
+    var name = String(product.display_name || product.name || '');
+    var code = String(product.sku || product.model_code || '');
+    var href = product.url || '#';
+    var full = !!card.querySelector('.pcard-actions');
+    var isFeatured = !!(product.is_featured || cardData.is_featured || card.getAttribute('data-featured') === '1');
+
+    card.setAttribute('data-product-id', String(product.id));
+    card.classList.toggle('is-featured', isFeatured);
+    card.classList.toggle('has-price', !!cardData.has_price);
+    card.classList.toggle('is-price-pending', !cardData.has_price);
+
+    /* Immediate tactile swatch feedback */
+    swatchLinks.forEach(function (link) {
+      var selected = parseInt(link.getAttribute('data-pcard-variant'), 10) === parseInt(product.id, 10);
+      link.classList.remove('is-popping');
+      link.classList.toggle('is-active', selected);
+      if (selected) {
+        link.setAttribute('aria-current', 'true');
+        if (shouldAnimate) {
+          void link.offsetWidth;
+          link.classList.add('is-popping');
+        }
+      } else {
+        link.removeAttribute('aria-current');
+      }
+    });
+
+    /* Launch directional image cross-glide immediately at 0ms */
+    updateMedia(card, product, name, shouldAnimate);
+
+    if (!shouldAnimate) {
+      card.classList.remove('is-pcard-out', 'is-pcard-in');
+      commitBodySwap(card, product, cardData, name, code, href, full, isFeatured);
+      card.dispatchEvent(new CustomEvent('pcard:variantchange', {
+        bubbles: true,
+        detail: { productId: parseInt(product.id, 10), product: product }
+      }));
+      return;
+    }
+
+    var body = card.querySelector('.pcard-body');
+    var fromH = body ? body.offsetHeight : 0;
+
+    card.classList.remove('is-pcard-in');
+    card.classList.add('is-pcard-out');
+
+    card.__pcardOutTimer = setTimeout(function () {
+      card.__pcardOutTimer = 0;
+      if (body) body.style.height = '';
+
+      commitBodySwap(card, product, cardData, name, code, href, full, isFeatured);
+
+      if (body && fromH > 0) {
+        var toH = body.offsetHeight;
+        if (Math.abs(toH - fromH) > 2) {
+          body.style.transition = 'none';
+          body.style.height = fromH + 'px';
+          void body.offsetWidth;
+          body.style.transition = '';
+          body.style.height = toH + 'px';
+          card.__pcardHeightTimer = setTimeout(function () {
+            body.style.height = '';
+            card.__pcardHeightTimer = 0;
+          }, 340);
+        }
+      }
+
+      card.classList.remove('is-pcard-out');
+      void card.offsetWidth;
+      card.classList.add('is-pcard-in');
+
+      card.dispatchEvent(new CustomEvent('pcard:variantchange', {
+        bubbles: true,
+        detail: { productId: parseInt(product.id, 10), product: product }
+      }));
+
+      card.__pcardCleanTimer = setTimeout(function () {
+        card.classList.remove('is-pcard-in');
+        var stg = card.querySelector('.pcard-stage');
+        if (stg) stg.classList.remove('is-variant-gliding');
+        swatchLinks.forEach(function (l) { l.classList.remove('is-popping'); });
+        card.__pcardCleanTimer = 0;
+      }, 560);
+    }, 110);
   }
 
   document.addEventListener('click', function (event) {
@@ -422,7 +589,7 @@
 
     event.preventDefault();
     if (parseInt(card.getAttribute('data-product-id'), 10) === id) return;
-    apply(card, product);
+    apply(card, product, { animate: true });
   });
 
   window.LUFLYProductCardVariants = { apply: apply, variants: variantsFor };

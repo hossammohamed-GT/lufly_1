@@ -524,6 +524,20 @@ $assert(
     'Editorial showroom PDP renders warm studio stage, responsive mobile swatches vs desktop variant cards, disabled Data Sheet button, tabbed dossier, and two-tier marketplace discovery',
 );
 
+$pcardCssSrc = (string) file_get_contents($root . '/frontend/css/product-card.css');
+$pcardVariantsJsSrc = (string) file_get_contents($root . '/frontend/js/product-card-variants.js');
+$assert(
+    str_contains($pcardCssSrc, '@keyframes pcardFieldReveal')
+    && str_contains($pcardCssSrc, '@keyframes pcardSwatchPop')
+    && str_contains($pcardCssSrc, '.pcard-img.pcard-img--entering')
+    && str_contains($pcardCssSrc, '.pcard-img.pcard-img--exiting')
+    && str_contains($pcardVariantsJsSrc, 'function warmCardVariants(')
+    && str_contains($pcardVariantsJsSrc, 'function commitBodySwap(')
+    && str_contains($pcardVariantsJsSrc, 'is-pcard-out')
+    && str_contains($pcardVariantsJsSrc, 'is-pcard-in'),
+    'Product card colour-variant switching choreographs directional image cross-glide, swatch spring, and staggered body cascade across all changing card elements',
+);
+
 foreach (glob($root . '/resources/lang/en/*.php') ?: [] as $enLangFile) {
     $base = basename($enLangFile);
     $enKeys = array_keys(require $enLangFile);

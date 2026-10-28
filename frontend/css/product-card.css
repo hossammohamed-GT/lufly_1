@@ -842,14 +842,165 @@ a.pcard-swatch.pcard-option.is-active {
   .pcard-spec { gap: 6px; }
 }
 
+/* ---------- choreographed in-card colour/finish morphing ---------- */
+
+.pcard-stage {
+  overflow: hidden;
+}
+
+@keyframes pcardStageSheen {
+  0% {
+    transform: translate3d(-115%, 0, 0) skewX(-18deg);
+    opacity: 0;
+  }
+  28% {
+    opacity: 0.56;
+  }
+  100% {
+    transform: translate3d(135%, 0, 0) skewX(-18deg);
+    opacity: 0;
+  }
+}
+
+.pcard-stage.is-variant-gliding::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: 3;
+  pointer-events: none;
+  background: linear-gradient(
+    105deg,
+    transparent 28%,
+    rgba(255, 255, 255, 0.52) 50%,
+    transparent 72%
+  );
+  animation: pcardStageSheen 0.62s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+}
+
+.pcard-img.pcard-img--entering {
+  opacity: 0 !important;
+  transform: translate3d(calc(var(--pcard-dir, 1) * 18px), 0, 0) scale(0.955) !important;
+  transition: none !important;
+}
+
+.pcard-img.pcard-img--exiting {
+  z-index: 0;
+  opacity: 0 !important;
+  pointer-events: none !important;
+  transform: translate3d(calc(var(--pcard-dir, 1) * -16px), 0, 0) scale(0.955) !important;
+  transition:
+    opacity 0.28s ease,
+    transform 0.38s cubic-bezier(0.22, 1, 0.36, 1) !important;
+}
+
+.pcard-img.is-on {
+  z-index: 1;
+  transition:
+    opacity 0.38s cubic-bezier(0.22, 1, 0.36, 1),
+    transform 0.44s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+a.pcard-swatch {
+  transition:
+    box-shadow 240ms cubic-bezier(0.22, 1, 0.36, 1),
+    transform 240ms cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+@keyframes pcardSwatchPop {
+  0% { transform: scale(0.86); }
+  55% { transform: scale(1.14); }
+  100% { transform: scale(1); }
+}
+
+a.pcard-swatch.is-popping {
+  animation: pcardSwatchPop 0.36s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+@keyframes pcardToneSpin {
+  0% {
+    opacity: 0;
+    transform: scale(0.68) rotate(-24deg);
+  }
+  100% {
+    opacity: 1;
+    transform: scale(1) rotate(0deg);
+  }
+}
+
+.pcard.is-pcard-in [data-pcard-piece-tones] {
+  animation: pcardToneSpin 0.36s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+.pcard-body {
+  transition: height 0.32s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.pcard.is-pcard-out .pcard-title,
+.pcard.is-pcard-out .pcard-code,
+.pcard.is-pcard-out .pcard-desc,
+.pcard.is-pcard-out .pcard-feature-panel,
+.pcard.is-pcard-out [data-pcard-finish-label],
+.pcard.is-pcard-out .pcard-specs,
+.pcard.is-pcard-out .pcard-price {
+  opacity: 0.08;
+  transform: translate3d(calc(var(--pcard-dir, 1) * -7px), -3px, 0);
+  transition:
+    opacity 0.11s ease,
+    transform 0.12s cubic-bezier(0.4, 0, 1, 1);
+}
+
+@keyframes pcardFieldReveal {
+  0% {
+    opacity: 0;
+    transform: translate3d(calc(var(--pcard-dir, 1) * 9px), 5px, 0);
+  }
+  100% {
+    opacity: 1;
+    transform: translate3d(0, 0, 0);
+  }
+}
+
+.pcard.is-pcard-in .pcard-title {
+  animation: pcardFieldReveal 0.36s cubic-bezier(0.22, 1, 0.36, 1) 0ms both;
+}
+.pcard.is-pcard-in .pcard-code {
+  animation: pcardFieldReveal 0.36s cubic-bezier(0.22, 1, 0.36, 1) 28ms both;
+}
+.pcard.is-pcard-in .pcard-desc {
+  animation: pcardFieldReveal 0.36s cubic-bezier(0.22, 1, 0.36, 1) 56ms both;
+}
+.pcard.is-pcard-in .pcard-feature-panel {
+  animation: pcardFieldReveal 0.36s cubic-bezier(0.22, 1, 0.36, 1) 84ms both;
+}
+.pcard.is-pcard-in [data-pcard-finish-label] {
+  animation: pcardFieldReveal 0.34s cubic-bezier(0.22, 1, 0.36, 1) 96ms both;
+}
+.pcard.is-pcard-in .pcard-specs {
+  animation: pcardFieldReveal 0.38s cubic-bezier(0.22, 1, 0.36, 1) 124ms both;
+}
+.pcard.is-pcard-in .pcard-price {
+  animation: pcardFieldReveal 0.36s cubic-bezier(0.22, 1, 0.36, 1) 152ms both;
+}
+
 @media (prefers-reduced-motion: reduce) {
   .pcard,
   .pcard-img,
   .pcard-dots,
   .pcard-kind,
   a.pcard-swatch,
+  .pcard-body,
   .pcard-details svg { transition: none; }
-  .pcard { animation: none; }
+  .pcard,
+  a.pcard-swatch.is-popping,
+  .pcard.is-pcard-in [data-pcard-piece-tones],
+  .pcard.is-pcard-in .pcard-title,
+  .pcard.is-pcard-in .pcard-code,
+  .pcard.is-pcard-in .pcard-desc,
+  .pcard.is-pcard-in .pcard-feature-panel,
+  .pcard.is-pcard-in [data-pcard-finish-label],
+  .pcard.is-pcard-in .pcard-specs,
+  .pcard.is-pcard-in .pcard-price { animation: none !important; }
+  .pcard-stage.is-variant-gliding::after { display: none !important; }
   .pcard:hover,
   .pcard:focus-within { transform: none; }
   .pcard:hover::before,
