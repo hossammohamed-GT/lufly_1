@@ -32,6 +32,7 @@ class UpdateProductRequest extends FormRequest
             'collection_id' => 'nullable|integer',
             'brand_id' => 'nullable|integer',
             'is_featured' => 'nullable|in:0,1',
+            'sort_order' => 'nullable|integer|min:0',
             'status' => 'required|in:draft,active,hidden,discontinued,coming_soon',
             'image' => 'nullable|file',
             'meta_title' => 'nullable|string|max:255',

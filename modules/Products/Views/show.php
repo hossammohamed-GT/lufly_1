@@ -126,7 +126,7 @@ if (feature('planner', true) && (bool) config('planner.enabled', true)) {
 
         <div class="pdp-grid">
             <!-- ================= media stage: 3 essential views ================= -->
-            <section class="pdp-stage" aria-label="<?= e(trans('products.sheet_title')) ?>">
+            <section class="pdp-stage<?= !empty($product['is_featured']) ? ' is-featured' : '' ?>" aria-label="<?= e(trans('products.sheet_title')) ?>">
                 <span class="pdp-stage-beam" aria-hidden="true"></span>
 
                 <?php foreach ($views as $vIndex => $v): ?>
@@ -230,7 +230,12 @@ if (feature('planner', true) && (bool) config('planner.enabled', true)) {
                 <div class="pdp-meta-row">
                     <span class="pdp-code-chip"><?= e(trans('common.sku')) ?>: <?= e($modelCode) ?></span>
                     <?php if (!empty($product['is_featured'])): ?>
-                        <span class="pdp-code-chip is-teal"><?= e(trans('common.featured')) ?></span>
+                        <span class="pdp-code-chip is-gold">
+                            <svg class="pdp-gold-star" viewBox="0 0 16 16" fill="currentColor" aria-hidden="true" focusable="false">
+                                <path d="M8 1.25l1.72 4.31 4.63.42-3.5 3.06 1.04 4.54L8 11.18l-3.89 2.4 1.04-4.54-3.5-3.06 4.63-.42L8 1.25z"/>
+                            </svg>
+                            <span><?= e(trans('common.featured')) ?></span>
+                        </span>
                     <?php endif; ?>
                 </div>
 

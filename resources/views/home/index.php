@@ -21,6 +21,10 @@ $component = static fn (string $name, array $data = []): string => $view->render
 <?= $component('inspiration') ?>
 <?= $component('rituals') ?>
 <!-- <?= $component('central-vacuum') ?> -->
-<?= $component('masterpieces', ['featuredProducts' => $featuredProducts]) ?>
+<?= $component('masterpieces', [
+    'featuredProducts' => $featuredProducts,
+    'savedIds' => $savedIds ?? [],
+    'boxIds' => $boxIds ?? [],
+]) ?>
 <?= $component('corporate') ?>
 </div>

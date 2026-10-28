@@ -101,11 +101,16 @@ $productId = $product === null ? 0 : (int) $product->id;
             </select>
         </div>
         <div class="field">
-            <label class="field-label" for="is_featured"><?= e(trans('common.status')) ?> / Featured</label>
+            <label class="field-label" for="is_featured"><?= e(trans('common.featured')) ?></label>
             <select class="input" id="is_featured" name="is_featured">
-                <option value="1" <?= $isFeatured === 1 ? 'selected' : '' ?>>Featured on home</option>
-                <option value="0" <?= $isFeatured === 0 ? 'selected' : '' ?>>Standard</option>
+                <option value="1" <?= $isFeatured === 1 ? 'selected' : '' ?>><?= e(trans('products.featured_yes')) ?></option>
+                <option value="0" <?= $isFeatured === 0 ? 'selected' : '' ?>><?= e(trans('products.featured_no')) ?></option>
             </select>
+        </div>
+        <div class="field">
+            <label class="field-label" for="sort_order"><?= e(trans('products.priority_order')) ?></label>
+            <input class="input" id="sort_order" name="sort_order" type="number" min="0" step="1"
+                   value="<?= e((string) ($product->sort_order ?? 0)) ?>">
         </div>
     </div>
 

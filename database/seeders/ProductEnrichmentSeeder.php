@@ -166,5 +166,27 @@ class ProductEnrichmentSeeder extends Seeder
                 ]);
             }
         }
+
+        /* 5. Initial featured & priority showcase (applied only when Admin has
+           not customized featured items yet, preserving future Admin overrides). */
+        $hasAdminFeatured = $this->db->selectOne(
+            'SELECT id FROM products WHERE is_featured = 1 AND deleted_at IS NULL LIMIT 1',
+        );
+        if ($hasAdminFeatured === null) {
+            foreach (($payload['featured_priority'] ?? []) as $featItem) {
+                if (!is_array($featItem)) {
+                    continue;
+                }
+                $fSlug = (string) ($featItem['slug'] ?? '');
+                $fPid = $productsBySlug[$fSlug] ?? null;
+                if ($fPid !== null) {
+                    $this->db->table('products')->where('id', $fPid)->update([
+                        'is_featured' => 1,
+                        'sort_order' => (int) ($featItem['sort_order'] ?? 1),
+                        'updated_at' => $now,
+                    ]);
+                }
+            }
+        }
     }
 }

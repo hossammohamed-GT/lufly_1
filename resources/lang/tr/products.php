@@ -212,4 +212,8 @@ return [
     'wc_seat_bundle_add' => 'Klozet + Kapağı birlikte ekle',
     'wc_seat_bundle_added' => 'Klozet + Kapak kutuda',
     'wc_seat_drawing' => 'Kapak çizimi',
+
+    'featured_yes' => 'Öne Çıkan (Altın Çerçeve + İlk Öncelik)',
+    'featured_no' => 'Standart',
+    'priority_order' => 'Öncelik Sırası (1 = İlk)',
 ];

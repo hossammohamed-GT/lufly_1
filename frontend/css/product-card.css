@@ -177,8 +177,9 @@
   display: inline-flex;
   align-self: flex-start;
   align-items: center;
+  gap: 5px;
   min-height: 24px;
-  padding: 5px 9px;
+  padding: 5px 10px;
   border: 1px solid rgba(255, 255, 255, 0.38);
   border-radius: 999px;
   background: color-mix(in srgb, var(--lu-mint) 88%, transparent);
@@ -188,6 +189,123 @@
   font-size: 10px;
   font-weight: 700;
   line-height: 1;
+}
+
+.pcard-badge-star {
+  width: 11px;
+  height: 11px;
+  flex: 0 0 11px;
+  color: #6b4809;
+  filter: drop-shadow(0 1px 0 rgba(255, 250, 232, 0.65));
+}
+
+/* ---------- featured signature golden frame ---------- */
+
+.pcard.is-featured {
+  --pcard-line: rgba(198, 150, 52, 0.32);
+  border: 1.5px solid rgba(206, 160, 67, 0.86);
+  background:
+    radial-gradient(480px 220px at 50% -10%, rgba(242, 206, 120, 0.20), transparent 68%),
+    linear-gradient(155deg,
+      rgba(255, 252, 242, 0.62) 0%,
+      color-mix(in srgb, var(--ds-surface) 38%, transparent) 46%,
+      rgba(226, 184, 92, 0.12) 100%);
+  box-shadow:
+    0 22px 54px rgba(170, 122, 28, 0.20),
+    0 0 0 1px rgba(245, 214, 138, 0.56),
+    inset 0 1px 0 rgba(255, 249, 230, 0.92),
+    inset 0 0 0 1px rgba(212, 168, 74, 0.24);
+}
+
+.pcard.is-featured::before {
+  padding: 2px;
+  background: conic-gradient(
+    from var(--pcard-orbit),
+    #b6842b 0deg,
+    #efd27d 58deg,
+    #fff6d6 92deg,
+    #d4a03e 148deg,
+    #8d6217 215deg,
+    #e5bf62 288deg,
+    #fff1c2 325deg,
+    #b6842b 360deg
+  );
+  opacity: 0.95;
+  animation: pcard-border-orbit 6.4s linear infinite;
+}
+
+.pcard.is-featured::after {
+  content: "";
+  position: absolute;
+  inset-inline: 16%;
+  top: 0;
+  z-index: 8;
+  height: 2.5px;
+  border-radius: 999px;
+  background: linear-gradient(90deg, transparent, #f8e4a0 28%, #fff9df 50%, #d8a441 72%, transparent);
+  box-shadow: 0 2px 12px rgba(214, 166, 66, 0.55);
+  pointer-events: none;
+}
+
+.pcard.is-featured:hover,
+.pcard.is-featured:focus-within {
+  border-color: rgba(218, 174, 78, 0.96);
+  box-shadow:
+    0 28px 64px rgba(176, 126, 30, 0.28),
+    0 0 26px rgba(235, 192, 96, 0.26),
+    0 0 0 1px rgba(250, 224, 154, 0.72),
+    inset 0 1px 0 rgba(255, 251, 235, 0.96);
+}
+
+.pcard.is-featured:hover::before,
+.pcard.is-featured:focus-within::before {
+  opacity: 1;
+  animation-duration: 3.4s;
+}
+
+.pcard.is-featured .pcard-stage {
+  border-bottom: 1px solid rgba(206, 160, 67, 0.34);
+}
+
+.pcard.is-featured .pcard-feature-panel {
+  border-color: rgba(206, 160, 67, 0.38);
+  background: linear-gradient(135deg,
+    rgba(255, 248, 226, 0.44),
+    rgba(218, 173, 76, 0.12));
+  box-shadow: inset 0 1px 0 rgba(255, 250, 234, 0.55);
+}
+
+.pcard-badge.is-featured-badge {
+  border-color: rgba(255, 245, 210, 0.85);
+  background: linear-gradient(135deg, #fbe8ae 0%, #e6c36a 52%, #c99432 100%);
+  color: #3a2504;
+  letter-spacing: 0.04em;
+  box-shadow:
+    0 6px 18px rgba(176, 126, 30, 0.26),
+    inset 0 1px 0 rgba(255, 252, 238, 0.82);
+}
+
+html[data-theme="dark"] .pcard.is-featured {
+  --pcard-line: rgba(226, 184, 92, 0.30);
+  border-color: rgba(226, 184, 92, 0.82);
+  background:
+    radial-gradient(480px 220px at 50% -10%, rgba(232, 188, 92, 0.18), transparent 68%),
+    linear-gradient(155deg,
+      rgba(44, 36, 18, 0.52) 0%,
+      color-mix(in srgb, var(--ds-surface) 42%, transparent) 52%,
+      rgba(196, 148, 52, 0.14) 100%);
+  box-shadow:
+    0 26px 60px rgba(0, 0, 0, 0.50),
+    0 0 30px rgba(218, 172, 74, 0.22),
+    0 0 0 1px rgba(238, 200, 114, 0.38),
+    inset 0 1px 0 rgba(255, 236, 184, 0.28);
+}
+
+html[data-theme="dark"] .pcard.is-featured .pcard-feature-panel {
+  border-color: rgba(226, 184, 92, 0.34);
+  background: linear-gradient(135deg,
+    rgba(232, 188, 92, 0.14),
+    rgba(30, 26, 16, 0.36));
 }
 
 .pcard-features {

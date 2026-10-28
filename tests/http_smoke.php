@@ -29,7 +29,13 @@ $routes = [
     ['GET', '/en/products?sort=newest', [200]],
     ['GET', '/en/products?sort=model', [200]],
     ['GET', '/en/products?category=bathroom.angle-valves', [200]],
+    ['GET', '/en/products?category=kitchen', [200]],
+    ['GET', '/en/products?category=kitchen.kitchen-mixers', [200]],
+    ['GET', '/en/products?category=kitchen.kitchen-mixers.pull-out-mixers', [200]],
     ['GET', '/en/products?q=1520', [200]],
+    ['GET', '/en/products/1653-8033c', [200]],
+    ['GET', '/tr/urunler/1653-8033c', [200]],
+    ['GET', '/cs/produkty/1653-8033c', [200]],
     ['GET', '/en/products/1520-2030', [200]],
     ['GET', '/tr/urunler/1520-2030', [200]],
     ['GET', '/cs/produkty/1520-2030', [200]],
@@ -76,9 +82,40 @@ foreach ($routes as [$method, $uri, $allowedStatuses]) {
     $status = $res->getStatus();
     $body = $res->getContent();
 
-    if (!in_array($status, $allowedStatuses, true) || str_contains($body, 'Something went wrong. Please try again later.')) {
+    $customError = '';
+    if (in_array($uri, [
+        '/en',
+        '/tr',
+        '/cs',
+        '/en/products',
+        '/tr/urunler',
+        '/cs/produkty',
+        '/en/products?category=kitchen',
+        '/en/products?category=kitchen.kitchen-mixers',
+        '/en/products?category=kitchen.kitchen-mixers.pull-out-mixers',
+    ], true)) {
+        if (!preg_match('/<article\s+class="pcard\b([^"]*)"[^>]*data-product-card[^>]*>(.*?)<\/article>/s', $body, $firstCard)) {
+            $customError = 'No product card found in grid';
+        } else {
+            $cardClasses = $firstCard[1];
+            $cardInner = $firstCard[2];
+            if (!str_contains(' ' . $cardClasses . ' ', ' is-featured ')) {
+                $customError = 'First product card is missing golden frame class is-featured';
+            } elseif (!str_contains($cardInner, '/1653-8033c"')) {
+                $customError = 'First product card is not Pull-Out Kitchen Mixer (1653-8033c)';
+            } elseif (!str_contains($cardInner, 'is-featured-badge')) {
+                $customError = 'First product card is missing golden featured badge';
+            }
+        }
+    } elseif (in_array($uri, ['/en/products/1653-8033c', '/tr/urunler/1653-8033c', '/cs/produkty/1653-8033c'], true)) {
+        if (!str_contains($body, 'pdp-stage is-featured') || !str_contains($body, 'pdp-code-chip is-gold')) {
+            $customError = 'Featured PDP is missing golden stage or golden featured chip';
+        }
+    }
+
+    if (!in_array($status, $allowedStatuses, true) || str_contains($body, 'Something went wrong. Please try again later.') || $customError !== '') {
         $failed++;
-        $logDump = '';
+        $logDump = $customError !== '' ? ($customError . ' ') : '';
         foreach (glob($root . '/storage/logs/*.log') ?: [] as $lf) {
             $tail = array_slice(file($lf) ?: [], -12);
             $logDump .= basename($lf) . ': ' . implode(' | ', array_map('trim', $tail)) . ' ';

@@ -212,4 +212,8 @@ return [
     'wc_seat_bundle_add' => 'Add WC + Seat Cover together',
     'wc_seat_bundle_added' => 'WC + Seat Cover in the box',
     'wc_seat_drawing' => 'Seat drawing',
+
+    'featured_yes' => 'Featured (Golden Frame + First Priority)',
+    'featured_no' => 'Standard',
+    'priority_order' => 'Priority Order (1 = First)',
 ];

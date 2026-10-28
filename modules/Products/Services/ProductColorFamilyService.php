@@ -53,8 +53,20 @@ final class ProductColorFamilyService
             $key = $family !== null ? 'family-' . $family[0] : 'product-' . $id;
             if (isset($seen[$key])) {
                 $slot = $seen[$key];
-                $currentId = (int) ($collapsed[$slot]['id'] ?? 0);
-                if (!isset($namedIds[$currentId]) && isset($namedIds[$id])) {
+                $current = $collapsed[$slot];
+                $currentId = (int) ($current['id'] ?? 0);
+                $currentFeatured = (int) ($current['is_featured'] ?? 0) === 1;
+                $candidateFeatured = (int) ($row['is_featured'] ?? 0) === 1;
+                $currentOrder = (int) ($current['sort_order'] ?? PHP_INT_MAX);
+                $candidateOrder = (int) ($row['sort_order'] ?? PHP_INT_MAX);
+
+                if ($candidateFeatured && !$currentFeatured) {
+                    $collapsed[$slot] = $row;
+                } elseif ($candidateFeatured && $currentFeatured) {
+                    if ($candidateOrder < $currentOrder || ($candidateOrder === $currentOrder && !isset($namedIds[$currentId]) && isset($namedIds[$id]))) {
+                        $collapsed[$slot] = $row;
+                    }
+                } elseif (!$currentFeatured && !isset($namedIds[$currentId]) && isset($namedIds[$id])) {
                     $collapsed[$slot] = $row;
                 }
                 continue;
@@ -85,6 +97,35 @@ final class ProductColorFamilyService
         }
 
         $models = $this->models($family);
+        $wasFeatured = !empty($product['is_featured']);
+        $familyFeatured = $wasFeatured;
+        foreach ($family as $memberId) {
+            if (isset($models[$memberId]) && ProductVisibility::isPublic($models[$memberId]) && !empty($models[$memberId]->is_featured)) {
+                $familyFeatured = true;
+                break;
+            }
+        }
+        if ($familyFeatured) {
+            $product['is_featured'] = true;
+            if (!$wasFeatured && isset($product['card'])) {
+                $product['card'] = ProductCardPresenter::make($product, $locale);
+            }
+        }
+
+        usort($family, static function (int $a, int $b) use ($id, $models): int {
+            if ($a === $id xor $b === $id) {
+                return $a === $id ? -1 : 1;
+            }
+            $fa = isset($models[$a]) && !empty($models[$a]->is_featured) ? 1 : 0;
+            $fb = isset($models[$b]) && !empty($models[$b]->is_featured) ? 1 : 0;
+            if ($fa !== $fb) {
+                return $fb <=> $fa;
+            }
+            $sa = isset($models[$a]) ? (int) ($models[$a]->sort_order ?? PHP_INT_MAX) : PHP_INT_MAX;
+            $sb = isset($models[$b]) ? (int) ($models[$b]->sort_order ?? PHP_INT_MAX) : PHP_INT_MAX;
+            return ($sa <=> $sb) ?: ($a <=> $b);
+        });
+
         $variants = [];
         $finishSlots = [];
         foreach ($family as $memberId) {
@@ -99,6 +140,9 @@ final class ProductColorFamilyService
             }
 
             $payload = $models[$memberId]->translate($locale);
+            if ($familyFeatured) {
+                $payload['is_featured'] = true;
+            }
             $card = ProductCardPresenter::make($payload, $locale);
             $rawName = trim((string) ($payload['name'] ?? ''));
             $name = $rawName !== '' ? $rawName : trans('products.name_pending', [], $locale);

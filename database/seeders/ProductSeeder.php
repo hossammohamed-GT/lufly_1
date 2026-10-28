@@ -119,8 +119,8 @@ class ProductSeeder extends Seeder
                 'collection_id' => null,
                 'brand_id' => $brandId,
                 'status' => (string) ($item['status'] ?? 'active'),
-                'is_featured' => 0,
-                'sort_order' => $sortCounter,
+                'is_featured' => !empty($item['is_featured']) ? 1 : 0,
+                'sort_order' => isset($item['sort_order']) ? (int) $item['sort_order'] : $sortCounter,
                 'created_at' => $this->stamp($item['created_at'] ?? null),
                 'updated_at' => $this->stamp($item['updated_at'] ?? null),
             ]);

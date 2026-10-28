@@ -340,7 +340,7 @@ class ProductController extends Controller
      */
     private function coreFields(array $data): array
     {
-        return [
+        $fields = [
             'model_code' => $data['model_code'],
             'slug' => $data['slug'] ?? '',
             'price' => (float) ($data['price'] ?? 0),
@@ -352,6 +352,11 @@ class ProductController extends Controller
             'meta_title' => $data['meta_title'] ?? '',
             'meta_description' => $data['meta_description'] ?? '',
         ];
+        if (array_key_exists('sort_order', $data) && $data['sort_order'] !== '' && $data['sort_order'] !== null) {
+            $fields['sort_order'] = max(0, (int) $data['sort_order']);
+        }
+
+        return $fields;
     }
 
     /**

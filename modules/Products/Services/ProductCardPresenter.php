@@ -183,12 +183,14 @@ final class ProductCardPresenter
         if ($name === '') {
             $name = trans('products.name_pending', [], $resolvedLocale);
         }
+        $isFeatured = !empty($product['is_featured']);
         $status = (string) ($product['status'] ?? '');
         $badge = $status === 'coming_soon'
             ? trans('common.coming_soon', [], $resolvedLocale)
-            : (!empty($product['is_featured']) ? trans('common.featured', [], $resolvedLocale) : '');
+            : ($isFeatured ? trans('common.featured', [], $resolvedLocale) : '');
 
         return [
+            'is_featured' => $isFeatured,
             'badge' => $badge,
             'features' => self::features($specs, $sourceDescription, $installation, $resolvedLocale),
             'finishes' => array_slice($finishes, 0, 4),

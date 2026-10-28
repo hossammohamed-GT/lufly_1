@@ -53,12 +53,13 @@ if ($cardSlides === []) {
     $cardSlides = [['path' => $img, 'kind' => 'photo']];
 }
 $cardKinds = ['drawing' => trans('products.view_drawing'), 'situ' => trans('products.view_situ')];
+$isFeatured = !empty($item['is_featured']) || !empty($card['is_featured']);
 $hasPrice = !empty($card['has_price']);
 $hasFeaturePanel = $card['badge'] !== '' || $card['features'] !== [];
 $colorVariants = is_array($item['color_variants'] ?? null) ? $item['color_variants'] : [];
 ?>
-<article class="pcard<?= $hasPrice ? ' has-price' : ' is-price-pending' ?>"
-         data-product-card data-product-id="<?= $productId ?>"
+<article class="pcard<?= $isFeatured ? ' is-featured' : '' ?><?= $hasPrice ? ' has-price' : ' is-price-pending' ?>"
+         data-product-card data-product-id="<?= $productId ?>"<?= $isFeatured ? ' data-featured="1"' : '' ?>
          style="--pcard-delay: <?= e((string) (0.04 * (($index % 6) + 1))) ?>s">
     <div class="pcard-stage">
         <a class="pcard-media" href="<?= e($cardUrl) ?>"
@@ -108,7 +109,14 @@ $colorVariants = is_array($item['color_variants'] ?? null) ? $item['color_varian
         <?php if ($hasFeaturePanel): ?>
             <div class="pcard-feature-panel">
                 <?php if ($card['badge'] !== ''): ?>
-                    <span class="pcard-badge"><?= e($card['badge']) ?></span>
+                    <span class="pcard-badge<?= $isFeatured ? ' is-featured-badge' : '' ?>">
+                        <?php if ($isFeatured): ?>
+                            <svg class="pcard-badge-star" viewBox="0 0 16 16" fill="currentColor" aria-hidden="true" focusable="false">
+                                <path d="M8 1.25l1.72 4.31 4.63.42-3.5 3.06 1.04 4.54L8 11.18l-3.89 2.4 1.04-4.54-3.5-3.06 4.63-.42L8 1.25z"/>
+                            </svg>
+                        <?php endif; ?>
+                        <span><?= e($card['badge']) ?></span>
+                    </span>
                 <?php endif; ?>
                 <?php if ($card['features'] !== []): ?>
                     <span class="pcard-features" role="list">

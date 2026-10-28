@@ -6,9 +6,20 @@ $view->pushScript('frontend/js/product-card-variants.js');
 $view->pushScript('frontend/products/catalog/catalog.js');
 $view->pushDeferredStyle('frontend/components/skeleton/skeleton.css');
 $view->pushScript('frontend/components/skeleton/skeleton.js');
+if (feature('favorites', true)) {
+    $view->pushDeferredStyle('frontend/favorites/favorites.css');
+    $view->pushScript('frontend/favorites/favorites.js');
+}
+if (feature('box', true)) {
+    $view->pushDeferredStyle('frontend/box/box.css');
+    $view->pushScript('frontend/box/box.js');
+}
 /** @var array $featuredProducts */
-$fallbackImg = '/images/favicon.png';
+/** @var array<int, int|string> $savedIds */
+/** @var array<int, int|string> $boxIds */
 $featured = is_array($featuredProducts ?? null) ? $featuredProducts : [];
+$savedMap = is_array($savedIds ?? null) ? $savedIds : [];
+$boxMap = is_array($boxIds ?? null) ? $boxIds : [];
 ?>
 <section class="masterpieces-section scroll-section" id="featured">
     <div class="container">
@@ -42,76 +53,19 @@ $featured = is_array($featuredProducts ?? null) ? $featuredProducts : [];
                 <?php endfor; ?>
             </div>
 
-        <div class="masterpieces-grid catalog-grid" data-sk-real>
-            <?php foreach (array_slice($featured, 0, 4) as $idx => $product):
-                $img = (string) ($product['image'] ?? '') !== '' ? (string) $product['image'] : $fallbackImg;
-                /* same media contract as the catalogue grid: every image of
-                   the product - photos, then technical drawings, then the
-                   installed shots - de-duplicated */
-                $cardSlides = [];
-                foreach ((array) ($product['card_slides'] ?? []) as $slide) {
-                    $slidePath = (string) ($slide['path'] ?? '');
-                    if ($slidePath !== '') {
-                        $cardSlides[] = ['path' => $slidePath, 'kind' => (string) ($slide['kind'] ?? 'photo')];
-                    }
-                }
-                if ($cardSlides === []) {
-                    $cardSlides = [['path' => $img, 'kind' => 'photo']];
-                }
-                $cardKinds = ['drawing' => trans('products.view_drawing'), 'situ' => trans('products.view_situ')];
-                $name = trim((string) ($product['name'] ?? ''));
-                if ($name === '') {
-                    $name = trans('products.name_pending');
-                }
-                $sku = trim((string) ($product['sku'] ?? ''));
-                $desc = trim((string) ($product['short_description'] ?? ''));
-                $slug = (string) ($product['slug'] ?? ($product['id'] ?? ''));
-                $detailUrl = $slug !== '' ? route('products.show', ['slug' => $slug]) : route('products.index');
-            ?>
-                <article class="pcard" data-product-card data-product-id="<?= (int) ($product['id'] ?? 0) ?>" style="--pcard-delay: <?= e((string) (0.06 * ($idx + 1))) ?>s">
-                    <a class="pcard-media" href="<?= e($detailUrl) ?>"
-                       <?= count($cardSlides) > 1 ? 'data-pcard-cycle data-pcard-kind-drawing="' . e($cardKinds['drawing']) . '" data-pcard-kind-situ="' . e($cardKinds['situ']) . '"' : '' ?>>
-                        <?php foreach ($cardSlides as $ci => $slide): ?>
-                            <?php $slideKind = (string) $slide['kind']; ?>
-                            <img src="<?= e(asset($slide['path'])) ?>"
-                                 alt="<?= $ci === 0 ? e($name) : ($slideKind === 'photo' ? '' : e($cardKinds[$slideKind] ?? '') . ' — ' . e($name)) ?>"
-                                 class="pcard-img<?= $ci === 0 ? ' is-on' : '' ?>"
-                                 data-pcard-slide="<?= (int) $ci ?>"
-                                 data-pcard-kind="<?= e($slideKind) ?>"
-                                 loading="lazy" decoding="async" width="420" height="320"
-                                 onerror="this.onerror=null; this.remove();">
-                        <?php endforeach; ?>
-                        <?php if (count($cardSlides) > 1): ?>
-                            <span class="pcard-dots" aria-hidden="true">
-                                <?php foreach ($cardSlides as $ci => $unusedDot): ?>
-                                    <i class="pcard-dot<?= $ci === 0 ? ' is-on' : '' ?>" data-pcard-dot="<?= (int) $ci ?>"></i>
-                                <?php endforeach; ?>
-                            </span>
-                            <span class="pcard-kind" data-pcard-kind-label aria-hidden="true" hidden></span>
-                        <?php endif; ?>
-                        <span class="pcard-hint" aria-hidden="true">
-                            <svg viewBox="0 0 20 20" fill="currentColor" width="13" height="13"><path fill-rule="evenodd" d="M10.293 3.293a1 1 0 011.414 0l6 6a1 1 0 010 1.414l-6 6a1 1 0 01-1.414-1.414L14.586 11H3a1 1 0 110-2h11.586l-4.293-4.293a1 1 0 010-1.414z" clip-rule="evenodd"/></svg>
-                            <?= e(trans('products.view_details')) ?>
-                        </span>
-                    </a>
-                    <div class="pcard-body">
-                        <div class="pcard-top pcard-heading">
-                            <h3 class="pcard-title">
-                                <a href="<?= e($detailUrl) ?>"><?= e($name) ?></a>
-                            </h3>
-                            <span class="pcard-no"><?= str_pad((string) ($idx + 1), 3, '0', STR_PAD_LEFT) ?></span>
-                        </div>
-                        <?php if ($sku !== ''): ?>
-                            <span class="pcard-code"><?= e($sku) ?></span>
-                        <?php endif; ?>
-                        <?php if ($desc !== ''): ?>
-                            <p class="pcard-desc"><?= e($desc) ?></p>
-                        <?php endif; ?>
-                        <?= $view->component('product-color-variants', ['item' => $product]) ?>
-                    </div>
-                </article>
-            <?php endforeach; ?>
-        </div>
+            <div class="masterpieces-grid catalog-grid" data-sk-real>
+                <?php foreach (array_slice($featured, 0, 4) as $idx => $product): ?>
+                    <?php $pid = (int) ($product['id'] ?? 0); ?>
+                    <?= $view->component('product-card', [
+                        'product' => $product,
+                        'slug' => (string) ($product['slug'] ?? ''),
+                        'index' => $idx,
+                        'heading' => 'h3',
+                        'saved' => isset($savedMap[$pid]),
+                        'in_box' => isset($boxMap[$pid]),
+                    ]) ?>
+                <?php endforeach; ?>
+            </div>
         </div>
     </div>
 </section>

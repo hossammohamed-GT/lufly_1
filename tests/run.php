@@ -381,6 +381,52 @@ $assert(
     'All audited multi-colour products collapse into single family cards with deduplicated swatches across catalog and PDP',
 );
 
+$featuredJsonBySlug = [];
+foreach ($seededProducts as $pItem) {
+    if (!empty($pItem['is_featured'])) {
+        $featuredJsonBySlug[(string) ($pItem['slug'] ?? '')] = (int) ($pItem['sort_order'] ?? 0);
+    }
+}
+$enrichmentPayload = json_decode((string) file_get_contents($root . '/database/seeders/data/product-enrichment.json'), true);
+$homeControllerSrc = (string) file_get_contents($root . '/app/Http/Controllers/HomeController.php');
+$masterpiecesViewSrc = (string) file_get_contents($root . '/resources/views/home/masterpieces/masterpieces.php');
+$productRepoSrc = (string) file_get_contents($root . '/modules/Products/Repositories/ProductRepository.php');
+$productCardViewSrc = (string) file_get_contents($root . '/resources/views/components/product-card.php');
+$productCardCssSrc = (string) file_get_contents($root . '/frontend/css/product-card.css');
+$variantsJsSrc = (string) file_get_contents($root . '/frontend/js/product-card-variants.js');
+$liveSearchJsSrc = (string) file_get_contents($root . '/frontend/js/live-search.js');
+
+$assert(
+    ($featuredJsonBySlug['1653-8033c'] ?? 0) === 1
+    && ($featuredJsonBySlug['1653-8033bn'] ?? 0) === 2
+    && ($featuredJsonBySlug['1653-8033gg'] ?? 0) === 3
+    && ($featuredJsonBySlug['1653-8033rg'] ?? 0) === 4
+    && ($featuredJsonBySlug['1654-8033rgb'] ?? 0) === 5
+    && (($enrichmentPayload['featured_priority'][0]['slug'] ?? '') === '1653-8033c')
+    && str_contains($homeControllerSrc, 'ORDER BY p.is_featured DESC, p.sort_order ASC, p.id DESC')
+    && str_contains($masterpiecesViewSrc, "component('product-card'")
+    && str_contains($productRepoSrc, 'ORDER BY p.is_featured DESC, p.sort_order ASC, has_photo DESC, p.id DESC')
+    && str_contains($productRepoSrc, 'array_merge($featuredIds, $this->diversifyDiscovery($regularRows))')
+    && str_contains($productCardViewSrc, 'is-featured')
+    && str_contains($productCardViewSrc, 'is-featured-badge')
+    && str_contains($productCardCssSrc, '.pcard.is-featured')
+    && str_contains($variantsJsSrc, "card.classList.toggle('is-featured'")
+    && str_contains($liveSearchJsSrc, 'is-featured-badge'),
+    'Featured priority system places Pull-Out Kitchen Mixer (1653-8033c) first with golden frame across Home, Catalog, Categories, and Live Search',
+);
+
+foreach (glob($root . '/resources/lang/en/*.php') ?: [] as $enLangFile) {
+    $base = basename($enLangFile);
+    $enKeys = array_keys(require $enLangFile);
+    sort($enKeys);
+    foreach (['tr', 'cs'] as $loc) {
+        $locFile = $root . "/resources/lang/{$loc}/{$base}";
+        $locKeys = is_file($locFile) ? array_keys(require $locFile) : [];
+        sort($locKeys);
+        $assert($enKeys === $locKeys, "Translation key parity holds between en/{$base} and {$loc}/{$base}");
+    }
+}
+
 if ($failures !== []) {
     fwrite(STDERR, "\n" . count($failures) . " contract test(s) failed.\n");
     exit(1);

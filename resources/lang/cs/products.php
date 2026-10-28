@@ -212,4 +212,8 @@ return [
     'wc_seat_bundle_add' => 'Přidat WC + sedátko společně',
     'wc_seat_bundle_added' => 'WC + sedátko v krabici',
     'wc_seat_drawing' => 'Výkres sedátka',
+
+    'featured_yes' => 'Doporučeno (Zlatý rám + První priorita)',
+    'featured_no' => 'Standardní',
+    'priority_order' => 'Pořadí priority (1 = První)',
 ];

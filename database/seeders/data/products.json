@@ -22238,7 +22238,9 @@
                 "caption": ""
             }
         ],
-        "category_updated_at": "2026-10-20 14:22:27"
+        "category_updated_at": "2026-10-20 14:22:27",
+        "is_featured": true,
+        "sort_order": 5
     },
     {
         "manager_id": 300,
@@ -28952,7 +28954,9 @@
                 "caption": ""
             }
         ],
-        "category_updated_at": "2026-10-20 14:22:27"
+        "category_updated_at": "2026-10-20 14:22:27",
+        "is_featured": true,
+        "sort_order": 1
     },
     {
         "manager_id": 380,
@@ -29024,7 +29028,9 @@
                 "caption": ""
             }
         ],
-        "category_updated_at": "2026-10-20 14:22:27"
+        "category_updated_at": "2026-10-20 14:22:27",
+        "is_featured": true,
+        "sort_order": 2
     },
     {
         "manager_id": 381,
@@ -29096,7 +29102,9 @@
                 "caption": ""
             }
         ],
-        "category_updated_at": "2026-10-20 14:22:27"
+        "category_updated_at": "2026-10-20 14:22:27",
+        "is_featured": true,
+        "sort_order": 3
     },
     {
         "manager_id": 382,
@@ -29168,7 +29176,9 @@
                 "caption": ""
             }
         ],
-        "category_updated_at": "2026-10-20 14:22:27"
+        "category_updated_at": "2026-10-20 14:22:27",
+        "is_featured": true,
+        "sort_order": 4
     },
     {
         "manager_id": 383,

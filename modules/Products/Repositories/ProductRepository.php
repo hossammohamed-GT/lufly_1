@@ -102,7 +102,7 @@ class ProductRepository extends Repository
             $where[] = 'p.is_featured = 1';
         }
 
-        $sort = (string) ($filters['sort'] ?? 'newest');
+        $sort = (string) ($filters['sort'] ?? 'curated');
         if ($sort === 'name' && !in_array('name', $usedJoins, true)) {
             $usedJoins[] = 'name';
             $joinBindings[] = $locale;
@@ -122,17 +122,18 @@ class ProductRepository extends Repository
         };
 
         $orderBySql = match ($sort) {
-            'model' => ' ORDER BY p.model_code ASC, p.id DESC',
-            'name' => " ORDER BY {$nameCollate}, p.id DESC",
-            default => ' ORDER BY p.id DESC',
+            'model' => ' ORDER BY p.is_featured DESC, p.sort_order ASC, p.model_code ASC, p.id DESC',
+            'name' => " ORDER BY p.is_featured DESC, p.sort_order ASC, {$nameCollate}, p.id DESC",
+            default => ' ORDER BY p.is_featured DESC, p.sort_order ASC, p.id DESC',
         };
 
         if ($sort === 'curated') {
-            /* Discovery order is deterministic, but not an import-order dump.
-               Fetch lightweight rows, then rotate categories and model families
-               before hydrating only the products visible on this page. */
+            /* Featured products ALWAYS appear strictly first in Admin priority
+               order (sort_order ASC, id ASC) on All Products, every Category,
+               every Subcategory, and search; non-featured items rotate cleanly
+               across categories and model families behind them. */
             $discoveryRows = $connection->select(
-                "SELECT DISTINCT p.id, p.category_id, p.model_code, p.is_featured,
+                "SELECT DISTINCT p.id, p.category_id, p.model_code, p.is_featured, p.sort_order,
                         CASE WHEN EXISTS (
                             SELECT 1 FROM product_media pm
                             INNER JOIN media m ON m.id = pm.media_id
@@ -142,14 +143,30 @@ class ProductRepository extends Repository
                               AND m.status = 'active'
                         ) THEN 1 ELSE 0 END AS has_photo
                  FROM products p {$searchJoin} {$whereSql}
-                 ORDER BY p.is_featured DESC, has_photo DESC, p.id DESC",
+                 ORDER BY p.is_featured DESC, p.sort_order ASC, has_photo DESC, p.id DESC",
                 array_merge($joinBindings, $whereBindings),
             );
 
             if ($colorFamilies !== null) {
                 $discoveryRows = $colorFamilies->collapseRows($discoveryRows);
             }
-            $orderedIds = $this->diversifyDiscovery($discoveryRows);
+
+            $featuredRows = [];
+            $regularRows = [];
+            foreach ($discoveryRows as $dRow) {
+                if ((int) ($dRow['is_featured'] ?? 0) === 1) {
+                    $featuredRows[] = $dRow;
+                } else {
+                    $regularRows[] = $dRow;
+                }
+            }
+            usort(
+                $featuredRows,
+                static fn (array $a, array $b): int => ((int) ($a['sort_order'] ?? PHP_INT_MAX) <=> (int) ($b['sort_order'] ?? PHP_INT_MAX))
+                    ?: ((int) ($a['id'] ?? 0) <=> (int) ($b['id'] ?? 0)),
+            );
+            $featuredIds = array_map(static fn (array $r): int => (int) $r['id'], $featuredRows);
+            $orderedIds = array_merge($featuredIds, $this->diversifyDiscovery($regularRows));
             $pageIds = array_slice($orderedIds, ($page - 1) * $perPage, $perPage);
             $items = $this->hydrateOrderedIds($pageIds);
 
@@ -356,7 +373,7 @@ class ProductRepository extends Repository
                    )
                )
                {$categoryClause}
-             ORDER BY p.id DESC",
+             ORDER BY p.is_featured DESC, p.sort_order ASC, p.id DESC",
             $params,
         );
 

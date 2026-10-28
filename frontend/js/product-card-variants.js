@@ -89,13 +89,20 @@
       (paths[name] || paths.spec) + '</svg>';
   }
 
-  function featurePanel(card) {
+  var badgeStar = '<svg class="pcard-badge-star" viewBox="0 0 16 16" fill="currentColor" aria-hidden="true" focusable="false">' +
+    '<path d="M8 1.25l1.72 4.31 4.63.42-3.5 3.06 1.04 4.54L8 11.18l-3.89 2.4 1.04-4.54-3.5-3.06 4.63-.42L8 1.25z"/></svg>';
+
+  function featurePanel(card, isFeatured) {
     var features = Array.isArray(card.features) ? card.features.slice(0, 3).map(function (feature) {
       return '<span class="pcard-feature" role="listitem">' + cardIcon(feature.icon) + '<span>' + esc(feature.label) + '</span></span>';
     }).join('') : '';
     if (!card.badge && !features) return '';
-    return '<div class="pcard-feature-panel">' +
-      (card.badge ? '<span class="pcard-badge">' + esc(card.badge) + '</span>' : '') +
+    var badgeHtml = '';
+    if (card.badge) {
+      badgeHtml = '<span class="pcard-badge' + (isFeatured ? ' is-featured-badge' : '') + '">' +
+        (isFeatured ? badgeStar : '') + '<span>' + esc(card.badge) + '</span></span>';
+    }
+    return '<div class="pcard-feature-panel">' + badgeHtml +
       (features ? '<span class="pcard-features" role="list">' + features + '</span>' : '') + '</div>';
   }
 
@@ -335,7 +342,9 @@
     var code = String(product.sku || product.model_code || '');
     var href = product.url || '#';
     var full = !!card.querySelector('.pcard-actions');
+    var isFeatured = !!(product.is_featured || cardData.is_featured || card.getAttribute('data-featured') === '1');
     card.setAttribute('data-product-id', String(product.id));
+    card.classList.toggle('is-featured', isFeatured);
     card.classList.toggle('has-price', !!cardData.has_price);
     card.classList.toggle('is-price-pending', !cardData.has_price);
 
@@ -373,7 +382,7 @@
     }
 
     if (full) {
-      replaceRegion(card, '.pcard-feature-panel', featurePanel(cardData), '.pcard-finishes, .pcard-specs, .pcard-actions');
+      replaceRegion(card, '.pcard-feature-panel', featurePanel(cardData, isFeatured), '.pcard-finishes, .pcard-specs, .pcard-actions');
       replaceRegion(card, '.pcard-specs', specList(cardData), '.pcard-actions');
 
       var caption = card.querySelector('.pcard-price small');

@@ -78,25 +78,57 @@ class HomeController extends Controller
            one removes it from the showcase on the very next request. */
         $colorFamilies = app(\Modules\Products\Services\ProductColorFamilyService::class);
         $pool = $colorFamilies->collapseRows($connection->select(
-            "SELECT p.id, p.category_id, p.is_featured
+            "SELECT p.id, p.category_id, p.is_featured, p.sort_order
                FROM products p
               WHERE p.status = 'active' AND p.deleted_at IS NULL
-                AND " . ProductVisibility::mediaReadySql('p'),
+                AND " . ProductVisibility::mediaReadySql('p') . "
+              ORDER BY p.is_featured DESC, p.sort_order ASC, p.id DESC",
         ));
 
-        $byCategory = [];
+        /* Featured products take priority slots FIRST in strict Admin priority
+           order (sort_order ASC, id ASC). Remaining slots up to 4 rotate across
+           distinct non-featured categories so the Home showcase stays vibrant. */
+        $featuredRows = [];
+        $regularByCategory = [];
         foreach ($pool as $row) {
-            $byCategory[(int) $row['category_id']][] = $row;
+            if ((int) ($row['is_featured'] ?? 0) === 1) {
+                $featuredRows[] = $row;
+            } else {
+                $regularByCategory[(int) $row['category_id']][] = $row;
+            }
         }
+        usort(
+            $featuredRows,
+            static fn (array $a, array $b): int => ((int) ($a['sort_order'] ?? PHP_INT_MAX) <=> (int) ($b['sort_order'] ?? PHP_INT_MAX))
+                ?: ((int) ($a['id'] ?? 0) <=> (int) ($b['id'] ?? 0)),
+        );
 
-        $ids = [];
-        foreach ($byCategory as $list) {
-            $featuredOnly = array_values(array_filter($list, static fn ($r) => (int) $r['is_featured'] === 1));
-            $bucket = $featuredOnly !== [] ? $featuredOnly : $list;
-            $ids[] = (int) $bucket[array_rand($bucket)]['id'];
+        $pinnedIds = array_map(static fn (array $r): int => (int) $r['id'], $featuredRows);
+        $featuredCategories = array_flip(array_map(static fn (array $r): int => (int) $r['category_id'], $featuredRows));
+
+        $rotatingIds = [];
+        $fallbackRotatingIds = [];
+        foreach ($regularByCategory as $catId => $list) {
+            $chosen = (int) $list[array_rand($list)]['id'];
+            if (isset($featuredCategories[$catId])) {
+                $fallbackRotatingIds[] = $chosen;
+            } else {
+                $rotatingIds[] = $chosen;
+            }
         }
-        shuffle($ids);                 /* random category order every time */
-        $ids = array_slice($ids, 0, 4); /* the grid renders 4 cards */
+        shuffle($rotatingIds);
+        shuffle($fallbackRotatingIds);
+
+        $ids = array_slice(array_values(array_unique(array_merge($pinnedIds, $rotatingIds, $fallbackRotatingIds))), 0, 4);
+
+        $savedIds = [];
+        if (feature('favorites', true) && class_exists(\Modules\Favorites\Services\FavoriteService::class)) {
+            $savedIds = array_flip(app(\Modules\Favorites\Services\FavoriteService::class)->productIds());
+        }
+        $boxIds = [];
+        if (feature('box', true) && class_exists(\Modules\Box\Services\BoxService::class)) {
+            $boxIds = array_flip(app(\Modules\Box\Services\BoxService::class)->productIds());
+        }
 
         $rawFeatured = [];
         if ($ids !== []) {
@@ -113,8 +145,8 @@ class HomeController extends Controller
 
         \Modules\Products\Models\Product::eagerLoad($rawFeatured);
 
-        $featuredProducts = array_map(function ($p) use ($locale, $colorFamilies) {
-            return $colorFamilies->attach($p->translate($locale), $locale);
+        $featuredProducts = array_map(function ($p) use ($locale, $colorFamilies, $savedIds, $boxIds) {
+            return $colorFamilies->attach($p->translate($locale), $locale, $savedIds, $boxIds);
         }, $rawFeatured);
 
         $seoTitles = [
@@ -150,6 +182,8 @@ class HomeController extends Controller
             'categories' => $categories,
             'categoryCounts' => $categoryCounts,
             'featuredProducts' => $featuredProducts,
+            'savedIds' => $savedIds,
+            'boxIds' => $boxIds,
             'supportedLocales' => $this->translator->supported(),
             'seo' => $this->seo,
         ]);

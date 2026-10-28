@@ -86,6 +86,31 @@
   pointer-events: none;
 }
 
+.pdp-stage.is-featured {
+  border: 1.5px solid rgba(206, 160, 67, 0.84);
+  background:
+    radial-gradient(640px 300px at 50% -12%, rgba(238, 198, 108, 0.16), transparent 70%),
+    var(--ds-surface);
+  box-shadow:
+    0 24px 58px rgba(170, 122, 28, 0.16),
+    0 0 0 1px rgba(242, 210, 134, 0.44),
+    inset 0 1px 0 rgba(255, 248, 226, 0.72);
+}
+
+.pdp-stage.is-featured .pdp-stage-beam {
+  height: 2.5px;
+  background: linear-gradient(90deg, transparent, #f6e19b 28%, #fff8dc 50%, #d49f3c 72%, transparent);
+}
+
+html[data-theme="dark"] .pdp-stage.is-featured {
+  border-color: rgba(226, 184, 92, 0.80);
+  box-shadow:
+    0 26px 60px rgba(0, 0, 0, 0.46),
+    0 0 28px rgba(218, 172, 74, 0.20),
+    0 0 0 1px rgba(238, 200, 114, 0.34),
+    inset 0 1px 0 rgba(255, 236, 184, 0.24);
+}
+
 .pdp-views { position: relative; }
 
 .pdp-view {
@@ -416,6 +441,21 @@
   color: var(--ds-primary);
   border-color: color-mix(in srgb, var(--ds-primary) 45%, transparent);
   background: var(--ds-primary-soft);
+}
+
+.pdp-code-chip.is-gold {
+  gap: 5px;
+  color: #3a2504;
+  border-color: rgba(255, 245, 210, 0.88);
+  background: linear-gradient(135deg, #fbe8ae 0%, #e6c36a 52%, #c99432 100%);
+  box-shadow: 0 5px 16px rgba(176, 126, 30, 0.22), inset 0 1px 0 rgba(255, 252, 238, 0.82);
+}
+
+.pdp-gold-star {
+  width: 11px;
+  height: 11px;
+  flex: 0 0 11px;
+  color: #6b4809;
 }
 
 .pdp-info .pcard-finishes {

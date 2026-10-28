@@ -562,13 +562,18 @@
             return kind === 'drawing' ? g.kindDrawing : kind === 'situ' ? g.kindSitu : '';
           };
           var delay = (0.04 * ((index % 6) + 1)).toFixed(2);
+          var isFeatured = !!(product.is_featured || card.is_featured);
           var features = featureList(card);
           var hasFeaturePanel = !!card.badge || features !== '';
+          var badgeStar = '<svg class="pcard-badge-star" viewBox="0 0 16 16" fill="currentColor" aria-hidden="true" focusable="false"><path d="M8 1.25l1.72 4.31 4.63.42-3.5 3.06 1.04 4.54L8 11.18l-3.89 2.4 1.04-4.54-3.5-3.06 4.63-.42L8 1.25z"/></svg>';
+          var badgeHtml = card.badge
+            ? '<span class="pcard-badge' + (isFeatured ? ' is-featured-badge' : '') + '">' + (isFeatured ? badgeStar : '') + '<span>' + esc(card.badge) + '</span></span>'
+            : '';
           var featurePanel = hasFeaturePanel
-            ? '<div class="pcard-feature-panel">' + (card.badge ? '<span class="pcard-badge">' + esc(card.badge) + '</span>' : '') + features + '</div>'
+            ? '<div class="pcard-feature-panel">' + badgeHtml + features + '</div>'
             : '';
 
-          return '<article class="pcard ' + (hasPrice ? 'has-price' : 'is-price-pending') + '" data-product-card data-product-id="' + esc(product.id || '') + '" style="--pcard-delay:' + delay + 's">' +
+          return '<article class="pcard' + (isFeatured ? ' is-featured' : '') + ' ' + (hasPrice ? 'has-price' : 'is-price-pending') + '" data-product-card data-product-id="' + esc(product.id || '') + '"' + (isFeatured ? ' data-featured="1"' : '') + ' style="--pcard-delay:' + delay + 's">' +
             '<div class="pcard-stage">' +
             '<a class="pcard-media" href="' + href + '"' + (slides.length > 1
               ? ' data-pcard-cycle data-pcard-kind-drawing="' + esc(g.kindDrawing) + '" data-pcard-kind-situ="' + esc(g.kindSitu) + '"'
