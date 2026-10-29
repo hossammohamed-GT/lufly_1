@@ -20,6 +20,7 @@ class Kernel
         'docs:api' => Commands\DocsApiCommand::class,
         'serve' => Commands\ServeCommand::class,
         'key:generate' => Commands\KeyGenerateCommand::class,
+        'admin:setup' => Commands\AdminSetupCommand::class,
         'backup:db' => Commands\BackupDbCommand::class,
         'ai:doctor' => Commands\AiDoctorCommand::class,
         'assistant:find' => Commands\AssistantFindCommand::class,

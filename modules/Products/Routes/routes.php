@@ -36,6 +36,11 @@ return function (Router $router): void {
             ->middleware('permission:products.manage')
             ->name('store');
 
+        /* type-ahead for the relation pickers in the product editor */
+        $router->get('/search', [ProductController::class, 'adminSearch'])
+            ->middleware('permission:products.view')
+            ->name('search');
+
         $router->get('/{id}/edit', [ProductController::class, 'adminEdit'])
             ->middleware('permission:products.manage')
             ->where('id', '\d+')
@@ -55,6 +60,17 @@ return function (Router $router): void {
             ->middleware('permission:products.manage')
             ->where('id', '\d+')
             ->name('destroy');
+
+        /* click-to-edit on the admin product cards + featured star toggle */
+        $router->post('/{id}/inline', [ProductController::class, 'adminInline'])
+            ->middleware('permission:products.manage')
+            ->where('id', '\d+')
+            ->name('inline');
+
+        $router->post('/{id}/toggle-featured', [ProductController::class, 'adminToggleFeatured'])
+            ->middleware('permission:products.manage')
+            ->where('id', '\d+')
+            ->name('toggle-featured');
 
         /* product images: photos / technical drawings / installed shots */
         $router->post('/{id}/media', [ProductMediaController::class, 'store'])

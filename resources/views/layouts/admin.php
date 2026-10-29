@@ -6,12 +6,21 @@ $translator = $translator ?? null;
 $locale = $translator instanceof \Core\Localization\Translator ? $translator->getLocale() : (string) config('localization.default', 'en');
 $basePath = rtrim((string) parse_url(url('/'), PHP_URL_PATH), '/');
 $direction = in_array($locale, ['ar', 'he', 'fa', 'ur'], true) ? 'rtl' : 'ltr';
+$currentPath = trim((string) request()->path(), '/');
+$navItems = [
+    ['href' => route('admin.dashboard'), 'label' => trans('common.dashboard'), 'active' => $currentPath === 'admin'],
+    ['href' => route('admin.products.index'), 'label' => trans('common.products'), 'active' => str_starts_with($currentPath, 'admin/products')],
+    ['href' => route('admin.categories.index'), 'label' => trans('common.categories'), 'active' => str_starts_with($currentPath, 'admin/categories')],
+    ['href' => route('admin.collections.index'), 'label' => trans('common.collections'), 'active' => str_starts_with($currentPath, 'admin/collections')],
+    ['href' => route('admin.brands.index'), 'label' => trans('common.brands'), 'active' => str_starts_with($currentPath, 'admin/brands')],
+];
 ?>
 <!DOCTYPE html>
 <html lang="<?= e($locale) ?>" dir="<?= e($direction) ?>" data-theme="light" data-base="<?= e($basePath) ?>">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="csrf-token" content="<?= e(csrf_token()) ?>">
 <title>Lufly</title>
 <link rel="icon" type="image/png" href="<?= e(asset('images/logo.png')) ?>">
 <script>
@@ -33,15 +42,9 @@ try {
     <aside class="admin-sidebar">
         <div class="admin-brand"><?= e($appName) ?></div>
         <nav class="admin-nav">
-            <a href="<?= e(route('admin.dashboard')) ?>"><?= e(trans('common.dashboard')) ?></a>
-            <a href="<?= e(route('admin.products.index')) ?>"><?= e(trans('common.products')) ?></a>
-            <a href="<?= e(route('admin.announcements.index')) ?>"><?= e(trans('common.announcements')) ?></a>
-            <a href="<?= e(route('admin.users.index')) ?>"><?= e(trans('common.users')) ?></a>
-            <a href="<?= e(route('admin.roles.index')) ?>"><?= e(trans('common.roles_permissions')) ?></a>
-            <a href="<?= e(route('admin.languages.index')) ?>"><?= e(trans('common.languages')) ?></a>
-            <a href="<?= e(route('admin.media.index')) ?>"><?= e(trans('common.media_library')) ?></a>
-            <a href="<?= e(route('admin.settings.index')) ?>"><?= e(trans('common.settings')) ?></a>
-            <a href="<?= e(route('admin.seo.index')) ?>"><?= e(trans('common.seo')) ?></a>
+            <?php foreach ($navItems as $item): ?>
+                <a href="<?= e($item['href']) ?>"<?= $item['active'] ? ' class="is-active" aria-current="page"' : '' ?>><?= e($item['label']) ?></a>
+            <?php endforeach; ?>
         </nav>
     </aside>
     <div class="admin-main">
@@ -50,6 +53,7 @@ try {
             <div class="admin-topbar-actions">
                 <?= $view->renderFile($view->resolvePath('components.theme-switcher'), []) ?>
                 <a class="btn btn-ghost" href="<?= e(route('home')) ?>"><?= e(trans('common.view_site')) ?></a>
+                <a class="btn btn-ghost" href="<?= e(route('admin.password.edit')) ?>"><?= e(trans('common.change_password')) ?></a>
                 <form method="post" action="<?= e(url('/logout')) ?>" class="inline-form">
                     <?= csrf_field() ?>
                     <button type="submit" class="btn btn-ghost"><?= e(trans('auth.logout')) ?></button>

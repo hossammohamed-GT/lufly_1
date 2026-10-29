@@ -37,6 +37,20 @@ class UpdateProductRequest extends FormRequest
             'image' => 'nullable|file',
             'meta_title' => 'nullable|string|max:255',
             'meta_description' => 'nullable|string|max:500',
+            'variants' => 'nullable|array',
+            'specs' => 'nullable|array',
+            'features' => 'nullable|array',
+            'seo' => 'nullable|array',
+            'dim_width_mm' => 'nullable|numeric|min:0',
+            'dim_height_mm' => 'nullable|numeric|min:0',
+            'dim_depth_mm' => 'nullable|numeric|min:0',
+            'dim_weight_kg' => 'nullable|numeric|min:0',
+            'relations_present' => 'nullable|in:0,1',
+            'color_variant_ids' => 'nullable|array',
+            'seat_cover_ids' => 'nullable|array',
+            'wc_ids' => 'nullable|array',
+            'seat_cover_only' => 'nullable|in:0,1',
+            'datasheet_delete' => 'nullable|array',
         ];
 
         $translator = app(\Core\Localization\Translator::class);
@@ -45,7 +59,7 @@ class UpdateProductRequest extends FormRequest
 
         foreach ($locales as $locale) {
             $rules['name_' . $locale] = ($locale === $fallback ? 'required|' : 'nullable|') . 'string|max:255';
-            $rules['short_description_' . $locale] = 'nullable|string|max:500';
+            $rules['short_description_' . $locale] = 'nullable|string|max:255';
             $rules['description_' . $locale] = 'nullable|string';
         }
 

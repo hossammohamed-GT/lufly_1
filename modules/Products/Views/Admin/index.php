@@ -1,112 +1,197 @@
 <?php
+use Modules\Products\Services\ProductFeatureIconCatalog;
+use Modules\Products\Services\ProductService;
 use Modules\Products\Services\ProductVisibility;
 
 /** @var Core\View\View $view */
 $view->layout('layouts.admin');
 /** @var Core\Database\Paginator $paginator */
-$locale = $translator->getLocale();
-$names = [];
-foreach ($paginator->items() as $product) {
-    $names[(int) $product->id] = $product->translate($locale)['name'] ?? '';
-}
-?>
-<div class="admin-toolbar">
-    <form method="get" class="inline-form">
-        <input class="input" type="search" name="q" value="<?= e(request()->query('q', '')) ?>" placeholder="<?= e(trans('common.search')) ?>">
-        <?= $view->component('button', ['label' => trans('common.search'), 'variant' => 'secondary', 'type' => 'submit']) ?>
-    </form>
-    <?= $view->component('button', ['label' => trans('common.create_product'), 'variant' => 'primary', 'href' => route('admin.products.create')]) ?>
-</div>
+/** @var array<int, array<string, mixed>> $cards */
+/** @var array<int, array<string, mixed>> $payloads */
+/** @var array<int, array{photo: bool, drawing: bool, ready: bool}> $mediaState */
+/** @var array<int, array<int, array{id: int, icon: string, label: string, value: string}>> $chips */
+/** @var array<int, array{id: int, value: string}> $finishSpecs */
+/** @var array<int, array<string, mixed>> $categoryOptions */
+/** @var array<int, string> $categoryPaths */
+/** @var array<string, mixed> $filters */
+/** @var string $locale */
 
-<div class="product-table-wrap">
-<table class="table">
-    <thead>
-        <tr>
-            <th>ID</th>
-            <th>Preview</th>
-            <th><?= e(trans('common.model_code')) ?></th>
-            <th><?= e(trans('common.name')) ?></th>
-            <th><?= e(trans('common.slug')) ?></th>
-            <th><?= e(trans('common.price')) ?></th>
-            <th><?= e(trans('common.status')) ?></th>
-            <th><?= e(trans('products.media_status')) ?></th>
-            <th><?= e(trans('products.visibility')) ?></th>
-            <th><?= e(trans('common.actions')) ?></th>
-        </tr>
-    </thead>
-    <tbody>
-        <?php foreach ($paginator->items() as $product): ?>
-            <?php
-            $data = $product->translate($locale);
-            $productImage = !empty($data['image']) ? asset((string) $data['image']) : null;
-            $productName = (string) ($names[(int) $product->id] ?? $product->model_code ?? '');
-            $status = (string) $product->status;
-            $media = ProductVisibility::media($product);
-            $hasMainImage = $media['photo'];
-            $hasDrawing = $media['drawing'];
-            $lifecyclePublic = in_array($status, ProductVisibility::PUBLIC_STATUSES, true);
-            $isPublic = $lifecyclePublic && $media['ready'];
-            $hiddenForMedia = $lifecyclePublic && !$media['ready'];
-            $canToggleVisibility = $media['ready'] && in_array($status, ['active', 'hidden'], true);
-            ?>
-            <tr>
-                <td><?= (int) $product->id ?></td>
-                <td style="width: 60px;">
-                    <?php if ($productImage): ?>
-                        <a href="<?= $productImage ?>" title="<?= e($productName) ?>">
-                            <img src="<?= $productImage ?>" alt="<?= e($productName) ?>" loading="lazy" style="width: 48px; height: 48px; object-fit: cover; border-radius: 6px; border: 1px solid var(--ds-border, #e2e8f0); display: block; background: var(--ds-surface, #fff);">
-                        </a>
+$fmtPrice = static function (float $value): string {
+    return rtrim(rtrim(number_format($value, 2, '.', ''), '0'), '.');
+};
+$leafOptions = array_values(array_filter($categoryOptions, static fn (array $c): bool => !empty($c['is_leaf'])));
+?>
+<form method="get" class="admin-toolbar adm-filters">
+    <input class="input" type="search" name="q" value="<?= e((string) $filters['q']) ?>" placeholder="<?= e(trans('common.search')) ?>">
+    <select class="input" name="category_id" aria-label="<?= e(trans('common.category')) ?>">
+        <option value=""><?= e(trans('common.all_categories')) ?></option>
+        <?php foreach ($categoryOptions as $option): ?>
+            <option value="<?= (int) $option['id'] ?>" <?= (int) $filters['category_id'] === (int) $option['id'] ? 'selected' : '' ?>><?= e((string) ($option['path'] ?? $option['slug'])) ?></option>
+        <?php endforeach; ?>
+    </select>
+    <select class="input" name="status" aria-label="<?= e(trans('common.status')) ?>">
+        <option value=""><?= e(trans('products.filter_all_statuses')) ?></option>
+        <?php foreach (ProductService::STATUSES as $statusOption): ?>
+            <option value="<?= $statusOption ?>" <?= $filters['status'] === $statusOption ? 'selected' : '' ?>><?= e(trans('common.' . $statusOption)) ?></option>
+        <?php endforeach; ?>
+    </select>
+    <select class="input" name="sort" aria-label="<?= e(trans('products.sort_label')) ?>">
+        <option value="model" <?= $filters['sort'] === 'model' ? 'selected' : '' ?>><?= e(trans('products.sort_model')) ?></option>
+        <option value="name" <?= $filters['sort'] === 'name' ? 'selected' : '' ?>><?= e(trans('products.sort_name')) ?></option>
+        <option value="newest" <?= $filters['sort'] === 'newest' ? 'selected' : '' ?>><?= e(trans('products.sort_newest')) ?></option>
+        <option value="curated" <?= $filters['sort'] === 'curated' ? 'selected' : '' ?>><?= e(trans('products.sort_curated')) ?></option>
+    </select>
+    <label class="adm-check">
+        <input type="checkbox" name="featured" value="1" <?= !empty($filters['featured']) ? 'checked' : '' ?>>
+        <?= e(trans('products.filter_featured_only')) ?>
+    </label>
+    <?= $view->component('button', ['label' => trans('common.search'), 'variant' => 'secondary', 'type' => 'submit']) ?>
+    <?= $view->component('button', ['label' => trans('common.create_product'), 'variant' => 'primary', 'href' => route('admin.products.create')]) ?>
+</form>
+
+<p class="admin-hint"><?= e(trans('products.inline_hint')) ?></p>
+
+<?php if ($paginator->items() === []): ?>
+    <p class="media-empty"><?= e(trans('common.no_results')) ?></p>
+<?php endif; ?>
+
+<div class="adm-cards">
+    <?php foreach ($paginator->items() as $product): ?>
+        <?php
+        $pid = (int) $product->id;
+        $payload = $payloads[$pid] ?? [];
+        $card = $cards[$pid] ?? [];
+        $media = $mediaState[$pid] ?? ['photo' => false, 'drawing' => false, 'ready' => false];
+        $isFeatured = !empty($payload['is_featured']);
+        $status = (string) ($payload['status'] ?? $product->status);
+        $isPublic = in_array($status, ProductVisibility::PUBLIC_STATUSES, true) && $media['ready'];
+        $image = trim((string) ($payload['image'] ?? ''));
+        $productChips = $chips[$pid] ?? [];
+        $finishSpec = $finishSpecs[$pid] ?? null;
+        $selectedCategory = (int) ($payload['category_id'] ?? 0);
+        $price = (float) ($payload['price'] ?? 0);
+        $stock = (string) ($payload['stock_status'] ?? 'in_stock');
+        ?>
+        <article class="adm-card<?= $isFeatured ? ' is-featured' : '' ?>"
+                 data-product-card="<?= $pid ?>"
+                 data-inline-url="<?= e(route('admin.products.inline', ['id' => $pid])) ?>"
+                 data-featured-url="<?= e(route('admin.products.toggle-featured', ['id' => $pid])) ?>">
+            <div class="adm-card-media">
+                <a href="<?= e(route('admin.products.edit', ['id' => $pid])) ?>#media-photos" title="<?= e(trans('products.images_title')) ?>">
+                    <?php if ($image !== ''): ?>
+                        <img src="<?= e(asset($image)) ?>" alt="<?= e((string) ($payload['name'] ?? '')) ?>" loading="lazy">
                     <?php else: ?>
-                        <div style="width: 48px; height: 48px; border-radius: 6px; border: 1px dashed var(--ds-border, #e2e8f0); display: flex; align-items: center; justify-content: center; background: var(--ds-surface-alt, #f8fafc); font-size: 11px; color: var(--ds-text-muted, #94a3b8); font-weight: 500;">
-                            No img
-                        </div>
+                        <span class="adm-noimg"><?= e(trans('products.no_image')) ?></span>
                     <?php endif; ?>
-                </td>
-                <td><strong><?= e((string) ($product->model_code ?? '')) ?></strong></td>
-                <td><?= e($productName) ?></td>
-                <td><code><?= e((string) $product->slug) ?></code></td>
-                <td><?= e((string) ($data['price'] ?? 0)) ?></td>
-                <td><span class="badge badge-<?= e($status) ?>"><?= e(trans('common.' . $status)) ?></span></td>
-                <td>
-                    <div class="product-media-flags">
-                        <span class="badge badge-<?= $hasMainImage ? 'active' : 'draft' ?>">
-                            <?= e(trans($hasMainImage ? 'products.main_image_present' : 'products.main_image_missing')) ?>
-                        </span>
-                        <span class="badge badge-<?= $hasDrawing ? 'active' : 'draft' ?>">
-                            <?= e(trans($hasDrawing ? 'products.drawing_present' : 'products.drawing_missing')) ?>
-                        </span>
-                    </div>
-                </td>
-                <td>
-                    <div class="product-visibility">
-                        <span class="badge badge-<?= $isPublic ? 'active' : 'inactive' ?>">
-                            <?= e(trans($isPublic ? 'products.visible' : ($hiddenForMedia ? 'products.hidden_media_incomplete' : 'products.hidden'))) ?>
-                        </span>
-                        <?php if ($canToggleVisibility): ?>
-                            <form method="post" action="<?= e(route('admin.products.visibility', ['id' => $product->id])) ?>" class="inline-form">
-                                <?= csrf_field() ?>
-                                <input type="hidden" name="page" value="<?= max(1, (int) request()->query('page', '1')) ?>">
-                                <input type="hidden" name="q" value="<?= e((string) request()->query('q', '')) ?>">
-                                <button type="submit" class="btn btn-sm btn-secondary"
-                                        aria-label="<?= e(trans($status === 'active' ? 'products.hide_product' : 'products.show_product') . ' — ' . $productName) ?>">
-                                    <?= e(trans($status === 'active' ? 'products.hide_product' : 'products.show_product')) ?>
-                                </button>
-                            </form>
+                </a>
+                <button type="button" class="adm-star<?= $isFeatured ? ' is-on' : '' ?>" data-featured-toggle
+                        title="<?= e(trans('products.featured_toggle')) ?>" aria-pressed="<?= $isFeatured ? 'true' : 'false' ?>">★</button>
+                <span class="badge badge-<?= $isPublic ? 'active' : 'inactive' ?> adm-card-visibility">
+                    <?= e(trans($isPublic ? 'products.visible' : 'products.hidden')) ?>
+                </span>
+            </div>
+
+            <div class="adm-card-body">
+                <h3 class="adm-card-title">
+                    <span data-inline="name" data-locale="<?= e($locale) ?>" tabindex="0"><?= e((string) ($payload['name'] ?? '')) ?></span>
+                </h3>
+
+                <div class="adm-card-codes">
+                    <code data-inline="model_code" tabindex="0"><?= e((string) ($payload['model_code'] ?? '')) ?></code>
+                    <span class="adm-slug">
+                        /<span data-inline="slug" tabindex="0"><?= e((string) ($payload['slug'] ?? '')) ?></span>
+                        <a href="<?= e(route('products.show', ['slug' => (string) ($payload['slug'] ?? '')])) ?>" target="_blank" rel="noopener" title="<?= e(trans('common.view')) ?>">↗</a>
+                    </span>
+                </div>
+
+                <label class="adm-field">
+                    <span><?= e(trans('common.category')) ?></span>
+                    <select class="input input-sm" data-inline-select="category_id">
+                        <option value="">—</option>
+                        <?php $hasCurrent = false; ?>
+                        <?php foreach ($leafOptions as $option): ?>
+                            <?php if ((int) $option['id'] === $selectedCategory) { $hasCurrent = true; } ?>
+                            <option value="<?= (int) $option['id'] ?>" <?= $selectedCategory === (int) $option['id'] ? 'selected' : '' ?>><?= e((string) ($option['path'] ?? $option['slug'])) ?></option>
+                        <?php endforeach; ?>
+                        <?php if ($selectedCategory > 0 && !$hasCurrent): ?>
+                            <option value="<?= $selectedCategory ?>" selected><?= e($categoryPaths[$selectedCategory] ?? ('#' . $selectedCategory)) ?></option>
                         <?php endif; ?>
+                    </select>
+                </label>
+
+                <?php if ($productChips !== []): ?>
+                    <div class="adm-chips">
+                        <?php foreach ($productChips as $chip): ?>
+                            <span class="adm-chip">
+                                <span class="adm-chip-icon"><?= ProductFeatureIconCatalog::svg($chip['icon']) ?></span>
+                                <span class="adm-chip-label" data-inline="feature_label" data-feature-id="<?= (int) $chip['id'] ?>" data-locale="<?= e($locale) ?>" tabindex="0"><?= e($chip['label']) ?></span>
+                                <strong data-inline="feature_value" data-feature-id="<?= (int) $chip['id'] ?>" data-locale="<?= e($locale) ?>" tabindex="0"><?= e($chip['value']) ?></strong>
+                            </span>
+                        <?php endforeach; ?>
                     </div>
-                </td>
-                <td class="row-actions">
-                    <a class="btn btn-sm btn-secondary" href="<?= e(route('admin.products.edit', ['id' => $product->id])) ?>"><?= e(trans('common.edit')) ?></a>
-                    <form method="post" action="<?= e(route('admin.products.destroy', ['id' => $product->id])) ?>" class="inline-form"
-                          onsubmit="return confirm('Are you sure you want to delete this product?');">
+                <?php endif; ?>
+
+                <div class="adm-finish-row">
+                    <span class="adm-swatches" data-finishes>
+                        <?php foreach ((array) ($card['finishes'] ?? []) as $finish): ?>
+                            <i class="adm-swatch adm-swatch--<?= e((string) ($finish['key'] ?? 'neutral')) ?>" title="<?= e((string) ($finish['label'] ?? '')) ?>"></i>
+                        <?php endforeach; ?>
+                    </span>
+                    <?php if ($finishSpec !== null): ?>
+                        <span class="adm-finish-text" data-inline="spec_value" data-spec-id="<?= (int) $finishSpec['id'] ?>" data-locale="<?= e($locale) ?>" tabindex="0"><?= e($finishSpec['value']) ?></span>
+                    <?php else: ?>
+                        <span class="adm-finish-text is-muted"><?= e(trans('products.no_finish')) ?></span>
+                    <?php endif; ?>
+                </div>
+
+                <div class="adm-card-row">
+                    <label class="adm-field">
+                        <span><?= e(trans('common.price')) ?></span>
+                        <span class="adm-price" data-inline="price" data-input-type="number" data-value="<?= e($fmtPrice($price)) ?>" tabindex="0"><?= e($fmtPrice($price)) ?></span>
+                    </label>
+                    <label class="adm-field">
+                        <span><?= e(trans('products.stock_in_stock')) ?></span>
+                        <select class="input input-sm" data-inline-select="stock_status">
+                            <?php foreach (ProductService::STOCK_STATUSES as $stockOption): ?>
+                                <option value="<?= $stockOption ?>" <?= $stock === $stockOption ? 'selected' : '' ?>><?= e(trans('products.stock_' . $stockOption)) ?></option>
+                            <?php endforeach; ?>
+                        </select>
+                    </label>
+                </div>
+
+                <div class="adm-card-row">
+                    <label class="adm-field">
+                        <span><?= e(trans('common.status')) ?></span>
+                        <select class="input input-sm" data-inline-select="status">
+                            <?php foreach (ProductService::STATUSES as $statusOption): ?>
+                                <option value="<?= $statusOption ?>" <?= $status === $statusOption ? 'selected' : '' ?>><?= e(trans('common.' . $statusOption)) ?></option>
+                            <?php endforeach; ?>
+                        </select>
+                    </label>
+                    <label class="adm-field">
+                        <span><?= e(trans('products.priority_order')) ?></span>
+                        <span data-inline="sort_order" data-input-type="number" data-sort-order-display tabindex="0"><?= (int) ($payload['sort_order'] ?? 0) ?></span>
+                    </label>
+                </div>
+
+                <?php if (!$media['ready']): ?>
+                    <p class="adm-media-warn">
+                        <?= e(trans('products.hidden_media_incomplete')) ?>:
+                        <?= e(trans($media['photo'] ? 'products.main_image_present' : 'products.main_image_missing')) ?> ·
+                        <?= e(trans($media['drawing'] ? 'products.drawing_present' : 'products.drawing_missing')) ?>
+                    </p>
+                <?php endif; ?>
+
+                <div class="adm-card-actions">
+                    <a class="btn btn-sm btn-secondary" href="<?= e(route('admin.products.edit', ['id' => $pid])) ?>"><?= e(trans('products.full_edit')) ?></a>
+                    <form method="post" action="<?= e(route('admin.products.destroy', ['id' => $pid])) ?>" class="inline-form" data-confirm="<?= e(trans('products.delete_product_confirm')) ?>">
                         <?= csrf_field() ?>
                         <button type="submit" class="btn btn-sm btn-danger"><?= e(trans('common.delete')) ?></button>
                     </form>
-                </td>
-            </tr>
-        <?php endforeach; ?>
-    </tbody>
-</table>
+                </div>
+            </div>
+        </article>
+    <?php endforeach; ?>
 </div>
 
 <?= $view->component('pagination', ['paginator' => $paginator]) ?>

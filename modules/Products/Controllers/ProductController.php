@@ -6,18 +6,24 @@ namespace Modules\Products\Controllers;
 
 use App\Http\Controllers\Controller;
 use App\Services\CategoryService;
+use App\Services\MediaService;
 use App\Services\SEOService;
+use Core\Http\JsonResponse;
 use Core\Http\RedirectResponse;
 use Core\Http\Request;
 use Core\Http\Response;
 use Core\Localization\Translator;
+use InvalidArgumentException;
+use Modules\Products\Models\Product;
 use Modules\Products\Requests\StoreProductRequest;
 use Modules\Products\Requests\UpdateProductRequest;
 use Modules\Products\Services\ProductCardPresenter;
 use Modules\Products\Services\ProductColorFamilyService;
+use Modules\Products\Services\ProductFeatureIconCatalog;
 use Modules\Products\Services\ProductMediaService;
 use Modules\Products\Services\ProductService;
 use Modules\Products\Services\ProductVisibility;
+use Throwable;
 
 class ProductController extends Controller
 {
@@ -27,6 +33,7 @@ class ProductController extends Controller
         private readonly SEOService $seo,
         private readonly CategoryService $categories,
         private readonly Translator $translator,
+        private readonly MediaService $mediaLibrary,
     ) {
     }
 
@@ -262,18 +269,68 @@ class ProductController extends Controller
 
     public function adminIndex(Request $request): Response
     {
+        $locale = (string) config('localization.fallback', 'en');
         $search = trim((string) $request->query('q', ''));
+        $categoryId = max(0, (int) $request->query('category_id', '0'));
+        $status = (string) $request->query('status', '');
+        if (!in_array($status, ProductService::STATUSES, true)) {
+            $status = '';
+        }
+        $featured = (string) $request->query('featured', '') === '1';
+        $sort = (string) $request->query('sort', 'model');
+        if (!in_array($sort, ['model', 'name', 'curated', 'newest'], true)) {
+            $sort = 'model';
+        }
         $page = max(1, (int) $request->query('page', '1'));
-        $perPage = 15;
 
         $paginator = $this->products->paginate([
             'search' => $search,
-            'locale' => $this->translator->getLocale(),
-        ], $page, $perPage);
+            'locale' => $locale,
+            'status' => $status,
+            'category_id' => $categoryId,
+            'featured' => $featured,
+            'sort' => $sort,
+        ], $page, 24);
+
+        $items = $paginator->items();
+        Product::eagerLoad($items, ['translations', 'variants', 'specs', 'card_features', 'dimensions', 'media', 'category']);
+
+        $ids = [];
+        $cards = [];
+        $payloads = [];
+        $mediaState = [];
+        foreach ($items as $product) {
+            $productId = (int) $product->id;
+            $ids[] = $productId;
+            $payloads[$productId] = $product->translate($locale);
+            $cards[$productId] = ProductCardPresenter::make($payloads[$productId], $locale);
+            $mediaState[$productId] = ProductVisibility::media($product);
+        }
+
+        $categoryOptions = $this->categories->flatten($locale, $locale);
+        $categoryPaths = [];
+        foreach ($categoryOptions as $option) {
+            $categoryPaths[(int) $option['id']] = (string) ($option['path'] ?? $option['slug']);
+        }
 
         return $this->view('products::Admin.index', [
             'title' => trans('common.products'),
             'paginator' => $paginator,
+            'cards' => $cards,
+            'payloads' => $payloads,
+            'mediaState' => $mediaState,
+            'chips' => $this->products->cardChipsBulk($ids, $locale),
+            'finishSpecs' => $this->products->finishSpecsBulk($ids),
+            'categoryOptions' => $categoryOptions,
+            'categoryPaths' => $categoryPaths,
+            'filters' => [
+                'q' => $search,
+                'category_id' => $categoryId,
+                'status' => $status,
+                'featured' => $featured,
+                'sort' => $sort,
+            ],
+            'locale' => $locale,
         ]);
     }
 
@@ -281,9 +338,7 @@ class ProductController extends Controller
     {
         return $this->view('products::Admin.form', [
             'title' => trans('common.create_product'),
-            'product' => null,
-            'mediaSections' => [],
-            'translations' => [],
+            ...$this->editorData(null),
         ]);
     }
 
@@ -291,13 +346,27 @@ class ProductController extends Controller
     {
         $data = (new StoreProductRequest())->handle($request);
 
-        $product = $this->products->create(
-            $this->coreFields($data),
-            $this->translationsFromForm($data),
-        );
+        try {
+            $product = $this->products->create(
+                $this->coreFields($data),
+                $this->translationsFromForm($data),
+                $this->extraFrom($request),
+            );
+        } catch (InvalidArgumentException $e) {
+            return $this->redirect(route('admin.products.create'))
+                ->with('_errors', ['product' => [$e->getMessage()]])
+                ->withInput($request->all());
+        }
 
         if ($request->hasFile('image')) {
             $this->attachPrimaryImage((int) $product->id, $request->file('image'));
+        }
+
+        try {
+            $this->syncDatasheets($request, (int) $product->id);
+        } catch (Throwable $e) {
+            return $this->redirect(route('admin.products.edit', ['id' => $product->id]))
+                ->with('_errors', ['datasheet' => [$e->getMessage()]]);
         }
 
         return $this->redirect(route('admin.products.edit', ['id' => $product->id]))
@@ -310,9 +379,7 @@ class ProductController extends Controller
 
         return $this->view('products::Admin.form', [
             'title' => trans('common.edit_product'),
-            'product' => $product,
-            'mediaSections' => $product !== null ? $product->mediaBySection() : [],
-            'translations' => $product !== null ? $product->translations() : [],
+            ...$this->editorData($product),
         ]);
     }
 
@@ -320,14 +387,71 @@ class ProductController extends Controller
     {
         $data = (new UpdateProductRequest())->forProduct($id)->handle($request);
 
-        $this->products->update($id, $this->coreFields($data), $this->translationsFromForm($data));
+        try {
+            $this->products->update($id, $this->coreFields($data), $this->translationsFromForm($data), $this->extraFrom($request));
+        } catch (InvalidArgumentException $e) {
+            return $this->redirect(route('admin.products.edit', ['id' => $id]))
+                ->with('_errors', ['product' => [$e->getMessage()]])
+                ->withInput($request->all());
+        }
 
         if ($request->hasFile('image')) {
             $this->attachPrimaryImage($id, $request->file('image'));
         }
 
+        try {
+            $this->syncDatasheets($request, $id);
+        } catch (Throwable $e) {
+            return $this->redirect(route('admin.products.edit', ['id' => $id]))
+                ->with('_errors', ['datasheet' => [$e->getMessage()]]);
+        }
+
         return $this->redirect(route('admin.products.edit', ['id' => $id]))
             ->with('_success', trans('common.saved'));
+    }
+
+    public function adminInline(Request $request, int $id): JsonResponse
+    {
+        $payload = $request->jsonPayload() ?? $request->all();
+
+        try {
+            $result = $this->products->inlineUpdate($id, is_array($payload) ? $payload : []);
+        } catch (InvalidArgumentException $e) {
+            return $this->json(['success' => false, 'message' => $e->getMessage()], 422);
+        }
+
+        return $this->json(['success' => true, 'data' => $result]);
+    }
+
+    public function adminToggleFeatured(Request $request, int $id): Response
+    {
+        $result = $this->products->toggleFeatured($id);
+
+        if ($request->expectsJson()) {
+            return $this->json(['success' => true, 'data' => $result]);
+        }
+
+        $query = array_filter([
+            'page' => max(1, (int) $request->input('page', '1')),
+            'q' => trim((string) $request->input('q', '')),
+            'category_id' => (int) $request->input('category_id', '0') ?: null,
+            'status' => trim((string) $request->input('status', '')) ?: null,
+            'featured' => (string) $request->input('featured', '') === '1' ? 1 : null,
+        ], static fn ($value): bool => $value !== null && $value !== '');
+
+        return $this->redirect(route('admin.products.index') . '?' . http_build_query($query))
+            ->with('_success', trans('common.saved'));
+    }
+
+    public function adminSearch(Request $request): JsonResponse
+    {
+        $query = trim((string) $request->query('q', ''));
+        $exclude = max(0, (int) $request->query('exclude', '0'));
+
+        return $this->json([
+            'success' => true,
+            'data' => $query === '' ? [] : $this->products->adminSearch($query, $exclude, 20),
+        ]);
     }
 
     public function adminToggleVisibility(Request $request, int $id): RedirectResponse
@@ -370,6 +494,215 @@ class ProductController extends Controller
     }
 
     /**
+     * Everything the full product editor renders, for create and edit alike.
+     *
+     * @return array<string, mixed>
+     */
+    private function editorData(?Product $product): array
+    {
+        $productId = $product !== null ? (int) $product->id : 0;
+        $relationState = $product !== null
+            ? $this->products->relationState($productId)
+            : ['color_family' => [], 'seat_covers' => [], 'parent_wcs' => [], 'seat_cover_only' => false];
+        $relationIds = array_values(array_unique([
+            ...$relationState['color_family'],
+            ...$relationState['seat_covers'],
+            ...$relationState['parent_wcs'],
+        ]));
+
+        return [
+            'product' => $product,
+            'mediaSections' => $product !== null ? $product->mediaBySection() : [],
+            'translations' => $product !== null ? $product->translations() : [],
+            'specs' => $product !== null ? $product->specs() : [],
+            'features' => $product !== null ? $this->products->cardFeaturesRaw($productId) : [],
+            'presets' => $this->products->featurePresets(),
+            'icons' => ProductFeatureIconCatalog::options('en'),
+            'finishCatalog' => ProductCardPresenter::finishCatalog(),
+            'variants' => $product !== null ? $product->variants() : [],
+            'dimensions' => $product !== null ? $product->dimensions() : null,
+            'seoRows' => $product !== null ? $this->products->seoRows($productId) : [],
+            'relationState' => $relationState,
+            'relationLabels' => $this->products->pickerLabels($relationIds),
+            'datasheets' => $product !== null ? $this->products->datasheets($productId) : [],
+        ];
+    }
+
+    /**
+     * Nested editor payloads (variants / specs / features / dimensions / seo /
+     * relations), lightly sanitized; ProductService owns the invariants.
+     *
+     * @return array<string, mixed>
+     */
+    private function extraFrom(Request $request): array
+    {
+        $all = $request->all();
+        $extra = [];
+
+        if (isset($all['variants']) && is_array($all['variants'])) {
+            $rows = [];
+            foreach ($all['variants'] as $row) {
+                if (!is_array($row)) {
+                    continue;
+                }
+                $id = (int) ($row['id'] ?? 0);
+                $sku = trim((string) ($row['sku'] ?? ''));
+                $name = trim((string) ($row['variant_name'] ?? ''));
+                if ($id === 0 && $sku === '' && $name === '') {
+                    continue;
+                }
+                $rows[] = [
+                    'id' => $id,
+                    'sku' => $sku,
+                    'variant_name' => $name,
+                    'price' => $row['price'] ?? 0,
+                    'stock_status' => (string) ($row['stock_status'] ?? 'in_stock'),
+                    'status' => (string) ($row['status'] ?? 'active'),
+                    'sort_order' => $row['sort_order'] ?? null,
+                ];
+            }
+            $extra['variants'] = $rows;
+        }
+
+        if (isset($all['specs']) && is_array($all['specs'])) {
+            $rows = [];
+            foreach ($all['specs'] as $row) {
+                if (!is_array($row)) {
+                    continue;
+                }
+                $keys = is_array($row['key'] ?? null) ? $row['key'] : [];
+                $values = is_array($row['value'] ?? null) ? $row['value'] : [];
+                $hasContent = false;
+                foreach ([...array_values($keys), ...array_values($values)] as $piece) {
+                    if (trim((string) $piece) !== '') {
+                        $hasContent = true;
+                        break;
+                    }
+                }
+                if (!$hasContent && (int) ($row['id'] ?? 0) === 0) {
+                    continue;
+                }
+                $rows[] = [
+                    'id' => (int) ($row['id'] ?? 0),
+                    'unit' => (string) ($row['unit'] ?? ''),
+                    'key' => $keys,
+                    'value' => $values,
+                ];
+            }
+            $extra['specs'] = $rows;
+        }
+
+        if (isset($all['features']) && is_array($all['features'])) {
+            $rows = [];
+            foreach ($all['features'] as $row) {
+                if (!is_array($row)) {
+                    continue;
+                }
+                $labels = is_array($row['label'] ?? null) ? $row['label'] : [];
+                $values = is_array($row['value'] ?? null) ? $row['value'] : [];
+                $hasContent = (int) ($row['preset_id'] ?? 0) > 0;
+                if (!$hasContent) {
+                    foreach ([...array_values($labels), ...array_values($values)] as $piece) {
+                        if (trim((string) $piece) !== '') {
+                            $hasContent = true;
+                            break;
+                        }
+                    }
+                }
+                if (!$hasContent && (int) ($row['id'] ?? 0) === 0) {
+                    continue;
+                }
+                $rows[] = [
+                    'id' => (int) ($row['id'] ?? 0),
+                    'preset_id' => (int) ($row['preset_id'] ?? 0),
+                    'icon_key' => (string) ($row['icon_key'] ?? ''),
+                    'label' => $labels,
+                    'value' => $values,
+                ];
+            }
+            $extra['features'] = $rows;
+        }
+
+        if (array_key_exists('dim_width_mm', $all) || array_key_exists('dim_height_mm', $all)
+            || array_key_exists('dim_depth_mm', $all) || array_key_exists('dim_weight_kg', $all)) {
+            $extra['dimensions'] = [
+                'width_mm' => $all['dim_width_mm'] ?? null,
+                'height_mm' => $all['dim_height_mm'] ?? null,
+                'depth_mm' => $all['dim_depth_mm'] ?? null,
+                'weight_kg' => $all['dim_weight_kg'] ?? null,
+            ];
+        }
+
+        if (isset($all['seo']) && is_array($all['seo'])) {
+            $extra['seo'] = $all['seo'];
+        }
+
+        if (($all['relations_present'] ?? '') === '1') {
+            $ids = static fn (mixed $values): array => array_values(array_filter(array_map('intval', is_array($values) ? $values : [])));
+            $extra['relations'] = [
+                'color_variant_ids' => $ids($all['color_variant_ids'] ?? []),
+                'seat_cover_ids' => $ids($all['seat_cover_ids'] ?? []),
+                'wc_ids' => $ids($all['wc_ids'] ?? []),
+                'seat_cover_only' => ($all['seat_cover_only'] ?? '') === '1',
+            ];
+        }
+
+        return $extra;
+    }
+
+    /**
+     * Datasheet PDF uploads/removals per language. Uploading a file activates
+     * the storefront Data Sheet button automatically (product_documents).
+     */
+    private function syncDatasheets(Request $request, int $productId): void
+    {
+        $files = [];
+        $entry = $request->file('datasheet');
+        if ($entry !== null && isset($entry['name']) && is_array($entry['name'])) {
+            foreach (array_keys($entry['name']) as $locale) {
+                $file = [
+                    'name' => $entry['name'][$locale] ?? '',
+                    'type' => $entry['type'][$locale] ?? '',
+                    'tmp_name' => $entry['tmp_name'][$locale] ?? '',
+                    'error' => $entry['error'][$locale] ?? UPLOAD_ERR_NO_FILE,
+                    'size' => $entry['size'][$locale] ?? 0,
+                ];
+                if ((int) $file['error'] === UPLOAD_ERR_OK) {
+                    $files[(string) $locale] = $file;
+                } elseif ((int) $file['error'] !== UPLOAD_ERR_NO_FILE) {
+                    throw new InvalidArgumentException(trans('products.datasheet_upload_failed'));
+                }
+            }
+        }
+
+        $deletes = $request->input('datasheet_delete', []);
+        $deletes = is_array($deletes) ? $deletes : [];
+
+        foreach ($this->translator->locales() as $locale) {
+            if (isset($files[$locale])) {
+                $extension = strtolower(pathinfo((string) $files[$locale]['name'], PATHINFO_EXTENSION));
+                if ($extension !== 'pdf') {
+                    throw new InvalidArgumentException(trans('products.datasheet_pdf_only'));
+                }
+                $media = $this->mediaLibrary->storeFromUpload($files[$locale], 'datasheets', $productId);
+                $detached = $this->products->attachDatasheet($productId, $locale, (int) $media->id);
+            } elseif (($deletes[$locale] ?? '') === '1') {
+                $detached = $this->products->detachDatasheet($productId, $locale);
+            } else {
+                continue;
+            }
+
+            foreach ($detached as $mediaId) {
+                try {
+                    $this->mediaLibrary->delete($mediaId);
+                } catch (Throwable) {
+                    /* The document row is already detached; a stale file is harmless. */
+                }
+            }
+        }
+    }
+
+    /**
      * @param array<string, mixed> $data
      * @return array<string, mixed>
      */
@@ -378,7 +711,6 @@ class ProductController extends Controller
         $fields = [
             'model_code' => $data['model_code'],
             'slug' => $data['slug'] ?? '',
-            'price' => (float) ($data['price'] ?? 0),
             'category_id' => ($data['category_id'] ?? '') !== '' ? (int) $data['category_id'] : null,
             'collection_id' => ($data['collection_id'] ?? '') !== '' ? (int) $data['collection_id'] : null,
             'brand_id' => ($data['brand_id'] ?? '') !== '' ? (int) $data['brand_id'] : null,
@@ -387,6 +719,9 @@ class ProductController extends Controller
             'meta_title' => $data['meta_title'] ?? '',
             'meta_description' => $data['meta_description'] ?? '',
         ];
+        if (array_key_exists('price', $data) && $data['price'] !== '' && $data['price'] !== null) {
+            $fields['price'] = (float) $data['price'];
+        }
         if (array_key_exists('sort_order', $data) && $data['sort_order'] !== '' && $data['sort_order'] !== null) {
             $fields['sort_order'] = max(0, (int) $data['sort_order']);
         }
@@ -422,10 +757,13 @@ class ProductController extends Controller
      * Upload coming from the single-image field of the product form: it lands
      * in the photos section and becomes the main image.
      *
-     * @param array<string, mixed> $file
+     * @param array<string, mixed>|null $file
      */
-    private function attachPrimaryImage(int $productId, array $file): void
+    private function attachPrimaryImage(int $productId, ?array $file): void
     {
+        if ($file === null) {
+            return;
+        }
         $this->media->upload($productId, $file, 'photos', true);
     }
 }

@@ -675,4 +675,57 @@ final class ProductCardPresenter
     {
         return rtrim(rtrim(number_format($value, 2, '.', ''), '0'), '.');
     }
+
+    /**
+     * Canonical finish options for the admin Finish picker: every supported
+     * English label with its swatch key and exact tr/cs translations.
+     *
+     * @return array<int, array{label: string, swatch: string, tr: string, cs: string}>
+     */
+    public static function finishCatalog(): array
+    {
+        $swatchByLabel = [];
+        foreach (self::FINISHES as [$swatch, $label]) {
+            $swatchByLabel[$label] ??= $swatch;
+        }
+
+        $catalog = [];
+        foreach (self::FINISH_TRANSLATIONS as $label => $translations) {
+            $catalog[] = [
+                'label' => $label,
+                'swatch' => $swatchByLabel[$label] ?? 'neutral',
+                'tr' => (string) ($translations['tr'] ?? $label),
+                'cs' => (string) ($translations['cs'] ?? $label),
+            ];
+        }
+        usort($catalog, static fn (array $a, array $b): int => strcmp($a['label'], $b['label']));
+
+        return $catalog;
+    }
+
+    /**
+     * Translate a canonical English finish value (parts joined with " / ") via
+     * the canonical dictionary. Returns null when any part is unknown so a
+     * manually entered translation is never overwritten with a guess.
+     */
+    public static function translateFinishValue(string $englishValue, string $locale): ?string
+    {
+        if ($locale === 'en') {
+            return $englishValue;
+        }
+        $parts = array_values(array_filter(array_map('trim', explode('/', $englishValue))));
+        if ($parts === []) {
+            return null;
+        }
+        $translated = [];
+        foreach ($parts as $part) {
+            $match = self::FINISH_TRANSLATIONS[$part][$locale] ?? null;
+            if ($match === null) {
+                return null;
+            }
+            $translated[] = $match;
+        }
+
+        return implode(' / ', $translated);
+    }
 }
