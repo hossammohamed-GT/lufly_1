@@ -415,26 +415,33 @@
   document.addEventListener('change', function (event) {
     var target = event.target;
     if (target.matches && target.matches('[data-preset-select]')) {
-      var preset = presetsData[target.value];
       var row = target.closest('[data-repeater-row]');
-      if (!preset || !row) { return; }
+      if (!row) { return; }
+      var preset = presetsData[target.value] || null;
+      row.classList.toggle('is-preset', !!preset);
       var iconSelect = row.querySelector('[data-icon-select]');
-      if (iconSelect && preset.icon) {
+      if (preset && iconSelect && preset.icon) {
         iconSelect.value = preset.icon;
         refreshIconPreview(iconSelect);
       }
       row.querySelectorAll('[data-feature-label]').forEach(function (input) {
         var locale = input.getAttribute('data-feature-label');
-        if (!input.value.trim() && preset.labels && preset.labels[locale]) {
-          input.value = preset.labels[locale];
+        if (preset) {
+          /* preset labels are fixed wording — never typed by hand */
+          if (preset.labels && preset.labels[locale]) { input.value = preset.labels[locale]; }
+          input.readOnly = true;
+        } else {
+          input.readOnly = false;
         }
       });
-      row.querySelectorAll('[data-feature-value]').forEach(function (input) {
-        var locale = input.getAttribute('data-feature-value');
-        if (preset.placeholders && preset.placeholders[locale]) {
-          input.placeholder = preset.placeholders[locale];
-        }
-      });
+      if (preset) {
+        row.querySelectorAll('[data-feature-value]').forEach(function (input) {
+          var locale = input.getAttribute('data-feature-value');
+          if (preset.placeholders && preset.placeholders[locale]) {
+            input.placeholder = preset.placeholders[locale];
+          }
+        });
+      }
     }
 
     if (target.matches && target.matches('[data-icon-select]')) {
@@ -1090,6 +1097,120 @@
       if (!catpop.hidden && !catpop.contains(event.target)) { closeCatpop(); }
     });
     window.addEventListener('resize', closeCatpop);
+  }
+
+  /* ------------------------------------------------- card feature popover */
+  var featpop = document.querySelector('[data-featpop]');
+  var featpopState = { card: null, anchor: null, featureId: 0, locale: 'en' };
+
+  function closeFeatpop() {
+    if (!featpop) { return; }
+    featpop.hidden = true;
+    featpopState.card = null;
+    featpopState.anchor = null;
+  }
+
+  function featpopPresetOptions(selectedId, locale) {
+    var select = featpop.querySelector('[data-featpop-preset]');
+    select.innerHTML = '';
+    var placeholder = document.createElement('option');
+    placeholder.value = '';
+    placeholder.textContent = featpop.getAttribute('data-preset-placeholder') || '—';
+    select.appendChild(placeholder);
+    Object.keys(presetsData).forEach(function (id) {
+      var preset = presetsData[id] || {};
+      var labels = preset.labels || {};
+      var option = document.createElement('option');
+      option.value = id;
+      option.textContent = labels[locale] || labels.en || ('#' + id);
+      if (Number(id) === Number(selectedId)) { option.selected = true; }
+      select.appendChild(option);
+    });
+  }
+
+  function refreshFeatpopIcon() {
+    var select = featpop.querySelector('[data-featpop-preset]');
+    var preview = featpop.querySelector('[data-featpop-icon]');
+    var preset = presetsData[select.value];
+    var icon = preset ? iconsData[preset.icon] : null;
+    if (preview) { preview.innerHTML = icon ? icon.svg : ''; }
+    var input = featpop.querySelector('[data-featpop-value]');
+    if (input && preset && preset.placeholders) {
+      input.placeholder = preset.placeholders[featpopState.locale] || preset.placeholders.en || '';
+    }
+  }
+
+  function openFeatpop(anchor) {
+    if (!featpop) { return; }
+    var card = anchor.closest('[data-inline-url]');
+    if (!card) { return; }
+    closeCatpop();
+    featpopState.card = card;
+    featpopState.anchor = anchor;
+    featpopState.featureId = Number(anchor.getAttribute('data-feature-id') || 0);
+    featpopState.locale = anchor.getAttribute('data-locale') || 'en';
+    featpopPresetOptions(anchor.getAttribute('data-preset-id') || '', featpopState.locale);
+    featpop.querySelector('[data-featpop-value]').value = anchor.getAttribute('data-value') || '';
+    var del = featpop.querySelector('[data-featpop-delete]');
+    if (del) { del.hidden = featpopState.featureId <= 0; }
+    refreshFeatpopIcon();
+
+    featpop.hidden = false;
+    var rect = anchor.getBoundingClientRect();
+    var width = 330;
+    var left = Math.max(8, Math.min(rect.left, window.innerWidth - width - 8));
+    var top = rect.bottom + 6;
+    if (top + 300 > window.innerHeight) { top = Math.max(8, rect.top - 306); }
+    featpop.style.left = left + 'px';
+    featpop.style.top = top + 'px';
+    var select = featpop.querySelector('[data-featpop-preset]');
+    if (select) { select.focus(); }
+  }
+
+  function saveFeatpop(action) {
+    var card = featpopState.card;
+    if (!card) { return; }
+    var payload = {
+      field: 'card_feature',
+      action: action,
+      feature_id: featpopState.featureId || undefined,
+      locale: featpopState.locale
+    };
+    if (action === 'upsert') {
+      payload.preset_id = featpop.querySelector('[data-featpop-preset]').value;
+      payload.value = featpop.querySelector('[data-featpop-value]').value;
+    }
+    postJson(card.getAttribute('data-inline-url'), payload)
+      .then(function (data) {
+        closeFeatpop();
+        refreshProductFace(card);
+        toast(data.message || 'Saved.');
+      })
+      .catch(function (error) { toast(error.message || 'Could not save.', true); });
+  }
+
+  if (featpop) {
+    featpop.querySelector('[data-featpop-preset]').addEventListener('change', refreshFeatpopIcon);
+    featpop.querySelector('[data-featpop-value]').addEventListener('keydown', function (event) {
+      if (event.key === 'Enter') { event.preventDefault(); saveFeatpop('upsert'); }
+    });
+    document.addEventListener('click', function (event) {
+      var anchor = event.target.closest ? event.target.closest('[data-feature-chip], [data-feature-add]') : null;
+      if (anchor) {
+        event.preventDefault();
+        if (!featpop.hidden && featpopState.anchor === anchor) { closeFeatpop(); return; }
+        openFeatpop(anchor);
+        return;
+      }
+      if (event.target.closest && event.target.closest('[data-featpop-close]')) { closeFeatpop(); return; }
+      if (event.target.closest && event.target.closest('[data-featpop-save]')) { saveFeatpop('upsert'); return; }
+      if (event.target.closest && event.target.closest('[data-featpop-delete]')) { saveFeatpop('delete'); return; }
+      if (!featpop.hidden && !featpop.contains(event.target)) { closeFeatpop(); }
+    });
+    document.addEventListener('keydown', function (event) {
+      if (event.key === 'Escape' && !featpop.hidden) { closeFeatpop(); }
+    });
+    window.addEventListener('resize', closeFeatpop);
   }
 
   /* ------------------------------------------------------- product browser */

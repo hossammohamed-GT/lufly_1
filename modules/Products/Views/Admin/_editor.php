@@ -123,7 +123,7 @@ $featureRow = static function (string $idx, array $row) use ($locales, $presets,
         }
     }
     ob_start(); ?>
-    <div class="rep-row" data-repeater-row data-feature-row>
+    <div class="rep-row<?= $selectedPreset > 0 ? ' is-preset' : '' ?>" data-repeater-row data-feature-row>
         <input type="hidden" name="features[<?= e($idx) ?>][id]" value="<?= (int) ($row['id'] ?? 0) ?>">
         <div class="rep-row-grid">
             <label class="field"><span class="field-label"><?= e(trans('products.feature_preset')) ?></span>
@@ -148,7 +148,7 @@ $featureRow = static function (string $idx, array $row) use ($locales, $presets,
                 <div class="rep-locale">
                     <span class="rep-locale-tag"><?= e(strtoupper($locale)) ?></span>
                     <input class="input" type="text" maxlength="120" placeholder="<?= e(trans('products.feature_label')) ?>"
-                           name="features[<?= e($idx) ?>][label][<?= e($locale) ?>]" value="<?= e((string) ($tr['label'] ?? '')) ?>" data-feature-label="<?= e($locale) ?>">
+                           name="features[<?= e($idx) ?>][label][<?= e($locale) ?>]" value="<?= e((string) ($tr['label'] ?? '')) ?>" data-feature-label="<?= e($locale) ?>"<?= $selectedPreset > 0 ? ' readonly' : '' ?>>
                     <input class="input" type="text" maxlength="255" placeholder="<?= e(trans('products.feature_value')) ?>"
                            name="features[<?= e($idx) ?>][value][<?= e($locale) ?>]" value="<?= e((string) ($tr['value'] ?? '')) ?>" data-feature-value="<?= e($locale) ?>">
                 </div>

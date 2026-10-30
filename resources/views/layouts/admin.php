@@ -132,6 +132,30 @@ try {
     </div>
 </div>
 
+<?php /* Card feature popover: pick a ready-made preset, type only the value. */ ?>
+<div class="adm-featpop" data-featpop hidden role="dialog" aria-label="<?= e(trans('products.feature_pick_title')) ?>"
+     data-preset-placeholder="<?= e(trans('products.feature_pick_placeholder')) ?>">
+    <div class="adm-featpop-head">
+        <strong><?= e(trans('products.feature_pick_title')) ?></strong>
+        <button type="button" class="btn btn-sm btn-ghost" data-featpop-close>×</button>
+    </div>
+    <div class="adm-featpop-body">
+        <label class="field"><span class="field-label"><?= e(trans('products.feature_preset')) ?></span>
+            <span class="icon-select-wrap">
+                <select class="input" data-featpop-preset></select>
+                <span class="icon-preview" data-featpop-icon></span>
+            </span></label>
+        <label class="field"><span class="field-label"><?= e(trans('products.feature_value')) ?></span>
+            <input class="input" type="text" maxlength="255" data-featpop-value></label>
+    </div>
+    <div class="adm-featpop-foot">
+        <button type="button" class="btn btn-sm btn-danger" data-featpop-delete><?= e(trans('common.delete')) ?></button>
+        <span class="adm-featpop-spacer"></span>
+        <button type="button" class="btn btn-sm btn-ghost" data-featpop-close><?= e(trans('common.cancel')) ?></button>
+        <button type="button" class="btn btn-sm btn-secondary" data-featpop-save><?= e(trans('common.save')) ?></button>
+    </div>
+</div>
+
 <?php /* Product full editor: one centered modal, filled per product via AJAX. */ ?>
 <div class="adm-editor-modal" data-editor-modal hidden role="dialog" aria-modal="true" aria-label="<?= e(trans('products.expand_editor')) ?>">
     <div class="adm-editor-backdrop" data-editor-close></div>

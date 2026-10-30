@@ -7,7 +7,7 @@ use Modules\Products\Services\ProductVisibility;
 /** @var array<int, array<string, mixed>> $payloads */
 /** @var array<int, array<string, mixed>> $cards */
 /** @var array<int, array{photo: bool, drawing: bool, ready: bool}> $mediaState */
-/** @var array<int, array<int, array{id: int, icon: string, label: string, value: string}>> $chips */
+/** @var array<int, array<int, array{id: int, preset_id: int, icon: string, label: string, value: string, value_raw: string}>> $chips */
 /** @var array<int, array{id: int, value: string}> $finishSpecs */
 /** @var array<int, array{attachment_id: int, path: string, section: string}|null> $covers */
 /** @var array<int, array<int, array{id: int, model_code: string, name: string, finish_key: string, finish_label: string}>> $members */
@@ -112,17 +112,25 @@ $fmtPrice = static fn (float $value): string => rtrim(rtrim(number_format($value
                 </button>
             </div>
 
-            <?php if ($productChips !== []): ?>
-                <div class="adm-chips">
-                    <?php foreach ($productChips as $chip): ?>
-                        <span class="adm-chip">
-                            <span class="adm-chip-icon"><?= ProductFeatureIconCatalog::svg($chip['icon']) ?></span>
-                            <span class="adm-chip-label" data-inline="feature_label" data-feature-id="<?= (int) $chip['id'] ?>" data-locale="<?= e($locale) ?>" tabindex="0"><?= e($chip['label']) ?></span>
-                            <strong data-inline="feature_value" data-feature-id="<?= (int) $chip['id'] ?>" data-locale="<?= e($locale) ?>" tabindex="0"><?= e($chip['value']) ?></strong>
-                        </span>
-                    <?php endforeach; ?>
-                </div>
-            <?php endif; ?>
+            <div class="adm-chips">
+                <?php foreach ($productChips as $chip): ?>
+                    <button type="button" class="adm-chip" data-feature-chip
+                            data-feature-id="<?= (int) $chip['id'] ?>"
+                            data-preset-id="<?= (int) ($chip['preset_id'] ?? 0) ?>"
+                            data-locale="<?= e($locale) ?>"
+                            data-value="<?= e((string) ($chip['value_raw'] ?? $chip['value'])) ?>"
+                            title="<?= e(trans('products.feature_pick_title')) ?>">
+                        <span class="adm-chip-icon"><?= ProductFeatureIconCatalog::svg($chip['icon']) ?></span>
+                        <span class="adm-chip-label"><?= e($chip['label']) ?></span>
+                        <strong><?= e($chip['value']) ?></strong>
+                    </button>
+                <?php endforeach; ?>
+                <?php if (count($productChips) < 6): ?>
+                    <button type="button" class="adm-chip adm-chip-add" data-feature-add
+                            data-locale="<?= e($locale) ?>"
+                            title="<?= e(trans('products.feature_add')) ?>">+ <?= e(trans('products.feature_add')) ?></button>
+                <?php endif; ?>
+            </div>
 
             <div class="adm-finish-row">
                 <span class="adm-swatches" data-finishes>

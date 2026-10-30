@@ -425,6 +425,100 @@ class ProductService
                     }
                     return ['value' => $text];
 
+                case 'card_feature':
+                    /* Card-face feature editor: label + icon always come from
+                       a ready-made preset — only the value is typed. */
+                    $action = (string) ($payload['action'] ?? 'upsert');
+                    $featureId = (int) ($payload['feature_id'] ?? 0);
+                    $feature = $featureId > 0 ? $connection->selectOne(
+                        'SELECT id FROM product_card_features WHERE id = ? AND product_id = ? LIMIT 1',
+                        [$featureId, $id],
+                    ) : null;
+
+                    if ($action === 'delete') {
+                        if ($feature === null) {
+                            throw new InvalidArgumentException(trans('products.inline_invalid_value'));
+                        }
+                        $connection->affect('DELETE FROM product_card_feature_translations WHERE feature_id = ?', [$featureId]);
+                        $connection->affect('DELETE FROM product_card_features WHERE id = ?', [$featureId]);
+                        foreach (array_values($connection->select(
+                            'SELECT id FROM product_card_features WHERE product_id = ? ORDER BY sort_order ASC, id ASC',
+                            [$id],
+                        )) as $index => $remaining) {
+                            $connection->table('product_card_features')->where('id', (int) $remaining['id'])
+                                ->update(['sort_order' => $index + 1]);
+                        }
+                        return ['value' => 'deleted', 'feature_id' => $featureId];
+                    }
+
+                    $presetId = (int) ($payload['preset_id'] ?? 0);
+                    $preset = null;
+                    foreach ($this->featurePresets() as $candidate) {
+                        if ((int) $candidate['id'] === $presetId) {
+                            $preset = $candidate;
+                            break;
+                        }
+                    }
+                    if ($preset === null) {
+                        throw new InvalidArgumentException(trans('products.feature_preset_required'));
+                    }
+                    $text = trim((string) $value);
+                    if (mb_strlen($text) > 255) {
+                        throw new InvalidArgumentException(trans('products.inline_too_long'));
+                    }
+                    $icon = ProductFeatureIconCatalog::normalize((string) $preset['icon_key']);
+
+                    if ($feature !== null) {
+                        $connection->table('product_card_features')->where('id', $featureId)->update([
+                            'preset_id' => $presetId,
+                            'icon_key' => $icon,
+                            'updated_at' => $now,
+                        ]);
+                    } else {
+                        $sizes = $connection->selectOne(
+                            'SELECT COUNT(*) AS total, COALESCE(MAX(sort_order), 0) AS max_sort FROM product_card_features WHERE product_id = ?',
+                            [$id],
+                        );
+                        if ((int) ($sizes['total'] ?? 0) >= 6) {
+                            throw new InvalidArgumentException(trans('products.features_count'));
+                        }
+                        $featureId = (int) $connection->table('product_card_features')->insert([
+                            'product_id' => $id,
+                            'preset_id' => $presetId,
+                            'icon_key' => $icon,
+                            'sort_order' => (int) ($sizes['max_sort'] ?? 0) + 1,
+                            'created_at' => $now,
+                            'updated_at' => $now,
+                        ]);
+                    }
+
+                    foreach ($this->locales() as $loc) {
+                        $label = (string) ($preset['translations'][$loc]['label'] ?? $preset['translations'][$fallback]['label'] ?? '');
+                        $existing = $connection->selectOne(
+                            'SELECT id, feature_value FROM product_card_feature_translations WHERE feature_id = ? AND locale = ? LIMIT 1',
+                            [$featureId, $loc],
+                        );
+                        $rowValue = $loc === $locale ? $text : (string) ($existing['feature_value'] ?? '');
+                        if ($label === '' && $rowValue === '') {
+                            if ($existing !== null) {
+                                $connection->affect('DELETE FROM product_card_feature_translations WHERE id = ?', [(int) $existing['id']]);
+                            }
+                            continue;
+                        }
+                        if ($existing !== null) {
+                            $connection->table('product_card_feature_translations')->where('id', (int) $existing['id'])
+                                ->update(['label' => $label, 'feature_value' => $rowValue]);
+                        } else {
+                            $connection->table('product_card_feature_translations')->insert([
+                                'feature_id' => $featureId,
+                                'locale' => $loc,
+                                'label' => $label,
+                                'feature_value' => $rowValue,
+                            ]);
+                        }
+                    }
+                    return ['value' => $text, 'feature_id' => $featureId, 'preset_id' => $presetId];
+
                 case 'spec_value':
                     $specId = (int) ($payload['spec_id'] ?? 0);
                     $spec = $specId > 0 ? $connection->selectOne(
@@ -1178,9 +1272,12 @@ class ProductService
             }
             $out[(int) $feature['product_id']][] = [
                 'id' => (int) $feature['id'],
+                'preset_id' => (int) ($feature['preset_id'] ?? 0),
                 'icon' => ProductFeatureIconCatalog::normalize($icon),
                 'label' => $label,
                 'value' => $value,
+                /* value before the preset-placeholder backfill, for editing */
+                'value_raw' => trim((string) ($chosen['value'] ?? '')),
             ];
         }
 
@@ -1559,7 +1656,10 @@ class ProductService
             ];
         }
 
-        if ($normalized !== [] && (count($normalized) < 4 || count($normalized) > 6)) {
+        /* Any count from 0 to 6 may be saved while a product is being
+           built up; below 4 it simply counts as incomplete and the
+           storefront presenter backfills the card. */
+        if (count($normalized) > 6) {
             throw new InvalidArgumentException(trans('products.features_count'));
         }
 
@@ -1572,7 +1672,8 @@ class ProductService
         foreach (array_values($normalized) as $index => $row) {
             $preset = $presets[$row['preset_id']] ?? null;
             $icon = $row['icon_key'];
-            if ($icon === '' && $preset !== null) {
+            if ($preset !== null) {
+                /* A preset feature always carries the preset's own icon. */
                 $icon = (string) $preset['icon_key'];
             }
             $icon = ProductFeatureIconCatalog::normalize($icon);
@@ -1606,8 +1707,10 @@ class ProductService
 
             foreach ($locales as $locale) {
                 $label = $row['label'][$locale] ?? '';
-                if ($label === '' && $preset !== null) {
-                    $label = (string) ($preset['translations'][$locale]['label'] ?? $preset['translations'][$fallback]['label'] ?? '');
+                if ($preset !== null) {
+                    /* Preset labels are never typed by hand — they always
+                       come from the preset's own translations. */
+                    $label = (string) ($preset['translations'][$locale]['label'] ?? $preset['translations'][$fallback]['label'] ?? $label);
                 }
                 $value = $row['value'][$locale] ?? '';
                 $existing = $connection->selectOne(
