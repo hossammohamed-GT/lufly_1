@@ -1798,6 +1798,28 @@
     });
   }
 
+  /* ------------------------------------------------------- add a colour */
+  document.addEventListener('click', function (event) {
+    var btn = event.target.closest ? event.target.closest('[data-add-color]') : null;
+    if (!btn) { return; }
+    if (!window.confirm(btn.getAttribute('data-confirm') || 'Are you sure?')) { return; }
+    var card = btn.closest('[data-product-card]');
+    btn.disabled = true;
+    postJson(btn.getAttribute('data-url'), {})
+      .then(function (data) {
+        toast(data.message || 'Saved.');
+        if (btn.hasAttribute('data-reload')) {
+          window.setTimeout(function () { window.location.reload(); }, 500);
+          return;
+        }
+        if (card) { refreshProductFace(card); }
+        var fresh = data.html ? parseFragment(data.html) : null;
+        if (fresh) { openProductEditor(fresh, 'media'); }
+      })
+      .catch(function (error) { toast(error.message || 'Could not add the colour.', true); })
+      .finally(function () { btn.disabled = false; });
+  });
+
   /* ------------------------------------------------------- product browser */
   function setupProductsBrowser() {
     var root = document.querySelector('[data-products-browser]');

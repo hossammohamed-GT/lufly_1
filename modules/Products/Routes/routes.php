@@ -85,6 +85,11 @@ return function (Router $router): void {
             ->where('id', '\d+')
             ->name('toggle-featured');
 
+        $router->post('/{id}/add-color', [ProductController::class, 'adminAddColor'])
+            ->middleware('permission:products.manage')
+            ->where('id', '\d+')
+            ->name('add-color');
+
         /* product images: photos / technical drawings / installed shots */
         $router->post('/{id}/media', [ProductMediaController::class, 'store'])
             ->middleware('permission:products.manage')

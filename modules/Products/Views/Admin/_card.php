@@ -108,9 +108,9 @@ $fmtPrice = static fn (float $value): string => rtrim(rtrim(number_format($value
                 </span>
             </div>
 
-            <?php if ($familyMembers !== []): ?>
-                <div class="adm-family">
-                    <span class="adm-family-label"><?= e(trans('products.family_label')) ?></span>
+            <div class="adm-family">
+                <span class="adm-family-label"><?= e(trans('products.family_label')) ?></span>
+                <?php if ($familyMembers !== []): ?>
                     <span class="adm-family-dots">
                         <?php foreach ($familyMembers as $member): ?>
                             <?php
@@ -123,8 +123,12 @@ $fmtPrice = static fn (float $value): string => rtrim(rtrim(number_format($value
                         <?php endforeach; ?>
                     </span>
                     <span class="adm-family-count"><?= count($familyMembers) ?></span>
-                </div>
-            <?php endif; ?>
+                <?php endif; ?>
+                <button type="button" class="btn btn-sm btn-ghost adm-family-add" data-add-color
+                        data-url="<?= e(route('admin.products.add-color', ['id' => $pid])) ?>"
+                        data-confirm="<?= e(trans('products.family_add_confirm')) ?>"
+                        title="<?= e(trans('products.family_add')) ?>">+ <?= e(trans('products.family_add')) ?></button>
+            </div>
 
             <div class="adm-field">
                 <span><?= e(trans('common.category')) ?></span>

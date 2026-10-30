@@ -839,3 +839,6 @@ button.adm-chip:hover { border-color: var(--ds-primary); }
   .adm-wizard-panel { width: 100%; height: 100%; max-height: none; border-radius: 0; }
   .adm-wizard-grid { grid-template-columns: 1fr; }
 }
+
+/* add-colour action sits at the end of the family row */
+.adm-family-add { margin-inline-start: auto; }

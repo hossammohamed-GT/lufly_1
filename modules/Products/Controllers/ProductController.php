@@ -397,6 +397,33 @@ class ProductController extends Controller
         return $this->json(['success' => true, 'id' => (int) $product->id, 'html' => $html]);
     }
 
+    /** Copy a product as a new colour of its family; the copy's card comes back. */
+    public function adminAddColor(int $id): JsonResponse
+    {
+        try {
+            $clone = $this->products->cloneAsColorVariant($id);
+        } catch (InvalidArgumentException $e) {
+            return $this->json(['success' => false, 'message' => $e->getMessage()], 422);
+        }
+
+        $locale = (string) config('localization.fallback', 'en');
+        $grid = ['ids' => [(int) $clone->id], 'families' => []];
+        $html = app(\Core\View\View::class)->render('products::Admin._card', [
+            ...$this->cardData($grid, $locale),
+            'product' => $clone,
+            'categoryPaths' => $this->categoryPaths(),
+            'mode' => 'index',
+            'locale' => $locale,
+        ]);
+
+        return $this->json([
+            'success' => true,
+            'message' => trans('products.family_added'),
+            'id' => (int) $clone->id,
+            'html' => $html,
+        ]);
+    }
+
     public function adminInline(Request $request, int $id): JsonResponse
     {
         $payload = $request->jsonPayload() ?? $request->all();

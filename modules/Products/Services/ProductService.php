@@ -1019,6 +1019,154 @@ class ProductService
         );
     }
 
+    /**
+     * Copy a product as a new colour of the same family: everything travels
+     * (texts, price/variants, specifications, card features, dimensions and
+     * the technical drawings — same shape, new colour) except the product
+     * photos and the Finish spec, which are exactly what make it a different
+     * colour. The copy starts as a draft linked into the colour family.
+     */
+    public function cloneAsColorVariant(int $sourceId): Product
+    {
+        $source = $this->find($sourceId);
+        $connection = Product::query()->connection();
+        $fallback = (string) config('localization.fallback', 'en');
+        $sourceCode = trim((string) ($source->model_code ?? ''));
+
+        /* next free "{code}-N" model code */
+        $familyIds = array_values(array_map('intval', app(ProductColorFamilyService::class)->familyOf($sourceId)));
+        $n = max(2, count($familyIds) + 1);
+        do {
+            $code = mb_substr($sourceCode . '-' . $n, 0, 100);
+            $n++;
+            $taken = $connection->selectOne(
+                'SELECT id FROM products WHERE model_code = ? AND deleted_at IS NULL LIMIT 1',
+                [$code],
+            );
+        } while ($taken !== null);
+
+        $uniqueSku = static function (string $candidate) use ($connection): string {
+            $base = mb_substr($candidate, 0, 100);
+            $sku = $base;
+            $i = 2;
+            while ($connection->selectOne('SELECT id FROM product_variants WHERE sku = ? LIMIT 1', [$sku]) !== null) {
+                $sku = mb_substr($base, 0, 96) . '-' . $i;
+                $i++;
+            }
+
+            return $sku;
+        };
+
+        $variants = [];
+        foreach ($source->variants() as $variant) {
+            $sku = trim((string) ($variant['sku'] ?? ''));
+            if ($sku === '' || $sku === $sourceCode) {
+                $sku = $code;
+            } elseif ($sourceCode !== '' && str_starts_with($sku, $sourceCode)) {
+                $sku = $code . substr($sku, strlen($sourceCode));
+            }
+            $variants[] = [
+                'id' => 0,
+                'sku' => $uniqueSku($sku),
+                'variant_name' => $variant['variant_name'] ?? null,
+                'price' => (float) ($variant['price'] ?? 0),
+                'stock_status' => (string) ($variant['stock_status'] ?? 'in_stock'),
+                'status' => (string) ($variant['status'] ?? 'active'),
+                'sort_order' => (int) ($variant['sort_order'] ?? 0),
+            ];
+        }
+
+        $specs = [];
+        foreach ($source->specs() as $spec) {
+            if (mb_strtolower(trim((string) ($spec['spec_key'] ?? ''))) === 'finish') {
+                continue; /* the new colour gets its own finish */
+            }
+            $keys = [];
+            $values = [];
+            foreach ($this->locales() as $locale) {
+                $tr = $spec['translations'][$locale] ?? null;
+                $keys[$locale] = (string) ($tr['spec_key'] ?? ($locale === $fallback ? (string) $spec['spec_key'] : ''));
+                $values[$locale] = (string) ($tr['spec_value'] ?? ($locale === $fallback ? (string) $spec['spec_value'] : ''));
+            }
+            $specs[] = ['id' => 0, 'key' => $keys, 'value' => $values, 'unit' => $spec['unit'] ?? null];
+        }
+
+        $features = [];
+        foreach ($this->cardFeaturesRaw($sourceId) as $feature) {
+            $labels = [];
+            $values = [];
+            foreach (($feature['translations'] ?? []) as $locale => $tr) {
+                $labels[$locale] = (string) ($tr['label'] ?? '');
+                $values[$locale] = (string) ($tr['value'] ?? '');
+            }
+            $features[] = [
+                'id' => 0,
+                'preset_id' => (int) ($feature['preset_id'] ?? 0),
+                'icon_key' => (string) ($feature['icon_key'] ?? ''),
+                'label' => $labels,
+                'value' => $values,
+            ];
+        }
+
+        $translations = [];
+        foreach ($source->translations() as $locale => $row) {
+            $translations[$locale] = [
+                'name' => (string) ($row['name'] ?? ''),
+                'short_description' => (string) ($row['short_description'] ?? ''),
+                'description' => (string) ($row['description'] ?? ''),
+            ];
+        }
+        if (($translations[$fallback]['name'] ?? '') === '') {
+            $translations[$fallback]['name'] = $code;
+        }
+
+        $extra = [
+            'specs' => $specs,
+            'features' => array_slice($features, 0, 6),
+            'relations' => ['color_variant_ids' => $familyIds],
+        ];
+        if ($variants !== []) {
+            $extra['variants'] = $variants;
+        }
+        $dimensions = $source->dimensions();
+        if ($dimensions !== null) {
+            $extra['dimensions'] = $dimensions;
+        }
+
+        $categoryId = isset($source->category_id) ? (int) $source->category_id : 0;
+        $collectionId = isset($source->collection_id) ? (int) $source->collection_id : 0;
+        $brandId = isset($source->brand_id) ? (int) $source->brand_id : 0;
+
+        $clone = $this->create(
+            [
+                'model_code' => $code,
+                'slug' => '',
+                'category_id' => $categoryId > 0 ? $categoryId : null,
+                'collection_id' => $collectionId > 0 ? $collectionId : null,
+                'brand_id' => $brandId > 0 ? $brandId : null,
+                'status' => 'draft',
+                'is_featured' => '0',
+                'sort_order' => 0,
+            ],
+            $translations,
+            $extra,
+        );
+        $cloneId = (int) $clone->id;
+
+        /* drawings + installed shots show the same shape — share the files */
+        $mediaService = app(ProductMediaService::class);
+        $bySection = $source->mediaBySection();
+        foreach (['drawings' => 'drawing', 'situ' => 'situ'] as $section => $type) {
+            foreach ($bySection[$section] ?? [] as $row) {
+                $mediaService->attach((int) ($row['id'] ?? 0), $cloneId, $type);
+            }
+        }
+
+        Product::clearStaticCaches();
+
+        return $this->find($cloneId);
+    }
+
     private function hasIsNewColumn(): bool
     {
         static $has = null;
