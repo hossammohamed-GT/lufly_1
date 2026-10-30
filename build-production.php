@@ -48,6 +48,14 @@ $write = static function (string $relative, string $contents, bool $minifyPhp = 
             $text = is_array($token) ? $token[1] : $token;
             if (is_array($token) && $token[0] === T_INLINE_HTML) {
                 $text = preg_replace('/<!--(?!\[if|<!)[\s\S]*?-->/', '', $text) ?? $text;
+                $text = preg_replace_callback(
+                    '/<(script|style)\\b([^>]*)>([\\s\\S]*?)<\\/\\1>/i',
+                    static function (array $match): string {
+                        $body = preg_replace('/\\/\\*[\\s\\S]*?\\*\\//', '', $match[3]) ?? $match[3];
+                        return '<' . $match[1] . $match[2] . '>' . $body . '</' . $match[1] . '>';
+                    },
+                    $text,
+                ) ?? $text;
             }
             $contents .= $text;
         }
