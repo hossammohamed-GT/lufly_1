@@ -41,6 +41,23 @@ The complete `database/lufly.sqlite` is included for local development; no SQL i
 - `pdo_sqlite` for the included local database, or `pdo_mysql` for a MySQL server installation
 - No Composer, no Node, no build step — assets are plain CSS/JS
 
+## Homepage agent map
+
+The homepage includes an interactive OpenStreetMap connecting the Türkiye
+factory with authorized agents in the UAE, Saudi Arabia, Oman, Qatar, Bahrain,
+Egypt, Jordan, and Czechia. Visitors can
+pan and zoom the street map, select a location marker, and use the reset
+control to show all locations. Map tiles load from OpenStreetMap and include
+the required attribution. Edit
+`config/home-agents.php` to update an agent's display name, city, office
+address, regional coverage, contact person, phone, e-mail, description, or map
+coordinates. Phone and e-mail details are optional and only appear when
+supplied. Section text and country names are translated in
+`resources/lang/{en,tr,cs}/home.php`.
+The Leaflet map library is bundled locally with its BSD 2-Clause license in
+`frontend/vendor/leaflet/`; basemap tiles are supplied by
+[OpenStreetMap](https://www.openstreetmap.org/copyright).
+
 ## Where things live
 
 ```

@@ -22,5 +22,6 @@ $component = static fn (string $name, array $data = []): string => $view->render
 <?= $component('rituals') ?>
 <!-- <?= $component('central-vacuum') ?> -->
 <?= $component('masterpieces', ['featuredProducts' => $featuredProducts]) ?>
+<?= $component('agents-map') ?>
 <?= $component('corporate') ?>
 </div>

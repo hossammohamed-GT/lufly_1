@@ -1,0 +1,106 @@
+<?php
+
+declare(strict_types=1);
+
+return [
+    /*
+     * Homepage map locations. Update names and contact details as agents are
+     * appointed. Locations use geographic longitude and latitude.
+     */
+    'factory' => [
+        'country' => 'turkey',
+        'latitude' => 37.0662,
+        'longitude' => 37.3833,
+    ],
+    'agents' => [
+        'uae' => [
+            'country' => 'uae',
+            'latitude' => 25.2048,
+            'longitude' => 55.2708,
+            'name' => 'Lufly',
+            'phone' => '+971502112139',
+            'email' => 'Info@Lufly.tr',
+            'contact_person' => 'Abdullah yasser',
+            'description' => '',
+        ],
+        'saudi_arabia' => [
+            'country' => 'saudi_arabia',
+            'latitude' => 24.7136,
+            'longitude' => 46.6753,
+            'name' => 'Lufly',
+            'phone' => '+971502112139',
+            'email' => 'Info@Lufly.tr',
+            'contact_person' => 'Abdullah yasser',
+            'description' => '',
+        ],
+        'oman' => [
+            'country' => 'oman',
+            'latitude' => 23.588,
+            'longitude' => 58.3829,
+            'name' => 'Lufly',
+            'phone' => '+971502112139',
+            'email' => 'Info@Lufly.tr',
+            'contact_person' => 'Abdullah yasser',
+            'description' => '',
+        ],
+        'qatar' => [
+            'country' => 'qatar',
+            'latitude' => 25.2854,
+            'longitude' => 51.531,
+            'name' => 'Lufly',
+            'phone' => '+971502112139',
+            'email' => 'Info@Lufly.tr',
+            'contact_person' => 'Abdullah yasser',
+            'description' => '',
+        ],
+        'bahrain' => [
+            'country' => 'bahrain',
+            'latitude' => 26.2285,
+            'longitude' => 50.586,
+            'name' => 'Lufly',
+            'phone' => '+971502112139',
+            'email' => 'Info@Lufly.tr',
+            'contact_person' => 'Abdullah yasser',
+            'description' => '',
+        ],
+        'egypt' => [
+            'country' => 'egypt',
+            'latitude' => 30.0444,
+            'longitude' => 31.2357,
+            'name' => 'Global Trading',
+            'city' => '',
+            'address' => '',
+            'phone' => '+971 58 993 0000',
+            'email' => 'Info@globaltradinguae.com',
+            'coverage' => '',
+            'contact_person' => 'yasser Alssiri',
+            'description' => '',
+        ],
+        'jordan' => [
+            'country' => 'jordan',
+            'latitude' => 31.9539,
+            'longitude' => 35.9106,
+            'name' => 'Al Maeen engineering',
+            'city' => '',
+            'address' => '',
+            'phone' => '+962 7 9911 1114',
+            'email' => '',
+            'coverage' => '',
+            'contact_person' => '',
+            'description' => '',
+        ],
+        'czechia' => [
+            'country' => 'czechia',
+            'latitude' => 50.0755,
+            'longitude' => 14.4378,
+            'name' => '',
+            'city' => '',
+            'address' => '',
+            'phone' => '',
+            'email' => '',
+            'coverage' => '',
+            'contact_person' => '',
+            'description' => '',
+        ],
+    ],
+];

@@ -66,6 +66,37 @@ foreach (['en', 'tr', 'cs'] as $catalogLocale) {
     $assert(str_contains($catalogTranslations, "'catalog_dock_search'") && str_contains($catalogTranslations, "'catalog_category_prompt'") && str_contains($catalogTranslations, "'catalog_category_back_to'") && str_contains($navbarTranslations, "'catalog_show_navigation'") && str_contains($navbarTranslations, "'catalog_show_filters'"), "Catalog dock, category picker, and navbar toggle are localized for {$catalogLocale}");
 }
 
+$homeView = (string) file_get_contents($root . '/resources/views/home/index.php');
+$agentView = (string) file_get_contents($root . '/resources/views/home/agents-map/agents-map.php');
+$agentConfig = require $root . '/config/home-agents.php';
+$agentScript = (string) file_get_contents($root . '/frontend/home/agents-map/agents-map.js');
+$agentStyles = (string) file_get_contents($root . '/frontend/home/agents-map/agents-map.css');
+$leafletStyles = (string) file_get_contents($root . '/frontend/vendor/leaflet/leaflet.css');
+$leafletLicense = (string) file_get_contents($root . '/frontend/vendor/leaflet/LICENSE');
+$assert(strpos($homeView, "component('agents-map')") < strpos($homeView, "component('corporate')"), 'Homepage agent map appears directly before the closing corporate section');
+$assert(array_keys($agentConfig['agents'] ?? []) === ['uae', 'saudi_arabia', 'oman', 'qatar', 'bahrain', 'egypt', 'jordan', 'czechia'] && str_contains($agentView, 'data-agent-pin') && str_contains($agentView, 'frontend/vendor/leaflet/leaflet.js'), 'Agent map connects the factory with configurable UAE, Saudi Arabia, Oman, Qatar, Bahrain, Egypt, Jordan, and Czechia locations');
+$gulfAgentsHaveOnlyRequestedContacts = true;
+foreach (['uae', 'saudi_arabia', 'oman', 'qatar', 'bahrain'] as $gulfAgent) {
+    $gulf = $agentConfig['agents'][$gulfAgent] ?? [];
+    $gulfAgentsHaveOnlyRequestedContacts = $gulfAgentsHaveOnlyRequestedContacts
+        && ($gulf['email'] ?? '') === 'Info@Lufly.tr'
+        && ($gulf['phone'] ?? '') === '+971502112139'
+        && ($gulf['contact_person'] ?? '') === 'Abdullah yasser'
+        && ($gulf['city'] ?? '') === ''
+        && ($gulf['address'] ?? '') === ''
+        && ($gulf['coverage'] ?? '') === '';
+}
+$assert($gulfAgentsHaveOnlyRequestedContacts && $agentConfig['agents']['egypt']['email'] === 'Info@globaltradinguae.com' && $agentConfig['agents']['jordan']['latitude'] === 31.9539 && str_contains($agentView, 'agents_coverage_label') && str_contains($agentView, 'agents_contact_person_label') && str_contains($agentView, 'elseif (!$hasContactDetails)'), 'Gulf representative cards show only the requested contact details');
+$assert(isset($agentConfig['factory']['latitude'], $agentConfig['factory']['longitude']) && str_contains($agentScript, 'https://tile.openstreetmap.org/{z}/{x}/{y}.png') && str_contains($agentScript, 'map.fitBounds'), 'Map uses geographic coordinates and live OpenStreetMap tiles with a fit-all-locations control');
+$assert(str_contains($agentScript, 'map.invalidateSize({ pan: false })') && str_contains($agentScript, 'window.requestAnimationFrame(() => fitLocations(false))'), 'Map fits every location after its rendered dimensions are available');
+$assert(str_contains($leafletStyles, '.leaflet-container') && str_contains($leafletLicense, 'BSD 2-Clause License') && is_file($root . '/frontend/vendor/leaflet/leaflet.js'), 'Leaflet is bundled locally with its required license');
+$assert(str_contains($agentScript, 'marker.on("mouseover"') && str_contains($agentScript, 'marker.on("focus"') && str_contains($agentScript, 'marker.on("click"'), 'Agent details are interactive by pointer, keyboard, and click');
+$assert(str_contains($agentStyles, '.agents-map-marker-label') && str_contains($agentStyles, '@media (prefers-reduced-motion: reduce)'), 'Map labels remain visible and route animation respects reduced-motion preferences');
+foreach (['en', 'tr', 'cs'] as $homeLocale) {
+    $homeTranslations = (string) file_get_contents($root . "/resources/lang/{$homeLocale}/home.php");
+    $assert(str_contains($homeTranslations, "'agents_title'") && str_contains($homeTranslations, "'agents_country_uae'") && str_contains($homeTranslations, "'agents_country_saudi_arabia'") && str_contains($homeTranslations, "'agents_country_oman'") && str_contains($homeTranslations, "'agents_country_qatar'") && str_contains($homeTranslations, "'agents_country_bahrain'") && str_contains($homeTranslations, "'agents_country_egypt'") && str_contains($homeTranslations, "'agents_country_jordan'") && str_contains($homeTranslations, "'agents_country_czechia'") && str_contains($homeTranslations, "'agents_coverage_label'") && str_contains($homeTranslations, "'agents_contact_person_label'") && str_contains($homeTranslations, "'agents_map_reset'") && str_contains($homeTranslations, "'agents_map_error'"), "Agent map is localized for {$homeLocale}");
+}
+
 $databaseDump = (string) file_get_contents($root . '/lufly-database.sql');
 $exportCommand = (string) file_get_contents($root . '/core/Console/Commands/ExportMysqlCommand.php');
 $assert(!str_contains(strtoupper($databaseDump), 'CREATE DATABASE') && preg_match('/^USE\s+/im', $databaseDump) === 0, 'Canonical MySQL dump imports into the selected database only');
