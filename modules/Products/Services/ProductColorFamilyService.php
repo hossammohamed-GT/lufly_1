@@ -334,7 +334,7 @@ final class ProductColorFamilyService
         $keys = [
             'id', 'slug', 'url', 'name', 'display_name', 'sku', 'model_code',
             'description', 'short_description', 'image', 'card_slides',
-            'price', 'currency', 'status', 'is_featured', 'card', 'finish',
+            'price', 'currency', 'status', 'is_featured', 'is_new', 'card', 'finish',
             'is_saved', 'in_box',
         ];
 

@@ -413,6 +413,12 @@ $complementaryProducts = is_array($complementaryProducts ?? null) ? $complementa
                                 <span><?= e(trans('products.pdp_featured')) ?></span>
                             </span>
                         <?php endif; ?>
+
+                        <?php if (!empty($card['is_new'])): ?>
+                            <span class="pdp-featured-badge pdp-code-chip is-new">
+                                <span><?= e((string) (($card['new_label'] ?? '') !== '' ? $card['new_label'] : trans('common.new'))) ?></span>
+                            </span>
+                        <?php endif; ?>
                     </div>
 
                     <div class="pdp-fav-corner">

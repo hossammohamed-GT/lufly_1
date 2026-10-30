@@ -620,6 +620,13 @@
     box-shadow: 0 4px 12px rgba(184, 137, 23, 0.24);
 }
 
+/* manually flagged "New" — deep teal, matching the catalogue card pill */
+.pdp-featured-badge.is-new {
+    background: #0b3d3a;
+    color: #eafffb;
+    box-shadow: 0 4px 12px rgba(7, 34, 31, 0.28);
+}
+
 .pdp-fav-corner .favbtn-card {
     position: static;
     width: 42px;

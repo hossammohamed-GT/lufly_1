@@ -102,6 +102,10 @@ class ProductRepository extends Repository
             $where[] = 'p.is_featured = 1';
         }
 
+        if (!empty($filters['is_new']) && $this->hasIsNewColumn()) {
+            $where[] = 'p.is_new = 1';
+        }
+
         $sort = (string) ($filters['sort'] ?? 'curated');
         if ($sort === 'name' && !in_array('name', $usedJoins, true)) {
             $usedJoins[] = 'name';
@@ -132,8 +136,9 @@ class ProductRepository extends Repository
                order (sort_order ASC, id ASC) on All Products, every Category,
                every Subcategory, and search; non-featured items rotate cleanly
                across categories and model families behind them. */
+            $isNewExpr = $this->hasIsNewColumn() ? 'p.is_new' : '0';
             $discoveryRows = $connection->select(
-                "SELECT DISTINCT p.id, p.category_id, p.model_code, p.is_featured, p.sort_order,
+                "SELECT DISTINCT p.id, p.category_id, p.model_code, p.is_featured, {$isNewExpr} AS is_new, p.sort_order,
                         CASE WHEN EXISTS (
                             SELECT 1 FROM product_media pm
                             INNER JOIN media m ON m.id = pm.media_id
@@ -166,7 +171,24 @@ class ProductRepository extends Repository
                     ?: ((int) ($a['id'] ?? 0) <=> (int) ($b['id'] ?? 0)),
             );
             $featuredIds = array_map(static fn (array $r): int => (int) $r['id'], $featuredRows);
-            $orderedIds = array_merge($featuredIds, $this->diversifyDiscovery($regularRows));
+            if ($hasCategoryFilter) {
+                /* Inside a category, manually flagged "New" products lead the
+                   non-featured rows (featured still first). The general
+                   catalogue keeps the pure diversified order. */
+                $newRows = [];
+                $restRows = [];
+                foreach ($regularRows as $dRow) {
+                    if ((int) ($dRow['is_new'] ?? 0) === 1) {
+                        $newRows[] = $dRow;
+                    } else {
+                        $restRows[] = $dRow;
+                    }
+                }
+                $newIds = array_map(static fn (array $r): int => (int) $r['id'], $newRows);
+                $orderedIds = array_merge($featuredIds, $newIds, $this->diversifyDiscovery($restRows));
+            } else {
+                $orderedIds = array_merge($featuredIds, $this->diversifyDiscovery($regularRows));
+            }
             $pageIds = array_slice($orderedIds, ($page - 1) * $perPage, $perPage);
             $items = $this->hydrateOrderedIds($pageIds);
 
@@ -204,6 +226,36 @@ class ProductRepository extends Repository
         Product::eagerLoad($items);
 
         return new Paginator($items, $total, $page, $perPage);
+    }
+
+    /** The is_new flag column arrives via migration 000023 — tolerate older databases. */
+    private function hasIsNewColumn(): bool
+    {
+        static $has = null;
+        if ($has !== null) {
+            return $has;
+        }
+
+        $connection = Product::query()->connection();
+        if ($connection->driver() === 'sqlite') {
+            $has = false;
+            foreach ($connection->select('PRAGMA table_info(products)') as $row) {
+                if ((string) ($row['name'] ?? '') === 'is_new') {
+                    $has = true;
+                    break;
+                }
+            }
+
+            return $has;
+        }
+
+        $row = $connection->selectOne(
+            'SELECT COUNT(*) AS total FROM information_schema.COLUMNS
+             WHERE TABLE_SCHEMA = DATABASE() AND TABLE_NAME = ? AND COLUMN_NAME = ?',
+            ['products', 'is_new'],
+        );
+
+        return $has = (int) ($row['total'] ?? 0) > 0;
     }
 
     /**

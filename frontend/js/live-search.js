@@ -56,6 +56,8 @@
       var countEl = countSel ? document.querySelector(countSel) : null;
       var limit = parseInt(input.getAttribute('data-livesearch-limit') || '8', 10) || 8;
       var sortSelect = form.querySelector('[data-catalog-sort]');
+      var latestParam = '';
+      try { latestParam = new URLSearchParams(window.location.search).get('latest') || ''; } catch (e0) { /* older browsers */ }
       var categorySlug = '';
       var hiddenCategory = form.querySelector('input[name="category"]');
       if (hiddenCategory) categorySlug = hiddenCategory.value || '';
@@ -334,6 +336,7 @@
         if (query) params.q = query;
         var sort = sortSelect ? sortSelect.value : '';
         if (sort && sort !== 'curated') params.sort = sort;
+        if (latestParam) params.latest = latestParam;
         var keys = Object.keys(params);
         var qs = keys.map(function (k) {
           return encodeURIComponent(k) + '=' + encodeURIComponent(params[k]);

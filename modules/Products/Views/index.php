@@ -34,6 +34,7 @@ $activeCategory = $activeCategory ?? '';
 $categoryFallbackName = $categoryFallbackName ?? null;
 $searchQuery = $searchQuery ?? '';
 $sort = $sort ?? 'curated';
+$latestOnly = $latestOnly ?? false;
 $total = (int) $paginator->total();
 
 $sortOptions = [
@@ -43,11 +44,12 @@ $sortOptions = [
     'model' => trans('products.sort_model'),
 ];
 
-$buildUrl = static function (array $overrides = []) use ($activeCategory, $searchQuery, $sort): string {
+$buildUrl = static function (array $overrides = []) use ($activeCategory, $searchQuery, $sort, $latestOnly): string {
     $params = array_filter(array_merge([
         'category' => $activeCategory !== '' ? $activeCategory : null,
         'q' => $searchQuery !== '' ? $searchQuery : null,
         'sort' => $sort !== 'curated' ? $sort : null,
+        'latest' => $latestOnly ? 1 : null,
     ], $overrides), static fn ($v) => $v !== null && $v !== '');
 
     return route('products.index') . (count($params) > 0 ? '?' . http_build_query($params) : '');
@@ -85,7 +87,7 @@ $colorFamilies = app(\Modules\Products\Services\ProductColorFamilyService::class
                 <nav class="catalog-breadcrumb" aria-label="<?= e(trans('products.catalog_eyebrow')) ?>">
                     <a href="<?= e(route('home')) ?>"><?= e(trans('products.catalog_home')) ?></a>
                     <svg viewBox="0 0 12 12" fill="none" stroke="currentColor" aria-hidden="true"><path d="m4 2 4 4-4 4"/></svg>
-                    <span aria-current="page"><?= e(trans('products.title')) ?></span>
+                    <span aria-current="page"><?= e($latestOnly ? trans('nav.latest') : trans('products.title')) ?></span>
                 </nav>
                 <span class="catalog-eyebrow"><?= e(trans('products.catalog_eyebrow')) ?></span>
                 <h1 class="catalog-title"><?= e(trans('products.catalog_hero_title')) ?> <em><?= e(trans('products.catalog_hero_accent')) ?></em></h1>

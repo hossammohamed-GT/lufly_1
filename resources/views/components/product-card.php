@@ -54,10 +54,20 @@ if ($cardSlides === []) {
 }
 $cardKinds = ['drawing' => trans('products.view_drawing'), 'situ' => trans('products.view_situ')];
 $isFeatured = !empty($item['is_featured']) || !empty($card['is_featured']);
+$colorVariants = is_array($item['color_variants'] ?? null) ? $item['color_variants'] : [];
+/* A collapsed colour-family card wears the NEW pill when any colour is new,
+   not only when the member currently representing the family is. */
 $isNew = !empty($card['is_new']);
+if (!$isNew) {
+    foreach ($colorVariants as $variant) {
+        if (!empty($variant['is_new']) || !empty($variant['card']['is_new'])) {
+            $isNew = true;
+            break;
+        }
+    }
+}
 $hasPrice = !empty($card['has_price']);
 $hasFeaturePanel = $isNew || $card['badge'] !== '' || $card['features'] !== [];
-$colorVariants = is_array($item['color_variants'] ?? null) ? $item['color_variants'] : [];
 ?>
 <article class="pcard<?= $isFeatured ? ' is-featured' : '' ?><?= $hasPrice ? ' has-price' : ' is-price-pending' ?>"
          data-product-card data-product-id="<?= $productId ?>"<?= $isFeatured ? ' data-featured="1"' : '' ?>
@@ -110,7 +120,7 @@ $colorVariants = is_array($item['color_variants'] ?? null) ? $item['color_varian
         <?php if ($hasFeaturePanel): ?>
             <div class="pcard-feature-panel">
                 <?php if ($isNew): ?>
-                    <span class="pcard-badge is-new-badge"><span><?= e((string) ($card['new_label'] ?? trans('common.new'))) ?></span></span>
+                    <span class="pcard-badge is-new-badge"><span><?= e((string) (($card['new_label'] ?? '') !== '' ? $card['new_label'] : trans('common.new'))) ?></span></span>
                 <?php endif; ?>
                 <?php if ($card['badge'] !== ''): ?>
                     <span class="pcard-badge<?= $isFeatured ? ' is-featured-badge' : '' ?>">

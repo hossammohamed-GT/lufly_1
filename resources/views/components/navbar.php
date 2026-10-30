@@ -77,7 +77,7 @@ if ($boxOn) {
 $indexLinks = [
     ['key' => 'bathroom', 'url' => route('products.index', ['category' => 'bathroom'])],
     ['key' => 'kitchen', 'url' => route('products.index', ['category' => 'kitchen'])],
-    ['key' => 'latest', 'url' => route('products.index', ['sort' => 'newest'])],
+    ['key' => 'latest', 'url' => route('products.index', ['latest' => 1, 'sort' => 'newest'])],
     ['key' => 'collections', 'url' => route('products.index')],
     ['key' => 'contact', 'url' => route('contact')],
 ];

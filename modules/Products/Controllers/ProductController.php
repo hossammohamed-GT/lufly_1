@@ -45,6 +45,8 @@ class ProductController extends Controller
         if (!in_array($sort, ['curated', 'newest', 'name', 'model'], true)) {
             $sort = 'curated';
         }
+        /* Navbar "Latest": only the products manually flagged New in Admin. */
+        $latestOnly = in_array(strtolower((string) $request->query('latest', '')), ['1', 'true', 'yes'], true);
         $fallback = (string) config('localization.fallback', 'en');
 
         $paginator = $this->products->paginate([
@@ -54,13 +56,14 @@ class ProductController extends Controller
             'category_id' => $categoryId,
             'search' => $searchQuery,
             'sort' => $sort,
+            'is_new' => $latestOnly,
         ], (int) $request->query('page', '1'), 12);
 
         $categoryCounts = $this->categories->productCounts();
         $categories = $this->categories->nonEmptyTree($locale, $fallback, $categoryCounts);
         $categoryFallbackName = null;
 
-        $pageTitle = trans('products.title');
+        $pageTitle = $latestOnly ? trans('nav.latest') : trans('products.title');
         $catalogDescs = [
             'en' => 'Browse the complete architectural catalog of luxury sanitary ware, rimless toilets, and PVD brassware from LUFLY.',
             'tr' => 'LUFLY lüks vitrifiye seramikler, asma klozetler ve mimari bataryaların eksiksiz ürün kataloğunu inceleyin.',
@@ -75,7 +78,7 @@ class ProductController extends Controller
            canonical of the clean catalogue URL and stay out of the index:
            crawlers may follow them, but only one catalog page ranks. */
         $isFaceted = $categorySlug !== '' || $categoryId > 0 || $searchQuery !== ''
-            || $sort !== 'curated' || (int) $request->query('page', '1') > 1;
+            || $latestOnly || $sort !== 'curated' || (int) $request->query('page', '1') > 1;
         if ($isFaceted) {
             $this->seo->setRobots('noindex, follow');
         }
@@ -119,6 +122,7 @@ class ProductController extends Controller
             'categoryFallbackName' => $categoryFallbackName,
             'searchQuery' => $searchQuery,
             'sort' => $sort,
+            'latestOnly' => $latestOnly,
             'locale' => $locale,
             'seo' => $this->seo,
         ]);
