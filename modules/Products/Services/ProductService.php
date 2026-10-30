@@ -689,6 +689,13 @@ class ProductService
         } elseif ($status !== '' && in_array($status, self::STATUSES, true)) {
             $where[] = 'p.status = ?';
             $bindings[] = $status;
+            if (in_array($status, ProductVisibility::PUBLIC_STATUSES, true)) {
+                /* A public status in this filter means "live on the website":
+                   the storefront also demands complete media, so an active
+                   product without a photo/drawing shows under "Hidden from
+                   store" (not_live) instead of polluting the Active list. */
+                $where[] = ProductVisibility::mediaReadySql('p');
+            }
         }
         if (!empty($filters['featured'])) {
             $where[] = 'p.is_featured = 1';
