@@ -250,6 +250,56 @@ class ProductMediaService
     }
 
     /**
+     * Replace every image of one section with a fresh set of uploads.
+     * New files are stored first, so a failed batch never leaves the
+     * product without images; only then are the old attachments detached
+     * (their files retire to deleted-images/ when orphaned). Upload order
+     * is preserved — for photos the first file becomes the main image.
+     *
+     * @param array<int, array<string, mixed>> $files $_FILES entries
+     * @return array{attachments: array<int, array<string, mixed>>, errors: string[]}
+     */
+    public function replaceSection(int $productId, string $section, array $files): array
+    {
+        $this->sectionType($section); /* validates the section name */
+        $this->product($productId);
+
+        $oldIds = array_map(
+            static fn (array $row): int => (int) $row['id'],
+            $this->sectionRows($productId, $section),
+        );
+
+        $newIds = [];
+        $errors = [];
+        foreach ($files as $file) {
+            try {
+                $attachmentId = $this->upload($productId, $file, $section);
+                if ($attachmentId > 0) {
+                    $newIds[] = $attachmentId;
+                }
+            } catch (\Throwable $exception) {
+                $errors[] = $exception->getMessage();
+            }
+        }
+
+        if ($newIds === []) {
+            return ['attachments' => [], 'errors' => $errors];
+        }
+
+        /* never detach a row the uploads just (re)used */
+        foreach (array_diff($oldIds, $newIds) as $oldId) {
+            $this->remove((int) $oldId);
+        }
+
+        $payloads = [];
+        foreach ($newIds as $newId) {
+            $payloads[] = $this->attachmentPayload($newId);
+        }
+
+        return ['attachments' => $payloads, 'errors' => $errors];
+    }
+
+    /**
      * Attachment + media data the admin image UI renders from.
      *
      * @return array<string, mixed>

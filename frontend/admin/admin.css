@@ -769,3 +769,7 @@ button.adm-chip:hover { border-color: var(--ds-primary); }
 .adm-finishpop-option span { flex: 1; min-width: 0; }
 .adm-finishpop-foot { display: flex; align-items: center; gap: var(--space-2); padding: var(--space-2) var(--space-3); border-top: 1px solid var(--ds-border); }
 .adm-finishpop-spacer { flex: 1; }
+
+/* media section header carries the replace-all action */
+.media-section-head { display: flex; align-items: flex-start; gap: var(--space-3); flex-wrap: wrap; }
+.media-section-head [data-media-replace-all] { margin-inline-start: auto; }

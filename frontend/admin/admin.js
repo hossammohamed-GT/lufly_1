@@ -1695,6 +1695,28 @@
       return;
     }
 
+    var replaceAllBtn = target.closest('[data-media-replace-all]');
+    if (replaceAllBtn) {
+      if (!window.confirm(replaceAllBtn.getAttribute('data-confirm') || 'Are you sure?')) { return; }
+      var replaceCard = mediaCardOf(replaceAllBtn);
+      pickFile({ multiple: true }).then(function (files) {
+        if (!files.length) { return null; }
+        var fd = new FormData();
+        fd.append('section', replaceAllBtn.getAttribute('data-section') || 'photos');
+        files.forEach(function (file) { fd.append('images[]', file); });
+        replaceAllBtn.disabled = true;
+        return postFormData(replaceAllBtn.getAttribute('data-url'), fd)
+          .then(function (data) {
+            toast(data.message || 'Saved.');
+            var errors = (data.data || {}).errors || [];
+            if (errors.length) { toast(errors[0], true); }
+            return afterMediaChange(replaceCard);
+          })
+          .finally(function () { replaceAllBtn.disabled = false; });
+      }).catch(function (error) { toast(error.message || 'Upload failed.', true); });
+      return;
+    }
+
     var orderBtn = target.closest('[data-media-order]');
     if (orderBtn) {
       postJson(orderBtn.getAttribute('data-url'), { direction: orderBtn.getAttribute('data-media-order') })

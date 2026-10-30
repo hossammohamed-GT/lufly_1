@@ -24,6 +24,12 @@ $mediaUrl = static fn (string $name, array $params = []): string => route('admin
             <header class="media-section-head">
                 <h4><?= e($sectionMeta['label']) ?> <span class="badge badge-ghost"><?= count($items) ?></span></h4>
                 <p class="field-help"><?= e($sectionMeta['hint']) ?></p>
+                <?php if ($items !== []): ?>
+                    <button type="button" class="btn btn-sm btn-ghost" data-media-replace-all
+                            data-url="<?= e($mediaUrl('replace-section', ['id' => $productId])) ?>"
+                            data-section="<?= e($sectionKey) ?>"
+                            data-confirm="<?= e(trans('products.media_replace_all_confirm')) ?>"><?= e(trans('products.media_replace_all')) ?></button>
+                <?php endif; ?>
             </header>
 
             <?php if ($items === []): ?>

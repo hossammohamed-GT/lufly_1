@@ -54,6 +54,34 @@ class ProductMediaController extends Controller
         ]);
     }
 
+    /** Replace every image of one section with a fresh set of uploads. */
+    public function replaceSection(Request $request, int $id): JsonResponse
+    {
+        $this->products->find($id);
+
+        $section = (string) $request->input('section', 'photos');
+        $files = $this->uploadedFiles($request);
+        if ($files === []) {
+            return $this->json(['success' => false, 'message' => trans('products.media_file_required')], 422);
+        }
+
+        try {
+            $result = $this->media->replaceSection($id, $section, $files);
+        } catch (\Throwable $exception) {
+            return $this->json(['success' => false, 'message' => $exception->getMessage()], 422);
+        }
+
+        if ($result['attachments'] === [] && $result['errors'] !== []) {
+            return $this->json(['success' => false, 'message' => $result['errors'][0], 'errors' => $result['errors']], 422);
+        }
+
+        return $this->json([
+            'success' => true,
+            'message' => trans('products.media_section_replaced'),
+            'data' => $result,
+        ]);
+    }
+
     /** Swap the file behind one attachment; the old file goes to deleted-images/. */
     public function replace(Request $request, int $id, int $attachmentId): JsonResponse
     {

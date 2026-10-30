@@ -91,6 +91,11 @@ return function (Router $router): void {
             ->where('id', '\d+')
             ->name('media.store');
 
+        $router->post('/{id}/media/replace-section', [ProductMediaController::class, 'replaceSection'])
+            ->middleware('permission:products.manage')
+            ->where('id', '\d+')
+            ->name('media.replace-section');
+
         $router->post('/{id}/media/{attachmentId}/replace', [ProductMediaController::class, 'replace'])
             ->middleware('permission:products.manage')
             ->where('id', '\d+')
