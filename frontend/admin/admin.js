@@ -624,6 +624,7 @@
     if (root.matches && root.matches('[data-picker]')) { initPicker(root); }
     root.querySelectorAll('[data-picker]').forEach(initPicker);
     root.querySelectorAll('form').forEach(function (form) { featuresCount(form); });
+    activateEditorStep(root, null);
   }
 
   function editorSlot(host) {
@@ -659,11 +660,143 @@
     return Promise.resolve();
   }
 
+  /* ------------------------------------------- product editor modal+steps
+     The product "full edit" opens in one centered modal above everything,
+     its sections shown one step at a time — no page-length scrolling. */
+  var productEditorState = { card: null };
+
+  function editorModalEls() {
+    var modal = document.querySelector('[data-editor-modal]');
+    if (!modal) { return null; }
+    return {
+      modal: modal,
+      body: modal.querySelector('[data-editor-body]'),
+      title: modal.querySelector('[data-editor-title]'),
+    };
+  }
+
+  function editorTitleFor(card) {
+    var codeEl = card.querySelector('[data-inline="model_code"]');
+    var nameEl = card.querySelector('[data-inline="name"]');
+    var parts = [];
+    if (codeEl && codeEl.textContent.trim()) { parts.push(codeEl.textContent.trim()); }
+    if (nameEl && nameEl.textContent.trim()) { parts.push(nameEl.textContent.trim()); }
+    return parts.join(' · ');
+  }
+
+  function syncExpandAria(card, open) {
+    if (!card) { return; }
+    card.querySelectorAll('[data-expand-editor]').forEach(function (btn) {
+      if (btn.hasAttribute('aria-expanded')) {
+        btn.setAttribute('aria-expanded', open ? 'true' : 'false');
+      }
+    });
+  }
+
+  function activateEditorStep(scope, name) {
+    if (!scope || !scope.querySelector) { return; }
+    var root = scope.matches && scope.matches('[data-editor-root]')
+      ? scope
+      : scope.querySelector('[data-editor-root]');
+    if (!root) { return; }
+    var buttons = root.querySelectorAll('[data-step-btn]');
+    var panels = root.querySelectorAll('[data-step-panel]');
+    if (!buttons.length || !panels.length) { return; }
+
+    var target = name || root.getAttribute('data-active-step');
+    var exists = false;
+    panels.forEach(function (panel) {
+      if (panel.getAttribute('data-step-panel') === target) { exists = true; }
+    });
+    if (!target || !exists) { target = panels[0].getAttribute('data-step-panel'); }
+
+    buttons.forEach(function (btn) {
+      var active = btn.getAttribute('data-step-btn') === target;
+      btn.classList.toggle('is-active', active);
+      btn.setAttribute('aria-selected', active ? 'true' : 'false');
+    });
+    panels.forEach(function (panel) {
+      panel.hidden = panel.getAttribute('data-step-panel') !== target;
+    });
+    root.setAttribute('data-active-step', target);
+  }
+
+  function openProductEditor(card, step) {
+    var els = editorModalEls();
+    if (!card || !els || !els.body) { return Promise.resolve(); }
+
+    if (productEditorState.card && productEditorState.card !== card) {
+      syncExpandAria(productEditorState.card, false);
+    }
+    var keepStep = step || null;
+    if (!keepStep && productEditorState.card === card) {
+      var oldRoot = els.body.querySelector('[data-editor-root]');
+      keepStep = oldRoot ? oldRoot.getAttribute('data-active-step') : null;
+    }
+
+    productEditorState.card = card;
+    if (els.title) {
+      var title = editorTitleFor(card);
+      if (title) { els.title.textContent = title; }
+    }
+    els.modal.hidden = false;
+    document.body.classList.add('adm-modal-open');
+    syncExpandAria(card, true);
+    els.body.innerHTML = '<p class="adm-editor-loading" aria-busy="true">...</p>';
+
+    return fetchText(card.getAttribute('data-editor-url'))
+      .then(function (html) {
+        if (productEditorState.card !== card || els.modal.hidden) { return; }
+        els.body.innerHTML = html;
+        initDynamic(els.body);
+        activateEditorStep(els.body, keepStep);
+        els.body.scrollTop = 0;
+      })
+      .catch(function (error) {
+        toast(error.message || 'Could not load the editor.', true);
+        closeProductEditor();
+      });
+  }
+
+  function closeProductEditor() {
+    var els = editorModalEls();
+    if (!els) { return; }
+    syncExpandAria(productEditorState.card, false);
+    productEditorState.card = null;
+    els.modal.hidden = true;
+    if (els.body) { els.body.innerHTML = ''; }
+    document.body.classList.remove('adm-modal-open');
+  }
+
+  document.addEventListener('click', function (event) {
+    var stepBtn = event.target.closest ? event.target.closest('[data-step-btn]') : null;
+    if (stepBtn) {
+      var root = stepBtn.closest('[data-editor-root]');
+      if (root) { activateEditorStep(root, stepBtn.getAttribute('data-step-btn')); }
+      return;
+    }
+    if (event.target.closest && event.target.closest('[data-editor-close]')) {
+      closeProductEditor();
+    }
+  });
+
   document.addEventListener('click', function (event) {
     var button = event.target.closest ? event.target.closest('[data-expand-editor]') : null;
     if (!button) { return; }
     var host = button.closest('[data-editor-url]');
     if (!host) { return; }
+
+    /* Product cards edit in the centered modal; taxonomy rows stay inline. */
+    if (host.hasAttribute('data-product-card')) {
+      var els = editorModalEls();
+      if (els && !els.modal.hidden && productEditorState.card === host) {
+        closeProductEditor();
+      } else {
+        openProductEditor(host, button.classList.contains('adm-cover-empty') ? 'media' : null);
+      }
+      return;
+    }
+
     var slot = editorSlot(host);
     setEditorOpen(host, !slot || slot.hidden, false);
   });
@@ -685,7 +818,12 @@
 
   function refreshMedia(card) {
     if (!card || !card.getAttribute('data-media-url')) { return Promise.resolve(); }
-    var slot = card.querySelector('[data-media-slot]');
+    var slot = null;
+    var els = editorModalEls();
+    if (els && els.body && !els.modal.hidden && productEditorState.card === card) {
+      slot = els.body.querySelector('[data-media-slot]');
+    }
+    if (!slot) { slot = card.querySelector('[data-media-slot]'); }
     if (!slot) { return Promise.resolve(); }
     return fetchText(card.getAttribute('data-media-url'))
       .then(function (html) { slot.innerHTML = html; })
@@ -733,10 +871,10 @@
         }
         toast(data.message || 'Saved.');
 
-        var productCard = form.closest('[data-product-card]');
+        var productCard = mediaCardOf(form);
         if (productCard) {
           if (form.getAttribute('data-section-form') === 'documents') {
-            setEditorOpen(productCard, true, true);
+            openProductEditor(productCard);
           } else {
             refreshProductFace(productCard);
           }
@@ -1201,7 +1339,7 @@
             if (card) {
               grid.insertBefore(card, grid.firstChild);
               card.scrollIntoView({ block: 'center', behavior: 'smooth' });
-              setEditorOpen(card, true, false);
+              openProductEditor(card);
             }
             if (totalEl) { totalEl.textContent = String((Number(totalEl.textContent) || 0) + 1); }
             toast(data.message || 'Saved.');
@@ -1297,7 +1435,12 @@
   }
 
   function mediaCardOf(el) {
-    return el ? el.closest('[data-product-card]') : null;
+    var card = el && el.closest ? el.closest('[data-product-card]') : null;
+    if (card) { return card; }
+    /* Inside the editor modal the card is found via the editor root's id. */
+    var root = el && el.closest ? el.closest('[data-editor-root]') : null;
+    var pid = root ? root.getAttribute('data-product-id') : null;
+    return pid ? document.querySelector('[data-product-card="' + pid + '"]') : null;
   }
 
   function afterMediaChange(card) {
@@ -1517,7 +1660,9 @@
     if (event.key !== 'Escape') { return; }
     if (chooser && !chooser.hidden) { settleChooser(null); return; }
     if (lightbox && !lightbox.hidden) { closeLightbox(); return; }
-    if (catpop && !catpop.hidden) { closeCatpop(); }
+    if (catpop && !catpop.hidden) { closeCatpop(); return; }
+    var editorModal = document.querySelector('[data-editor-modal]');
+    if (editorModal && !editorModal.hidden) { closeProductEditor(); }
   });
 
   /* ------------------------------------------------------- categories page */

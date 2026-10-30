@@ -132,6 +132,18 @@ try {
     </div>
 </div>
 
+<?php /* Product full editor: one centered modal, filled per product via AJAX. */ ?>
+<div class="adm-editor-modal" data-editor-modal hidden role="dialog" aria-modal="true" aria-label="<?= e(trans('products.expand_editor')) ?>">
+    <div class="adm-editor-backdrop" data-editor-close></div>
+    <div class="adm-editor-panel">
+        <div class="adm-editor-head">
+            <strong class="adm-editor-title" data-editor-title><?= e(trans('products.expand_editor')) ?></strong>
+            <button type="button" class="btn btn-sm btn-ghost" data-editor-close aria-label="<?= e(trans('common.close')) ?>">×</button>
+        </div>
+        <div class="adm-editor-body" data-editor-body></div>
+    </div>
+</div>
+
 <script src="<?= e(asset('frontend/js/app.js')) ?>"></script>
 <script src="<?= e(asset('frontend/admin/admin.js')) ?>"></script>
 </body>

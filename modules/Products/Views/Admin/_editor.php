@@ -186,14 +186,28 @@ $picker = static function (string $field, array $ids) use ($relationLabels, $pid
 
 $saveBtn = static fn (): string => '<div class="editor-save-row"><button type="submit" class="btn btn-sm btn-primary">' . e(trans('common.save')) . '</button><span class="editor-saved" data-saved-flag hidden>✓ ' . e(trans('common.saved')) . '</span></div>';
 ?>
-<div class="card-editor" data-editor-root>
+<div class="card-editor" data-editor-root data-product-id="<?= $pid ?>">
+    <?php /* Steps: one topic at a time inside the editor modal — no endless scroll. */ ?>
+    <nav class="adm-steps" data-editor-steps role="tablist" aria-label="<?= e(trans('products.expand_editor')) ?>">
+        <button type="button" class="adm-step-btn is-active" data-step-btn="media" role="tab" aria-selected="true"><?= e(trans('products.images_title')) ?></button>
+        <button type="button" class="adm-step-btn" data-step-btn="basics" role="tab" aria-selected="false"><?= e(trans('products.section_basics')) ?></button>
+        <button type="button" class="adm-step-btn" data-step-btn="prices" role="tab" aria-selected="false"><?= e(trans('products.section_variants')) ?></button>
+        <button type="button" class="adm-step-btn" data-step-btn="specs" role="tab" aria-selected="false"><?= e(trans('products.section_specs')) ?></button>
+        <button type="button" class="adm-step-btn" data-step-btn="features" role="tab" aria-selected="false"><?= e(trans('products.section_features')) ?></button>
+        <button type="button" class="adm-step-btn" data-step-btn="relations" role="tab" aria-selected="false"><?= e(trans('products.section_relations')) ?></button>
+        <button type="button" class="adm-step-btn" data-step-btn="files" role="tab" aria-selected="false"><?= e(trans('products.section_documents')) ?></button>
+    </nav>
+
+    <div class="adm-step-panel" data-step-panel="media">
     <section class="editor-block" data-editor-media>
         <h3 class="editor-block-title"><?= e(trans('products.images_title')) ?></h3>
         <div data-media-slot>
             <?= $view->render('products::Admin._media', ['product' => $product, 'mediaSections' => $mediaSections]) ?>
         </div>
     </section>
+    </div>
 
+    <div class="adm-step-panel" data-step-panel="basics" hidden>
     <form class="editor-block" data-section-form="classification" method="post" action="<?= e($sectionUrl('classification')) ?>">
         <?= csrf_field() ?>
         <h3 class="editor-block-title"><?= e(trans('products.section_basics')) ?></h3>
@@ -237,7 +251,9 @@ $saveBtn = static fn (): string => '<div class="editor-save-row"><button type="s
         <?php endforeach; ?>
         <?= $saveBtn() ?>
     </form>
+    </div>
 
+    <div class="adm-step-panel" data-step-panel="prices" hidden>
     <form class="editor-block" data-section-form="variants" method="post" action="<?= e($sectionUrl('variants')) ?>">
         <?= csrf_field() ?>
         <h3 class="editor-block-title"><?= e(trans('products.section_variants')) ?></h3>
@@ -254,7 +270,9 @@ $saveBtn = static fn (): string => '<div class="editor-save-row"><button type="s
         <template id="variant-template-<?= $pid ?>"><?= $variantRow('__INDEX__', ['stock_status' => 'in_stock', 'status' => 'active', 'sort_order' => 0]) ?></template>
         <?= $saveBtn() ?>
     </form>
+    </div>
 
+    <div class="adm-step-panel" data-step-panel="specs" hidden>
     <form class="editor-block" data-section-form="specs" method="post" action="<?= e($sectionUrl('specs')) ?>">
         <?= csrf_field() ?>
         <h3 class="editor-block-title"><?= e(trans('products.section_specs')) ?></h3>
@@ -267,18 +285,6 @@ $saveBtn = static fn (): string => '<div class="editor-save-row"><button type="s
             <button type="button" class="btn btn-ghost btn-sm" data-add-finish data-template="spec-template-<?= $pid ?>" data-finish-keys="<?= e((string) json_encode($finishKeys, JSON_UNESCAPED_UNICODE)) ?>"><?= e(trans('products.spec_finish_add')) ?></button>
         </div>
         <template id="spec-template-<?= $pid ?>"><?= $specRow('__INDEX__', []) ?></template>
-        <?= $saveBtn() ?>
-    </form>
-
-    <form class="editor-block" data-section-form="features" method="post" action="<?= e($sectionUrl('features')) ?>">
-        <?= csrf_field() ?>
-        <h3 class="editor-block-title"><?= e(trans('products.section_features')) ?> <span class="badge badge-ghost" data-features-count><?= count($features) ?></span></h3>
-        <p class="field-help"><?= e(trans('products.features_hint')) ?></p>
-        <div data-repeater="features">
-            <?php foreach (array_values($features) as $i => $row) { echo $featureRow((string) $i, $row); } ?>
-        </div>
-        <button type="button" class="btn btn-secondary btn-sm" data-repeater-add data-target="features" data-template="feature-template-<?= $pid ?>"><?= e(trans('products.feature_add')) ?></button>
-        <template id="feature-template-<?= $pid ?>"><?= $featureRow('__INDEX__', []) ?></template>
         <?= $saveBtn() ?>
     </form>
 
@@ -297,7 +303,23 @@ $saveBtn = static fn (): string => '<div class="editor-save-row"><button type="s
         </div>
         <?= $saveBtn() ?>
     </form>
+    </div>
 
+    <div class="adm-step-panel" data-step-panel="features" hidden>
+    <form class="editor-block" data-section-form="features" method="post" action="<?= e($sectionUrl('features')) ?>">
+        <?= csrf_field() ?>
+        <h3 class="editor-block-title"><?= e(trans('products.section_features')) ?> <span class="badge badge-ghost" data-features-count><?= count($features) ?></span></h3>
+        <p class="field-help"><?= e(trans('products.features_hint')) ?></p>
+        <div data-repeater="features">
+            <?php foreach (array_values($features) as $i => $row) { echo $featureRow((string) $i, $row); } ?>
+        </div>
+        <button type="button" class="btn btn-secondary btn-sm" data-repeater-add data-target="features" data-template="feature-template-<?= $pid ?>"><?= e(trans('products.feature_add')) ?></button>
+        <template id="feature-template-<?= $pid ?>"><?= $featureRow('__INDEX__', []) ?></template>
+        <?= $saveBtn() ?>
+    </form>
+    </div>
+
+    <div class="adm-step-panel" data-step-panel="relations" hidden>
     <form class="editor-block" data-section-form="relations" method="post" action="<?= e($sectionUrl('relations')) ?>">
         <?= csrf_field() ?>
         <h3 class="editor-block-title"><?= e(trans('products.section_relations')) ?></h3>
@@ -317,7 +339,9 @@ $saveBtn = static fn (): string => '<div class="editor-save-row"><button type="s
         </label>
         <?= $saveBtn() ?>
     </form>
+    </div>
 
+    <div class="adm-step-panel" data-step-panel="files" hidden>
     <form class="editor-block" data-section-form="documents" method="post" enctype="multipart/form-data" action="<?= e($sectionUrl('documents')) ?>">
         <?= csrf_field() ?>
         <h3 class="editor-block-title"><?= e(trans('products.section_documents')) ?></h3>
@@ -358,4 +382,5 @@ $saveBtn = static fn (): string => '<div class="editor-save-row"><button type="s
         <?php endforeach; ?>
         <?= $saveBtn() ?>
     </form>
+    </div>
 </div>

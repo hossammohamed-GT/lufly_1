@@ -192,5 +192,4 @@ $fmtPrice = static fn (float $value): string => rtrim(rtrim(number_format($value
         </div>
     </div>
 
-    <div class="adm-card-editor" data-editor hidden></div>
 </article>
