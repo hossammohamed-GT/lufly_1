@@ -256,13 +256,16 @@
 }
 
 .agents-map-marker--qatar .agents-map-marker-label {
-  top: -25px;
-  left: -40px;
+  top: 35px;
+  left: 50%;
+  transform: translateX(-50%);
 }
 
 .agents-map-marker--bahrain .agents-map-marker-label {
-  top: -45px;
-  left: 10px;
+  top: 50%;
+  right: calc(100% + 8px);
+  left: auto;
+  transform: translateY(-50%);
 }
 
 .agents-map-factory-icon {
@@ -284,7 +287,8 @@
   animation: agents-map-route-flow 26s linear infinite;
 }
 
-.agents-map-route--uae {
+.agents-map-route--uae,
+.agents-map-route--egypt {
   animation-duration: 16s;
   filter: drop-shadow(0 0 2px rgb(179 131 69 / 48%));
 }

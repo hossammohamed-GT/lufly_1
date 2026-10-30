@@ -156,43 +156,153 @@
     keyboard: false,
   }).addTo(map);
 
-  locations.forEach((marker, index) => {
+  const routeZoom = 5;
+  const routeOrigin = map.project(factory, routeZoom);
+  const routeTargets = locations.map((marker, index) => {
+    const key = locationData[index]?.dataset.agentPin;
+    const point = map.project(marker.getLatLng(), routeZoom);
+    const dx = point.x - routeOrigin.x;
+    const dy = point.y - routeOrigin.y;
+
+    return {
+      marker,
+      key,
+      point,
+      distance: Math.hypot(dx, dy),
+      angle: (Math.atan2(dy, dx) + Math.PI * 2) % (Math.PI * 2),
+    };
+  });
+  const sortedTargets = [...routeTargets].sort((a, b) => a.angle - b.angle);
+  let largestAngleGap = -1;
+  let firstTargetIndex = 0;
+
+  sortedTargets.forEach((target, index) => {
+    const next = sortedTargets[(index + 1) % sortedTargets.length];
+    const nextAngle = index === sortedTargets.length - 1
+      ? next.angle + Math.PI * 2
+      : next.angle;
+    const gap = nextAngle - target.angle;
+
+    if (gap > largestAngleGap) {
+      largestAngleGap = gap;
+      firstTargetIndex = (index + 1) % sortedTargets.length;
+    }
+  });
+
+  const orderedTargets = Array.from(
+    { length: sortedTargets.length },
+    (_, index) => {
+      const target = sortedTargets[(firstTargetIndex + index) % sortedTargets.length];
+      const wrapsAround = firstTargetIndex + index >= sortedTargets.length;
+
+      return { ...target, unwrappedAngle: target.angle + (wrapsAround ? Math.PI * 2 : 0) };
+    },
+  );
+  const routeAngles = new Map(
+    orderedTargets.map((target, index) => {
+      const previousAngle = index === 0
+        ? orderedTargets.at(-1).unwrappedAngle - Math.PI * 2
+        : orderedTargets[index - 1].unwrappedAngle;
+      const nextAngle = index === orderedTargets.length - 1
+        ? orderedTargets[0].unwrappedAngle + Math.PI * 2
+        : orderedTargets[index + 1].unwrappedAngle;
+      const sectorCenter = (previousAngle + nextAngle) / 2;
+      const bendAmount = target.key === "egypt" ? 0.12 : 0.38;
+
+      return [
+        target.key,
+        {
+          destination: target.unwrappedAngle,
+          start: target.unwrappedAngle +
+            (sectorCenter - target.unwrappedAngle) * bendAmount,
+        },
+      ];
+    }),
+  );
+
+  routeTargets.forEach(({ marker, key, distance }) => {
     const destination = marker.getLatLng();
-    const isUaeRoute = locationData[index]?.dataset.agentPin === "uae";
-    const controlLatitude = Math.min(factory.lat, destination.lat) + 10;
-    const controlLongitude = (factory.lng + destination.lng) / 2;
+    const isHighlightedRoute = key === "uae" || key === "egypt";
+    const { destination: destinationAngle, start: startAngle } = routeAngles.get(key);
     const curve = [];
 
-    for (let step = 0; step <= 24; step += 1) {
-      const progress = step / 24;
-      const inverse = 1 - progress;
-      curve.push([
-        inverse ** 2 * factory.lat +
-          2 * inverse * progress * controlLatitude +
-          progress ** 2 * destination.lat,
-        inverse ** 2 * factory.lng +
-          2 * inverse * progress * controlLongitude +
-          progress ** 2 * destination.lng,
-      ]);
+    for (let step = 0; step <= 40; step += 1) {
+      const progress = step / 40;
+      const angle = startAngle + (destinationAngle - startAngle) * progress;
+      const radius = distance * progress;
+      const point = L.point(
+        routeOrigin.x + Math.cos(angle) * radius,
+        routeOrigin.y + Math.sin(angle) * radius,
+      );
+      curve.push(
+        step === 40 ? destination : map.unproject(point, routeZoom),
+      );
     }
 
     L.polyline(curve, {
-      className: isUaeRoute
-        ? "agents-map-route agents-map-route--uae"
+      className: isHighlightedRoute
+        ? `agents-map-route agents-map-route--${key}`
         : "agents-map-route",
-      color: isUaeRoute ? "#b38345" : "#117d78",
-      weight: isUaeRoute ? 3 : 2,
-      opacity: isUaeRoute ? 0.95 : 0.7,
-      dashArray: isUaeRoute ? "10 6" : "5 8",
+      color: isHighlightedRoute ? "#b38345" : "#117d78",
+      weight: isHighlightedRoute ? 3 : 2,
+      opacity: isHighlightedRoute ? 0.95 : 0.7,
+      dashArray: isHighlightedRoute ? "10 6" : "5 8",
       interactive: false,
     }).addTo(map);
   });
 
   const bounds = L.latLngBounds(locationsForBounds);
+  const initialRegionKeys = new Set([
+    "uae",
+    "saudi_arabia",
+    "oman",
+    "qatar",
+    "bahrain",
+    "egypt",
+    "jordan",
+  ]);
+  const initialRegionBounds = L.latLngBounds([
+    factory,
+    ...locations
+      .filter((_, index) =>
+        initialRegionKeys.has(locationData[index]?.dataset.agentPin),
+      )
+      .map((marker) => marker.getLatLng()),
+  ]);
+  const fitInitialRegion = () => {
+    map.invalidateSize({ pan: false });
+    map.fitBounds(initialRegionBounds, {
+      padding: [32, 32],
+      maxZoom: 5,
+      animate: false,
+    });
+  };
   const fitLocations = (animate = true) => {
     map.invalidateSize({ pan: false });
     map.fitBounds(bounds, { padding: [32, 32], maxZoom: 5, animate });
   };
+
+  let hasInteractedWithMap = false;
+  const markMapAsInteracted = () => {
+    hasInteractedWithMap = true;
+  };
+  mapElement.addEventListener("pointerdown", markMapAsInteracted, { once: true });
+  mapElement.addEventListener("keydown", markMapAsInteracted, { once: true });
+
+  if ("ResizeObserver" in window) {
+    const mapResizeObserver = new ResizeObserver(() => {
+      map.invalidateSize({ pan: false });
+      if (!hasInteractedWithMap) {
+        window.requestAnimationFrame(fitInitialRegion);
+      }
+    });
+    mapResizeObserver.observe(mapElement);
+  }
+
+  window.addEventListener("load", fitInitialRegion, { once: true });
+  document.fonts?.ready.then(() => {
+    if (!hasInteractedWithMap) fitInitialRegion();
+  });
 
   const ResetControl = L.Control.extend({
     onAdd() {
@@ -212,5 +322,5 @@
   });
 
   new ResetControl({ position: "topright" }).addTo(map);
-  window.requestAnimationFrame(() => fitLocations(false));
+  window.requestAnimationFrame(fitInitialRegion);
 })();
