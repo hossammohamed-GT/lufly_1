@@ -663,3 +663,16 @@ span.cat-image-preview.cat-image-empty {
   .cat-row-main { gap: var(--space-2); }
   .cat-row-actions { margin-inline-start: 0; }
 }
+
+/* dashboard: signed-in account without admin permissions */
+.access-warning {
+  background: #fdf3e3;
+  border: 1px solid #e5c07b;
+  color: #6b4e12;
+  border-radius: 10px;
+  padding: var(--space-3) var(--space-4);
+  margin-bottom: var(--space-4);
+}
+.access-warning strong { display: block; margin-bottom: 4px; }
+.access-warning p { margin: 0; }
+[data-theme="dark"] .access-warning { background: #3a2f14; border-color: #8a6d2f; color: #f0d9a0; }

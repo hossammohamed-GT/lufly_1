@@ -12,6 +12,12 @@ $cards = [
     ['label' => trans('common.brands'), 'value' => $stats['brands'] ?? 0, 'href' => route('admin.brands.index')],
 ];
 ?>
+<?php if (!empty($missingAdminAccess)): ?>
+<div class="access-warning" role="alert">
+    <strong><?= e(trans('common.no_admin_permissions_title')) ?></strong>
+    <p><?= e(trans('common.no_admin_permissions_body')) ?></p>
+</div>
+<?php endif; ?>
 <div class="grid grid-4 stat-grid">
     <?php foreach ($cards as $card): ?>
         <a class="card stat-card" href="<?= e($card['href']) ?>">

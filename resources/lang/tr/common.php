@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 return [
     'dashboard' => 'Kontrol Paneli',
+    'no_admin_permissions_title' => 'Bu hesabın yönetici izni yok',
+    'no_admin_permissions_body' => 'Ürün ve kategori sayfaları bu hesap için "Forbidden" döndürür. php cli admin:setup komutunu çalıştırın, ardından çıkış yapıp .env içindeki yönetici hesabıyla tekrar giriş yapın.',
     'products' => 'Ürünler',
     'users' => 'Kullanıcılar',
     'languages' => 'Diller',

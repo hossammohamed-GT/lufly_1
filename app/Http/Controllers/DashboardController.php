@@ -19,6 +19,9 @@ class DashboardController extends Controller
     {
         return $this->view('admin.dashboard', [
             'title' => trans('common.dashboard'),
+            /* Role-less sessions can open the dashboard but every product and
+               category page answers Forbidden — say so out loud instead. */
+            'missingAdminAccess' => !(auth()->userCan('products.view') && auth()->userCan('categories.view')),
             'stats' => $this->stats(),
         ]);
     }

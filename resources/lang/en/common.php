@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 return [
     'dashboard' => 'Dashboard',
+    'no_admin_permissions_title' => 'This account has no admin permissions',
+    'no_admin_permissions_body' => 'Products and category pages will return "Forbidden" for this account. Run php cli admin:setup, then log out and log back in with the administrator account from .env.',
     'products' => 'Products',
     'users' => 'Users',
     'languages' => 'Languages',

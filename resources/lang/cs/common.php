@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 return [
     'dashboard' => 'Nástěnka',
+    'no_admin_permissions_title' => 'Tento účet nemá oprávnění správce',
+    'no_admin_permissions_body' => 'Stránky produktů a kategorií pro tento účet vrátí "Forbidden". Spusťte php cli admin:setup, odhlaste se a znovu se přihlaste účtem správce z .env.',
     'products' => 'Produkty',
     'users' => 'Uživatelé',
     'languages' => 'Jazyky',
