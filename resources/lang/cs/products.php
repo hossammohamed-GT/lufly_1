@@ -284,6 +284,7 @@ return [
     'full_edit' => 'Úplné úpravy',
     'featured_toggle' => 'Přepnout zvýraznění (zlatý rámeček, zobrazeno první)',
     'filter_all_statuses' => 'Všechny stavy',
+    'filter_not_live' => 'Skryto v obchodě',
     'filter_featured_only' => 'Jen zvýrazněné',
     'no_image' => 'Bez obrázku',
     'no_finish' => 'Povrch není nastaven',

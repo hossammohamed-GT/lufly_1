@@ -513,7 +513,13 @@ class ProductService
         $bindings = [];
 
         $status = (string) ($filters['status'] ?? '');
-        if ($status !== '' && in_array($status, self::STATUSES, true)) {
+        if ($status === 'not_live') {
+            /* "Hidden from store": exactly what the card visibility badge
+               judges — non-public status OR storefront media incomplete. */
+            $publicPlaceholders = implode(',', array_fill(0, count(ProductVisibility::PUBLIC_STATUSES), '?'));
+            $where[] = "(p.status NOT IN ({$publicPlaceholders}) OR NOT (" . ProductVisibility::mediaReadySql('p') . '))';
+            $bindings = [...$bindings, ...ProductVisibility::PUBLIC_STATUSES];
+        } elseif ($status !== '' && in_array($status, self::STATUSES, true)) {
             $where[] = 'p.status = ?';
             $bindings[] = $status;
         }

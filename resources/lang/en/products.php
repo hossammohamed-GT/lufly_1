@@ -284,6 +284,7 @@ return [
     'full_edit' => 'Full edit',
     'featured_toggle' => 'Toggle featured (golden frame, shown first)',
     'filter_all_statuses' => 'All statuses',
+    'filter_not_live' => 'Hidden from store',
     'filter_featured_only' => 'Featured only',
     'no_image' => 'No image',
     'no_finish' => 'No finish set',

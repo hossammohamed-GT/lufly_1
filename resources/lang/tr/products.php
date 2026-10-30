@@ -284,6 +284,7 @@ return [
     'full_edit' => 'Tam düzenleme',
     'featured_toggle' => 'Öne çıkan yap/kaldır (altın çerçeve, ilk sırada)',
     'filter_all_statuses' => 'Tüm durumlar',
+    'filter_not_live' => 'Mağazada gizli',
     'filter_featured_only' => 'Yalnızca öne çıkanlar',
     'no_image' => 'Görsel yok',
     'no_finish' => 'Yüzey belirlenmedi',

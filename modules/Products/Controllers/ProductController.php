@@ -481,7 +481,7 @@ class ProductController extends Controller
     private function gridFilters(Request $request, ?bool $forceIncomplete = null): array
     {
         $status = (string) $request->query('status', '');
-        if (!in_array($status, ProductService::STATUSES, true)) {
+        if ($status !== 'not_live' && !in_array($status, ProductService::STATUSES, true)) {
             $status = '';
         }
         $sort = (string) $request->query('sort', 'model');

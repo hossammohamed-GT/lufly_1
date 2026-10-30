@@ -61,6 +61,7 @@ $gridState = [
             <?php foreach (ProductService::STATUSES as $statusOption): ?>
                 <option value="<?= $statusOption ?>" <?= $gridState['status'] === $statusOption ? 'selected' : '' ?>><?= e(trans('common.' . $statusOption)) ?></option>
             <?php endforeach; ?>
+            <option value="not_live" <?= $gridState['status'] === 'not_live' ? 'selected' : '' ?>><?= e(trans('products.filter_not_live')) ?></option>
         </select>
         <select class="input" data-filter="sort" aria-label="<?= e(trans('products.sort_label')) ?>">
             <option value="model" <?= $gridState['sort'] === 'model' ? 'selected' : '' ?>><?= e(trans('products.sort_model')) ?></option>
