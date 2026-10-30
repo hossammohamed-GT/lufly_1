@@ -11,6 +11,8 @@ class PermissionSeeder extends Seeder
     private const PERMISSIONS = [
         'products.view' => 'View products',
         'products.manage' => 'Create, edit and delete products',
+        'categories.view' => 'View categories, collections and brands',
+        'categories.manage' => 'Manage categories, collections and brands',
         'announcements.view' => 'View announcements',
         'announcements.manage' => 'Create, edit and delete announcements',
         'users.manage' => 'Manage users',

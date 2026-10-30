@@ -203,8 +203,9 @@ class ProductMediaService
     }
 
     /**
-     * Detach an image from the product. The file itself stays in the media
-     * library (Admin -> Media) so it can be re-used on another product.
+     * Detach an image from the product. When nothing else references the
+     * file, it is moved to images/deleted-images/ (named with the product
+     * code) instead of lingering anonymously in the live folders.
      */
     public function remove(int $attachmentId): void
     {
@@ -214,10 +215,101 @@ class ProductMediaService
         Product::query()->connection()->table('product_media')->where('id', $attachmentId)->delete();
 
         $this->normalise($productId);
+        $this->trashIfOrphan((int) $row['media_id'], $productId);
         $this->activity->updated('product', $productId, ['detached_media' => (int) $row['media_id']]);
     }
 
+    /**
+     * Replace the file behind one attachment, keeping its section, position
+     * and primary flag. The old file is retired to deleted-images/ when no
+     * other product still uses it.
+     *
+     * @param array<string, mixed> $file $_FILES entry
+     * @return array<string, mixed> attachment payload for the UI
+     */
+    public function replace(int $attachmentId, array $file): array
+    {
+        $row = $this->attachment($attachmentId);
+        $productId = (int) $row['product_id'];
+        $oldMediaId = (int) $row['media_id'];
+
+        $media = $this->media->storeFromUpload($file, $this->collection($productId), auth()->id());
+
+        Product::query()->connection()->table('product_media')->where('id', $attachmentId)->update([
+            'media_id' => (int) $media->id,
+            'updated_at' => date('Y-m-d H:i:s'),
+        ]);
+
+        $this->normalise($productId);
+        if ((int) $media->id !== $oldMediaId) {
+            $this->trashIfOrphan($oldMediaId, $productId);
+        }
+        $this->activity->updated('product', $productId, ['replaced_media' => $oldMediaId, 'media' => (int) $media->id]);
+
+        return $this->attachmentPayload($attachmentId);
+    }
+
+    /**
+     * Attachment + media data the admin image UI renders from.
+     *
+     * @return array<string, mixed>
+     */
+    public function attachmentPayload(int $attachmentId): array
+    {
+        $row = Product::query()->connection()->selectOne(
+            'SELECT pm.id, pm.product_id, pm.media_id, pm.type, pm.sort_order, pm.is_primary, m.path AS media_path
+             FROM product_media pm
+             JOIN media m ON m.id = pm.media_id
+             WHERE pm.id = ? LIMIT 1',
+            [$attachmentId],
+        );
+        if ($row === null) {
+            throw new NotFoundException(trans('errors.media_not_found'));
+        }
+
+        return [
+            'attachment_id' => (int) $row['id'],
+            'product_id' => (int) $row['product_id'],
+            'media_id' => (int) $row['media_id'],
+            'type' => (string) $row['type'],
+            'section' => $this->sectionOf((string) $row['type']),
+            'is_primary' => (int) $row['is_primary'] === 1,
+            'path' => (string) $row['media_path'],
+        ];
+    }
+
     /* ---------------------------------------------------------------- internals */
+
+    /**
+     * Retire a media file once no product image or datasheet references it.
+     * The file lands in images/deleted-images/ named with the product code.
+     */
+    private function trashIfOrphan(int $mediaId, int $productId): void
+    {
+        if ($mediaId <= 0) {
+            return;
+        }
+
+        $connection = Product::query()->connection();
+        $attachments = $connection->selectOne(
+            'SELECT COUNT(*) AS total FROM product_media WHERE media_id = ?',
+            [$mediaId],
+        );
+        if ((int) ($attachments['total'] ?? 0) > 0) {
+            return;
+        }
+        $documents = $connection->selectOne(
+            'SELECT COUNT(*) AS total FROM product_documents WHERE media_id = ?',
+            [$mediaId],
+        );
+        if ((int) ($documents['total'] ?? 0) > 0) {
+            return;
+        }
+
+        $product = $connection->selectOne('SELECT model_code FROM products WHERE id = ? LIMIT 1', [$productId]);
+        $label = trim((string) ($product['model_code'] ?? ''));
+        $this->media->trash($mediaId, $label !== '' ? $label : 'product-' . $productId);
+    }
 
     private function product(int $productId): Product
     {

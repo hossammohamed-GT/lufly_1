@@ -27,6 +27,7 @@ class ProductsSchema extends SchemaDefinition
         $table->foreignId('brand_id')->nullable()->index();
         $table->string('status', 50)->default('active')->index(); // draft|active|hidden|discontinued|coming_soon
         $table->boolean('is_featured')->default(0)->index();
+        $table->boolean('is_new')->default(0)->index();
         $table->integer('sort_order')->default(0);
         $table->timestamps();
         $table->soft_delete();

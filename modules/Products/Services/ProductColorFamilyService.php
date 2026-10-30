@@ -195,6 +195,23 @@ final class ProductColorFamilyService
         return $product;
     }
 
+    /**
+     * The full membership map (product id => ordered family member ids).
+     * The admin grid collapses families exactly like the storefront.
+     *
+     * @return array<int, array<int, int>>
+     */
+    public function familyMap(): array
+    {
+        return $this->memberships();
+    }
+
+    /** @return int[] the family of one product (itself when it has no colours) */
+    public function familyOf(int $productId): array
+    {
+        return $this->memberships()[$productId] ?? [$productId];
+    }
+
     /** @return array<int, bool> */
     private function namedIds(): array
     {

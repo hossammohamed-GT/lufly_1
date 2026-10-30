@@ -19,7 +19,7 @@ class Product extends Model
 
     protected static array $fillable = [
         'model_code', 'slug', 'category_id', 'collection_id', 'brand_id',
-        'status', 'is_featured', 'sort_order',
+        'status', 'is_featured', 'is_new', 'sort_order',
     ];
 
     protected static array $casts = [
@@ -28,6 +28,7 @@ class Product extends Model
         'collection_id' => 'int',
         'brand_id' => 'int',
         'is_featured' => 'bool',
+        'is_new' => 'bool',
         'sort_order' => 'int',
     ];
 

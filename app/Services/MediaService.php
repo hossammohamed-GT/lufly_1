@@ -89,6 +89,36 @@ class MediaService
     }
 
     /**
+     * Retire a media file that nothing references any more: the file moves to
+     * public/images/deleted-images/ (renamed with $label, e.g. the product
+     * code) and the library row is soft-deleted.
+     */
+    public function trash(int $mediaId, string $label): void
+    {
+        $media = Media::find($mediaId);
+        if ($media === null) {
+            return;
+        }
+
+        $this->uploads->trash((string) $media->path, $label);
+        $media->delete();
+        $this->activity->deleted('media', $mediaId);
+    }
+
+    /** Same as trash(), starting from a stored web path (e.g. categories.image). */
+    public function trashByPath(string $path, string $label): void
+    {
+        if (trim($path) === '') {
+            return;
+        }
+
+        $this->uploads->trash($path, $label);
+        foreach (Media::query()->where('path', $path)->get() as $media) {
+            $media->delete();
+        }
+    }
+
+    /**
      * @return array<int, array{collection: string, label: string, count: int}>
      */
     public function collections(): array

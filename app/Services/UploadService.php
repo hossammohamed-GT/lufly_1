@@ -179,6 +179,65 @@ class UploadService
         return unlink($realTarget);
     }
 
+    /**
+     * Move a public image into public/images/deleted-images/, renamed with a
+     * recognisable label (usually the product code), so replaced or removed
+     * images never pile up anonymously inside the live image folders.
+     *
+     * Returns the new web path, or null when there was nothing to move.
+     */
+    public function trash(string $webPath, string $label = 'image'): ?string
+    {
+        $clean = ltrim(str_replace('\\', '/', $webPath), '/');
+        if ($clean === '' || str_contains($clean, '..') || str_contains($clean, "\0")
+            || !str_starts_with($clean, 'images/')) {
+            return null;
+        }
+        if (str_starts_with($clean, 'images/deleted-images/')) {
+            return $clean;
+        }
+
+        $imagesRoot = realpath($this->app->basePath('public/images'));
+        if ($imagesRoot === false) {
+            return null;
+        }
+        $source = realpath($this->app->basePath('public/' . $clean));
+        if ($source === false || !is_file($source) || !str_starts_with($source, $imagesRoot)) {
+            return null;
+        }
+
+        $trashDir = $imagesRoot . '/deleted-images';
+        if (!is_dir($trashDir) && !mkdir($trashDir, 0775, true)) {
+            return null;
+        }
+
+        $safeLabel = trim((string) preg_replace('/[^A-Za-z0-9_\-]+/', '-', $label), '-');
+        if ($safeLabel === '') {
+            $safeLabel = 'image';
+        }
+        $base = pathinfo($source, PATHINFO_FILENAME);
+        $extension = pathinfo($source, PATHINFO_EXTENSION);
+        $suffix = $extension !== '' ? '.' . $extension : '';
+
+        $name = $safeLabel . '__' . $base . $suffix;
+        $target = $trashDir . '/' . $name;
+        $attempt = 1;
+        while (file_exists($target)) {
+            $attempt++;
+            $name = $safeLabel . '__' . $base . '-' . $attempt . $suffix;
+            $target = $trashDir . '/' . $name;
+        }
+
+        if (!@rename($source, $target)) {
+            if (!@copy($source, $target)) {
+                return null;
+            }
+            @unlink($source);
+        }
+
+        return 'images/deleted-images/' . $name;
+    }
+
     /** @param array<string, mixed> $file */
     private function assertValidUpload(array $file): void
     {

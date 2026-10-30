@@ -96,10 +96,13 @@
     var features = Array.isArray(card.features) ? card.features.slice(0, 3).map(function (feature) {
       return '<span class="pcard-feature" role="listitem">' + cardIcon(feature.icon) + '<span>' + esc(feature.label) + '</span></span>';
     }).join('') : '';
-    if (!card.badge && !features) return '';
+    if (!card.badge && !card.is_new && !features) return '';
     var badgeHtml = '';
+    if (card.is_new) {
+      badgeHtml += '<span class="pcard-badge is-new-badge"><span>' + esc(card.new_label || 'New') + '</span></span>';
+    }
     if (card.badge) {
-      badgeHtml = '<span class="pcard-badge' + (isFeatured ? ' is-featured-badge' : '') + '">' +
+      badgeHtml += '<span class="pcard-badge' + (isFeatured ? ' is-featured-badge' : '') + '">' +
         (isFeatured ? badgeStar : '') + '<span>' + esc(card.badge) + '</span></span>';
     }
     return '<div class="pcard-feature-panel">' + badgeHtml +

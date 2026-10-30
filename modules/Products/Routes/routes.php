@@ -18,7 +18,8 @@ return function (Router $router): void {
             ->name('products.show');
     });
 
-    // Admin panel routes.
+    // Admin panel routes — in-place browser: everything edits on the card
+    // itself via JSON endpoints + HTML fragments (no separate editor pages).
     $router->group([
         'prefix' => 'admin/products',
         'middleware' => ['web', 'auth'],
@@ -28,39 +29,73 @@ return function (Router $router): void {
             ->middleware('permission:products.view')
             ->name('index');
 
-        $router->get('/create', [ProductController::class, 'adminCreate'])
-            ->middleware('permission:products.manage')
-            ->name('create');
+        $router->get('/incomplete', [ProductController::class, 'adminIncomplete'])
+            ->middleware('permission:products.view')
+            ->name('incomplete');
 
-        $router->post('/', [ProductController::class, 'adminStore'])
-            ->middleware('permission:products.manage')
-            ->name('store');
+        $router->get('/grid', [ProductController::class, 'adminGrid'])
+            ->middleware('permission:products.view')
+            ->name('grid');
 
-        $router->get('/{id}/edit', [ProductController::class, 'adminEdit'])
+        /* creates a draft product; the returned card opens expanded */
+        $router->post('/draft', [ProductController::class, 'adminDraft'])
+            ->middleware('permission:products.manage')
+            ->name('draft');
+
+        /* type-ahead for the relation pickers in the product editor */
+        $router->get('/search', [ProductController::class, 'adminSearch'])
+            ->middleware('permission:products.view')
+            ->name('search');
+
+        $router->get('/{id}/card', [ProductController::class, 'adminCard'])
+            ->middleware('permission:products.view')
+            ->where('id', '\d+')
+            ->name('card');
+
+        $router->get('/{id}/editor', [ProductController::class, 'adminEditor'])
+            ->middleware('permission:products.view')
+            ->where('id', '\d+')
+            ->name('editor');
+
+        $router->get('/{id}/media-fragment', [ProductController::class, 'adminMediaFragment'])
+            ->middleware('permission:products.view')
+            ->where('id', '\d+')
+            ->name('media-fragment');
+
+        /* per-section saves of the expanded editor */
+        $router->post('/{id}/section/{section}', [ProductController::class, 'adminSection'])
             ->middleware('permission:products.manage')
             ->where('id', '\d+')
-            ->name('edit');
-
-        $router->post('/{id}', [ProductController::class, 'adminUpdate'])
-            ->middleware('permission:products.manage')
-            ->where('id', '\d+')
-            ->name('update');
-
-        $router->post('/{id}/visibility', [ProductController::class, 'adminToggleVisibility'])
-            ->middleware('permission:products.manage')
-            ->where('id', '\d+')
-            ->name('visibility');
+            ->where('section', '[a-z]+')
+            ->name('section');
 
         $router->post('/{id}/delete', [ProductController::class, 'adminDestroy'])
             ->middleware('permission:products.manage')
             ->where('id', '\d+')
             ->name('destroy');
 
+        /* click-to-edit on the admin product cards + featured star toggle */
+        $router->post('/{id}/inline', [ProductController::class, 'adminInline'])
+            ->middleware('permission:products.manage')
+            ->where('id', '\d+')
+            ->name('inline');
+
+        $router->post('/{id}/toggle-featured', [ProductController::class, 'adminToggleFeatured'])
+            ->middleware('permission:products.manage')
+            ->where('id', '\d+')
+            ->name('toggle-featured');
+
         /* product images: photos / technical drawings / installed shots */
         $router->post('/{id}/media', [ProductMediaController::class, 'store'])
             ->middleware('permission:products.manage')
             ->where('id', '\d+')
             ->name('media.store');
+
+        $router->post('/{id}/media/{attachmentId}/replace', [ProductMediaController::class, 'replace'])
+            ->middleware('permission:products.manage')
+            ->where('id', '\d+')
+            ->where('attachmentId', '\d+')
+            ->name('media.replace');
 
         $router->post('/{id}/media/{attachmentId}/section', [ProductMediaController::class, 'move'])
             ->middleware('permission:products.manage')

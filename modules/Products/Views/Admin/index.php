@@ -1,112 +1,122 @@
 <?php
-use Modules\Products\Services\ProductVisibility;
+use Modules\Products\Services\ProductService;
 
 /** @var Core\View\View $view */
 $view->layout('layouts.admin');
-/** @var Core\Database\Paginator $paginator */
-$locale = $translator->getLocale();
-$names = [];
-foreach ($paginator->items() as $product) {
-    $names[(int) $product->id] = $product->translate($locale)['name'] ?? '';
-}
+/** @var string $mode */
+/** @var array<string, mixed> $filters */
+/** @var array{ids: int[], total: int, pages: int, page: int, families: array} $grid */
+/** @var array<int, array<string, mixed>> $categoryTree */
+/** @var array<int, array<string, mixed>> $presets */
+/** @var array<int, array{key: string, label: string, svg: string}> $icons */
+/** @var array<string, int> $reasonSummary */
+/** @var int $incompleteTotal */
+
+$isIncomplete = $mode === 'incomplete';
+$gridState = [
+    'q' => (string) $filters['search'],
+    'status' => (string) $filters['status'],
+    'sort' => (string) $filters['sort'],
+    'featured' => !empty($filters['featured']) ? 1 : 0,
+    'is_new' => !empty($filters['is_new']) ? 1 : 0,
+    'incomplete' => $isIncomplete || !empty($filters['incomplete']) ? 1 : 0,
+    'category_id' => (int) $filters['category_id'],
+    'page' => (int) $filters['page'],
+];
 ?>
-<div class="admin-toolbar">
-    <form method="get" class="inline-form">
-        <input class="input" type="search" name="q" value="<?= e(request()->query('q', '')) ?>" placeholder="<?= e(trans('common.search')) ?>">
-        <?= $view->component('button', ['label' => trans('common.search'), 'variant' => 'secondary', 'type' => 'submit']) ?>
-    </form>
-    <?= $view->component('button', ['label' => trans('common.create_product'), 'variant' => 'primary', 'href' => route('admin.products.create')]) ?>
+<div class="adm-browser" data-products-browser
+     data-mode="<?= e($mode) ?>"
+     data-grid-url="<?= e(route('admin.products.grid')) ?>"
+     data-draft-url="<?= e(route('admin.products.draft')) ?>">
+
+    <?php if ($isIncomplete): ?>
+        <div class="adm-incomplete-summary">
+            <strong><?= e(trans('products.incomplete_title')) ?>: <?= (int) $incompleteTotal ?></strong>
+            <?php foreach (['photo', 'drawing', 'name', 'category', 'price', 'features', 'finish'] as $reason): ?>
+                <?php if (!empty($reasonSummary[$reason])): ?>
+                    <span class="adm-reason"><?= e(trans('products.reason_' . $reason)) ?> · <?= (int) $reasonSummary[$reason] ?></span>
+                <?php endif; ?>
+            <?php endforeach; ?>
+        </div>
+    <?php endif; ?>
+
+    <section class="adm-catbrowser" data-catbrowser aria-label="<?= e(trans('common.category')) ?>">
+        <div class="adm-catcrumbs" data-catcrumbs></div>
+        <div class="adm-catcols">
+            <?php for ($level = 0; $level < 3; $level++): ?>
+                <div class="adm-catcol" data-catcol="<?= $level ?>" hidden>
+                    <input type="search" class="input input-sm adm-catsearch" data-catsearch
+                           placeholder="<?= e(trans('common.search')) ?>…" aria-label="<?= e(trans('common.search')) ?>">
+                    <div class="adm-catlist" data-catlist></div>
+                </div>
+            <?php endfor; ?>
+        </div>
+    </section>
+
+    <div class="admin-toolbar adm-filters" data-grid-filters>
+        <input class="input" type="search" data-filter="q" value="<?= e($gridState['q']) ?>"
+               placeholder="<?= e(trans('products.search_placeholder')) ?>">
+        <select class="input" data-filter="status" aria-label="<?= e(trans('common.status')) ?>">
+            <option value=""><?= e(trans('products.filter_all_statuses')) ?></option>
+            <?php foreach (ProductService::STATUSES as $statusOption): ?>
+                <option value="<?= $statusOption ?>" <?= $gridState['status'] === $statusOption ? 'selected' : '' ?>><?= e(trans('common.' . $statusOption)) ?></option>
+            <?php endforeach; ?>
+        </select>
+        <select class="input" data-filter="sort" aria-label="<?= e(trans('products.sort_label')) ?>">
+            <option value="model" <?= $gridState['sort'] === 'model' ? 'selected' : '' ?>><?= e(trans('products.sort_model')) ?></option>
+            <option value="name" <?= $gridState['sort'] === 'name' ? 'selected' : '' ?>><?= e(trans('products.sort_name')) ?></option>
+            <option value="newest" <?= $gridState['sort'] === 'newest' ? 'selected' : '' ?>><?= e(trans('products.sort_newest')) ?></option>
+            <option value="curated" <?= $gridState['sort'] === 'curated' ? 'selected' : '' ?>><?= e(trans('products.sort_curated')) ?></option>
+        </select>
+        <button type="button" class="adm-chip-toggle<?= $gridState['featured'] ? ' is-on' : '' ?>" data-filter-toggle="featured" aria-pressed="<?= $gridState['featured'] ? 'true' : 'false' ?>">★ <?= e(trans('common.featured')) ?></button>
+        <button type="button" class="adm-chip-toggle<?= $gridState['is_new'] ? ' is-on' : '' ?>" data-filter-toggle="is_new" aria-pressed="<?= $gridState['is_new'] ? 'true' : 'false' ?>"><?= e(trans('common.new')) ?></button>
+        <span class="adm-grid-total" data-grid-total><?= (int) $grid['total'] ?></span>
+        <button type="button" class="btn btn-primary" data-add-product>+ <?= e(trans('common.create_product')) ?></button>
+    </div>
+
+    <p class="admin-hint"><?= e(trans('products.inline_hint')) ?></p>
+
+    <div class="adm-cards" data-grid>
+        <?= $view->render('products::Admin._grid', [
+            'products' => $products,
+            'payloads' => $payloads,
+            'cards' => $cards,
+            'mediaState' => $mediaState,
+            'chips' => $chips,
+            'finishSpecs' => $finishSpecs,
+            'covers' => $covers,
+            'members' => $members,
+            'reasons' => $reasons,
+            'categoryPaths' => $categoryPaths,
+            'mode' => $mode,
+            'locale' => $locale,
+        ]) ?>
+    </div>
+
+    <nav class="adm-pager" data-grid-pager data-page="<?= (int) $grid['page'] ?>" data-pages="<?= (int) $grid['pages'] ?>">
+        <button type="button" class="btn btn-sm btn-secondary" data-pager="prev">&larr;</button>
+        <span data-pager-label><?= (int) $grid['page'] ?> / <?= (int) $grid['pages'] ?></span>
+        <button type="button" class="btn btn-sm btn-secondary" data-pager="next">&rarr;</button>
+    </nav>
 </div>
 
-<div class="product-table-wrap">
-<table class="table">
-    <thead>
-        <tr>
-            <th>ID</th>
-            <th>Preview</th>
-            <th><?= e(trans('common.model_code')) ?></th>
-            <th><?= e(trans('common.name')) ?></th>
-            <th><?= e(trans('common.slug')) ?></th>
-            <th><?= e(trans('common.price')) ?></th>
-            <th><?= e(trans('common.status')) ?></th>
-            <th><?= e(trans('products.media_status')) ?></th>
-            <th><?= e(trans('products.visibility')) ?></th>
-            <th><?= e(trans('common.actions')) ?></th>
-        </tr>
-    </thead>
-    <tbody>
-        <?php foreach ($paginator->items() as $product): ?>
-            <?php
-            $data = $product->translate($locale);
-            $productImage = !empty($data['image']) ? asset((string) $data['image']) : null;
-            $productName = (string) ($names[(int) $product->id] ?? $product->model_code ?? '');
-            $status = (string) $product->status;
-            $media = ProductVisibility::media($product);
-            $hasMainImage = $media['photo'];
-            $hasDrawing = $media['drawing'];
-            $lifecyclePublic = in_array($status, ProductVisibility::PUBLIC_STATUSES, true);
-            $isPublic = $lifecyclePublic && $media['ready'];
-            $hiddenForMedia = $lifecyclePublic && !$media['ready'];
-            $canToggleVisibility = $media['ready'] && in_array($status, ['active', 'hidden'], true);
-            ?>
-            <tr>
-                <td><?= (int) $product->id ?></td>
-                <td style="width: 60px;">
-                    <?php if ($productImage): ?>
-                        <a href="<?= $productImage ?>" title="<?= e($productName) ?>">
-                            <img src="<?= $productImage ?>" alt="<?= e($productName) ?>" loading="lazy" style="width: 48px; height: 48px; object-fit: cover; border-radius: 6px; border: 1px solid var(--ds-border, #e2e8f0); display: block; background: var(--ds-surface, #fff);">
-                        </a>
-                    <?php else: ?>
-                        <div style="width: 48px; height: 48px; border-radius: 6px; border: 1px dashed var(--ds-border, #e2e8f0); display: flex; align-items: center; justify-content: center; background: var(--ds-surface-alt, #f8fafc); font-size: 11px; color: var(--ds-text-muted, #94a3b8); font-weight: 500;">
-                            No img
-                        </div>
-                    <?php endif; ?>
-                </td>
-                <td><strong><?= e((string) ($product->model_code ?? '')) ?></strong></td>
-                <td><?= e($productName) ?></td>
-                <td><code><?= e((string) $product->slug) ?></code></td>
-                <td><?= e((string) ($data['price'] ?? 0)) ?></td>
-                <td><span class="badge badge-<?= e($status) ?>"><?= e(trans('common.' . $status)) ?></span></td>
-                <td>
-                    <div class="product-media-flags">
-                        <span class="badge badge-<?= $hasMainImage ? 'active' : 'draft' ?>">
-                            <?= e(trans($hasMainImage ? 'products.main_image_present' : 'products.main_image_missing')) ?>
-                        </span>
-                        <span class="badge badge-<?= $hasDrawing ? 'active' : 'draft' ?>">
-                            <?= e(trans($hasDrawing ? 'products.drawing_present' : 'products.drawing_missing')) ?>
-                        </span>
-                    </div>
-                </td>
-                <td>
-                    <div class="product-visibility">
-                        <span class="badge badge-<?= $isPublic ? 'active' : 'inactive' ?>">
-                            <?= e(trans($isPublic ? 'products.visible' : ($hiddenForMedia ? 'products.hidden_media_incomplete' : 'products.hidden'))) ?>
-                        </span>
-                        <?php if ($canToggleVisibility): ?>
-                            <form method="post" action="<?= e(route('admin.products.visibility', ['id' => $product->id])) ?>" class="inline-form">
-                                <?= csrf_field() ?>
-                                <input type="hidden" name="page" value="<?= max(1, (int) request()->query('page', '1')) ?>">
-                                <input type="hidden" name="q" value="<?= e((string) request()->query('q', '')) ?>">
-                                <button type="submit" class="btn btn-sm btn-secondary"
-                                        aria-label="<?= e(trans($status === 'active' ? 'products.hide_product' : 'products.show_product') . ' — ' . $productName) ?>">
-                                    <?= e(trans($status === 'active' ? 'products.hide_product' : 'products.show_product')) ?>
-                                </button>
-                            </form>
-                        <?php endif; ?>
-                    </div>
-                </td>
-                <td class="row-actions">
-                    <a class="btn btn-sm btn-secondary" href="<?= e(route('admin.products.edit', ['id' => $product->id])) ?>"><?= e(trans('common.edit')) ?></a>
-                    <form method="post" action="<?= e(route('admin.products.destroy', ['id' => $product->id])) ?>" class="inline-form"
-                          onsubmit="return confirm('Are you sure you want to delete this product?');">
-                        <?= csrf_field() ?>
-                        <button type="submit" class="btn btn-sm btn-danger"><?= e(trans('common.delete')) ?></button>
-                    </form>
-                </td>
-            </tr>
-        <?php endforeach; ?>
-    </tbody>
-</table>
-</div>
-
-<?= $view->component('pagination', ['paginator' => $paginator]) ?>
+<script type="application/json" id="category-tree-json"><?= json_encode($categoryTree, JSON_UNESCAPED_UNICODE | JSON_HEX_TAG | JSON_HEX_AMP) ?></script>
+<script type="application/json" id="grid-state-json"><?= json_encode($gridState, JSON_UNESCAPED_UNICODE | JSON_HEX_TAG | JSON_HEX_AMP) ?></script>
+<script type="application/json" id="feature-presets-json"><?=
+    json_encode(array_reduce($presets, static function (array $carry, array $preset): array {
+        $labels = [];
+        $placeholders = [];
+        foreach (($preset['translations'] ?? []) as $loc => $tr) {
+            $labels[$loc] = (string) ($tr['label'] ?? '');
+            $placeholders[$loc] = (string) ($tr['placeholder'] ?? '');
+        }
+        $carry[(int) $preset['id']] = ['icon' => (string) $preset['icon_key'], 'labels' => $labels, 'placeholders' => $placeholders];
+        return $carry;
+    }, []), JSON_UNESCAPED_UNICODE | JSON_HEX_TAG | JSON_HEX_AMP)
+?></script>
+<script type="application/json" id="feature-icons-json"><?=
+    json_encode(array_reduce($icons, static function (array $carry, array $icon): array {
+        $carry[$icon['key']] = ['label' => $icon['label'], 'svg' => $icon['svg']];
+        return $carry;
+    }, []), JSON_UNESCAPED_UNICODE | JSON_HEX_TAG | JSON_HEX_AMP)
+?></script>
