@@ -271,7 +271,8 @@ return [
     'pdp_on_request_tag' => 'Request',
     'pdp_finishes_count' => ':n finishes available',
     /* admin product cards: inline editing */
-    'inline_hint' => 'Click any value on a card to edit it in place. Use \"Full edit\" on the card for everything else — languages, specifications, relations, SEO.',
+    'inline_hint' => 'Click any value on a card to edit it in place. Open the card editor for everything else — languages, specifications, relations, SEO.',
+    'search_placeholder' => 'Search by model code (starts with...) or name',
     'inline_required' => 'This value cannot be empty.',
     'inline_too_long' => 'This value is too long.',
     'inline_model_taken' => 'Another product already uses this model code.',

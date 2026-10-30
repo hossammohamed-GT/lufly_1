@@ -52,15 +52,20 @@ class View
     /** @param array<string, mixed> $data */
     public function render(string $template, array $data = []): string
     {
+        /* Templates may nest render() calls (a page rendering its partials).
+           The layout declaration belongs to the template that made it, so a
+           nested fragment render must not wipe an outer template's layout:
+           save it on entry and restore it on exit, stack-style. */
+        $previousLayout = $this->layout;
         $this->layout = null;
 
         $content = $this->renderFile($this->resolvePath($template), $data);
 
-        if ($this->layout !== null) {
-            $layoutPath = $this->resolvePath($this->layout);
-            $this->layout = null;
+        $layout = $this->layout;
+        $this->layout = $previousLayout;
 
-            return $this->renderFile($layoutPath, array_merge($data, ['content' => $content]));
+        if ($layout !== null) {
+            return $this->renderFile($this->resolvePath($layout), array_merge($data, ['content' => $content]));
         }
 
         return $content;

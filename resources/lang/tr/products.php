@@ -271,7 +271,8 @@ return [
     'pdp_on_request_tag' => 'Talep',
     'pdp_finishes_count' => ':n yüzey seçeneği',
     /* admin ürün kartları: yerinde düzenleme */
-    'inline_hint' => 'Karttaki herhangi bir degeri tiklayarak yerinde duzenleyin. Diger her sey icin — diller, teknik ozellikler, iliskiler, SEO — karttaki \"Tam duzenleme\"yi kullanin.',
+    'inline_hint' => 'Karttaki herhangi bir değere tıklayarak yerinde düzenleyin. Diğer her şey için kart düzenleyiciyi açın — diller, teknik özellikler, ilişkiler, SEO.',
+    'search_placeholder' => 'Model koduna (ile başlayan) veya ada göre ara',
     'inline_required' => 'Bu değer boş olamaz.',
     'inline_too_long' => 'Bu değer çok uzun.',
     'inline_model_taken' => 'Bu model kodu başka bir ürün tarafından kullanılıyor.',

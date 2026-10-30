@@ -271,7 +271,8 @@ return [
     'pdp_on_request_tag' => 'Na dotaz',
     'pdp_finishes_count' => ':n povrchových úprav',
     /* admin karty produktů: úpravy na místě */
-    'inline_hint' => 'Kliknutim na libovolnou hodnotu na karte ji upravite primo na miste. Vse ostatni — jazyky, specifikace, vztahy, SEO — najdete v Uplnych upravach na karte.',
+    'inline_hint' => 'Kliknutím na libovolnou hodnotu na kartě ji upravíte přímo na místě. Pro vše ostatní otevřete editor karty — jazyky, specifikace, vazby, SEO.',
+    'search_placeholder' => 'Hledat podle kódu modelu (začíná na...) nebo názvu',
     'inline_required' => 'Tato hodnota nesmí být prázdná.',
     'inline_too_long' => 'Tato hodnota je příliš dlouhá.',
     'inline_model_taken' => 'Tento kód modelu už používá jiný produkt.',
