@@ -10,6 +10,7 @@ use Modules\Products\Services\ProductVisibility;
 /** @var array<int, array<int, array{id: int, preset_id: int, icon: string, label: string, value: string, value_raw: string}>> $chips */
 /** @var array<int, array{id: int, value: string}> $finishSpecs */
 /** @var array<int, array{attachment_id: int, path: string, section: string}|null> $covers */
+/** @var array<int, array<int, array{attachment_id: int, path: string}>> $galleries */
 /** @var array<int, array<int, array{id: int, model_code: string, name: string, finish_key: string, finish_label: string}>> $members */
 /** @var array<int, string[]> $reasons */
 /** @var array<int, string> $categoryPaths */
@@ -21,6 +22,7 @@ $payload = $payloads[$pid] ?? [];
 $card = $cards[$pid] ?? [];
 $media = $mediaState[$pid] ?? ['photo' => false, 'drawing' => false, 'ready' => false];
 $cover = $covers[$pid] ?? null;
+$gallery = $galleries[$pid] ?? [];
 $isFeatured = !empty($payload['is_featured']);
 $isNew = !empty($payload['is_new']);
 $status = (string) ($payload['status'] ?? $product->status);
@@ -47,7 +49,29 @@ $fmtPrice = static fn (float $value): string => rtrim(rtrim(number_format($value
          data-delete-url="<?= e(route('admin.products.destroy', ['id' => $pid])) ?>">
     <div class="adm-card-face" data-card-face>
         <div class="adm-card-media">
-            <?php if ($cover !== null && $image !== ''): ?>
+            <?php if (count($gallery) >= 2): ?>
+                <?php
+                $slides = array_map(static fn (array $g): array => [
+                    'attachment_id' => (int) $g['attachment_id'],
+                    'path' => (string) $g['path'],
+                    'src' => asset((string) $g['path']),
+                ], $gallery);
+                ?>
+                <div class="adm-carousel" data-carousel data-gallery="<?= e((string) json_encode($slides)) ?>">
+                    <button type="button" class="adm-cover" data-lightbox="product" data-carousel-stage
+                            data-attachment-id="<?= (int) $slides[0]['attachment_id'] ?>"
+                            data-product-id="<?= $pid ?>"
+                            data-path="<?= e($slides[0]['path']) ?>"
+                            data-section="photos"
+                            data-caption="<?= e((string) ($payload['model_code'] ?? '') . ' · ' . (string) ($payload['name'] ?? '')) ?>"
+                            title="<?= e(trans('products.images_title')) ?>">
+                        <img src="<?= e($slides[0]['src']) ?>" alt="<?= e((string) ($payload['name'] ?? '')) ?>" loading="lazy" data-carousel-img>
+                    </button>
+                    <button type="button" class="adm-carousel-arrow is-prev" data-carousel-prev aria-label="<?= e(trans('products.carousel_prev')) ?>">‹</button>
+                    <button type="button" class="adm-carousel-arrow is-next" data-carousel-next aria-label="<?= e(trans('products.carousel_next')) ?>">›</button>
+                    <span class="adm-carousel-count" data-carousel-count>1 / <?= count($slides) ?></span>
+                </div>
+            <?php elseif ($cover !== null && $image !== ''): ?>
                 <button type="button" class="adm-cover" data-lightbox="product"
                         data-attachment-id="<?= (int) $cover['attachment_id'] ?>"
                         data-product-id="<?= $pid ?>"

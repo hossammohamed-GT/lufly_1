@@ -358,6 +358,8 @@ return [
     'media_replace_all' => 'Nahradit vše',
     'media_replace_all_confirm' => 'Nahradit všechny obrázky v této sekci? Současné soubory se přesunou do deleted-images.',
     'media_section_replaced' => 'Obrázky sekce byly nahrazeny.',
+    'carousel_prev' => 'Předchozí obrázek',
+    'carousel_next' => 'Další obrázek',
     'media_file_required' => 'Nejprve vyberte soubor obrázku.',
     'new_toggle' => 'Označit jako nové (zobrazí odznak NOVÉ v obchodě)',
     'family_label' => 'Barvy',

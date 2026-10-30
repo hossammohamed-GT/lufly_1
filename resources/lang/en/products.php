@@ -358,6 +358,8 @@ return [
     'media_replace_all' => 'Replace all',
     'media_replace_all_confirm' => 'Replace every image in this section? The current files move to deleted-images.',
     'media_section_replaced' => 'Section images replaced.',
+    'carousel_prev' => 'Previous image',
+    'carousel_next' => 'Next image',
     'media_file_required' => 'Please choose an image file first.',
     'new_toggle' => 'Mark as New (shows the NEW badge on the storefront)',
     'family_label' => 'Colors',

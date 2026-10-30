@@ -514,7 +514,7 @@ class ProductController extends Controller
         $families = $grid['families'] ?? [];
         $empty = [
             'products' => [], 'payloads' => [], 'cards' => [], 'mediaState' => [],
-            'chips' => [], 'finishSpecs' => [], 'covers' => [], 'members' => [], 'reasons' => [],
+            'chips' => [], 'finishSpecs' => [], 'covers' => [], 'galleries' => [], 'members' => [], 'reasons' => [],
         ];
         if ($ids === []) {
             return $empty;
@@ -538,6 +538,7 @@ class ProductController extends Controller
         $cards = [];
         $mediaState = [];
         $covers = [];
+        $galleries = [];
         $membersOut = [];
         foreach ($ids as $id) {
             if (!isset($byId[$id])) {
@@ -549,6 +550,13 @@ class ProductController extends Controller
             $cards[$id] = ProductCardPresenter::make($payloads[$id], $locale);
             $mediaState[$id] = ProductVisibility::media($product);
             $covers[$id] = $this->coverOf($product);
+            $galleries[$id] = [];
+            foreach ($product->mediaBySection()['photos'] ?? [] as $photo) {
+                $galleries[$id][] = [
+                    'attachment_id' => (int) ($photo['attachment_id'] ?? 0),
+                    'path' => (string) ($photo['path'] ?? ''),
+                ];
+            }
 
             if (isset($families[$id])) {
                 $list = [];
@@ -582,6 +590,7 @@ class ProductController extends Controller
             'chips' => $this->products->cardChipsBulk($ids, $locale),
             'finishSpecs' => $this->products->finishSpecsBulk($ids),
             'covers' => $covers,
+            'galleries' => $galleries,
             'members' => $membersOut,
             'reasons' => $this->products->incompleteReasons($ids),
         ];

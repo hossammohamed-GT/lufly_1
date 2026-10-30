@@ -773,3 +773,25 @@ button.adm-chip:hover { border-color: var(--ds-primary); }
 /* media section header carries the replace-all action */
 .media-section-head { display: flex; align-items: flex-start; gap: var(--space-3); flex-wrap: wrap; }
 .media-section-head [data-media-replace-all] { margin-inline-start: auto; }
+
+/* ---------------------------------------------------- card cover carousel */
+.adm-carousel { position: relative; width: 100%; height: 100%; }
+.adm-carousel [data-carousel-img] { transition: opacity .25s ease; }
+.adm-carousel [data-carousel-img].is-fading { opacity: .35; }
+.adm-carousel-arrow {
+  position: absolute; top: 50%; transform: translateY(-50%); z-index: 3;
+  width: 30px; height: 30px; border-radius: 999px; border: 1px solid var(--ds-border);
+  background: rgba(255, 255, 255, .92); color: inherit; font-size: 18px; line-height: 1;
+  display: flex; align-items: center; justify-content: center; cursor: pointer;
+  opacity: 0; transition: opacity .15s ease; padding: 0;
+}
+.adm-carousel-arrow.is-prev { inset-inline-start: 8px; }
+.adm-carousel-arrow.is-next { inset-inline-end: 8px; }
+.adm-carousel:hover .adm-carousel-arrow,
+.adm-carousel:focus-within .adm-carousel-arrow { opacity: 1; }
+@media (hover: none) { .adm-carousel-arrow { opacity: .92; } }
+.adm-carousel-count {
+  position: absolute; bottom: 8px; inset-inline-end: 8px; z-index: 3;
+  background: rgba(0, 0, 0, .55); color: #fff; font-size: var(--text-xs);
+  padding: 2px 8px; border-radius: 999px; pointer-events: none;
+}

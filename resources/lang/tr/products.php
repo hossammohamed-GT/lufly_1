@@ -358,6 +358,8 @@ return [
     'media_replace_all' => 'Tümünü değiştir',
     'media_replace_all_confirm' => 'Bu bölümdeki tüm görseller değişsin mi? Mevcut dosyalar deleted-images klasörüne taşınır.',
     'media_section_replaced' => 'Bölüm görselleri değiştirildi.',
+    'carousel_prev' => 'Önceki görsel',
+    'carousel_next' => 'Sonraki görsel',
     'media_file_required' => 'Önce bir görsel dosyası seçin.',
     'new_toggle' => 'Yeni olarak işaretle (mağazada YENİ rozetini gösterir)',
     'family_label' => 'Renkler',
