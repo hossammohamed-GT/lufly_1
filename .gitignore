@@ -35,3 +35,6 @@ node_modules/
 /database/schema/*.sql
 /public/manage_products_lufly_new/
 
+# Generated upload-ready production copy; keep the image library single-sourced.
+/production/
+
