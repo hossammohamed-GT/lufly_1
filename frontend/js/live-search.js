@@ -567,15 +567,18 @@
           var delay = (0.04 * ((index % 6) + 1)).toFixed(2);
           var isFeatured = !!(product.is_featured || card.is_featured);
           var features = featureList(card);
-          var hasFeaturePanel = !!card.badge || !!card.is_new || features !== '';
+          var hasFeaturePanel = features !== '';
           var badgeStar = '<svg class="pcard-badge-star" viewBox="0 0 16 16" fill="currentColor" aria-hidden="true" focusable="false"><path d="M8 1.25l1.72 4.31 4.63.42-3.5 3.06 1.04 4.54L8 11.18l-3.89 2.4 1.04-4.54-3.5-3.06 4.63-.42L8 1.25z"/></svg>';
           var badgeHtml = (card.is_new
             ? '<span class="pcard-badge is-new-badge"><span>' + esc(card.new_label || 'New') + '</span></span>'
             : '') + (card.badge
             ? '<span class="pcard-badge' + (isFeatured ? ' is-featured-badge' : '') + '">' + (isFeatured ? badgeStar : '') + '<span>' + esc(card.badge) + '</span></span>'
             : '');
+          var badges = badgeHtml
+            ? '<div class="pcard-badges" data-pcard-badges>' + badgeHtml + '</div>'
+            : '';
           var featurePanel = hasFeaturePanel
-            ? '<div class="pcard-feature-panel">' + badgeHtml + features + '</div>'
+            ? '<div class="pcard-feature-panel">' + features + '</div>'
             : '';
 
           return '<article class="pcard' + (isFeatured ? ' is-featured' : '') + ' ' + (hasPrice ? 'has-price' : 'is-price-pending') + '" data-product-card data-product-id="' + esc(product.id || '') + '"' + (isFeatured ? ' data-featured="1"' : '') + ' style="--pcard-delay:' + delay + 's">' +
@@ -590,7 +593,7 @@
                 ' data-pcard-kind="' + esc(slide.kind) + '"' +
                 ' src="' + esc(slide.src) + '" alt="' + alt + '" loading="lazy" decoding="async" width="420" height="320"' +
                 ' onerror="this.onerror=null;this.remove();">';
-            }).join('') + '</a>' +
+            }).join('') + '</a>' + badges +
             (slides.length > 1
               ? '<div class="pcard-media-meta"><span class="pcard-dots" aria-hidden="true">' + slides.map(function (u, n) {
                   return '<i class="pcard-dot' + (n === 0 ? ' is-on' : '') + '" data-pcard-dot="' + n + '"></i>';

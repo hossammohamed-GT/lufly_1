@@ -67,7 +67,7 @@ if (!$isNew) {
     }
 }
 $hasPrice = !empty($card['has_price']);
-$hasFeaturePanel = $isNew || $card['badge'] !== '' || $card['features'] !== [];
+$hasFeaturePanel = $card['features'] !== [];
 ?>
 <article class="pcard<?= $isFeatured ? ' is-featured' : '' ?><?= $hasPrice ? ' has-price' : ' is-price-pending' ?>"
          data-product-card data-product-id="<?= $productId ?>"<?= $isFeatured ? ' data-featured="1"' : '' ?>
@@ -86,6 +86,23 @@ $hasFeaturePanel = $isNew || $card['badge'] !== '' || $card['features'] !== [];
                      onerror="this.onerror=null; this.remove();">
             <?php endforeach; ?>
         </a>
+        <?php if ($isNew || $card['badge'] !== ''): ?>
+            <div class="pcard-badges" data-pcard-badges>
+                <?php if ($isNew): ?>
+                    <span class="pcard-badge is-new-badge"><span><?= e((string) (($card['new_label'] ?? '') !== '' ? $card['new_label'] : trans('common.new'))) ?></span></span>
+                <?php endif; ?>
+                <?php if ($card['badge'] !== ''): ?>
+                    <span class="pcard-badge<?= $isFeatured ? ' is-featured-badge' : '' ?>">
+                        <?php if ($isFeatured): ?>
+                            <svg class="pcard-badge-star" viewBox="0 0 16 16" fill="currentColor" aria-hidden="true" focusable="false">
+                                <path d="M8 1.25l1.72 4.31 4.63.42-3.5 3.06 1.04 4.54L8 11.18l-3.89 2.4 1.04-4.54-3.5-3.06 4.63-.42L8 1.25z"/>
+                            </svg>
+                        <?php endif; ?>
+                        <span><?= e($card['badge']) ?></span>
+                    </span>
+                <?php endif; ?>
+            </div>
+        <?php endif; ?>
         <?php if (count($cardSlides) > 1): ?>
             <div class="pcard-media-meta">
                 <span class="pcard-dots" aria-hidden="true">
@@ -119,19 +136,6 @@ $hasFeaturePanel = $isNew || $card['badge'] !== '' || $card['features'] !== [];
 
         <?php if ($hasFeaturePanel): ?>
             <div class="pcard-feature-panel">
-                <?php if ($isNew): ?>
-                    <span class="pcard-badge is-new-badge"><span><?= e((string) (($card['new_label'] ?? '') !== '' ? $card['new_label'] : trans('common.new'))) ?></span></span>
-                <?php endif; ?>
-                <?php if ($card['badge'] !== ''): ?>
-                    <span class="pcard-badge<?= $isFeatured ? ' is-featured-badge' : '' ?>">
-                        <?php if ($isFeatured): ?>
-                            <svg class="pcard-badge-star" viewBox="0 0 16 16" fill="currentColor" aria-hidden="true" focusable="false">
-                                <path d="M8 1.25l1.72 4.31 4.63.42-3.5 3.06 1.04 4.54L8 11.18l-3.89 2.4 1.04-4.54-3.5-3.06 4.63-.42L8 1.25z"/>
-                            </svg>
-                        <?php endif; ?>
-                        <span><?= e($card['badge']) ?></span>
-                    </span>
-                <?php endif; ?>
                 <?php if ($card['features'] !== []): ?>
                     <span class="pcard-features" role="list">
                         <?php foreach ($card['features'] as $feature): ?>

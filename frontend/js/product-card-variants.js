@@ -92,11 +92,16 @@
   var badgeStar = '<svg class="pcard-badge-star" viewBox="0 0 16 16" fill="currentColor" aria-hidden="true" focusable="false">' +
     '<path d="M8 1.25l1.72 4.31 4.63.42-3.5 3.06 1.04 4.54L8 11.18l-3.89 2.4 1.04-4.54-3.5-3.06 4.63-.42L8 1.25z"/></svg>';
 
-  function featurePanel(card, isFeatured) {
+  function featurePanel(card) {
     var features = Array.isArray(card.features) ? card.features.slice(0, 3).map(function (feature) {
       return '<span class="pcard-feature" role="listitem">' + cardIcon(feature.icon) + '<span>' + esc(feature.label) + '</span></span>';
     }).join('') : '';
-    if (!card.badge && !card.is_new && !features) return '';
+    if (!features) return '';
+    return '<div class="pcard-feature-panel"><span class="pcard-features" role="list">' + features + '</span></div>';
+  }
+
+  /* New / Featured pills sit on the image (top corner), not in the panel. */
+  function badgeOverlay(card, isFeatured) {
     var badgeHtml = '';
     if (card.is_new) {
       badgeHtml += '<span class="pcard-badge is-new-badge"><span>' + esc(card.new_label || 'New') + '</span></span>';
@@ -105,8 +110,22 @@
       badgeHtml += '<span class="pcard-badge' + (isFeatured ? ' is-featured-badge' : '') + '">' +
         (isFeatured ? badgeStar : '') + '<span>' + esc(card.badge) + '</span></span>';
     }
-    return '<div class="pcard-feature-panel">' + badgeHtml +
-      (features ? '<span class="pcard-features" role="list">' + features + '</span>' : '') + '</div>';
+    return badgeHtml ? '<div class="pcard-badges" data-pcard-badges>' + badgeHtml + '</div>' : '';
+  }
+
+  function replaceBadges(card, html) {
+    var current = card.querySelector('[data-pcard-badges]');
+    if (current) {
+      if (html) current.outerHTML = html;
+      else current.remove();
+      return;
+    }
+    if (!html) return;
+    var stage = card.querySelector('.pcard-stage');
+    if (!stage) return;
+    var template = document.createElement('template');
+    template.innerHTML = html;
+    stage.appendChild(template.content);
   }
 
   function specList(card) {
@@ -445,7 +464,8 @@
     }
 
     if (full) {
-      replaceRegion(card, '.pcard-feature-panel', featurePanel(cardData, isFeatured), '.pcard-finishes, .pcard-specs, .pcard-actions');
+      replaceRegion(card, '.pcard-feature-panel', featurePanel(cardData), '.pcard-finishes, .pcard-specs, .pcard-actions');
+      replaceBadges(card, badgeOverlay(cardData, isFeatured));
       replaceRegion(card, '.pcard-specs', specList(cardData), '.pcard-actions');
 
       var caption = card.querySelector('.pcard-price small');
