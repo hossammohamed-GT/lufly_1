@@ -76,6 +76,13 @@
 
     cards.forEach((card) => {
       card.hidden = card.dataset.agentCard !== key;
+      if (card.hidden) return;
+
+      const copyTargets = [...card.querySelectorAll(".home-copy-target")];
+      copyTargets.forEach((target) => target.classList.remove("home-copy-visible"));
+      window.requestAnimationFrame(() => {
+        copyTargets.forEach((target) => target.classList.add("home-copy-visible"));
+      });
     });
   };
 
