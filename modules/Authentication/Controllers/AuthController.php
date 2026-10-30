@@ -6,6 +6,7 @@ namespace Modules\Authentication\Controllers;
 
 use App\Http\Controllers\Controller;
 use App\Services\ActivityLogger;
+use App\Services\AdminAccount;
 use Core\Auth\Auth;
 use Core\Exceptions\AuthenticationException;
 use Core\Http\RedirectResponse;
@@ -20,6 +21,7 @@ class AuthController extends Controller
         private readonly Auth $auth,
         private readonly Session $session,
         private readonly ActivityLogger $activity,
+        private readonly AdminAccount $adminAccount,
     ) {
     }
 
@@ -39,18 +41,29 @@ class AuthController extends Controller
         $data = (new LoginRequest())->handle($request);
 
         if (!$this->auth->attempt($data['email'], $data['password'])) {
-            \Core\Logging\Log::channel('security')->warning('Login failed', [
-                'email' => $data['email'],
-                'ip' => $request->ip(),
-            ]);
+            /* First sign-in (or recovery) on hosts without a console: when
+               the submitted credentials match ADMIN_EMAIL/ADMIN_PASSWORD in
+               .env, the single administrator is created/reset from .env and
+               the attempt is retried once with the canonical email. A normal
+               successful sign-in never reaches this, so a password changed
+               in the panel is never overridden by .env. */
+            $envEmail = $this->adminAccount->syncFromEnvIfMatches($data['email'], $data['password']);
+            if ($envEmail !== null && $this->auth->attempt($envEmail, $data['password'])) {
+                $data['email'] = $envEmail;
+            } else {
+                \Core\Logging\Log::channel('security')->warning('Login failed', [
+                    'email' => $data['email'],
+                    'ip' => $request->ip(),
+                ]);
 
-            if ($request->expectsJson()) {
-                throw new AuthenticationException(trans('auth.failed'));
+                if ($request->expectsJson()) {
+                    throw new AuthenticationException(trans('auth.failed'));
+                }
+
+                $this->session->flash('_errors', ['email' => [trans('auth.failed')]]);
+
+                return new RedirectResponse(route('login'));
             }
-
-            $this->session->flash('_errors', ['email' => [trans('auth.failed')]]);
-
-            return new RedirectResponse(route('login'));
         }
 
         $this->activity->login($this->auth->id(), $data['email']);
