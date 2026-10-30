@@ -149,17 +149,9 @@
     keyboard: false,
   }).addTo(map);
 
-  const routeStyle = {
-    className: "agents-map-route",
-    color: "#117d78",
-    weight: 2,
-    opacity: 0.7,
-    dashArray: "5 8",
-    interactive: false,
-  };
-
-  locations.forEach((marker) => {
+  locations.forEach((marker, index) => {
     const destination = marker.getLatLng();
+    const isUaeRoute = locationData[index]?.dataset.agentPin === "uae";
     const controlLatitude = Math.min(factory.lat, destination.lat) + 10;
     const controlLongitude = (factory.lng + destination.lng) / 2;
     const curve = [];
@@ -177,7 +169,16 @@
       ]);
     }
 
-    L.polyline(curve, routeStyle).addTo(map);
+    L.polyline(curve, {
+      className: isUaeRoute
+        ? "agents-map-route agents-map-route--uae"
+        : "agents-map-route",
+      color: isUaeRoute ? "#b38345" : "#117d78",
+      weight: isUaeRoute ? 3 : 2,
+      opacity: isUaeRoute ? 0.95 : 0.7,
+      dashArray: isUaeRoute ? "10 6" : "5 8",
+      interactive: false,
+    }).addTo(map);
   });
 
   const bounds = L.latLngBounds(locationsForBounds);

@@ -284,6 +284,27 @@
   animation: agents-map-route-flow 26s linear infinite;
 }
 
+.agents-map-route--uae {
+  animation-duration: 16s;
+  filter: drop-shadow(0 0 2px rgb(179 131 69 / 48%));
+}
+
+.agents-map-card:not([hidden]) {
+  animation: agents-map-card-reveal 420ms cubic-bezier(.2, .7, .25, 1) both;
+}
+
+@keyframes agents-map-card-reveal {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
 @keyframes agents-map-route-flow {
   to { stroke-dashoffset: -120; }
 }
@@ -459,6 +480,7 @@
 
 @media (prefers-reduced-motion: reduce) {
   .agents-map-route { animation: none; }
+  .agents-map-card:not([hidden]) { animation: none; }
   .agents-map-marker,
   .agents-map-marker-dot,
   .agents-map-visual .agents-map-reset { transition: none; }
