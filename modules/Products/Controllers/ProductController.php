@@ -372,6 +372,74 @@ class ProductController extends Controller
         return $this->json(['success' => true, 'message' => trans('common.saved')]);
     }
 
+    /** Colour families overview: every multi-colour family with its members. */
+    public function adminFamilies(Request $request): Response
+    {
+        $locale = (string) config('localization.fallback', 'en');
+        $familyMap = app(ProductColorFamilyService::class)->familyMap();
+
+        $groups = [];
+        $seen = [];
+        foreach ($familyMap as $members) {
+            $members = array_values(array_map('intval', $members));
+            $rep = (int) ($members[0] ?? 0);
+            if ($rep <= 0 || isset($seen[$rep])) {
+                continue;
+            }
+            $seen[$rep] = true;
+            $groups[] = $members;
+        }
+
+        $allIds = [];
+        foreach ($groups as $members) {
+            $allIds = [...$allIds, ...$members];
+        }
+        $allIds = array_values(array_unique($allIds));
+        $models = $allIds === [] ? [] : Product::query()->whereIn('id', $allIds)->get();
+        if ($models !== []) {
+            Product::eagerLoad($models, ['translations', 'variants', 'specs', 'card_features', 'dimensions', 'media', 'category']);
+        }
+        $byId = [];
+        foreach ($models as $model) {
+            $byId[(int) $model->id] = $model;
+        }
+
+        $familiesOut = [];
+        foreach ($groups as $members) {
+            $rows = [];
+            foreach ($members as $memberId) {
+                if (!isset($byId[$memberId])) {
+                    continue;
+                }
+                $model = $byId[$memberId];
+                $payload = $model->translate($locale);
+                $card = ProductCardPresenter::make($payload, $locale);
+                $finish = $card['finishes'][0] ?? null;
+                $media = ProductVisibility::media($model);
+                $cover = $this->coverOf($model);
+                $rows[] = [
+                    'id' => $memberId,
+                    'model_code' => (string) ($payload['model_code'] ?? ''),
+                    'name' => (string) ($payload['name'] ?? ''),
+                    'finish_key' => (string) ($finish['key'] ?? 'neutral'),
+                    'finish_label' => (string) ($finish['label'] ?? ''),
+                    'live' => in_array((string) ($payload['status'] ?? $model->status), ProductVisibility::PUBLIC_STATUSES, true) && $media['ready'],
+                    'cover' => (string) ($cover['path'] ?? ''),
+                ];
+            }
+            if (count($rows) >= 2) {
+                $familiesOut[] = ['source_id' => $rows[0]['id'], 'members' => $rows];
+            }
+        }
+        usort($familiesOut, static fn (array $a, array $b): int => strcmp($a['members'][0]['model_code'], $b['members'][0]['model_code']));
+
+        return $this->view('products::Admin.families', [
+            'title' => trans('products.families_title'),
+            'families' => $familiesOut,
+            'locale' => $locale,
+        ]);
+    }
+
     /** Create a draft product from the grid; its card comes back ready to edit. */
     public function adminDraft(Request $request): JsonResponse
     {

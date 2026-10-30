@@ -9,7 +9,8 @@ $direction = in_array($locale, ['ar', 'he', 'fa', 'ur'], true) ? 'rtl' : 'ltr';
 $currentPath = trim((string) request()->path(), '/');
 $navItems = [
     ['href' => route('admin.dashboard'), 'label' => trans('common.dashboard'), 'active' => $currentPath === 'admin'],
-    ['href' => route('admin.products.index'), 'label' => trans('common.products'), 'active' => str_starts_with($currentPath, 'admin/products')],
+    ['href' => route('admin.products.index'), 'label' => trans('common.products'), 'active' => str_starts_with($currentPath, 'admin/products') && !str_starts_with($currentPath, 'admin/products/families')],
+    ['href' => route('admin.products.families'), 'label' => trans('products.families_title'), 'active' => str_starts_with($currentPath, 'admin/products/families')],
     ['href' => route('admin.categories.index'), 'label' => trans('common.categories'), 'active' => str_starts_with($currentPath, 'admin/categories')],
     ['href' => route('admin.collections.index'), 'label' => trans('common.collections'), 'active' => str_starts_with($currentPath, 'admin/collections')],
     ['href' => route('admin.brands.index'), 'label' => trans('common.brands'), 'active' => str_starts_with($currentPath, 'admin/brands')],

@@ -33,6 +33,10 @@ return function (Router $router): void {
             ->middleware('permission:products.view')
             ->name('incomplete');
 
+        $router->get('/families', [ProductController::class, 'adminFamilies'])
+            ->middleware('permission:products.view')
+            ->name('families');
+
         $router->get('/grid', [ProductController::class, 'adminGrid'])
             ->middleware('permission:products.view')
             ->name('grid');

@@ -842,3 +842,14 @@ button.adm-chip:hover { border-color: var(--ds-primary); }
 
 /* add-colour action sits at the end of the family row */
 .adm-family-add { margin-inline-start: auto; }
+
+/* ------------------------------------------------------- colour families */
+.adm-families { display: grid; gap: var(--space-4); }
+.adm-family-block { border: 1px solid var(--ds-border); border-radius: var(--radius-md); background: var(--ds-surface); padding: var(--space-3) var(--space-4); display: grid; gap: var(--space-3); }
+.adm-family-block-head { display: flex; align-items: center; gap: var(--space-2); }
+.adm-family-block-spacer { flex: 1; }
+.adm-family-members { display: grid; gap: var(--space-2); }
+.adm-family-member { display: flex; align-items: center; gap: var(--space-3); border: 1px solid var(--ds-border); border-radius: var(--radius-md); padding: var(--space-2) var(--space-3); background: var(--ds-surface-alt); }
+.adm-family-member-img { width: 64px; height: 48px; object-fit: contain; border-radius: var(--radius-md); background: #fff; border: 1px solid var(--ds-border); display: flex; align-items: center; justify-content: center; flex: none; }
+.adm-family-member-meta { display: flex; align-items: center; gap: var(--space-3); flex-wrap: wrap; flex: 1; min-width: 0; }
+.adm-family-member-finish { display: inline-flex; align-items: center; gap: 6px; color: var(--ds-text-muted); }
