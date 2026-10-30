@@ -1,16 +1,20 @@
 <?php
 /**
  * LUFLY: First-entry brand intro.
- * The LUFLY mark — the exact same glyph paths and colours as the loading
- * loader (components.loader) — drawn large, stroke by stroke, over a deep
- * aquatic stage with rising light motes and a glass reflection; then the
- * whole stage lifts away like a curtain. Shown on the home page once per
- * visit (session); the gate script + intro.js handle show/skip/cleanup,
- * intro.css carries the whole choreography. The classic loader keeps its
- * own loading/navigation role untouched.
+ * The real LUFLY logo image itself (images/logo.png — the same artwork the
+ * navbar carries, in its true teal ink) painted in large by a travelling
+ * pen of light over a deep aquatic stage with rising light motes and a
+ * glass reflection; then the whole stage lifts away like a curtain. Shown
+ * on the home page once per visit (session); the gate script + intro.js
+ * handle show/skip/cleanup, intro.css carries the whole choreography.
+ * The classic loader (its own line-drawn mark) keeps its loading and
+ * navigation role untouched.
  *
  * @var Core\View\View $view
  */
+
+/* the one true logo artwork, exactly as the navbar uses it */
+$introLogo = asset('images/logo.png');
 
 /* deterministic rising-mote field: [left %, size px, delay s, drift px] */
 $introMotes = [
@@ -29,33 +33,24 @@ $introMotes = [
     </div>
 
     <div class="intro-logoBox">
-        <!-- seed: a single mint dot before the mark draws itself -->
+        <!-- seed: a single mint dot before the logo paints itself in -->
         <span class="intro-seed" aria-hidden="true"></span>
 
-        <!-- the LUFLY mark, identical glyph paths to the loader's;
-             pathLength normalises every stroke so CSS can "draw" them -->
-        <svg class="intro-draw" viewBox="0 0 510 325" aria-hidden="true">
-            <path pathLength="100" d="M 30 16 L 30 298 Q 30 306 38 306 L 116 306"/>
-            <path pathLength="100" d="M 64 16 L 64 174"/>
-            <path pathLength="100" d="M 64 244 L 116 244"/>
-            <path pathLength="100" d="M 158 148 L 158 246 Q 158 292 198 292 Q 238 292 238 246 L 238 148"/>
-            <path pathLength="100" d="M 288 292 L 288 82 Q 288 42 330 42"/>
-            <path pathLength="100" d="M 256 148 L 320 148"/>
-            <path pathLength="100" d="M 378 16 L 378 292"/>
-            <path pathLength="100" d="M 416 148 L 456 238 L 496 148 L 424 306"/>
-        </svg>
+        <!-- the actual LUFLY logo image, revealed left-to-right by light;
+             the intro-pen bar rides the reveal edge like a brush of light -->
+        <img class="intro-logo"
+             src="<?= e($introLogo) ?>"
+             alt=""
+             width="510"
+             height="325"
+             fetchpriority="high"
+             decoding="async">
+        <span class="intro-pen" aria-hidden="true"></span>
 
-        <!-- glass-floor reflection under the finished mark -->
+        <!-- glass-floor reflection under the finished logo -->
         <span class="intro-floor" aria-hidden="true"></span>
-        <svg class="intro-reflect" viewBox="0 0 510 325" aria-hidden="true">
-            <path d="M 30 16 L 30 298 Q 30 306 38 306 L 116 306"/>
-            <path d="M 64 16 L 64 174"/>
-            <path d="M 64 244 L 116 244"/>
-            <path d="M 158 148 L 158 246 Q 158 292 198 292 Q 238 292 238 246 L 238 148"/>
-            <path d="M 288 292 L 288 82 Q 288 42 330 42"/>
-            <path d="M 256 148 L 320 148"/>
-            <path d="M 378 16 L 378 292"/>
-            <path d="M 416 148 L 456 238 L 496 148 L 424 306"/>
-        </svg>
+        <div class="intro-reflect" aria-hidden="true">
+            <img src="<?= e($introLogo) ?>" alt="" width="510" height="325" decoding="async">
+        </div>
     </div>
 </div>

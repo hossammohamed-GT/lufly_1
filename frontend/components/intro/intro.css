@@ -1,10 +1,11 @@
 /* ============================================================
    LUFLY - First-entry brand intro
-   The loader's mark (same glyphs, same mint ink) drawn large:
-   seed glow -> strokes draw themselves -> glass reflection ->
-   seal of light -> the whole stage lifts like a curtain.
-   Shown only when <html> carries .has-intro (set pre-paint by
-   the gate script on the home page). Tokens mirror loader.css.
+   The real logo image (images/logo.png, true teal ink) painted
+   in large by a travelling pen of light: seed glow -> reveal
+   sweep -> glass reflection -> seal of light -> the whole
+   stage lifts like a curtain. Shown only when <html> carries
+   .has-intro (set pre-paint by the gate script on the home
+   page). Ambient tokens mirror loader.css.
    ============================================================ */
 
 :root {
@@ -12,6 +13,7 @@
   --in-teal: var(--lu-teal-500, #1c8b8b);
   --in-ease: cubic-bezier(.19, 1, .22, 1);
   --in-curtain: cubic-bezier(.76, 0, .24, 1);
+  --in-paint: cubic-bezier(.65, .02, .23, 1);
 }
 
 /* hidden unless the gate script decided this visit gets the intro;
@@ -97,8 +99,8 @@ html.has-intro {
   margin: -46vmin 0 0 -46vmin;
   border-radius: 50%;
   background: radial-gradient(circle,
-    color-mix(in srgb, var(--in-mint) 26%, transparent) 0%,
-    color-mix(in srgb, var(--in-teal) 14%, transparent) 42%,
+    color-mix(in srgb, var(--in-mint) 30%, transparent) 0%,
+    color-mix(in srgb, var(--in-teal) 15%, transparent) 42%,
     transparent 68%);
   filter: blur(6px);
   opacity: 0;
@@ -139,12 +141,12 @@ html.has-intro {
   100% { transform: translate(var(--drift), -88vh) scale(.35); opacity: 0; }
 }
 
-/* ---------------- the mark: big, drawn, reflected ---------------- */
+/* ---------------- the logo: big, painted in, reflected ---------------- */
 
 .intro-logoBox {
   position: relative;
   z-index: 3;
-  width: min(780px, 84vw);
+  width: min(640px, 84vw); /* the artwork is 510px wide; stay near-crisp */
   aspect-ratio: 510 / 325;
   transform-origin: center center;
   flex-shrink: 0;
@@ -174,7 +176,7 @@ html.has-intro {
   }
 }
 
-/* a band of light sweeps the finished mark before the curtain */
+/* a band of light sweeps the finished logo before the curtain */
 .intro-logoBox::after {
   content: "";
   position: absolute;
@@ -188,6 +190,7 @@ html.has-intro {
   opacity: 0;
   animation: inSweep .9s ease 2.02s both;
   pointer-events: none;
+  z-index: 5;
 }
 
 @keyframes inSweep {
@@ -197,46 +200,55 @@ html.has-intro {
   100% { transform: translateX(85%) skewX(-8deg); opacity: 0; }
 }
 
-.intro-draw {
+/* the logo image itself, painted in left-to-right by a moving clip edge —
+   slight overshoot past the box so antialiased edges are never shaved */
+.intro-logo {
   position: absolute;
   inset: 0;
   width: 100%;
   height: 100%;
-  overflow: visible;
+  display: block;
+  clip-path: inset(0 101% 0 0);
+  animation: inReveal 1.55s var(--in-paint) .3s both;
+  will-change: clip-path;
+  -webkit-user-drag: none;
+  user-select: none;
 }
 
-.intro-draw path {
-  fill: none;
-  stroke: var(--in-mint);
-  stroke-width: 7;
-  stroke-linecap: round;
-  stroke-linejoin: round;
-  stroke-dasharray: 100;
-  stroke-dashoffset: 100;
-  filter: drop-shadow(0 0 9px color-mix(in srgb, var(--in-mint) 45%, transparent));
-  animation: inDraw .8s ease-in-out forwards;
+@keyframes inReveal {
+  0% { clip-path: inset(0 101% 0 0); }
+  100% { clip-path: inset(0 -1% 0 0); }
 }
 
-/* two-tone identity, identical to the loader's mark */
-.intro-draw path:nth-child(4),
-.intro-draw path:nth-child(8) {
-  stroke: color-mix(in srgb, var(--lu-neutral-0, #ffffff) 82%, var(--in-mint));
+/* the pen of light riding the reveal edge, in sync with inReveal */
+.intro-pen {
+  position: absolute;
+  top: -5%;
+  height: 110%;
+  left: 0;
+  width: 3px;
+  border-radius: 2px;
+  background: linear-gradient(to bottom,
+    transparent 0%,
+    var(--in-mint) 36%,
+    #eafffa 50%,
+    var(--in-mint) 64%,
+    transparent 100%);
+  box-shadow: 0 0 18px 4px color-mix(in srgb, var(--in-mint) 55%, transparent);
+  opacity: 0;
+  animation: inPen 1.55s var(--in-paint) .3s both;
+  pointer-events: none;
+  z-index: 4;
 }
 
-.intro-draw path:nth-child(1) { animation-delay: .30s; }
-.intro-draw path:nth-child(2) { animation-delay: .43s; }
-.intro-draw path:nth-child(3) { animation-delay: .56s; }
-.intro-draw path:nth-child(4) { animation-delay: .69s; }
-.intro-draw path:nth-child(5) { animation-delay: .82s; }
-.intro-draw path:nth-child(6) { animation-delay: .95s; }
-.intro-draw path:nth-child(7) { animation-delay: 1.08s; }
-.intro-draw path:nth-child(8) { animation-delay: 1.21s; }
-
-@keyframes inDraw {
-  to { stroke-dashoffset: 0; }
+@keyframes inPen {
+  0% { left: 0; opacity: 0; }
+  7% { opacity: 1; }
+  93% { opacity: 1; }
+  100% { left: calc(100% - 3px); opacity: 0; }
 }
 
-/* seed dot: the spark the mark is born from */
+/* seed dot: the spark the logo is born from */
 .intro-seed {
   position: absolute;
   left: 50%;
@@ -258,7 +270,10 @@ html.has-intro {
   100% { opacity: 0; transform: scale(2.6); }
 }
 
-/* glass-floor reflection (flipped, squashed, teal tint) */
+/* glass-floor reflection: the same image, mirrored under a hairline of
+   light. The mask is written in the pre-flip direction on purpose — the
+   scaleY(-1) flip turns "strong at local bottom" into "strong at the
+   floor line, fading downward" on screen. */
 .intro-floor {
   position: absolute;
   top: calc(100% + 5px);
@@ -277,32 +292,31 @@ html.has-intro {
 
 .intro-reflect {
   position: absolute;
-  top: 70%;
+  top: calc(100% + 6px);
   left: 0;
   width: 100%;
   height: 100%;
-  transform: scaleY(-.3);
-  transform-origin: 50% 100%;
+  transform: scaleY(-1);
   filter: blur(1.4px);
   opacity: 0;
   animation: inReflectIn 1s ease 1.88s both;
   pointer-events: none;
   z-index: 1;
-  -webkit-mask-image: linear-gradient(to top, rgba(0, 0, 0, .95) 4%, rgba(0, 0, 0, .3) 38%, transparent 56%);
-  mask-image: linear-gradient(to top, rgba(0, 0, 0, .95) 4%, rgba(0, 0, 0, .3) 38%, transparent 56%);
+  -webkit-mask-image: linear-gradient(to top, rgba(0, 0, 0, .95) 4%, rgba(0, 0, 0, .3) 34%, transparent 50%);
+  mask-image: linear-gradient(to top, rgba(0, 0, 0, .95) 4%, rgba(0, 0, 0, .3) 34%, transparent 50%);
 }
 
-.intro-reflect path {
-  fill: none;
-  stroke: color-mix(in srgb, var(--in-teal) 70%, var(--in-mint));
-  stroke-width: 7;
-  stroke-linecap: round;
-  stroke-linejoin: round;
+.intro-reflect img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  -webkit-user-drag: none;
+  user-select: none;
 }
 
 @keyframes inReflectIn {
   from { opacity: 0; }
-  to { opacity: .32; }
+  to { opacity: .3; }
 }
 
 /* ---------------- reduced motion: never ---------------- */
