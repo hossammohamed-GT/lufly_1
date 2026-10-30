@@ -105,7 +105,7 @@ if ($currentLabel === '' && is_array($selectedVariant['finish'] ?? null)) {
     <?php if ($hasVariants): ?>
         <script type="application/json" data-pcard-variant-data><?= json_encode(
             array_values($variants),
-            JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT | JSON_UNESCAPED_UNICODE | JSON_THROW_ON_ERROR,
+            JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT | JSON_UNESCAPED_UNICODE | JSON_INVALID_UTF8_SUBSTITUTE | JSON_THROW_ON_ERROR,
         ) ?></script>
     <?php endif; ?>
 <?php endif; ?>

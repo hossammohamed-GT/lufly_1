@@ -102,8 +102,8 @@ $gridState = [
     </nav>
 </div>
 
-<script type="application/json" id="category-tree-json"><?= json_encode($categoryTree, JSON_UNESCAPED_UNICODE | JSON_HEX_TAG | JSON_HEX_AMP) ?></script>
-<script type="application/json" id="grid-state-json"><?= json_encode($gridState, JSON_UNESCAPED_UNICODE | JSON_HEX_TAG | JSON_HEX_AMP) ?></script>
+<script type="application/json" id="category-tree-json"><?= json_encode($categoryTree, JSON_UNESCAPED_UNICODE | JSON_HEX_TAG | JSON_HEX_AMP | JSON_INVALID_UTF8_SUBSTITUTE) ?></script>
+<script type="application/json" id="grid-state-json"><?= json_encode($gridState, JSON_UNESCAPED_UNICODE | JSON_HEX_TAG | JSON_HEX_AMP | JSON_INVALID_UTF8_SUBSTITUTE) ?></script>
 <script type="application/json" id="feature-presets-json"><?=
     json_encode(array_reduce($presets, static function (array $carry, array $preset): array {
         $labels = [];
@@ -114,12 +114,12 @@ $gridState = [
         }
         $carry[(int) $preset['id']] = ['icon' => (string) $preset['icon_key'], 'labels' => $labels, 'placeholders' => $placeholders];
         return $carry;
-    }, []), JSON_UNESCAPED_UNICODE | JSON_HEX_TAG | JSON_HEX_AMP)
+    }, []), JSON_UNESCAPED_UNICODE | JSON_HEX_TAG | JSON_HEX_AMP | JSON_INVALID_UTF8_SUBSTITUTE)
 ?></script>
 <script type="application/json" id="feature-icons-json"><?=
     json_encode(array_reduce($icons, static function (array $carry, array $icon): array {
         $carry[$icon['key']] = ['label' => $icon['label'], 'svg' => $icon['svg']];
         return $carry;
-    }, []), JSON_UNESCAPED_UNICODE | JSON_HEX_TAG | JSON_HEX_AMP)
+    }, []), JSON_UNESCAPED_UNICODE | JSON_HEX_TAG | JSON_HEX_AMP | JSON_INVALID_UTF8_SUBSTITUTE)
 ?></script>
-<script type="application/json" id="finish-catalog-json"><?= json_encode($finishCatalog ?? [], JSON_UNESCAPED_UNICODE | JSON_HEX_TAG | JSON_HEX_AMP) ?></script>
+<script type="application/json" id="finish-catalog-json"><?= json_encode($finishCatalog ?? [], JSON_UNESCAPED_UNICODE | JSON_HEX_TAG | JSON_HEX_AMP | JSON_INVALID_UTF8_SUBSTITUTE) ?></script>

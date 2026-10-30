@@ -55,4 +55,4 @@ $buildTree = static function (array $nodes): array {
     </div>
 </div>
 
-<script type="application/json" id="category-tree-json"><?= json_encode($buildTree($tree), JSON_UNESCAPED_UNICODE | JSON_HEX_TAG | JSON_HEX_AMP) ?></script>
+<script type="application/json" id="category-tree-json"><?= json_encode($buildTree($tree), JSON_UNESCAPED_UNICODE | JSON_HEX_TAG | JSON_HEX_AMP | JSON_INVALID_UTF8_SUBSTITUTE) ?></script>
