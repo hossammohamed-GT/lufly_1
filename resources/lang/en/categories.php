@@ -41,6 +41,7 @@ return [
 
     /* collections */
     'collection_create' => 'New collection',
+    'collection_empty_hint' => 'No collections yet. A collection groups products under one marketing line (a named series). Type a name above and press the create button to add your first one.',
     'collection_edit' => 'Edit collection',
     'collection_in_use' => 'Products still belong to this collection. Reassign them first.',
     'collections_empty' => 'No collections yet.',

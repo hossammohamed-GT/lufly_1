@@ -18,7 +18,7 @@ $view->layout('layouts.admin');
 
     <div class="cat-tree" data-generic-list>
         <?php if ($collections === []): ?>
-            <p class="media-empty"><?= e(trans('common.no_results')) ?></p>
+            <p class="media-empty"><?= e(trans('categories.collection_empty_hint')) ?></p>
         <?php endif; ?>
         <?php foreach ($collections as $collection): ?>
             <?= $view->render('admin.collections._row', ['collection' => $collection, 'locale' => $locale]) ?>

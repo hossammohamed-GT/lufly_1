@@ -41,6 +41,7 @@ return [
 
     /* koleksiyonlar */
     'collection_create' => 'Yeni koleksiyon',
+    'collection_empty_hint' => 'Henüz koleksiyon yok. Koleksiyon, ürünleri tek bir pazarlama hattı (adlandırılmış bir seri) altında gruplar. Yukarıya bir ad yazın ve oluştur düğmesine basarak ilkini ekleyin.',
     'collection_edit' => 'Koleksiyonu düzenle',
     'collection_in_use' => 'Bu koleksiyona hâlâ ürün bağlı. Önce onları yeniden atayın.',
     'collections_empty' => 'Henüz koleksiyon yok.',

@@ -41,6 +41,7 @@ return [
 
     /* kolekce */
     'collection_create' => 'Nová kolekce',
+    'collection_empty_hint' => 'Zatím žádné kolekce. Kolekce seskupuje produkty pod jednou marketingovou řadou (pojmenovanou sérií). Zadejte výše název a stisknutím tlačítka vytvořit přidejte první.',
     'collection_edit' => 'Upravit kolekci',
     'collection_in_use' => 'K této kolekci stále patří produkty. Nejprve je přeřaďte.',
     'collections_empty' => 'Zatím žádné kolekce.',
