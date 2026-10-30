@@ -183,6 +183,105 @@ try {
     </div>
 </div>
 
+<?php /* Quick-add wizard: the easy 4-step way to add a product (basics only). */ ?>
+<div class="adm-wizard" data-wizard hidden role="dialog" aria-modal="true" aria-label="<?= e(trans('common.create_product')) ?>"
+     data-msg-name-required="<?= e(trans('products.wizard_name_required')) ?>"
+     data-msg-created="<?= e(trans('products.wizard_created')) ?>"
+     data-preset-placeholder="<?= e(trans('products.feature_pick_placeholder')) ?>"
+     data-value-label="<?= e(trans('products.feature_value')) ?>">
+    <div class="adm-wizard-backdrop" data-wizard-close></div>
+    <div class="adm-wizard-panel">
+        <div class="adm-wizard-head">
+            <strong><?= e(trans('common.create_product')) ?></strong>
+            <button type="button" class="btn btn-sm btn-ghost" data-wizard-close aria-label="<?= e(trans('common.close')) ?>">×</button>
+        </div>
+        <ol class="adm-wizard-steps">
+            <li data-wizard-step-label="1" class="is-active"><?= e(trans('products.wizard_step_basics')) ?></li>
+            <li data-wizard-step-label="2"><?= e(trans('products.wizard_step_photos')) ?></li>
+            <li data-wizard-step-label="3"><?= e(trans('products.wizard_step_look')) ?></li>
+            <li data-wizard-step-label="4"><?= e(trans('products.wizard_step_publish')) ?></li>
+        </ol>
+        <div class="adm-wizard-body">
+            <section data-wizard-panel="1">
+                <label class="field"><span class="field-label"><?= e(trans('products.wizard_name')) ?> *</span>
+                    <input class="input" type="text" maxlength="255" data-wizard-name="en" placeholder="<?= e(trans('products.wizard_name_hint')) ?>"></label>
+                <details class="adm-wizard-more">
+                    <summary><?= e(trans('products.wizard_name_languages')) ?></summary>
+                    <label class="field"><span class="field-label">TR</span>
+                        <input class="input" type="text" maxlength="255" data-wizard-name="tr"></label>
+                    <label class="field"><span class="field-label">CS</span>
+                        <input class="input" type="text" maxlength="255" data-wizard-name="cs"></label>
+                </details>
+                <div class="adm-wizard-grid">
+                    <label class="field"><span class="field-label"><?= e(trans('products.wizard_code')) ?></span>
+                        <input class="input" type="text" maxlength="100" data-wizard-code placeholder="<?= e(trans('products.wizard_code_hint')) ?>"></label>
+                    <label class="field"><span class="field-label"><?= e(trans('common.price')) ?></span>
+                        <input class="input" type="number" min="0" step="any" data-wizard-price></label>
+                </div>
+                <div class="field"><span class="field-label"><?= e(trans('common.category')) ?></span>
+                    <button type="button" class="input adm-catbtn is-empty" data-cat-picker data-wizard-category data-category-id="0"
+                            title="<?= e(trans('products.choose_category')) ?>">
+                        <span data-cat-label><?= e(trans('products.choose_category')) ?></span>
+                        <span class="adm-catbtn-caret">▾</span>
+                    </button>
+                    <p class="field-help"><?= e(trans('products.wizard_category_hint')) ?></p>
+                </div>
+            </section>
+            <section data-wizard-panel="2" hidden>
+                <div class="adm-wizard-zone">
+                    <div class="adm-wizard-zone-head">
+                        <strong><?= e(trans('products.section_photos')) ?></strong>
+                        <button type="button" class="btn btn-sm btn-secondary" data-wizard-upload="photos"><?= e(trans('products.media_add')) ?></button>
+                    </div>
+                    <p class="field-help"><?= e(trans('products.section_photos_hint')) ?></p>
+                    <div class="adm-wizard-thumbs" data-wizard-thumbs="photos"></div>
+                </div>
+                <div class="adm-wizard-zone">
+                    <div class="adm-wizard-zone-head">
+                        <strong><?= e(trans('products.section_drawings')) ?></strong>
+                        <button type="button" class="btn btn-sm btn-secondary" data-wizard-upload="drawings"><?= e(trans('products.media_add')) ?></button>
+                    </div>
+                    <p class="field-help"><?= e(trans('products.section_drawings_hint')) ?></p>
+                    <div class="adm-wizard-thumbs" data-wizard-thumbs="drawings"></div>
+                </div>
+                <p class="field-help"><?= e(trans('products.wizard_photos_optional')) ?></p>
+            </section>
+            <section data-wizard-panel="3" hidden>
+                <div class="field"><span class="field-label"><?= e(trans('products.finish_picker')) ?></span>
+                    <div class="adm-wizard-finishes" data-wizard-finishes></div>
+                </div>
+                <div class="field"><span class="field-label"><?= e(trans('products.section_features')) ?></span>
+                    <div data-wizard-features></div>
+                    <button type="button" class="btn btn-sm btn-ghost" data-wizard-feature-add>+ <?= e(trans('products.feature_add')) ?></button>
+                    <p class="field-help"><?= e(trans('products.wizard_features_hint')) ?></p>
+                </div>
+            </section>
+            <section data-wizard-panel="4" hidden>
+                <div class="adm-wizard-summary" data-wizard-summary></div>
+                <div class="adm-wizard-publish">
+                    <label class="adm-wizard-choice">
+                        <input type="radio" name="wizard_publish" value="active" data-wizard-publish checked>
+                        <span><strong><?= e(trans('products.wizard_publish_show')) ?></strong><small><?= e(trans('products.wizard_publish_show_hint')) ?></small></span>
+                    </label>
+                    <label class="adm-wizard-choice">
+                        <input type="radio" name="wizard_publish" value="draft" data-wizard-publish>
+                        <span><strong><?= e(trans('products.wizard_publish_draft')) ?></strong><small><?= e(trans('products.wizard_publish_draft_hint')) ?></small></span>
+                    </label>
+                </div>
+                <p class="field-help"><?= e(trans('products.wizard_finish_hint')) ?></p>
+            </section>
+        </div>
+        <p class="adm-wizard-error" data-wizard-error hidden></p>
+        <div class="adm-wizard-foot">
+            <button type="button" class="btn btn-sm btn-ghost" data-wizard-back hidden><?= e(trans('products.wizard_back')) ?></button>
+            <span class="adm-wizard-spacer"></span>
+            <button type="button" class="btn btn-sm btn-ghost" data-wizard-close><?= e(trans('common.cancel')) ?></button>
+            <button type="button" class="btn btn-sm btn-secondary" data-wizard-next><?= e(trans('products.wizard_next')) ?></button>
+            <button type="button" class="btn btn-sm btn-secondary" data-wizard-finish hidden><?= e(trans('products.wizard_finish')) ?></button>
+        </div>
+    </div>
+</div>
+
 <script src="<?= e(asset('frontend/js/app.js')) ?>"></script>
 <script src="<?= e(asset('frontend/admin/admin.js')) ?>"></script>
 </body>
