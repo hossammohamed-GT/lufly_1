@@ -1094,7 +1094,13 @@
       }
       if (event.target.closest && event.target.closest('[data-catpop-close]')) { closeCatpop(); return; }
       if (event.target.closest && event.target.closest('[data-catpop-clear]')) { commitCategoryPick(0); return; }
-      if (!catpop.hidden && !catpop.contains(event.target)) { closeCatpop(); }
+      /* Re-rendering a level removes the clicked button before this bubble
+         listener runs. The event path still proves it started inside the
+         picker, so do not mistake that internal drill-down for an outside
+         click and close/reset the picker. */
+      var eventPath = typeof event.composedPath === 'function' ? event.composedPath() : [];
+      var clickedInside = catpop.contains(event.target) || eventPath.indexOf(catpop) !== -1;
+      if (!catpop.hidden && !clickedInside) { closeCatpop(); }
     });
     window.addEventListener('resize', closeCatpop);
   }
