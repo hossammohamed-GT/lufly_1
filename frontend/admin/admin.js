@@ -1213,6 +1213,103 @@
     window.addEventListener('resize', closeFeatpop);
   }
 
+  /* --------------------------------------------------- card finish popover */
+  var finishpop = document.querySelector('[data-finishpop]');
+  var finishCatalogData = readJson('finish-catalog-json');
+  if (!Array.isArray(finishCatalogData)) { finishCatalogData = []; }
+  var finishpopState = { card: null, anchor: null, locale: 'en' };
+
+  function closeFinishpop() {
+    if (!finishpop) { return; }
+    finishpop.hidden = true;
+    finishpopState.card = null;
+    finishpopState.anchor = null;
+  }
+
+  function openFinishpop(anchor) {
+    if (!finishpop) { return; }
+    var card = anchor.closest('[data-inline-url]');
+    if (!card) { return; }
+    closeCatpop();
+    closeFeatpop();
+    finishpopState.card = card;
+    finishpopState.anchor = anchor;
+    finishpopState.locale = anchor.getAttribute('data-locale') || 'en';
+    var chosen = (anchor.getAttribute('data-value') || '').split('/')
+      .map(function (p) { return p.trim(); }).filter(Boolean);
+
+    var list = finishpop.querySelector('[data-finishpop-list]');
+    list.innerHTML = '';
+    finishCatalogData.forEach(function (option) {
+      var label = document.createElement('label');
+      label.className = 'adm-finishpop-option';
+      var box = document.createElement('input');
+      box.type = 'checkbox';
+      box.value = option.label;
+      box.checked = chosen.indexOf(option.label) !== -1;
+      label.appendChild(box);
+      var swatch = document.createElement('i');
+      swatch.className = 'adm-swatch adm-swatch--' + (option.swatch || 'neutral');
+      label.appendChild(swatch);
+      var name = document.createElement('span');
+      var names = { en: option.label, tr: option.tr, cs: option.cs };
+      name.textContent = names[finishpopState.locale] || option.label;
+      label.appendChild(name);
+      list.appendChild(label);
+    });
+
+    finishpop.hidden = false;
+    var rect = anchor.getBoundingClientRect();
+    var width = 330;
+    var left = Math.max(8, Math.min(rect.left, window.innerWidth - width - 8));
+    var top = rect.bottom + 6;
+    if (top + 420 > window.innerHeight) { top = Math.max(8, rect.top - 426); }
+    finishpop.style.left = left + 'px';
+    finishpop.style.top = top + 'px';
+  }
+
+  function saveFinishpop() {
+    var card = finishpopState.card;
+    if (!card) { return; }
+    var values = Array.prototype.slice.call(
+      finishpop.querySelectorAll('[data-finishpop-list] input[type="checkbox"]:checked')
+    ).map(function (box) { return box.value; });
+    postJson(card.getAttribute('data-inline-url'), {
+      field: 'finish_set',
+      value: values,
+      locale: finishpopState.locale
+    }).then(function (data) {
+      closeFinishpop();
+      refreshProductFace(card);
+      toast(data.message || 'Saved.');
+    }).catch(function (error) { toast(error.message || 'Could not save.', true); });
+  }
+
+  if (finishpop) {
+    document.addEventListener('click', function (event) {
+      var anchor = event.target.closest ? event.target.closest('[data-finish-open]') : null;
+      if (anchor) {
+        event.preventDefault();
+        if (!finishpop.hidden && finishpopState.anchor === anchor) { closeFinishpop(); return; }
+        openFinishpop(anchor);
+        return;
+      }
+      if (event.target.closest && event.target.closest('[data-finishpop-close]')) { closeFinishpop(); return; }
+      if (event.target.closest && event.target.closest('[data-finishpop-clear]')) {
+        finishpop.querySelectorAll('[data-finishpop-list] input[type="checkbox"]').forEach(function (box) {
+          box.checked = false;
+        });
+        return;
+      }
+      if (event.target.closest && event.target.closest('[data-finishpop-save]')) { saveFinishpop(); return; }
+      if (!finishpop.hidden && !finishpop.contains(event.target)) { closeFinishpop(); }
+    });
+    document.addEventListener('keydown', function (event) {
+      if (event.key === 'Escape' && !finishpop.hidden) { closeFinishpop(); }
+    });
+    window.addEventListener('resize', closeFinishpop);
+  }
+
   /* ------------------------------------------------------- product browser */
   function setupProductsBrowser() {
     var root = document.querySelector('[data-products-browser]');

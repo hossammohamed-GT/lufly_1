@@ -156,6 +156,21 @@ try {
     </div>
 </div>
 
+<?php /* Card finish popover: tick canonical finishes from the system catalogue. */ ?>
+<div class="adm-finishpop" data-finishpop hidden role="dialog" aria-label="<?= e(trans('products.finish_picker')) ?>">
+    <div class="adm-finishpop-head">
+        <strong><?= e(trans('products.finish_picker')) ?></strong>
+        <button type="button" class="btn btn-sm btn-ghost" data-finishpop-close>×</button>
+    </div>
+    <div class="adm-finishpop-list" data-finishpop-list></div>
+    <div class="adm-finishpop-foot">
+        <button type="button" class="btn btn-sm btn-ghost" data-finishpop-clear><?= e(trans('common.remove')) ?></button>
+        <span class="adm-finishpop-spacer"></span>
+        <button type="button" class="btn btn-sm btn-ghost" data-finishpop-close><?= e(trans('common.cancel')) ?></button>
+        <button type="button" class="btn btn-sm btn-secondary" data-finishpop-save><?= e(trans('common.save')) ?></button>
+    </div>
+</div>
+
 <?php /* Product full editor: one centered modal, filled per product via AJAX. */ ?>
 <div class="adm-editor-modal" data-editor-modal hidden role="dialog" aria-modal="true" aria-label="<?= e(trans('products.expand_editor')) ?>">
     <div class="adm-editor-backdrop" data-editor-close></div>

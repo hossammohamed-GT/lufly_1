@@ -747,3 +747,25 @@ button.adm-chip:hover { border-color: var(--ds-primary); }
 
 /* preset feature rows in the editor: labels are fixed wording */
 .rep-row.is-preset [data-feature-label] { background: var(--ds-surface-alt); color: var(--ds-text-muted); }
+
+/* --------------------------------------------------- card finish popover */
+.adm-finish-btn {
+  display: inline-flex; align-items: center; gap: var(--space-2);
+  font: inherit; color: inherit; background: none; border: 1px solid transparent;
+  border-radius: var(--radius-md); padding: 2px 6px; cursor: pointer; text-align: start;
+}
+.adm-finish-btn:hover { border-color: var(--ds-border); background: var(--ds-surface-alt); }
+
+.adm-finishpop[hidden] { display: none !important; }
+.adm-finishpop {
+  position: fixed; z-index: 285; width: 330px; max-width: 94vw;
+  background: var(--ds-surface); border: 1px solid var(--ds-border); border-radius: var(--radius-md);
+  box-shadow: 0 20px 48px rgba(0, 0, 0, 0.22); display: grid; overflow: hidden;
+}
+.adm-finishpop-head { display: flex; align-items: center; justify-content: space-between; gap: var(--space-2); padding: var(--space-3) var(--space-4); border-bottom: 1px solid var(--ds-border); }
+.adm-finishpop-list { max-height: 300px; overflow-y: auto; padding: var(--space-2); display: grid; gap: 2px; }
+.adm-finishpop-option { display: flex; align-items: center; gap: var(--space-2); padding: 6px var(--space-2); border: 1px solid transparent; border-radius: var(--radius-md); cursor: pointer; }
+.adm-finishpop-option:hover { background: var(--ds-surface-alt); border-color: var(--ds-border); }
+.adm-finishpop-option span { flex: 1; min-width: 0; }
+.adm-finishpop-foot { display: flex; align-items: center; gap: var(--space-2); padding: var(--space-2) var(--space-3); border-top: 1px solid var(--ds-border); }
+.adm-finishpop-spacer { flex: 1; }

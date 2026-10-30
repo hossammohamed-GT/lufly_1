@@ -558,6 +558,79 @@ class ProductService
                     }
                     return $result;
 
+                case 'finish_set':
+                    /* Card finish picker: canonical finishes are ticked from
+                       the system catalogue — never typed by hand. The whole
+                       Finish spec is written at once, in every locale. */
+                    $catalog = [];
+                    foreach (ProductCardPresenter::finishCatalog() as $option) {
+                        $catalog[(string) $option['label']] = $option;
+                    }
+                    $chosen = [];
+                    foreach (is_array($value) ? $value : [] as $label) {
+                        $label = trim((string) $label);
+                        if ($label !== '' && isset($catalog[$label]) && !in_array($label, $chosen, true)) {
+                            $chosen[] = $label;
+                        }
+                    }
+                    $english = implode(' / ', $chosen);
+                    $spec = $connection->selectOne(
+                        "SELECT id FROM product_specifications WHERE product_id = ? AND variant_id IS NULL AND spec_key = 'Finish' ORDER BY sort_order ASC, id ASC LIMIT 1",
+                        [$id],
+                    );
+
+                    if ($english === '') {
+                        if ($spec !== null) {
+                            $connection->affect('DELETE FROM product_specification_translations WHERE specification_id = ?', [(int) $spec['id']]);
+                            $connection->affect('DELETE FROM product_specifications WHERE id = ?', [(int) $spec['id']]);
+                        }
+                        return ['value' => '', 'spec_id' => 0];
+                    }
+
+                    if ($spec !== null) {
+                        $specId = (int) $spec['id'];
+                        $connection->table('product_specifications')->where('id', $specId)->update([
+                            'spec_value' => $english,
+                            'updated_at' => $now,
+                        ]);
+                    } else {
+                        $maxSort = $connection->selectOne(
+                            'SELECT COALESCE(MAX(sort_order), 0) AS max_sort FROM product_specifications WHERE product_id = ? AND variant_id IS NULL',
+                            [$id],
+                        );
+                        $specId = (int) $connection->table('product_specifications')->insert([
+                            'product_id' => $id,
+                            'variant_id' => null,
+                            'spec_key' => 'Finish',
+                            'spec_value' => $english,
+                            'unit' => null,
+                            'sort_order' => (int) ($maxSort['max_sort'] ?? 0) + 1,
+                            'created_at' => $now,
+                            'updated_at' => $now,
+                        ]);
+                    }
+
+                    $finishKeys = ['en' => 'Finish', 'tr' => 'Yüzey Kaplaması', 'cs' => 'Povrchová úprava'];
+                    foreach ($this->locales() as $loc) {
+                        $localized = ProductCardPresenter::translateFinishValue($english, $loc) ?? $english;
+                        $existing = $connection->selectOne(
+                            'SELECT id FROM product_specification_translations WHERE specification_id = ? AND locale = ? LIMIT 1',
+                            [$specId, $loc],
+                        );
+                        if ($existing !== null) {
+                            $connection->table('product_specification_translations')->where('id', (int) $existing['id'])
+                                ->update(['spec_value' => $localized]);
+                        } else {
+                            $connection->table('product_specification_translations')->insert([
+                                'specification_id' => $specId,
+                                'locale' => $loc,
+                                'spec_key' => $finishKeys[$loc] ?? 'Finish',
+                                'spec_value' => $localized,
+                            ]);
+                        }
+                    }
+                    return ['value' => $english, 'spec_id' => $specId];
+
                 default:
                     throw new InvalidArgumentException(trans('products.inline_unknown_field'));
             }

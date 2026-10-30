@@ -9,6 +9,7 @@ $view->layout('layouts.admin');
 /** @var array<int, array<string, mixed>> $categoryTree */
 /** @var array<int, array<string, mixed>> $presets */
 /** @var array<int, array{key: string, label: string, svg: string}> $icons */
+/** @var array<int, array{label: string, swatch: string, tr: string, cs: string}> $finishCatalog */
 /** @var array<string, int> $reasonSummary */
 /** @var int $incompleteTotal */
 
@@ -121,3 +122,4 @@ $gridState = [
         return $carry;
     }, []), JSON_UNESCAPED_UNICODE | JSON_HEX_TAG | JSON_HEX_AMP)
 ?></script>
+<script type="application/json" id="finish-catalog-json"><?= json_encode($finishCatalog ?? [], JSON_UNESCAPED_UNICODE | JSON_HEX_TAG | JSON_HEX_AMP) ?></script>

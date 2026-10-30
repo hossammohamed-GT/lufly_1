@@ -133,16 +133,21 @@ $fmtPrice = static fn (float $value): string => rtrim(rtrim(number_format($value
             </div>
 
             <div class="adm-finish-row">
-                <span class="adm-swatches" data-finishes>
-                    <?php foreach ((array) ($card['finishes'] ?? []) as $finish): ?>
-                        <i class="adm-swatch adm-swatch--<?= e((string) ($finish['key'] ?? 'neutral')) ?>" title="<?= e((string) ($finish['label'] ?? '')) ?>"></i>
-                    <?php endforeach; ?>
-                </span>
-                <?php if ($finishSpec !== null): ?>
-                    <span class="adm-finish-text" data-inline="spec_value" data-spec-id="<?= (int) $finishSpec['id'] ?>" data-locale="<?= e($locale) ?>" tabindex="0"><?= e($finishSpec['value']) ?></span>
-                <?php else: ?>
-                    <span class="adm-finish-text is-muted"><?= e(trans('products.no_finish')) ?></span>
-                <?php endif; ?>
+                <button type="button" class="adm-finish-btn" data-finish-open
+                        data-locale="<?= e($locale) ?>"
+                        data-value="<?= e((string) ($finishSpec['value'] ?? '')) ?>"
+                        title="<?= e(trans('products.finish_picker')) ?>">
+                    <span class="adm-swatches" data-finishes>
+                        <?php foreach ((array) ($card['finishes'] ?? []) as $finish): ?>
+                            <i class="adm-swatch adm-swatch--<?= e((string) ($finish['key'] ?? 'neutral')) ?>" title="<?= e((string) ($finish['label'] ?? '')) ?>"></i>
+                        <?php endforeach; ?>
+                    </span>
+                    <?php if ($finishSpec !== null): ?>
+                        <span class="adm-finish-text"><?= e($finishSpec['value']) ?></span>
+                    <?php else: ?>
+                        <span class="adm-finish-text is-muted"><?= e(trans('products.no_finish')) ?></span>
+                    <?php endif; ?>
+                </button>
             </div>
 
             <div class="adm-card-row">

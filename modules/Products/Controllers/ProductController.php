@@ -471,6 +471,7 @@ class ProductController extends Controller
             'categoryTree' => $this->categoryTree(),
             'presets' => $this->products->featurePresets(),
             'icons' => ProductFeatureIconCatalog::options('en'),
+            'finishCatalog' => ProductCardPresenter::finishCatalog(),
             'reasonSummary' => $incomplete ? $this->products->incompleteSummary() : [],
             'incompleteTotal' => $this->products->incompleteCount(),
             'locale' => $locale,
