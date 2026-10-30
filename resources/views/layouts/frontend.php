@@ -11,6 +11,26 @@ $direction = in_array($locale, ['ar', 'he', 'fa', 'ur'], true) ? 'rtl' : 'ltr';
 $view->pushStyle('frontend/components/loader/loader.css');
 $view->pushScript('frontend/components/loader/loader.js');
 
+/* First-entry brand intro: home page only. The request path is app-relative,
+   so the home route is '' or just the locale segment. Its assets ride along
+   only where the stage can exist; the <head> gate script decides, per visit,
+   whether this visitor actually sees it. */
+$currentPath = trim((string) request()->path(), '/');
+$pathSegments = $currentPath === '' ? [] : explode('/', $currentPath);
+$homeLocales = ['en', 'tr', 'cs', $locale, (string) config('localization.default', 'en')];
+foreach ((array) config('localization.supported', []) as $supportedLocale) {
+    $code = is_array($supportedLocale) ? (string) ($supportedLocale['code'] ?? '') : (string) $supportedLocale;
+    if ($code !== '') {
+        $homeLocales[] = $code;
+    }
+}
+$isHomePage = $pathSegments === []
+    || (count($pathSegments) === 1 && in_array($pathSegments[0], $homeLocales, true));
+if ($isHomePage) {
+    $view->pushStyle('frontend/components/intro/intro.css');
+    $view->pushScript('frontend/components/intro/intro.js');
+}
+
 /* Chrome first: the navbar declares its own stylesheet and controller, so it has
    to render before the asset lists are collected for <head>. */
 $navbar = $translator !== null
@@ -68,6 +88,25 @@ try {
     document.documentElement.setAttribute('data-theme', stored || (dark ? 'dark' : 'light'));
 } catch (error) { /* storage unavailable */ }
 </script>
+<?php if ($isHomePage): ?>
+<script>
+/* First-entry brand intro gate: once per visit, never for reduced motion.
+   The stage itself is CSS keyed off html.has-intro, decided here before the
+   first paint so the page never flashes behind it. On the visit where the
+   intro plays, the classic loader stands down via its own "seen" marker,
+   so the two brand moments never stack; the loader keeps its loading and
+   navigation role everywhere else, untouched. */
+try {
+    var introSeen = window.sessionStorage.getItem('lufly-intro-seen') === '1';
+    var introReduced = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    if (!introSeen && !introReduced) {
+        document.documentElement.classList.add('has-intro');
+        window.sessionStorage.setItem('lufly-intro-seen', '1');
+        try { window.localStorage.setItem('lufly-loader-seen', '1'); } catch (e2) { /* storage unavailable */ }
+    }
+} catch (error) { /* storage unavailable */ }
+</script>
+<?php endif; ?>
 <?= $view->renderFile($view->resolvePath('components.seo'), ['seo' => $seo ?? null, 'title' => $title ?? null, 'status' => $status ?? null]) ?>
 <?php
 /* Analytics & measurement: every provider renders only when its ID is
@@ -134,6 +173,9 @@ $clarity = trim((string) ($analytics['clarity'] ?? ''));
 <noscript><iframe src="https://www.googletagmanager.com/ns.html?id=<?= e($gtm) ?>" height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
 <?php endif; ?>
 <?= $view->renderFile($view->resolvePath('components.loader'), ['translator' => $translator]) ?>
+<?php if ($isHomePage): ?>
+<?= $view->renderFile($view->resolvePath('components.intro'), []) ?>
+<?php endif; ?>
 <?= $announcement ?>
 <a class="skip-link" href="#main"><?= e(trans('common.skip_to_content')) ?></a>
 <?= $navbar ?>
