@@ -260,6 +260,7 @@
 
 .agents-map-marker-label {
   position: absolute;
+  top: 50%;
   left: 27px;
   max-width: 150px;
   padding: 3px 5px;
@@ -270,65 +271,12 @@
   box-shadow: none;
   font: 600 9px/1.2 var(--font-body);
   white-space: nowrap;
-}
-
-.agents-map-marker--egypt .agents-map-marker-label {
-  top: 18px;
-  left: -54px;
-}
-
-.agents-map-marker--czechia .agents-map-marker-label {
-  top: -19px;
-  left: -60px;
-}
-
-.agents-map-marker--uae .agents-map-marker-label {
-  top: 18px;
-  left: 17px;
-}
-
-.agents-map-marker--saudi_arabia .agents-map-marker-label {
-  top: 20px;
-  left: -74px;
-}
-
-.agents-map-marker--oman .agents-map-marker-label {
-  top: 23px;
-  left: 13px;
-}
-
-.agents-map-marker--qatar .agents-map-marker-label {
-  top: 35px;
-  left: 50%;
-  transform: translateX(-50%);
-}
-
-.agents-map-marker--bahrain .agents-map-marker-label {
-  top: 50%;
-  right: calc(100% + 8px);
-  left: auto;
   transform: translateY(-50%);
 }
 
-/* Destination pin labels (Poland, Italy, Spain, Morocco, Algeria, Libya, Kuwait):
-   vertically centred beside the pin — Spain and Morocco open to the west. */
-.agents-map-marker--poland .agents-map-marker-label,
-.agents-map-marker--italy .agents-map-marker-label,
-.agents-map-marker--algeria .agents-map-marker-label,
-.agents-map-marker--libya .agents-map-marker-label,
-.agents-map-marker--kuwait .agents-map-marker-label {
-  top: 50%;
-  left: 20px;
-  transform: translateY(-50%);
-}
-
-.agents-map-marker--spain .agents-map-marker-label,
-.agents-map-marker--morocco .agents-map-marker-label {
-  top: 50%;
-  right: calc(100% + 8px);
-  left: auto;
-  transform: translateY(-50%);
-}
+/* Label sides are chosen per view in agents-map.js (see placeLabels) so no label
+   ever covers another pin, another label, or leaves the map. The rule above is
+   only the pre-enhancement fallback: a tight label to the right of its pin. */
 
 .agents-map-factory-icon {
   border: 0;

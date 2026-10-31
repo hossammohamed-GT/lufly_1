@@ -40,6 +40,8 @@
   // Exact marker coordinates, keyed by location id. Route endpoints are always
   // resolved from this map so a line and its marker share one single source of truth.
   const markerCoordinates = new Map();
+  // Every map label, so they can be laid out against each other on each view change.
+  const labelEntries = [];
   const tileLayer = L.tileLayer("https://tile.openstreetmap.org/{z}/{x}/{y}.png", {
     attribution:
       '&copy; <a href="https://www.openstreetmap.org/copyright" target="_blank" rel="noopener noreferrer">OpenStreetMap contributors</a>',
@@ -136,6 +138,11 @@
     }
 
     markerCoordinates.set(key, L.latLng(latitude, longitude));
+    labelEntries.push({
+      key,
+      latlng: L.latLng(latitude, longitude),
+      label: markerLabel,
+    });
 
     marker.on("mouseover", () => selectAgent(key));
     marker.on("focus", () => selectAgent(key));
@@ -203,16 +210,16 @@
           longitude: 37.3833,
           routes: {
             egypt: { id: "egypt", name: "Egypt", latitude: 30.0444, longitude: 31.2357, style: "highlighted", is_dealer: true, curve_bend: 0.16 },
-            uae: { id: "uae", name: "Dubai", latitude: 25.2048, longitude: 55.2708, style: "highlighted", is_dealer: true, curve_bend: -0.18 },
-            morocco: { id: "morocco", name: "Morocco", latitude: 33.5731, longitude: -7.5898, style: "europe", curve_bend: 0.20, marker_color: "green" },
-            algeria: { id: "algeria", name: "Algeria", latitude: 36.7538, longitude: 3.0588, style: "europe", curve_bend: 0.16, marker_color: "green" },
-            libya: { id: "libya", name: "Libya", latitude: 32.8872, longitude: 13.1913, style: "europe", curve_bend: 0.12, marker_color: "green" },
-            jordan: { id: "jordan", name: "Jordan", latitude: 31.9539, longitude: 35.9106, style: "europe", is_dealer: true, curve_bend: 0.08, marker_color: "green" },
-            saudi_arabia: { id: "saudi_arabia", name: "Saudi Arabia", latitude: 24.7136, longitude: 46.6753, style: "europe", is_dealer: true, curve_bend: -0.12, marker_color: "green" },
-            bahrain: { id: "bahrain", name: "Bahrain", latitude: 26.2285, longitude: 50.5860, style: "europe", is_dealer: true, curve_bend: -0.14, marker_color: "green" },
-            qatar: { id: "qatar", name: "Qatar", latitude: 25.2854, longitude: 51.5310, style: "europe", is_dealer: true, curve_bend: -0.16, marker_color: "green" },
-            oman: { id: "oman", name: "Oman", latitude: 23.5880, longitude: 58.3829, style: "europe", is_dealer: true, curve_bend: -0.20, marker_color: "green" },
-            kuwait: { id: "kuwait", name: "Kuwait", latitude: 29.3759, longitude: 47.9774, style: "europe", curve_bend: -0.10, marker_color: "green" },
+            uae: { id: "uae", name: "Dubai", latitude: 25.2048, longitude: 55.2708, style: "highlighted", is_dealer: true, curve_bend: -0.13 },
+            morocco: { id: "morocco", name: "Morocco", latitude: 33.5731, longitude: -7.5898, style: "europe", curve_bend: -0.14, marker_color: "green" },
+            algeria: { id: "algeria", name: "Algeria", latitude: 36.7538, longitude: 3.0588, style: "europe", curve_bend: 0.22, marker_color: "green" },
+            libya: { id: "libya", name: "Libya", latitude: 32.8872, longitude: 13.1913, style: "europe", curve_bend: 0.14, marker_color: "green" },
+            jordan: { id: "jordan", name: "Jordan", latitude: 31.9539, longitude: 35.9106, style: "europe", is_dealer: true, curve_bend: 0.03, marker_color: "green" },
+            saudi_arabia: { id: "saudi_arabia", name: "Saudi Arabia", latitude: 24.7136, longitude: 46.6753, style: "europe", is_dealer: true, curve_bend: 0.22, marker_color: "green" },
+            bahrain: { id: "bahrain", name: "Bahrain", latitude: 26.2285, longitude: 50.5860, style: "europe", is_dealer: true, curve_bend: 0.06, marker_color: "green" },
+            qatar: { id: "qatar", name: "Qatar", latitude: 25.2854, longitude: 51.5310, style: "europe", is_dealer: true, curve_bend: 0.21, marker_color: "green" },
+            oman: { id: "oman", name: "Oman", latitude: 23.5880, longitude: 58.3829, style: "europe", is_dealer: true, curve_bend: -0.22, marker_color: "green" },
+            kuwait: { id: "kuwait", name: "Kuwait", latitude: 29.3759, longitude: 47.9774, style: "europe", curve_bend: -0.03, marker_color: "green" },
           },
         },
       },
@@ -315,6 +322,7 @@
     text.textContent = label;
 
     content.append(dot, text);
+    labelEntries.push({ key: route.id, latlng: destLatLng, label: text });
 
     return L.marker(destLatLng, {
       icon: L.divIcon({
@@ -404,6 +412,151 @@
     });
   };
 
+  /*
+   * Label layout
+   * -------------
+   * Labels sit right next to their own pin (no more fixed 30–60px offsets) and each
+   * one is pushed to the first free side of its pin, so a label never covers another
+   * location marker, another label, the EU hub badge, or runs outside the map.
+   * The layout is recomputed whenever the view settles, so it stays tidy at any zoom.
+   */
+  const LABEL_PRIORITY = [
+    "egypt", "uae", "czechia", "jordan", "saudi_arabia", "kuwait", "qatar",
+    "bahrain", "oman", "poland", "italy", "spain", "morocco", "algeria", "libya",
+  ];
+  const IMPORTANT_LABELS = 5; // always keep the first labels of the priority list
+  const PIN_HALF = 16; // iconSize 32 / iconAnchor 16,16 -> pin centre at (16,16)
+  const LABEL_GAP_X = 11; // distance from the pin centre to a side label
+  const LABEL_GAP_Y = 12; // distance from the pin centre to a top/bottom label
+  const MAP_MARGIN = 4;
+
+  const overlapArea = (a, b) => {
+    const width = Math.min(a.x + a.w, b.x + b.w) - Math.max(a.x, b.x);
+    const height = Math.min(a.y + a.h, b.y + b.h) - Math.max(a.y, b.y);
+    return width > 0 && height > 0 ? width * height : 0;
+  };
+
+  const placeLabels = () => {
+    if (labelEntries.length === 0) return;
+
+    const mapSize = map.getSize();
+    const pinPoints = labelEntries.map((entry) =>
+      map.latLngToContainerPoint(entry.latlng),
+    );
+    const pinBoxes = pinPoints.map((point) => ({
+      x: point.x - 10,
+      y: point.y - 10,
+      w: 20,
+      h: 20,
+    }));
+
+    const order = labelEntries
+      .map((entry, index) => ({
+        index,
+        rank: LABEL_PRIORITY.indexOf(entry.key),
+      }))
+      .sort(
+        (a, b) =>
+          (a.rank < 0 ? LABEL_PRIORITY.length : a.rank) -
+            (b.rank < 0 ? LABEL_PRIORITY.length : b.rank) || a.index - b.index,
+      );
+
+    const placed = [];
+
+    order.forEach(({ index, rank }) => {
+      const entry = labelEntries[index];
+      const label = entry.label;
+      const width =
+        label.offsetWidth || Math.max(24, label.textContent.length * 5.4 + 12);
+      const height = label.offsetHeight || 14;
+      const pin = pinPoints[index];
+
+      const candidates = [
+        { left: PIN_HALF + LABEL_GAP_X, top: PIN_HALF - height / 2 }, // right
+        { left: PIN_HALF - LABEL_GAP_X - width, top: PIN_HALF - height / 2 }, // left
+        { left: PIN_HALF - width / 2, top: PIN_HALF - LABEL_GAP_Y - height }, // top
+        { left: PIN_HALF - width / 2, top: PIN_HALF + LABEL_GAP_Y }, // bottom
+        { left: PIN_HALF + 8, top: PIN_HALF - height - 6 }, // top-right
+        { left: PIN_HALF + 8, top: PIN_HALF + 8 }, // bottom-right
+        { left: PIN_HALF - 8 - width, top: PIN_HALF - height - 6 }, // top-left
+        { left: PIN_HALF - 8 - width, top: PIN_HALF + 8 }, // bottom-left
+        // last resort on cramped maps: the same four sides, one step further out
+        { left: PIN_HALF + 20, top: PIN_HALF - height / 2 },
+        { left: PIN_HALF - 20 - width, top: PIN_HALF - height / 2 },
+        { left: PIN_HALF - width / 2, top: PIN_HALF - 21 - height },
+        { left: PIN_HALF - width / 2, top: PIN_HALF + 21 },
+      ];
+
+      const obstacles = [];
+      pinBoxes.forEach((box, pinIndex) => {
+        if (pinIndex !== index) obstacles.push({ ...box, weight: 1 });
+      });
+      placed.forEach((box) => obstacles.push({ ...box, weight: 2 }));
+
+      const badge = label
+        .closest(".leaflet-marker-icon")
+        ?.querySelector(".agents-map-hub-badge");
+      if (badge && badge.offsetWidth) {
+        obstacles.push({
+          x: pin.x + PIN_HALF + 12 - badge.offsetWidth,
+          y: pin.y - PIN_HALF - 12,
+          w: badge.offsetWidth,
+          h: badge.offsetHeight || 12,
+          weight: 2,
+        });
+      }
+
+      let best = null;
+      candidates.forEach((candidate) => {
+        const rect = {
+          x: pin.x - PIN_HALF + candidate.left,
+          y: pin.y - PIN_HALF + candidate.top,
+          w: width,
+          h: height,
+        };
+
+        const overlap = obstacles.reduce(
+          (total, box) => total + overlapArea(rect, box) * box.weight,
+          0,
+        );
+
+        const overflow =
+          Math.max(0, MAP_MARGIN - rect.x) +
+          Math.max(0, rect.x + rect.w - (mapSize.x - MAP_MARGIN)) +
+          Math.max(0, MAP_MARGIN - rect.y) +
+          Math.max(0, rect.y + rect.h - (mapSize.y - MAP_MARGIN));
+
+        const cost = overlap + overflow * 80;
+
+        // keep the candidate order as the tie-breaker so the result is stable
+        if (!best || cost < best.cost - 0.01) {
+          best = { cost, overlap, candidate, rect };
+        }
+      });
+
+      label.style.display = "";
+      // On cramped screens the low-priority labels step aside instead of piling up.
+      const important = rank >= 0 && rank < IMPORTANT_LABELS;
+      if (!important && best.overlap > width * height * 0.25) {
+        label.style.display = "none";
+        return;
+      }
+
+      label.style.left = `${best.candidate.left}px`;
+      label.style.top = `${best.candidate.top}px`;
+      label.style.right = "auto";
+      label.style.transform = "none";
+      placed.push(best.rect);
+    });
+  };
+
+  let labelFrame = 0;
+  const refreshLabels = () => {
+    window.cancelAnimationFrame(labelFrame);
+    labelFrame = window.requestAnimationFrame(placeLabels);
+  };
+  map.on("zoomend moveend", refreshLabels);
+
   let hasInteractedWithMap = false;
   const markMapAsInteracted = () => {
     hasInteractedWithMap = true;
@@ -417,13 +570,18 @@
       if (!hasInteractedWithMap) {
         window.requestAnimationFrame(() => fitWorldMap(false));
       }
+      refreshLabels();
     });
     mapResizeObserver.observe(mapElement);
   }
 
-  window.addEventListener("load", () => fitWorldMap(false), { once: true });
+  window.addEventListener("load", () => {
+    fitWorldMap(false);
+    refreshLabels();
+  }, { once: true });
   document.fonts?.ready.then(() => {
     if (!hasInteractedWithMap) fitWorldMap(false);
+    refreshLabels();
   });
 
   const ResetControl = L.Control.extend({
@@ -444,5 +602,8 @@
   });
 
   new ResetControl({ position: "topright" }).addTo(map);
-  window.requestAnimationFrame(() => fitWorldMap(false));
+  window.requestAnimationFrame(() => {
+    fitWorldMap(false);
+    refreshLabels();
+  });
 })();
