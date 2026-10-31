@@ -283,6 +283,18 @@
   background: transparent;
 }
 
+.agents-map-factory-content {
+  display: grid;
+  width: 24px;
+  height: 24px;
+  place-items: center;
+}
+
+/* Factory label: same pill as the location labels, edged in the factory gold. */
+.agents-map-factory-label {
+  border-color: rgba(179, 131, 69, 0.9);
+}
+
 .agents-map-factory-marker {
   display: block;
   width: 14px;

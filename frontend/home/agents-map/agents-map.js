@@ -157,17 +157,40 @@
     locationsForBounds.push(marker.getLatLng());
   });
 
+  // The factory hub carries the same kind of label as the locations, positioned by
+  // the shared label layout so it never covers a pin or another label.
+  const factoryLabelText = mapElement.dataset.mapFactoryLabel || "";
+  const factoryContent = document.createElement("span");
+  factoryContent.className = "agents-map-factory-content";
+
+  const factoryDot = document.createElement("span");
+  factoryDot.className = "agents-map-factory-marker";
+  factoryDot.setAttribute("aria-hidden", "true");
+
+  const factoryLabel = document.createElement("span");
+  factoryLabel.className = "agents-map-marker-label agents-map-factory-label";
+  factoryLabel.textContent = factoryLabelText;
+
+  factoryContent.append(factoryDot, factoryLabel);
+
   const factoryMarker = L.marker(factory, {
     icon: L.divIcon({
       className: "agents-map-icon agents-map-factory-icon",
-      html: '<span class="agents-map-factory-marker" aria-hidden="true"></span>',
+      html: factoryContent,
       iconSize: [24, 24],
       iconAnchor: [12, 12],
     }),
-    title: mapElement.dataset.mapFactoryLabel || "",
+    title: factoryLabelText,
     interactive: false,
     keyboard: false,
   }).addTo(map);
+
+  labelEntries.push({
+    key: "factory",
+    latlng: factory,
+    label: factoryLabel,
+    half: 12, // this icon is 24x24 with a 12,12 anchor
+  });
 
   // Czechia is a hub, not a dealer location: it renders as a blue hub circle
   // (same circle shape as the Türkiye factory marker) instead of a location pin.
@@ -421,10 +444,11 @@
    * The layout is recomputed whenever the view settles, so it stays tidy at any zoom.
    */
   const LABEL_PRIORITY = [
-    "egypt", "uae", "czechia", "jordan", "saudi_arabia", "kuwait", "qatar",
-    "bahrain", "oman", "poland", "italy", "spain", "morocco", "algeria", "libya",
+    "factory", "egypt", "uae", "czechia", "jordan", "saudi_arabia", "kuwait",
+    "qatar", "bahrain", "oman", "poland", "italy", "spain", "morocco", "algeria",
+    "libya",
   ];
-  const IMPORTANT_LABELS = 5; // always keep the first labels of the priority list
+  const IMPORTANT_LABELS = 6; // always keep the first labels of the priority list
   const PIN_HALF = 16; // iconSize 32 / iconAnchor 16,16 -> pin centre at (16,16)
   const LABEL_GAP_X = 11; // distance from the pin centre to a side label
   const LABEL_GAP_Y = 12; // distance from the pin centre to a top/bottom label
@@ -470,21 +494,22 @@
         label.offsetWidth || Math.max(24, label.textContent.length * 5.4 + 12);
       const height = label.offsetHeight || 14;
       const pin = pinPoints[index];
+      const half = entry.half ?? PIN_HALF; // icon centre in icon-local pixels
 
       const candidates = [
-        { left: PIN_HALF + LABEL_GAP_X, top: PIN_HALF - height / 2 }, // right
-        { left: PIN_HALF - LABEL_GAP_X - width, top: PIN_HALF - height / 2 }, // left
-        { left: PIN_HALF - width / 2, top: PIN_HALF - LABEL_GAP_Y - height }, // top
-        { left: PIN_HALF - width / 2, top: PIN_HALF + LABEL_GAP_Y }, // bottom
-        { left: PIN_HALF + 8, top: PIN_HALF - height - 6 }, // top-right
-        { left: PIN_HALF + 8, top: PIN_HALF + 8 }, // bottom-right
-        { left: PIN_HALF - 8 - width, top: PIN_HALF - height - 6 }, // top-left
-        { left: PIN_HALF - 8 - width, top: PIN_HALF + 8 }, // bottom-left
+        { left: half + LABEL_GAP_X, top: half - height / 2 }, // right
+        { left: half - LABEL_GAP_X - width, top: half - height / 2 }, // left
+        { left: half - width / 2, top: half - LABEL_GAP_Y - height }, // top
+        { left: half - width / 2, top: half + LABEL_GAP_Y }, // bottom
+        { left: half + 8, top: half - height - 6 }, // top-right
+        { left: half + 8, top: half + 8 }, // bottom-right
+        { left: half - 8 - width, top: half - height - 6 }, // top-left
+        { left: half - 8 - width, top: half + 8 }, // bottom-left
         // last resort on cramped maps: the same four sides, one step further out
-        { left: PIN_HALF + 20, top: PIN_HALF - height / 2 },
-        { left: PIN_HALF - 20 - width, top: PIN_HALF - height / 2 },
-        { left: PIN_HALF - width / 2, top: PIN_HALF - 21 - height },
-        { left: PIN_HALF - width / 2, top: PIN_HALF + 21 },
+        { left: half + 20, top: half - height / 2 },
+        { left: half - 20 - width, top: half - height / 2 },
+        { left: half - width / 2, top: half - 21 - height },
+        { left: half - width / 2, top: half + 21 },
       ];
 
       const obstacles = [];
@@ -498,8 +523,8 @@
         ?.querySelector(".agents-map-hub-badge");
       if (badge && badge.offsetWidth) {
         obstacles.push({
-          x: pin.x + PIN_HALF + 12 - badge.offsetWidth,
-          y: pin.y - PIN_HALF - 12,
+          x: pin.x + half + 12 - badge.offsetWidth,
+          y: pin.y - half - 12,
           w: badge.offsetWidth,
           h: badge.offsetHeight || 12,
           weight: 2,
@@ -509,8 +534,8 @@
       let best = null;
       candidates.forEach((candidate) => {
         const rect = {
-          x: pin.x - PIN_HALF + candidate.left,
-          y: pin.y - PIN_HALF + candidate.top,
+          x: pin.x - half + candidate.left,
+          y: pin.y - half + candidate.top,
           w: width,
           h: height,
         };

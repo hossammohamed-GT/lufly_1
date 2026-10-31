@@ -91,7 +91,7 @@ $firstAgent = array_key_first($agentPoints);
                  data-map-error="<?= e(trans('home.agents_map_error')) ?>"
                  data-map-factory-latitude="<?= e((string) $factoryCoordinates['latitude']) ?>"
                  data-map-factory-longitude="<?= e((string) $factoryCoordinates['longitude']) ?>"
-                 data-map-factory-label="<?= e(trans('home.agents_factory_map_label')) ?>"
+                 data-map-factory-label="<?= e(trans('home.agents_factory')) ?>"
                  data-map-routes="<?= e(json_encode($routesConfig, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES)) ?>"
                  aria-label="<?= e(trans('home.agents_map_desc')) ?>">
                 <?php foreach ($agentPoints as $key => $agent):
