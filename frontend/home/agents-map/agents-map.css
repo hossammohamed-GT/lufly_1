@@ -375,24 +375,30 @@
   opacity: 0.75;
 }
 
-/* Czechia is a hub, not a dealer location: it uses the same plain circle as the
-   Türkiye factory marker, painted blue instead of gold. */
+/* Czechia is a hub, not a dealer location: it is an exact copy of the Türkiye
+   factory circle — same 14px size, 3px white border, gold fill, gold halo and
+   shadow — so both hubs read as one family. */
 .agents-map-marker--europe-hub .agents-map-marker-dot {
   width: 14px;
   height: 14px;
+  border: 3px solid #fff;
   border-radius: 50%;
-  background: #2563eb;
-  box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.35), 0 2px 8px rgba(22, 49, 45, 0.35);
+  background: #b38345;
+  box-shadow: 0 0 0 3px rgb(179 131 69 / 35%), 0 2px 8px rgb(22 49 45 / 35%);
   transform: none;
+  transition: none;
 }
 
 .agents-map-marker--europe-hub .agents-map-marker-dot::after { display: none; }
 
+/* The factory circle never restyles, so the Czechia circle stays put as well:
+   hovering or selecting it only swaps the location card. */
 .agents-map-marker--europe-hub:hover .agents-map-marker-dot,
 .agents-map-marker--europe-hub:focus-visible .agents-map-marker-dot,
 .agents-map-marker--europe-hub[aria-pressed="true"] .agents-map-marker-dot {
-  background: #a8793e;
-  transform: scale(1.18);
+  background: #b38345;
+  box-shadow: 0 0 0 3px rgb(179 131 69 / 35%), 0 2px 8px rgb(22 49 45 / 35%);
+  transform: none;
 }
 
 .agents-map-hub-badge {
@@ -571,9 +577,10 @@
   box-shadow: 0 0 0 3px color-mix(in srgb, var(--lu-gold-500, #b99559) 25%, transparent);
 }
 
+/* the Czechia hub now matches the factory circle, so its swatch does too */
 .agents-map-legend .legend-swatch--europe-hub {
-  background: #2563eb;
-  box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.25);
+  background: var(--lu-gold-500, #b99559);
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--lu-gold-500, #b99559) 25%, transparent);
 }
 
 .agents-map-legend .legend-swatch--dealer {
