@@ -192,16 +192,11 @@
     half: 12, // this icon is 24x24 with a 12,12 anchor
   });
 
-  // Czechia is a hub, not a dealer location: it renders as a blue hub circle
-  // (same circle shape as the Türkiye factory marker) instead of a location pin.
+  // Czechia is a hub, not a dealer location: it renders as a circle built exactly
+  // like the Türkiye factory marker instead of a location pin.
   const czechiaPinEl = markerElements.get("czechia");
   if (czechiaPinEl) {
     czechiaPinEl.classList.add("agents-map-marker--europe-hub");
-    const hubBadge = document.createElement("span");
-    hubBadge.className = "agents-map-hub-badge";
-    hubBadge.textContent = "EU Hub";
-    hubBadge.setAttribute("aria-hidden", "true");
-    czechiaPinEl.appendChild(hubBadge);
   }
 
   // Parse directional routes configuration
@@ -234,15 +229,15 @@
           routes: {
             egypt: { id: "egypt", name: "Egypt", latitude: 30.0444, longitude: 31.2357, style: "highlighted", is_dealer: true, curve_bend: 0.16 },
             uae: { id: "uae", name: "Dubai", latitude: 25.2048, longitude: 55.2708, style: "highlighted", is_dealer: true, curve_bend: -0.13 },
-            morocco: { id: "morocco", name: "Morocco", latitude: 33.5731, longitude: -7.5898, style: "europe", curve_bend: -0.14, marker_color: "green" },
-            algeria: { id: "algeria", name: "Algeria", latitude: 36.7538, longitude: 3.0588, style: "europe", curve_bend: 0.22, marker_color: "green" },
-            libya: { id: "libya", name: "Libya", latitude: 32.8872, longitude: 13.1913, style: "europe", curve_bend: 0.14, marker_color: "green" },
-            jordan: { id: "jordan", name: "Jordan", latitude: 31.9539, longitude: 35.9106, style: "europe", is_dealer: true, curve_bend: 0.03, marker_color: "green" },
-            saudi_arabia: { id: "saudi_arabia", name: "Saudi Arabia", latitude: 24.7136, longitude: 46.6753, style: "europe", is_dealer: true, curve_bend: 0.22, marker_color: "green" },
-            bahrain: { id: "bahrain", name: "Bahrain", latitude: 26.2285, longitude: 50.5860, style: "europe", is_dealer: true, curve_bend: 0.06, marker_color: "green" },
-            qatar: { id: "qatar", name: "Qatar", latitude: 25.2854, longitude: 51.5310, style: "europe", is_dealer: true, curve_bend: 0.21, marker_color: "green" },
-            oman: { id: "oman", name: "Oman", latitude: 23.5880, longitude: 58.3829, style: "europe", is_dealer: true, curve_bend: -0.22, marker_color: "green" },
-            kuwait: { id: "kuwait", name: "Kuwait", latitude: 29.3759, longitude: 47.9774, style: "europe", curve_bend: -0.03, marker_color: "green" },
+            morocco: { id: "morocco", name: "Morocco", latitude: 33.5731, longitude: -7.5898, style: "europe", curve_bend: -0.14, marker_color: "blue" },
+            algeria: { id: "algeria", name: "Algeria", latitude: 36.7538, longitude: 3.0588, style: "europe", curve_bend: 0.22, marker_color: "blue" },
+            libya: { id: "libya", name: "Libya", latitude: 32.8872, longitude: 13.1913, style: "europe", curve_bend: 0.14, marker_color: "blue" },
+            jordan: { id: "jordan", name: "Jordan", latitude: 31.9539, longitude: 35.9106, style: "europe", is_dealer: true, curve_bend: 0.03 },
+            saudi_arabia: { id: "saudi_arabia", name: "Saudi Arabia", latitude: 24.7136, longitude: 46.6753, style: "europe", is_dealer: true, curve_bend: 0.22 },
+            bahrain: { id: "bahrain", name: "Bahrain", latitude: 26.2285, longitude: 50.5860, style: "europe", is_dealer: true, curve_bend: 0.06 },
+            qatar: { id: "qatar", name: "Qatar", latitude: 25.2854, longitude: 51.5310, style: "europe", is_dealer: true, curve_bend: 0.21 },
+            oman: { id: "oman", name: "Oman", latitude: 23.5880, longitude: 58.3829, style: "europe", is_dealer: true, curve_bend: -0.22 },
+            kuwait: { id: "kuwait", name: "Kuwait", latitude: 29.3759, longitude: 47.9774, style: "europe", curve_bend: -0.03, marker_color: "blue" },
           },
         },
       },
@@ -413,7 +408,7 @@
       // If the destination is not a dealer marker, render a pin on the very same
       // coordinate as the line endpoint (green for the Middle East, blue for Europe).
       if (!route.is_dealer) {
-        const pinColor = route.marker_color === "blue" ? "blue" : "green";
+        const pinColor = route.marker_color === "green" ? "green" : "blue";
         createDestinationPinMarker(destLatLng, route, pinColor).addTo(map);
         locationsForBounds.push(destLatLng);
       }
@@ -440,7 +435,7 @@
    * -------------
    * Labels sit right next to their own pin (no more fixed 30–60px offsets) and each
    * one is pushed to the first free side of its pin, so a label never covers another
-   * location marker, another label, the EU hub badge, or runs outside the map.
+   * location marker, another label, or runs outside the map.
    * The layout is recomputed whenever the view settles, so it stays tidy at any zoom.
    */
   const LABEL_PRIORITY = [
@@ -517,19 +512,6 @@
         if (pinIndex !== index) obstacles.push({ ...box, weight: 1 });
       });
       placed.forEach((box) => obstacles.push({ ...box, weight: 2 }));
-
-      const badge = label
-        .closest(".leaflet-marker-icon")
-        ?.querySelector(".agents-map-hub-badge");
-      if (badge && badge.offsetWidth) {
-        obstacles.push({
-          x: pin.x + half + 12 - badge.offsetWidth,
-          y: pin.y - half - 12,
-          w: badge.offsetWidth,
-          h: badge.offsetHeight || 12,
-          weight: 2,
-        });
-      }
 
       let best = null;
       candidates.forEach((candidate) => {

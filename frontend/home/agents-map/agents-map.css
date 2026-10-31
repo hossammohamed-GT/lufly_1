@@ -191,10 +191,17 @@
   height: 17px;
   border: 3px solid #fff;
   border-radius: 50% 50% 50% 2px;
-  background: #147d78;
-  box-shadow: 0 2px 7px rgb(11 49 45 / 38%);
+  background: #2563eb;
+  box-shadow: 0 2px 7px rgb(37 99 235 / 42%);
   transform: rotate(-45deg);
   transition: transform 160ms ease, background 160ms ease;
+}
+
+/* Every location pin is blue; Egypt and the UAE keep the green priority pin. */
+.agents-map-marker--egypt .agents-map-marker-dot,
+.agents-map-marker--uae .agents-map-marker-dot {
+  background: #147d78;
+  box-shadow: 0 2px 7px rgb(11 49 45 / 38%);
 }
 
 .agents-map-marker-dot::after {
@@ -215,15 +222,15 @@
   transform: rotate(-45deg) scale(1.18);
 }
 
-/* Destination pins (non-dealer markets): identical pin geometry to dealer pins,
-   only the colour differs — green for the Middle East, blue for Europe. Both turn
-   amber/yellow when hovered, exactly like the Egypt / Jordan / Saudi Arabia pins. */
+/* Destination pins (non-dealer markets): identical pin geometry to the dealer pins,
+   blue like every other location, and amber/yellow on hover. */
 .agents-map-marker--destination { cursor: default; }
 
 .agents-map-destination-icon {
   pointer-events: auto;
 }
 
+/* opt-in green pin for a destination (marker_color: "green"); none ship with it now */
 .agents-map-marker--middle-east .agents-map-marker-dot {
   background: #147d78;
   box-shadow: 0 2px 7px rgb(11 49 45 / 38%);
@@ -401,21 +408,6 @@
   transform: none;
 }
 
-.agents-map-hub-badge {
-  position: absolute;
-  top: -12px;
-  right: -12px;
-  padding: 1px 5px;
-  border-radius: 3px;
-  background: #2563eb;
-  color: #ffffff;
-  font: 700 8px/1 var(--font-mono);
-  text-transform: uppercase;
-  letter-spacing: 0.04em;
-  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.35);
-  pointer-events: none;
-}
-
 .agents-map-tooltip {
   padding: 5px 8px;
   border: 1px solid rgb(25 60 55 / 12%);
@@ -583,9 +575,10 @@
   box-shadow: 0 0 0 3px color-mix(in srgb, var(--lu-gold-500, #b99559) 25%, transparent);
 }
 
+/* location pins are blue; Egypt and the UAE stay green as priority markets */
 .agents-map-legend .legend-swatch--dealer {
-  background: var(--ds-primary, #147d78);
-  box-shadow: 0 0 0 3px var(--ds-primary-glow);
+  background: #2563eb;
+  box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.25);
 }
 
 .agents-map-legend .legend-swatch--priority {
