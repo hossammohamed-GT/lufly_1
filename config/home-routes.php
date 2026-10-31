@@ -9,10 +9,17 @@ declare(strict_types=1);
  * independent of the Authorized Dealers network.
  *
  * Route Categories:
- *  - Origin A: Czech Republic -> European Markets (Poland, Italy, Spain) [Blue, 2px]
+ *  - Shared European line style: Royal blue, 2.1px, 6 5 dash, 0.88 opacity and the
+ *    same quadratic curve used by Czech Republic -> Poland / Italy / Spain.
+ *  - Origin A: Czech Republic -> European Markets (Poland, Italy, Spain) [Blue, 2.1px]
  *  - Origin B: Turkey -> Africa & Middle East:
  *      * Priority Highlighted Destinations: Egypt & UAE (Dubai) [Vibrant Gold/Amber, 3.5px]
- *      * Subtle Regional Destinations: Morocco, Algeria, Libya, Jordan, Saudi Arabia, Bahrain, Qatar, Oman, Kuwait [Subtle Slate, 1.2px]
+ *      * Regional Destinations: Morocco, Algeria, Libya, Jordan, Saudi Arabia, Bahrain,
+ *        Qatar, Oman, Kuwait [identical "europe" style to Origin A routes]
+ *
+ * Marker coloring for non-dealer destinations is driven by "marker_color":
+ *  - "green": Middle East / North Africa pins (same pin as Egypt, Jordan, Saudi Arabia)
+ *  - "blue":  European pins (same pin shape, blue)
  */
 return [
     'origins' => [
@@ -35,6 +42,7 @@ return [
                     'longitude' => 21.0122,
                     'style' => 'europe',
                     'curve_bend' => -0.16,
+                    'marker_color' => 'blue',
                 ],
                 'italy' => [
                     'id' => 'italy',
@@ -45,6 +53,7 @@ return [
                     'longitude' => 12.4964,
                     'style' => 'europe',
                     'curve_bend' => 0.14,
+                    'marker_color' => 'blue',
                 ],
                 'spain' => [
                     'id' => 'spain',
@@ -55,6 +64,7 @@ return [
                     'longitude' => -3.7038,
                     'style' => 'europe',
                     'curve_bend' => 0.18,
+                    'marker_color' => 'blue',
                 ],
             ],
         ],
@@ -91,7 +101,7 @@ return [
                     'is_dealer' => true,
                     'curve_bend' => -0.18,
                 ],
-                // Subtle Africa & Middle East Markets (Section 6)
+                // Regional Africa & Middle East Markets (Section 6) — same line style as Europe
                 'morocco' => [
                     'id' => 'morocco',
                     'country' => 'morocco',
@@ -99,9 +109,10 @@ return [
                     'city' => 'Casablanca',
                     'latitude' => 33.5731,
                     'longitude' => -7.5898,
-                    'style' => 'subtle',
+                    'style' => 'europe',
                     'is_dealer' => false,
                     'curve_bend' => 0.20,
+                    'marker_color' => 'green',
                 ],
                 'algeria' => [
                     'id' => 'algeria',
@@ -110,9 +121,10 @@ return [
                     'city' => 'Algiers',
                     'latitude' => 36.7538,
                     'longitude' => 3.0588,
-                    'style' => 'subtle',
+                    'style' => 'europe',
                     'is_dealer' => false,
                     'curve_bend' => 0.16,
+                    'marker_color' => 'green',
                 ],
                 'libya' => [
                     'id' => 'libya',
@@ -121,9 +133,10 @@ return [
                     'city' => 'Tripoli',
                     'latitude' => 32.8872,
                     'longitude' => 13.1913,
-                    'style' => 'subtle',
+                    'style' => 'europe',
                     'is_dealer' => false,
                     'curve_bend' => 0.12,
+                    'marker_color' => 'green',
                 ],
                 'jordan' => [
                     'id' => 'jordan',
@@ -132,9 +145,10 @@ return [
                     'city' => 'Amman',
                     'latitude' => 31.9539,
                     'longitude' => 35.9106,
-                    'style' => 'subtle',
+                    'style' => 'europe',
                     'is_dealer' => true,
                     'curve_bend' => 0.08,
+                    'marker_color' => 'green',
                 ],
                 'saudi_arabia' => [
                     'id' => 'saudi_arabia',
@@ -143,9 +157,10 @@ return [
                     'city' => 'Riyadh',
                     'latitude' => 24.7136,
                     'longitude' => 46.6753,
-                    'style' => 'subtle',
+                    'style' => 'europe',
                     'is_dealer' => true,
                     'curve_bend' => -0.12,
+                    'marker_color' => 'green',
                 ],
                 'bahrain' => [
                     'id' => 'bahrain',
@@ -154,9 +169,10 @@ return [
                     'city' => 'Manama',
                     'latitude' => 26.2285,
                     'longitude' => 50.5860,
-                    'style' => 'subtle',
+                    'style' => 'europe',
                     'is_dealer' => true,
                     'curve_bend' => -0.14,
+                    'marker_color' => 'green',
                 ],
                 'qatar' => [
                     'id' => 'qatar',
@@ -165,9 +181,10 @@ return [
                     'city' => 'Doha',
                     'latitude' => 25.2854,
                     'longitude' => 51.5310,
-                    'style' => 'subtle',
+                    'style' => 'europe',
                     'is_dealer' => true,
                     'curve_bend' => -0.16,
+                    'marker_color' => 'green',
                 ],
                 'oman' => [
                     'id' => 'oman',
@@ -176,9 +193,10 @@ return [
                     'city' => 'Muscat',
                     'latitude' => 23.5880,
                     'longitude' => 58.3829,
-                    'style' => 'subtle',
+                    'style' => 'europe',
                     'is_dealer' => true,
                     'curve_bend' => -0.20,
+                    'marker_color' => 'green',
                 ],
                 'kuwait' => [
                     'id' => 'kuwait',
@@ -187,9 +205,10 @@ return [
                     'city' => 'Kuwait City',
                     'latitude' => 29.3759,
                     'longitude' => 47.9774,
-                    'style' => 'subtle',
+                    'style' => 'europe',
                     'is_dealer' => false,
                     'curve_bend' => -0.10,
+                    'marker_color' => 'green',
                 ],
             ],
         ],

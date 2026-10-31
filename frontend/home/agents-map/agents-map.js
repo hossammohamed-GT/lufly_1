@@ -37,6 +37,9 @@
   map.setView(factory, 3);
   const locations = [];
   const markerElements = new Map();
+  // Exact marker coordinates, keyed by location id. Route endpoints are always
+  // resolved from this map so a line and its marker share one single source of truth.
+  const markerCoordinates = new Map();
   const tileLayer = L.tileLayer("https://tile.openstreetmap.org/{z}/{x}/{y}.png", {
     attribution:
       '&copy; <a href="https://www.openstreetmap.org/copyright" target="_blank" rel="noopener noreferrer">OpenStreetMap contributors</a>',
@@ -132,6 +135,8 @@
       markerElements.set(key, markerElement);
     }
 
+    markerCoordinates.set(key, L.latLng(latitude, longitude));
+
     marker.on("mouseover", () => selectAgent(key));
     marker.on("focus", () => selectAgent(key));
     marker.on("click", () => {
@@ -157,7 +162,8 @@
     keyboard: false,
   }).addTo(map);
 
-  // European Hub visual indicator on Czechia dealer marker
+  // Czechia is a hub, not a dealer location: it renders as a blue hub circle
+  // (same circle shape as the Türkiye factory marker) instead of a location pin.
   const czechiaPinEl = markerElements.get("czechia");
   if (czechiaPinEl) {
     czechiaPinEl.classList.add("agents-map-marker--europe-hub");
@@ -186,9 +192,9 @@
           latitude: 50.0755,
           longitude: 14.4378,
           routes: {
-            poland: { id: "poland", name: "Poland", latitude: 52.2297, longitude: 21.0122, style: "europe", curve_bend: -0.16 },
-            italy: { id: "italy", name: "Italy", latitude: 41.9028, longitude: 12.4964, style: "europe", curve_bend: 0.14 },
-            spain: { id: "spain", name: "Spain", latitude: 40.4168, longitude: -3.7038, style: "europe", curve_bend: 0.18 },
+            poland: { id: "poland", name: "Poland", latitude: 52.2297, longitude: 21.0122, style: "europe", curve_bend: -0.16, marker_color: "blue" },
+            italy: { id: "italy", name: "Italy", latitude: 41.9028, longitude: 12.4964, style: "europe", curve_bend: 0.14, marker_color: "blue" },
+            spain: { id: "spain", name: "Spain", latitude: 40.4168, longitude: -3.7038, style: "europe", curve_bend: 0.18, marker_color: "blue" },
           },
         },
         turkey: {
@@ -198,15 +204,15 @@
           routes: {
             egypt: { id: "egypt", name: "Egypt", latitude: 30.0444, longitude: 31.2357, style: "highlighted", is_dealer: true, curve_bend: -0.16 },
             uae: { id: "uae", name: "Dubai", latitude: 25.2048, longitude: 55.2708, style: "highlighted", is_dealer: true, curve_bend: -0.18 },
-            morocco: { id: "morocco", name: "Morocco", latitude: 33.5731, longitude: -7.5898, style: "europe", curve_bend: 0.20 },
-            algeria: { id: "algeria", name: "Algeria", latitude: 36.7538, longitude: 3.0588, style: "europe", curve_bend: 0.16 },
-            libya: { id: "libya", name: "Libya", latitude: 32.8872, longitude: 13.1913, style: "europe", curve_bend: 0.12 },
-            jordan: { id: "jordan", name: "Jordan", latitude: 31.9539, longitude: 35.9106, style: "europe", is_dealer: true, curve_bend: 0.08 },
-            saudi_arabia: { id: "saudi_arabia", name: "Saudi Arabia", latitude: 24.7136, longitude: 46.6753, style: "europe", is_dealer: true, curve_bend: -0.12 },
-            bahrain: { id: "bahrain", name: "Bahrain", latitude: 26.2285, longitude: 50.5860, style: "europe", is_dealer: true, curve_bend: -0.14 },
-            qatar: { id: "qatar", name: "Qatar", latitude: 25.2854, longitude: 51.5310, style: "europe", is_dealer: true, curve_bend: -0.16 },
-            oman: { id: "oman", name: "Oman", latitude: 23.5880, longitude: 58.3829, style: "europe", is_dealer: true, curve_bend: -0.20 },
-            kuwait: { id: "kuwait", name: "Kuwait", latitude: 29.3759, longitude: 47.9774, style: "europe", curve_bend: -0.10 },
+            morocco: { id: "morocco", name: "Morocco", latitude: 33.5731, longitude: -7.5898, style: "europe", curve_bend: 0.20, marker_color: "green" },
+            algeria: { id: "algeria", name: "Algeria", latitude: 36.7538, longitude: 3.0588, style: "europe", curve_bend: 0.16, marker_color: "green" },
+            libya: { id: "libya", name: "Libya", latitude: 32.8872, longitude: 13.1913, style: "europe", curve_bend: 0.12, marker_color: "green" },
+            jordan: { id: "jordan", name: "Jordan", latitude: 31.9539, longitude: 35.9106, style: "europe", is_dealer: true, curve_bend: 0.08, marker_color: "green" },
+            saudi_arabia: { id: "saudi_arabia", name: "Saudi Arabia", latitude: 24.7136, longitude: 46.6753, style: "europe", is_dealer: true, curve_bend: -0.12, marker_color: "green" },
+            bahrain: { id: "bahrain", name: "Bahrain", latitude: 26.2285, longitude: 50.5860, style: "europe", is_dealer: true, curve_bend: -0.14, marker_color: "green" },
+            qatar: { id: "qatar", name: "Qatar", latitude: 25.2854, longitude: 51.5310, style: "europe", is_dealer: true, curve_bend: -0.16, marker_color: "green" },
+            oman: { id: "oman", name: "Oman", latitude: 23.5880, longitude: 58.3829, style: "europe", is_dealer: true, curve_bend: -0.20, marker_color: "green" },
+            kuwait: { id: "kuwait", name: "Kuwait", latitude: 29.3759, longitude: 47.9774, style: "europe", curve_bend: -0.10, marker_color: "green" },
           },
         },
       },
@@ -285,44 +291,61 @@
     });
   };
 
-  // Create discrete destination node marker for non-dealer markets
-  const createMarketNodeMarker = (dest, style) => {
-    const label = dest.name || dest.city;
+  // Create a destination pin marker for non-dealer markets. It reuses the exact
+  // location-pin design of the dealer markers (icon box 32x32, anchor 16,16 so the
+  // pin centre sits on the coordinate) and only differs by its colour.
+  const createDestinationPinMarker = (destLatLng, route, pinColor) => {
+    const label = route.name || route.city || route.id;
+    const variant = pinColor === "blue" ? "europe" : "middle-east";
+
     const content = document.createElement("span");
-    content.className = `agents-map-market-node agents-map-market-node--${style}`;
+    content.className = [
+      "agents-map-marker",
+      "agents-map-marker--destination",
+      `agents-map-marker--${variant}`,
+      `agents-map-marker--${route.id}`,
+    ].join(" ");
 
     const dot = document.createElement("span");
-    dot.className = `agents-map-market-dot agents-map-market-dot--${style}`;
+    dot.className = "agents-map-marker-dot";
     dot.setAttribute("aria-hidden", "true");
 
     const text = document.createElement("span");
-    text.className = `agents-map-market-label agents-map-market-label--${style}`;
+    text.className = "agents-map-marker-label";
     text.textContent = label;
 
     content.append(dot, text);
 
-    return L.marker([dest.latitude, dest.longitude], {
+    return L.marker(destLatLng, {
       icon: L.divIcon({
-        className: "agents-map-icon agents-map-market-icon",
+        className: `agents-map-icon agents-map-destination-icon agents-map-destination-icon--${variant}`,
         html: content,
-        iconSize: [24, 24],
-        iconAnchor: [12, 12],
+        iconSize: [32, 32],
+        iconAnchor: [16, 16],
       }),
-      title: `${label} · Trade Destination`,
+      title: label,
       keyboard: false,
       riseOnHover: false,
       interactive: false,
+      alt: label,
     });
   };
 
   // Render multi-origin directional routes
   const origins = routesConfig.origins || {};
   Object.values(origins).forEach((origin) => {
-    const originLatLng = L.latLng(Number(origin.latitude), Number(origin.longitude));
+    // Start the line on the real origin marker whenever one is rendered.
+    const originLatLng =
+      markerCoordinates.get(origin.id) ??
+      L.latLng(Number(origin.latitude), Number(origin.longitude));
     const routes = Object.values(origin.routes || {});
 
     routes.forEach((route) => {
-      const destLatLng = L.latLng(Number(route.latitude), Number(route.longitude));
+      // Use the exact destination marker coordinates so the line always terminates
+      // in the centre of the marker, with no gap and no offset.
+      const destLatLng =
+        markerCoordinates.get(route.id) ??
+        L.latLng(Number(route.latitude), Number(route.longitude));
       const style = route.style || "subtle";
       const bend = typeof route.curve_bend === "number" ? route.curve_bend : 0.15;
       const curve = calculateCurvedPoints(originLatLng, destLatLng, bend);
@@ -356,9 +379,11 @@
 
       // Arrowhead removed for cleaner lines
 
-      // If destination is not an existing dealer, add discrete destination node
+      // If the destination is not a dealer marker, render a pin on the very same
+      // coordinate as the line endpoint (green for the Middle East, blue for Europe).
       if (!route.is_dealer) {
-        createMarketNodeMarker(route, style).addTo(map);
+        const pinColor = route.marker_color === "blue" ? "blue" : "green";
+        createDestinationPinMarker(destLatLng, route, pinColor).addTo(map);
         locationsForBounds.push(destLatLng);
       }
     });

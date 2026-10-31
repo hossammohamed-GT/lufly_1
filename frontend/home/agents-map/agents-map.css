@@ -215,6 +215,37 @@
   transform: rotate(-45deg) scale(1.18);
 }
 
+/* Destination pins (non-dealer markets): identical pin geometry to dealer pins,
+   only the colour differs — green for the Middle East, blue for Europe. Both turn
+   amber/yellow when hovered, exactly like the Egypt / Jordan / Saudi Arabia pins. */
+.agents-map-marker--destination { cursor: default; }
+
+.agents-map-destination-icon {
+  pointer-events: auto;
+}
+
+.agents-map-marker--middle-east .agents-map-marker-dot {
+  background: #147d78;
+  box-shadow: 0 2px 7px rgb(11 49 45 / 38%);
+}
+
+.agents-map-marker--middle-east:hover .agents-map-marker-dot,
+.agents-map-marker--middle-east:focus-visible .agents-map-marker-dot {
+  background: #a8793e;
+  transform: rotate(-45deg) scale(1.18);
+}
+
+.agents-map-marker--europe .agents-map-marker-dot {
+  background: #2563eb;
+  box-shadow: 0 2px 7px rgb(37 99 235 / 42%);
+}
+
+.agents-map-marker--europe:hover .agents-map-marker-dot,
+.agents-map-marker--europe:focus-visible .agents-map-marker-dot {
+  background: #a8793e;
+  transform: rotate(-45deg) scale(1.18);
+}
+
 .agents-map-marker--delivered .agents-map-marker-dot {
   background: #1d8ca4;
   box-shadow: 0 2px 7px rgb(14 116 144 / 45%);
@@ -273,6 +304,26 @@
 }
 
 .agents-map-marker--bahrain .agents-map-marker-label {
+  top: 50%;
+  right: calc(100% + 8px);
+  left: auto;
+  transform: translateY(-50%);
+}
+
+/* Destination pin labels (Poland, Italy, Spain, Morocco, Algeria, Libya, Kuwait):
+   vertically centred beside the pin — Spain and Morocco open to the west. */
+.agents-map-marker--poland .agents-map-marker-label,
+.agents-map-marker--italy .agents-map-marker-label,
+.agents-map-marker--algeria .agents-map-marker-label,
+.agents-map-marker--libya .agents-map-marker-label,
+.agents-map-marker--kuwait .agents-map-marker-label {
+  top: 50%;
+  left: 20px;
+  transform: translateY(-50%);
+}
+
+.agents-map-marker--spain .agents-map-marker-label,
+.agents-map-marker--morocco .agents-map-marker-label {
   top: 50%;
   right: calc(100% + 8px);
   left: auto;
@@ -364,66 +415,24 @@
   opacity: 0.75;
 }
 
-/* Destination node markers for non-dealer markets */
-.agents-map-market-icon {
-  background: transparent;
-  border: 0;
-  pointer-events: none;
-}
-
-.agents-map-market-node {
-  position: relative;
-  display: inline-flex;
-  align-items: center;
-  pointer-events: auto;
-}
-
-.agents-map-market-dot {
-  display: block;
-  width: 9px;
-  height: 9px;
-  border-radius: 50%;
-  border: 2px solid #ffffff;
-  background: #64748b;
-  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.35);
-  transition: transform 160ms ease, background 160ms ease;
-}
-
-.agents-map-market-dot--europe {
-  background: #2563eb;
-  box-shadow: 0 0 0 2px rgba(37, 99, 235, 0.3), 0 2px 5px rgba(0, 0, 0, 0.35);
-}
-
-.agents-map-market-dot--subtle {
-  background: #64748b;
-}
-
-.agents-map-market-label {
-  position: absolute;
-  top: 50%;
-  left: 13px;
-  transform: translateY(-50%);
-  padding: 2px 6px;
-  border-radius: 4px;
-  color: #1e293b;
-  background: rgba(255, 255, 255, 0.94);
-  box-shadow: 0 1px 5px rgba(0, 0, 0, 0.16);
-  font: 700 9px/1.2 var(--font-body);
-  white-space: nowrap;
-  pointer-events: none;
-  border: 1px solid rgba(0, 0, 0, 0.08);
-}
-
-[data-theme="dark"] .agents-map-market-label {
-  color: #e2e8f0;
-  background: rgba(15, 23, 42, 0.92);
-  border-color: rgba(255, 255, 255, 0.12);
-}
-
-/* European Hub Badge on Czechia Marker */
+/* Czechia is a hub, not a dealer location: it uses the same plain circle as the
+   Türkiye factory marker, painted blue instead of gold. */
 .agents-map-marker--europe-hub .agents-map-marker-dot {
+  width: 14px;
+  height: 14px;
+  border-radius: 50%;
   background: #2563eb;
-  box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.35), 0 2px 7px rgba(11, 49, 45, 0.38);
+  box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.35), 0 2px 8px rgba(22, 49, 45, 0.35);
+  transform: none;
+}
+
+.agents-map-marker--europe-hub .agents-map-marker-dot::after { display: none; }
+
+.agents-map-marker--europe-hub:hover .agents-map-marker-dot,
+.agents-map-marker--europe-hub:focus-visible .agents-map-marker-dot,
+.agents-map-marker--europe-hub[aria-pressed="true"] .agents-map-marker-dot {
+  background: #a8793e;
+  transform: scale(1.18);
 }
 
 .agents-map-hub-badge {
@@ -628,12 +637,13 @@
   box-shadow: 0 0 4px rgba(37, 99, 235, 0.4);
 }
 
+/* Africa & Middle East routes now share the European line style, so the swatch matches. */
 .agents-map-legend .legend-swatch--subtle-route {
-  width: 14px;
-  height: 1.5px;
+  width: 15px;
+  height: 2px;
   border-radius: 1px;
-  background: #64748b;
-  opacity: 0.65;
+  background: #2563eb;
+  box-shadow: 0 0 4px rgba(37, 99, 235, 0.4);
 }
 
 .agents-map-legend .agents-map-legend-note {
