@@ -103,4 +103,25 @@ return [
             'description' => '',
         ],
     ],
+
+    /*
+     * Delivered Markets & Project Destinations (مناطق المبيعات والتصدير والمشاريع المنفذة)
+     * Add any countries or project locations where LUFLY products were shipped/installed.
+     * Example:
+     * 'germany' => [
+     *     'country' => 'germany',
+     *     'country_name' => 'Germany', // Optional custom display name
+     *     'label' => 'Berlin Project', // Optional map label
+     *     'latitude' => 52.5200,
+     *     'longitude' => 13.4050,
+     *     'name' => 'Luxury Hotel Project',
+     *     'project' => 'Grand Hyatt Sanitary Suite',
+     *     'city' => 'Berlin',
+     *     'description' => 'Supplied 120 custom architectural mixers and concealed systems.',
+     * ],
+     */
+    'delivered_markets' => [
+        // Add your delivered destinations here when ready
+    ],
 ];
+

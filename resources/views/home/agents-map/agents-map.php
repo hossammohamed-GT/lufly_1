@@ -11,34 +11,48 @@ $view->pushScript('frontend/home/agents-map/agents-map.js');
 $network = (array) config('home-agents', []);
 $factory = (array) ($network['factory'] ?? []);
 $agents = (array) ($network['agents'] ?? []);
-$agentKeys = ['uae', 'saudi_arabia', 'oman', 'qatar', 'bahrain', 'egypt', 'jordan', 'czechia'];
-$agentCountries = [
-    'uae' => trans('home.agents_country_uae'),
-    'saudi_arabia' => trans('home.agents_country_saudi_arabia'),
-    'oman' => trans('home.agents_country_oman'),
-    'qatar' => trans('home.agents_country_qatar'),
-    'bahrain' => trans('home.agents_country_bahrain'),
-    'egypt' => trans('home.agents_country_egypt'),
-    'jordan' => trans('home.agents_country_jordan'),
-    'czechia' => trans('home.agents_country_czechia'),
-];
-$agentMapLabels = [
-    'uae' => trans('home.agents_map_label_uae'),
-    'saudi_arabia' => trans('home.agents_map_label_saudi_arabia'),
-    'oman' => trans('home.agents_map_label_oman'),
-    'qatar' => trans('home.agents_map_label_qatar'),
-    'bahrain' => trans('home.agents_map_label_bahrain'),
-    'egypt' => trans('home.agents_map_label_egypt'),
-    'jordan' => trans('home.agents_map_label_jordan'),
-    'czechia' => trans('home.agents_map_label_czechia'),
-];
-$agentPoints = [];
+$deliveredMarkets = (array) ($network['delivered_markets'] ?? []);
+$routesConfig = (array) config('home-routes', []);
 
-foreach ($agentKeys as $key) {
-    if (isset($agents[$key]) && is_array($agents[$key])) {
-        $agentPoints[$key] = $agents[$key];
+$agentPoints = [];
+foreach ($agents as $key => $point) {
+    if (is_array($point)) {
+        $point['type'] = 'agent';
+        $agentPoints[$key] = $point;
     }
 }
+foreach ($deliveredMarkets as $key => $point) {
+    if (is_array($point)) {
+        $point['type'] = 'delivered';
+        $agentPoints[$key] = $point;
+    }
+}
+
+$getCountryName = static function (string $key, array $point): string {
+    if (!empty($point['country_name'])) {
+        return (string) $point['country_name'];
+    }
+    $country = (string) ($point['country'] ?? $key);
+    $transKey = 'home.agents_country_' . $country;
+    $translated = trans($transKey);
+    if ($translated !== $transKey) {
+        return $translated;
+    }
+    return ucwords(str_replace(['_', '-'], ' ', $country));
+};
+
+$getMapLabel = static function (string $key, array $point) use ($getCountryName): string {
+    if (!empty($point['label'])) {
+        return (string) $point['label'];
+    }
+    $country = (string) ($point['country'] ?? $key);
+    $transKey = 'home.agents_map_label_' . $country;
+    $translated = trans($transKey);
+    if ($translated !== $transKey) {
+        return $translated;
+    }
+    return $getCountryName($key, $point);
+};
 
 $getCoordinate = static function (array $point, string $axis, float $default): float {
     $value = (float) ($point[$axis] ?? $default);
@@ -78,17 +92,23 @@ $firstAgent = array_key_first($agentPoints);
                  data-map-factory-latitude="<?= e((string) $factoryCoordinates['latitude']) ?>"
                  data-map-factory-longitude="<?= e((string) $factoryCoordinates['longitude']) ?>"
                  data-map-factory-label="<?= e(trans('home.agents_factory_map_label')) ?>"
+                 data-map-routes="<?= e(json_encode($routesConfig, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES)) ?>"
                  aria-label="<?= e(trans('home.agents_map_desc')) ?>">
-                <?php foreach ($agentPoints as $key => $agent): ?>
+                <?php foreach ($agentPoints as $key => $agent):
+                    $countryName = $getCountryName($key, $agent);
+                    $mapLabel = $getMapLabel($key, $agent);
+                    $pinType = (string) ($agent['type'] ?? 'agent');
+                ?>
                     <button class="agents-map-location-data"
                             type="button"
                             data-agent-pin="<?= e($key) ?>"
+                            data-pin-type="<?= e($pinType) ?>"
                             data-latitude="<?= e((string) $getCoordinate($agent, 'latitude', 0)) ?>"
                             data-longitude="<?= e((string) $getCoordinate($agent, 'longitude', 0)) ?>"
                             aria-controls="agent-card-<?= e($key) ?>"
                             aria-pressed="<?= $key === $firstAgent ? 'true' : 'false' ?>"
-                            aria-label="<?= e(trans('home.agents_pin_label', ['country' => $agentCountries[$key]])) ?>">
-                        <?= e($agentMapLabels[$key]) ?>
+                            aria-label="<?= e(trans('home.agents_pin_label', ['country' => $countryName])) ?>">
+                        <?= e($mapLabel) ?>
                     </button>
                 <?php endforeach; ?>
                 <span class="agents-map-location-data"
@@ -106,7 +126,14 @@ $firstAgent = array_key_first($agentPoints);
                     <span class="agents-map-details-signal" aria-hidden="true"><i></i><i></i><i></i></span>
                 </div>
                 <?php foreach ($agentPoints as $key => $agent):
-                    $name = trim((string) ($agent['name'] ?? '')) ?: trans('home.agents_name_default');
+                    $pinType = (string) ($agent['type'] ?? 'agent');
+                    $countryName = $getCountryName($key, $agent);
+                    $name = trim((string) ($agent['name'] ?? ''));
+                    if ($name === '') {
+                        $name = $pinType === 'delivered'
+                            ? ($agent['project'] ?? trans('home.agents_delivered_default'))
+                            : trans('home.agents_name_default');
+                    }
                     $city = trim((string) ($agent['city'] ?? ''));
                     $address = trim((string) ($agent['address'] ?? ''));
                     $phone = trim((string) ($agent['phone'] ?? ''));
@@ -114,21 +141,29 @@ $firstAgent = array_key_first($agentPoints);
                     $coverage = trim((string) ($agent['coverage'] ?? ''));
                     $contactPerson = trim((string) ($agent['contact_person'] ?? ''));
                     $description = trim((string) ($agent['description'] ?? ''));
+                    $project = trim((string) ($agent['project'] ?? ''));
                     $hasContactDetails = $contactPerson !== '' || $phone !== '' || $email !== '';
+                    $role = $pinType === 'delivered'
+                        ? trans('home.agents_role_delivered')
+                        : trans('home.agents_role');
                 ?>
                     <div class="agents-map-card"
                          id="agent-card-<?= e($key) ?>"
                          data-agent-card="<?= e($key) ?>"
+                         data-card-type="<?= e($pinType) ?>"
                          <?= $key === $firstAgent ? '' : 'hidden' ?>>
-                        <span class="agents-map-card-country"><?= e($agentCountries[$key]) ?></span>
+                        <span class="agents-map-card-country"><?= e($countryName) ?></span>
                         <h3><?= e($name) ?></h3>
-                        <p class="agents-map-card-role"><?= e(trans('home.agents_role')) ?></p>
+                        <p class="agents-map-card-role"><?= e($role) ?></p>
                         <?php if ($description !== ''): ?>
                             <p class="agents-map-card-description"><?= e($description) ?></p>
-                        <?php elseif (!$hasContactDetails): ?>
+                        <?php elseif (!$hasContactDetails && $pinType === 'agent'): ?>
                             <p class="agents-map-card-description"><?= e(trans('home.agents_info_placeholder')) ?></p>
                         <?php endif; ?>
                         <ul class="agents-map-contact">
+                            <?php if ($project !== ''): ?>
+                                <li><span><?= e(trans('home.agents_project_label')) ?></span><?= e($project) ?></li>
+                            <?php endif; ?>
                             <?php if ($city !== ''): ?>
                                 <li><span><?= e(trans('home.agents_city_label')) ?></span><?= e($city) ?></li>
                             <?php endif; ?>
@@ -158,8 +193,12 @@ $firstAgent = array_key_first($agentPoints);
         </div>
 
         <div class="agents-map-legend" aria-label="<?= e(trans('home.agents_legend_label')) ?>">
-            <span><i class="agents-map-legend-factory" aria-hidden="true"></i><?= e(trans('home.agents_factory')) ?></span>
-            <span><i class="agents-map-legend-agent" aria-hidden="true"></i><?= e(trans('home.agents_role')) ?></span>
+            <span class="legend-item"><i class="legend-swatch legend-swatch--factory" aria-hidden="true"></i><?= e(trans('home.agents_factory')) ?></span>
+            <span class="legend-item"><i class="legend-swatch legend-swatch--europe-hub" aria-hidden="true"></i><?= e(trans('home.agents_europe_hub')) ?></span>
+            <span class="legend-item"><i class="legend-swatch legend-swatch--dealer" aria-hidden="true"></i><?= e(trans('home.agents_role')) ?></span>
+            <span class="legend-item"><i class="legend-swatch legend-swatch--priority" aria-hidden="true"></i><?= e(trans('home.agents_priority_markets')) ?></span>
+            <span class="legend-item"><i class="legend-swatch legend-swatch--europe-route" aria-hidden="true"></i><?= e(trans('home.agents_europe_routes')) ?></span>
+            <span class="legend-item"><i class="legend-swatch legend-swatch--subtle-route" aria-hidden="true"></i><?= e(trans('home.agents_subtle_routes')) ?></span>
             <span class="agents-map-legend-note"><?= e(trans('home.agents_legend_note')) ?></span>
         </div>
     </div>

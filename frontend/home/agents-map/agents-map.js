@@ -90,11 +90,12 @@
 
   locationData.forEach((location) => {
     const key = location.dataset.agentPin;
+    const pinType = location.dataset.pinType || "agent";
     const latitude = Number(location.dataset.latitude);
     const longitude = Number(location.dataset.longitude);
     const label = location.textContent.trim();
     const markerContent = document.createElement("span");
-    markerContent.className = `agents-map-marker agents-map-marker--${key}`;
+    markerContent.className = `agents-map-marker agents-map-marker--${pinType} agents-map-marker--${key}`;
     const markerDot = document.createElement("span");
     markerDot.className = "agents-map-marker-dot";
     markerDot.setAttribute("aria-hidden", "true");
@@ -106,7 +107,7 @@
 
     const marker = L.marker([latitude, longitude], {
       icon: L.divIcon({
-        className: "agents-map-icon agents-map-agent-icon",
+        className: `agents-map-icon agents-map-${pinType}-icon`,
         html: markerContent,
         iconSize: [32, 32],
         iconAnchor: [16, 16],
@@ -156,130 +157,226 @@
     keyboard: false,
   }).addTo(map);
 
-  const routeZoom = 5;
-  const routeOrigin = map.project(factory, routeZoom);
-  const routeTargets = locations.map((marker, index) => {
-    const key = locationData[index]?.dataset.agentPin;
-    const point = map.project(marker.getLatLng(), routeZoom);
-    const dx = point.x - routeOrigin.x;
-    const dy = point.y - routeOrigin.y;
+  // European Hub visual indicator on Czechia dealer marker
+  const czechiaPinEl = markerElements.get("czechia");
+  if (czechiaPinEl) {
+    czechiaPinEl.classList.add("agents-map-marker--europe-hub");
+    const hubBadge = document.createElement("span");
+    hubBadge.className = "agents-map-hub-badge";
+    hubBadge.textContent = "EU Hub";
+    hubBadge.setAttribute("aria-hidden", "true");
+    czechiaPinEl.appendChild(hubBadge);
+  }
 
-    return {
-      marker,
-      key,
-      point,
-      distance: Math.hypot(dx, dy),
-      angle: (Math.atan2(dy, dx) + Math.PI * 2) % (Math.PI * 2),
-    };
-  });
-  const sortedTargets = [...routeTargets].sort((a, b) => a.angle - b.angle);
-  let largestAngleGap = -1;
-  let firstTargetIndex = 0;
-
-  sortedTargets.forEach((target, index) => {
-    const next = sortedTargets[(index + 1) % sortedTargets.length];
-    const nextAngle = index === sortedTargets.length - 1
-      ? next.angle + Math.PI * 2
-      : next.angle;
-    const gap = nextAngle - target.angle;
-
-    if (gap > largestAngleGap) {
-      largestAngleGap = gap;
-      firstTargetIndex = (index + 1) % sortedTargets.length;
+  // Parse directional routes configuration
+  let routesConfig = null;
+  try {
+    if (mapElement.dataset.mapRoutes) {
+      routesConfig = JSON.parse(mapElement.dataset.mapRoutes);
     }
-  });
+  } catch (err) {
+    console.warn("Failed to parse map routes config:", err);
+  }
 
-  const orderedTargets = Array.from(
-    { length: sortedTargets.length },
-    (_, index) => {
-      const target = sortedTargets[(firstTargetIndex + index) % sortedTargets.length];
-      const wrapsAround = firstTargetIndex + index >= sortedTargets.length;
-
-      return { ...target, unwrappedAngle: target.angle + (wrapsAround ? Math.PI * 2 : 0) };
-    },
-  );
-  const routeAngles = new Map(
-    orderedTargets.map((target, index) => {
-      const previousAngle = index === 0
-        ? orderedTargets.at(-1).unwrappedAngle - Math.PI * 2
-        : orderedTargets[index - 1].unwrappedAngle;
-      const nextAngle = index === orderedTargets.length - 1
-        ? orderedTargets[0].unwrappedAngle + Math.PI * 2
-        : orderedTargets[index + 1].unwrappedAngle;
-      const sectorCenter = (previousAngle + nextAngle) / 2;
-      const bendAmount = target.key === "egypt" ? 0.12 : 0.38;
-
-      return [
-        target.key,
-        {
-          destination: target.unwrappedAngle,
-          start: target.unwrappedAngle +
-            (sectorCenter - target.unwrappedAngle) * bendAmount,
+  if (!routesConfig || !routesConfig.origins) {
+    routesConfig = {
+      origins: {
+        czechia: {
+          id: "czechia",
+          latitude: 50.0755,
+          longitude: 14.4378,
+          routes: {
+            poland: { id: "poland", name: "Poland", latitude: 52.2297, longitude: 21.0122, style: "europe", curve_bend: -0.16 },
+            italy: { id: "italy", name: "Italy", latitude: 41.9028, longitude: 12.4964, style: "europe", curve_bend: 0.14 },
+            spain: { id: "spain", name: "Spain", latitude: 40.4168, longitude: -3.7038, style: "europe", curve_bend: 0.18 },
+          },
         },
-      ];
-    }),
-  );
+        turkey: {
+          id: "turkey",
+          latitude: 37.0662,
+          longitude: 37.3833,
+          routes: {
+            egypt: { id: "egypt", name: "Egypt", latitude: 30.0444, longitude: 31.2357, style: "highlighted", is_dealer: true, curve_bend: -0.16 },
+            uae: { id: "uae", name: "Dubai", latitude: 25.2048, longitude: 55.2708, style: "highlighted", is_dealer: true, curve_bend: -0.18 },
+            morocco: { id: "morocco", name: "Morocco", latitude: 33.5731, longitude: -7.5898, style: "europe", curve_bend: 0.20 },
+            algeria: { id: "algeria", name: "Algeria", latitude: 36.7538, longitude: 3.0588, style: "europe", curve_bend: 0.16 },
+            libya: { id: "libya", name: "Libya", latitude: 32.8872, longitude: 13.1913, style: "europe", curve_bend: 0.12 },
+            jordan: { id: "jordan", name: "Jordan", latitude: 31.9539, longitude: 35.9106, style: "europe", is_dealer: true, curve_bend: 0.08 },
+            saudi_arabia: { id: "saudi_arabia", name: "Saudi Arabia", latitude: 24.7136, longitude: 46.6753, style: "europe", is_dealer: true, curve_bend: -0.12 },
+            bahrain: { id: "bahrain", name: "Bahrain", latitude: 26.2285, longitude: 50.5860, style: "europe", is_dealer: true, curve_bend: -0.14 },
+            qatar: { id: "qatar", name: "Qatar", latitude: 25.2854, longitude: 51.5310, style: "europe", is_dealer: true, curve_bend: -0.16 },
+            oman: { id: "oman", name: "Oman", latitude: 23.5880, longitude: 58.3829, style: "europe", is_dealer: true, curve_bend: -0.20 },
+            kuwait: { id: "kuwait", name: "Kuwait", latitude: 29.3759, longitude: 47.9774, style: "europe", curve_bend: -0.10 },
+          },
+        },
+      },
+    };
+  }
 
-  routeTargets.forEach(({ marker, key, distance }) => {
-    const destination = marker.getLatLng();
-    const isHighlightedRoute = key === "uae" || key === "egypt";
-    const { destination: destinationAngle, start: startAngle } = routeAngles.get(key);
-    const curve = [];
+  // Quadratic Bezier curve calculation between two geographic coordinates
+  const calculateCurvedPoints = (originLatLng, destLatLng, bend = 0.15) => {
+    const z = 6;
+    const p1 = map.project(originLatLng, z);
+    const p2 = map.project(destLatLng, z);
+    const dx = p2.x - p1.x;
+    const dy = p2.y - p1.y;
+    const dist = Math.hypot(dx, dy);
 
-    for (let step = 0; step <= 40; step += 1) {
-      const progress = step / 40;
-      const angle = startAngle + (destinationAngle - startAngle) * progress;
-      const radius = distance * progress;
-      const point = L.point(
-        routeOrigin.x + Math.cos(angle) * radius,
-        routeOrigin.y + Math.sin(angle) * radius,
-      );
-      curve.push(
-        step === 40 ? destination : map.unproject(point, routeZoom),
-      );
+    if (dist === 0) {
+      return { points: [originLatLng, destLatLng], angle: 0, arrowPos: destLatLng };
     }
 
-    L.polyline(curve, {
-      className: isHighlightedRoute
-        ? `agents-map-route agents-map-route--${key}`
-        : "agents-map-route",
-      color: isHighlightedRoute ? "#b38345" : "#117d78",
-      weight: isHighlightedRoute ? 3 : 2,
-      opacity: isHighlightedRoute ? 0.95 : 0.7,
-      dashArray: isHighlightedRoute ? "10 6" : "5 8",
-      interactive: false,
-    }).addTo(map);
-  });
+    const nx = -dy / dist;
+    const ny = dx / dist;
+    const cx = (p1.x + p2.x) / 2 + nx * (dist * bend);
+    const cy = (p1.y + p2.y) / 2 + ny * (dist * bend);
 
-  const bounds = L.latLngBounds(locationsForBounds);
-  const initialRegionKeys = new Set([
-    "uae",
-    "saudi_arabia",
-    "oman",
-    "qatar",
-    "bahrain",
-    "egypt",
-    "jordan",
-  ]);
-  const initialRegionBounds = L.latLngBounds([
-    factory,
-    ...locations
-      .filter((_, index) =>
-        initialRegionKeys.has(locationData[index]?.dataset.agentPin),
-      )
-      .map((marker) => marker.getLatLng()),
-  ]);
-  const fitInitialRegion = () => {
-    map.invalidateSize({ pan: false });
-    map.fitBounds(initialRegionBounds, {
-      padding: [32, 32],
-      maxZoom: 5,
-      animate: false,
+    const points = [];
+    const steps = 36;
+    for (let i = 0; i <= steps; i += 1) {
+      const t = i / steps;
+      const it = 1 - t;
+      const x = it * it * p1.x + 2 * it * t * cx + t * t * p2.x;
+      const y = it * it * p1.y + 2 * it * t * cy + t * t * p2.y;
+      points.push(map.unproject(L.point(x, y), z));
+    }
+
+    const endDx = p2.x - cx;
+    const endDy = p2.y - cy;
+    const angle = (Math.atan2(endDy, endDx) * 180) / Math.PI;
+
+    // Arrowhead position slightly before final marker center
+    const arrowT = 0.94;
+    const arrowIt = 1 - arrowT;
+    const ax = arrowIt * arrowIt * p1.x + 2 * arrowIt * arrowT * cx + arrowT * arrowT * p2.x;
+    const ay = arrowIt * arrowIt * p1.y + 2 * arrowIt * arrowT * cy + arrowT * arrowT * p2.y;
+    const arrowPos = map.unproject(L.point(ax, ay), z);
+
+    return { points, angle, arrowPos, end: destLatLng };
+  };
+
+  // Create crisp directional arrowhead SVG icon
+  const createArrowheadIcon = (style, angle) => {
+    let size = 12;
+    let svg = "";
+
+    if (style === "highlighted") {
+      size = 18;
+      svg = `<svg viewBox="0 0 20 20" class="agents-map-arrowhead agents-map-arrowhead--highlighted" style="transform: rotate(${angle}deg); width: ${size}px; height: ${size}px;" aria-hidden="true">
+        <polygon points="3,4 17,10 3,16 6,10" fill="#c9974c" stroke="#ffffff" stroke-width="0.8"/>
+      </svg>`;
+    } else if (style === "europe") {
+      size = 14;
+      svg = `<svg viewBox="0 0 20 20" class="agents-map-arrowhead agents-map-arrowhead--europe" style="transform: rotate(${angle}deg); width: ${size}px; height: ${size}px;" aria-hidden="true">
+        <polygon points="4,4 16,10 4,16 7,10" fill="#2563eb" stroke="#ffffff" stroke-width="0.6"/>
+      </svg>`;
+    } else {
+      size = 11;
+      svg = `<svg viewBox="0 0 20 20" class="agents-map-arrowhead agents-map-arrowhead--subtle" style="transform: rotate(${angle}deg); width: ${size}px; height: ${size}px;" aria-hidden="true">
+        <polygon points="5,5 15,10 5,15 7,10" fill="#64748b"/>
+      </svg>`;
+    }
+
+    return L.divIcon({
+      className: "agents-map-arrow-icon",
+      html: svg,
+      iconSize: [size, size],
+      iconAnchor: [size / 2, size / 2],
     });
   };
-  const fitLocations = (animate = true) => {
+
+  // Create discrete destination node marker for non-dealer markets
+  const createMarketNodeMarker = (dest, style) => {
+    const label = dest.name || dest.city;
+    const content = document.createElement("span");
+    content.className = `agents-map-market-node agents-map-market-node--${style}`;
+
+    const dot = document.createElement("span");
+    dot.className = `agents-map-market-dot agents-map-market-dot--${style}`;
+    dot.setAttribute("aria-hidden", "true");
+
+    const text = document.createElement("span");
+    text.className = `agents-map-market-label agents-map-market-label--${style}`;
+    text.textContent = label;
+
+    content.append(dot, text);
+
+    return L.marker([dest.latitude, dest.longitude], {
+      icon: L.divIcon({
+        className: "agents-map-icon agents-map-market-icon",
+        html: content,
+        iconSize: [24, 24],
+        iconAnchor: [12, 12],
+      }),
+      title: `${label} · Trade Destination`,
+      keyboard: false,
+      riseOnHover: false,
+      interactive: false,
+    });
+  };
+
+  // Render multi-origin directional routes
+  const origins = routesConfig.origins || {};
+  Object.values(origins).forEach((origin) => {
+    const originLatLng = L.latLng(Number(origin.latitude), Number(origin.longitude));
+    const routes = Object.values(origin.routes || {});
+
+    routes.forEach((route) => {
+      const destLatLng = L.latLng(Number(route.latitude), Number(route.longitude));
+      const style = route.style || "subtle";
+      const bend = typeof route.curve_bend === "number" ? route.curve_bend : 0.15;
+      const curve = calculateCurvedPoints(originLatLng, destLatLng, bend);
+
+      let color = "#64748b";
+      let weight = 1.2;
+      let opacity = 0.52;
+      let dashArray = "4 6";
+
+      if (style === "highlighted") {
+        color = "#c9974c";
+        weight = 3.5;
+        opacity = 0.95;
+        dashArray = "9 6";
+      } else if (style === "europe") {
+        color = "#2563eb";
+        weight = 2.1;
+        opacity = 0.88;
+        dashArray = "6 5";
+      }
+
+      // Add polyline route
+      L.polyline(curve.points, {
+        className: `agents-map-route agents-map-route--${style} agents-map-route--${route.id}`,
+        color,
+        weight,
+        opacity,
+        dashArray,
+        interactive: false,
+      }).addTo(map);
+
+      // Arrowhead removed for cleaner lines
+
+      // If destination is not an existing dealer, add discrete destination node
+      if (!route.is_dealer) {
+        createMarketNodeMarker(route, style).addTo(map);
+        locationsForBounds.push(destLatLng);
+      }
+    });
+  });
+
+  // Comprehensive world view covering Europe, North Africa, Middle East, and Gulf
+  const worldBounds = L.latLngBounds([
+    [19.0, -11.0], // South-West corner (South of Morocco/Saudi/Oman, West of Spain)
+    [54.5, 61.0],  // North-East corner (North of Poland, East of Oman)
+  ]);
+
+  const fitWorldMap = (animate = false) => {
     map.invalidateSize({ pan: false });
-    map.fitBounds(bounds, { padding: [32, 32], maxZoom: 5, animate });
+    map.fitBounds(worldBounds, {
+      padding: [32, 32],
+      maxZoom: 6,
+      animate: Boolean(animate),
+    });
   };
 
   let hasInteractedWithMap = false;
@@ -293,15 +390,15 @@
     const mapResizeObserver = new ResizeObserver(() => {
       map.invalidateSize({ pan: false });
       if (!hasInteractedWithMap) {
-        window.requestAnimationFrame(fitInitialRegion);
+        window.requestAnimationFrame(() => fitWorldMap(false));
       }
     });
     mapResizeObserver.observe(mapElement);
   }
 
-  window.addEventListener("load", fitInitialRegion, { once: true });
+  window.addEventListener("load", () => fitWorldMap(false), { once: true });
   document.fonts?.ready.then(() => {
-    if (!hasInteractedWithMap) fitInitialRegion();
+    if (!hasInteractedWithMap) fitWorldMap(false);
   });
 
   const ResetControl = L.Control.extend({
@@ -316,11 +413,11 @@
       button.innerHTML =
         '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 10V4m0 0h6M4 4l5 5a8 8 0 1 1-2 7"/></svg>';
       L.DomEvent.disableClickPropagation(button);
-      L.DomEvent.on(button, "click", () => fitLocations());
+      L.DomEvent.on(button, "click", () => fitWorldMap(true));
       return button;
     },
   });
 
   new ResetControl({ position: "topright" }).addTo(map);
-  window.requestAnimationFrame(fitInitialRegion);
+  window.requestAnimationFrame(() => fitWorldMap(false));
 })();
