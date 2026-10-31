@@ -100,7 +100,7 @@ return [
                     'longitude' => 55.2708,
                     'style' => 'highlighted',
                     'is_dealer' => true,
-                    'curve_bend' => -0.18,
+                    'curve_bend' => -0.13,
                 ],
                 // Regional Africa & Middle East Markets (Section 6) — same line style as Europe
                 'morocco' => [
@@ -112,7 +112,7 @@ return [
                     'longitude' => -7.5898,
                     'style' => 'europe',
                     'is_dealer' => false,
-                    'curve_bend' => 0.20,
+                    'curve_bend' => -0.14,
                     'marker_color' => 'green',
                 ],
                 'algeria' => [
@@ -124,7 +124,7 @@ return [
                     'longitude' => 3.0588,
                     'style' => 'europe',
                     'is_dealer' => false,
-                    'curve_bend' => 0.16,
+                    'curve_bend' => 0.22,
                     'marker_color' => 'green',
                 ],
                 'libya' => [
@@ -136,7 +136,7 @@ return [
                     'longitude' => 13.1913,
                     'style' => 'europe',
                     'is_dealer' => false,
-                    'curve_bend' => 0.12,
+                    'curve_bend' => 0.14,
                     'marker_color' => 'green',
                 ],
                 'jordan' => [
@@ -148,7 +148,7 @@ return [
                     'longitude' => 35.9106,
                     'style' => 'europe',
                     'is_dealer' => true,
-                    'curve_bend' => 0.08,
+                    'curve_bend' => 0.03,
                     'marker_color' => 'green',
                 ],
                 'saudi_arabia' => [
@@ -160,7 +160,7 @@ return [
                     'longitude' => 46.6753,
                     'style' => 'europe',
                     'is_dealer' => true,
-                    'curve_bend' => -0.12,
+                    'curve_bend' => 0.22,
                     'marker_color' => 'green',
                 ],
                 'bahrain' => [
@@ -172,7 +172,7 @@ return [
                     'longitude' => 50.5860,
                     'style' => 'europe',
                     'is_dealer' => true,
-                    'curve_bend' => -0.14,
+                    'curve_bend' => 0.06,
                     'marker_color' => 'green',
                 ],
                 'qatar' => [
@@ -184,7 +184,7 @@ return [
                     'longitude' => 51.5310,
                     'style' => 'europe',
                     'is_dealer' => true,
-                    'curve_bend' => -0.16,
+                    'curve_bend' => 0.21,
                     'marker_color' => 'green',
                 ],
                 'oman' => [
@@ -196,7 +196,7 @@ return [
                     'longitude' => 58.3829,
                     'style' => 'europe',
                     'is_dealer' => true,
-                    'curve_bend' => -0.20,
+                    'curve_bend' => -0.22,
                     'marker_color' => 'green',
                 ],
                 'kuwait' => [
@@ -208,7 +208,7 @@ return [
                     'longitude' => 47.9774,
                     'style' => 'europe',
                     'is_dealer' => false,
-                    'curve_bend' => -0.10,
+                    'curve_bend' => -0.03,
                     'marker_color' => 'green',
                 ],
             ],
