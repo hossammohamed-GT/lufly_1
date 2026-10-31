@@ -17,9 +17,10 @@ declare(strict_types=1);
  *      * Regional Destinations: Morocco, Algeria, Libya, Jordan, Saudi Arabia, Bahrain,
  *        Qatar, Oman, Kuwait [identical "europe" style to Origin A routes]
  *
- * Marker coloring for non-dealer destinations is driven by "marker_color":
- *  - "green": Middle East / North Africa pins (same pin as Egypt, Jordan, Saudi Arabia)
- *  - "blue":  European pins (same pin shape, blue)
+ * Pins: every location ships blue; the Egyptian and UAE dealer pins keep the green
+ * priority pin. "marker_color" only affects non-dealer destinations:
+ *  - "blue" (default): the standard blue location pin
+ *  - "green": optional green pin variant
  */
 return [
     'origins' => [
@@ -113,7 +114,7 @@ return [
                     'style' => 'europe',
                     'is_dealer' => false,
                     'curve_bend' => -0.14,
-                    'marker_color' => 'green',
+                    'marker_color' => 'blue',
                 ],
                 'algeria' => [
                     'id' => 'algeria',
@@ -125,7 +126,7 @@ return [
                     'style' => 'europe',
                     'is_dealer' => false,
                     'curve_bend' => 0.22,
-                    'marker_color' => 'green',
+                    'marker_color' => 'blue',
                 ],
                 'libya' => [
                     'id' => 'libya',
@@ -137,7 +138,7 @@ return [
                     'style' => 'europe',
                     'is_dealer' => false,
                     'curve_bend' => 0.14,
-                    'marker_color' => 'green',
+                    'marker_color' => 'blue',
                 ],
                 'jordan' => [
                     'id' => 'jordan',
@@ -149,7 +150,6 @@ return [
                     'style' => 'europe',
                     'is_dealer' => true,
                     'curve_bend' => 0.03,
-                    'marker_color' => 'green',
                 ],
                 'saudi_arabia' => [
                     'id' => 'saudi_arabia',
@@ -161,7 +161,6 @@ return [
                     'style' => 'europe',
                     'is_dealer' => true,
                     'curve_bend' => 0.22,
-                    'marker_color' => 'green',
                 ],
                 'bahrain' => [
                     'id' => 'bahrain',
@@ -173,7 +172,6 @@ return [
                     'style' => 'europe',
                     'is_dealer' => true,
                     'curve_bend' => 0.06,
-                    'marker_color' => 'green',
                 ],
                 'qatar' => [
                     'id' => 'qatar',
@@ -185,7 +183,6 @@ return [
                     'style' => 'europe',
                     'is_dealer' => true,
                     'curve_bend' => 0.21,
-                    'marker_color' => 'green',
                 ],
                 'oman' => [
                     'id' => 'oman',
@@ -197,7 +194,6 @@ return [
                     'style' => 'europe',
                     'is_dealer' => true,
                     'curve_bend' => -0.22,
-                    'marker_color' => 'green',
                 ],
                 'kuwait' => [
                     'id' => 'kuwait',
@@ -209,7 +205,7 @@ return [
                     'style' => 'europe',
                     'is_dealer' => false,
                     'curve_bend' => -0.03,
-                    'marker_color' => 'green',
+                    'marker_color' => 'blue',
                 ],
             ],
         ],
