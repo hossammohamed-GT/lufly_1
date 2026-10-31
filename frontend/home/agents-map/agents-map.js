@@ -202,7 +202,7 @@
           latitude: 37.0662,
           longitude: 37.3833,
           routes: {
-            egypt: { id: "egypt", name: "Egypt", latitude: 30.0444, longitude: 31.2357, style: "highlighted", is_dealer: true, curve_bend: -0.16 },
+            egypt: { id: "egypt", name: "Egypt", latitude: 30.0444, longitude: 31.2357, style: "highlighted", is_dealer: true, curve_bend: 0.16 },
             uae: { id: "uae", name: "Dubai", latitude: 25.2048, longitude: 55.2708, style: "highlighted", is_dealer: true, curve_bend: -0.18 },
             morocco: { id: "morocco", name: "Morocco", latitude: 33.5731, longitude: -7.5898, style: "europe", curve_bend: 0.20, marker_color: "green" },
             algeria: { id: "algeria", name: "Algeria", latitude: 36.7538, longitude: 3.0588, style: "europe", curve_bend: 0.16, marker_color: "green" },

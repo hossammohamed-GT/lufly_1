@@ -88,7 +88,8 @@ return [
                     'longitude' => 31.2357,
                     'style' => 'highlighted',
                     'is_dealer' => true,
-                    'curve_bend' => -0.16,
+                    // Positive bend sweeps the arc above the straight line.
+                    'curve_bend' => 0.16,
                 ],
                 'uae' => [
                     'id' => 'uae',
