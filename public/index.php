@@ -14,7 +14,7 @@ $app = require dirname(__DIR__) . '/bootstrap.php';
    that arrives on a non-canonical scheme or host (http vs https, www vs
    non-www) is permanently redirected to the APP_URL form, so search engines
    index exactly one variant. Local development is untouched: the flag
-   defaults to false and never fires on localhost-style hosts. */
+   defaults to false and never fires on localhost-style hosts. test*/
 if (config('seo.enforce_host')) {
     $canonicalBase = rtrim((string) config('app.url', ''), '/');
     $canonicalScheme = (string) (parse_url($canonicalBase, PHP_URL_SCHEME) ?: 'https');
