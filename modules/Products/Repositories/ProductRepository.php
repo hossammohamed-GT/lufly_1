@@ -125,9 +125,13 @@ class ProductRepository extends Repository
             default => 'LOWER(pt.name) ASC',
         };
 
+        $isNewExpr = $this->hasIsNewColumn() ? 'p.is_new' : '0';
         $orderBySql = match ($sort) {
             'model' => ' ORDER BY p.is_featured DESC, p.sort_order ASC, p.model_code ASC, p.id DESC',
             'name' => " ORDER BY p.is_featured DESC, p.sort_order ASC, {$nameCollate}, p.id DESC",
+            /* "Newest" (the navbar Latest page): featured first, then the
+               admin-flagged New products, then the most recently created. */
+            'newest' => " ORDER BY p.is_featured DESC, {$isNewExpr} DESC, p.created_at DESC, p.id DESC",
             default => ' ORDER BY p.is_featured DESC, p.sort_order ASC, p.id DESC',
         };
 

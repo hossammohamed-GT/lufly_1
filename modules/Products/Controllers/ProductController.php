@@ -56,7 +56,6 @@ class ProductController extends Controller
             'category_id' => $categoryId,
             'search' => $searchQuery,
             'sort' => $sort,
-            'is_new' => $latestOnly,
         ], (int) $request->query('page', '1'), 12);
 
         $categoryCounts = $this->categories->productCounts();

@@ -69,10 +69,10 @@ class HomeController extends Controller
         $categoryCounts = $this->categoryService->productCounts();
         $categories = $this->categoryService->nonEmptyTree($locale, $fallback, $categoryCounts);
 
-        /* Rotating showcase: every visit picks ONE random product per
-           category, then keeps 4 for the grid - so each reload shows a
-           different mix that always spans distinct categories. Curated
-           (is_featured) products win within their category when any exist. */
+        /* Rotating showcase: every visit picks ONE random FEATURED product per
+           category, then keeps up to 4 for the grid - so each reload shows a
+           different mix that always spans distinct categories, and every card
+           shown here is featured. */
         /* Media readiness is intentionally uncached: uploading the missing
            photo/drawing restores a product immediately, while removing either
            one removes it from the showcase on the very next request. */
@@ -80,46 +80,21 @@ class HomeController extends Controller
         $pool = $colorFamilies->collapseRows($connection->select(
             "SELECT p.id, p.category_id, p.is_featured, p.sort_order
                FROM products p
-              WHERE p.status = 'active' AND p.deleted_at IS NULL
+              WHERE p.status = 'active' AND p.deleted_at IS NULL AND p.is_featured = 1
                 AND " . ProductVisibility::mediaReadySql('p') . "
-              ORDER BY p.is_featured DESC, p.sort_order ASC, p.id DESC",
+              ORDER BY p.id DESC",
         ));
 
-        /* Featured products take priority slots FIRST in strict Admin priority
-           order (sort_order ASC, id ASC). Remaining slots up to 4 rotate across
-           distinct non-featured categories so the Home showcase stays vibrant. */
-        $featuredRows = [];
-        $regularByCategory = [];
+        $featuredByCategory = [];
         foreach ($pool as $row) {
-            if ((int) ($row['is_featured'] ?? 0) === 1) {
-                $featuredRows[] = $row;
-            } else {
-                $regularByCategory[(int) $row['category_id']][] = $row;
-            }
+            $featuredByCategory[(int) ($row['category_id'] ?? 0)][] = (int) ($row['id'] ?? 0);
         }
-        usort(
-            $featuredRows,
-            static fn (array $a, array $b): int => ((int) ($a['sort_order'] ?? PHP_INT_MAX) <=> (int) ($b['sort_order'] ?? PHP_INT_MAX))
-                ?: ((int) ($a['id'] ?? 0) <=> (int) ($b['id'] ?? 0)),
-        );
-
-        $pinnedIds = array_map(static fn (array $r): int => (int) $r['id'], $featuredRows);
-        $featuredCategories = array_flip(array_map(static fn (array $r): int => (int) $r['category_id'], $featuredRows));
-
-        $rotatingIds = [];
-        $fallbackRotatingIds = [];
-        foreach ($regularByCategory as $catId => $list) {
-            $chosen = (int) $list[array_rand($list)]['id'];
-            if (isset($featuredCategories[$catId])) {
-                $fallbackRotatingIds[] = $chosen;
-            } else {
-                $rotatingIds[] = $chosen;
-            }
+        $ids = [];
+        foreach ($featuredByCategory as $categoryId => $list) {
+            $ids[] = $list[array_rand($list)];
         }
-        shuffle($rotatingIds);
-        shuffle($fallbackRotatingIds);
-
-        $ids = array_slice(array_values(array_unique(array_merge($pinnedIds, $rotatingIds, $fallbackRotatingIds))), 0, 4);
+        shuffle($ids);
+        $ids = array_slice($ids, 0, 4);
 
         $savedIds = [];
         if (feature('favorites', true) && class_exists(\Modules\Favorites\Services\FavoriteService::class)) {
