@@ -1,0 +1,185 @@
+/* ============================================================
+   Public product-card lightbox + card media arrows.
+   ============================================================ */
+
+/* prev/next arrows over the card image (shown on hover / focus / touch) */
+.pcard-nav {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  z-index: 3;
+  width: 30px;
+  height: 30px;
+  border: 0;
+  border-radius: 50%;
+  background: rgba(6, 18, 16, 0.55);
+  color: #fff;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  opacity: 0;
+  transition: opacity 0.15s ease, background 0.15s ease;
+}
+.pcard-nav:hover { background: rgba(6, 18, 16, 0.8); }
+.pcard-stage:hover .pcard-nav,
+.pcard-nav:focus-visible { opacity: 1; }
+.pcard-nav--prev { left: 8px; }
+.pcard-nav--next { right: 8px; }
+@media (hover: none) {
+  .pcard-nav { opacity: 1; }
+}
+
+/* lightbox overlay */
+.pcard-lb {
+  position: fixed;
+  inset: 0;
+  z-index: 400;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 16px;
+}
+.pcard-lb[hidden] { display: none; }
+.pcard-lb-backdrop { position: absolute; inset: 0; background: rgba(6, 18, 16, 0.78); }
+.pcard-lb-box {
+  position: relative;
+  background: var(--ds-surface, #fff);
+  border-radius: 12px;
+  padding: 16px;
+  width: 100%;
+  max-width: min(960px, 95vw);
+  max-height: 92vh;
+  overflow-y: auto;
+  display: grid;
+  gap: 12px;
+  box-shadow: 0 24px 60px rgba(0, 0, 0, 0.35);
+}
+.pcard-lb-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+.pcard-lb-head strong { font-size: 15px; }
+.pcard-lb-head-tools {
+  display: inline-flex;
+  align-items: center;
+  gap: 12px;
+  flex-wrap: wrap;
+  font-size: 12px;
+  color: var(--ds-text-muted, #6f6a61);
+}
+.pcard-lb-selectall {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  cursor: pointer;
+  user-select: none;
+}
+.pcard-lb-selectall input { accent-color: var(--ds-primary, #0f766e); }
+.pcard-lb-selcount { font-weight: 600; }
+.pcard-lb-product { font-size: 12px; }
+.pcard-lb-close {
+  border: 0;
+  background: none;
+  cursor: pointer;
+  display: inline-flex;
+  padding: 4px;
+  color: inherit;
+  border-radius: 6px;
+}
+.pcard-lb-close:hover { background: rgba(6, 18, 16, 0.08); }
+
+/* main enlarged image */
+.pcard-lb-main {
+  position: relative;
+  display: grid;
+  place-items: center;
+  background: #faf8f4;
+  border-radius: 10px;
+  overflow: hidden;
+  min-height: 220px;
+}
+.pcard-lb-img {
+  max-width: 100%;
+  max-height: 56vh;
+  object-fit: contain;
+  display: block;
+}
+.pcard-lb-nav {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 36px;
+  height: 36px;
+  border: 0;
+  border-radius: 50%;
+  background: rgba(6, 18, 16, 0.55);
+  color: #fff;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+}
+.pcard-lb-nav:hover { background: rgba(6, 18, 16, 0.85); }
+.pcard-lb-nav--prev { left: 10px; }
+.pcard-lb-nav--next { right: 10px; }
+.pcard-lb-nav[hidden] { display: none; }
+.pcard-lb-counter {
+  position: absolute;
+  bottom: 8px;
+  right: 12px;
+  font-size: 12px;
+  color: #fff;
+  background: rgba(6, 18, 16, 0.55);
+  padding: 2px 8px;
+  border-radius: 999px;
+}
+
+/* image grid: 1 column on small screens, 2 on medium, 3 on large */
+.pcard-lb-grid {
+  display: grid;
+  gap: 8px;
+  grid-template-columns: 1fr;
+}
+@media (min-width: 640px) {
+  .pcard-lb-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+}
+@media (min-width: 1024px) {
+  .pcard-lb-grid { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+}
+.pcard-lb-item {
+  position: relative;
+  margin: 0;
+  border: 2px solid transparent;
+  border-radius: 8px;
+  overflow: hidden;
+  background: #faf8f4;
+}
+.pcard-lb-item.is-main { border-color: var(--ds-primary, #0f766e); }
+.pcard-lb-item.is-selected { border-color: #2563eb; }
+.pcard-lb-thumb {
+  display: block;
+  width: 100%;
+  border: 0;
+  padding: 0;
+  background: none;
+  cursor: zoom-in;
+}
+.pcard-lb-thumb img {
+  width: 100%;
+  aspect-ratio: 4 / 3;
+  object-fit: contain;
+  display: block;
+}
+.pcard-lb-check {
+  position: absolute;
+  top: 6px;
+  right: 6px;
+  width: 18px;
+  height: 18px;
+  accent-color: var(--ds-primary, #0f766e);
+  cursor: pointer;
+}

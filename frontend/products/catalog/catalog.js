@@ -526,6 +526,25 @@
       if (media) show(media, 0, { animate: false });
     });
 
+    /* Explicit prev/next arrows on the card media step through the slides
+       and pause the hover auto-cycle while used. */
+    document.addEventListener('click', function (e) {
+      var t = e.target;
+      if (!t || !t.closest) return;
+      var prevBtn = t.closest('[data-pcard-prev]');
+      var nextBtn = t.closest('[data-pcard-next]');
+      if (!prevBtn && !nextBtn) return;
+      var stage = (prevBtn || nextBtn).closest('.pcard-stage');
+      var media = stage ? stage.querySelector('.pcard-media') : null;
+      if (!media) return;
+      e.preventDefault();
+      e.stopPropagation();
+      if (!slides(media).length) return;
+      var cur = parseInt(media.getAttribute('data-pcard-index') || '0', 10);
+      stop(media, { animate: false });
+      show(media, cur + (nextBtn ? 1 : -1), { animate: true });
+    });
+
     /* Pre-warm secondary slides as soon as the pointer enters any part of the card */
     document.addEventListener('pointerenter', function (e) {
       var t = e.target;

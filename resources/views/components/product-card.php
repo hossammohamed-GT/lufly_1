@@ -101,6 +101,16 @@ $hasFeaturePanel = $card['features'] !== [];
                      onerror="this.onerror=null; this.remove();">
             <?php endforeach; ?>
         </a>
+        <?php if (count($cardSlides) > 1): ?>
+            <button type="button" class="pcard-nav pcard-nav--prev" data-pcard-prev
+                    aria-label="<?= e(trans('products.carousel_prev')) ?>" title="<?= e(trans('products.carousel_prev')) ?>">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m15 18-6-6 6-6"/></svg>
+            </button>
+            <button type="button" class="pcard-nav pcard-nav--next" data-pcard-next
+                    aria-label="<?= e(trans('products.carousel_next')) ?>" title="<?= e(trans('products.carousel_next')) ?>">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m9 18 6-6-6-6"/></svg>
+            </button>
+        <?php endif; ?>
         <?php if ($isNew || $card['badge'] !== ''): ?>
             <div class="pcard-badges" data-pcard-badges>
                 <?php if ($isNew): ?>

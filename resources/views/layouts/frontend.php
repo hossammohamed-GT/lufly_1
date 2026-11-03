@@ -11,6 +11,10 @@ $direction = in_array($locale, ['ar', 'he', 'fa', 'ur'], true) ? 'rtl' : 'ltr';
 $view->pushStyle('frontend/components/loader/loader.css');
 $view->pushScript('frontend/components/loader/loader.js');
 
+/* Public product-card arrows + lightbox (storefront-wide) */
+$view->pushStyle('frontend/css/pcard-lightbox.css');
+$view->pushScript('frontend/js/pcard-lightbox.js');
+
 /* First-entry brand intro: home page only. The request path is app-relative,
    so the home route is '' or just the locale segment. Its assets ride along
    only where the stage can exist; the <head> gate script decides, per visit,
@@ -192,5 +196,40 @@ $clarity = trim((string) ($analytics['clarity'] ?? ''));
 <?php foreach ($scripts as $script): ?>
 <script defer<?= str_ends_with((string) $script, 'home.js') ? ' type="module"' : '' ?> src="<?= e(asset($script)) ?>"></script>
 <?php endforeach; ?>
+
+<?php /* Product-card lightbox: click a card image to enlarge it; the grid below shows the product's images (1 / 2 / 3 per row depending on screen width), clicking another image enlarges that one, and images can be multi-selected. */ ?>
+<div class="pcard-lb" data-pcard-lb hidden role="dialog" aria-modal="true" aria-label="<?= e(trans('products.pcard_lb_images')) ?>">
+    <div class="pcard-lb-backdrop" data-pcard-lb-close></div>
+    <div class="pcard-lb-box">
+        <div class="pcard-lb-head">
+            <strong data-pcard-lb-title></strong>
+            <span class="pcard-lb-head-tools">
+                <label class="pcard-lb-selectall">
+                    <input type="checkbox" data-pcard-lb-selectall>
+                    <?= e(trans('products.pcard_lb_select_all')) ?>
+                </label>
+                <span class="pcard-lb-selcount" data-pcard-lb-selcount data-label="<?= e(trans('products.pcard_lb_selected')) ?>"></span>
+                <a class="pcard-lb-product" data-pcard-lb-product href="#"><?= e(trans('products.pcard_lb_view_product')) ?></a>
+                <button type="button" class="pcard-lb-close" data-pcard-lb-close data-pcard-lb-close-btn
+                        aria-label="<?= e(trans('common.close')) ?>">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M18 6 6 18M6 6l12 12"/></svg>
+                </button>
+            </span>
+        </div>
+        <div class="pcard-lb-main">
+            <button type="button" class="pcard-lb-nav pcard-lb-nav--prev" data-pcard-lb-prev hidden
+                    aria-label="<?= e(trans('products.carousel_prev')) ?>">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m15 18-6-6 6-6"/></svg>
+            </button>
+            <img class="pcard-lb-img" data-pcard-lb-img alt="">
+            <button type="button" class="pcard-lb-nav pcard-lb-nav--next" data-pcard-lb-next hidden
+                    aria-label="<?= e(trans('products.carousel_next')) ?>">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m9 18 6-6-6-6"/></svg>
+            </button>
+            <span class="pcard-lb-counter" data-pcard-lb-counter></span>
+        </div>
+        <div class="pcard-lb-grid" data-pcard-lb-grid></div>
+    </div>
+</div>
 </body>
 </html>
