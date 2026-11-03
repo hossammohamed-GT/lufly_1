@@ -181,9 +181,16 @@
       iconAnchor: [12, 12],
     }),
     title: factoryLabelText,
-    interactive: false,
+    interactive: true,
     keyboard: false,
   }).addTo(map);
+
+  // The factory is a location too, so clicking it centres the map just like a pin.
+  factoryMarker.on("click", () => {
+    map.flyTo(factory, Math.max(map.getZoom(), 5), {
+      duration: 0.65,
+    });
+  });
 
   labelEntries.push({
     key: "factory",
@@ -342,7 +349,7 @@
     content.append(dot, text);
     labelEntries.push({ key: route.id, latlng: destLatLng, label: text });
 
-    return L.marker(destLatLng, {
+    const marker = L.marker(destLatLng, {
       icon: L.divIcon({
         className: `agents-map-icon agents-map-destination-icon agents-map-destination-icon--${variant}`,
         html: content,
@@ -351,10 +358,20 @@
       }),
       title: label,
       keyboard: false,
-      riseOnHover: false,
-      interactive: false,
+      riseOnHover: true,
+      interactive: true,
       alt: label,
     });
+
+    // Every location answers a click the same way: the map glides over and puts
+    // the clicked spot in the middle, exactly like the dealer pins do.
+    marker.on("click", () => {
+      map.flyTo(marker.getLatLng(), Math.max(map.getZoom(), 5), {
+        duration: 0.65,
+      });
+    });
+
+    return marker;
   };
 
   // Render multi-origin directional routes

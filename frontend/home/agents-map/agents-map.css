@@ -233,15 +233,17 @@
   transform: translate(50%, 20.71%) rotate(-45deg) scale(2);
 }
 
-/* While a pin is doubled it has to sit above its neighbours, including the
-   destination pins that Leaflet cannot lift (they stay non-interactive). */
+/* While a pin is doubled it has to sit above its neighbours, so it stays the
+   thing under the pointer and the one you just clicked. */
 .agents-map-visual .leaflet-marker-icon:has(.agents-map-marker:hover) {
   z-index: 900 !important;
 }
 
 /* Destination pins (non-dealer markets): identical pin geometry to the dealer pins,
    blue like every other location, and amber/yellow on hover. */
-.agents-map-marker--destination { cursor: default; }
+/* Destination pins are clickable too now (they centre the map), so they get the
+   same pointer cursor as the dealer pins. */
+.agents-map-marker--destination { cursor: pointer; }
 
 .agents-map-destination-icon {
   pointer-events: auto;
@@ -309,6 +311,7 @@
 .agents-map-factory-icon {
   border: 0;
   background: transparent;
+  cursor: pointer;
 }
 
 .agents-map-factory-content {
