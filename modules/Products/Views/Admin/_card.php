@@ -77,7 +77,9 @@ $fmtPrice = static fn (float $value): string => rtrim(rtrim(number_format($value
                                 data-attachment-id="<?= (int) $slide['attachment_id'] ?>"
                                 data-path="<?= e($slide['path']) ?>"
                                 data-section="<?= e($slide['section']) ?>"
-                                data-caption="<?= e((string) ($payload['model_code'] ?? '') . ' · ' . (string) ($payload['name'] ?? '')) ?>"></button>
+                                data-caption="<?= e((string) ($payload['model_code'] ?? '') . ' · ' . (string) ($payload['name'] ?? '')) ?>">
+                            <img src="<?= e($slide['src']) ?>" alt="" loading="lazy" decoding="async">
+                        </button>
                     <?php endforeach; ?>
                 </div>
             <?php elseif ($cover !== null && $image !== ''): ?>

@@ -108,8 +108,13 @@
 
   function assetUrl(path) {
     var value = String(path || '');
-    if (!value || /^(?:https?:)?\/\//i.test(value) || value.charAt(0) === '/') { return value; }
+    if (!value || /^(?:https?:)?\/\//i.test(value)) { return value; }
+    /* data-base carries any sub-directory the app is served from (e.g. /lufly).
+       DB asset paths are root-relative (/images/...), so the base must be
+       prepended for them as well, otherwise the browser requests the bare
+       /images/... and gets a 404 (blank image). */
     var base = document.documentElement.getAttribute('data-base') || '';
+    if (value.charAt(0) === '/') { return (base ? base : '') + value; }
     return base + '/' + value.replace(/^\/+/, '');
   }
 
