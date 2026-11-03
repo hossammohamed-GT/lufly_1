@@ -639,7 +639,7 @@ INSERT INTO `categories` (`id`, `parent_id`, `slug`, `image`, `icon`, `is_featur
 (107, 103, 'drains.by-mounting-type.other-drains', '/images/categories/107-drains-by-mounting-type-other-drains.jpg', NULL, 0, 4, 'active', '{\"title\": \"Other Drains\"}', '2026-10-23 07:43:10', '2026-10-23 07:43:10', NULL),
 (108, NULL, 'drinking-fountains', '/images/categories/108-drinking-fountains.jpg', NULL, 1, 9, 'active', '{\"title\": \"Drinking Fountains\"}', '2026-10-23 07:43:10', '2026-10-23 07:43:10', NULL),
 (109, 1, 'bathroom.angle-valves', '/images/categories/109-bathroom-angle-valves.jpg', NULL, 0, 4, 'active', '{\"title\": \"Angle Valves\"}', '2026-10-23 07:43:10', '2026-10-23 07:43:10', NULL),
-(110, NULL, 'soap-dispenser', NULL, NULL, 0, 10, 'active', '{\"title\":\"soap dispenser\"}', '2026-10-30 16:16:50', '2026-10-30 16:16:50', NULL);
+(110, NULL, 'soap-dispenser', '/images/categories/110-soap-dispenser.jpg', NULL, 0, 10, 'active', '{\"title\":\"soap dispenser\"}', '2026-10-30 16:16:50', '2026-10-30 16:16:50', NULL);
 
 -- --------------------------------------------------------
 
