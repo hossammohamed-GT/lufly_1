@@ -87,6 +87,7 @@ $gridState = [
             'chips' => $chips,
             'finishSpecs' => $finishSpecs,
             'covers' => $covers,
+            'galleries' => $galleries,
             'members' => $members,
             'reasons' => $reasons,
             'categoryPaths' => $categoryPaths,
