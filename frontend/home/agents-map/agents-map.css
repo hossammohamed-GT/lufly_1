@@ -193,7 +193,12 @@
   border-radius: 50% 50% 50% 2px;
   background: #2563eb;
   box-shadow: 0 2px 7px rgb(37 99 235 / 42%);
-  transform: rotate(-45deg);
+  /* Rotation is anchored on the pin tip (its sharp bottom-left corner); the
+     translate keeps the resting pin pixel-identical to a centre-anchored
+     rotation, so a hover scale can grow the pin out of its own tip instead of
+     sliding it off the city it points at. */
+  transform-origin: 0% 100%;
+  transform: translate(50%, 20.71%) rotate(-45deg);
   transition: transform 160ms ease, background 160ms ease;
 }
 
@@ -215,11 +220,23 @@
   content: "";
 }
 
-.agents-map-marker:hover .agents-map-marker-dot,
-.agents-map-marker:focus-visible .agents-map-marker-dot,
 .agents-map-marker[aria-pressed="true"] .agents-map-marker-dot {
   background: #a8793e;
-  transform: rotate(-45deg) scale(1.18);
+  transform: translate(50%, 20.71%) rotate(-45deg) scale(1.18);
+}
+
+/* Hovering / focusing a location doubles the pin, so the place under the pointer
+   is unmistakable. It scales about the pin tip, so it grows in place. */
+.agents-map-marker:hover .agents-map-marker-dot,
+.agents-map-marker:focus-visible .agents-map-marker-dot {
+  background: #a8793e;
+  transform: translate(50%, 20.71%) rotate(-45deg) scale(2);
+}
+
+/* While a pin is doubled it has to sit above its neighbours, including the
+   destination pins that Leaflet cannot lift (they stay non-interactive). */
+.agents-map-visual .leaflet-marker-icon:has(.agents-map-marker:hover) {
+  z-index: 900 !important;
 }
 
 /* Destination pins (non-dealer markets): identical pin geometry to the dealer pins,
@@ -239,7 +256,7 @@
 .agents-map-marker--middle-east:hover .agents-map-marker-dot,
 .agents-map-marker--middle-east:focus-visible .agents-map-marker-dot {
   background: #a8793e;
-  transform: rotate(-45deg) scale(1.18);
+  transform: translate(50%, 20.71%) rotate(-45deg) scale(2);
 }
 
 .agents-map-marker--europe .agents-map-marker-dot {
@@ -250,7 +267,7 @@
 .agents-map-marker--europe:hover .agents-map-marker-dot,
 .agents-map-marker--europe:focus-visible .agents-map-marker-dot {
   background: #a8793e;
-  transform: rotate(-45deg) scale(1.18);
+  transform: translate(50%, 20.71%) rotate(-45deg) scale(2);
 }
 
 .agents-map-marker--delivered .agents-map-marker-dot {
@@ -258,11 +275,15 @@
   box-shadow: 0 2px 7px rgb(14 116 144 / 45%);
 }
 
-.agents-map-marker--delivered:hover .agents-map-marker-dot,
-.agents-map-marker--delivered:focus-visible .agents-map-marker-dot,
 .agents-map-marker--delivered[aria-pressed="true"] .agents-map-marker-dot {
   background: #0ea5e9;
-  transform: rotate(-45deg) scale(1.18);
+  transform: translate(50%, 20.71%) rotate(-45deg) scale(1.18);
+}
+
+.agents-map-marker--delivered:hover .agents-map-marker-dot,
+.agents-map-marker--delivered:focus-visible .agents-map-marker-dot {
+  background: #0ea5e9;
+  transform: translate(50%, 20.71%) rotate(-45deg) scale(2);
 }
 
 .agents-map-marker-label {
