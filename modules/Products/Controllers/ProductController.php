@@ -650,12 +650,18 @@ class ProductController extends Controller
             $cards[$id] = ProductCardPresenter::make($payloads[$id], $locale);
             $mediaState[$id] = ProductVisibility::media($product);
             $covers[$id] = $this->coverOf($product);
+            /* Card cover carousel walks every media item of the product —
+               photos first, then drawings and situ shots — so the prev/next
+               arrows show on any card that has more than one image. */
             $galleries[$id] = [];
-            foreach ($product->mediaBySection()['photos'] ?? [] as $photo) {
-                $galleries[$id][] = [
-                    'attachment_id' => (int) ($photo['attachment_id'] ?? 0),
-                    'path' => (string) ($photo['path'] ?? ''),
-                ];
+            foreach ($product->mediaBySection() as $sectionKey => $items) {
+                foreach ($items as $item) {
+                    $galleries[$id][] = [
+                        'attachment_id' => (int) ($item['attachment_id'] ?? 0),
+                        'path' => (string) ($item['path'] ?? ''),
+                        'section' => (string) $sectionKey,
+                    ];
+                }
             }
 
             if (isset($families[$id])) {

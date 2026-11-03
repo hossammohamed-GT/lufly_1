@@ -2183,9 +2183,17 @@
   /* All image triggers (thumbs) of one media section, in display order. */
   function sectionTriggersOf(el) {
     var sectionEl = el && el.closest ? el.closest('[data-media-section]') : null;
-    if (!sectionEl) { return el ? [el] : []; }
-    var list = Array.prototype.slice.call(sectionEl.querySelectorAll('.adm-thumb[data-attachment-id]'));
-    return list.length ? list : (el ? [el] : []);
+    if (sectionEl) {
+      var list = Array.prototype.slice.call(sectionEl.querySelectorAll('.adm-thumb[data-attachment-id]'));
+      return list.length ? list : (el ? [el] : []);
+    }
+    /* Card cover carousel: one hidden trigger per slide, in gallery order. */
+    var carousel = el && el.closest ? el.closest('[data-carousel]') : null;
+    if (carousel) {
+      var slides = Array.prototype.slice.call(carousel.querySelectorAll('[data-carousel-trigger]'));
+      if (slides.length) { return slides; }
+    }
+    return el ? [el] : [];
   }
 
   /* Ids of the checked cards inside one section. */
@@ -2412,10 +2420,19 @@
   /* Fill the lightbox from one thumb trigger and remember its position in
      the section list so prev/next can walk through the images. */
   function applyLightboxTrigger(trigger) {
+    var list = sectionTriggersOf(trigger);
+    /* The card cover is a single stage button whose data-* follows the visible
+       slide; map it to its matching slide trigger so the enlarged view opens on
+       the slide currently shown and prev/next walk the whole gallery. */
+    if (trigger.hasAttribute && trigger.hasAttribute('data-carousel-stage') && list.length > 1) {
+      var aid = trigger.getAttribute('data-attachment-id') || '';
+      for (var i = 0; i < list.length; i++) {
+        if (list[i] !== trigger && list[i].getAttribute('data-attachment-id') === aid) { trigger = list[i]; break; }
+      }
+    }
     var card = mediaCardOf(trigger);
     var attachmentId = trigger.getAttribute('data-attachment-id') || '';
     var derived = deriveMediaUrls(card, attachmentId);
-    var list = sectionTriggersOf(trigger);
     lightboxState = {
       card: card,
       attachmentId: attachmentId,
@@ -2498,6 +2515,8 @@
         return;
       }
       if (target.closest('[data-lightbox-close]')) { closeLightbox(); return; }
+      if (target.closest('[data-lightbox-prev]')) { navLightbox(-1); return; }
+      if (target.closest('[data-lightbox-next]')) { navLightbox(1); return; }
 
       if (target.closest('[data-lightbox-primary]')) {
         if (!lightboxState.urls.primary) { return; }

@@ -54,6 +54,7 @@ $fmtPrice = static fn (float $value): string => rtrim(rtrim(number_format($value
                 $slides = array_map(static fn (array $g): array => [
                     'attachment_id' => (int) $g['attachment_id'],
                     'path' => (string) $g['path'],
+                    'section' => (string) ($g['section'] ?? 'photos'),
                     'src' => asset((string) $g['path']),
                 ], $gallery);
                 ?>
@@ -70,6 +71,14 @@ $fmtPrice = static fn (float $value): string => rtrim(rtrim(number_format($value
                     <button type="button" class="adm-carousel-arrow is-prev" data-carousel-prev aria-label="<?= e(trans('products.carousel_prev')) ?>">‹</button>
                     <button type="button" class="adm-carousel-arrow is-next" data-carousel-next aria-label="<?= e(trans('products.carousel_next')) ?>">›</button>
                     <span class="adm-carousel-count" data-carousel-count>1 / <?= count($slides) ?></span>
+                    <?php /* One hidden lightbox trigger per slide: the lightbox prev/next walks these, so the enlarged view always has arrows. */ ?>
+                    <?php foreach ($slides as $slide): ?>
+                        <button type="button" class="adm-carousel-slide" data-carousel-trigger data-lightbox="product" hidden
+                                data-attachment-id="<?= (int) $slide['attachment_id'] ?>"
+                                data-path="<?= e($slide['path']) ?>"
+                                data-section="<?= e($slide['section']) ?>"
+                                data-caption="<?= e((string) ($payload['model_code'] ?? '') . ' · ' . (string) ($payload['name'] ?? '')) ?>"></button>
+                    <?php endforeach; ?>
                 </div>
             <?php elseif ($cover !== null && $image !== ''): ?>
                 <button type="button" class="adm-cover" data-lightbox="product"
