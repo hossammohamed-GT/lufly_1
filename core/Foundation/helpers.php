@@ -143,6 +143,32 @@ if (!function_exists('asset')) {
     }
 }
 
+if (!function_exists('asset_file_exists')) {
+    /**
+     * True when a web asset path (e.g. /images/categories/x.jpg) maps to a
+     * real file on disk. The web root is public/ (see .htaccess), so the
+     * lookup checks public/<path> first and falls back to the app root for
+     * legacy paths. Storefront elements whose image file is missing are
+     * treated as having no image at all and stay hidden.
+     */
+    function asset_file_exists(string $path): bool
+    {
+        $clean = ltrim($path, '/');
+
+        if ($clean === '' || str_contains($clean, '://')) {
+            return false;
+        }
+
+        static $cache = [];
+
+        if (!array_key_exists($clean, $cache)) {
+            $cache[$clean] = is_file(base_path('public/' . $clean)) || is_file(base_path($clean));
+        }
+
+        return $cache[$clean];
+    }
+}
+
 if (!function_exists('view')) {
     function view(string $template, array $data = []): Response
     {

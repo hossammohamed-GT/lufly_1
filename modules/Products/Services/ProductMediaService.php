@@ -220,6 +220,79 @@ class ProductMediaService
     }
 
     /**
+     * Detach every image of one section (photos / drawings / situ).
+     *
+     * @return int number of attachments removed
+     */
+    public function removeSection(int $productId, string $section): int
+    {
+        $this->sectionType($section); /* validates the section name */
+        $this->product($productId);
+
+        $count = 0;
+        foreach ($this->sectionRows($productId, $section) as $row) {
+            $this->remove((int) $row['id']);
+            $count++;
+        }
+
+        return $count;
+    }
+
+    /**
+     * Detach every image of the product, across all sections.
+     *
+     * @return int number of attachments removed
+     */
+    public function removeAll(int $productId): int
+    {
+        $this->product($productId);
+
+        $rows = Product::query()->connection()->select(
+            'SELECT id FROM product_media WHERE product_id = ? AND variant_id IS NULL ORDER BY id ASC',
+            [$productId],
+        );
+
+        $count = 0;
+        foreach ($rows as $row) {
+            $this->remove((int) $row['id']);
+            $count++;
+        }
+
+        return $count;
+    }
+
+    /**
+     * Detach a hand-picked set of attachments (multi-select delete). Ids that
+     * do not belong to the product are ignored.
+     *
+     * @param int[] $attachmentIds
+     * @return int number of attachments removed
+     */
+    public function removeMany(int $productId, array $attachmentIds): int
+    {
+        $this->product($productId);
+
+        $ids = array_values(array_unique(array_filter(array_map('intval', $attachmentIds))));
+        if ($ids === []) {
+            return 0;
+        }
+
+        $placeholders = implode(',', array_fill(0, count($ids), '?'));
+        $rows = Product::query()->connection()->select(
+            'SELECT id FROM product_media WHERE product_id = ? AND variant_id IS NULL AND id IN (' . $placeholders . ')',
+            array_merge([$productId], $ids),
+        );
+
+        $count = 0;
+        foreach ($rows as $row) {
+            $this->remove((int) $row['id']);
+            $count++;
+        }
+
+        return $count;
+    }
+
+    /**
      * Replace the file behind one attachment, keeping its section, position
      * and primary flag. The old file is retired to deleted-images/ when no
      * other product still uses it.

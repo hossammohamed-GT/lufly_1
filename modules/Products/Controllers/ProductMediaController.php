@@ -155,6 +155,61 @@ class ProductMediaController extends Controller
         return $this->json(['success' => true, 'message' => trans('products.media_removed')]);
     }
 
+    /** Delete every image of one section (photos / drawings / situ). */
+    public function destroySection(Request $request, int $id): JsonResponse
+    {
+        $this->products->find($id);
+
+        $payload = $request->jsonPayload() ?? $request->all();
+        $section = (string) (is_array($payload) ? ($payload['section'] ?? 'photos') : 'photos');
+
+        try {
+            $count = $this->media->removeSection($id, $section);
+        } catch (\Throwable $exception) {
+            return $this->json(['success' => false, 'message' => $exception->getMessage()], 422);
+        }
+
+        return $this->json([
+            'success' => true,
+            'message' => trans('products.media_section_deleted', ['n' => $count]),
+            'data' => ['removed' => $count, 'section' => $section],
+        ]);
+    }
+
+    /** Delete every image of the product, across all sections. */
+    public function destroyAll(int $id): JsonResponse
+    {
+        $this->products->find($id);
+
+        $count = $this->media->removeAll($id);
+
+        return $this->json([
+            'success' => true,
+            'message' => trans('products.media_all_deleted', ['n' => $count]),
+            'data' => ['removed' => $count],
+        ]);
+    }
+
+    /** Delete a selected set of attachments in one call (multi-select). */
+    public function destroyBulk(Request $request, int $id): JsonResponse
+    {
+        $this->products->find($id);
+
+        $payload = $request->jsonPayload() ?? $request->all();
+        $ids = is_array($payload) ? ($payload['ids'] ?? []) : [];
+        if (!is_array($ids)) {
+            $ids = [];
+        }
+
+        $count = $this->media->removeMany($id, $ids);
+
+        return $this->json([
+            'success' => true,
+            'message' => trans('products.media_bulk_removed', ['n' => $count]),
+            'data' => ['removed' => $count],
+        ]);
+    }
+
     /**
      * Flatten one or many uploaded files ($_FILES entries) into a plain list.
      *

@@ -40,8 +40,14 @@ if (feature('box', true)) {
 }
 
 $fallbackImg = '/images/favicon.png';
-$img = trim((string) ($product['image'] ?? '')) !== '' ? trim((string) $product['image']) : $fallbackImg;
+/* An image whose file is gone from disk counts as "no image": the element
+   that would show it stays hidden instead of rendering a broken icon. */
+$rawImg = trim((string) ($product['image'] ?? ''));
+$img = $rawImg !== '' && asset_file_exists($rawImg) ? $rawImg : '';
 $situImg = trim((string) ($product['situ_image'] ?? ''));
+if ($situImg !== '' && !asset_file_exists($situImg)) {
+    $situImg = '';
+}
 
 $name = trim((string) ($product['name'] ?? ''));
 if ($name === '') {
@@ -71,9 +77,28 @@ $situImages = array_values(array_filter(
 if ($situImages === [] && $situImg !== '') {
     $situImages = [$situImg];
 }
+/* Drop slides whose file no longer exists on disk (broken-image icons are
+   exactly what this prevents); the favicon placeholder never counts. */
+$existingOnly = static fn (array $srcs): array => array_values(array_filter(
+    $srcs,
+    static fn ($src): bool => is_string($src)
+        && trim($src) !== ''
+        && trim($src) !== $fallbackImg
+        && asset_file_exists(trim($src)),
+));
+$gallery = $existingOnly($gallery);
+$drawings = $existingOnly($drawings);
+$situImages = $existingOnly($situImages);
 if ($gallery === [] && $drawings === [] && $img !== '') {
     $gallery = [$img];
 }
+
+/* Materials & Certifications tab is only rendered when the product really
+   has certificate/material documents; otherwise it stays hidden. */
+$certificates = array_values(array_filter(
+    is_array($certificates ?? null) ? $certificates : [],
+    static fn ($cert): bool => is_array($cert) && asset_file_exists((string) ($cert['path'] ?? '')),
+));
 
 $slides = [];
 foreach ($gallery as $src) {
@@ -293,6 +318,7 @@ $complementaryProducts = is_array($complementaryProducts ?? null) ? $complementa
 
         <!-- Two-Column Architectural Showroom Hero -->
         <div class="pdp-grid">
+            <?php if ($slides !== []): ?>
             <!-- Left Column: Vertical Thumbnail Rail + Warm Architectural Gallery Stage -->
             <section class="pdp-stage<?= $isFeatured ? ' is-featured' : '' ?><?= count($slides) > 1 ? ' has-rail' : '' ?>"
                      data-pdp-stage
@@ -393,6 +419,7 @@ $complementaryProducts = is_array($complementaryProducts ?? null) ? $complementa
                     </div>
                 </div>
             </section>
+            <?php endif; ?>
 
             <!-- Right Column: Editorial Showroom Info & Action Panel -->
             <aside class="pdp-info">
@@ -803,9 +830,11 @@ $complementaryProducts = is_array($complementaryProducts ?? null) ? $complementa
                             <?= e(trans('products.pdp_tab_specs')) ?>
                         </button>
                     <?php endif; ?>
-                    <button type="button" role="tab" class="pdp-dtab" data-dossier-tab="guarantee" aria-selected="false">
-                        <?= e(trans('products.pdp_tab_guarantee')) ?>
-                    </button>
+                    <?php if ($certificates !== []): ?>
+                        <button type="button" role="tab" class="pdp-dtab" data-dossier-tab="guarantee" aria-selected="false">
+                            <?= e(trans('products.pdp_tab_guarantee')) ?>
+                        </button>
+                    <?php endif; ?>
                 </div>
 
                 <div class="pdp-dossier-body" data-dossier-body>
@@ -973,8 +1002,25 @@ $complementaryProducts = is_array($complementaryProducts ?? null) ? $complementa
                     </div>
                 <?php endif; ?>
 
-                <!-- Tab 4: Materials, Guarantee & European Certifications -->
+                <?php if ($certificates !== []): ?>
+                <!-- Tab 4: Materials, Guarantee & European Certifications (only when real certificate images exist) -->
                 <div class="pdp-dpanel" data-dossier-panel="guarantee" hidden>
+                    <?php if ($certificates !== []): ?>
+                        <div class="pdp-cert-grid">
+                            <?php foreach ($certificates as $cert): ?>
+                                <figure class="pdp-cert-item"
+                                        data-pdp-external-zoom="<?= e(asset((string) $cert['path'])) ?>"
+                                        data-pdp-external-alt="<?= e(trim((string) ($cert['name'] ?? '')) !== '' ? (string) $cert['name'] : $name . ' — ' . trans('products.pdp_tab_guarantee')) ?>">
+                                    <img src="<?= e(asset((string) $cert['path'])) ?>"
+                                         alt="<?= e(trim((string) ($cert['name'] ?? '')) !== '' ? (string) $cert['name'] : $name) ?>"
+                                         loading="lazy" decoding="async">
+                                    <?php if (trim((string) ($cert['name'] ?? '')) !== ''): ?>
+                                        <figcaption><?= e((string) $cert['name']) ?></figcaption>
+                                    <?php endif; ?>
+                                </figure>
+                            <?php endforeach; ?>
+                        </div>
+                    <?php endif; ?>
                     <div class="pdp-trust-grid">
                         <div class="pdp-trust-item">
                             <span class="pdp-trust-icon" aria-hidden="true">
@@ -1014,6 +1060,7 @@ $complementaryProducts = is_array($complementaryProducts ?? null) ? $complementa
                         </div>
                     </div>
                 </div>
+                <?php endif; ?>
                 </div>
             </section>
         <?php endif; ?>

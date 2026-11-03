@@ -10,12 +10,22 @@ $imageSections = [
     'situ' => ['label' => trans('products.section_situ'), 'hint' => trans('products.section_situ_hint')],
 ];
 $mediaUrl = static fn (string $name, array $params = []): string => route('admin.products.media.' . $name, $params);
+$totalItems = array_sum(array_map('count', $mediaSections));
 ?>
 <div class="media-manager" data-media-root
-     data-upload-url="<?= e($mediaUrl('store', ['id' => $productId])) ?>">
+     data-upload-url="<?= e($mediaUrl('store', ['id' => $productId])) ?>"
+     data-bulk-delete-url="<?= e($mediaUrl('destroy-bulk', ['id' => $productId])) ?>"
+     data-delete-all-url="<?= e($mediaUrl('destroy-all', ['id' => $productId])) ?>">
     <div class="media-manager-head">
         <p class="field-help"><?= e(trans('products.images_intro')) ?></p>
-        <button type="button" class="btn btn-primary btn-sm" data-media-add><?= e(trans('products.media_add')) ?></button>
+        <span class="media-manager-head-actions">
+            <button type="button" class="btn btn-primary btn-sm" data-media-add><?= e(trans('products.media_add')) ?></button>
+            <?php if ($totalItems > 0): ?>
+                <button type="button" class="btn btn-sm btn-danger" data-media-delete-all
+                        data-url="<?= e($mediaUrl('destroy-all', ['id' => $productId])) ?>"
+                        data-confirm="<?= e(trans('products.media_delete_all_confirm')) ?>"><?= e(trans('products.media_delete_all')) ?></button>
+            <?php endif; ?>
+        </span>
     </div>
 
     <?php foreach ($imageSections as $sectionKey => $sectionMeta): ?>
@@ -25,10 +35,25 @@ $mediaUrl = static fn (string $name, array $params = []): string => route('admin
                 <h4><?= e($sectionMeta['label']) ?> <span class="badge badge-ghost"><?= count($items) ?></span></h4>
                 <p class="field-help"><?= e($sectionMeta['hint']) ?></p>
                 <?php if ($items !== []): ?>
-                    <button type="button" class="btn btn-sm btn-ghost" data-media-replace-all
-                            data-url="<?= e($mediaUrl('replace-section', ['id' => $productId])) ?>"
-                            data-section="<?= e($sectionKey) ?>"
-                            data-confirm="<?= e(trans('products.media_replace_all_confirm')) ?>"><?= e(trans('products.media_replace_all')) ?></button>
+                    <span class="media-section-tools">
+                        <label class="media-select-all">
+                            <input type="checkbox" data-media-select-all>
+                            <?= e(trans('products.media_select_all')) ?>
+                        </label>
+                        <button type="button" class="btn btn-sm btn-danger" data-media-delete-selected
+                                data-url="<?= e($mediaUrl('destroy-bulk', ['id' => $productId])) ?>"
+                                data-confirm="<?= e(trans('products.media_delete_selected_confirm')) ?>"
+                                disabled><?= e(trans('products.media_delete_selected')) ?>
+                            <span class="badge badge-ghost" data-media-selected-count>0</span></button>
+                        <button type="button" class="btn btn-sm btn-ghost" data-media-delete-section
+                                data-url="<?= e($mediaUrl('destroy-section', ['id' => $productId])) ?>"
+                                data-section="<?= e($sectionKey) ?>"
+                                data-confirm="<?= e(trans('products.media_delete_section_confirm')) ?>"><?= e(trans('products.media_delete_section')) ?></button>
+                        <button type="button" class="btn btn-sm btn-ghost" data-media-replace-all
+                                data-url="<?= e($mediaUrl('replace-section', ['id' => $productId])) ?>"
+                                data-section="<?= e($sectionKey) ?>"
+                                data-confirm="<?= e(trans('products.media_replace_all_confirm')) ?>"><?= e(trans('products.media_replace_all')) ?></button>
+                    </span>
                 <?php endif; ?>
             </header>
 
@@ -64,6 +89,19 @@ $mediaUrl = static fn (string $name, array $params = []): string => route('admin
                                         data-url-move="<?= e($urls['move']) ?>">
                                     <img src="<?= e(asset((string) $item['path'])) ?>" alt="<?= e((string) ($item['original_name'] ?? '')) ?>" loading="lazy" decoding="async">
                                 </button>
+                                <input type="checkbox" class="media-card-select" data-media-select
+                                       value="<?= $attachmentId ?>"
+                                       aria-label="<?= e(trans('products.media_select_all')) ?> #<?= $attachmentId ?>">
+                                <?php if (count($items) > 1): ?>
+                                    <button type="button" class="media-card-nav media-card-nav--prev" data-media-prev
+                                            aria-label="<?= e(trans('products.carousel_prev')) ?>" title="<?= e(trans('products.carousel_prev')) ?>">
+                                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m15 18-6-6 6-6"/></svg>
+                                    </button>
+                                    <button type="button" class="media-card-nav media-card-nav--next" data-media-next
+                                            aria-label="<?= e(trans('products.carousel_next')) ?>" title="<?= e(trans('products.carousel_next')) ?>">
+                                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m9 18 6-6-6-6"/></svg>
+                                    </button>
+                                <?php endif; ?>
                                 <?php if ($isPrimary): ?>
                                     <span class="media-card-flag"><?= e(trans('products.media_main')) ?></span>
                                 <?php endif; ?>

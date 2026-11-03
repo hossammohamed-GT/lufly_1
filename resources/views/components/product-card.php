@@ -40,7 +40,8 @@ foreach ([
 $heading = ($props['heading'] ?? 'h2') === 'h3' ? 'h3' : 'h2';
 $index = max(0, (int) ($props['index'] ?? 0));
 $fallbackImg = '/images/favicon.png';
-$img = trim((string) ($item['image'] ?? '')) !== '' ? (string) $item['image'] : $fallbackImg;
+$rawImg = trim((string) ($item['image'] ?? ''));
+$img = $rawImg !== '' ? $rawImg : $fallbackImg;
 
 $cardSlides = [];
 foreach ((array) ($item['card_slides'] ?? []) as $slide) {
@@ -51,6 +52,20 @@ foreach ((array) ($item['card_slides'] ?? []) as $slide) {
 }
 if ($cardSlides === []) {
     $cardSlides = [['path' => $img, 'kind' => 'photo']];
+}
+/* Storefront rule: an element with no image stays hidden. A product whose
+   every image file is missing would render as a broken-image icon, so the
+   whole card is skipped instead of being shown with the favicon placeholder. */
+$hasUsableImage = false;
+foreach ($cardSlides as $slide) {
+    $slidePathCheck = trim((string) $slide['path']);
+    if ($slidePathCheck !== '' && $slidePathCheck !== $fallbackImg && asset_file_exists($slidePathCheck)) {
+        $hasUsableImage = true;
+        break;
+    }
+}
+if (!$hasUsableImage) {
+    return;
 }
 $cardKinds = ['drawing' => trans('products.view_drawing'), 'situ' => trans('products.view_situ')];
 $isFeatured = !empty($item['is_featured']) || !empty($card['is_featured']);

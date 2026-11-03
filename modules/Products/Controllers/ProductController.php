@@ -258,6 +258,7 @@ class ProductController extends Controller
             'savedIds' => $savedIds,
             'boxIds' => $boxIds,
             'datasheetUrl' => $this->products->datasheetUrl($productId, $locale),
+            'certificates' => $this->products->certificateImages($productId),
             'categoryNeighbors' => $this->products->categoryNeighbors($product),
             'similarProducts' => $hydrateRecCards($rawRecs['similar']),
             'complementaryProducts' => $hydrateRecCards($rawRecs['complementary']),

@@ -105,6 +105,21 @@ return function (Router $router): void {
             ->where('id', '\d+')
             ->name('media.replace-section');
 
+        $router->post('/{id}/media/section/delete', [ProductMediaController::class, 'destroySection'])
+            ->middleware('permission:products.manage')
+            ->where('id', '\d+')
+            ->name('media.destroy-section');
+
+        $router->post('/{id}/media/delete-bulk', [ProductMediaController::class, 'destroyBulk'])
+            ->middleware('permission:products.manage')
+            ->where('id', '\d+')
+            ->name('media.destroy-bulk');
+
+        $router->post('/{id}/media/delete-all', [ProductMediaController::class, 'destroyAll'])
+            ->middleware('permission:products.manage')
+            ->where('id', '\d+')
+            ->name('media.destroy-all');
+
         $router->post('/{id}/media/{attachmentId}/replace', [ProductMediaController::class, 'replace'])
             ->middleware('permission:products.manage')
             ->where('id', '\d+')

@@ -1437,6 +1437,39 @@ class ProductService
     }
 
     /**
+     * Certificate / materials / warranty documents attached to a product,
+     * as image paths. Drives the "Materials & Certifications" tab on the
+     * product page: when a product has none, the tab stays hidden instead of
+     * showing icon-only placeholder cards.
+     *
+     * @return array<int, array{path: string, name: string}>
+     */
+    public function certificateImages(int $id): array
+    {
+        $out = [];
+        foreach (Product::query()->connection()->select(
+            "SELECT pd.id AS document_id, m.path, m.original_name
+             FROM product_documents pd
+             INNER JOIN media m ON m.id = pd.media_id
+             WHERE pd.product_id = ? AND pd.variant_id IS NULL
+               AND pd.document_type NOT IN ('datasheet', 'data_sheet', 'technical_sheet')
+             ORDER BY pd.sort_order ASC, pd.id ASC",
+            [$id],
+        ) as $row) {
+            $path = (string) $row['path'];
+            if ($path === '') {
+                continue;
+            }
+            $out[] = [
+                'path' => $path,
+                'name' => (string) ($row['original_name'] ?? ''),
+            ];
+        }
+
+        return $out;
+    }
+
+    /**
      * Resolved card-feature chips (with feature ids for inline editing) for a
      * page of admin product cards, in one set of bulk queries.
      *

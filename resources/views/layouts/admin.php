@@ -72,8 +72,16 @@ try {
 <div class="adm-lightbox" data-lightbox hidden role="dialog" aria-modal="true" aria-label="<?= e(trans('products.images_title')) ?>">
     <div class="adm-lightbox-backdrop" data-lightbox-close></div>
     <figure class="adm-lightbox-box">
+        <button type="button" class="adm-lightbox-nav adm-lightbox-nav--prev" data-lightbox-prev hidden
+                aria-label="<?= e(trans('products.carousel_prev')) ?>">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m15 18-6-6 6-6"/></svg>
+        </button>
         <img class="adm-lightbox-img" data-lightbox-img alt="">
-        <figcaption class="adm-lightbox-caption" data-lightbox-caption></figcaption>
+        <button type="button" class="adm-lightbox-nav adm-lightbox-nav--next" data-lightbox-next hidden
+                aria-label="<?= e(trans('products.carousel_next')) ?>">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m9 18 6-6-6-6"/></svg>
+        </button>
+        <figcaption class="adm-lightbox-caption"><span data-lightbox-caption></span> <span class="adm-lightbox-counter" data-lightbox-counter></span></figcaption>
         <div class="adm-lightbox-tools">
             <label class="adm-lightbox-section">
                 <span><?= e(trans('products.lightbox_section')) ?></span>

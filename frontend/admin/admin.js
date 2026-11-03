@@ -2180,6 +2180,57 @@
     return refreshMedia(card).then(function () { return refreshProductFace(card); });
   }
 
+  /* All image triggers (thumbs) of one media section, in display order. */
+  function sectionTriggersOf(el) {
+    var sectionEl = el && el.closest ? el.closest('[data-media-section]') : null;
+    if (!sectionEl) { return el ? [el] : []; }
+    var list = Array.prototype.slice.call(sectionEl.querySelectorAll('.adm-thumb[data-attachment-id]'));
+    return list.length ? list : (el ? [el] : []);
+  }
+
+  /* Ids of the checked cards inside one section. */
+  function selectedIds(sectionEl) {
+    if (!sectionEl) { return []; }
+    return Array.prototype.slice.call(sectionEl.querySelectorAll('[data-media-select]:checked'))
+      .map(function (cb) { return parseInt(cb.value, 10); })
+      .filter(function (id) { return id > 0; });
+  }
+
+  /* Reflect the current selection in the section head (count + buttons). */
+  function syncSectionSelection(sectionEl) {
+    if (!sectionEl) { return; }
+    var boxes = Array.prototype.slice.call(sectionEl.querySelectorAll('[data-media-select]'));
+    var checked = selectedIds(sectionEl);
+    boxes.forEach(function (cb) {
+      var figure = cb.closest('.media-card');
+      if (figure) { figure.classList.toggle('is-selected', cb.checked); }
+    });
+    var all = sectionEl.querySelector('[data-media-select-all]');
+    if (all) {
+      all.checked = boxes.length > 0 && checked.length === boxes.length;
+      all.indeterminate = checked.length > 0 && checked.length < boxes.length;
+    }
+    var btn = sectionEl.querySelector('[data-media-delete-selected]');
+    if (btn) { btn.disabled = checked.length === 0; }
+    var counter = sectionEl.querySelector('[data-media-selected-count]');
+    if (counter) { counter.textContent = String(checked.length); }
+  }
+
+  /* Card arrows: jump to the previous/next image of the same section by
+     opening the lightbox on that sibling (wraps around). */
+  function stepCardMedia(navBtn, dir) {
+    var cardEl = navBtn.closest('.media-card');
+    var sectionEl = navBtn.closest('[data-media-section]');
+    if (!cardEl || !sectionEl) { return; }
+    var list = sectionTriggersOf(sectionEl);
+    if (list.length < 2) { return; }
+    var trigger = cardEl.querySelector('.adm-thumb[data-attachment-id]');
+    var idx = list.indexOf(trigger);
+    if (idx < 0) { return; }
+    var nextIdx = (idx + dir + list.length) % list.length;
+    openLightbox(list[nextIdx]);
+  }
+
   document.addEventListener('click', function (event) {
     var target = event.target;
     if (!target.closest) { return; }
@@ -2260,6 +2311,76 @@
           return afterMediaChange(mediaCardOf(deleteBtn));
         })
         .catch(function (error) { toast(error.message || 'Could not delete.', true); });
+      return;
+    }
+
+    var cardPrev = target.closest('[data-media-prev]');
+    if (cardPrev) { stepCardMedia(cardPrev, -1); return; }
+
+    var cardNext = target.closest('[data-media-next]');
+    if (cardNext) { stepCardMedia(cardNext, 1); return; }
+
+    var deleteAllBtn = target.closest('[data-media-delete-all]');
+    if (deleteAllBtn) {
+      if (!window.confirm(deleteAllBtn.getAttribute('data-confirm') || 'Are you sure?')) { return; }
+      deleteAllBtn.disabled = true;
+      postJson(deleteAllBtn.getAttribute('data-url'), {})
+        .then(function (data) {
+          toast(data.message || 'Deleted.');
+          return afterMediaChange(mediaCardOf(deleteAllBtn));
+        })
+        .catch(function (error) { toast(error.message || 'Could not delete.', true); })
+        .finally(function () { deleteAllBtn.disabled = false; });
+      return;
+    }
+
+    var deleteSectionBtn = target.closest('[data-media-delete-section]');
+    if (deleteSectionBtn) {
+      if (!window.confirm(deleteSectionBtn.getAttribute('data-confirm') || 'Are you sure?')) { return; }
+      deleteSectionBtn.disabled = true;
+      postJson(deleteSectionBtn.getAttribute('data-url'), { section: deleteSectionBtn.getAttribute('data-section') || 'photos' })
+        .then(function (data) {
+          toast(data.message || 'Deleted.');
+          return afterMediaChange(mediaCardOf(deleteSectionBtn));
+        })
+        .catch(function (error) { toast(error.message || 'Could not delete.', true); })
+        .finally(function () { deleteSectionBtn.disabled = false; });
+      return;
+    }
+
+    var deleteSelectedBtn = target.closest('[data-media-delete-selected]');
+    if (deleteSelectedBtn) {
+      var sectionEl = deleteSelectedBtn.closest('[data-media-section]');
+      var ids = selectedIds(sectionEl);
+      if (!ids.length) { return; }
+      if (!window.confirm(deleteSelectedBtn.getAttribute('data-confirm') || 'Are you sure?')) { return; }
+      deleteSelectedBtn.disabled = true;
+      postJson(deleteSelectedBtn.getAttribute('data-url'), { ids: ids })
+        .then(function (data) {
+          toast(data.message || 'Deleted.');
+          return afterMediaChange(mediaCardOf(deleteSelectedBtn));
+        })
+        .catch(function (error) { toast(error.message || 'Could not delete.', true); })
+        .finally(function () { deleteSelectedBtn.disabled = false; });
+      return;
+    }
+  });
+
+  /* checkbox selection inside the media sections */
+  document.addEventListener('change', function (event) {
+    var target = event.target;
+    if (!target || !target.matches) { return; }
+    if (target.matches('[data-media-select]')) {
+      syncSectionSelection(target.closest('[data-media-section]'));
+      return;
+    }
+    if (target.matches('[data-media-select-all]')) {
+      var sectionEl = target.closest('[data-media-section]');
+      if (!sectionEl) { return; }
+      Array.prototype.forEach.call(sectionEl.querySelectorAll('[data-media-select]'), function (cb) {
+        cb.checked = target.checked;
+      });
+      syncSectionSelection(sectionEl);
     }
   });
 
@@ -2288,11 +2409,13 @@
     }
   }
 
-  function openLightbox(trigger) {
-    if (!lightbox) { return; }
+  /* Fill the lightbox from one thumb trigger and remember its position in
+     the section list so prev/next can walk through the images. */
+  function applyLightboxTrigger(trigger) {
     var card = mediaCardOf(trigger);
     var attachmentId = trigger.getAttribute('data-attachment-id') || '';
     var derived = deriveMediaUrls(card, attachmentId);
+    var list = sectionTriggersOf(trigger);
     lightboxState = {
       card: card,
       attachmentId: attachmentId,
@@ -2303,7 +2426,9 @@
         destroy: trigger.getAttribute('data-url-destroy') || derived.destroy || '',
         primary: trigger.getAttribute('data-url-primary') || derived.primary || '',
         move: trigger.getAttribute('data-url-move') || derived.move || ''
-      }
+      },
+      list: list,
+      index: Math.max(0, list.indexOf(trigger))
     };
 
     var img = lightbox.querySelector('[data-lightbox-img]');
@@ -2317,6 +2442,35 @@
     var select = lightbox.querySelector('[data-lightbox-section]');
     if (select) { select.value = lightboxState.section; }
     syncLightboxPrimary();
+    syncLightboxNav();
+  }
+
+  function syncLightboxNav() {
+    if (!lightbox || !lightboxState) { return; }
+    var multiple = (lightboxState.list || []).length > 1;
+    var prev = lightbox.querySelector('[data-lightbox-prev]');
+    var next = lightbox.querySelector('[data-lightbox-next]');
+    if (prev) { prev.hidden = !multiple; }
+    if (next) { next.hidden = !multiple; }
+    var counter = lightbox.querySelector('[data-lightbox-counter]');
+    if (counter) {
+      counter.textContent = multiple
+        ? ((lightboxState.index + 1) + ' / ' + lightboxState.list.length)
+        : '';
+    }
+  }
+
+  /* Step through the images of the current section, wrapping around. */
+  function navLightbox(dir) {
+    if (!lightbox || !lightboxState || !lightboxState.list || lightboxState.list.length < 2) { return; }
+    var len = lightboxState.list.length;
+    lightboxState.index = (lightboxState.index + dir + len) % len;
+    applyLightboxTrigger(lightboxState.list[lightboxState.index]);
+  }
+
+  function openLightbox(trigger) {
+    if (!lightbox) { return; }
+    applyLightboxTrigger(trigger);
 
     lightbox.hidden = false;
     document.body.style.overflow = 'hidden';
@@ -2412,9 +2566,14 @@
   }
 
   document.addEventListener('keydown', function (event) {
+    if (lightbox && !lightbox.hidden) {
+      if (event.key === 'ArrowLeft') { navLightbox(-1); return; }
+      if (event.key === 'ArrowRight') { navLightbox(1); return; }
+      if (event.key === 'Escape') { closeLightbox(); return; }
+      return;
+    }
     if (event.key !== 'Escape') { return; }
     if (chooser && !chooser.hidden) { settleChooser(null); return; }
-    if (lightbox && !lightbox.hidden) { closeLightbox(); return; }
     if (catpop && !catpop.hidden) { closeCatpop(); return; }
     var editorModal = document.querySelector('[data-editor-modal]');
     if (editorModal && !editorModal.hidden) { closeProductEditor(); }

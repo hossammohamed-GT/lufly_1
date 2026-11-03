@@ -39,6 +39,25 @@ if ($counts !== null) {
         return;
     }
 }
+/* Categories with no usable image (empty path, or the file is gone from
+   disk) are hidden entirely — the atlas never shows favicon placeholder
+   cards. A root without an image hides its whole branch. */
+$pruneNoImage = static function (array $items) use (&$pruneNoImage): array {
+    $filtered = [];
+    foreach ($items as $item) {
+        $imgPath = trim((string) ($item['image'] ?? ''));
+        if ($imgPath === '' || !asset_file_exists($imgPath)) {
+            continue;
+        }
+        $item['children'] = is_array($item['children'] ?? null) ? $pruneNoImage($item['children']) : [];
+        $filtered[] = $item;
+    }
+    return $filtered;
+};
+$tree = $pruneNoImage($tree);
+if ($tree === []) {
+    return;
+}
 $urlBuilder = $buildUrl ?? null;
 $fallbackImage = asset('images/favicon.png');
 
