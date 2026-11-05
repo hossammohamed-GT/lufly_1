@@ -69,41 +69,41 @@ class Placement:
 # Placements — all measured on the original pixels, then written as fractions
 # --------------------------------------------------------------------------- #
 PLACEMENTS = [
-    # The makeup mirrors carry the mark on the wall plate — the flat, machined
-    # face between the fixing screw and the sliding arm boss.
+    # The two makeup mirrors are signed on the glass, centred — the way an arm
+    # mirror is marked, and the only place a mark can sit square on a round head.
     Placement(
-        file="c7181bc35d636359403fdd8a.webp",           # 1600 x 1123, plate x 70..250 y 190..1000
+        file="c7181bc35d636359403fdd8a.webp",           # 1600 x 1145
         product="1610-0051 · wall-mounted LED makeup mirror",
-        width_frac=96 / 1600,
-        centre=(228 / 1600, 530 / 1123),
-        strength=1.15,
-        note="wall plate, below the top screw and above the sliding boss",
+        width_frac=210 / 1600,
+        centre=(1132 / 1600, 470 / 1145),
+        strength=1.5,
+        note="on the glass, horizontally centred above the touch icon",
     ),
     Placement(
-        file="b032652d6a19ed62de154309.webp",           # 1600 x 1068, round plate centred x 175 y 775
+        file="b032652d6a19ed62de154309.webp",           # 1600 x 1056
         product="1610-0044 · wall-mounted LED makeup mirror",
-        width_frac=76 / 1600,
-        centre=(150 / 1600, 925 / 1068),
-        strength=1.2,
-        note="round wall plate, below the arm boss",
+        width_frac=215 / 1600,
+        centre=(1148 / 1600, 330 / 1056),
+        strength=1.5,
+        note="on the glass, horizontally centred in the upper half of the disc",
     ),
-    # Framed mirror: the bronze bottom rail is the frame's own flat face.
+    # Framed mirror: on the glass, centred just above the bronze rail.
     Placement(
-        file="f0c10843681c6fb5db27e2e4.webp",           # 1600 x 1988, rail y 1782..1806
+        file="f0c10843681c6fb5db27e2e4.webp",           # 1600 x 1952, rail top y 1596
         product="SS-90626 · bronze-framed mirror",
-        width_frac=152 / 1600,
-        centre=(800 / 1600, 1700 / 1988),
-        strength=1.3,
-        note="on the glass, low centre above the bronze rail",
+        width_frac=200 / 1600,
+        centre=(800 / 1600, 1660 / 1952),
+        strength=1.35,
+        note="on the glass, centred low above the bronze rail",
     ),
-    # Tall LED mirror: etched into the glass above the touch sensor.
+    # Tall LED mirror: on the glass, centred, clear of the touch sensor.
     Placement(
-        file="fcbd5a0b475aa37bd34c1462.webp",           # 1600 x 4006
+        file="fcbd5a0b475aa37bd34c1462.webp",           # 1600 x 3783, sensor centre (622, 3255)
         product="custom-made-171 · LED sensor mirror",
-        width_frac=340 / 1600,
-        centre=(800 / 1600, 3150 / 4006),
-        strength=1.25,
-        note="on the glass, above the touch sensor",
+        width_frac=230 / 1600,
+        centre=(795 / 1600, 3100 / 3783),
+        strength=1.35,
+        note="on the glass, centred above the touch sensor",
     ),
 ]
 
