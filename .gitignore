@@ -18,11 +18,7 @@ Thumbs.db
 /public/uploads/assistant/*
 !/public/uploads/assistant/.gitkeep
 
-# Python bytecode from the import tooling
-__pycache__/
-*.py[cod]
-
-# tooling installs (php-wasm, one-shot dev deps)
+# tooling installs (the optional preview server pulls php-wasm here)
 node_modules/
 
 # Runtime database artifacts. Keep the tracked local SQLite runtime and the
@@ -34,4 +30,3 @@ node_modules/
 /database/sql/
 /database/schema/*.sql
 /public/manage_products_lufly_new/
-
