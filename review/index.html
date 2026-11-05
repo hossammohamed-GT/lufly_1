@@ -1,0 +1,130 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>مراجعة صور المطبخ — 24 صورة</title>
+<style>
+  :root { --ink:#0f172a; --muted:#64748b; --line:#e2e8f0; --accent:#0ea5e9; }
+  * { box-sizing:border-box; }
+  body { margin:0; font-family: "Segoe UI", Tahoma, system-ui, sans-serif; color:var(--ink); background:#f8fafc; }
+  header { position:sticky; top:0; z-index:20; background:#fff; border-bottom:1px solid var(--line);
+           padding:14px 20px; display:flex; flex-wrap:wrap; gap:12px; align-items:center; }
+  h1 { font-size:18px; margin:0; font-weight:700; }
+  .hint { color:var(--muted); font-size:13px; }
+  .spacer { flex:1 1 40px; }
+  button { font:inherit; font-size:13px; padding:7px 12px; border-radius:9px; border:1px solid var(--line);
+           background:#fff; cursor:pointer; }
+  button:hover { border-color:#94a3b8; }
+  button.on { background:var(--ink); color:#fff; border-color:var(--ink); }
+  #grid { display:grid; gap:18px; padding:20px; grid-template-columns:repeat(auto-fill, minmax(300px, 1fr)); }
+  .card { background:#fff; border:1px solid var(--line); border-radius:14px; overflow:hidden;
+          display:flex; flex-direction:column; }
+  .bar { display:flex; align-items:center; gap:10px; padding:10px 12px; border-bottom:1px solid var(--line); }
+  .num { font-weight:800; font-size:16px; background:var(--ink); color:#fff; border-radius:8px;
+         padding:3px 10px; min-width:44px; text-align:center; }
+  .slug { color:var(--muted); font-size:13px; margin-inline-start:auto; direction:ltr; }
+  .stage { background:#fff; display:flex; align-items:center; justify-content:center; padding:14px; flex:1; }
+  .stage img { max-width:100%; max-height:420px; display:block; cursor:zoom-in; }
+  .foot { border-top:1px solid var(--line); padding:8px 12px; display:flex; gap:8px; align-items:center; }
+  .foot a { font-size:12px; color:var(--accent); text-decoration:none; }
+  .feed { display:flex; gap:6px; padding:10px 20px 24px; flex-wrap:wrap; }
+  .feed input { flex:1 1 320px; font:inherit; padding:9px 12px; border:1px solid var(--line); border-radius:9px; }
+  /* lightbox */
+  #lb { position:fixed; inset:0; background:rgba(15,23,42,.94); display:none; z-index:50;
+        flex-direction:column; }
+  #lb.open { display:flex; }
+  #lb .top { display:flex; align-items:center; gap:14px; padding:14px 18px; color:#fff; }
+  #lb .top .num { background:#fff; color:#0f172a; }
+  #lb .top .slug { color:#cbd5e1; }
+  #lb .body { flex:1; display:flex; align-items:center; justify-content:center; padding:0 18px 18px; }
+  #lb img { max-width:100%; max-height:100%; background:#fff; border-radius:10px; }
+  #lb .nav { position:absolute; top:50%; transform:translateY(-50%); background:rgba(255,255,255,.14);
+             border:1px solid rgba(255,255,255,.3); color:#fff; width:46px; height:46px; border-radius:50%;
+             font-size:20px; display:flex; align-items:center; justify-content:center; cursor:pointer; }
+  #lb .prev { right:14px; } #lb .next { left:14px; }
+  #lb .close { margin-inline-start:auto; }
+</style>
+</head>
+<body>
+<header>
+  <h1>مراجعة صور المطبخ</h1>
+  <span class="hint">24 صورة — نفس ترتيب الموقع. اضغط أي صورة تكبّرها، واستخدم الأسهم للتنقل.</span>
+  <span class="spacer"></span>
+  <button id="fit" class="on">حجم مناسب</button>
+  <button id="full">حجم كامل</button>
+</header>
+
+<div id="grid"></div>
+
+<div class="feed">
+  <input id="note" placeholder="اكتب رقم الصورة والمشكلة، مثال: #14 المارك فاتح شوية…">
+</div>
+
+<div id="lb">
+  <div class="top">
+    <span class="num" id="lbn">#1</span>
+    <span class="slug" id="lbs"></span>
+    <span class="spacer"></span>
+    <button class="close" id="lbclose">إغلاق ✕</button>
+  </div>
+  <div class="body"><img id="lbi" alt=""></div>
+  <div class="nav prev" id="lbprev">›</div>
+  <div class="nav next" id="lbnext">‹</div>
+</div>
+
+<script>
+let items = [], idx = 0, natural = false;
+const grid = document.getElementById('grid');
+
+function draw() {
+  grid.innerHTML = items.map((it, i) => `
+    <div class="card">
+      <div class="bar">
+        <span class="num">#${it.n}</span>
+        <span class="slug">${it.slug}</span>
+      </div>
+      <div class="stage"><img src="${it.file}" alt="${it.slug}" data-i="${i}"></div>
+      <div class="foot">
+        <span class="hint" style="font-size:12px">${it.w}×${it.h}</span>
+        <span style="margin-inline-start:auto"></span>
+        <a href="${it.file}" target="_blank">فتح الأصل</a>
+      </div>
+    </div>`).join('');
+  grid.querySelectorAll('img').forEach(img => img.onclick = e => open(+e.target.dataset.i));
+}
+
+fetch('items.json').then(r => r.json()).then(d => { items = d; draw(); });
+
+document.getElementById('fit').onclick = () => setMode(false);
+document.getElementById('full').onclick = () => setMode(true);
+function setMode(n) {
+  natural = n;
+  document.getElementById('fit').classList.toggle('on', !n);
+  document.getElementById('full').classList.toggle('on', n);
+  grid.style.gridTemplateColumns = n ? '1fr' : 'repeat(auto-fill, minmax(300px, 1fr))';
+  grid.querySelectorAll('.stage img').forEach(i => { i.style.maxHeight = n ? 'none' : '420px'; });
+}
+
+const lb = document.getElementById('lb');
+function open(i) { idx = i; render(); lb.classList.add('open'); }
+function render() {
+  const it = items[idx];
+  document.getElementById('lbn').textContent = '#' + it.n;
+  document.getElementById('lbs').textContent = it.slug;
+  document.getElementById('lbi').src = it.file;
+}
+function step(d) { idx = (idx + d + items.length) % items.length; render(); }
+document.getElementById('lbclose').onclick = () => lb.classList.remove('open');
+document.getElementById('lbprev').onclick = () => step(1);
+document.getElementById('lbnext').onclick = () => step(-1);
+lb.onclick = e => { if (e.target === lb || e.target.classList.contains('body')) lb.classList.remove('open'); };
+document.addEventListener('keydown', e => {
+  if (!lb.classList.contains('open')) return;
+  if (e.key === 'Escape') lb.classList.remove('open');
+  if (e.key === 'ArrowLeft') step(-1);
+  if (e.key === 'ArrowRight') step(1);
+});
+</script>
+</body>
+</html>
