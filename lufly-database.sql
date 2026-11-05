@@ -269,7 +269,7 @@ CREATE TABLE `media` (
   `deleted_at` datetime DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
--- data: media (1500 rows)
+-- data: media (1503 rows)
 INSERT INTO `media` (`id`, `uuid`, `collection`, `filename`, `original_name`, `path`, `mime_type`, `extension`, `size`, `width`, `height`, `meta`, `owner_id`, `status`, `created_at`, `updated_at`, `deleted_at`) VALUES (1, '07f0ca7d-f0ce-4581-b426-84b4b2e5b466', 'bathroom.sanitary-ware.toilets', 'c0325557b877c9659b17d681.webp', 'image1.png', '/images/products/catalog/c0325557b877c9659b17d681.webp', 'image/webp', 'webp', 2000, 171, 226, '{\"source\": \"lufly-manager\", \"manager_product_id\": 1, \"manager_media_id\": 1, \"original_path\": \"assets/catalog/c0325557b877c9659b17d681.webp\", \"source_column\": \"D\", \"source_row\": 3, \"source_sort_order\": 1, \"source_sha256\": \"c0325557b877c9659b17d681e5a4126a13af3793685caa698a8f23e9f7a8d550\", \"sha256\": \"4fa80c30ed2e6a2116dfb673f1c9859e934e72ab0fad9578d11a4ea2a2847223\", \"caption\": \"\", \"previewable\": true}', NULL, 'active', '2026-10-23 09:44:39', '2026-10-23 09:44:39', NULL);
 INSERT INTO `media` (`id`, `uuid`, `collection`, `filename`, `original_name`, `path`, `mime_type`, `extension`, `size`, `width`, `height`, `meta`, `owner_id`, `status`, `created_at`, `updated_at`, `deleted_at`) VALUES (2, '48a2b43f-2687-49c7-b855-ceb3a191da46', 'bathroom.sanitary-ware.toilets', '9b1fe15bdfa514f0ae3efb5ec98c63ec3907.png', 'untitled-design.png', '/images/products/uploads/9b1fe15bdfa514f0ae3efb5ec98c63ec3907.png', 'image/png', 'png', 340745, 1387, 781, '{\"source\": \"lufly-manager\", \"manager_product_id\": 2, \"manager_media_id\": 2, \"original_path\": \"uploads/9b1fe15bdfa514f0ae3efb5ec98c63ec3907.png\", \"source_column\": \"D\", \"source_row\": 4, \"source_sort_order\": 2, \"source_sha256\": \"440e5f62885148a9f6867a60e62cc67ea118631f62a697c71d6285c93b9ca9fe\", \"sha256\": \"440e5f62885148a9f6867a60e62cc67ea118631f62a697c71d6285c93b9ca9fe\", \"caption\": \"\", \"previewable\": true}', NULL, 'active', '2026-10-23 09:44:39', '2026-10-23 09:44:39', NULL);
 INSERT INTO `media` (`id`, `uuid`, `collection`, `filename`, `original_name`, `path`, `mime_type`, `extension`, `size`, `width`, `height`, `meta`, `owner_id`, `status`, `created_at`, `updated_at`, `deleted_at`) VALUES (3, '92415da5-462e-410d-98ab-8675e9307a36', 'bathroom.sanitary-ware.toilets', 'ffa228c3e6b75331be204042.webp', 'image13.png', '/images/products/catalog/ffa228c3e6b75331be204042.webp', 'image/webp', 'webp', 2252, 181, 227, '{\"source\": \"lufly-manager\", \"manager_product_id\": 3, \"manager_media_id\": 3, \"original_path\": \"assets/catalog/ffa228c3e6b75331be204042.webp\", \"source_column\": \"D\", \"source_row\": 5, \"source_sort_order\": 3, \"source_sha256\": \"ffa228c3e6b75331be2040427c69d4ebc6e02579d62901c233aff108aff177e7\", \"sha256\": \"1804e52360b9fbffb63c2846dd79b38600796e2243f27d6b56db9f1227687af5\", \"caption\": \"\", \"previewable\": true}', NULL, 'active', '2026-10-23 09:44:39', '2026-10-23 09:44:39', NULL);
@@ -1769,6 +1769,10 @@ INSERT INTO `media` (`id`, `uuid`, `collection`, `filename`, `original_name`, `p
 INSERT INTO `media` (`id`, `uuid`, `collection`, `filename`, `original_name`, `path`, `mime_type`, `extension`, `size`, `width`, `height`, `meta`, `owner_id`, `status`, `created_at`, `updated_at`, `deleted_at`) VALUES (1498, NULL, 'soap-dispenser', '949ef0f9f6ebd3d2b0cb00c0.jpeg', 'hdhdh.jpeg', '/images/uploads/soap-dispenser/2026/10/949ef0f9f6ebd3d2b0cb00c0.jpeg', 'image/jpeg', 'jpeg', 45358, NULL, NULL, '[]', 2, 'missing', '2026-10-31 06:49:07', '2026-10-31 06:49:07', NULL);
 INSERT INTO `media` (`id`, `uuid`, `collection`, `filename`, `original_name`, `path`, `mime_type`, `extension`, `size`, `width`, `height`, `meta`, `owner_id`, `status`, `created_at`, `updated_at`, `deleted_at`) VALUES (1499, NULL, 'soap-dispenser', '29bf3f4ef91962f46a9be09b.jpeg', '2jjs.jpeg', '/images/uploads/soap-dispenser/2026/10/29bf3f4ef91962f46a9be09b.jpeg', 'image/jpeg', 'jpeg', 42622, NULL, NULL, '[]', 2, 'missing', '2026-10-31 06:49:07', '2026-10-31 06:49:07', NULL);
 INSERT INTO `media` (`id`, `uuid`, `collection`, `filename`, `original_name`, `path`, `mime_type`, `extension`, `size`, `width`, `height`, `meta`, `owner_id`, `status`, `created_at`, `updated_at`, `deleted_at`) VALUES (1500, NULL, 'soap-dispenser', '84188b421f11e9e2b87723b3.jpeg', 'iiiii.jpeg', '/images/uploads/soap-dispenser/2026/10/84188b421f11e9e2b87723b3.jpeg', 'image/jpeg', 'jpeg', 59248, NULL, NULL, '[]', 2, 'missing', '2026-10-31 06:49:07', '2026-10-31 06:49:07', NULL);
+INSERT INTO `media` (`id`, `uuid`, `collection`, `filename`, `original_name`, `path`, `mime_type`, `extension`, `size`, `width`, `height`, `meta`, `owner_id`, `status`, `created_at`, `updated_at`, `deleted_at`) VALUES (1501, NULL, 'soap-dispenser', 'v-0726c-hero.jpg', 'V-0726C hero.jpg', '/images/products/soap-dispenser/v-0726c-hero.jpg', 'image/jpeg', 'jpeg', 343673, 1600, 2867, '[]', 2, 'active', '2026-11-05 13:00:00', '2026-11-05 13:00:00', NULL);
+INSERT INTO `media` (`id`, `uuid`, `collection`, `filename`, `original_name`, `path`, `mime_type`, `extension`, `size`, `width`, `height`, `meta`, `owner_id`, `status`, `created_at`, `updated_at`, `deleted_at`) VALUES (1502, NULL, 'soap-dispenser', 'v-0726c-detail.jpg', 'V-0726C detail.jpg', '/images/products/soap-dispenser/v-0726c-detail.jpg', 'image/jpeg', 'jpeg', 129320, 1600, 893, '[]', 2, 'active', '2026-11-05 13:00:00', '2026-11-05 13:00:00', NULL);
+INSERT INTO `media` (`id`, `uuid`, `collection`, `filename`, `original_name`, `path`, `mime_type`, `extension`, `size`, `width`, `height`, `meta`, `owner_id`, `status`, `created_at`, `updated_at`, `deleted_at`) VALUES (1503, NULL, 'soap-dispenser', 'v-0726c-lifestyle.jpg', 'V-0726C in situ.jpg', '/images/products/soap-dispenser/v-0726c-lifestyle.jpg', 'image/jpeg', 'jpeg', 297242, 1600, 1477, '[]', 2, 'active', '2026-11-05 13:00:00', '2026-11-05 13:00:00', NULL);
+INSERT INTO `media` (`id`, `uuid`, `collection`, `filename`, `original_name`, `path`, `mime_type`, `extension`, `size`, `width`, `height`, `meta`, `owner_id`, `status`, `created_at`, `updated_at`, `deleted_at`) VALUES (1504, NULL, 'soap-dispenser', '4f7df108c783d9ba2757a88f.webp', 'V-0726C technical sheet.webp', '/images/products/catalog/4f7df108c783d9ba2757a88f.webp', 'image/webp', 'webp', 69474, 1720, 1440, '[]', 2, 'active', '2026-11-05 13:00:00', '2026-11-05 13:00:00', NULL);
 
 -- table: activity_logs
 CREATE TABLE `activity_logs` (
@@ -2043,7 +2047,7 @@ CREATE TABLE `categories` (
   `deleted_at` datetime DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
--- data: categories (110 rows)
+-- data: categories (111 rows)
 INSERT INTO `categories` (`id`, `parent_id`, `slug`, `image`, `icon`, `is_featured`, `sort_order`, `status`, `seo`, `created_at`, `updated_at`, `deleted_at`) VALUES (1, NULL, 'bathroom', '/images/categories/001-bathroom.jpg', NULL, 1, 1, 'active', '{\"title\": \"Bathroom\"}', '2026-10-23 07:43:10', '2026-10-23 07:43:10', NULL);
 INSERT INTO `categories` (`id`, `parent_id`, `slug`, `image`, `icon`, `is_featured`, `sort_order`, `status`, `seo`, `created_at`, `updated_at`, `deleted_at`) VALUES (2, 1, 'bathroom.sanitary-ware', '/images/categories/002-bathroom-sanitary-ware.jpg', NULL, 0, 1, 'active', '{\"title\": \"Sanitary Ware\"}', '2026-10-23 07:43:10', '2026-10-23 07:43:10', NULL);
 INSERT INTO `categories` (`id`, `parent_id`, `slug`, `image`, `icon`, `is_featured`, `sort_order`, `status`, `seo`, `created_at`, `updated_at`, `deleted_at`) VALUES (3, 2, 'bathroom.sanitary-ware.toilets', '/images/categories/003-bathroom-sanitary-ware-toilets.jpg', NULL, 0, 1, 'active', '{\"title\": \"Toilets\"}', '2026-10-23 07:43:10', '2026-10-23 07:43:10', NULL);
@@ -2153,8 +2157,8 @@ INSERT INTO `categories` (`id`, `parent_id`, `slug`, `image`, `icon`, `is_featur
 INSERT INTO `categories` (`id`, `parent_id`, `slug`, `image`, `icon`, `is_featured`, `sort_order`, `status`, `seo`, `created_at`, `updated_at`, `deleted_at`) VALUES (107, 103, 'drains.by-mounting-type.other-drains', '/images/categories/107-drains-by-mounting-type-other-drains.jpg', NULL, 0, 4, 'active', '{\"title\": \"Other Drains\"}', '2026-10-23 07:43:10', '2026-10-23 07:43:10', NULL);
 INSERT INTO `categories` (`id`, `parent_id`, `slug`, `image`, `icon`, `is_featured`, `sort_order`, `status`, `seo`, `created_at`, `updated_at`, `deleted_at`) VALUES (108, NULL, 'drinking-fountains', '/images/categories/108-drinking-fountains.jpg', NULL, 1, 9, 'active', '{\"title\": \"Drinking Fountains\"}', '2026-10-23 07:43:10', '2026-10-23 07:43:10', NULL);
 INSERT INTO `categories` (`id`, `parent_id`, `slug`, `image`, `icon`, `is_featured`, `sort_order`, `status`, `seo`, `created_at`, `updated_at`, `deleted_at`) VALUES (109, 1, 'bathroom.angle-valves', '/images/categories/109-bathroom-angle-valves.jpg', NULL, 0, 4, 'active', '{\"title\": \"Angle Valves\"}', '2026-10-23 07:43:10', '2026-10-23 07:43:10', NULL);
-INSERT INTO `categories` (`id`, `parent_id`, `slug`, `image`, `icon`, `is_featured`, `sort_order`, `status`, `seo`, `created_at`, `updated_at`, `deleted_at`) VALUES (110, NULL, 'soap-dispenser', '/images/categories/110-soap-dispenser.jpg', NULL, 0, 10, 'active', '{\"title\":\"soap dispenser\"}', '2026-10-30 16:16:50', '2026-10-30 16:16:50', NULL);
 INSERT INTO `categories` (`id`, `parent_id`, `slug`, `image`, `icon`, `is_featured`, `sort_order`, `status`, `seo`, `created_at`, `updated_at`, `deleted_at`) VALUES (111, 2, 'bathroom.sanitary-ware.shower-trays', '/images/categories/111-bathroom-sanitary-ware-shower-trays.jpg', NULL, 0, 8, 'active', '{\"title\": \"Shower Trays\"}', '2026-11-05 12:00:00', '2026-11-05 12:00:00', NULL);
+INSERT INTO `categories` (`id`, `parent_id`, `slug`, `image`, `icon`, `is_featured`, `sort_order`, `status`, `seo`, `created_at`, `updated_at`, `deleted_at`) VALUES (110, NULL, 'soap-dispenser', '/images/categories/110-soap-dispenser.jpg', NULL, 1, 10, 'active', '{"title": "Soap Dispensers"}', '2026-10-30 16:16:50', '2026-11-05 13:00:00', NULL);
 
 -- table: category_translations
 CREATE TABLE `category_translations` (
@@ -2165,7 +2169,7 @@ CREATE TABLE `category_translations` (
   `description` longtext DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
--- data: category_translations (328 rows)
+-- data: category_translations (333 rows)
 INSERT INTO `category_translations` (`id`, `category_id`, `locale`, `name`, `description`) VALUES (1, 1, 'en', 'Bathroom', NULL);
 INSERT INTO `category_translations` (`id`, `category_id`, `locale`, `name`, `description`) VALUES (2, 2, 'en', 'Sanitary Ware', NULL);
 INSERT INTO `category_translations` (`id`, `category_id`, `locale`, `name`, `description`) VALUES (3, 3, 'en', 'Toilets', NULL);
@@ -2493,10 +2497,12 @@ INSERT INTO `category_translations` (`id`, `category_id`, `locale`, `name`, `des
 INSERT INTO `category_translations` (`id`, `category_id`, `locale`, `name`, `description`) VALUES (325, 109, 'en', 'Angle Valves', NULL);
 INSERT INTO `category_translations` (`id`, `category_id`, `locale`, `name`, `description`) VALUES (326, 109, 'tr', 'Ara Musluklar', NULL);
 INSERT INTO `category_translations` (`id`, `category_id`, `locale`, `name`, `description`) VALUES (327, 109, 'cs', 'Rohové ventily', NULL);
-INSERT INTO `category_translations` (`id`, `category_id`, `locale`, `name`, `description`) VALUES (328, 110, 'en', 'soap dispenser', NULL);
 INSERT INTO `category_translations` (`id`, `category_id`, `locale`, `name`, `description`) VALUES (329, 111, 'en', 'Shower Trays', NULL);
 INSERT INTO `category_translations` (`id`, `category_id`, `locale`, `name`, `description`) VALUES (330, 111, 'tr', 'Duş Tekneleri', NULL);
 INSERT INTO `category_translations` (`id`, `category_id`, `locale`, `name`, `description`) VALUES (331, 111, 'cs', 'Sprchové vaničky', NULL);
+INSERT INTO `category_translations` (`id`, `category_id`, `locale`, `name`, `description`) VALUES (328, 110, 'en', 'Soap Dispensers', NULL);
+INSERT INTO `category_translations` (`id`, `category_id`, `locale`, `name`, `description`) VALUES (332, 110, 'tr', 'Sabunluklar', NULL);
+INSERT INTO `category_translations` (`id`, `category_id`, `locale`, `name`, `description`) VALUES (333, 110, 'cs', 'Dávkovače mýdla', NULL);
 
 -- table: brands
 CREATE TABLE `brands` (
@@ -3283,7 +3289,7 @@ INSERT INTO `products` (`id`, `model_code`, `slug`, `category_id`, `collection_i
 INSERT INTO `products` (`id`, `model_code`, `slug`, `category_id`, `collection_id`, `brand_id`, `status`, `is_featured`, `is_new`, `sort_order`, `created_at`, `updated_at`, `deleted_at`) VALUES (711, '5000-FR03', '5000-fr03', 108, NULL, 1, 'active', 0, 0, 711, '2026-10-18 06:05:58', '2026-10-19 10:50:33', NULL);
 INSERT INTO `products` (`id`, `model_code`, `slug`, `category_id`, `collection_id`, `brand_id`, `status`, `is_featured`, `is_new`, `sort_order`, `created_at`, `updated_at`, `deleted_at`) VALUES (712, '5000-F04', '5000-f04', 108, NULL, 1, 'active', 0, 0, 712, '2026-10-18 06:05:58', '2026-10-19 10:50:43', NULL);
 INSERT INTO `products` (`id`, `model_code`, `slug`, `category_id`, `collection_id`, `brand_id`, `status`, `is_featured`, `is_new`, `sort_order`, `created_at`, `updated_at`, `deleted_at`) VALUES (713, '1654-2002RB-4', 'wash-basin-mixer', 11, NULL, 1, 'draft', 0, 0, 0, '2026-10-31 06:36:12', '2026-10-31 06:36:12', NULL);
-INSERT INTO `products` (`id`, `model_code`, `slug`, `category_id`, `collection_id`, `brand_id`, `status`, `is_featured`, `is_new`, `sort_order`, `created_at`, `updated_at`, `deleted_at`) VALUES (714, 'V-0726C', 'v-0726c', 110, NULL, NULL, 'draft', 0, 0, 0, '2026-10-31 06:47:48', '2026-10-31 06:49:17', NULL);
+INSERT INTO `products` (`id`, `model_code`, `slug`, `category_id`, `collection_id`, `brand_id`, `status`, `is_featured`, `is_new`, `sort_order`, `created_at`, `updated_at`, `deleted_at`) VALUES (714, 'V-0726C', 'v-0726c', 110, NULL, 1, 'active', 1, 1, 714, '2026-10-31 06:47:48', '2026-11-05 13:00:00', NULL);
 INSERT INTO `products` (`id`, `model_code`, `slug`, `category_id`, `collection_id`, `brand_id`, `status`, `is_featured`, `is_new`, `sort_order`, `created_at`, `updated_at`, `deleted_at`) VALUES (715, 'V-0726C-2', 'hand-wash-dispenser', 110, NULL, NULL, 'draft', 0, 0, 0, '2026-10-31 06:49:43', '2026-10-31 06:49:43', NULL);
 
 -- table: product_translations
@@ -3296,7 +3302,7 @@ CREATE TABLE `product_translations` (
   `description` longtext DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
--- data: product_translations (2141 rows)
+-- data: product_translations (2143 rows)
 INSERT INTO `product_translations` (`id`, `product_id`, `locale`, `name`, `short_description`, `description`) VALUES (1, 1, 'en', '', NULL, NULL);
 INSERT INTO `product_translations` (`id`, `product_id`, `locale`, `name`, `short_description`, `description`) VALUES (2, 2, 'en', 'Toilet seat', 'Toilet seat, slim, soft-closing, UF, Finish: white, A thin and delicate slim type toilet seat, Round Shape.', 'Toilet seat, slim, soft-closing, UF, Finish: white, A thin and delicate slim type toilet seat, Round Shape.');
 INSERT INTO `product_translations` (`id`, `product_id`, `locale`, `name`, `short_description`, `description`) VALUES (3, 3, 'en', 'Floor-Standing Washdown Water Closet', 'Floor-Standing Washdown Water Closet, P-Trap, manufactured from high-quality vitreous china with smooth glazed finish, complete with matching cistern, seat & cover, flushing mechanism, inlet/outlet fittings and fixing accessories.', 'Floor-Standing Washdown Water Closet, P-Trap, manufactured from high-quality vitreous china with smooth glazed finish, complete with matching cistern, seat & cover, flushing mechanism, inlet/outlet fittings and fixing accessories.\n\nVerified drawing dimensions:\nLength: 700 mm\nWidth: 370 mm\nHeight: 855 mm');
@@ -5436,8 +5442,10 @@ INSERT INTO `product_translations` (`id`, `product_id`, `locale`, `name`, `short
 INSERT INTO `product_translations` (`id`, `product_id`, `locale`, `name`, `short_description`, `description`) VALUES (2137, 713, 'cs', 'Umyvadlová baterie', 'Umyvadlová baterie, designová architektonická baterie, hlavní tělo z nerezové oceli SUS 316, mosazná páka s diamantovým vzorem, výtok a základna 3.35# kartuše KEROX, perlátor NEOPERL, růžové zlato + galvanická černá, dekorativní…', 'Umyvadlová baterie, designová architektonická baterie, hlavní tělo z nerezové oceli SUS 316, mosazná páka s diamantovým vzorem, výtok a základna 3.35# kartuše KEROX, perlátor NEOPERL, růžové zlato + galvanická černá, dekorativní povrch, nerezové opletené hadice TUCAI WaterMark, přívodní hadice, typ baterie: jednopáková, způsob montáže baterie: stojánková, masivní mosaz, keramická kartuše, růžové zlato + gunmetal\n\nOvěřené rozměry z technického výkresu:\nCelková výška: 290 mm\nDosah výtoku: 143 mm\nVýška výtoku: 166 mm');
 INSERT INTO `product_translations` (`id`, `product_id`, `locale`, `name`, `short_description`, `description`) VALUES (2138, 713, 'en', 'Wash Basin Mixer', 'Wash Basin Mixer, Decorative Art Mixer, SUS 316 Main body, Brass Diamond handle, Spout & base 3.35# KEROX Cartridge, NEOPERL Aerator, Rose Gold + Electroplated Black, Decorative Finish, TUCAI WATERMARK S/S, water inlet hose, Mixer…', 'Wash Basin Mixer, Decorative Art Mixer, SUS 316 Main body, Brass Diamond handle, Spout & base 3.35# KEROX Cartridge, NEOPERL Aerator, Rose Gold + Electroplated Black, Decorative Finish, TUCAI WATERMARK S/S, water inlet hose, Mixer type: single-handle, mixer Installation method: standing, Brass Solid, Ceramic Cartridge, Rose Gold + Metal Gun\n\nVerified drawing dimensions:\nOverall height: 290 mm\nSpout reach: 143 mm\nSpout height: 166 mm');
 INSERT INTO `product_translations` (`id`, `product_id`, `locale`, `name`, `short_description`, `description`) VALUES (2139, 713, 'tr', 'Lavabo Bataryası', 'Lavabo Bataryası, dekoratif tasarım batarya, SUS 316 paslanmaz çelik ana gövde, elmas dokulu pirinç kol, gaga ve gövde tabanı 3.35# KEROX kartuş, NEOPERL perlatör, rose gold + elektrokaplama siyah, dekoratif yüzey, TUCAI WaterMark…', 'Lavabo Bataryası, dekoratif tasarım batarya, SUS 316 paslanmaz çelik ana gövde, elmas dokulu pirinç kol, gaga ve gövde tabanı 3.35# KEROX kartuş, NEOPERL perlatör, rose gold + elektrokaplama siyah, dekoratif yüzey, TUCAI WaterMark paslanmaz çelik bağlantı hortumu, su giriş hortumu, batarya tipi: tek kollu, batarya montaj tipi: tezgâh üstü, masif pirinç, seramik kartuş, rose gold + gunmetal\n\nDoğrulanmış teknik çizim ölçüleri:\nToplam yükseklik: 290 mm\nGaga uzanım mesafesi: 143 mm\nGaga çıkış yüksekliği: 166 mm');
-INSERT INTO `product_translations` (`id`, `product_id`, `locale`, `name`, `short_description`, `description`) VALUES (2140, 714, 'en', 'Hand Wash Dispenser', '', '');
+INSERT INTO `product_translations` (`id`, `product_id`, `locale`, `name`, `short_description`, `description`) VALUES (2140, 714, 'en', 'Hand Wash Dispenser', 'Hand Wash Dispenser — deck mounted, push type, 48 mm body, 185 mm high, brass body with AISI 304 stainless steel, Chrome finish', 'Hand Wash Dispenser — Deck Mounted, Soap Dispenser, Push Type, Brass raw copper material faucet body with Stainless Steel 304, Finish: Chrome, Diameter: 48 mm [4.8 cm], Weight: 2 kg, Max 43 mm [4.3 cm] Mounting Thickness, 60 mm base flange, 185 mm overall height, 150 mm body height above the base, body inclined at 60° so the soap falls naturally into the hand over the basin. Push-type pump with a slim chrome actuator and a machined soap outlet; recommended maximum of 40,000 cP soap viscosity, suitable for liquid soap and hand wash gels. The polished cap carries the LUFLY mark engraved tone-on-tone.\n\nVerified drawing dimensions:\nBody diameter: 48 mm\nBase flange diameter: 60 mm\nOverall height: 185 mm\nBody height above base: 150 mm\nMaximum mounting thickness: 43 mm\nWeight: 2 kg');
 INSERT INTO `product_translations` (`id`, `product_id`, `locale`, `name`, `short_description`, `description`) VALUES (2141, 715, 'en', 'Hand Wash Dispenser', '', '');
+INSERT INTO `product_translations` (`id`, `product_id`, `locale`, `name`, `short_description`, `description`) VALUES (2201, 714, 'tr', 'El Yıkama Sabunluk Bataryası', 'El Yıkama Sabunluk Bataryası — tezgâh üstü, basmalı, 48 mm gövde, 185 mm yükseklik, pirinç gövde ve AISI 304 paslanmaz çelik, Krom kaplama', 'El Yıkama Sabunluk Bataryası — Tezgâh Üstü, Sabunluk, Basmalı, pirinç ham bakır gövde ve AISI 304 paslanmaz çelik, Yüzey: Krom, Çap: 48 mm [4,8 cm], Ağırlık: 2 kg, Maksimum 43 mm [4,3 cm] montaj kalınlığı, 60 mm taban flanşı, 185 mm toplam yükseklik, tabandan itibaren 150 mm gövde yüksekliği, gövde lavaboya doğal el pozisyonu için 60° eğimli. İnce krom butonlu basmalı pompa ve işlenmiş sabun çıkışı; tavsiye edilen maksimum 40.000 cP sabun viskozitesi, sıvı sabun ve el yıkama jelleri için uygundur. Parlak başlıkta LUFLY markası ton üzerine ton kazınmıştır.\n\nDoğrulanmış çizim ölçüleri:\nGövde çapı: 48 mm\nTaban flanş çapı: 60 mm\nToplam yükseklik: 185 mm\nTabandan gövde yüksekliği: 150 mm\nMaksimum montaj kalınlığı: 43 mm\nAğırlık: 2 kg');
+INSERT INTO `product_translations` (`id`, `product_id`, `locale`, `name`, `short_description`, `description`) VALUES (2202, 714, 'cs', 'Dávkovač mýdla', 'Dávkovač mýdla — na desku, tlačný, tělo 48 mm, výška 185 mm, mosazné tělo a nerez AISI 304, povrch Chrom', 'Dávkovač mýdla — na desku, dávkovač mýdla, tlačný, mosazné tělo ze surové mědi a nerez AISI 304, povrch: Chrom, průměr: 48 mm [4,8 cm], hmotnost: 2 kg, maximální tloušťka montáže 43 mm [4,3 cm], základní příruba 60 mm, celková výška 185 mm, výška těla nad základnou 150 mm, tělo skloněné o 60° pro přirozenou polohu ruky nad umyvadlem. Tlačná pumpa se štíhlým chromovým ovladačem a opracovaným vývodem mýdla; doporučená maximální viskozita mýdla 40 000 cP, vhodné pro tekuté mýdlo a gely na mytí rukou. Na leštěném víku je značka LUFLY vyrytá tón v tónu.\n\nOvěřené rozměry z výkresu:\nPrůměr těla: 48 mm\nPrůměr základní příruby: 60 mm\nCelková výška: 185 mm\nVýška těla nad základnou: 150 mm\nMaximální tloušťka montáže: 43 mm\nHmotnost: 2 kg');
 
 -- table: product_variants
 CREATE TABLE `product_variants` (
@@ -6221,7 +6229,7 @@ CREATE TABLE `product_specifications` (
   `updated_at` datetime DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
--- data: product_specifications (2457 rows)
+-- data: product_specifications (2469 rows)
 INSERT INTO `product_specifications` (`id`, `product_id`, `variant_id`, `spec_key`, `spec_value`, `unit`, `sort_order`, `created_at`, `updated_at`) VALUES (1, 683, NULL, 'Drawing: Overall height', '170 mm', NULL, 1, '2026-10-24 00:00:00', '2026-10-24 00:00:00');
 INSERT INTO `product_specifications` (`id`, `product_id`, `variant_id`, `spec_key`, `spec_value`, `unit`, `sort_order`, `created_at`, `updated_at`) VALUES (2, 683, NULL, 'Drawing: Spout side height', '165 mm', NULL, 2, '2026-10-24 00:00:00', '2026-10-24 00:00:00');
 INSERT INTO `product_specifications` (`id`, `product_id`, `variant_id`, `spec_key`, `spec_value`, `unit`, `sort_order`, `created_at`, `updated_at`) VALUES (3, 683, NULL, 'Drawing: Body height', '130 mm', NULL, 3, '2026-10-24 00:00:00', '2026-10-24 00:00:00');
@@ -8679,6 +8687,18 @@ INSERT INTO `product_specifications` (`id`, `product_id`, `variant_id`, `spec_ke
 INSERT INTO `product_specifications` (`id`, `product_id`, `variant_id`, `spec_key`, `spec_value`, `unit`, `sort_order`, `created_at`, `updated_at`) VALUES (2455, 713, NULL, 'Drawing: Overall height', '290 mm', NULL, 1, '2026-10-31 06:36:12', '2026-10-31 06:36:12');
 INSERT INTO `product_specifications` (`id`, `product_id`, `variant_id`, `spec_key`, `spec_value`, `unit`, `sort_order`, `created_at`, `updated_at`) VALUES (2456, 713, NULL, 'Drawing: Spout reach', '143 mm', NULL, 2, '2026-10-31 06:36:12', '2026-10-31 06:36:12');
 INSERT INTO `product_specifications` (`id`, `product_id`, `variant_id`, `spec_key`, `spec_value`, `unit`, `sort_order`, `created_at`, `updated_at`) VALUES (2457, 713, NULL, 'Drawing: Spout height', '166 mm', NULL, 3, '2026-10-31 06:36:12', '2026-10-31 06:36:12');
+INSERT INTO `product_specifications` (`id`, `product_id`, `variant_id`, `spec_key`, `spec_value`, `unit`, `sort_order`, `created_at`, `updated_at`) VALUES (2500, 714, NULL, 'Finish', 'Chrome', NULL, 1, '2026-11-05 13:00:00', '2026-11-05 13:00:00');
+INSERT INTO `product_specifications` (`id`, `product_id`, `variant_id`, `spec_key`, `spec_value`, `unit`, `sort_order`, `created_at`, `updated_at`) VALUES (2501, 714, NULL, 'Drawing: Body diameter', '48 mm', NULL, 2, '2026-11-05 13:00:00', '2026-11-05 13:00:00');
+INSERT INTO `product_specifications` (`id`, `product_id`, `variant_id`, `spec_key`, `spec_value`, `unit`, `sort_order`, `created_at`, `updated_at`) VALUES (2502, 714, NULL, 'Drawing: Base diameter', '60 mm', NULL, 3, '2026-11-05 13:00:00', '2026-11-05 13:00:00');
+INSERT INTO `product_specifications` (`id`, `product_id`, `variant_id`, `spec_key`, `spec_value`, `unit`, `sort_order`, `created_at`, `updated_at`) VALUES (2503, 714, NULL, 'Drawing: Overall height', '185 mm', NULL, 4, '2026-11-05 13:00:00', '2026-11-05 13:00:00');
+INSERT INTO `product_specifications` (`id`, `product_id`, `variant_id`, `spec_key`, `spec_value`, `unit`, `sort_order`, `created_at`, `updated_at`) VALUES (2504, 714, NULL, 'Drawing: Body height', '150 mm', NULL, 5, '2026-11-05 13:00:00', '2026-11-05 13:00:00');
+INSERT INTO `product_specifications` (`id`, `product_id`, `variant_id`, `spec_key`, `spec_value`, `unit`, `sort_order`, `created_at`, `updated_at`) VALUES (2505, 714, NULL, 'Drawing: Mounting thickness', 'Max 43 mm', NULL, 6, '2026-11-05 13:00:00', '2026-11-05 13:00:00');
+INSERT INTO `product_specifications` (`id`, `product_id`, `variant_id`, `spec_key`, `spec_value`, `unit`, `sort_order`, `created_at`, `updated_at`) VALUES (2506, 714, NULL, 'Material', 'Brass & AISI 304 Stainless Steel', NULL, 7, '2026-11-05 13:00:00', '2026-11-05 13:00:00');
+INSERT INTO `product_specifications` (`id`, `product_id`, `variant_id`, `spec_key`, `spec_value`, `unit`, `sort_order`, `created_at`, `updated_at`) VALUES (2507, 714, NULL, 'Installation', 'Deck mounted', NULL, 8, '2026-11-05 13:00:00', '2026-11-05 13:00:00');
+INSERT INTO `product_specifications` (`id`, `product_id`, `variant_id`, `spec_key`, `spec_value`, `unit`, `sort_order`, `created_at`, `updated_at`) VALUES (2508, 714, NULL, 'Dispenser type', 'Push type', NULL, 9, '2026-11-05 13:00:00', '2026-11-05 13:00:00');
+INSERT INTO `product_specifications` (`id`, `product_id`, `variant_id`, `spec_key`, `spec_value`, `unit`, `sort_order`, `created_at`, `updated_at`) VALUES (2509, 714, NULL, 'Soap viscosity', 'Max 40,000 cP', NULL, 10, '2026-11-05 13:00:00', '2026-11-05 13:00:00');
+INSERT INTO `product_specifications` (`id`, `product_id`, `variant_id`, `spec_key`, `spec_value`, `unit`, `sort_order`, `created_at`, `updated_at`) VALUES (2510, 714, NULL, 'Body angle', '60°', NULL, 11, '2026-11-05 13:00:00', '2026-11-05 13:00:00');
+INSERT INTO `product_specifications` (`id`, `product_id`, `variant_id`, `spec_key`, `spec_value`, `unit`, `sort_order`, `created_at`, `updated_at`) VALUES (2511, 714, NULL, 'Weight', '2 kg', NULL, 12, '2026-11-05 13:00:00', '2026-11-05 13:00:00');
 
 -- table: product_specification_translations
 CREATE TABLE `product_specification_translations` (
@@ -8689,7 +8709,7 @@ CREATE TABLE `product_specification_translations` (
   `spec_value` varchar(255) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
--- data: product_specification_translations (7371 rows)
+-- data: product_specification_translations (7407 rows)
 INSERT INTO `product_specification_translations` (`id`, `specification_id`, `locale`, `spec_key`, `spec_value`) VALUES (1, 1, 'en', 'Drawing: Overall height', '170 mm');
 INSERT INTO `product_specification_translations` (`id`, `specification_id`, `locale`, `spec_key`, `spec_value`) VALUES (2, 1, 'tr', 'Teknik Çizim: Toplam yükseklik', '170 mm');
 INSERT INTO `product_specification_translations` (`id`, `specification_id`, `locale`, `spec_key`, `spec_value`) VALUES (3, 1, 'cs', 'Výkres: Celková výška', '170 mm');
@@ -16061,6 +16081,42 @@ INSERT INTO `product_specification_translations` (`id`, `specification_id`, `loc
 INSERT INTO `product_specification_translations` (`id`, `specification_id`, `locale`, `spec_key`, `spec_value`) VALUES (7369, 2457, 'en', 'Drawing: Spout height', '166 mm');
 INSERT INTO `product_specification_translations` (`id`, `specification_id`, `locale`, `spec_key`, `spec_value`) VALUES (7370, 2457, 'tr', 'Teknik Çizim: Gaga çıkış yüksekliği', '166 mm');
 INSERT INTO `product_specification_translations` (`id`, `specification_id`, `locale`, `spec_key`, `spec_value`) VALUES (7371, 2457, 'cs', 'Výkres: Výška výtoku', '166 mm');
+INSERT INTO `product_specification_translations` (`id`, `specification_id`, `locale`, `spec_key`, `spec_value`) VALUES (7400, 2500, 'en', 'Finish', 'Chrome');
+INSERT INTO `product_specification_translations` (`id`, `specification_id`, `locale`, `spec_key`, `spec_value`) VALUES (7401, 2500, 'tr', 'Yüzey Kaplaması', 'Krom');
+INSERT INTO `product_specification_translations` (`id`, `specification_id`, `locale`, `spec_key`, `spec_value`) VALUES (7402, 2500, 'cs', 'Povrchová úprava', 'Chrom');
+INSERT INTO `product_specification_translations` (`id`, `specification_id`, `locale`, `spec_key`, `spec_value`) VALUES (7403, 2501, 'en', 'Drawing: Body diameter', '48 mm');
+INSERT INTO `product_specification_translations` (`id`, `specification_id`, `locale`, `spec_key`, `spec_value`) VALUES (7404, 2501, 'tr', 'Teknik Çizim: Gövde çapı', '48 mm');
+INSERT INTO `product_specification_translations` (`id`, `specification_id`, `locale`, `spec_key`, `spec_value`) VALUES (7405, 2501, 'cs', 'Výkres: Průměr těla', '48 mm');
+INSERT INTO `product_specification_translations` (`id`, `specification_id`, `locale`, `spec_key`, `spec_value`) VALUES (7406, 2502, 'en', 'Drawing: Base diameter', '60 mm');
+INSERT INTO `product_specification_translations` (`id`, `specification_id`, `locale`, `spec_key`, `spec_value`) VALUES (7407, 2502, 'tr', 'Teknik Çizim: Taban çapı', '60 mm');
+INSERT INTO `product_specification_translations` (`id`, `specification_id`, `locale`, `spec_key`, `spec_value`) VALUES (7408, 2502, 'cs', 'Výkres: Průměr základny', '60 mm');
+INSERT INTO `product_specification_translations` (`id`, `specification_id`, `locale`, `spec_key`, `spec_value`) VALUES (7409, 2503, 'en', 'Drawing: Overall height', '185 mm');
+INSERT INTO `product_specification_translations` (`id`, `specification_id`, `locale`, `spec_key`, `spec_value`) VALUES (7410, 2503, 'tr', 'Teknik Çizim: Toplam yükseklik', '185 mm');
+INSERT INTO `product_specification_translations` (`id`, `specification_id`, `locale`, `spec_key`, `spec_value`) VALUES (7411, 2503, 'cs', 'Výkres: Celková výška', '185 mm');
+INSERT INTO `product_specification_translations` (`id`, `specification_id`, `locale`, `spec_key`, `spec_value`) VALUES (7412, 2504, 'en', 'Drawing: Body height', '150 mm');
+INSERT INTO `product_specification_translations` (`id`, `specification_id`, `locale`, `spec_key`, `spec_value`) VALUES (7413, 2504, 'tr', 'Teknik Çizim: Gövde yüksekliği', '150 mm');
+INSERT INTO `product_specification_translations` (`id`, `specification_id`, `locale`, `spec_key`, `spec_value`) VALUES (7414, 2504, 'cs', 'Výkres: Výška těla', '150 mm');
+INSERT INTO `product_specification_translations` (`id`, `specification_id`, `locale`, `spec_key`, `spec_value`) VALUES (7415, 2505, 'en', 'Drawing: Mounting thickness', 'Max 43 mm');
+INSERT INTO `product_specification_translations` (`id`, `specification_id`, `locale`, `spec_key`, `spec_value`) VALUES (7416, 2505, 'tr', 'Teknik Çizim: Montaj kalınlığı', 'Maks. 43 mm');
+INSERT INTO `product_specification_translations` (`id`, `specification_id`, `locale`, `spec_key`, `spec_value`) VALUES (7417, 2505, 'cs', 'Výkres: Tloušťka montáže', 'Max. 43 mm');
+INSERT INTO `product_specification_translations` (`id`, `specification_id`, `locale`, `spec_key`, `spec_value`) VALUES (7418, 2506, 'en', 'Material', 'Brass & AISI 304 Stainless Steel');
+INSERT INTO `product_specification_translations` (`id`, `specification_id`, `locale`, `spec_key`, `spec_value`) VALUES (7419, 2506, 'tr', 'Malzeme', 'Pirinç ve AISI 304 Paslanmaz Çelik');
+INSERT INTO `product_specification_translations` (`id`, `specification_id`, `locale`, `spec_key`, `spec_value`) VALUES (7420, 2506, 'cs', 'Materiál', 'Mosaz a nerez AISI 304');
+INSERT INTO `product_specification_translations` (`id`, `specification_id`, `locale`, `spec_key`, `spec_value`) VALUES (7421, 2507, 'en', 'Installation', 'Deck mounted');
+INSERT INTO `product_specification_translations` (`id`, `specification_id`, `locale`, `spec_key`, `spec_value`) VALUES (7422, 2507, 'tr', 'Montaj', 'Tezgâh üstü');
+INSERT INTO `product_specification_translations` (`id`, `specification_id`, `locale`, `spec_key`, `spec_value`) VALUES (7423, 2507, 'cs', 'Montáž', 'Na desku');
+INSERT INTO `product_specification_translations` (`id`, `specification_id`, `locale`, `spec_key`, `spec_value`) VALUES (7424, 2508, 'en', 'Dispenser type', 'Push type');
+INSERT INTO `product_specification_translations` (`id`, `specification_id`, `locale`, `spec_key`, `spec_value`) VALUES (7425, 2508, 'tr', 'Sabunluk tipi', 'Basmalı');
+INSERT INTO `product_specification_translations` (`id`, `specification_id`, `locale`, `spec_key`, `spec_value`) VALUES (7426, 2508, 'cs', 'Typ dávkovače', 'Tlačný');
+INSERT INTO `product_specification_translations` (`id`, `specification_id`, `locale`, `spec_key`, `spec_value`) VALUES (7427, 2509, 'en', 'Soap viscosity', 'Max 40,000 cP');
+INSERT INTO `product_specification_translations` (`id`, `specification_id`, `locale`, `spec_key`, `spec_value`) VALUES (7428, 2509, 'tr', 'Sabun viskozitesi', 'Maks. 40.000 cP');
+INSERT INTO `product_specification_translations` (`id`, `specification_id`, `locale`, `spec_key`, `spec_value`) VALUES (7429, 2509, 'cs', 'Viskozita mýdla', 'Max 40 000 cP');
+INSERT INTO `product_specification_translations` (`id`, `specification_id`, `locale`, `spec_key`, `spec_value`) VALUES (7430, 2510, 'en', 'Body angle', '60°');
+INSERT INTO `product_specification_translations` (`id`, `specification_id`, `locale`, `spec_key`, `spec_value`) VALUES (7431, 2510, 'tr', 'Gövde açısı', '60°');
+INSERT INTO `product_specification_translations` (`id`, `specification_id`, `locale`, `spec_key`, `spec_value`) VALUES (7432, 2510, 'cs', 'Úhel těla', '60°');
+INSERT INTO `product_specification_translations` (`id`, `specification_id`, `locale`, `spec_key`, `spec_value`) VALUES (7433, 2511, 'en', 'Weight', '2 kg');
+INSERT INTO `product_specification_translations` (`id`, `specification_id`, `locale`, `spec_key`, `spec_value`) VALUES (7434, 2511, 'tr', 'Ağırlık', '2 kg');
+INSERT INTO `product_specification_translations` (`id`, `specification_id`, `locale`, `spec_key`, `spec_value`) VALUES (7435, 2511, 'cs', 'Hmotnost', '2 kg');
 
 -- table: product_feature_presets
 CREATE TABLE `product_feature_presets` (
@@ -16178,7 +16234,7 @@ CREATE TABLE `product_card_features` (
   `updated_at` datetime DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
--- data: product_card_features (3715 rows)
+-- data: product_card_features (3721 rows)
 INSERT INTO `product_card_features` (`id`, `product_id`, `preset_id`, `icon_key`, `sort_order`, `created_at`, `updated_at`) VALUES (1, 1, 2, 'material', 1, '2026-10-28 12:00:00', '2026-10-28 12:00:00');
 INSERT INTO `product_card_features` (`id`, `product_id`, `preset_id`, `icon_key`, `sort_order`, `created_at`, `updated_at`) VALUES (2, 1, 3, 'finish', 2, '2026-10-28 12:00:00', '2026-10-28 12:00:00');
 INSERT INTO `product_card_features` (`id`, `product_id`, `preset_id`, `icon_key`, `sort_order`, `created_at`, `updated_at`) VALUES (3, 1, 4, 'installation', 3, '2026-10-28 12:00:00', '2026-10-28 12:00:00');
@@ -19894,6 +19950,12 @@ INSERT INTO `product_card_features` (`id`, `product_id`, `preset_id`, `icon_key`
 INSERT INTO `product_card_features` (`id`, `product_id`, `preset_id`, `icon_key`, `sort_order`, `created_at`, `updated_at`) VALUES (3713, 713, 4, 'installation', 4, '2026-10-31 06:36:12', '2026-10-31 06:36:12');
 INSERT INTO `product_card_features` (`id`, `product_id`, `preset_id`, `icon_key`, `sort_order`, `created_at`, `updated_at`) VALUES (3714, 713, 5, 'cartridge', 5, '2026-10-31 06:36:12', '2026-10-31 06:36:12');
 INSERT INTO `product_card_features` (`id`, `product_id`, `preset_id`, `icon_key`, `sort_order`, `created_at`, `updated_at`) VALUES (3715, 713, 6, 'water-saving', 6, '2026-10-31 06:36:12', '2026-10-31 06:36:12');
+INSERT INTO `product_card_features` (`id`, `product_id`, `preset_id`, `icon_key`, `sort_order`, `created_at`, `updated_at`) VALUES (3800, 714, 1, 'dimensions', 1, '2026-11-05 13:00:00', '2026-11-05 13:00:00');
+INSERT INTO `product_card_features` (`id`, `product_id`, `preset_id`, `icon_key`, `sort_order`, `created_at`, `updated_at`) VALUES (3801, 714, 2, 'material', 2, '2026-11-05 13:00:00', '2026-11-05 13:00:00');
+INSERT INTO `product_card_features` (`id`, `product_id`, `preset_id`, `icon_key`, `sort_order`, `created_at`, `updated_at`) VALUES (3802, 714, 3, 'finish', 3, '2026-11-05 13:00:00', '2026-11-05 13:00:00');
+INSERT INTO `product_card_features` (`id`, `product_id`, `preset_id`, `icon_key`, `sort_order`, `created_at`, `updated_at`) VALUES (3803, 714, 4, 'installation', 4, '2026-11-05 13:00:00', '2026-11-05 13:00:00');
+INSERT INTO `product_card_features` (`id`, `product_id`, `preset_id`, `icon_key`, `sort_order`, `created_at`, `updated_at`) VALUES (3804, 714, 20, 'warranty', 5, '2026-11-05 13:00:00', '2026-11-05 13:00:00');
+INSERT INTO `product_card_features` (`id`, `product_id`, `preset_id`, `icon_key`, `sort_order`, `created_at`, `updated_at`) VALUES (3805, 714, 19, 'certification', 6, '2026-11-05 13:00:00', '2026-11-05 13:00:00');
 
 -- table: product_card_feature_translations
 CREATE TABLE `product_card_feature_translations` (
@@ -19904,7 +19966,7 @@ CREATE TABLE `product_card_feature_translations` (
   `feature_value` varchar(255) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
--- data: product_card_feature_translations (11145 rows)
+-- data: product_card_feature_translations (11163 rows)
 INSERT INTO `product_card_feature_translations` (`id`, `feature_id`, `locale`, `label`, `feature_value`) VALUES (1, 1, 'en', 'Material', 'Vitreous China');
 INSERT INTO `product_card_feature_translations` (`id`, `feature_id`, `locale`, `label`, `feature_value`) VALUES (2, 1, 'tr', 'Malzeme', 'Vitrifiye Seramik');
 INSERT INTO `product_card_feature_translations` (`id`, `feature_id`, `locale`, `label`, `feature_value`) VALUES (3, 1, 'cs', 'Materiál', 'Sanitární keramika');
@@ -31050,6 +31112,24 @@ INSERT INTO `product_card_feature_translations` (`id`, `feature_id`, `locale`, `
 INSERT INTO `product_card_feature_translations` (`id`, `feature_id`, `locale`, `label`, `feature_value`) VALUES (11143, 3715, 'en', 'Water System', 'Neoperl® Eco Aerator');
 INSERT INTO `product_card_feature_translations` (`id`, `feature_id`, `locale`, `label`, `feature_value`) VALUES (11144, 3715, 'tr', 'Su Teknolojisi', 'Neoperl® Su Tasarruflu');
 INSERT INTO `product_card_feature_translations` (`id`, `feature_id`, `locale`, `label`, `feature_value`) VALUES (11145, 3715, 'cs', 'Vodní systém', 'Úsporný perlátor Neoperl®');
+INSERT INTO `product_card_feature_translations` (`id`, `feature_id`, `locale`, `label`, `feature_value`) VALUES (11300, 3800, 'en', 'Dimensions', 'Ø48 × 185 mm');
+INSERT INTO `product_card_feature_translations` (`id`, `feature_id`, `locale`, `label`, `feature_value`) VALUES (11301, 3800, 'tr', 'Ölçüler', 'Ø48 × 185 mm');
+INSERT INTO `product_card_feature_translations` (`id`, `feature_id`, `locale`, `label`, `feature_value`) VALUES (11302, 3800, 'cs', 'Rozměry', 'Ø48 × 185 mm');
+INSERT INTO `product_card_feature_translations` (`id`, `feature_id`, `locale`, `label`, `feature_value`) VALUES (11303, 3801, 'en', 'Material', 'Brass & AISI 304');
+INSERT INTO `product_card_feature_translations` (`id`, `feature_id`, `locale`, `label`, `feature_value`) VALUES (11304, 3801, 'tr', 'Malzeme', 'Pirinç ve AISI 304');
+INSERT INTO `product_card_feature_translations` (`id`, `feature_id`, `locale`, `label`, `feature_value`) VALUES (11305, 3801, 'cs', 'Materiál', 'Mosaz a nerez AISI 304');
+INSERT INTO `product_card_feature_translations` (`id`, `feature_id`, `locale`, `label`, `feature_value`) VALUES (11306, 3802, 'en', 'Finish', 'Chrome');
+INSERT INTO `product_card_feature_translations` (`id`, `feature_id`, `locale`, `label`, `feature_value`) VALUES (11307, 3802, 'tr', 'Yüzey', 'Krom');
+INSERT INTO `product_card_feature_translations` (`id`, `feature_id`, `locale`, `label`, `feature_value`) VALUES (11308, 3802, 'cs', 'Povrch', 'Chrom');
+INSERT INTO `product_card_feature_translations` (`id`, `feature_id`, `locale`, `label`, `feature_value`) VALUES (11309, 3803, 'en', 'Mounting', 'Deck Mounted');
+INSERT INTO `product_card_feature_translations` (`id`, `feature_id`, `locale`, `label`, `feature_value`) VALUES (11310, 3803, 'tr', 'Montaj', 'Tezgâh Üstü');
+INSERT INTO `product_card_feature_translations` (`id`, `feature_id`, `locale`, `label`, `feature_value`) VALUES (11311, 3803, 'cs', 'Montáž', 'Na desku');
+INSERT INTO `product_card_feature_translations` (`id`, `feature_id`, `locale`, `label`, `feature_value`) VALUES (11312, 3804, 'en', 'Operation', 'Push Type');
+INSERT INTO `product_card_feature_translations` (`id`, `feature_id`, `locale`, `label`, `feature_value`) VALUES (11313, 3804, 'tr', 'Çalışma', 'Basmalı');
+INSERT INTO `product_card_feature_translations` (`id`, `feature_id`, `locale`, `label`, `feature_value`) VALUES (11314, 3804, 'cs', 'Provoz', 'Tlačný');
+INSERT INTO `product_card_feature_translations` (`id`, `feature_id`, `locale`, `label`, `feature_value`) VALUES (11315, 3805, 'en', 'Soap Viscosity', 'Max 40,000 cP');
+INSERT INTO `product_card_feature_translations` (`id`, `feature_id`, `locale`, `label`, `feature_value`) VALUES (11316, 3805, 'tr', 'Sabun Viskozitesi', 'Maks. 40.000 cP');
+INSERT INTO `product_card_feature_translations` (`id`, `feature_id`, `locale`, `label`, `feature_value`) VALUES (11317, 3805, 'cs', 'Viskozita mýdla', 'Max 40 000 cP');
 
 -- table: product_dimensions
 CREATE TABLE `product_dimensions` (
@@ -31064,7 +31144,9 @@ CREATE TABLE `product_dimensions` (
   `updated_at` datetime DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
--- data: product_dimensions (0 rows)
+-- data: product_dimensions (1 rows)
+
+INSERT INTO `product_dimensions` (`id`, `product_id`, `variant_id`, `width_mm`, `height_mm`, `depth_mm`, `weight_kg`, `created_at`, `updated_at`) VALUES (1, 714, NULL, 48, 185, 48, 2, '2026-11-05 13:00:00', '2026-11-05 13:00:00');
 
 -- table: product_media
 CREATE TABLE `product_media` (
@@ -31079,7 +31161,7 @@ CREATE TABLE `product_media` (
   `updated_at` datetime DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
--- data: product_media (1504 rows)
+-- data: product_media (1503 rows)
 INSERT INTO `product_media` (`id`, `product_id`, `variant_id`, `media_id`, `type`, `sort_order`, `is_primary`, `created_at`, `updated_at`) VALUES (1, 1, NULL, 1, 'gallery', 1, 1, '2026-10-23 09:44:39', '2026-10-23 09:44:39');
 INSERT INTO `product_media` (`id`, `product_id`, `variant_id`, `media_id`, `type`, `sort_order`, `is_primary`, `created_at`, `updated_at`) VALUES (2, 2, NULL, 2, 'gallery', 1, 1, '2026-10-23 09:44:39', '2026-10-23 09:44:39');
 INSERT INTO `product_media` (`id`, `product_id`, `variant_id`, `media_id`, `type`, `sort_order`, `is_primary`, `created_at`, `updated_at`) VALUES (3, 3, NULL, 3, 'gallery', 1, 1, '2026-10-23 09:44:39', '2026-10-23 09:44:39');
@@ -32577,13 +32659,13 @@ INSERT INTO `product_media` (`id`, `product_id`, `variant_id`, `media_id`, `type
 INSERT INTO `product_media` (`id`, `product_id`, `variant_id`, `media_id`, `type`, `sort_order`, `is_primary`, `created_at`, `updated_at`) VALUES (1495, 711, NULL, 1495, 'drawing', 3, 0, '2026-10-23 09:44:39', '2026-10-23 09:44:39');
 INSERT INTO `product_media` (`id`, `product_id`, `variant_id`, `media_id`, `type`, `sort_order`, `is_primary`, `created_at`, `updated_at`) VALUES (1496, 712, NULL, 1496, 'gallery', 1, 1, '2026-10-23 09:44:39', '2026-10-23 09:44:39');
 INSERT INTO `product_media` (`id`, `product_id`, `variant_id`, `media_id`, `type`, `sort_order`, `is_primary`, `created_at`, `updated_at`) VALUES (1498, 713, NULL, 802, 'drawing', 1, 0, '2026-10-31 06:36:12', '2026-10-31 06:36:12');
-INSERT INTO `product_media` (`id`, `product_id`, `variant_id`, `media_id`, `type`, `sort_order`, `is_primary`, `created_at`, `updated_at`) VALUES (1499, 714, NULL, 1497, 'main', 1, 1, '2026-10-31 06:48:56', '2026-10-31 06:48:56');
-INSERT INTO `product_media` (`id`, `product_id`, `variant_id`, `media_id`, `type`, `sort_order`, `is_primary`, `created_at`, `updated_at`) VALUES (1500, 714, NULL, 1498, 'drawing', 1, 0, '2026-10-31 06:49:07', '2026-10-31 06:49:07');
-INSERT INTO `product_media` (`id`, `product_id`, `variant_id`, `media_id`, `type`, `sort_order`, `is_primary`, `created_at`, `updated_at`) VALUES (1501, 714, NULL, 1499, 'drawing', 2, 0, '2026-10-31 06:49:07', '2026-10-31 06:49:07');
-INSERT INTO `product_media` (`id`, `product_id`, `variant_id`, `media_id`, `type`, `sort_order`, `is_primary`, `created_at`, `updated_at`) VALUES (1502, 714, NULL, 1500, 'drawing', 3, 0, '2026-10-31 06:49:07', '2026-10-31 06:49:07');
 INSERT INTO `product_media` (`id`, `product_id`, `variant_id`, `media_id`, `type`, `sort_order`, `is_primary`, `created_at`, `updated_at`) VALUES (1503, 715, NULL, 1498, 'drawing', 1, 0, '2026-10-31 06:49:43', '2026-10-31 06:49:43');
 INSERT INTO `product_media` (`id`, `product_id`, `variant_id`, `media_id`, `type`, `sort_order`, `is_primary`, `created_at`, `updated_at`) VALUES (1504, 715, NULL, 1499, 'drawing', 2, 0, '2026-10-31 06:49:43', '2026-10-31 06:49:43');
 INSERT INTO `product_media` (`id`, `product_id`, `variant_id`, `media_id`, `type`, `sort_order`, `is_primary`, `created_at`, `updated_at`) VALUES (1505, 715, NULL, 1500, 'drawing', 3, 0, '2026-10-31 06:49:43', '2026-10-31 06:49:43');
+INSERT INTO `product_media` (`id`, `product_id`, `variant_id`, `media_id`, `type`, `sort_order`, `is_primary`, `created_at`, `updated_at`) VALUES (1506, 714, NULL, 1501, 'gallery', 1, 1, '2026-11-05 13:00:00', '2026-11-05 13:00:00');
+INSERT INTO `product_media` (`id`, `product_id`, `variant_id`, `media_id`, `type`, `sort_order`, `is_primary`, `created_at`, `updated_at`) VALUES (1507, 714, NULL, 1502, 'gallery', 2, 0, '2026-11-05 13:00:00', '2026-11-05 13:00:00');
+INSERT INTO `product_media` (`id`, `product_id`, `variant_id`, `media_id`, `type`, `sort_order`, `is_primary`, `created_at`, `updated_at`) VALUES (1508, 714, NULL, 1503, 'situ', 3, 0, '2026-11-05 13:00:00', '2026-11-05 13:00:00');
+INSERT INTO `product_media` (`id`, `product_id`, `variant_id`, `media_id`, `type`, `sort_order`, `is_primary`, `created_at`, `updated_at`) VALUES (1509, 714, NULL, 1504, 'drawing', 1, 0, '2026-11-05 13:00:00', '2026-11-05 13:00:00');
 
 -- table: product_documents
 CREATE TABLE `product_documents` (
@@ -35018,7 +35100,7 @@ CREATE TABLE `product_search_keywords` (
   `keyword` varchar(150) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
--- data: product_search_keywords (8893 rows)
+-- data: product_search_keywords (8901 rows)
 INSERT INTO `product_search_keywords` (`id`, `product_id`, `keyword`) VALUES (2, 1, '1520-015');
 INSERT INTO `product_search_keywords` (`id`, `product_id`, `keyword`) VALUES (8880, 1, '1685-015');
 INSERT INTO `product_search_keywords` (`id`, `product_id`, `keyword`) VALUES (3, 1, 'bathroom');
@@ -43900,18 +43982,26 @@ INSERT INTO `product_search_keywords` (`id`, `product_id`, `keyword`) VALUES (89
 INSERT INTO `product_search_keywords` (`id`, `product_id`, `keyword`) VALUES (8906, 713, 'mixers');
 INSERT INTO `product_search_keywords` (`id`, `product_id`, `keyword`) VALUES (8908, 713, 'umyvadlové baterie');
 INSERT INTO `product_search_keywords` (`id`, `product_id`, `keyword`) VALUES (8902, 713, 'wash');
-INSERT INTO `product_search_keywords` (`id`, `product_id`, `keyword`) VALUES (8925, 714, 'dispenser');
-INSERT INTO `product_search_keywords` (`id`, `product_id`, `keyword`) VALUES (8923, 714, 'hand');
-INSERT INTO `product_search_keywords` (`id`, `product_id`, `keyword`) VALUES (8921, 714, 'lufly');
-INSERT INTO `product_search_keywords` (`id`, `product_id`, `keyword`) VALUES (8926, 714, 'soap dispenser');
-INSERT INTO `product_search_keywords` (`id`, `product_id`, `keyword`) VALUES (8922, 714, 'v-0726c');
-INSERT INTO `product_search_keywords` (`id`, `product_id`, `keyword`) VALUES (8924, 714, 'wash');
 INSERT INTO `product_search_keywords` (`id`, `product_id`, `keyword`) VALUES (8931, 715, 'dispenser');
 INSERT INTO `product_search_keywords` (`id`, `product_id`, `keyword`) VALUES (8929, 715, 'hand');
 INSERT INTO `product_search_keywords` (`id`, `product_id`, `keyword`) VALUES (8927, 715, 'lufly');
 INSERT INTO `product_search_keywords` (`id`, `product_id`, `keyword`) VALUES (8932, 715, 'soap dispenser');
 INSERT INTO `product_search_keywords` (`id`, `product_id`, `keyword`) VALUES (8928, 715, 'v-0726c-2');
 INSERT INTO `product_search_keywords` (`id`, `product_id`, `keyword`) VALUES (8930, 715, 'wash');
+INSERT INTO `product_search_keywords` (`id`, `product_id`, `keyword`) VALUES (9000, 714, 'V-0726C');
+INSERT INTO `product_search_keywords` (`id`, `product_id`, `keyword`) VALUES (9001, 714, 'lufly');
+INSERT INTO `product_search_keywords` (`id`, `product_id`, `keyword`) VALUES (9002, 714, 'soap dispenser');
+INSERT INTO `product_search_keywords` (`id`, `product_id`, `keyword`) VALUES (9003, 714, 'hand wash dispenser');
+INSERT INTO `product_search_keywords` (`id`, `product_id`, `keyword`) VALUES (9004, 714, 'sabunluk');
+INSERT INTO `product_search_keywords` (`id`, `product_id`, `keyword`) VALUES (9005, 714, 'sabunluk bataryası');
+INSERT INTO `product_search_keywords` (`id`, `product_id`, `keyword`) VALUES (9006, 714, 'dávkovač mýdla');
+INSERT INTO `product_search_keywords` (`id`, `product_id`, `keyword`) VALUES (9007, 714, 'deck mounted dispenser');
+INSERT INTO `product_search_keywords` (`id`, `product_id`, `keyword`) VALUES (9008, 714, 'push type soap dispenser');
+INSERT INTO `product_search_keywords` (`id`, `product_id`, `keyword`) VALUES (9009, 714, 'chrome soap dispenser');
+INSERT INTO `product_search_keywords` (`id`, `product_id`, `keyword`) VALUES (9010, 714, 'bathroom accessories');
+INSERT INTO `product_search_keywords` (`id`, `product_id`, `keyword`) VALUES (9011, 714, 'bathroom');
+INSERT INTO `product_search_keywords` (`id`, `product_id`, `keyword`) VALUES (9012, 714, 'accessories');
+INSERT INTO `product_search_keywords` (`id`, `product_id`, `keyword`) VALUES (9013, 714, 'soap-dispenser');
 
 -- table: product_import_logs
 CREATE TABLE `product_import_logs` (

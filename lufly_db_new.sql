@@ -11,7 +11,6 @@ SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
 START TRANSACTION;
 SET time_zone = "+00:00";
 
-
 /*!40101 SET @OLD_CHARACTER_SET_CLIENT=@@CHARACTER_SET_CLIENT */;
 /*!40101 SET @OLD_CHARACTER_SET_RESULTS=@@CHARACTER_SET_RESULTS */;
 /*!40101 SET @OLD_COLLATION_CONNECTION=@@COLLATION_CONNECTION */;
@@ -640,7 +639,6 @@ INSERT INTO `categories` (`id`, `parent_id`, `slug`, `image`, `icon`, `is_featur
 (107, 103, 'drains.by-mounting-type.other-drains', '/images/categories/107-drains-by-mounting-type-other-drains.jpg', NULL, 0, 4, 'active', '{\"title\": \"Other Drains\"}', '2026-10-23 07:43:10', '2026-10-23 07:43:10', NULL),
 (108, NULL, 'drinking-fountains', '/images/categories/108-drinking-fountains.jpg', NULL, 1, 9, 'active', '{\"title\": \"Drinking Fountains\"}', '2026-10-23 07:43:10', '2026-10-23 07:43:10', NULL),
 (109, 1, 'bathroom.angle-valves', '/images/categories/109-bathroom-angle-valves.jpg', NULL, 0, 4, 'active', '{\"title\": \"Angle Valves\"}', '2026-10-23 07:43:10', '2026-10-23 07:43:10', NULL),
-(110, NULL, 'soap-dispenser', '/images/categories/110-soap-dispenser.jpg', NULL, 0, 10, 'active', '{\"title\":\"soap dispenser\"}', '2026-10-30 16:16:50', '2026-10-30 16:16:50', NULL);
 
 -- --------------------------------------------------------
 
@@ -654,7 +652,8 @@ CREATE TABLE `category_translations` (
   `locale` varchar(50) NOT NULL,
   `name` varchar(255) NOT NULL,
   `description` longtext DEFAULT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci,
+(110, NULL, 'soap-dispenser', '/images/categories/110-soap-dispenser.jpg', NULL, 1, 10, 'active', '{"title": "Soap Dispensers"}', '2026-10-30 16:16:50', '2026-11-05 13:00:00', NULL);
 
 --
 -- Dumping data for table `category_translations`
@@ -991,7 +990,6 @@ INSERT INTO `category_translations` (`id`, `category_id`, `locale`, `name`, `des
 (325, 109, 'en', 'Angle Valves', NULL),
 (326, 109, 'tr', 'Ara Musluklar', NULL),
 (327, 109, 'cs', 'Rohové ventily', NULL),
-(328, 110, 'en', 'soap dispenser', NULL);
 
 -- --------------------------------------------------------
 
@@ -1008,7 +1006,10 @@ CREATE TABLE `collections` (
   `created_at` datetime DEFAULT NULL,
   `updated_at` datetime DEFAULT NULL,
   `deleted_at` datetime DEFAULT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci,
+(328, 110, 'en', 'Soap Dispensers', NULL),
+(332, 110, 'tr', 'Sabunluklar', NULL),
+(333, 110, 'cs', 'Dávkovače mýdla', NULL);
 
 --
 -- Dumping data for table `collections`
@@ -2666,7 +2667,11 @@ INSERT INTO `media` (`id`, `uuid`, `collection`, `filename`, `original_name`, `p
 (1497, NULL, 'soap-dispenser', '180ce90b527f3ea5787fd293.jpeg', 'WhatsApp Image 2026-10-30 at 14.29.49.jpeg', '/images/uploads/soap-dispenser/2026/10/180ce90b527f3ea5787fd293.jpeg', 'image/jpeg', 'jpeg', 44523, NULL, NULL, '[]', 2, 'missing', '2026-10-31 06:48:56', '2026-10-31 06:48:56', NULL),
 (1498, NULL, 'soap-dispenser', '949ef0f9f6ebd3d2b0cb00c0.jpeg', 'hdhdh.jpeg', '/images/uploads/soap-dispenser/2026/10/949ef0f9f6ebd3d2b0cb00c0.jpeg', 'image/jpeg', 'jpeg', 45358, NULL, NULL, '[]', 2, 'missing', '2026-10-31 06:49:07', '2026-10-31 06:49:07', NULL),
 (1499, NULL, 'soap-dispenser', '29bf3f4ef91962f46a9be09b.jpeg', '2jjs.jpeg', '/images/uploads/soap-dispenser/2026/10/29bf3f4ef91962f46a9be09b.jpeg', 'image/jpeg', 'jpeg', 42622, NULL, NULL, '[]', 2, 'missing', '2026-10-31 06:49:07', '2026-10-31 06:49:07', NULL),
-(1500, NULL, 'soap-dispenser', '84188b421f11e9e2b87723b3.jpeg', 'iiiii.jpeg', '/images/uploads/soap-dispenser/2026/10/84188b421f11e9e2b87723b3.jpeg', 'image/jpeg', 'jpeg', 59248, NULL, NULL, '[]', 2, 'missing', '2026-10-31 06:49:07', '2026-10-31 06:49:07', NULL);
+(1500, NULL, 'soap-dispenser', '84188b421f11e9e2b87723b3.jpeg', 'iiiii.jpeg', '/images/uploads/soap-dispenser/2026/10/84188b421f11e9e2b87723b3.jpeg', 'image/jpeg', 'jpeg', 59248, NULL, NULL, '[]', 2, 'missing', '2026-10-31 06:49:07', '2026-10-31 06:49:07', NULL),
+(1501, NULL, 'soap-dispenser', 'v-0726c-hero.jpg', 'V-0726C hero.jpg', '/images/products/soap-dispenser/v-0726c-hero.jpg', 'image/jpeg', 'jpeg', 343673, 1600, 2867, '[]', 2, 'active', '2026-11-05 13:00:00', '2026-11-05 13:00:00', NULL),
+(1502, NULL, 'soap-dispenser', 'v-0726c-detail.jpg', 'V-0726C detail.jpg', '/images/products/soap-dispenser/v-0726c-detail.jpg', 'image/jpeg', 'jpeg', 129320, 1600, 893, '[]', 2, 'active', '2026-11-05 13:00:00', '2026-11-05 13:00:00', NULL),
+(1503, NULL, 'soap-dispenser', 'v-0726c-lifestyle.jpg', 'V-0726C in situ.jpg', '/images/products/soap-dispenser/v-0726c-lifestyle.jpg', 'image/jpeg', 'jpeg', 297242, 1600, 1477, '[]', 2, 'active', '2026-11-05 13:00:00', '2026-11-05 13:00:00', NULL),
+(1504, NULL, 'soap-dispenser', '4f7df108c783d9ba2757a88f.webp', 'V-0726C technical sheet.webp', '/images/products/catalog/4f7df108c783d9ba2757a88f.webp', 'image/webp', 'webp', 69474, 1720, 1440, '[]', 2, 'active', '2026-11-05 13:00:00', '2026-11-05 13:00:00', NULL);
 
 -- --------------------------------------------------------
 
@@ -3535,7 +3540,7 @@ INSERT INTO `products` (`id`, `model_code`, `slug`, `category_id`, `collection_i
 (711, '5000-FR03', '5000-fr03', 108, NULL, 1, 'active', 0, 0, 711, '2026-10-18 06:05:58', '2026-10-19 10:50:33', NULL),
 (712, '5000-F04', '5000-f04', 108, NULL, 1, 'active', 0, 0, 712, '2026-10-18 06:05:58', '2026-10-19 10:50:43', NULL),
 (713, '1654-2002RB-4', 'wash-basin-mixer', 11, NULL, 1, 'draft', 0, 0, 0, '2026-10-31 06:36:12', '2026-10-31 06:36:12', NULL),
-(714, 'V-0726C', 'v-0726c', 110, NULL, NULL, 'draft', 0, 0, 0, '2026-10-31 06:47:48', '2026-10-31 06:49:17', NULL),
+(714, 'V-0726C', 'v-0726c', 110, NULL, 1, 'active', 1, 1, 714, '2026-10-31 06:47:48', '2026-11-05 13:00:00', NULL),
 (715, 'V-0726C-2', 'hand-wash-dispenser', 110, NULL, NULL, 'draft', 0, 0, 0, '2026-10-31 06:49:43', '2026-10-31 06:49:43', NULL);
 
 -- --------------------------------------------------------
@@ -7293,7 +7298,13 @@ INSERT INTO `product_card_features` (`id`, `product_id`, `preset_id`, `icon_key`
 (3712, 713, 3, 'finish', 3, '2026-10-31 06:36:12', '2026-10-31 06:36:12'),
 (3713, 713, 4, 'installation', 4, '2026-10-31 06:36:12', '2026-10-31 06:36:12'),
 (3714, 713, 5, 'cartridge', 5, '2026-10-31 06:36:12', '2026-10-31 06:36:12'),
-(3715, 713, 6, 'water-saving', 6, '2026-10-31 06:36:12', '2026-10-31 06:36:12');
+(3715, 713, 6, 'water-saving', 6, '2026-10-31 06:36:12', '2026-10-31 06:36:12'),
+(3800, 714, 1, 'dimensions', 1, '2026-11-05 13:00:00', '2026-11-05 13:00:00'),
+(3801, 714, 2, 'material', 2, '2026-11-05 13:00:00', '2026-11-05 13:00:00'),
+(3802, 714, 3, 'finish', 3, '2026-11-05 13:00:00', '2026-11-05 13:00:00'),
+(3803, 714, 4, 'installation', 4, '2026-11-05 13:00:00', '2026-11-05 13:00:00'),
+(3804, 714, 20, 'warranty', 5, '2026-11-05 13:00:00', '2026-11-05 13:00:00'),
+(3805, 714, 19, 'certification', 6, '2026-11-05 13:00:00', '2026-11-05 13:00:00');
 
 -- --------------------------------------------------------
 
@@ -9455,7 +9466,7 @@ INSERT INTO `product_card_feature_translations` (`id`, `feature_id`, `locale`, `
 (2137, 713, 'en', 'Geometry', 'Ultra-Slim Profile'),
 (2138, 713, 'tr', 'Form', 'Ultra İnce Tasarım'),
 (2139, 713, 'cs', 'Tvar', 'Ultratenký profil'),
-(2140, 714, 'en', 'Compliance', 'EN 817 · ISO 9001 · CE'),
+(2140, 714, 'en', 'Hand Wash Dispenser', 'Hand Wash Dispenser — deck mounted, push type, 48 mm body, 185 mm high, brass body with AISI 304 stainless steel, Chrome finish', 'Hand Wash Dispenser — Deck Mounted, Soap Dispenser, Push Type, Brass raw copper material faucet body with Stainless Steel 304, Finish: Chrome, Diameter: 48 mm [4.8 cm], Weight: 2 kg, Max 43 mm [4.3 cm] Mounting Thickness, 60 mm base flange, 185 mm overall height, 150 mm body height above the base, body inclined at 60° so the soap falls naturally into the hand over the basin. Push-type pump with a slim chrome actuator and a machined soap outlet; recommended maximum of 40,000 cP soap viscosity, suitable for liquid soap and hand wash gels. The polished cap carries the LUFLY mark engraved tone-on-tone.\n\nVerified drawing dimensions:\nBody diameter: 48 mm\nBase flange diameter: 60 mm\nOverall height: 185 mm\nBody height above base: 150 mm\nMaximum mounting thickness: 43 mm\nWeight: 2 kg'),
 (2141, 714, 'tr', 'Standart', 'EN 817 · ISO 9001 · CE'),
 (2142, 714, 'cs', 'Certifikace', 'EN 817 · ISO 9001 · CE'),
 (2143, 715, 'en', 'Dimensions', '600 × 55 × 57 mm'),
@@ -18468,7 +18479,25 @@ INSERT INTO `product_card_feature_translations` (`id`, `feature_id`, `locale`, `
 (11142, 3714, 'cs', 'Kartuše', 'Keramická kartuše Kerox®'),
 (11143, 3715, 'en', 'Water System', 'Neoperl® Eco Aerator'),
 (11144, 3715, 'tr', 'Su Teknolojisi', 'Neoperl® Su Tasarruflu'),
-(11145, 3715, 'cs', 'Vodní systém', 'Úsporný perlátor Neoperl®');
+(11145, 3715, 'cs', 'Vodní systém', 'Úsporný perlátor Neoperl®'),
+(11300, 3800, 'en', 'Dimensions', 'Ø48 × 185 mm'),
+(11301, 3800, 'tr', 'Ölçüler', 'Ø48 × 185 mm'),
+(11302, 3800, 'cs', 'Rozměry', 'Ø48 × 185 mm'),
+(11303, 3801, 'en', 'Material', 'Brass & AISI 304'),
+(11304, 3801, 'tr', 'Malzeme', 'Pirinç ve AISI 304'),
+(11305, 3801, 'cs', 'Materiál', 'Mosaz a nerez AISI 304'),
+(11306, 3802, 'en', 'Finish', 'Chrome'),
+(11307, 3802, 'tr', 'Yüzey', 'Krom'),
+(11308, 3802, 'cs', 'Povrch', 'Chrom'),
+(11309, 3803, 'en', 'Mounting', 'Deck Mounted'),
+(11310, 3803, 'tr', 'Montaj', 'Tezgâh Üstü'),
+(11311, 3803, 'cs', 'Montáž', 'Na desku'),
+(11312, 3804, 'en', 'Operation', 'Push Type'),
+(11313, 3804, 'tr', 'Çalışma', 'Basmalı'),
+(11314, 3804, 'cs', 'Provoz', 'Tlačný'),
+(11315, 3805, 'en', 'Soap Viscosity', 'Max 40,000 cP'),
+(11316, 3805, 'tr', 'Sabun Viskozitesi', 'Maks. 40.000 cP'),
+(11317, 3805, 'cs', 'Viskozita mýdla', 'Max 40 000 cP');
 
 -- --------------------------------------------------------
 
@@ -20919,13 +20948,13 @@ INSERT INTO `product_media` (`id`, `product_id`, `variant_id`, `media_id`, `type
 (1495, 711, NULL, 1495, 'drawing', 3, 0, '2026-10-23 09:44:39', '2026-10-23 09:44:39'),
 (1496, 712, NULL, 1496, 'gallery', 1, 1, '2026-10-23 09:44:39', '2026-10-23 09:44:39'),
 (1498, 713, NULL, 802, 'drawing', 1, 0, '2026-10-31 06:36:12', '2026-10-31 06:36:12'),
-(1499, 714, NULL, 1497, 'main', 1, 1, '2026-10-31 06:48:56', '2026-10-31 06:48:56'),
-(1500, 714, NULL, 1498, 'drawing', 1, 0, '2026-10-31 06:49:07', '2026-10-31 06:49:07'),
-(1501, 714, NULL, 1499, 'drawing', 2, 0, '2026-10-31 06:49:07', '2026-10-31 06:49:07'),
-(1502, 714, NULL, 1500, 'drawing', 3, 0, '2026-10-31 06:49:07', '2026-10-31 06:49:07'),
 (1503, 715, NULL, 1498, 'drawing', 1, 0, '2026-10-31 06:49:43', '2026-10-31 06:49:43'),
 (1504, 715, NULL, 1499, 'drawing', 2, 0, '2026-10-31 06:49:43', '2026-10-31 06:49:43'),
-(1505, 715, NULL, 1500, 'drawing', 3, 0, '2026-10-31 06:49:43', '2026-10-31 06:49:43');
+(1505, 715, NULL, 1500, 'drawing', 3, 0, '2026-10-31 06:49:43', '2026-10-31 06:49:43'),
+(1506, 714, NULL, 1501, 'gallery', 1, 1, '2026-11-05 13:00:00', '2026-11-05 13:00:00'),
+(1507, 714, NULL, 1502, 'gallery', 2, 0, '2026-11-05 13:00:00', '2026-11-05 13:00:00'),
+(1508, 714, NULL, 1503, 'situ', 3, 0, '2026-11-05 13:00:00', '2026-11-05 13:00:00'),
+(1509, 714, NULL, 1504, 'drawing', 1, 0, '2026-11-05 13:00:00', '2026-11-05 13:00:00');
 
 -- --------------------------------------------------------
 
@@ -30097,18 +30126,26 @@ INSERT INTO `product_search_keywords` (`id`, `product_id`, `keyword`) VALUES
 (8906, 713, 'mixers'),
 (8908, 713, 'umyvadlové baterie'),
 (8902, 713, 'wash'),
-(8925, 714, 'dispenser'),
-(8923, 714, 'hand'),
-(8921, 714, 'lufly'),
-(8926, 714, 'soap dispenser'),
-(8922, 714, 'v-0726c'),
-(8924, 714, 'wash'),
 (8931, 715, 'dispenser'),
 (8929, 715, 'hand'),
 (8927, 715, 'lufly'),
 (8932, 715, 'soap dispenser'),
 (8928, 715, 'v-0726c-2'),
-(8930, 715, 'wash');
+(8930, 715, 'wash'),
+(9000, 714, 'V-0726C'),
+(9001, 714, 'lufly'),
+(9002, 714, 'soap dispenser'),
+(9003, 714, 'hand wash dispenser'),
+(9004, 714, 'sabunluk'),
+(9005, 714, 'sabunluk bataryası'),
+(9006, 714, 'dávkovač mýdla'),
+(9007, 714, 'deck mounted dispenser'),
+(9008, 714, 'push type soap dispenser'),
+(9009, 714, 'chrome soap dispenser'),
+(9010, 714, 'bathroom accessories'),
+(9011, 714, 'bathroom'),
+(9012, 714, 'accessories'),
+(9013, 714, 'soap-dispenser');
 
 -- --------------------------------------------------------
 
@@ -32593,7 +32630,19 @@ INSERT INTO `product_specifications` (`id`, `product_id`, `variant_id`, `spec_ke
 (2454, 712, NULL, 'Finish', 'Brushed Stainless Steel', NULL, 1, NULL, NULL),
 (2455, 713, NULL, 'Drawing: Overall height', '290 mm', NULL, 1, '2026-10-31 06:36:12', '2026-10-31 06:36:12'),
 (2456, 713, NULL, 'Drawing: Spout reach', '143 mm', NULL, 2, '2026-10-31 06:36:12', '2026-10-31 06:36:12'),
-(2457, 713, NULL, 'Drawing: Spout height', '166 mm', NULL, 3, '2026-10-31 06:36:12', '2026-10-31 06:36:12');
+(2457, 713, NULL, 'Drawing: Spout height', '166 mm', NULL, 3, '2026-10-31 06:36:12', '2026-10-31 06:36:12'),
+(2500, 714, NULL, 'Finish', 'Chrome', NULL, 1, '2026-11-05 13:00:00', '2026-11-05 13:00:00'),
+(2501, 714, NULL, 'Drawing: Body diameter', '48 mm', NULL, 2, '2026-11-05 13:00:00', '2026-11-05 13:00:00'),
+(2502, 714, NULL, 'Drawing: Base diameter', '60 mm', NULL, 3, '2026-11-05 13:00:00', '2026-11-05 13:00:00'),
+(2503, 714, NULL, 'Drawing: Overall height', '185 mm', NULL, 4, '2026-11-05 13:00:00', '2026-11-05 13:00:00'),
+(2504, 714, NULL, 'Drawing: Body height', '150 mm', NULL, 5, '2026-11-05 13:00:00', '2026-11-05 13:00:00'),
+(2505, 714, NULL, 'Drawing: Mounting thickness', 'Max 43 mm', NULL, 6, '2026-11-05 13:00:00', '2026-11-05 13:00:00'),
+(2506, 714, NULL, 'Material', 'Brass & AISI 304 Stainless Steel', NULL, 7, '2026-11-05 13:00:00', '2026-11-05 13:00:00'),
+(2507, 714, NULL, 'Installation', 'Deck mounted', NULL, 8, '2026-11-05 13:00:00', '2026-11-05 13:00:00'),
+(2508, 714, NULL, 'Dispenser type', 'Push type', NULL, 9, '2026-11-05 13:00:00', '2026-11-05 13:00:00'),
+(2509, 714, NULL, 'Soap viscosity', 'Max 40,000 cP', NULL, 10, '2026-11-05 13:00:00', '2026-11-05 13:00:00'),
+(2510, 714, NULL, 'Body angle', '60°', NULL, 11, '2026-11-05 13:00:00', '2026-11-05 13:00:00'),
+(2511, 714, NULL, 'Weight', '2 kg', NULL, 12, '2026-11-05 13:00:00', '2026-11-05 13:00:00');
 
 -- --------------------------------------------------------
 
@@ -39991,7 +40040,43 @@ INSERT INTO `product_specification_translations` (`id`, `specification_id`, `loc
 (7368, 2456, 'cs', 'Výkres: Dosah výtoku', '143 mm'),
 (7369, 2457, 'en', 'Drawing: Spout height', '166 mm'),
 (7370, 2457, 'tr', 'Teknik Çizim: Gaga çıkış yüksekliği', '166 mm'),
-(7371, 2457, 'cs', 'Výkres: Výška výtoku', '166 mm');
+(7371, 2457, 'cs', 'Výkres: Výška výtoku', '166 mm'),
+(7400, 2500, 'en', 'Finish', 'Chrome'),
+(7401, 2500, 'tr', 'Yüzey Kaplaması', 'Krom'),
+(7402, 2500, 'cs', 'Povrchová úprava', 'Chrom'),
+(7403, 2501, 'en', 'Drawing: Body diameter', '48 mm'),
+(7404, 2501, 'tr', 'Teknik Çizim: Gövde çapı', '48 mm'),
+(7405, 2501, 'cs', 'Výkres: Průměr těla', '48 mm'),
+(7406, 2502, 'en', 'Drawing: Base diameter', '60 mm'),
+(7407, 2502, 'tr', 'Teknik Çizim: Taban çapı', '60 mm'),
+(7408, 2502, 'cs', 'Výkres: Průměr základny', '60 mm'),
+(7409, 2503, 'en', 'Drawing: Overall height', '185 mm'),
+(7410, 2503, 'tr', 'Teknik Çizim: Toplam yükseklik', '185 mm'),
+(7411, 2503, 'cs', 'Výkres: Celková výška', '185 mm'),
+(7412, 2504, 'en', 'Drawing: Body height', '150 mm'),
+(7413, 2504, 'tr', 'Teknik Çizim: Gövde yüksekliği', '150 mm'),
+(7414, 2504, 'cs', 'Výkres: Výška těla', '150 mm'),
+(7415, 2505, 'en', 'Drawing: Mounting thickness', 'Max 43 mm'),
+(7416, 2505, 'tr', 'Teknik Çizim: Montaj kalınlığı', 'Maks. 43 mm'),
+(7417, 2505, 'cs', 'Výkres: Tloušťka montáže', 'Max. 43 mm'),
+(7418, 2506, 'en', 'Material', 'Brass & AISI 304 Stainless Steel'),
+(7419, 2506, 'tr', 'Malzeme', 'Pirinç ve AISI 304 Paslanmaz Çelik'),
+(7420, 2506, 'cs', 'Materiál', 'Mosaz a nerez AISI 304'),
+(7421, 2507, 'en', 'Installation', 'Deck mounted'),
+(7422, 2507, 'tr', 'Montaj', 'Tezgâh üstü'),
+(7423, 2507, 'cs', 'Montáž', 'Na desku'),
+(7424, 2508, 'en', 'Dispenser type', 'Push type'),
+(7425, 2508, 'tr', 'Sabunluk tipi', 'Basmalı'),
+(7426, 2508, 'cs', 'Typ dávkovače', 'Tlačný'),
+(7427, 2509, 'en', 'Soap viscosity', 'Max 40,000 cP'),
+(7428, 2509, 'tr', 'Sabun viskozitesi', 'Maks. 40.000 cP'),
+(7429, 2509, 'cs', 'Viskozita mýdla', 'Max 40 000 cP'),
+(7430, 2510, 'en', 'Body angle', '60°'),
+(7431, 2510, 'tr', 'Gövde açısı', '60°'),
+(7432, 2510, 'cs', 'Úhel těla', '60°'),
+(7433, 2511, 'en', 'Weight', '2 kg'),
+(7434, 2511, 'tr', 'Ağırlık', '2 kg'),
+(7435, 2511, 'cs', 'Hmotnost', '2 kg');
 
 -- --------------------------------------------------------
 
@@ -42171,7 +42256,9 @@ INSERT INTO `product_translations` (`id`, `product_id`, `locale`, `name`, `short
 (2138, 713, 'en', 'Wash Basin Mixer', 'Wash Basin Mixer, Decorative Art Mixer, SUS 316 Main body, Brass Diamond handle, Spout & base 3.35# KEROX Cartridge, NEOPERL Aerator, Rose Gold + Electroplated Black, Decorative Finish, TUCAI WATERMARK S/S, water inlet hose, Mixer…', 'Wash Basin Mixer, Decorative Art Mixer, SUS 316 Main body, Brass Diamond handle, Spout & base 3.35# KEROX Cartridge, NEOPERL Aerator, Rose Gold + Electroplated Black, Decorative Finish, TUCAI WATERMARK S/S, water inlet hose, Mixer type: single-handle, mixer Installation method: standing, Brass Solid, Ceramic Cartridge, Rose Gold + Metal Gun\n\nVerified drawing dimensions:\nOverall height: 290 mm\nSpout reach: 143 mm\nSpout height: 166 mm'),
 (2139, 713, 'tr', 'Lavabo Bataryası', 'Lavabo Bataryası, dekoratif tasarım batarya, SUS 316 paslanmaz çelik ana gövde, elmas dokulu pirinç kol, gaga ve gövde tabanı 3.35# KEROX kartuş, NEOPERL perlatör, rose gold + elektrokaplama siyah, dekoratif yüzey, TUCAI WaterMark…', 'Lavabo Bataryası, dekoratif tasarım batarya, SUS 316 paslanmaz çelik ana gövde, elmas dokulu pirinç kol, gaga ve gövde tabanı 3.35# KEROX kartuş, NEOPERL perlatör, rose gold + elektrokaplama siyah, dekoratif yüzey, TUCAI WaterMark paslanmaz çelik bağlantı hortumu, su giriş hortumu, batarya tipi: tek kollu, batarya montaj tipi: tezgâh üstü, masif pirinç, seramik kartuş, rose gold + gunmetal\n\nDoğrulanmış teknik çizim ölçüleri:\nToplam yükseklik: 290 mm\nGaga uzanım mesafesi: 143 mm\nGaga çıkış yüksekliği: 166 mm'),
 (2140, 714, 'en', 'Hand Wash Dispenser', '', ''),
-(2141, 715, 'en', 'Hand Wash Dispenser', '', '');
+(2141, 715, 'en', 'Hand Wash Dispenser', '', ''),
+(2201, 714, 'tr', 'El Yıkama Sabunluk Bataryası', 'El Yıkama Sabunluk Bataryası — tezgâh üstü, basmalı, 48 mm gövde, 185 mm yükseklik, pirinç gövde ve AISI 304 paslanmaz çelik, Krom kaplama', 'El Yıkama Sabunluk Bataryası — Tezgâh Üstü, Sabunluk, Basmalı, pirinç ham bakır gövde ve AISI 304 paslanmaz çelik, Yüzey: Krom, Çap: 48 mm [4,8 cm], Ağırlık: 2 kg, Maksimum 43 mm [4,3 cm] montaj kalınlığı, 60 mm taban flanşı, 185 mm toplam yükseklik, tabandan itibaren 150 mm gövde yüksekliği, gövde lavaboya doğal el pozisyonu için 60° eğimli. İnce krom butonlu basmalı pompa ve işlenmiş sabun çıkışı; tavsiye edilen maksimum 40.000 cP sabun viskozitesi, sıvı sabun ve el yıkama jelleri için uygundur. Parlak başlıkta LUFLY markası ton üzerine ton kazınmıştır.\n\nDoğrulanmış çizim ölçüleri:\nGövde çapı: 48 mm\nTaban flanş çapı: 60 mm\nToplam yükseklik: 185 mm\nTabandan gövde yüksekliği: 150 mm\nMaksimum montaj kalınlığı: 43 mm\nAğırlık: 2 kg'),
+(2202, 714, 'cs', 'Dávkovač mýdla', 'Dávkovač mýdla — na desku, tlačný, tělo 48 mm, výška 185 mm, mosazné tělo a nerez AISI 304, povrch Chrom', 'Dávkovač mýdla — na desku, dávkovač mýdla, tlačný, mosazné tělo ze surové mědi a nerez AISI 304, povrch: Chrom, průměr: 48 mm [4,8 cm], hmotnost: 2 kg, maximální tloušťka montáže 43 mm [4,3 cm], základní příruba 60 mm, celková výška 185 mm, výška těla nad základnou 150 mm, tělo skloněné o 60° pro přirozenou polohu ruky nad umyvadlem. Tlačná pumpa se štíhlým chromovým ovladačem a opracovaným vývodem mýdla; doporučená maximální viskozita mýdla 40 000 cP, vhodné pro tekuté mýdlo a gely na mytí rukou. Na leštěném víku je značka LUFLY vyrytá tón v tónu.\n\nOvěřené rozměry z výkresu:\nPrůměr těla: 48 mm\nPrůměr základní příruby: 60 mm\nCelková výška: 185 mm\nVýška těla nad základnou: 150 mm\nMaximální tloušťka montáže: 43 mm\nHmotnost: 2 kg');
 
 -- --------------------------------------------------------
 
@@ -45521,6 +45608,7 @@ ALTER TABLE `product_card_feature_translations`
   ADD KEY `product_card_feature_translations_feature_id_index` (`feature_id`),
   ADD KEY `product_card_feature_translations_locale_index` (`locale`);
 
+INSERT INTO `product_dimensions` (`id`, `product_id`, `variant_id`, `width_mm`, `height_mm`, `depth_mm`, `weight_kg`, `created_at`, `updated_at`) VALUES (1, 714, NULL, 48, 185, 48, 2, '2026-11-05 13:00:00', '2026-11-05 13:00:00');
 --
 -- Indexes for table `product_dimensions`
 --
