@@ -252,6 +252,42 @@ PLACEMENTS = [
         strength=1.6,
         note="on the flat face of the trap body",
     ),
+    Placement(
+        plate="1644-8037.webp",
+        target="13c66a34aefd59683bdcaa7f.webp",
+        product="1644-8037 · professional spring pull-down mixer",
+        mark_width=112,
+        centre=(206, 1006),
+        strength=1.6,
+        note="front face of the horizontal body barrel at the base",
+    ),
+    Placement(
+        plate="1644-7062.webp",
+        target="8ea841b85374d5ebb6026e97.webp",
+        product="1644-7062 · single-lever mixer, curved gooseneck",
+        mark_width=38,
+        centre=(326, 578),
+        strength=1.55,
+        note="front face of the body, below the spout collar",
+    ),
+    Placement(
+        plate="1644-7069.webp",
+        target="bd83377de00a3c87ac490dd2.webp",
+        product="1644-7069 · square-design single-lever mixer",
+        mark_width=60,
+        centre=(488, 450),
+        strength=1.5,
+        note="front face of the square column, above the base plate",
+    ),
+    Placement(
+        plate="1644-8035c.webp",
+        target="5a3f0f6ca83fc05fa7eb7112.webp",
+        product="1644-8035C · single-lever mixer, square spout",
+        mark_width=54,
+        centre=(470, 390),
+        strength=1.6,
+        note="front face of the column, below the spout bend",
+    ),
 ]
 
 
