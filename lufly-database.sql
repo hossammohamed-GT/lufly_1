@@ -45408,4 +45408,50 @@ COMMIT;
 
 SET FOREIGN_KEY_CHECKS = 1;
 
+
+-- ---------------------------------------------------------------------------
+-- 2026-11-05 - Bathroom accessories: studio photo refresh
+--
+--  * Ten bathroom-accessory products get a new high-resolution studio photo,
+--    engraved with the LUFLY mark; the watermark-only catalogue thumbnails
+--    they replace are retired.
+--  * The freestanding acrylic bathtub (LXD-3104) leaves "Other Accessories"
+--    for the new third-level Bathtubs category under Sanitary Ware.
+-- ---------------------------------------------------------------------------
+
+-- 1. Bathtubs category under Sanitary Ware
+INSERT INTO `categories` (`id`, `parent_id`, `slug`, `image`, `icon`, `is_featured`, `sort_order`, `status`, `seo`, `created_at`, `updated_at`, `deleted_at`) VALUES (112, 2, 'bathroom.sanitary-ware.bathtubs', '/images/products/lxd-3104/lxd-3104-hero.jpg', NULL, 0, 9, 'active', '{\"title\": \"Bathtubs\"}', '2026-11-05 16:12:11', '2026-11-05 16:12:11', NULL);
+INSERT INTO `category_translations` (`id`, `category_id`, `locale`, `name`, `description`) VALUES (336, 112, 'cs', 'Vany', NULL), (334, 112, 'en', 'Bathtubs', NULL), (335, 112, 'tr', 'Küvetler', NULL);
+
+-- 2. LXD-3104 moves from Other Accessories (28) to Bathtubs
+UPDATE `products` SET `category_id` = 112, `updated_at` = '2026-11-05 16:12:11' WHERE `slug` = 'lxd-3104';
+
+-- 3. New studio photo for each product (primary photo)
+INSERT INTO `media` (`id`, `uuid`, `collection`, `filename`, `original_name`, `path`, `mime_type`, `extension`, `size`, `width`, `height`, `meta`, `owner_id`, `status`, `created_at`, `updated_at`, `deleted_at`) VALUES (1505, '00dd7eab-4fa4-4891-9612-b7d8db0b9295', 'v-1911l', 'v-1911l-hero.jpg', 'V-1911L hero.jpg', '/images/products/v-1911l/v-1911l-hero.jpg', 'image/jpeg', 'jpeg', 56576, 896, 1200, '[]', 2, 'active', '2026-11-05 16:12:11', '2026-11-05 16:12:11', NULL);
+INSERT INTO `media` (`id`, `uuid`, `collection`, `filename`, `original_name`, `path`, `mime_type`, `extension`, `size`, `width`, `height`, `meta`, `owner_id`, `status`, `created_at`, `updated_at`, `deleted_at`) VALUES (1506, '8ee43732-2653-4b1c-9914-b68b00165fe2', '1300-024bro', '1300-024bro-hero.jpg', '1300-024BRO hero.jpg', '/images/products/1300-024bro/1300-024bro-hero.jpg', 'image/jpeg', 'jpeg', 48777, 1376, 768, '[]', 2, 'active', '2026-11-05 16:12:11', '2026-11-05 16:12:11', NULL);
+INSERT INTO `media` (`id`, `uuid`, `collection`, `filename`, `original_name`, `path`, `mime_type`, `extension`, `size`, `width`, `height`, `meta`, `owner_id`, `status`, `created_at`, `updated_at`, `deleted_at`) VALUES (1507, '5abd7910-667b-4ac4-b8a6-274457d4060e', '1300-065', '1300-065-hero.jpg', '1300-065 hero.jpg', '/images/products/1300-065/1300-065-hero.jpg', 'image/jpeg', 'jpeg', 42369, 1024, 1024, '[]', 2, 'active', '2026-11-05 16:12:11', '2026-11-05 16:12:11', NULL);
+INSERT INTO `media` (`id`, `uuid`, `collection`, `filename`, `original_name`, `path`, `mime_type`, `extension`, `size`, `width`, `height`, `meta`, `owner_id`, `status`, `created_at`, `updated_at`, `deleted_at`) VALUES (1508, 'dfb3e043-c12a-4492-b2d2-3a172557a3a3', '1300-077', '1300-077-hero.jpg', '1300-077 hero.jpg', '/images/products/1300-077/1300-077-hero.jpg', 'image/jpeg', 'jpeg', 127172, 1376, 768, '[]', 2, 'active', '2026-11-05 16:12:11', '2026-11-05 16:12:11', NULL);
+INSERT INTO `media` (`id`, `uuid`, `collection`, `filename`, `original_name`, `path`, `mime_type`, `extension`, `size`, `width`, `height`, `meta`, `owner_id`, `status`, `created_at`, `updated_at`, `deleted_at`) VALUES (1509, '361b5ae9-4590-4949-bae0-580d4bc6a8c1', '1300-027', '1300-027-hero.jpg', '1300-027 hero.jpg', '/images/products/1300-027/1300-027-hero.jpg', 'image/jpeg', 'jpeg', 72511, 1376, 768, '[]', 2, 'active', '2026-11-05 16:12:11', '2026-11-05 16:12:11', NULL);
+INSERT INTO `media` (`id`, `uuid`, `collection`, `filename`, `original_name`, `path`, `mime_type`, `extension`, `size`, `width`, `height`, `meta`, `owner_id`, `status`, `created_at`, `updated_at`, `deleted_at`) VALUES (1510, '4e0fb59f-e532-4e46-8c5f-7c7ca320045b', '1300-07806gb', '1300-07806gb-hero.jpg', '1300-07806GB hero.jpg', '/images/products/1300-07806gb/1300-07806gb-hero.jpg', 'image/jpeg', 'jpeg', 39309, 848, 1264, '[]', 2, 'active', '2026-11-05 16:12:11', '2026-11-05 16:12:11', NULL);
+INSERT INTO `media` (`id`, `uuid`, `collection`, `filename`, `original_name`, `path`, `mime_type`, `extension`, `size`, `width`, `height`, `meta`, `owner_id`, `status`, `created_at`, `updated_at`, `deleted_at`) VALUES (1511, 'b154194a-66d9-41a1-b7bf-00315beebb37', 'lxd-3104', 'lxd-3104-hero.jpg', 'LXD-3104 hero.jpg', '/images/products/lxd-3104/lxd-3104-hero.jpg', 'image/jpeg', 'jpeg', 29469, 1376, 768, '[]', 2, 'active', '2026-11-05 16:12:11', '2026-11-05 16:12:11', NULL);
+INSERT INTO `media` (`id`, `uuid`, `collection`, `filename`, `original_name`, `path`, `mime_type`, `extension`, `size`, `width`, `height`, `meta`, `owner_id`, `status`, `created_at`, `updated_at`, `deleted_at`) VALUES (1512, '2ddc77d1-145f-4ba9-b811-7f754e0bdec5', '1300-023', '1300-023-hero.jpg', '1300-023 hero.jpg', '/images/products/1300-023/1300-023-hero.jpg', 'image/jpeg', 'jpeg', 31584, 1376, 768, '[]', 2, 'active', '2026-11-05 16:12:11', '2026-11-05 16:12:11', NULL);
+INSERT INTO `media` (`id`, `uuid`, `collection`, `filename`, `original_name`, `path`, `mime_type`, `extension`, `size`, `width`, `height`, `meta`, `owner_id`, `status`, `created_at`, `updated_at`, `deleted_at`) VALUES (1513, 'ef49e78b-1753-4ba3-9418-e72eaa3b486b', '1300-0514', '1300-0514-hero.jpg', '1300-0514 hero.jpg', '/images/products/1300-0514/1300-0514-hero.jpg', 'image/jpeg', 'jpeg', 72810, 1376, 768, '[]', 2, 'active', '2026-11-05 16:12:11', '2026-11-05 16:12:11', NULL);
+INSERT INTO `media` (`id`, `uuid`, `collection`, `filename`, `original_name`, `path`, `mime_type`, `extension`, `size`, `width`, `height`, `meta`, `owner_id`, `status`, `created_at`, `updated_at`, `deleted_at`) VALUES (1514, '21d71824-794a-46d7-95e0-c93f51061819', '1300-028', '1300-028-hero.jpg', '1300-028 hero.jpg', '/images/products/1300-028/1300-028-hero.jpg', 'image/jpeg', 'jpeg', 122782, 1376, 768, '[]', 2, 'active', '2026-11-05 16:12:11', '2026-11-05 16:12:11', NULL);
+
+INSERT INTO `product_media` (`id`, `product_id`, `variant_id`, `media_id`, `type`, `sort_order`, `is_primary`, `created_at`, `updated_at`) VALUES (1510, 394, NULL, 1505, 'main', 1, 1, '2026-11-05 16:12:11', '2026-11-05 16:12:11');
+INSERT INTO `product_media` (`id`, `product_id`, `variant_id`, `media_id`, `type`, `sort_order`, `is_primary`, `created_at`, `updated_at`) VALUES (1511, 452, NULL, 1506, 'main', 1, 1, '2026-11-05 16:12:11', '2026-11-05 16:12:11');
+INSERT INTO `product_media` (`id`, `product_id`, `variant_id`, `media_id`, `type`, `sort_order`, `is_primary`, `created_at`, `updated_at`) VALUES (1512, 457, NULL, 1507, 'main', 1, 1, '2026-11-05 16:12:11', '2026-11-05 16:12:11');
+INSERT INTO `product_media` (`id`, `product_id`, `variant_id`, `media_id`, `type`, `sort_order`, `is_primary`, `created_at`, `updated_at`) VALUES (1513, 459, NULL, 1508, 'main', 1, 1, '2026-11-05 16:12:11', '2026-11-05 16:12:11');
+INSERT INTO `product_media` (`id`, `product_id`, `variant_id`, `media_id`, `type`, `sort_order`, `is_primary`, `created_at`, `updated_at`) VALUES (1514, 460, NULL, 1509, 'main', 1, 1, '2026-11-05 16:12:11', '2026-11-05 16:12:11');
+INSERT INTO `product_media` (`id`, `product_id`, `variant_id`, `media_id`, `type`, `sort_order`, `is_primary`, `created_at`, `updated_at`) VALUES (1515, 487, NULL, 1510, 'main', 1, 1, '2026-11-05 16:12:11', '2026-11-05 16:12:11');
+INSERT INTO `product_media` (`id`, `product_id`, `variant_id`, `media_id`, `type`, `sort_order`, `is_primary`, `created_at`, `updated_at`) VALUES (1516, 123, NULL, 1511, 'main', 1, 1, '2026-11-05 16:12:11', '2026-11-05 16:12:11');
+INSERT INTO `product_media` (`id`, `product_id`, `variant_id`, `media_id`, `type`, `sort_order`, `is_primary`, `created_at`, `updated_at`) VALUES (1517, 454, NULL, 1512, 'main', 1, 1, '2026-11-05 16:12:11', '2026-11-05 16:12:11');
+INSERT INTO `product_media` (`id`, `product_id`, `variant_id`, `media_id`, `type`, `sort_order`, `is_primary`, `created_at`, `updated_at`) VALUES (1518, 464, NULL, 1513, 'main', 1, 1, '2026-11-05 16:12:11', '2026-11-05 16:12:11');
+INSERT INTO `product_media` (`id`, `product_id`, `variant_id`, `media_id`, `type`, `sort_order`, `is_primary`, `created_at`, `updated_at`) VALUES (1519, 463, NULL, 1514, 'main', 1, 1, '2026-11-05 16:12:11', '2026-11-05 16:12:11');
+
+-- 4. Retire the ten low-resolution catalogue thumbnails they replace
+DELETE FROM `product_media` WHERE `media_id` IN (213, 803, 956, 960, 966, 970, 972, 980, 984, 1032);
+DELETE FROM `media` WHERE `id` IN (213, 803, 956, 960, 966, 970, 972, 980, 984, 1032);
+
+-- End of the 2026-11-05 accessory photo patch
 -- End of lufly-database.sql

@@ -110,6 +110,17 @@
     }
   },
   {
+    "slug": "bathroom.sanitary-ware.bathtubs",
+    "parent": "bathroom.sanitary-ware",
+    "sort_order": 9,
+    "image": "/images/products/lxd-3104/lxd-3104-hero.jpg",
+    "names": {
+      "en": "Bathtubs",
+      "tr": "Küvetler",
+      "cs": "Vany"
+    }
+  },
+  {
     "slug": "bathroom.mixers",
     "parent": "bathroom",
     "sort_order": 2,
