@@ -49,6 +49,21 @@ class ProductController extends Controller
         $latestOnly = in_array(strtolower((string) $request->query('latest', '')), ['1', 'true', 'yes'], true);
         $fallback = (string) config('localization.fallback', 'en');
 
+        /* A category whose every card would be pruned (media rows survive but
+           the files are gone from disk) must never render as an empty grid:
+           send the visitor to the catalogue, exactly as if the branch held
+           nothing. Searches keep working — they may be looking elsewhere. */
+        if ($searchQuery === '') {
+            $requestedSlug = $categorySlug;
+            if ($requestedSlug === '' && $categoryId > 0) {
+                $requestedSlug = $this->categories->slugForId($categoryId);
+            }
+            if ($requestedSlug !== '' && $this->categories->descendantIdsBySlug($requestedSlug) !== []
+                && !$this->categories->rendersAnyProducts($requestedSlug)) {
+                return new RedirectResponse(route('products.index'));
+            }
+        }
+
         $paginator = $this->products->paginate([
             'locale' => $locale,
             'status' => 'active',

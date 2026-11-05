@@ -25,11 +25,26 @@ final class ProductVisibility
     /** @var array<int, bool>|null product_id => true when product is a WC seat cover */
     private static ?array $seatCoverIds = null;
 
-    /** @return array{photo: bool, drawing: bool, ready: bool} */
+    /**
+     * Media readiness of a hydrated product, measured on the files themselves.
+     *
+     * A media row can outlive its file (uploads that were never written, or
+     * were pruned later). Counting such a row would advertise a product whose
+     * card cannot be drawn, so a photo counts only when one of its files is
+     * really on disk. The drawing still counts on the row alone: it is a
+     * secondary slide, not the card image.
+     *
+     * `drawable` is the question the storefront card asks before it renders,
+     * and CategoryService::productCounts() applies the same rule to its SQL
+     * counts so a badge can never promise a product the grid hides.
+     *
+     * @return array{photo: bool, drawing: bool, ready: bool, drawable: bool}
+     */
     public static function media(Product $product): array
     {
         $photo = false;
         $drawing = false;
+        $photoFile = false;
 
         /* Keep the explicit status check here as well as in Product::media():
            it makes the public contract independent of a caller's hydration
@@ -44,6 +59,10 @@ final class ProductVisibility
                 $drawing = true;
             } elseif ($type !== 'situ') {
                 $photo = true;
+                if (!$photoFile) {
+                    $path = trim((string) ($row['path'] ?? ''));
+                    $photoFile = $path !== '' && asset_file_exists($path);
+                }
             }
 
             if ($photo && $drawing) {
@@ -51,7 +70,12 @@ final class ProductVisibility
             }
         }
 
-        return ['photo' => $photo, 'drawing' => $drawing, 'ready' => $photo && $drawing];
+        return [
+            'photo' => $photo,
+            'drawing' => $drawing,
+            'ready' => $photo && $drawing,
+            'drawable' => $photoFile,
+        ];
     }
 
     /**
@@ -101,7 +125,7 @@ final class ProductVisibility
     {
         return in_array((string) $product->status, self::PUBLIC_STATUSES, true)
             && !self::isSeatCover($product)
-            && self::media($product)['ready'];
+            && self::media($product)['drawable'];
     }
 
     /**

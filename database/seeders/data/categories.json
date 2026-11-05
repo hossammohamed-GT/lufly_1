@@ -99,6 +99,17 @@
     }
   },
   {
+    "slug": "bathroom.sanitary-ware.shower-trays",
+    "parent": "bathroom.sanitary-ware",
+    "sort_order": 8,
+    "image": "/images/categories/111-bathroom-sanitary-ware-shower-trays.jpg",
+    "names": {
+      "en": "Shower Trays",
+      "tr": "Duş Tekneleri",
+      "cs": "Sprchové vaničky"
+    }
+  },
+  {
     "slug": "bathroom.mixers",
     "parent": "bathroom",
     "sort_order": 2,

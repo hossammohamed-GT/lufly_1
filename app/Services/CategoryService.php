@@ -20,6 +20,9 @@ class CategoryService
     /** @var array<int, array{id:int,parent_id:int|null,slug:string}>|null */
     private ?array $structure = null;
 
+    /** @var array<string, int>|null memoised productCounts() for the request */
+    private ?array $counts = null;
+
     public function __construct(private readonly DatabaseManager $db)
     {
     }
@@ -227,6 +230,34 @@ class CategoryService
         return [];
     }
 
+    /** Active category slug for an id, or '' when the id is unknown/retired. */
+    public function slugForId(int $categoryId): string
+    {
+        if ($categoryId <= 0) {
+            return '';
+        }
+        $row = $this->structure()[$categoryId] ?? null;
+
+        return $row === null ? '' : (string) $row['slug'];
+    }
+
+    /**
+     * Whether opening this branch can draw at least one product card.
+     *
+     * Counts alone are not proof: a media row can survive while its file is
+     * missing from disk, in which case the storefront prunes the card and the
+     * grid comes out empty while the badge still advertises a product.
+     */
+    public function rendersAnyProducts(string $slug): bool
+    {
+        $slug = trim($slug);
+        if ($slug === '') {
+            return false;
+        }
+
+        return (int) ($this->productCounts()[$slug] ?? 0) > 0;
+    }
+
     /** @return array<int, int> selected id followed by every active descendant */
     public function descendantIds(int $categoryId): array
     {
@@ -341,6 +372,10 @@ class CategoryService
      */
     public function productCounts(): array
     {
+        if ($this->counts !== null) {
+            return $this->counts;
+        }
+
         $connection = $this->db->connection();
         $counts = array_fill_keys(array_column($this->structure(), 'slug'), 0);
         $productRows = app(\Modules\Products\Services\ProductColorFamilyService::class)->collapseRows(
@@ -350,6 +385,7 @@ class CategoryService
                    AND " . ProductVisibility::mediaReadySql('p'),
             ),
         );
+        $productRows = $this->withDrawableCard($productRows);
         $direct = [];
         foreach ($productRows as $row) {
             $id = (int) $row['category_id'];
@@ -370,7 +406,67 @@ class CategoryService
 
         $counts[''] = count($productRows);
 
-        return $counts;
+        return $this->counts = $counts;
+    }
+
+    /**
+     * Keep only the products whose card can actually be drawn.
+     *
+     * mediaReadySql() proves the media rows exist, not that the files do: an
+     * upload can point at a path that was never written (or was removed), and
+     * product-card.php then refuses to render the card. Counting such a product
+     * made a category advertise "1 product" while its grid came out empty, so
+     * the count and the grid now share this one rule: a product counts only
+     * when at least one of its product-photo files is present on disk.
+     *
+     * @param array<int, array<string, mixed>> $productRows
+     * @return array<int, array<string, mixed>>
+     */
+    private function withDrawableCard(array $productRows): array
+    {
+        if ($productRows === []) {
+            return [];
+        }
+
+        $ids = [];
+        foreach ($productRows as $row) {
+            $id = (int) ($row['id'] ?? 0);
+            if ($id > 0) {
+                $ids[] = $id;
+            }
+        }
+        if ($ids === []) {
+            return [];
+        }
+
+        $placeholders = implode(',', array_fill(0, count($ids), '?'));
+        $drawable = [];
+        foreach ($this->db->connection()->select(
+            "SELECT pm.product_id, m.path
+             FROM product_media pm
+             INNER JOIN media m ON m.id = pm.media_id
+             WHERE pm.variant_id IS NULL
+               AND pm.type NOT IN ('drawing', 'situ')
+               AND m.status NOT IN ('missing', 'hidden')
+               AND pm.product_id IN ({$placeholders})
+             ORDER BY pm.is_primary DESC, pm.sort_order ASC, pm.id ASC",
+            $ids,
+        ) as $row) {
+            $productId = (int) ($row['product_id'] ?? 0);
+            if ($productId <= 0 || isset($drawable[$productId])) {
+                continue;
+            }
+            $path = trim((string) ($row['path'] ?? ''));
+            /* asset_file_exists() memoises is_file() for the whole request. */
+            if ($path !== '' && asset_file_exists($path)) {
+                $drawable[$productId] = true;
+            }
+        }
+
+        return array_values(array_filter(
+            $productRows,
+            static fn (array $row): bool => isset($drawable[(int) ($row['id'] ?? 0)]),
+        ));
     }
 
     /** @return array<int, array{id:int,parent_id:int|null,slug:string}> */

@@ -530,6 +530,7 @@ CREATE TABLE `categories` (
 --
 
 INSERT INTO `categories` (`id`, `parent_id`, `slug`, `image`, `icon`, `is_featured`, `sort_order`, `status`, `seo`, `created_at`, `updated_at`, `deleted_at`) VALUES
+(111, 2, 'bathroom.sanitary-ware.shower-trays', '/images/categories/111-bathroom-sanitary-ware-shower-trays.jpg', NULL, 0, 8, 'active', '{\\"title\\": \\"Shower Trays\\"}', '2026-11-05 12:00:00', '2026-11-05 12:00:00', NULL),
 (1, NULL, 'bathroom', '/images/categories/001-bathroom.jpg', NULL, 1, 1, 'active', '{\"title\": \"Bathroom\"}', '2026-10-23 07:43:10', '2026-10-23 07:43:10', NULL),
 (2, 1, 'bathroom.sanitary-ware', '/images/categories/002-bathroom-sanitary-ware.jpg', NULL, 0, 1, 'active', '{\"title\": \"Sanitary Ware\"}', '2026-10-23 07:43:10', '2026-10-23 07:43:10', NULL),
 (3, 2, 'bathroom.sanitary-ware.toilets', '/images/categories/003-bathroom-sanitary-ware-toilets.jpg', NULL, 0, 1, 'active', '{\"title\": \"Toilets\"}', '2026-10-23 07:43:10', '2026-10-23 07:43:10', NULL),
@@ -608,7 +609,7 @@ INSERT INTO `categories` (`id`, `parent_id`, `slug`, `image`, `icon`, `is_featur
 (76, 71, 'shower-enclosures.frameless-enclosures', '/images/categories/076-shower-enclosures-frameless-enclosures.jpg', NULL, 0, 5, 'active', '{\"title\": \"Frameless Enclosures\"}', '2026-10-23 07:43:10', '2026-10-23 07:43:10', NULL),
 (77, 71, 'shower-enclosures.semi-framed-enclosures', '/images/categories/077-shower-enclosures-semi-framed-enclosures.jpg', NULL, 0, 6, 'active', '{\"title\": \"Semi-Framed Enclosures\"}', '2026-10-23 07:43:10', '2026-10-23 07:43:10', NULL),
 (78, 71, 'shower-enclosures.profiles-hardware', '/images/categories/078-shower-enclosures-profiles-hardware.jpg', NULL, 0, 7, 'active', '{\"title\": \"Profiles & Hardware\"}', '2026-10-23 07:43:10', '2026-10-23 07:43:10', NULL),
-(79, 71, 'shower-enclosures.other-enclosures', '/images/categories/079-shower-enclosures-other-enclosures.jpg', NULL, 0, 8, 'active', '{\"title\": \"Other Enclosures\"}', '2026-10-23 07:43:10', '2026-10-23 07:43:10', NULL),
+(79, 71, 'shower-enclosures.other-enclosures', '/images/categories/079-shower-enclosures-other-enclosures.jpg', NULL, 0, 8, 'inactive', '{\"title\": \"Other Enclosures\"}', '2026-10-23 07:43:10', '2026-10-23 07:43:10', NULL),
 (80, NULL, 'vanity-units', '/images/categories/080-vanity-units.jpg', NULL, 1, 6, 'active', '{\"title\": \"Vanity Units\"}', '2026-10-23 07:43:10', '2026-10-23 07:43:10', NULL),
 (81, 80, 'vanity-units.solid-wood-vanity', '/images/categories/081-vanity-units-solid-wood-vanity.jpg', NULL, 0, 1, 'active', '{\"title\": \"Solid Wood Vanity\"}', '2026-10-23 07:43:10', '2026-10-23 07:43:10', NULL),
 (82, 80, 'vanity-units.pvc-vanity', '/images/categories/082-vanity-units-pvc-vanity.jpg', NULL, 0, 2, 'active', '{\"title\": \"PVC Vanity\"}', '2026-10-23 07:43:10', '2026-10-23 07:43:10', NULL),
@@ -660,6 +661,9 @@ CREATE TABLE `category_translations` (
 --
 
 INSERT INTO `category_translations` (`id`, `category_id`, `locale`, `name`, `description`) VALUES
+(329, 111, 'en', 'Shower Trays', NULL),
+(330, 111, 'tr', 'Duş Tekneleri', NULL),
+(331, 111, 'cs', 'Sprchové vaničky', NULL),
 (1, 1, 'en', 'Bathroom', NULL),
 (2, 2, 'en', 'Sanitary Ware', NULL),
 (3, 3, 'en', 'Toilets', NULL),
@@ -2659,10 +2663,10 @@ INSERT INTO `media` (`id`, `uuid`, `collection`, `filename`, `original_name`, `p
 (1494, '384fd4ce-1ae2-40aa-9ea3-5c417503ef31', 'drinking-fountains', '90bbdc6a37c00e273b54ed1b.emf', 'image176.emf', '/images/products/catalog/90bbdc6a37c00e273b54ed1b.emf', 'image/emf', 'emf', 977468, NULL, NULL, '{\"source\": \"lufly-manager\", \"manager_product_id\": 714, \"manager_media_id\": 1463, \"original_path\": \"assets/catalog/90bbdc6a37c00e273b54ed1b.emf\", \"source_column\": \"G\", \"source_row\": 124, \"source_sort_order\": 1463, \"source_sha256\": \"90bbdc6a37c00e273b54ed1bdc7c2051ba748659bb117721407f6619f0a61202\", \"sha256\": \"90bbdc6a37c00e273b54ed1bdc7c2051ba748659bb117721407f6619f0a61202\", \"caption\": \"\", \"previewable\": false}', NULL, 'hidden', '2026-10-23 09:44:39', '2026-10-23 09:44:39', NULL),
 (1495, '997490bf-0124-4341-bc6a-2355d712c645', 'drinking-fountains', '7593fee209ea6e3419d3f4c7.webp', 'image177.png', '/images/products/catalog/7593fee209ea6e3419d3f4c7.webp', 'image/webp', 'webp', 45628, 998, 1040, '{\"source\": \"lufly-manager\", \"manager_product_id\": 714, \"manager_media_id\": 1464, \"original_path\": \"assets/catalog/7593fee209ea6e3419d3f4c7.webp\", \"source_column\": \"E\", \"source_row\": 124, \"source_sort_order\": 1464, \"source_sha256\": \"7593fee209ea6e3419d3f4c7022380ae8492585b85eb4d6a96b6b92a6b9e0ab4\", \"sha256\": \"1cbada4d86005d95255cde1581b94d47b6454160ac38a11a895f00c594772460\", \"caption\": \"\", \"previewable\": true}', NULL, 'active', '2026-10-23 09:44:39', '2026-10-23 09:44:39', NULL),
 (1496, 'ab99c2c8-7321-4818-831d-4c879383c65b', 'drinking-fountains', '4e2625bda34bc195392063c0.webp', 'image171.png', '/images/products/catalog/4e2625bda34bc195392063c0.webp', 'image/webp', 'webp', 52860, 890, 1268, '{\"source\": \"lufly-manager\", \"manager_product_id\": 715, \"manager_media_id\": 1465, \"original_path\": \"assets/catalog/4e2625bda34bc195392063c0.webp\", \"source_column\": \"D\", \"source_row\": 125, \"source_sort_order\": 1465, \"source_sha256\": \"4e2625bda34bc195392063c0113675f4366d7dd916e4707d7b41cfec54f3973f\", \"sha256\": \"707a3dbc44b2068e5995f81a38884428db7997ac451ae527c2ef2d011336b45f\", \"caption\": \"\", \"previewable\": true}', NULL, 'active', '2026-10-23 09:44:39', '2026-10-23 09:44:39', NULL),
-(1497, NULL, 'soap-dispenser', '180ce90b527f3ea5787fd293.jpeg', 'WhatsApp Image 2026-10-30 at 14.29.49.jpeg', '/images/uploads/soap-dispenser/2026/10/180ce90b527f3ea5787fd293.jpeg', 'image/jpeg', 'jpeg', 44523, NULL, NULL, '[]', 2, 'active', '2026-10-31 06:48:56', '2026-10-31 06:48:56', NULL),
-(1498, NULL, 'soap-dispenser', '949ef0f9f6ebd3d2b0cb00c0.jpeg', 'hdhdh.jpeg', '/images/uploads/soap-dispenser/2026/10/949ef0f9f6ebd3d2b0cb00c0.jpeg', 'image/jpeg', 'jpeg', 45358, NULL, NULL, '[]', 2, 'active', '2026-10-31 06:49:07', '2026-10-31 06:49:07', NULL),
-(1499, NULL, 'soap-dispenser', '29bf3f4ef91962f46a9be09b.jpeg', '2jjs.jpeg', '/images/uploads/soap-dispenser/2026/10/29bf3f4ef91962f46a9be09b.jpeg', 'image/jpeg', 'jpeg', 42622, NULL, NULL, '[]', 2, 'active', '2026-10-31 06:49:07', '2026-10-31 06:49:07', NULL),
-(1500, NULL, 'soap-dispenser', '84188b421f11e9e2b87723b3.jpeg', 'iiiii.jpeg', '/images/uploads/soap-dispenser/2026/10/84188b421f11e9e2b87723b3.jpeg', 'image/jpeg', 'jpeg', 59248, NULL, NULL, '[]', 2, 'active', '2026-10-31 06:49:07', '2026-10-31 06:49:07', NULL);
+(1497, NULL, 'soap-dispenser', '180ce90b527f3ea5787fd293.jpeg', 'WhatsApp Image 2026-10-30 at 14.29.49.jpeg', '/images/uploads/soap-dispenser/2026/10/180ce90b527f3ea5787fd293.jpeg', 'image/jpeg', 'jpeg', 44523, NULL, NULL, '[]', 2, 'missing', '2026-10-31 06:48:56', '2026-10-31 06:48:56', NULL),
+(1498, NULL, 'soap-dispenser', '949ef0f9f6ebd3d2b0cb00c0.jpeg', 'hdhdh.jpeg', '/images/uploads/soap-dispenser/2026/10/949ef0f9f6ebd3d2b0cb00c0.jpeg', 'image/jpeg', 'jpeg', 45358, NULL, NULL, '[]', 2, 'missing', '2026-10-31 06:49:07', '2026-10-31 06:49:07', NULL),
+(1499, NULL, 'soap-dispenser', '29bf3f4ef91962f46a9be09b.jpeg', '2jjs.jpeg', '/images/uploads/soap-dispenser/2026/10/29bf3f4ef91962f46a9be09b.jpeg', 'image/jpeg', 'jpeg', 42622, NULL, NULL, '[]', 2, 'missing', '2026-10-31 06:49:07', '2026-10-31 06:49:07', NULL),
+(1500, NULL, 'soap-dispenser', '84188b421f11e9e2b87723b3.jpeg', 'iiiii.jpeg', '/images/uploads/soap-dispenser/2026/10/84188b421f11e9e2b87723b3.jpeg', 'image/jpeg', 'jpeg', 59248, NULL, NULL, '[]', 2, 'missing', '2026-10-31 06:49:07', '2026-10-31 06:49:07', NULL);
 
 -- --------------------------------------------------------
 
@@ -2941,10 +2945,10 @@ INSERT INTO `products` (`id`, `model_code`, `slug`, `category_id`, `collection_i
 (122, 'LXD-3103', 'lxd-3103', 28, NULL, 1, 'active', 0, 0, 122, '2026-10-18 06:05:58', '2026-10-18 06:05:58', NULL),
 (123, 'LXD-3104', 'lxd-3104', 28, NULL, 1, 'active', 0, 0, 123, '2026-10-18 06:05:58', '2026-10-20 21:35:28', NULL),
 (124, 'LXD-3111', 'lxd-3111', 28, NULL, 1, 'active', 0, 0, 124, '2026-10-18 06:05:58', '2026-10-18 06:05:58', NULL),
-(125, 'LXD-7012', 'lxd-7012', 79, NULL, 1, 'active', 0, 0, 125, '2026-10-18 06:05:58', '2026-10-20 21:35:30', NULL),
-(126, 'LXD-7098', 'lxd-7098', 79, NULL, 1, 'active', 0, 0, 126, '2026-10-18 06:05:58', '2026-10-20 21:35:31', NULL),
-(127, 'LXD-7095', 'lxd-7095', 79, NULL, 1, 'active', 0, 0, 127, '2026-10-18 06:05:58', '2026-10-20 21:35:35', NULL),
-(128, 'LXD-7190', 'lxd-7190', 79, NULL, 1, 'active', 0, 0, 128, '2026-10-18 06:05:58', '2026-10-20 21:35:34', NULL),
+(125, 'LXD-7012', 'lxd-7012', 111, NULL, 1, 'active', 0, 0, 125, '2026-10-18 06:05:58', '2026-10-20 21:35:30', NULL),
+(126, 'LXD-7098', 'lxd-7098', 111, NULL, 1, 'active', 0, 0, 126, '2026-10-18 06:05:58', '2026-10-20 21:35:31', NULL),
+(127, 'LXD-7095', 'lxd-7095', 111, NULL, 1, 'active', 0, 0, 127, '2026-10-18 06:05:58', '2026-10-20 21:35:35', NULL),
+(128, 'LXD-7190', 'lxd-7190', 111, NULL, 1, 'active', 0, 0, 128, '2026-10-18 06:05:58', '2026-10-20 21:35:34', NULL),
 (129, NULL, 'product-131', 106, NULL, 1, 'active', 0, 0, 129, '2026-10-18 06:05:58', '2026-10-20 21:36:15', NULL),
 (130, NULL, 'product-132', 106, NULL, 1, 'active', 0, 0, 130, '2026-10-18 06:05:58', '2026-10-20 21:36:17', NULL),
 (131, NULL, 'product-133', 98, NULL, 1, 'active', 0, 0, 131, '2026-10-18 06:05:58', '2026-10-20 21:36:21', NULL),
@@ -3531,7 +3535,7 @@ INSERT INTO `products` (`id`, `model_code`, `slug`, `category_id`, `collection_i
 (711, '5000-FR03', '5000-fr03', 108, NULL, 1, 'active', 0, 0, 711, '2026-10-18 06:05:58', '2026-10-19 10:50:33', NULL),
 (712, '5000-F04', '5000-f04', 108, NULL, 1, 'active', 0, 0, 712, '2026-10-18 06:05:58', '2026-10-19 10:50:43', NULL),
 (713, '1654-2002RB-4', 'wash-basin-mixer', 11, NULL, 1, 'draft', 0, 0, 0, '2026-10-31 06:36:12', '2026-10-31 06:36:12', NULL),
-(714, 'V-0726C', 'new-product', 110, NULL, NULL, 'active', 0, 0, 0, '2026-10-31 06:47:48', '2026-10-31 06:49:17', NULL),
+(714, 'V-0726C', 'v-0726c', 110, NULL, NULL, 'draft', 0, 0, 0, '2026-10-31 06:47:48', '2026-10-31 06:49:17', NULL),
 (715, 'V-0726C-2', 'hand-wash-dispenser', 110, NULL, NULL, 'draft', 0, 0, 0, '2026-10-31 06:49:43', '2026-10-31 06:49:43', NULL);
 
 -- --------------------------------------------------------
