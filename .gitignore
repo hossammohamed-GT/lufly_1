@@ -19,6 +19,7 @@ Thumbs.db
 !/public/uploads/assistant/.gitkeep
 
 # tooling installs (the optional preview server pulls php-wasm here)
+node_modules
 node_modules/
 
 # Runtime database artifacts. Keep the tracked local SQLite runtime and the
