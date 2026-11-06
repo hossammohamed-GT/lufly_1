@@ -45876,6 +45876,23 @@ UPDATE `media` SET `path` = '/images/products/1685-601a/1685-601a-hero.jpg', `fi
 UPDATE `media` SET `path` = '/images/products/1610-0198/1610-0198-hero.jpg', `filename` = '1610-0198-hero.jpg', `size` = 75709, `width` = 1280, `height` = 816, `updated_at` = '2026-11-08 12:40:00' WHERE `id` = 1586;
 
 -- End of the 2026-11-08 corrections
+-- ---------------------------------------------------------------------------
+-- 2026-11-08 LXD-7190 back to its own catalogue photo (generated shots removed);
+--             1610-0198 gets a second studio shot, as the product had two
+-- ---------------------------------------------------------------------------
+
+DELETE FROM `product_media` WHERE `id` = 1582;
+DELETE FROM `media` WHERE `id` = 1577;
+INSERT INTO `media` (`id`, `uuid`, `collection`, `filename`, `original_name`, `path`, `mime_type`, `extension`, `size`, `width`, `height`, `meta`, `owner_id`, `status`, `created_at`, `updated_at`, `deleted_at`) VALUES (224, 'c8d8f662-130a-4af3-b7f2-8737fe0c3284', 'shower-enclosures.other-enclosures', 'f008c7f99b4606abd72ca2c4.webp', 'image125.png', '/images/products/catalog/f008c7f99b4606abd72ca2c4.webp', 'image/webp', 'webp', 22130, 357, 520, '{\"source\": \"lufly-manager\", \"manager_product_id\": 130, \"manager_media_id\": 221, \"original_path\": \"assets/catalog/f008c7f99b4606abd72ca2c4.webp\", \"source_column\": \"D\", \"source_row\": 10, \"source_sort_order\": 221, \"source_sha256\": \"f008c7f99b4606abd72ca2c4e07434750ac2ecc6c80760544a46140797c731be\", \"sha256\": \"fc6141c1e427de80bdcb91d24f70e9e82ab584e43b8e9a546b8268563c6f3c8e\", \"caption\": \"\", \"previewable\": true}', NULL, 'active', '2026-10-23 09:44:39', '2026-10-23 09:44:39', NULL);
+INSERT INTO `product_media` (`id`, `product_id`, `variant_id`, `media_id`, `type`, `sort_order`, `is_primary`, `created_at`, `updated_at`) VALUES (224, 128, NULL, 224, 'gallery', 1, 1, '2026-10-23 09:44:39', '2026-10-23 09:44:39');
+
+UPDATE `media` SET `size` = 88728, `width` = 1280, `height` = 816, `updated_at` = '2026-11-08 15:10:00' WHERE `id` = 1586;
+UPDATE `product_media` SET `sort_order` = 12 WHERE `id` = 119;
+INSERT INTO `media` (`id`, `uuid`, `collection`, `filename`, `original_name`, `path`, `mime_type`, `extension`, `size`, `width`, `height`, `meta`, `owner_id`, `status`, `created_at`, `updated_at`, `deleted_at`) VALUES (1587, '3f91dafc-6940-4c30-8a8b-b04f2fa403be', '1610-0198', '1610-0198-detail.jpg', '1610-0198 detail.jpg', '/images/products/1610-0198/1610-0198-detail.jpg', 'image/jpeg', 'jpeg', 97844, 1280, 816, '[]', 2, 'active', '2026-11-08 15:10:00', '2026-11-08 15:10:00', NULL);
+INSERT INTO `product_media` (`id`, `product_id`, `variant_id`, `media_id`, `type`, `sort_order`, `is_primary`, `created_at`, `updated_at`) VALUES (1592, 67, NULL, 1587, 'gallery', 1, 0, '2026-11-08 15:10:00', '2026-11-08 15:10:00');
+
+-- End of the 2026-11-08 lxd-7190 and 1610-0198 patch
+-- End of lufly-database.sql
 -- End of lufly-database.sql
 -- End of lufly-database.sql
 -- End of lufly-database.sql
