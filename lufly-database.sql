@@ -45892,6 +45892,17 @@ INSERT INTO `media` (`id`, `uuid`, `collection`, `filename`, `original_name`, `p
 INSERT INTO `product_media` (`id`, `product_id`, `variant_id`, `media_id`, `type`, `sort_order`, `is_primary`, `created_at`, `updated_at`) VALUES (1592, 67, NULL, 1587, 'gallery', 1, 0, '2026-11-08 15:10:00', '2026-11-08 15:10:00');
 
 -- End of the 2026-11-08 lxd-7190 and 1610-0198 patch
+-- ---------------------------------------------------------------------------
+-- 2026-11-08 1610-0198: the extra detail shot is removed again, so the product
+--             keeps one studio shot plus its drawing, as the user wants
+-- ---------------------------------------------------------------------------
+
+DELETE FROM `product_media` WHERE `id` = 1592;
+DELETE FROM `media` WHERE `id` = 1587;
+UPDATE `product_media` SET `sort_order` = 2 WHERE `id` = 119;
+
+-- End of the 2026-11-08 basin clean-up
+-- End of lufly-database.sql
 -- End of lufly-database.sql
 -- End of lufly-database.sql
 -- End of lufly-database.sql
