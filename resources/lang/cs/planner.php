@@ -127,13 +127,10 @@ return [
     /* handoff */
     'handoff_title' => 'Sežeňte mi tyto díly',
     'handoff_text' => 'Pošlete celý plán týmu LUFLY a my se ozveme s nejbližšími odpovídajícími díly a jejich cenami.',
-    'handoff_whatsapp' => 'Poslat na WhatsApp',
     'handoff_email' => 'Poslat e-mailem',
     'handoff_phone' => 'nebo volejte :phone',
     'handoff_subject' => 'Plán koupelny — poptávka dílů',
     'handoff_mail_body' => "Dobrý den, LUFLY,\n\nprosím o zajištění dílů níže pro mou koupelnu.\n\nMůj e-mail: :email\n\n:plan\n\nDěkuji.",
-    'handoff_wa_body' => "Dobrý den, LUFLY, můj plán koupelny:\n\n:plan\n\nPošlete prosím ceny odpovídajících dílů.",
-    'handoff_copied' => 'Plán zkopírován — pokud je zpráva krátká, vložte ho do chatu.',
     'handoff_sending' => 'Posíláme váš plán týmu LUFLY…',
     'handoff_sent' => 'Plán má náš tým — ozveme se na :email, obvykle tentýž pracovní den.',
     'email_label' => 'Váš e-mail',
@@ -143,7 +140,7 @@ return [
     'err_size' => 'Nejprve prosím vyberte velikost místnosti.',
     'err_custom' => 'Napište prosím šířku a hloubku mezi 100 a 600 cm.',
     'err_email' => 'Zadejte prosím platnou e-mailovou adresu.',
-    'err_send' => 'Zprávu se teď nepodařilo odeslat. Použijte WhatsApp nebo to zkuste za chvíli znovu.',
+    'err_send' => 'Zprávu se teď nepodařilo odeslat. Napište na info@lufly.tr nebo to zkuste za chvíli znovu.',
 
     /* the promise: the planner is not open yet */
     'soon_pill' => 'Již brzy',

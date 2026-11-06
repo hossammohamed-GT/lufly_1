@@ -969,12 +969,12 @@ final class AssistantService
         return $cards;
     }
 
-    /** @return array<string, string> the addresses the visitor may write to */
+    /** @return array<string, string> the ways the visitor may reach the team */
     private function support(): array
     {
         return [
             'email' => (string) config('assistant.lead.email', 'info@lufly.tr'),
-            'whatsapp' => (string) config('planner.handoff.whatsapp', ''),
+            'phone' => (string) config('planner.handoff.phone', ''),
         ];
     }
 

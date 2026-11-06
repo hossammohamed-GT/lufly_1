@@ -15,7 +15,6 @@ class SettingSeeder extends Seeder
             'brand_name' => 'LUFLY Sanitary & Ceramic Ware',
             'contact_email' => 'info@lufly.tr',
             'contact_phone' => '+90 850 3040 817',
-            'contact_whatsapp' => '+90 850 3040 817',
             'contact_address' => 'Gaziantep, Turkey',
             'factory_warranty' => '10 Years Factory Guarantee',
             'default_meta_description' => 'LUFLY - Premium Turkish Vitreous China Sanitary Ware, Rimless Wall-Hung Toilets, Luxury Bidets & Architectural Ceramics Manufacturer and European Exporter.',

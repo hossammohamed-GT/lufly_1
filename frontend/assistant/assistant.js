@@ -865,12 +865,10 @@
 
     var support = data.support || {};
 
-    if (support.whatsapp) {
-      var chat = el('a', 'aichat-link', labels.support_whatsapp || 'WhatsApp');
-      chat.href = 'https://wa.me/' + support.whatsapp;
-      chat.target = '_blank';
-      chat.rel = 'noopener';
-      wrap.appendChild(chat);
+    if (support.phone) {
+      var call = el('a', 'aichat-link', labels.support_call || support.phone);
+      call.href = 'tel:' + String(support.phone).replace(/[^\d+]/g, '');
+      wrap.appendChild(call);
     }
 
     if (support.email) {

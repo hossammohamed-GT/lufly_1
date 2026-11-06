@@ -254,7 +254,6 @@ INSERT INTO `settings` (`id`, `key`, `value`, `created_at`, `updated_at`) VALUES
 INSERT INTO `settings` (`id`, `key`, `value`, `created_at`, `updated_at`) VALUES (2, 'brand_name', '\"LUFLY Sanitary & Ceramic Ware\"', '2026-09-18 22:04:38', '2026-09-18 22:04:38');
 INSERT INTO `settings` (`id`, `key`, `value`, `created_at`, `updated_at`) VALUES (3, 'contact_email', '\"info@lufly.tr\"', '2026-09-18 22:04:38', '2026-09-18 22:04:38');
 INSERT INTO `settings` (`id`, `key`, `value`, `created_at`, `updated_at`) VALUES (4, 'contact_phone', '\"+90 850 3040 817\"', '2026-09-18 22:04:38', '2026-09-18 22:04:38');
-INSERT INTO `settings` (`id`, `key`, `value`, `created_at`, `updated_at`) VALUES (5, 'contact_whatsapp', '\"+90 850 3040 817\"', '2026-09-18 22:04:38', '2026-09-18 22:04:38');
 INSERT INTO `settings` (`id`, `key`, `value`, `created_at`, `updated_at`) VALUES (6, 'contact_address', '\"Gaziantep, Turkey\"', '2026-09-18 22:04:38', '2026-09-18 22:04:38');
 INSERT INTO `settings` (`id`, `key`, `value`, `created_at`, `updated_at`) VALUES (7, 'factory_warranty', '\"10 Years Factory Guarantee\"', '2026-09-18 22:04:38', '2026-09-18 22:04:38');
 INSERT INTO `settings` (`id`, `key`, `value`, `created_at`, `updated_at`) VALUES (8, 'default_meta_description', '\"LUFLY - Premium Turkish Vitreous China Sanitary Ware, Rimless Wall-Hung Toilets, Luxury Bidets & Architectural Ceramics Manufacturer and European Exporter.\"', '2026-09-18 22:04:38', '2026-09-18 22:04:38');

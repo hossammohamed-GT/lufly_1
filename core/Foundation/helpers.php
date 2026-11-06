@@ -296,8 +296,7 @@ if (!function_exists('is_external_url')) {
      * (`https://example.com/en/products`), so "starts with http" says nothing
      * about whether a link is ours. Anything that stays on our own host - an
      * absolute route, a relative path, a bare `#anchor` - is internal, and so
-     * are the schemes that never navigate to a page at all (`mailto:`, `tel:`,
-     * `whatsapp:`).
+     * are the schemes that never navigate to a page at all (`mailto:`, `tel:`).
      */
     function is_external_url(?string $url): bool
     {

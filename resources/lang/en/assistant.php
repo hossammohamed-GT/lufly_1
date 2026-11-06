@@ -88,7 +88,6 @@ return [
     'see_all' => 'See all results in the catalogue',
     'support_call' => 'Talk to the team',
     'support_mail' => 'Write to us',
-    'support_whatsapp' => 'Send on WhatsApp',
 
     /* while it works */
     'waiting_1' => 'Reading your words…',

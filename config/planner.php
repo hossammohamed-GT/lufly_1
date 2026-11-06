@@ -156,8 +156,6 @@ return [
     'handoff' => [
         'email' => (string) env('PLANNER_HANDOFF_EMAIL', 'info@lufly.tr'),
         'phone' => (string) env('PLANNER_HANDOFF_PHONE', '+90 850 3040 817'),
-        /* digits only, the way wa.me wants it */
-        'whatsapp' => (string) env('PLANNER_WHATSAPP', '908503040817'),
     ],
 
     /* seconds of cache life for a plan (answers are deterministic, so a month) */

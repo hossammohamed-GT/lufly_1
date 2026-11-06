@@ -17,7 +17,7 @@ return [
 
     'hero1_eyebrow' => 'LUFLY MONOLİTİK BANYO MİMARİSİ',
     'hero1_primary' => 'Akıllı Klozetleri Keşfedin',
-    'whatsapp_specifier' => 'Mimari Proje Masası',
+    'specifier_desk' => 'Mimari Proje Masası',
     'hero2_eyebrow' => 'LUFLY HİDRODİNAMİK HASSASİYET',
     'hero2_primary' => 'Armatür Koleksiyonları',
     'hero2_secondary' => 'Tüm 9 Yüzeyü İnceleyin',
@@ -48,7 +48,7 @@ return [
     'trust_global_desc' => 'Gaziantep entegre üretim tesisimizden güçlendirilmiş ahşap kasalarda ve tam takipli olarak 34\'ten fazla ülkeye doğrudan ihracat.',
     'trust_cta_heading' => 'Projeniz İçin Doğrudan Fabrika Fiyatı mı İstiyorsunuz?',
     'trust_cta_sub' => 'Toptan proje fiyatlandırması, özel PVD renk numuneleri ve BIM/CAD teknik şartname dosyalarına anında ulaşın.',
-    'trust_cta_quote' => 'WhatsApp ile Hızlı Fiyat Alın',
+    'trust_cta_quote' => 'Direkt Hattan Hızlı Fiyat Alın',
     'trust_cta_catalog' => 'Ürün Kataloğunu İnceleyin',
     'trust_pill_1' => 'EN 997 & EN 817 Avrupa Sertifikası',
     'trust_pill_2' => '10 Yıl Fabrika Garantisi',

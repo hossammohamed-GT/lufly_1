@@ -117,7 +117,7 @@
     var href = link.getAttribute('href');
     if (!href || href.startsWith('#') || href.startsWith('javascript:') ||
         href.startsWith('mailto:') || href.startsWith('tel:') ||
-        href.startsWith('https://wa.me') || link.target === '_blank' ||
+        link.target === '_blank' ||
         link.hasAttribute('download')) {
       return null;
     }

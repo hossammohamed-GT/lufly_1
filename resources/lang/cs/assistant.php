@@ -73,7 +73,6 @@ return [
     'see_all' => 'Zobrazit všechny výsledky v katalogu',
     'support_call' => 'Mluvit s týmem',
     'support_mail' => 'Napište nám',
-    'support_whatsapp' => 'Poslat na WhatsApp',
     'waiting_1' => 'Čtu vaše slova…',
     'waiting_2' => 'Procházím náš katalog…',
     'waiting_3' => 'Porovnávám rozměry a povrchy…',

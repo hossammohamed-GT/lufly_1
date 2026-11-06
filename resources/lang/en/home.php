@@ -17,7 +17,7 @@ return [
 
     'hero1_eyebrow' => 'LUFLY TIDAL MONOLITH ARCHITECTURE',
     'hero1_primary' => 'Discover Smart Toilets',
-    'whatsapp_specifier' => 'Architectural Desk',
+    'specifier_desk' => 'Architectural Desk',
     'hero2_eyebrow' => 'LUFLY HYDRODYNAMIC PRECISION',
     'hero2_primary' => 'Explore Mixer Suites',
     'hero2_secondary' => 'Discover All 9 Finishes',
@@ -48,7 +48,7 @@ return [
     'trust_global_desc' => 'Direct shipping from our Gaziantep manufacturing hub in reinforced wooden crates with door-to-door tracking.',
     'trust_cta_heading' => 'Looking for Direct Factory Pricing or Project Spec Sheets?',
     'trust_cta_sub' => 'Get personalized wholesale volume discounts, bespoke PVD finish samples, and CAD/BIM architectural files within minutes.',
-    'trust_cta_quote' => 'Instant WhatsApp Direct Quote',
+    'trust_cta_quote' => 'Instant Direct-Line Quote',
     'trust_cta_catalog' => 'Explore Product Catalog',
     'trust_pill_1' => 'EN 997 & EN 817 European Standard',
     'trust_pill_2' => '10-Year Full Warranty',

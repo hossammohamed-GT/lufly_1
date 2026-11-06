@@ -127,13 +127,10 @@ return [
     /* handoff */
     'handoff_title' => 'Bunları benim için bulun',
     'handoff_text' => 'Planın tamamını LUFLY ekibine gönderin; size en yakın parçaları ve fiyatlarını iletelim.',
-    'handoff_whatsapp' => 'WhatsApp ile gönder',
     'handoff_email' => 'E-posta ile gönder',
     'handoff_phone' => 'ya da arayın: :phone',
     'handoff_subject' => 'Banyo planı — ürün talebi',
     'handoff_mail_body' => "Merhaba LUFLY,\n\nAşağıdaki parçaları banyom için rica ediyorum.\n\nE-postam: :email\n\n:plan\n\nTeşekkürler.",
-    'handoff_wa_body' => "Merhaba LUFLY, banyo planım:\n\n:plan\n\nUygun parçaların fiyatlarını gönderebilir misiniz?",
-    'handoff_copied' => 'Plan kopyalandı — mesaj kısa görünürse sohbete yapıştırın.',
     'handoff_sending' => 'Planınız LUFLY ekibine gönderiliyor…',
     'handoff_sent' => 'Planınız ekibimizde — :email adresine dönüş yapıyoruz, genelde aynı iş günü içinde.',
     'email_label' => 'E-posta adresiniz',
@@ -143,7 +140,7 @@ return [
     'err_size' => 'Lütfen önce oda ölçüsünü seçin.',
     'err_custom' => 'Lütfen 100 ile 600 cm arasında bir genişlik ve derinlik yazın.',
     'err_email' => 'Lütfen geçerli bir e-posta adresi girin.',
-    'err_send' => 'Mesaj şu anda gönderilemedi. WhatsApp\'ı kullanın ya da birazdan tekrar deneyin.',
+    'err_send' => 'Mesaj şu anda gönderilemedi. info@lufly.tr adresine yazın ya da birazdan tekrar deneyin.',
 
     /* the promise: the planner is not open yet */
     'soon_pill' => 'Çok yakında',

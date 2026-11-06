@@ -1,9 +1,9 @@
 /* ==========================================================================
    Contact page - machined editorial edition
-   Blueprint grid page, a signature deep-teal WhatsApp panel, beam-hover
-   channel cards and coded request lines. Static page: no JS, no scroll
-   effects. Design-system tokens only; the WhatsApp panel keeps the fixed
-   brand palette (like the announcement bar) so it reads in both themes.
+   Blueprint grid page, a signature deep-teal direct-line panel, beam-hover
+   channel cards and coded request lines. Design-system tokens only; the
+   direct-line panel keeps the fixed brand palette (like the announcement
+   bar) so it reads in both themes.
    ========================================================================== */
 
 .cpage {
@@ -25,7 +25,7 @@
   gap: clamp(24px, 3.5vw, 36px);
 }
 
-/* ---------- hero row: intro + machined WhatsApp panel ---------- */
+/* ---------- hero row: intro + machined direct-line panel ---------- */
 
 .cpage-hero {
   display: grid;
@@ -103,9 +103,9 @@
 
 .cpage-note svg { color: var(--ds-primary); flex: none; }
 
-/* ---------- the signature WhatsApp panel (fixed brand palette) ---------- */
+/* ---------- the signature direct-line panel (fixed brand palette) ---------- */
 
-.cpage-wa {
+.cpage-hot {
   position: relative;
   overflow: hidden;
   display: grid;
@@ -122,7 +122,7 @@
   box-shadow: var(--shadow-2);
 }
 
-.cpage-wa-shimmer {
+.cpage-hot-shimmer {
   position: absolute;
   inset: 0;
   background: linear-gradient(115deg,
@@ -132,16 +132,16 @@
     transparent 70%);
   background-size: 260% 100%;
   background-position: 120% 0;
-  animation: cpageWaShimmer 5.6s ease-in-out infinite;
+  animation: cpageHotShimmer 5.6s ease-in-out infinite;
   pointer-events: none;
 }
 
-@keyframes cpageWaShimmer {
+@keyframes cpageHotShimmer {
   0%, 55% { background-position: 130% 0; }
   85%, 100% { background-position: -80% 0; }
 }
 
-.cpage-wa-grain {
+.cpage-hot-grain {
   position: absolute;
   inset: 0;
   background-image: radial-gradient(color-mix(in srgb, var(--lu-neutral-0) 13%, transparent) 0.65px, transparent 0.65px);
@@ -150,7 +150,7 @@
   pointer-events: none;
 }
 
-.cpage-wa-beam {
+.cpage-hot-beam {
   position: absolute;
   inset-inline: 0;
   top: 0;
@@ -160,9 +160,9 @@
   pointer-events: none;
 }
 
-.cpage-wa > *:not(span) { position: relative; }
+.cpage-hot > *:not(span) { position: relative; }
 
-.cpage-wa-chip {
+.cpage-hot-chip {
   position: relative;
   display: inline-flex;
   align-items: center;
@@ -179,7 +179,7 @@
   color: var(--lu-mint);
 }
 
-.cpage-wa-desc {
+.cpage-hot-desc {
   margin: 2px 0 0;
   font-size: 12.5px;
   line-height: 1.6;
@@ -187,7 +187,7 @@
   max-width: 34ch;
 }
 
-.cpage-wa-number {
+.cpage-hot-number {
   font-family: var(--font-display);
   font-size: clamp(27px, 3.4vw, 38px);
   font-weight: 700;
@@ -198,9 +198,9 @@
   transition: color 160ms ease;
 }
 
-.cpage-wa-number:hover { color: var(--lu-mint); }
+.cpage-hot-number:hover { color: var(--lu-mint); }
 
-.cpage-wa-cta {
+.cpage-hot-cta {
   position: relative;
   display: inline-flex;
   align-items: center;
@@ -219,12 +219,26 @@
   transition: transform 160ms ease, box-shadow 160ms ease;
 }
 
-.cpage-wa-cta:hover {
+.cpage-hot-cta:hover {
   transform: translateY(-2px);
   box-shadow: 0 10px 26px color-mix(in srgb, var(--lu-mint) 34%, transparent);
 }
 
-[dir="rtl"] .cpage-wa-cta svg,
+.cpage-hot-hours {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  margin: 4px 0 0;
+  font-family: var(--font-mono);
+  font-size: 10.5px;
+  letter-spacing: 0.05em;
+  color: color-mix(in srgb, var(--lu-neutral-0) 74%, transparent);
+}
+
+.cpage-hot-hours svg { flex: none; color: var(--lu-mint); }
+
+[dir="rtl"] .cpage-hot-cta svg,
 [dir="rtl"] .cpage-line-arrow { transform: scaleX(-1); }
 
 /* ---------- channel cards: flat with machined beam hover ---------- */
@@ -429,7 +443,7 @@
 
 @media (max-width: 960px) {
   .cpage-hero { grid-template-columns: 1fr; }
-  .cpage-wa { min-height: 0; }
+  .cpage-hot { min-height: 0; }
 }
 
 @media (max-width: 620px) {
@@ -442,9 +456,9 @@
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .cpage-wa-shimmer { animation: none; }
+  .cpage-hot-shimmer { animation: none; }
   .cpage-card,
-  .cpage-wa-cta,
+  .cpage-hot-cta,
   .cpage-strong,
   .cpage-line,
   .cpage-line-arrow,

@@ -199,15 +199,15 @@ class HomeController extends Controller
         $locale = $this->translator->getLocale();
 
         $seoTitles = [
-            'en' => 'Contact LUFLY | WhatsApp, Email and Factory Direct Line',
-            'tr' => 'LUFLY İletişim | WhatsApp, E-posta ve Fabrika Direkt Hattı',
-            'cs' => 'Kontakt LUFLY | WhatsApp, e-mail a přímá linka továrny',
+            'en' => 'Contact LUFLY | Direct Line, Email and Factory',
+            'tr' => 'LUFLY İletişim | Direkt Hat, E-posta ve Fabrika',
+            'cs' => 'Kontakt LUFLY | Přímá linka, e-mail a továrna',
         ];
 
         $seoDescriptions = [
-            'en' => 'Reach the LUFLY architectural team directly: WhatsApp +90 850 3040 817, email info@lufly.tr, catalog and BIM requests, and our Gaziantep manufacturing and export hub in Turkey.',
-            'tr' => 'LUFLY mimari ekibine doğrudan ulaşın: WhatsApp +90 850 3040 817, e-posta info@lufly.tr, katalog ve BIM talepleri ve Gaziantep üretim ile ihracat üssümüz.',
-            'cs' => 'Oslovte architektonický tým LUFLY přímo: WhatsApp +90 850 3040 817, e-mail info@lufly.tr, žádosti o katalog a BIM a naše výrobní a exportní centrum v Gaziantepu.',
+            'en' => 'Reach the LUFLY architectural team directly: direct line +90 850 3040 817, email info@lufly.tr, catalog and BIM requests, and our Gaziantep manufacturing and export hub in Turkey.',
+            'tr' => 'LUFLY mimari ekibine doğrudan ulaşın: direkt hat +90 850 3040 817, e-posta info@lufly.tr, katalog ve BIM talepleri ve Gaziantep üretim ile ihracat üssümüz.',
+            'cs' => 'Oslovte architektonický tým LUFLY přímo: přímá linka +90 850 3040 817, e-mail info@lufly.tr, žádosti o katalog a BIM a naše výrobní a exportní centrum v Gaziantepu.',
         ];
 
         $pageTitle = $seoTitles[$locale] ?? $seoTitles['en'];

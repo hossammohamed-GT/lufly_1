@@ -17,7 +17,7 @@ return [
 
     'hero1_eyebrow' => 'LUFLY MONOLITICKÁ ARCHITEKTURA',
     'hero1_primary' => 'Objevte chytré toalety',
-    'whatsapp_specifier' => 'Architektonická podpora',
+    'specifier_desk' => 'Architektonická podpora',
     'hero2_eyebrow' => 'LUFLY HYDRODYNAMICKÁ PŘESNOST',
     'hero2_primary' => 'Kolekce baterií a armatur',
     'hero2_secondary' => 'Prozkoumat všech 9 povrchů',
@@ -48,7 +48,7 @@ return [
     'trust_global_desc' => 'Přímá doprava z výrobního závodu v Gaziantepu ve vyztužených boxech se sledováním zásilky od dveří ke dveřím.',
     'trust_cta_heading' => 'Hledáte přímé tovární ceny nebo podklady pro svůj projekt?',
     'trust_cta_sub' => 'Získejte velkoobchodní slevy, vzorky PVD povrchů a architektonické CAD/BIM podklady během několika minut.',
-    'trust_cta_quote' => 'Získat rychlou nabídku přes WhatsApp',
+    'trust_cta_quote' => 'Rychlá nabídka po telefonu',
     'trust_cta_catalog' => 'Prohlédnout katalog produktů',
     'trust_pill_1' => 'Evropský standard EN 997 a EN 817',
     'trust_pill_2' => '10letá tovární záruka',

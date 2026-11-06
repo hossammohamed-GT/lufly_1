@@ -41,7 +41,7 @@ return [
     'name_pending' => 'Název produktu neuveden',
     'description' => 'Popis',
     'specs_title' => 'Technické specifikace',
-    'inquire_whatsapp' => 'Vyžádat nabídku',
+    'inquire_quote' => 'Vyžádat nabídku',
     'width' => 'Šířka',
     'height' => 'Výška',
     'depth' => 'Hloubka',

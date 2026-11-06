@@ -3,7 +3,7 @@
 declare(strict_types=1);
 
 return [
-    // B2B Wholesale quotation & WhatsApp inquiry workflow
+    // B2B Wholesale quotation & enquiry workflow
     'b2b_inquiry' => (bool) env('FEATURE_B2B_INQUIRY', true),
 
     // AI helpers (Gemini key pool): the bathroom planner, the assistant and

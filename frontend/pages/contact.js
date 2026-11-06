@@ -2,9 +2,10 @@
    Contact enquiry form.
 
    There is no mail backend on this site, so the form composes the answers
-   into a single WhatsApp message and opens the chat. That keeps one reply
-   channel rather than promising an inbox nobody reads, and nothing the user
-   types is stored or transmitted anywhere else.
+   into a single e-mail draft addressed to the export desk and opens the
+   visitor's mail app with it. That keeps one written channel rather than
+   promising an inbox nobody reads, and nothing the user types is stored or
+   transmitted anywhere else.
    ============================================================ */
 
 (function () {
@@ -19,7 +20,7 @@
     var form = document.querySelector('[data-contact-form]');
     if (!form) return;
 
-    var number = form.getAttribute('data-wa-number') || '';
+    var address = form.getAttribute('data-mail-to') || '';
 
     form.addEventListener('submit', function (e) {
       e.preventDefault();
@@ -40,12 +41,19 @@
       var country = val(form, 'country');
       if (country) lines.push('Country: ' + country);
 
-      lines.push('Enquiry: ' + val(form, 'type'));
+      var type = val(form, 'type');
+      lines.push('Enquiry: ' + type);
       lines.push('');
       lines.push(val(form, 'message'));
+      lines.push('');
+      lines.push('Thank you.');
 
-      var url = 'https://wa.me/' + number + '?text=' + encodeURIComponent(lines.join('\n'));
-      window.open(url, '_blank', 'noopener');
+      var subject = 'Project enquiry' + (type ? ' — ' + type : '');
+      var url = 'mailto:' + address +
+        '?subject=' + encodeURIComponent(subject) +
+        '&body=' + encodeURIComponent(lines.join('\n'));
+
+      window.location.href = url;
     });
   }
 

@@ -166,11 +166,6 @@ $fallbackImg = asset('/images/favicon.png');
         <p class="planp-note"><?= e(trans('planner.handoff_text')) ?></p>
 
         <div class="planp-handoff-actions">
-            <a class="planp-btn is-whatsapp" href="<?= e((string) $handoff['whatsapp']) ?>"
-               <?= external_link_attrs((string) $handoff['whatsapp']) ?>>
-                <?= e(trans('planner.handoff_whatsapp')) ?>
-            </a>
-
             <form class="planp-mail" data-planner-send novalidate>
                 <label class="planp-field">
                     <span><?= e(trans('planner.email_label')) ?></span>

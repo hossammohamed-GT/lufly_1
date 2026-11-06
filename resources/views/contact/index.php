@@ -3,14 +3,17 @@
  * Contact page.
  *
  * Structure, top to bottom:
- *   hero        - who you are talking to + trust badge + WhatsApp panel
- *   channels    - WhatsApp / email / phone / factory, every one icon-led
- *   form        - project enquiry, composed into a WhatsApp message
+ *   hero        - who you are talking to + trust badge + direct-line panel
+ *   channels    - hotline / email / factory, every one icon-led
+ *   form        - project enquiry, composed into an e-mail draft
  *   why         - four reassurance points
- *   quick       - one-tap request lines
+ *   quick       - one-tap request lines (prefilled e-mails)
  *   faq         - the questions the sales desk answers every day
  *
  * Every block is icon-led so the page has a readable structure at a glance.
+ *
+ * There is no messaging app on this site: the published number is a telephone
+ * hotline only, and every written request leaves through e-mail.
  *
  * @var Core\View\View $view
  */
@@ -18,13 +21,17 @@ $view->layout('layouts.frontend');
 $view->pushStyle('frontend/pages/contact.css');
 $view->pushScript('frontend/pages/contact.js');
 
-$waNumber = '908503040817';
-$wa = static fn (string $message): string => 'https://wa.me/' . $waNumber . '?text=' . rawurlencode($message);
+$phone = '+90 850 3040 817';
+$phoneHref = 'tel:+908503040817';
+$email = 'info@lufly.tr';
+
+$mail = static fn (string $subject, string $body): string => 'mailto:' . $email
+    . '?subject=' . rawurlencode($subject)
+    . '&body=' . rawurlencode($body);
 
 /* inline icon helper: keeps the markup readable and the set consistent */
 $icon = static function (string $name, int $size = 20): string {
     $paths = [
-        'whatsapp' => '<path d="M12.04 2C6.58 2 2.13 6.45 2.13 11.91C2.13 13.66 2.59 15.36 3.45 16.86L2.05 22L7.3 20.62C8.75 21.41 10.38 21.83 12.04 21.83C17.5 21.83 21.95 17.38 21.95 11.92C21.95 9.27 20.92 6.78 19.05 4.91C17.18 3.03 14.69 2 12.04 2ZM12.05 20.15C10.56 20.15 9.11 19.76 7.85 19.01L7.55 18.83L4.43 19.65L5.26 16.61L5.06 16.29C4.24 14.99 3.81 13.47 3.81 11.91C3.81 7.37 7.5 3.68 12.04 3.68C14.25 3.68 16.31 4.54 17.87 6.1C19.42 7.66 20.28 9.72 20.28 11.92C20.28 16.46 16.59 20.15 12.05 20.15ZM16.57 14.43C16.32 14.3 15.1 13.71 14.88 13.62C14.65 13.54 14.48 13.5 14.32 13.75C14.15 14 13.67 14.57 13.52 14.74C13.38 14.9 13.23 14.92 12.98 14.8C12.73 14.67 11.94 14.41 11 13.57C10.27 12.91 9.78 12.1 9.63 11.85C9.48 11.6 9.61 11.47 9.74 11.34C9.85 11.23 9.99 11.05 10.12 10.9C10.24 10.75 10.28 10.64 10.36 10.48C10.44 10.31 10.4 10.17 10.34 10.05C10.28 9.92 9.78 8.7 9.58 8.19C9.38 7.69 9.18 7.76 9.03 7.75C8.89 7.74 8.72 7.74 8.56 7.74C8.39 7.74 8.12 7.8 7.89 8.05C7.67 8.3 7.03 8.9 7.03 10.12C7.03 11.34 7.92 12.52 8.04 12.68C8.17 12.85 9.78 15.33 12.26 16.4C12.85 16.65 13.31 16.81 13.67 16.92C14.26 17.11 14.8 17.08 15.22 17.02C15.7 16.95 16.67 16.43 16.88 15.86C17.08 15.29 17.08 14.8 17.02 14.7C16.96 14.6 16.81 14.55 16.57 14.43Z" fill="currentColor" stroke="none"/>',
         'mail' => '<rect x="2" y="4" width="20" height="16" rx="2"/><path d="m22 7-10 6L2 7"/>',
         'phone' => '<path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.8 19.8 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6A19.8 19.8 0 0 1 2.12 4.2 2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72c.13.96.36 1.9.7 2.81a2 2 0 0 1-.45 2.11L8.1 9.9a16 16 0 0 0 6 6l1.26-1.26a2 2 0 0 1 2.11-.45c.9.34 1.85.57 2.81.7A2 2 0 0 1 22 16.92Z"/>',
         'factory' => '<path d="M3 21h18"/><path d="M5 21V7l7-4 7 4v14"/><path d="M9 21v-6h6v6"/><path d="M9 10h.01M15 10h.01"/>',
@@ -54,11 +61,11 @@ $icon = static function (string $name, int $size = 20): string {
 };
 
 $requestLines = [
-    ['code' => 'R-01', 'icon' => 'tag',     'key' => 'quick_quote',   'href' => $wa('Hello LUFLY Team, I would like to request direct factory pricing and project specifications for architectural sanitary ware.')],
-    ['code' => 'R-02', 'icon' => 'doc',     'key' => 'quick_catalog', 'href' => $wa('Hello LUFLY, please send the 2026 Master Technical PDF Catalog.')],
-    ['code' => 'R-03', 'icon' => 'cube',    'key' => 'quick_bim',     'href' => $wa('Hello LUFLY, I require BIM and 3D Revit files for project specification.')],
-    ['code' => 'R-04', 'icon' => 'list',    'key' => 'quick_tender',  'href' => $wa('Hello LUFLY, please send the complete 2026 Architect Tender Package (CAD/BIM/PDF).')],
-    ['code' => 'R-05', 'icon' => 'palette', 'key' => 'quick_finish',  'href' => $wa('Hello LUFLY, I am specifying a finish for an architectural project. Please share high-res renders and export pricing.')],
+    ['code' => 'R-01', 'icon' => 'tag',     'key' => 'quick_quote',   'href' => $mail('Request for factory pricing', "Hello LUFLY Team,\n\nI would like to request direct factory pricing and project specifications for architectural sanitary ware.\n\nProject:\nQuantities:\nDelivery country:\n\nThank you.")],
+    ['code' => 'R-02', 'icon' => 'doc',     'key' => 'quick_catalog', 'href' => $mail('Request for the 2026 Master Technical PDF Catalog', "Hello LUFLY,\n\nPlease send the 2026 Master Technical PDF Catalog.\n\nThank you.")],
+    ['code' => 'R-03', 'icon' => 'cube',    'key' => 'quick_bim',     'href' => $mail('Request for BIM and 3D Revit files', "Hello LUFLY,\n\nI require BIM and 3D Revit files for project specification.\n\nProject:\nThank you.")],
+    ['code' => 'R-04', 'icon' => 'list',    'key' => 'quick_tender',  'href' => $mail('Request for the architect tender package', "Hello LUFLY,\n\nPlease send the complete 2026 Architect Tender Package (CAD/BIM/PDF).\n\nThank you.")],
+    ['code' => 'R-05', 'icon' => 'palette', 'key' => 'quick_finish',  'href' => $mail('Finish specification enquiry', "Hello LUFLY,\n\nI am specifying a finish for an architectural project. Please share high-res renders and export pricing.\n\nFinish:\nThank you.")],
 ];
 
 $whyPoints = [
@@ -76,7 +83,6 @@ $faqs = [
 ];
 
 $mapUrl = 'https://maps.app.goo.gl/b4syJ4YpmdgtTV7d8';
-$waCta = $wa('Hello LUFLY, I would like to contact your architectural team.');
 ?>
 <main class="cpage" id="main">
     <div class="cpage-inner">
@@ -97,42 +103,46 @@ $waCta = $wa('Hello LUFLY, I would like to contact your architectural team.');
                 </p>
             </div>
 
-            <!-- signature WhatsApp panel -->
-            <aside class="cpage-wa" aria-label="<?= e(trans('contact.whatsapp_title')) ?>">
-                <span class="cpage-wa-shimmer" aria-hidden="true"></span>
-                <span class="cpage-wa-grain" aria-hidden="true"></span>
-                <span class="cpage-wa-beam" aria-hidden="true"></span>
-                <span class="cpage-wa-chip">
-                    <svg viewBox="0 0 24 24" width="15" height="15" aria-hidden="true"><path fill="currentColor" d="M12.04 2C6.58 2 2.13 6.45 2.13 11.91C2.13 13.66 2.59 15.36 3.45 16.86L2.05 22L7.3 20.62C8.75 21.41 10.38 21.83 12.04 21.83C17.5 21.83 21.95 17.38 21.95 11.92C21.95 9.27 20.92 6.78 19.05 4.91C17.18 3.03 14.69 2 12.04 2ZM12.05 20.15C10.56 20.15 9.11 19.76 7.85 19.01L7.55 18.83L4.43 19.65L5.26 16.61L5.06 16.29C4.24 14.99 3.81 13.47 3.81 11.91C3.81 7.37 7.5 3.68 12.04 3.68C14.25 3.68 16.31 4.54 17.87 6.1C19.42 7.66 20.28 9.72 20.28 11.92C20.28 16.46 16.59 20.15 12.05 20.15ZM16.57 14.43C16.32 14.3 15.1 13.71 14.88 13.62C14.65 13.54 14.48 13.5 14.32 13.75C14.15 14 13.67 14.57 13.52 14.74C13.38 14.9 13.23 14.92 12.98 14.8C12.73 14.67 11.94 14.41 11 13.57C10.27 12.91 9.78 12.1 9.63 11.85C9.48 11.6 9.61 11.47 9.74 11.34C9.85 11.23 9.99 11.05 10.12 10.9C10.24 10.75 10.28 10.64 10.36 10.48C10.44 10.31 10.4 10.17 10.34 10.05C10.28 9.92 9.78 8.7 9.58 8.19C9.38 7.69 9.18 7.76 9.03 7.75C8.89 7.74 8.72 7.74 8.56 7.74C8.39 7.74 8.12 7.8 7.89 8.05C7.67 8.3 7.03 8.9 7.03 10.12C7.03 11.34 7.92 12.52 8.04 12.68C8.17 12.85 9.78 15.33 12.26 16.4C12.85 16.65 13.31 16.81 13.67 16.92C14.26 17.11 14.8 17.08 15.22 17.02C15.7 16.95 16.67 16.43 16.88 15.86C17.08 15.29 17.08 14.8 17.02 14.7C16.96 14.6 16.81 14.55 16.57 14.43Z"/></svg>
-                    <span><?= e(trans('contact.whatsapp_title')) ?></span>
+            <!-- signature direct-line panel -->
+            <aside class="cpage-hot" aria-label="<?= e(trans('contact.hotline_title')) ?>">
+                <span class="cpage-hot-shimmer" aria-hidden="true"></span>
+                <span class="cpage-hot-grain" aria-hidden="true"></span>
+                <span class="cpage-hot-beam" aria-hidden="true"></span>
+                <span class="cpage-hot-chip">
+                    <?= $icon('phone', 15) ?>
+                    <span><?= e(trans('contact.hotline_title')) ?></span>
                 </span>
-                <p class="cpage-wa-desc"><?= e(trans('contact.whatsapp_desc')) ?></p>
-                <a class="cpage-wa-number" href="https://wa.me/<?= e($waNumber) ?>" <?= external_link_attrs('https://wa.me/' . $waNumber) ?>>+90 850 3040 817</a>
-                <a class="cpage-wa-cta" href="<?= e($waCta) ?>" <?= external_link_attrs($waCta) ?>>
-                    <span><?= e(trans('contact.whatsapp_cta')) ?></span>
+                <p class="cpage-hot-desc"><?= e(trans('contact.hotline_desc')) ?></p>
+                <a class="cpage-hot-number" href="<?= e($phoneHref) ?>"><?= e($phone) ?></a>
+                <a class="cpage-hot-cta" href="<?= e($phoneHref) ?>">
+                    <span><?= e(trans('contact.hotline_cta')) ?></span>
                     <?= $icon('arrow', 15) ?>
                 </a>
+                <p class="cpage-hot-hours">
+                    <?= $icon('clock', 13) ?>
+                    <span><?= e(trans('contact.hotline_hours')) ?></span>
+                </p>
             </aside>
         </section>
 
         <!-- ============ channels ============ -->
         <div class="cpage-grid">
             <article class="cpage-card">
-                <span class="cpage-card-icon" aria-hidden="true"><?= $icon('mail', 21) ?></span>
-                <h2><?= e(trans('contact.email_title')) ?></h2>
-                <p class="cpage-card-desc"><?= e(trans('contact.email_desc')) ?></p>
-                <a class="cpage-strong" href="mailto:info@lufly.tr">info@lufly.tr</a>
-            </article>
-
-            <article class="cpage-card">
                 <span class="cpage-card-icon" aria-hidden="true"><?= $icon('phone', 21) ?></span>
                 <h2><?= e(trans('contact.phone_title')) ?></h2>
                 <p class="cpage-card-desc"><?= e(trans('contact.phone_desc')) ?></p>
-                <a class="cpage-strong" href="tel:+908503040817">+90 850 3040 817</a>
+                <a class="cpage-strong" href="<?= e($phoneHref) ?>"><?= e($phone) ?></a>
                 <dl class="cpage-hours">
                     <dt><?= $icon('clock', 13) ?> <?= e(trans('contact.hours_label')) ?></dt>
                     <dd><?= e(trans('contact.hours_value')) ?></dd>
                 </dl>
+            </article>
+
+            <article class="cpage-card">
+                <span class="cpage-card-icon" aria-hidden="true"><?= $icon('mail', 21) ?></span>
+                <h2><?= e(trans('contact.email_title')) ?></h2>
+                <p class="cpage-card-desc"><?= e(trans('contact.email_desc')) ?></p>
+                <a class="cpage-strong" href="mailto:<?= e($email) ?>"><?= e($email) ?></a>
             </article>
 
             <article class="cpage-card">
@@ -160,7 +170,7 @@ $waCta = $wa('Hello LUFLY, I would like to contact your architectural team.');
                 </div>
             </div>
 
-            <form class="cpage-form" data-contact-form data-wa-number="<?= e($waNumber) ?>" data-loader-skip>
+            <form class="cpage-form" data-contact-form data-mail-to="<?= e($email) ?>" data-loader-skip>
                 <div class="cpage-field">
                     <label for="cf-name"><?= $icon('user', 14) ?> <?= e(trans('contact.form_name')) ?> *</label>
                     <input id="cf-name" name="name" type="text" required autocomplete="name">
@@ -233,7 +243,7 @@ $waCta = $wa('Hello LUFLY, I would like to contact your architectural team.');
             </h2>
             <div class="cpage-lines">
                 <?php foreach ($requestLines as $line): ?>
-                    <a class="cpage-line" href="<?= e($line['href']) ?>" <?= external_link_attrs((string) $line['href']) ?>>
+                    <a class="cpage-line" href="<?= e($line['href']) ?>">
                         <span class="cpage-line-code"><?= e($line['code']) ?></span>
                         <span class="cpage-line-ico" aria-hidden="true"><?= $icon($line['icon'], 17) ?></span>
                         <span class="cpage-line-label"><?= e(trans('contact.' . $line['key'])) ?></span>

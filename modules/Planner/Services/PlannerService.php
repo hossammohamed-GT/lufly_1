@@ -782,8 +782,8 @@ class PlannerService
      * ------------------------------------------------------------------- */
 
     /**
-     * The two ways a plan leaves the shop: a WhatsApp message the visitor can
-     * send in one tap, and the e-mail the shop sends on their behalf.
+     * How a plan leaves the shop: the e-mail the shop sends on the visitor's
+     * behalf, and the phone number they can call instead.
      *
      * @param array<string, mixed> $plan
      * @return array<string, string>
@@ -791,14 +791,10 @@ class PlannerService
     public function handoff(array $plan, string $locale = 'en'): array
     {
         $config = (array) ($this->config()['handoff'] ?? []);
-        $body = $this->t('handoff_wa_body', $locale, ['plan' => $plan['plan_text']]);
 
         return [
             'phone' => (string) ($config['phone'] ?? ''),
             'email' => (string) ($config['email'] ?? ''),
-            'whatsapp' => 'https://wa.me/' . rawurlencode((string) ($config['whatsapp'] ?? ''))
-                . '?text=' . rawurlencode($body),
-            'body' => $body,
             'mail_body' => $this->t('handoff_mail_body', $locale, [
                 'plan' => $plan['plan_text'],
                 'email' => '',
