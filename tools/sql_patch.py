@@ -17,6 +17,12 @@ def append_patch(block, path=PATH):
         raise RuntimeError("lufly-database.sql has no end marker; refusing to patch")
     if not block.endswith("\n"):
         block += "\n"
+    # A caller may paste the file's own footer into its block; drop it so the
+    # end marker stays unique instead of piling up at the bottom of the dump.
+    while block.rstrip("\n").endswith(TAIL.strip()):
+        block = block.rstrip("\n")[:-len(TAIL.strip())].rstrip("\n") + "\n"
+        if not block.endswith("\n"):
+            block += "\n"
     sql = sql.replace(TAIL, block + TAIL, 1)
     fd, tmp = tempfile.mkstemp(dir=os.path.dirname(path))
     with os.fdopen(fd, "w", encoding="utf-8") as fh:

@@ -45982,16 +45982,39 @@ DELETE FROM `product_media` WHERE `id` IN (352, 354, 137, 139, 140, 374, 141, 14
 DELETE FROM `media` WHERE `id` IN (352, 354, 137, 139, 140, 374, 141, 143, 355, 144, 378, 146, 383);
 
 -- End of the 2026-11-09 sanitary ware batch 5
--- End of lufly-database.sql
--- End of lufly-database.sql
--- End of lufly-database.sql
--- End of lufly-database.sql
--- End of lufly-database.sql
--- End of lufly-database.sql
--- End of lufly-database.sql
--- End of lufly-database.sql
--- End of lufly-database.sql
--- End of lufly-database.sql
--- End of lufly-database.sql
--- End of lufly-database.sql
+-- ---------------------------------------------------------------------------
+-- 2026-11-09 Sanitary Ware batch 6: 1685-199 and 1610-0045 re-shot,
+--             1681-993 and 1681-093C back to their own photos, seven new heroes
+-- ---------------------------------------------------------------------------
+
+INSERT INTO `media` (`id`, `uuid`, `collection`, `filename`, `original_name`, `path`, `mime_type`, `extension`, `size`, `width`, `height`, `meta`, `owner_id`, `status`, `created_at`, `updated_at`, `deleted_at`) VALUES (378, '7af2a1f0-fcc4-4381-b60e-fb76909fb4e8', 'bathroom.sanitary-ware.cisterns', '419dfca0c6fa9f74e00bf48b.webp', 'image196.png', '/images/products/catalog/419dfca0c6fa9f74e00bf48b.webp', 'image/webp', 'webp', 39998, 1258, 996, '{\"source\": \"lufly-manager\", \"manager_product_id\": 206, \"manager_media_id\": 371, \"original_path\": \"assets/catalog/419dfca0c6fa9f74e00bf48b.webp\", \"source_column\": \"D\", \"source_row\": 86, \"source_sort_order\": 371, \"source_sha256\": \"419dfca0c6fa9f74e00bf48b05a60627d815bda1240205741c9db2de0bac880a\", \"sha256\": \"72bae37d646538bdf0dd8d1ede3518a7331f784e45f6bdb6c4eea494d705de69\", \"caption\": \"\", \"previewable\": true}', NULL, 'active', '2026-10-23 09:44:39', '2026-10-23 09:44:39', NULL);
+INSERT INTO `media` (`id`, `uuid`, `collection`, `filename`, `original_name`, `path`, `mime_type`, `extension`, `size`, `width`, `height`, `meta`, `owner_id`, `status`, `created_at`, `updated_at`, `deleted_at`) VALUES (383, '3c388167-7209-45ec-95c8-9b199e9a73d8', 'bathroom.sanitary-ware.cisterns', 'e362a520db0c1eedb5be3df7.webp', 'image140.png', '/images/products/catalog/e362a520db0c1eedb5be3df7.webp', 'image/webp', 'webp', 164224, 1510, 1042, '{\"source\": \"lufly-manager\", \"manager_product_id\": 207, \"manager_media_id\": 376, \"original_path\": \"assets/catalog/e362a520db0c1eedb5be3df7.webp\", \"source_column\": \"D\", \"source_row\": 87, \"source_sort_order\": 376, \"source_sha256\": \"e362a520db0c1eedb5be3df70403cf2732b434339ff8f1742731ef6627355df5\", \"sha256\": \"5b2134d1c7a10f54c718f4ae73f738df28d60687e12bc154219d1d50f8a543e2\", \"caption\": \"\", \"previewable\": true}', NULL, 'active', '2026-10-23 09:44:39', '2026-10-23 09:44:39', NULL);
+UPDATE `product_media` SET `is_primary` = 0 WHERE `product_id` IN (204, 205) AND `type` = 'drawing';
+INSERT INTO `product_media` (`id`, `product_id`, `variant_id`, `media_id`, `type`, `sort_order`, `is_primary`, `created_at`, `updated_at`) VALUES (378, 204, NULL, 378, 'gallery', 2, 1, '2026-10-23 09:44:39', '2026-10-23 09:44:39');
+INSERT INTO `product_media` (`id`, `product_id`, `variant_id`, `media_id`, `type`, `sort_order`, `is_primary`, `created_at`, `updated_at`) VALUES (383, 205, NULL, 383, 'gallery', 1, 1, '2026-10-23 09:44:39', '2026-10-23 09:44:39');
+DELETE FROM `product_media` WHERE `id` IN (1611, 1609);
+DELETE FROM `media` WHERE `id` IN (1606, 1604);
+
+UPDATE `media` SET `size` = 31828, `width` = 1280, `height` = 816, `updated_at` = '2026-11-09 15:20:00' WHERE `id` = 1602;
+UPDATE `media` SET `size` = 60642, `width` = 1265, `height` = 832, `updated_at` = '2026-11-09 15:20:00' WHERE `id` = 1605;
+INSERT INTO `media` (`id`, `uuid`, `collection`, `filename`, `original_name`, `path`, `mime_type`, `extension`, `size`, `width`, `height`, `meta`, `owner_id`, `status`, `created_at`, `updated_at`, `deleted_at`) VALUES (1607, '70f26ce6-4fbe-42ed-9774-26afddacdf14', '', '1610-0185-73-hero.jpg', '1610-0185-73 hero.jpg', '/images/products/1610-0185-73/1610-0185-73-hero.jpg', 'image/jpeg', 'jpeg', 60052, 1280, 816, '[]', 2, 'active', '2026-11-09 15:20:00', '2026-11-09 15:20:00', NULL);
+INSERT INTO `media` (`id`, `uuid`, `collection`, `filename`, `original_name`, `path`, `mime_type`, `extension`, `size`, `width`, `height`, `meta`, `owner_id`, `status`, `created_at`, `updated_at`, `deleted_at`) VALUES (1608, '873fad1d-7d29-461f-80ed-e972a74abd1a', '', '1610-0144-hero.jpg', '1610-0144 hero.jpg', '/images/products/1610-0144/1610-0144-hero.jpg', 'image/jpeg', 'jpeg', 61201, 1280, 816, '[]', 2, 'active', '2026-11-09 15:20:00', '2026-11-09 15:20:00', NULL);
+INSERT INTO `media` (`id`, `uuid`, `collection`, `filename`, `original_name`, `path`, `mime_type`, `extension`, `size`, `width`, `height`, `meta`, `owner_id`, `status`, `created_at`, `updated_at`, `deleted_at`) VALUES (1609, 'ccf8de59-7aa5-4ac6-82e5-e4f5df812b67', '', '1610-0177-hero.jpg', '1610-0177 hero.jpg', '/images/products/1610-0177/1610-0177-hero.jpg', 'image/jpeg', 'jpeg', 69849, 1280, 816, '[]', 2, 'active', '2026-11-09 15:20:00', '2026-11-09 15:20:00', NULL);
+INSERT INTO `media` (`id`, `uuid`, `collection`, `filename`, `original_name`, `path`, `mime_type`, `extension`, `size`, `width`, `height`, `meta`, `owner_id`, `status`, `created_at`, `updated_at`, `deleted_at`) VALUES (1610, 'b688d6e0-f091-4337-8e16-049ca3564d9f', '', '1610-0181-hero.jpg', '1610-0181 hero.jpg', '/images/products/1610-0181/1610-0181-hero.jpg', 'image/jpeg', 'jpeg', 73240, 1296, 816, '[]', 2, 'active', '2026-11-09 15:20:00', '2026-11-09 15:20:00', NULL);
+INSERT INTO `media` (`id`, `uuid`, `collection`, `filename`, `original_name`, `path`, `mime_type`, `extension`, `size`, `width`, `height`, `meta`, `owner_id`, `status`, `created_at`, `updated_at`, `deleted_at`) VALUES (1611, '7ce43551-b830-47c2-bc46-31ca90f8ea2e', '', '1610-0181b-hero.jpg', '1610-0181b hero.jpg', '/images/products/1610-0181b/1610-0181b-hero.jpg', 'image/jpeg', 'jpeg', 124837, 1280, 816, '[]', 2, 'active', '2026-11-09 15:20:00', '2026-11-09 15:20:00', NULL);
+INSERT INTO `media` (`id`, `uuid`, `collection`, `filename`, `original_name`, `path`, `mime_type`, `extension`, `size`, `width`, `height`, `meta`, `owner_id`, `status`, `created_at`, `updated_at`, `deleted_at`) VALUES (1612, 'b3ee0868-a1ed-400a-8f3b-5b0724cb68ac', '', '1610-0293-hero.jpg', '1610-0293 hero.jpg', '/images/products/1610-0293/1610-0293-hero.jpg', 'image/jpeg', 'jpeg', 48437, 1280, 816, '[]', 2, 'active', '2026-11-09 15:20:00', '2026-11-09 15:20:00', NULL);
+INSERT INTO `media` (`id`, `uuid`, `collection`, `filename`, `original_name`, `path`, `mime_type`, `extension`, `size`, `width`, `height`, `meta`, `owner_id`, `status`, `created_at`, `updated_at`, `deleted_at`) VALUES (1613, '00154dea-1fb9-4da9-9f03-fb7fd350125f', '', '1610-0021-87-hero.jpg', '1610-0021-87 hero.jpg', '/images/products/1610-0021-87/1610-0021-87-hero.jpg', 'image/jpeg', 'jpeg', 38920, 1280, 816, '[]', 2, 'active', '2026-11-09 15:20:00', '2026-11-09 15:20:00', NULL);
+
+INSERT INTO `product_media` (`id`, `product_id`, `variant_id`, `media_id`, `type`, `sort_order`, `is_primary`, `created_at`, `updated_at`) VALUES (1612, 71, NULL, 1607, 'main', 0, 1, '2026-11-09 15:20:00', '2026-11-09 15:20:00');
+INSERT INTO `product_media` (`id`, `product_id`, `variant_id`, `media_id`, `type`, `sort_order`, `is_primary`, `created_at`, `updated_at`) VALUES (1613, 80, NULL, 1608, 'main', 0, 1, '2026-11-09 15:20:00', '2026-11-09 15:20:00');
+INSERT INTO `product_media` (`id`, `product_id`, `variant_id`, `media_id`, `type`, `sort_order`, `is_primary`, `created_at`, `updated_at`) VALUES (1614, 81, NULL, 1609, 'main', 0, 1, '2026-11-09 15:20:00', '2026-11-09 15:20:00');
+INSERT INTO `product_media` (`id`, `product_id`, `variant_id`, `media_id`, `type`, `sort_order`, `is_primary`, `created_at`, `updated_at`) VALUES (1615, 82, NULL, 1610, 'main', 0, 1, '2026-11-09 15:20:00', '2026-11-09 15:20:00');
+INSERT INTO `product_media` (`id`, `product_id`, `variant_id`, `media_id`, `type`, `sort_order`, `is_primary`, `created_at`, `updated_at`) VALUES (1616, 83, NULL, 1611, 'main', 0, 1, '2026-11-09 15:20:00', '2026-11-09 15:20:00');
+INSERT INTO `product_media` (`id`, `product_id`, `variant_id`, `media_id`, `type`, `sort_order`, `is_primary`, `created_at`, `updated_at`) VALUES (1617, 84, NULL, 1612, 'main', 0, 1, '2026-11-09 15:20:00', '2026-11-09 15:20:00');
+INSERT INTO `product_media` (`id`, `product_id`, `variant_id`, `media_id`, `type`, `sort_order`, `is_primary`, `created_at`, `updated_at`) VALUES (1618, 85, NULL, 1613, 'main', 0, 1, '2026-11-09 15:20:00', '2026-11-09 15:20:00');
+
+DELETE FROM `product_media` WHERE `id` IN (127, 128, 149, 151, 153, 155, 157, 159, 161);
+DELETE FROM `media` WHERE `id` IN (127, 128, 149, 151, 153, 155, 157, 159, 161);
+
+-- End of the 2026-11-09 sanitary ware batch 6
 -- End of lufly-database.sql
