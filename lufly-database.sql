@@ -45542,4 +45542,52 @@ INSERT INTO `product_media` (`id`, `product_id`, `variant_id`, `media_id`, `type
 INSERT INTO `product_media` (`id`, `product_id`, `variant_id`, `media_id`, `type`, `sort_order`, `is_primary`, `created_at`, `updated_at`) VALUES (1534, 479, NULL, 1529, 'main', 0, 1, '2026-11-06 16:10:00', '2026-11-06 16:10:00');
 
 -- End of the 2026-11-06 accessory photo patch (third pass)
+-- ---------------------------------------------------------------------------
+-- 2026-11-06 accessory photos, fourth pass: 1300-0106BR (brushed steel) and its
+--   1300-0106BRO twin (oil-rubbed bronze), 1300-008-2, 1300-DUS05, V-1721L,
+--   V-1722F, 1300-07214GB
+-- ---------------------------------------------------------------------------
+
+UPDATE `media` SET `size` = 138624, `width` = 1366, `height` = 784, `updated_at` = '2026-11-06 17:20:00' WHERE `id` = 1528;
+
+UPDATE `product_media` SET `is_primary` = 0, `sort_order` = `sort_order` + 2, `updated_at` = '2026-11-06 17:20:00' WHERE `product_id` = 468 AND `media_id` = 993;
+UPDATE `product_media` SET `is_primary` = 0, `sort_order` = `sort_order` + 2, `updated_at` = '2026-11-06 17:20:00' WHERE `product_id` = 470 AND `media_id` = 996;
+UPDATE `product_media` SET `is_primary` = 0, `sort_order` = `sort_order` + 2, `updated_at` = '2026-11-06 17:20:00' WHERE `product_id` = 534 AND `media_id` = 1118;
+UPDATE `product_media` SET `is_primary` = 0, `sort_order` = `sort_order` + 2, `updated_at` = '2026-11-06 17:20:00' WHERE `product_id` = 396 AND `media_id` = 807;
+UPDATE `product_media` SET `is_primary` = 0, `sort_order` = `sort_order` + 2, `updated_at` = '2026-11-06 17:20:00' WHERE `product_id` = 397 AND `media_id` = 809;
+UPDATE `product_media` SET `is_primary` = 0, `sort_order` = `sort_order` + 2, `updated_at` = '2026-11-06 17:20:00' WHERE `product_id` = 480 AND `media_id` = 1018;
+
+INSERT INTO `media` (`id`, `uuid`, `collection`, `filename`, `original_name`, `path`, `mime_type`, `extension`, `size`, `width`, `height`, `meta`, `owner_id`, `status`, `created_at`, `updated_at`, `deleted_at`) VALUES (1530, '22cd9830-9a06-406f-a829-377b42abd994', '1300-0106bro', '1300-0106bro-hero.jpg', '1300-0106BRO hero.jpg', '/images/products/1300-0106bro/1300-0106bro-hero.jpg', 'image/jpeg', 'jpeg', 146790, 1366, 784, '[]', 2, 'active', '2026-11-06 17:20:00', '2026-11-06 17:20:00', NULL);
+INSERT INTO `media` (`id`, `uuid`, `collection`, `filename`, `original_name`, `path`, `mime_type`, `extension`, `size`, `width`, `height`, `meta`, `owner_id`, `status`, `created_at`, `updated_at`, `deleted_at`) VALUES (1531, '1a92e9ec-2e10-4e3a-ba2a-50dd1fea6f7f', '1300-008-473', '1300-008-473-hero.jpg', '1300-008 hero.jpg', '/images/products/1300-008-473/1300-008-473-hero.jpg', 'image/jpeg', 'jpeg', 171290, 1280, 816, '[]', 2, 'active', '2026-11-06 17:20:00', '2026-11-06 17:20:00', NULL);
+INSERT INTO `media` (`id`, `uuid`, `collection`, `filename`, `original_name`, `path`, `mime_type`, `extension`, `size`, `width`, `height`, `meta`, `owner_id`, `status`, `created_at`, `updated_at`, `deleted_at`) VALUES (1532, 'dd1eeb0a-6263-4890-805f-9f8201ee5ce3', '1300-dus05', '1300-dus05-hero.jpg', '1300-DUS05 hero.jpg', '/images/products/1300-dus05/1300-dus05-hero.jpg', 'image/jpeg', 'jpeg', 72014, 1280, 816, '[]', 2, 'active', '2026-11-06 17:20:00', '2026-11-06 17:20:00', NULL);
+INSERT INTO `media` (`id`, `uuid`, `collection`, `filename`, `original_name`, `path`, `mime_type`, `extension`, `size`, `width`, `height`, `meta`, `owner_id`, `status`, `created_at`, `updated_at`, `deleted_at`) VALUES (1533, '331750c0-42ed-49bd-a3e6-175c668ca995', 'v-1721l', 'v-1721l-hero.jpg', 'V-1721L hero.jpg', '/images/products/v-1721l/v-1721l-hero.jpg', 'image/jpeg', 'jpeg', 69496, 1280, 816, '[]', 2, 'active', '2026-11-06 17:20:00', '2026-11-06 17:20:00', NULL);
+INSERT INTO `media` (`id`, `uuid`, `collection`, `filename`, `original_name`, `path`, `mime_type`, `extension`, `size`, `width`, `height`, `meta`, `owner_id`, `status`, `created_at`, `updated_at`, `deleted_at`) VALUES (1534, '72f5e82f-123e-42f9-82d5-14f92285512a', 'v-1722f', 'v-1722f-hero.jpg', 'V-1722F hero.jpg', '/images/products/v-1722f/v-1722f-hero.jpg', 'image/jpeg', 'jpeg', 63636, 1280, 816, '[]', 2, 'active', '2026-11-06 17:20:00', '2026-11-06 17:20:00', NULL);
+INSERT INTO `media` (`id`, `uuid`, `collection`, `filename`, `original_name`, `path`, `mime_type`, `extension`, `size`, `width`, `height`, `meta`, `owner_id`, `status`, `created_at`, `updated_at`, `deleted_at`) VALUES (1535, '95907cbb-573a-4f91-8c2f-19b5bb9a78f4', '1300-07214gb', '1300-07214gb-hero.jpg', '1300-07214GB hero.jpg', '/images/products/1300-07214gb/1300-07214gb-hero.jpg', 'image/jpeg', 'jpeg', 63666, 1280, 816, '[]', 2, 'active', '2026-11-06 17:20:00', '2026-11-06 17:20:00', NULL);
+
+INSERT INTO `product_media` (`id`, `product_id`, `variant_id`, `media_id`, `type`, `sort_order`, `is_primary`, `created_at`, `updated_at`) VALUES (1535, 468, NULL, 1530, 'main', 0, 1, '2026-11-06 17:20:00', '2026-11-06 17:20:00');
+INSERT INTO `product_media` (`id`, `product_id`, `variant_id`, `media_id`, `type`, `sort_order`, `is_primary`, `created_at`, `updated_at`) VALUES (1536, 470, NULL, 1531, 'main', 0, 1, '2026-11-06 17:20:00', '2026-11-06 17:20:00');
+INSERT INTO `product_media` (`id`, `product_id`, `variant_id`, `media_id`, `type`, `sort_order`, `is_primary`, `created_at`, `updated_at`) VALUES (1537, 534, NULL, 1532, 'main', 0, 1, '2026-11-06 17:20:00', '2026-11-06 17:20:00');
+INSERT INTO `product_media` (`id`, `product_id`, `variant_id`, `media_id`, `type`, `sort_order`, `is_primary`, `created_at`, `updated_at`) VALUES (1538, 396, NULL, 1533, 'main', 0, 1, '2026-11-06 17:20:00', '2026-11-06 17:20:00');
+INSERT INTO `product_media` (`id`, `product_id`, `variant_id`, `media_id`, `type`, `sort_order`, `is_primary`, `created_at`, `updated_at`) VALUES (1539, 397, NULL, 1534, 'main', 0, 1, '2026-11-06 17:20:00', '2026-11-06 17:20:00');
+INSERT INTO `product_media` (`id`, `product_id`, `variant_id`, `media_id`, `type`, `sort_order`, `is_primary`, `created_at`, `updated_at`) VALUES (1540, 480, NULL, 1535, 'main', 0, 1, '2026-11-06 17:20:00', '2026-11-06 17:20:00');
+
+-- End of the 2026-11-06 accessory photo patch (fourth pass)
+-- ---------------------------------------------------------------------------
+-- 2026-11-06 1300-003 family: one master shot (chrome) plus its rose-gold and
+--             oil-rubbed-bronze variants, so only the colour differs
+-- ---------------------------------------------------------------------------
+
+UPDATE `product_media` SET `is_primary` = 0, `sort_order` = `sort_order` + 2, `updated_at` = '2026-11-06 18:05:00' WHERE `product_id` = 437 AND `media_id` = 912;
+UPDATE `product_media` SET `is_primary` = 0, `sort_order` = `sort_order` + 2, `updated_at` = '2026-11-06 18:05:00' WHERE `product_id` = 438 AND `media_id` = 917;
+UPDATE `product_media` SET `is_primary` = 0, `sort_order` = `sort_order` + 2, `updated_at` = '2026-11-06 18:05:00' WHERE `product_id` = 439 AND `media_id` = 920;
+
+INSERT INTO `media` (`id`, `uuid`, `collection`, `filename`, `original_name`, `path`, `mime_type`, `extension`, `size`, `width`, `height`, `meta`, `owner_id`, `status`, `created_at`, `updated_at`, `deleted_at`) VALUES (1536, '765f8a78-b26d-46a5-8f9a-d9f484e2ad96', '1300-003-440', '1300-003-440-hero.jpg', '1300-003 hero.jpg', '/images/products/1300-003-440/1300-003-440-hero.jpg', 'image/jpeg', 'jpeg', 120123, 1280, 816, '[]', 2, 'active', '2026-11-06 18:05:00', '2026-11-06 18:05:00', NULL);
+INSERT INTO `media` (`id`, `uuid`, `collection`, `filename`, `original_name`, `path`, `mime_type`, `extension`, `size`, `width`, `height`, `meta`, `owner_id`, `status`, `created_at`, `updated_at`, `deleted_at`) VALUES (1537, '153ffd73-afd0-4afc-83fd-fc3817171cc2', '1300-003rg', '1300-003rg-hero.jpg', '1300-003RG hero.jpg', '/images/products/1300-003rg/1300-003rg-hero.jpg', 'image/jpeg', 'jpeg', 144669, 1280, 816, '[]', 2, 'active', '2026-11-06 18:05:00', '2026-11-06 18:05:00', NULL);
+INSERT INTO `media` (`id`, `uuid`, `collection`, `filename`, `original_name`, `path`, `mime_type`, `extension`, `size`, `width`, `height`, `meta`, `owner_id`, `status`, `created_at`, `updated_at`, `deleted_at`) VALUES (1538, '53db2050-acbf-4fef-81fd-a6d8321eb710', '1300-003br', '1300-003br-hero.jpg', '1300-003BR hero.jpg', '/images/products/1300-003br/1300-003br-hero.jpg', 'image/jpeg', 'jpeg', 132674, 1280, 816, '[]', 2, 'active', '2026-11-06 18:05:00', '2026-11-06 18:05:00', NULL);
+
+INSERT INTO `product_media` (`id`, `product_id`, `variant_id`, `media_id`, `type`, `sort_order`, `is_primary`, `created_at`, `updated_at`) VALUES (1541, 437, NULL, 1536, 'main', 0, 1, '2026-11-06 18:05:00', '2026-11-06 18:05:00');
+INSERT INTO `product_media` (`id`, `product_id`, `variant_id`, `media_id`, `type`, `sort_order`, `is_primary`, `created_at`, `updated_at`) VALUES (1542, 438, NULL, 1537, 'main', 0, 1, '2026-11-06 18:05:00', '2026-11-06 18:05:00');
+INSERT INTO `product_media` (`id`, `product_id`, `variant_id`, `media_id`, `type`, `sort_order`, `is_primary`, `created_at`, `updated_at`) VALUES (1543, 439, NULL, 1538, 'main', 0, 1, '2026-11-06 18:05:00', '2026-11-06 18:05:00');
+
+-- End of the 2026-11-06 1300-003 colour-family patch
 -- End of lufly-database.sql
