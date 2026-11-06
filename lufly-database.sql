@@ -45690,4 +45690,21 @@ DELETE FROM `product_media` WHERE `id` IN (807, 809, 912, 917, 920, 925, 928, 93
 DELETE FROM `media` WHERE `id` IN (807, 809, 912, 917, 920, 925, 928, 931, 932, 934, 955, 964, 990, 993, 996, 1003, 1010, 1016, 1018, 1118, 1126, 1150, 1172, 1203, 1205);
 
 -- End of the 2026-11-06 clean-up patch
+-- ---------------------------------------------------------------------------
+-- 2026-11-07 1300-SUR60B, 1300-007 and 1300-008 studio heroes; their old
+--             catalogue photos are retired
+-- ---------------------------------------------------------------------------
+
+INSERT INTO `media` (`id`, `uuid`, `collection`, `filename`, `original_name`, `path`, `mime_type`, `extension`, `size`, `width`, `height`, `meta`, `owner_id`, `status`, `created_at`, `updated_at`, `deleted_at`) VALUES (1548, '87878071-5dc3-4b5b-a679-007ceefc8d30', '1300-sur60b', '1300-sur60b-hero.jpg', '1300-SUR60B hero.jpg', '/images/products/1300-sur60b/1300-sur60b-hero.jpg', 'image/jpeg', 'jpeg', 84386, 1280, 816, '[]', 2, 'active', '2026-11-07 09:30:00', '2026-11-07 09:30:00', NULL);
+INSERT INTO `media` (`id`, `uuid`, `collection`, `filename`, `original_name`, `path`, `mime_type`, `extension`, `size`, `width`, `height`, `meta`, `owner_id`, `status`, `created_at`, `updated_at`, `deleted_at`) VALUES (1549, '26f6d4dc-df99-4d74-9368-1fc4d3e46d63', '1300-007', '1300-007-hero.jpg', '1300-007 hero.jpg', '/images/products/1300-007/1300-007-hero.jpg', 'image/jpeg', 'jpeg', 50553, 1280, 816, '[]', 2, 'active', '2026-11-07 09:30:00', '2026-11-07 09:30:00', NULL);
+INSERT INTO `media` (`id`, `uuid`, `collection`, `filename`, `original_name`, `path`, `mime_type`, `extension`, `size`, `width`, `height`, `meta`, `owner_id`, `status`, `created_at`, `updated_at`, `deleted_at`) VALUES (1550, 'c49ff69e-8e0f-4c4f-bd2c-57c0275a0032', '1300-008', '1300-008-hero.jpg', '1300-008 hero.jpg', '/images/products/1300-008/1300-008-hero.jpg', 'image/jpeg', 'jpeg', 73534, 1280, 816, '[]', 2, 'active', '2026-11-07 09:30:00', '2026-11-07 09:30:00', NULL);
+
+INSERT INTO `product_media` (`id`, `product_id`, `variant_id`, `media_id`, `type`, `sort_order`, `is_primary`, `created_at`, `updated_at`) VALUES (1553, 575, NULL, 1548, 'main', 0, 1, '2026-11-07 09:30:00', '2026-11-07 09:30:00');
+INSERT INTO `product_media` (`id`, `product_id`, `variant_id`, `media_id`, `type`, `sort_order`, `is_primary`, `created_at`, `updated_at`) VALUES (1554, 447, NULL, 1549, 'main', 0, 1, '2026-11-07 09:30:00', '2026-11-07 09:30:00');
+INSERT INTO `product_media` (`id`, `product_id`, `variant_id`, `media_id`, `type`, `sort_order`, `is_primary`, `created_at`, `updated_at`) VALUES (1555, 450, NULL, 1550, 'main', 0, 1, '2026-11-07 09:30:00', '2026-11-07 09:30:00');
+
+DELETE FROM `product_media` WHERE `id` IN (1197, 942, 951);
+DELETE FROM `media` WHERE `id` IN (1197, 942, 951);
+
+-- End of the 2026-11-07 patch
 -- End of lufly-database.sql
