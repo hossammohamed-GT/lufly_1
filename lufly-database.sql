@@ -45635,4 +45635,59 @@ INSERT INTO `product_media` (`id`, `product_id`, `variant_id`, `media_id`, `type
 INSERT INTO `product_media` (`id`, `product_id`, `variant_id`, `media_id`, `type`, `sort_order`, `is_primary`, `created_at`, `updated_at`) VALUES (1552, 578, NULL, 1547, 'main', 0, 1, '2026-11-06 20:10:00', '2026-11-06 20:10:00');
 
 -- End of the 2026-11-06 accessory photo patch (fifth pass)
+-- ---------------------------------------------------------------------------
+-- 2026-11-06 clean-up: the old catalogue photos are retired for every product
+--   that now has a generated studio hero (only the drawings are kept), and
+--   the hero files were re-processed so every backdrop is pure white while
+--   the product pixels stay untouched.
+-- ---------------------------------------------------------------------------
+
+UPDATE `media` SET `size` = 358174, `width` = 1600, `height` = 2867, `updated_at` = '2026-11-06 22:10:00' WHERE `id` = 1501;
+UPDATE `media` SET `size` = 90361, `width` = 896, `height` = 1200, `updated_at` = '2026-11-06 22:10:00' WHERE `id` = 1505;
+UPDATE `media` SET `size` = 80256, `width` = 1376, `height` = 768, `updated_at` = '2026-11-06 22:10:00' WHERE `id` = 1506;
+UPDATE `media` SET `size` = 91235, `width` = 1024, `height` = 1024, `updated_at` = '2026-11-06 22:10:00' WHERE `id` = 1507;
+UPDATE `media` SET `size` = 203843, `width` = 1376, `height` = 768, `updated_at` = '2026-11-06 22:10:00' WHERE `id` = 1508;
+UPDATE `media` SET `size` = 117576, `width` = 1376, `height` = 768, `updated_at` = '2026-11-06 22:10:00' WHERE `id` = 1509;
+UPDATE `media` SET `size` = 132542, `width` = 784, `height` = 1343, `updated_at` = '2026-11-06 22:10:00' WHERE `id` = 1510;
+UPDATE `media` SET `size` = 66951, `width` = 1376, `height` = 768, `updated_at` = '2026-11-06 22:10:00' WHERE `id` = 1511;
+UPDATE `media` SET `size` = 74576, `width` = 1376, `height` = 768, `updated_at` = '2026-11-06 22:10:00' WHERE `id` = 1512;
+UPDATE `media` SET `size` = 181319, `width` = 1376, `height` = 768, `updated_at` = '2026-11-06 22:10:00' WHERE `id` = 1513;
+UPDATE `media` SET `size` = 325879, `width` = 1280, `height` = 816, `updated_at` = '2026-11-06 22:10:00' WHERE `id` = 1514;
+UPDATE `media` SET `size` = 123259, `width` = 1280, `height` = 816, `updated_at` = '2026-11-06 22:10:00' WHERE `id` = 1515;
+UPDATE `media` SET `size` = 102194, `width` = 848, `height` = 1264, `updated_at` = '2026-11-06 22:10:00' WHERE `id` = 1516;
+UPDATE `media` SET `size` = 97963, `width` = 1024, `height` = 1024, `updated_at` = '2026-11-06 22:10:00' WHERE `id` = 1517;
+UPDATE `media` SET `size` = 72168, `width` = 1376, `height` = 768, `updated_at` = '2026-11-06 22:10:00' WHERE `id` = 1518;
+UPDATE `media` SET `size` = 95497, `width` = 1376, `height` = 768, `updated_at` = '2026-11-06 22:10:00' WHERE `id` = 1520;
+UPDATE `media` SET `size` = 108853, `width` = 1376, `height` = 768, `updated_at` = '2026-11-06 22:10:00' WHERE `id` = 1521;
+UPDATE `media` SET `size` = 93731, `width` = 848, `height` = 1264, `updated_at` = '2026-11-06 22:10:00' WHERE `id` = 1522;
+UPDATE `media` SET `size` = 124083, `width` = 1280, `height` = 816, `updated_at` = '2026-11-06 22:10:00' WHERE `id` = 1523;
+UPDATE `media` SET `size` = 136056, `width` = 1280, `height` = 816, `updated_at` = '2026-11-06 22:10:00' WHERE `id` = 1524;
+UPDATE `media` SET `size` = 190181, `width` = 1280, `height` = 816, `updated_at` = '2026-11-06 22:10:00' WHERE `id` = 1525;
+UPDATE `media` SET `size` = 177999, `width` = 1280, `height` = 816, `updated_at` = '2026-11-06 22:10:00' WHERE `id` = 1526;
+UPDATE `media` SET `size` = 127767, `width` = 1280, `height` = 816, `updated_at` = '2026-11-06 22:10:00' WHERE `id` = 1527;
+UPDATE `media` SET `size` = 211120, `width` = 1366, `height` = 784, `updated_at` = '2026-11-06 22:10:00' WHERE `id` = 1528;
+UPDATE `media` SET `size` = 114315, `width` = 1280, `height` = 816, `updated_at` = '2026-11-06 22:10:00' WHERE `id` = 1529;
+UPDATE `media` SET `size` = 229791, `width` = 1366, `height` = 784, `updated_at` = '2026-11-06 22:10:00' WHERE `id` = 1530;
+UPDATE `media` SET `size` = 246923, `width` = 1280, `height` = 816, `updated_at` = '2026-11-06 22:10:00' WHERE `id` = 1531;
+UPDATE `media` SET `size` = 125682, `width` = 1280, `height` = 816, `updated_at` = '2026-11-06 22:10:00' WHERE `id` = 1532;
+UPDATE `media` SET `size` = 170954, `width` = 1280, `height` = 816, `updated_at` = '2026-11-06 22:10:00' WHERE `id` = 1533;
+UPDATE `media` SET `size` = 119193, `width` = 1280, `height` = 816, `updated_at` = '2026-11-06 22:10:00' WHERE `id` = 1534;
+UPDATE `media` SET `size` = 93700, `width` = 1280, `height` = 816, `updated_at` = '2026-11-06 22:10:00' WHERE `id` = 1535;
+UPDATE `media` SET `size` = 195995, `width` = 1280, `height` = 816, `updated_at` = '2026-11-06 22:10:00' WHERE `id` = 1536;
+UPDATE `media` SET `size` = 246453, `width` = 1280, `height` = 816, `updated_at` = '2026-11-06 22:10:00' WHERE `id` = 1537;
+UPDATE `media` SET `size` = 226620, `width` = 1280, `height` = 816, `updated_at` = '2026-11-06 22:10:00' WHERE `id` = 1538;
+UPDATE `media` SET `size` = 173155, `width` = 1280, `height` = 816, `updated_at` = '2026-11-06 22:10:00' WHERE `id` = 1539;
+UPDATE `media` SET `size` = 195995, `width` = 1280, `height` = 816, `updated_at` = '2026-11-06 22:10:00' WHERE `id` = 1540;
+UPDATE `media` SET `size` = 226510, `width` = 1280, `height` = 816, `updated_at` = '2026-11-06 22:10:00' WHERE `id` = 1541;
+UPDATE `media` SET `size` = 156149, `width` = 1280, `height` = 816, `updated_at` = '2026-11-06 22:10:00' WHERE `id` = 1542;
+UPDATE `media` SET `size` = 129372, `width` = 1280, `height` = 816, `updated_at` = '2026-11-06 22:10:00' WHERE `id` = 1543;
+UPDATE `media` SET `size` = 180178, `width` = 1008, `height` = 1067, `updated_at` = '2026-11-06 22:10:00' WHERE `id` = 1544;
+UPDATE `media` SET `size` = 133432, `width` = 1376, `height` = 768, `updated_at` = '2026-11-06 22:10:00' WHERE `id` = 1545;
+UPDATE `media` SET `size` = 134285, `width` = 1280, `height` = 816, `updated_at` = '2026-11-06 22:10:00' WHERE `id` = 1546;
+UPDATE `media` SET `size` = 120001, `width` = 1280, `height` = 816, `updated_at` = '2026-11-06 22:10:00' WHERE `id` = 1547;
+
+DELETE FROM `product_media` WHERE `id` IN (807, 809, 912, 917, 920, 925, 928, 931, 932, 934, 955, 964, 990, 993, 996, 1003, 1010, 1016, 1018, 1118, 1126, 1150, 1172, 1203, 1205);
+DELETE FROM `media` WHERE `id` IN (807, 809, 912, 917, 920, 925, 928, 931, 932, 934, 955, 964, 990, 993, 996, 1003, 1010, 1016, 1018, 1118, 1126, 1150, 1172, 1203, 1205);
+
+-- End of the 2026-11-06 clean-up patch
 -- End of lufly-database.sql
