@@ -1,0 +1,183 @@
+<?php
+
+declare(strict_types=1);
+
+namespace Core\Console\Commands;
+
+use Core\Console\Command;
+use Core\Database\Connection;
+
+/**
+ * Answers "why is this product not on the site?" on the machine that is serving
+ * it, with the data that machine actually has in its database and on its disk.
+ *
+ *   php cli products:doctor              # summary + every hidden product
+ *   php cli products:doctor --code=1722-8124
+ *   php cli products:doctor --limit=0
+ *
+ * It applies the same rule as the storefront (Modules\Products\Services\
+ * ProductVisibility): status active/coming_soon, a usable photo row, a usable
+ * drawing row, not a linked toilet seat cover, AND the photo file actually
+ * exists on disk (asset_file_exists). A missing file is the #1 cause of
+ * "local works, server 404" — the DB row exists but public/images/... was
+ * never deployed.
+ */
+final class ProductsDoctorCommand extends Command
+{
+    protected string $name = 'products:doctor';
+
+    protected string $description = 'Explain why products are missing from the storefront (MySQL or SQLite).';
+
+    public function handle(array $args, array $options): int
+    {
+        $connection = $this->app->get(\Core\Database\DatabaseManager::class)->connection();
+        $code = trim((string) ($options['code'] ?? ''));
+        $limit = array_key_exists('limit', $options) ? (int) $options['limit'] : 40;
+
+        $this->line('driver: ' . $connection->driver());
+
+        $where = "p.deleted_at IS NULL AND p.status IN ('active','coming_soon')";
+        $bindings = [];
+        if ($code !== '') {
+            $where .= ' AND p.model_code = ?';
+            $bindings[] = $code;
+        }
+
+        $rows = $connection->select(
+            "SELECT p.id, p.model_code, p.slug, p.status, cat.slug AS category,\n"
+            . "                (SELECT COUNT(*) FROM product_media pm INNER JOIN media m ON m.id = pm.media_id\n"
+            . "                   WHERE pm.product_id = p.id AND pm.variant_id IS NULL\n"
+            . "                     AND pm.type NOT IN ('drawing','situ')\n"
+            . "                     AND m.status NOT IN ('missing','hidden')) AS photo_rows,\n"
+            . "                (SELECT COUNT(*) FROM product_media pm INNER JOIN media m ON m.id = pm.media_id\n"
+            . "                   WHERE pm.product_id = p.id AND pm.variant_id IS NULL\n"
+            . "                     AND pm.type = 'drawing'\n"
+            . "                     AND m.status NOT IN ('missing','hidden')) AS drawing_rows,\n"
+            . "                EXISTS (SELECT 1 FROM product_relations pr WHERE pr.related_product_id = p.id\n"
+            . "                          AND pr.relation_type IN ('seat_cover','seat_cover_only')) AS seat_cover\n"
+            . "             FROM products p LEFT JOIN categories cat ON cat.id = p.category_id\n"
+            . "             WHERE {$where}\n"
+            . "             ORDER BY p.id ASC",
+            $bindings,
+        );
+
+        if ($rows === []) {
+            $this->error($code === '' ? 'No public products found.' : "No public product with model_code {$code} (check DB import / status).");
+            // Extra hint: maybe the product exists but is not public (draft/inactive)?
+            if ($code !== '') {
+                $any = $connection->selectOne('SELECT id, model_code, slug, status FROM products WHERE model_code = ? LIMIT 1', [$code]);
+                if ($any !== null) {
+                    $this->line(sprintf('  found in DB anyway: id=%d status=%s slug=%s', (int) ($any['id'] ?? 0), (string) ($any['status'] ?? ''), (string) ($any['slug'] ?? '')));
+                    $this->line('  -> status must be active/coming_soon to appear.');
+                } else {
+                    $this->line('  -> no row at all: the server DB is stale — re-import lufly-database.sql.');
+                }
+            }
+
+            return 1;
+        }
+
+        // Pre-fetch first photo path for every row so we can test file existence.
+        $photoPaths = [];
+        foreach ($rows as $row) {
+            $photoPaths[(int) $row['id']] = $this->firstPhotoPath($connection, (int) $row['id']);
+        }
+
+        $public = 0;
+        $reasons = [];
+        $hidden = [];
+        foreach ($rows as $row) {
+            $id = (int) $row['id'];
+            $reason = null;
+            if ((int) $row['seat_cover'] === 1) {
+                $reason = 'seat cover: shown inside its WC, never as a card (by design)';
+            } elseif ((int) $row['photo_rows'] === 0) {
+                $reason = 'no usable photo row in the database';
+            } elseif ((int) $row['drawing_rows'] === 0) {
+                $reason = 'photo but NO technical drawing (the storefront needs both)';
+            } else {
+                $path = $photoPaths[$id] ?? null;
+                if ($path === null || $path === '' || !asset_file_exists((string) $path)) {
+                    $reason = 'photo row present but FILE MISSING on disk (re-deploy public/images)';
+                }
+            }
+
+            if ($reason === null) {
+                $public++;
+                continue;
+            }
+            $reasons[$reason] = ($reasons[$reason] ?? 0) + 1;
+            $row['reason'] = $reason;
+            $row['photo_path'] = $photoPaths[$id];
+            $row['photo_file'] = $row['photo_path'] !== null && $row['photo_path'] !== '' && asset_file_exists((string) $row['photo_path']);
+            $hidden[] = $row;
+        }
+
+        usort($hidden, static fn (array $a, array $b): int => strcmp($a['reason'], $b['reason']));
+
+        $this->line('');
+        $this->line(sprintf('public products   : %d', count($rows)));
+        $this->line(sprintf('shown on the site : %d', $public));
+        $this->line(sprintf('hidden            : %d', count($hidden)));
+        foreach ($reasons as $reason => $count) {
+            $this->line(sprintf('   %-68s %d', $reason, $count));
+        }
+
+        if ($code !== '' && $public > 0) {
+            $this->line('');
+            $this->success('This product SHOULD be visible. If the server still returns 404:');
+            $this->line('  1) Check the URL slug matches:  /en/products/' . (string) $rows[0]['slug']);
+            $this->line('  2) Check .htaccess / docroot — /en/products/{slug} must reach public/index.php');
+            $this->line('  3) Clear any cache/CDN (Cloudflare) for that URL.');
+        }
+
+        if ($hidden !== []) {
+            $this->line('');
+            $this->line('hidden products' . ($limit > 0 ? " (first {$limit})" : '') . ':');
+            $shown = 0;
+            foreach ($hidden as $row) {
+                if ($limit > 0 && $shown >= $limit) {
+                    $remaining = count($hidden) - $shown;
+                    $this->line("   ... and {$remaining} more (use --limit=0 to list them all)");
+
+                    break;
+                }
+                $shown++;
+                $file = $row['photo_path'] === null || $row['photo_path'] === ''
+                    ? 'no photo row'
+                    : (($row['photo_file'] ? 'file ok' : 'FILE MISSING') . ' ' . $row['photo_path']);
+                $this->line(sprintf(
+                    '   %-18s id=%-4d %-46s %s | %s',
+                    (string) $row['model_code'],
+                    (int) $row['id'],
+                    (string) $row['category'],
+                    $row['reason'],
+                    $file,
+                ));
+            }
+            $this->line('');
+            $hasMissingFile = isset($reasons['photo row present but FILE MISSING on disk (re-deploy public/images)']);
+            if ($hasMissingFile) {
+                $this->error('FILE MISSING means: the DB says the product has a photo, but public/images/... is not on the server.');
+                $this->line('  Fix: git pull (or re-upload) so that public/images is complete, then reload the page.');
+            }
+        }
+
+        return 0;
+    }
+
+    private function firstPhotoPath(Connection $connection, int $productId): ?string
+    {
+        $row = $connection->selectOne(
+            "SELECT m.path FROM product_media pm INNER JOIN media m ON m.id = pm.media_id\n"
+            . "              WHERE pm.product_id = ? AND pm.variant_id IS NULL\n"
+            . "                AND pm.type NOT IN ('drawing','situ')\n"
+            . "              ORDER BY pm.is_primary DESC, pm.sort_order ASC, pm.id ASC LIMIT 1",
+            [$productId],
+        );
+
+        $path = $row['path'] ?? null;
+
+        return $path === null ? null : (string) $path;
+    }
+}
