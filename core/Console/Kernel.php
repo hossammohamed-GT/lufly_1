@@ -24,6 +24,7 @@ class Kernel
         'backup:db' => Commands\BackupDbCommand::class,
         'ai:doctor' => Commands\AiDoctorCommand::class,
         'products:doctor' => Commands\ProductsDoctorCommand::class,
+        'media:sync' => Commands\MediaSyncCommand::class,
         'assistant:find' => Commands\AssistantFindCommand::class,
         'list' => Commands\ListCommand::class,
     ];
