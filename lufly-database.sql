@@ -45810,6 +45810,24 @@ DELETE FROM `product_media` WHERE `id` IN (170, 221, 340, 15, 107);
 DELETE FROM `media` WHERE `id` IN (170, 221, 340, 15, 107);
 
 -- End of the 2026-11-07 sanitary ware corrections
+-- ---------------------------------------------------------------------------
+-- 2026-11-07 LXD-7095 / LXD-7098 restored to their own catalogue photo, and
+--             1520-0080 / 1610-0202 re-shot to match the real product
+-- ---------------------------------------------------------------------------
+
+DELETE FROM `product_media` WHERE `id` IN (1572, 1578);
+DELETE FROM `media` WHERE `id` IN (1567, 1573);
+
+INSERT INTO `media` (`id`, `uuid`, `collection`, `filename`, `original_name`, `path`, `mime_type`, `extension`, `size`, `width`, `height`, `meta`, `owner_id`, `status`, `created_at`, `updated_at`, `deleted_at`) VALUES (217, '7578c67d-fcb6-45ac-a957-b90269499122', 'bathroom.sanitary-ware.shower-trays', '2412d2966bc4581c48f30ebd.webp', 'image117.png', '/images/products/catalog/2412d2966bc4581c48f30ebd.webp', 'image/webp', 'webp', 9720, 567, 550, '[]', NULL, 'active', '2026-10-23 09:44:39', '2026-10-23 09:44:39', NULL);
+INSERT INTO `media` (`id`, `uuid`, `collection`, `filename`, `original_name`, `path`, `mime_type`, `extension`, `size`, `width`, `height`, `meta`, `owner_id`, `status`, `created_at`, `updated_at`, `deleted_at`) VALUES (221, '993879e1-6246-43ea-99d8-944d662bdeb9', 'shower-enclosures.other-enclosures', '2412d2966bc4581c48f30ebd.webp', 'image117.png', '/images/products/catalog/2412d2966bc4581c48f30ebd.webp', 'image/webp', 'webp', 9720, 567, 550, '[]', NULL, 'active', '2026-10-23 09:44:39', '2026-10-23 09:44:39', NULL);
+INSERT INTO `product_media` (`id`, `product_id`, `variant_id`, `media_id`, `type`, `sort_order`, `is_primary`, `created_at`, `updated_at`) VALUES (217, 126, NULL, 217, 'gallery', 2, 1, '2026-10-23 09:44:39', '2026-10-23 09:44:39');
+INSERT INTO `product_media` (`id`, `product_id`, `variant_id`, `media_id`, `type`, `sort_order`, `is_primary`, `created_at`, `updated_at`) VALUES (221, 127, NULL, 221, 'gallery', 1, 1, '2026-10-23 09:44:39', '2026-10-23 09:44:39');
+
+UPDATE `media` SET `size` = 74669, `width` = 1385, `height` = 752, `updated_at` = '2026-11-07 20:05:00' WHERE `id` = 1575;
+UPDATE `media` SET `size` = 88859, `width` = 1307, `height` = 816, `updated_at` = '2026-11-07 20:05:00' WHERE `id` = 1571;
+
+-- End of the 2026-11-07 corrections
+-- End of lufly-database.sql
 -- End of lufly-database.sql
 -- End of lufly-database.sql
 -- End of lufly-database.sql
