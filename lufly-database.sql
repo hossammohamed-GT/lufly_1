@@ -45902,6 +45902,18 @@ DELETE FROM `media` WHERE `id` = 1587;
 UPDATE `product_media` SET `sort_order` = 2 WHERE `id` = 119;
 
 -- End of the 2026-11-08 basin clean-up
+-- ---------------------------------------------------------------------------
+-- 2026-11-08 1620-003 gets its second studio shot back: the closed-seat view is
+--             the first image again, the open bowl is the second
+-- ---------------------------------------------------------------------------
+
+UPDATE `product_media` SET `is_primary` = 0, `type` = 'gallery', `sort_order` = 1 WHERE `id` = 1584;
+UPDATE `product_media` SET `sort_order` = `sort_order` + 10 WHERE `product_id` = 16 AND `type` = 'drawing';
+INSERT INTO `media` (`id`, `uuid`, `collection`, `filename`, `original_name`, `path`, `mime_type`, `extension`, `size`, `width`, `height`, `meta`, `owner_id`, `status`, `created_at`, `updated_at`, `deleted_at`) VALUES (1587, '5f78bb3d-53fd-455a-bbec-1608e95f8a8f', '1620-003', '1620-003-closed.jpg', '1620-003 closed seat.jpg', '/images/products/1620-003/1620-003-closed.jpg', 'image/jpeg', 'jpeg', 83814, 1280, 816, '[]', 2, 'active', '2026-11-08 17:30:00', '2026-11-08 17:30:00', NULL);
+INSERT INTO `product_media` (`id`, `product_id`, `variant_id`, `media_id`, `type`, `sort_order`, `is_primary`, `created_at`, `updated_at`) VALUES (1592, 16, NULL, 1587, 'main', 0, 1, '2026-11-08 17:30:00', '2026-11-08 17:30:00');
+
+-- End of the 2026-11-08 WC second shot patch
+-- End of lufly-database.sql
 -- End of lufly-database.sql
 -- End of lufly-database.sql
 -- End of lufly-database.sql
