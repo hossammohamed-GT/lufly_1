@@ -45864,6 +45864,19 @@ DELETE FROM `product_media` WHERE `id` IN (224, 362, 21, 22, 109, 343, 30, 111, 
 DELETE FROM `media` WHERE `id` IN (224, 362, 21, 22, 109, 343, 30, 111, 369, 41, 118);
 
 -- End of the 2026-11-08 sanitary ware batch 3
+-- ---------------------------------------------------------------------------
+-- 2026-11-08 LXD-7190, 1681-090, 1620-003, 1685-601A and 1610-0198 re-shot
+--             to the real product; LXD-7190 gets a fresh file name
+-- ---------------------------------------------------------------------------
+
+UPDATE `media` SET `path` = '/images/products/lxd-7190/lxd-7190-hero-2026.jpg', `filename` = 'lxd-7190-hero-2026.jpg', `size` = 85576, `width` = 1280, `height` = 816, `updated_at` = '2026-11-08 12:40:00' WHERE `id` = 1577;
+UPDATE `media` SET `path` = '/images/products/1681-090/1681-090-hero.jpg', `filename` = '1681-090-hero.jpg', `size` = 105153, `width` = 1280, `height` = 816, `updated_at` = '2026-11-08 12:40:00' WHERE `id` = 1584;
+UPDATE `media` SET `path` = '/images/products/1620-003/1620-003-hero.jpg', `filename` = '1620-003-hero.jpg', `size` = 89048, `width` = 1280, `height` = 816, `updated_at` = '2026-11-08 12:40:00' WHERE `id` = 1579;
+UPDATE `media` SET `path` = '/images/products/1685-601a/1685-601a-hero.jpg', `filename` = '1685-601a-hero.jpg', `size` = 94595, `width` = 1280, `height` = 816, `updated_at` = '2026-11-08 12:40:00' WHERE `id` = 1581;
+UPDATE `media` SET `path` = '/images/products/1610-0198/1610-0198-hero.jpg', `filename` = '1610-0198-hero.jpg', `size` = 75709, `width` = 1280, `height` = 816, `updated_at` = '2026-11-08 12:40:00' WHERE `id` = 1586;
+
+-- End of the 2026-11-08 corrections
+-- End of lufly-database.sql
 -- End of lufly-database.sql
 -- End of lufly-database.sql
 -- End of lufly-database.sql
