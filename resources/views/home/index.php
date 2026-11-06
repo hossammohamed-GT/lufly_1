@@ -26,5 +26,6 @@ $component = static fn (string $name, array $data = []): string => $view->render
     'savedIds' => $savedIds ?? [],
     'boxIds' => $boxIds ?? [],
 ]) ?>
+<?= $component('agents-map') ?>
 <?= $component('corporate') ?>
 </div>

@@ -2,7 +2,7 @@
   const scope = document.querySelector('.home-animation-scope');
   if (!scope || window.matchMedia?.('(prefers-reduced-motion: reduce)').matches) return;
 
-  const targets = [...scope.querySelectorAll('h2,h3,h4,p,.section-tag,.section-kicker,.eyebrow,.card-label')]
+  const targets = [...scope.querySelectorAll('h2,h3,h4,p,.section-tag,.section-kicker,.eyebrow,.card-label,.agents-map-card > *')]
     .filter((element) => !element.closest('.hero') && !element.closest('nav') && !element.closest('button'));
 
   targets.forEach((element, index) => {
