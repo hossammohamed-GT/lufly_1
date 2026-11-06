@@ -8,6 +8,9 @@
 -- schema and diffing it against the sqlite copy: no rows differ.
 -- AUTO_INCREMENT counters are max(id)+1 for every table, so the first
 -- insert made in phpMyAdmin/admin panel cannot collide with an existing id.
+-- JSON columns are plain LONGTEXT without CHECK (json_valid(...)) and without
+-- per-column COLLATE: that combination has already aborted one import
+-- (PR #16, 2026-11-05). The app still stores JSON in those columns.
 -- Regenerate with: php cli db:export-mysql
 -- (that command emits schema without indexes/FKs; this file keeps them).
 --
@@ -231,7 +234,7 @@ INSERT INTO `user_roles` (`id`, `user_id`, `role_id`, `created_at`, `updated_at`
 CREATE TABLE `settings` (
   `id` bigint(20) UNSIGNED NOT NULL,
   `key` varchar(100) NOT NULL,
-  `value` longtext CHARACTER SET utf8mb4 COLLATE utf8mb4_bin DEFAULT NULL CHECK (json_valid(`value`)),
+  `value` longtext DEFAULT NULL,
   `created_at` datetime DEFAULT NULL,
   `updated_at` datetime DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
@@ -258,7 +261,7 @@ CREATE TABLE `media` (
   `size` bigint(20) NOT NULL DEFAULT 0,
   `width` int(11) DEFAULT NULL,
   `height` int(11) DEFAULT NULL,
-  `meta` longtext CHARACTER SET utf8mb4 COLLATE utf8mb4_bin DEFAULT NULL CHECK (json_valid(`meta`)),
+  `meta` longtext DEFAULT NULL,
   `owner_id` bigint(20) UNSIGNED DEFAULT NULL,
   `status` varchar(50) NOT NULL DEFAULT 'active',
   `created_at` datetime DEFAULT NULL,
@@ -1778,7 +1781,7 @@ CREATE TABLE `activity_logs` (
   `entity` varchar(50) NOT NULL,
   `entity_id` varchar(50) DEFAULT NULL,
   `description` varchar(255) DEFAULT NULL,
-  `data` longtext CHARACTER SET utf8mb4 COLLATE utf8mb4_bin DEFAULT NULL CHECK (json_valid(`data`)),
+  `data` longtext DEFAULT NULL,
   `created_at` datetime DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
@@ -1873,8 +1876,8 @@ CREATE TABLE `audits` (
   `entity` varchar(50) NOT NULL,
   `entity_id` varchar(50) DEFAULT NULL,
   `action` varchar(50) NOT NULL,
-  `before` longtext CHARACTER SET utf8mb4 COLLATE utf8mb4_bin DEFAULT NULL CHECK (json_valid(`before`)),
-  `after` longtext CHARACTER SET utf8mb4 COLLATE utf8mb4_bin DEFAULT NULL CHECK (json_valid(`after`)),
+  `before` longtext DEFAULT NULL,
+  `after` longtext DEFAULT NULL,
   `created_at` datetime DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
@@ -1965,7 +1968,7 @@ CREATE TABLE `notifications` (
   `type` varchar(50) NOT NULL DEFAULT 'info',
   `title` varchar(255) NOT NULL,
   `body` longtext NOT NULL,
-  `data` longtext CHARACTER SET utf8mb4 COLLATE utf8mb4_bin DEFAULT NULL CHECK (json_valid(`data`)),
+  `data` longtext DEFAULT NULL,
   `read_at` datetime DEFAULT NULL,
   `created_at` datetime DEFAULT NULL,
   `updated_at` datetime DEFAULT NULL
@@ -1978,7 +1981,7 @@ CREATE TABLE `pages` (
   `id` bigint(20) UNSIGNED NOT NULL,
   `slug` varchar(255) NOT NULL,
   `status` varchar(50) NOT NULL DEFAULT 'active',
-  `seo` longtext CHARACTER SET utf8mb4 COLLATE utf8mb4_bin DEFAULT NULL CHECK (json_valid(`seo`)),
+  `seo` longtext DEFAULT NULL,
   `created_at` datetime DEFAULT NULL,
   `updated_at` datetime DEFAULT NULL,
   `deleted_at` datetime DEFAULT NULL
@@ -2004,7 +2007,7 @@ CREATE TABLE `blogs` (
   `published_at` datetime DEFAULT NULL,
   `slug` varchar(255) NOT NULL,
   `status` varchar(50) NOT NULL DEFAULT 'active',
-  `seo` longtext CHARACTER SET utf8mb4 COLLATE utf8mb4_bin DEFAULT NULL CHECK (json_valid(`seo`)),
+  `seo` longtext DEFAULT NULL,
   `created_at` datetime DEFAULT NULL,
   `updated_at` datetime DEFAULT NULL,
   `deleted_at` datetime DEFAULT NULL
@@ -2034,7 +2037,7 @@ CREATE TABLE `categories` (
   `is_featured` tinyint(1) NOT NULL DEFAULT 0,
   `sort_order` int(11) NOT NULL DEFAULT 0,
   `status` varchar(50) NOT NULL DEFAULT 'active',
-  `seo` longtext CHARACTER SET utf8mb4 COLLATE utf8mb4_bin DEFAULT NULL CHECK (json_valid(`seo`)),
+  `seo` longtext DEFAULT NULL,
   `created_at` datetime DEFAULT NULL,
   `updated_at` datetime DEFAULT NULL,
   `deleted_at` datetime DEFAULT NULL
@@ -44735,7 +44738,7 @@ CREATE TABLE `ai_cache` (
   `id` bigint(20) UNSIGNED NOT NULL,
   `scope` varchar(50) NOT NULL,
   `fingerprint` varchar(100) NOT NULL,
-  `payload` longtext CHARACTER SET utf8mb4 COLLATE utf8mb4_bin NOT NULL CHECK (json_valid(`payload`)),
+  `payload` longtext NOT NULL,
   `model` varchar(100) DEFAULT NULL,
   `hits` int(11) NOT NULL DEFAULT 0,
   `expires_at` datetime DEFAULT NULL,

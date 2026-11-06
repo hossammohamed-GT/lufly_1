@@ -214,11 +214,71 @@ def category_of(db, media_id):
     return row[0] if row else None
 
 
+def ddl_traps():
+    """DDL constructs that phpMyAdmin/MySQL choke on when this is imported and
+    that have already caused one failed import (2026-11-05, PR #16)."""
+    text = open(DUMP, encoding='utf-8').read()
+    # comments explain these traps on purpose, so only inspect real DDL lines
+    ddl = '\n'.join(l for l in text.split('\n') if not l.lstrip().startswith('--'))
+    problems = []
+    if 'json_valid' in ddl:
+        problems.append('CHECK (json_valid(...)) present - JSON columns go in as plain LONGTEXT')
+    if 'CHARACTER SET' in ddl:
+        problems.append('per-column CHARACTER SET/COLLATE present - only the table default is needed')
+    if re.search(r'^\s*VALUES\s*;', ddl, re.M):
+        problems.append('INSERT with an empty VALUES list (#1064)')
+    if not text.rstrip().endswith('-- End of lufly-database.sql'):
+        problems.append('missing end marker')
+    # INSERT/UPDATE/DDL must only touch declared columns
+    schema = {}
+    for m in re.finditer(r'CREATE TABLE `(\w+)` \((.*?)\n\) ENGINE=', text, re.S):
+        schema[m.group(1)] = [c.group(1) for c in re.finditer(r'^\s*`(\w+)`', m.group(2), re.M)]
+    for stmt in statements(text):
+        s = strip_leading_comments(stmt.strip())
+        m = re.match(r'^INSERT INTO `(\w+)` \(([^)]*)\) VALUES', s, re.S)
+        if m and m.group(1) in schema:
+            cols = [c.strip().strip('`') for c in m.group(2).split(',')]
+            unknown = [c for c in cols if c not in schema[m.group(1)]]
+            if unknown:
+                problems.append(f'{m.group(1)}: INSERT names undeclared column(s) {unknown}')
+        m = re.match(r'^UPDATE `(\w+)` SET (.*?) WHERE', s, re.S)
+        if m and m.group(1) in schema:
+            for c in re.findall(r'`(\w+)`\s*=', m.group(2)):
+                if c not in schema[m.group(1)]:
+                    problems.append(f'{m.group(1)}: UPDATE sets undeclared column {c}')
+    # every non-null JSON-column value must actually be JSON
+    db = sqlite3.connect(SCRATCH)
+    for t, c in (('settings', 'value'), ('media', 'meta'), ('activity_logs', 'data'),
+                 ('audits', 'before'), ('audits', 'after'), ('notifications', 'data'),
+                 ('pages', 'seo'), ('blogs', 'seo'), ('categories', 'seo'), ('ai_cache', 'payload')):
+        try:
+            rows = db.execute(f'SELECT id, `{c}` FROM `{t}` WHERE `{c}` IS NOT NULL').fetchall()
+        except sqlite3.OperationalError:
+            continue
+        bad = [i for i, v in rows if not _is_json(v)]
+        if bad:
+            problems.append(f'{t}.{c}: {len(bad)} values are not valid JSON {bad[:5]}')
+    return problems
+
+
+def _is_json(value):
+    try:
+        json.loads(value)
+        return True
+    except (TypeError, ValueError):
+        return False
+
+
 def main():
     live, scratch, tables, applied, errors = build_scratch()
     print('replayed:', dict(applied), ' errors:', len(errors))
     for e in errors:
         print('  ERROR', e[0], '->', e[1])
+
+    traps = ddl_traps()
+    print('ddl/import traps:', len(traps))
+    for t in traps:
+        print('  !', t)
 
     exact, real = [], []
     cosmetic_rows = collections.Counter()
@@ -278,7 +338,7 @@ def main():
     for t, msg in real:
         print(f'  X {t}: {msg}')
 
-    return 1 if (real or errors) else 0
+    return 1 if (real or errors or traps) else 0
 
 
 if __name__ == '__main__':
