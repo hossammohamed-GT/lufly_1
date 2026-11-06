@@ -45827,6 +45827,14 @@ UPDATE `media` SET `size` = 74669, `width` = 1385, `height` = 752, `updated_at` 
 UPDATE `media` SET `size` = 88859, `width` = 1307, `height` = 816, `updated_at` = '2026-11-07 20:05:00' WHERE `id` = 1571;
 
 -- End of the 2026-11-07 corrections
+-- ---------------------------------------------------------------------------
+-- 2026-11-07 1610-0202 now uses the user's own product photo, upscaled to 2000 px
+-- ---------------------------------------------------------------------------
+
+UPDATE `media` SET `size` = 305436, `width` = 2000, `height` = 1248, `updated_at` = '2026-11-07 21:20:00' WHERE `id` = 1571;
+
+-- End of the 2026-11-07 basin photo patch
+-- End of lufly-database.sql
 -- End of lufly-database.sql
 -- End of lufly-database.sql
 -- End of lufly-database.sql
