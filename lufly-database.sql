@@ -2,9 +2,12 @@
 -- LUFLY Platform - full database export
 -- File: lufly-database.sql
 -- Target: MySQL 5.7+ / MySQL 8.x / MariaDB 10.4+ (XAMPP, phpMyAdmin import)
--- The complete local dataset: every table, row, index, foreign key and
--- AUTO_INCREMENT value matches database/lufly.sqlite row for row
--- (44,108 rows across 36 tables, verified 2026-11-05).
+-- The complete local dataset: every table, row, index and foreign key is the
+-- live database/lufly.sqlite, row for row (44,094 rows across 36 non-empty
+-- tables). Verified 2026-11-06 by replaying this whole file into an empty
+-- schema and diffing it against the sqlite copy: no rows differ.
+-- AUTO_INCREMENT counters are max(id)+1 for every table, so the first
+-- insert made in phpMyAdmin/admin panel cannot collide with an existing id.
 -- Regenerate with: php cli db:export-mysql
 -- (that command emits schema without indexes/FKs; this file keeps them).
 --
@@ -45196,10 +45199,10 @@ ALTER TABLE `brands`
   MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
 
 ALTER TABLE `categories`
-  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=111;
+  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=113;
 
 ALTER TABLE `category_translations`
-  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=329;
+  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=337;
 
 ALTER TABLE `collections`
   MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
@@ -45217,7 +45220,7 @@ ALTER TABLE `languages`
   MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
 
 ALTER TABLE `media`
-  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=1501;
+  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=1661;
 
 ALTER TABLE `migrations`
   MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=27;
@@ -45241,10 +45244,10 @@ ALTER TABLE `product_attribute_values`
   MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT;
 
 ALTER TABLE `product_card_features`
-  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3716;
+  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3806;
 
 ALTER TABLE `product_card_feature_translations`
-  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=11146;
+  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=11318;
 
 ALTER TABLE `product_dimensions`
   MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT;
@@ -45262,22 +45265,22 @@ ALTER TABLE `product_import_logs`
   MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=713;
 
 ALTER TABLE `product_media`
-  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=1506;
+  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=1664;
 
 ALTER TABLE `product_relations`
   MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=985;
 
 ALTER TABLE `product_search_keywords`
-  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=8933;
+  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=9014;
 
 ALTER TABLE `product_specifications`
-  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2458;
+  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2512;
 
 ALTER TABLE `product_specification_translations`
-  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=7372;
+  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=7436;
 
 ALTER TABLE `product_translations`
-  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2142;
+  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2203;
 
 ALTER TABLE `product_variants`
   MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=713;
@@ -46261,4 +46264,13 @@ DELETE FROM `product_media` WHERE `id` IN (410, 412, 413, 417, 420, 423, 425, 13
 DELETE FROM `media` WHERE `id` IN (410, 412, 413, 417, 420, 423, 425, 1319, 1320, 901, 502);
 
 -- End of the 2026-11-10 mixers batch 6
+
+-- ---------------------------------------------------------------------------
+-- 2026-11-06  audit fix: media 217 / 221 lost their provenance meta when the
+--              2026-11-07 block re-inserted them as '[]'. The objects below are
+--              the exact values stored in database/lufly.sqlite, written as
+--              real JSON (the sqlite copy carries one extra escaping level).
+-- ---------------------------------------------------------------------------
+UPDATE `media` SET `meta` = '{"source": "lufly-manager", "manager_product_id": 128, "manager_media_id": 214, "original_path": "assets/catalog/2412d2966bc4581c48f30ebd.webp", "source_column": "D", "source_row": 8, "source_sort_order": 214, "source_sha256": "2412d2966bc4581c48f30ebd37257edac3a85a3d06b8c10d437aad62c120fd56", "sha256": "c8e4eaccb413afcc304a9e94a68ba1be6cac66c4a94b525764955ed48a2a798a", "caption": "", "previewable": true}' WHERE `id` = 217;
+UPDATE `media` SET `meta` = '{"source": "lufly-manager", "manager_product_id": 129, "manager_media_id": 218, "original_path": "assets/catalog/2412d2966bc4581c48f30ebd.webp", "source_column": "D", "source_row": 9, "source_sort_order": 218, "source_sha256": "2412d2966bc4581c48f30ebd37257edac3a85a3d06b8c10d437aad62c120fd56", "sha256": "c8e4eaccb413afcc304a9e94a68ba1be6cac66c4a94b525764955ed48a2a798a", "caption": "", "previewable": true}' WHERE `id` = 221;
 -- End of lufly-database.sql
