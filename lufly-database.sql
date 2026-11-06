@@ -45480,10 +45480,10 @@ UPDATE `media` SET `size` = 174855, `width` = 1376, `height` = 768, `updated_at`
 UPDATE `media` SET `size` = 240115, `width` = 1398, `height` = 752, `updated_at` = '2026-11-05 18:05:00' WHERE `id` = 1514;
 
 -- 2. New studio photos for the remaining accessories
-INSERT INTO `media` (`id`, `uuid`, `collection`, `filename`, `original_name`, `path`, `mime_type`, `extension`, `size`, `width`, `height`, `meta`, `owner_id`, `status`, `created_at`, `updated_at`, `deleted_at`) VALUES (1515, 'b622e60f-380a-4086-97c0-d243c9251b7e', '1300-039', '1300-039-hero.jpg', '1300-039 hero.jpg', '/images/products/1300-039/1300-039-hero.jpg', 'image/jpeg', 'jpeg', 126916, 1376, 768, '[]', 2, 'active', '2026-11-05 18:05:00', '2026-11-05 18:05:00', NULL);
+INSERT INTO `media` (`id`, `uuid`, `collection`, `filename`, `original_name`, `path`, `mime_type`, `extension`, `size`, `width`, `height`, `meta`, `owner_id`, `status`, `created_at`, `updated_at`, `deleted_at`) VALUES (1515, 'b622e60f-380a-4086-97c0-d243c9251b7e', '1300-039', '1300-039-hero.jpg', '1300-039 hero.jpg', '/images/products/1300-039/1300-039-hero.jpg', 'image/jpeg', 'jpeg', 168936, 1280, 816, '[]', 2, 'active', '2026-11-05 18:05:00', '2026-11-05 18:05:00', NULL);
 INSERT INTO `media` (`id`, `uuid`, `collection`, `filename`, `original_name`, `path`, `mime_type`, `extension`, `size`, `width`, `height`, `meta`, `owner_id`, `status`, `created_at`, `updated_at`, `deleted_at`) VALUES (1516, 'b2dd3306-4bce-4f1f-8727-583ed56128c2', '1300-07708gb', '1300-07708gb-hero.jpg', '1300-07707GB hero.jpg', '/images/products/1300-07708gb/1300-07708gb-hero.jpg', 'image/jpeg', 'jpeg', 124385, 848, 1264, '[]', 2, 'active', '2026-11-05 18:05:00', '2026-11-05 18:05:00', NULL);
 INSERT INTO `media` (`id`, `uuid`, `collection`, `filename`, `original_name`, `path`, `mime_type`, `extension`, `size`, `width`, `height`, `meta`, `owner_id`, `status`, `created_at`, `updated_at`, `deleted_at`) VALUES (1517, '0685cc46-c135-43c1-afcc-94b133a2936f', '1300-011', '1300-011-hero.jpg', '1300-011 hero.jpg', '/images/products/1300-011/1300-011-hero.jpg', 'image/jpeg', 'jpeg', 110353, 1024, 1024, '[]', 2, 'active', '2026-11-05 18:05:00', '2026-11-05 18:05:00', NULL);
-INSERT INTO `media` (`id`, `uuid`, `collection`, `filename`, `original_name`, `path`, `mime_type`, `extension`, `size`, `width`, `height`, `meta`, `owner_id`, `status`, `created_at`, `updated_at`, `deleted_at`) VALUES (1518, '0204a8ee-50f5-4f33-9b89-f6b8019be52a', '1300-022', '1300-022-hero.jpg', '1300-022 hero.jpg', '/images/products/1300-022/1300-022-hero.jpg', 'image/jpeg', 'jpeg', 105805, 1376, 768, '[]', 2, 'active', '2026-11-05 18:05:00', '2026-11-05 18:05:00', NULL);
+INSERT INTO `media` (`id`, `uuid`, `collection`, `filename`, `original_name`, `path`, `mime_type`, `extension`, `size`, `width`, `height`, `meta`, `owner_id`, `status`, `created_at`, `updated_at`, `deleted_at`) VALUES (1518, '0204a8ee-50f5-4f33-9b89-f6b8019be52a', '1300-022', '1300-022-hero.jpg', '1300-022 hero.jpg', '/images/products/1300-022/1300-022-hero.jpg', 'image/jpeg', 'jpeg', 113872, 1376, 768, '[]', 2, 'active', '2026-11-05 18:05:00', '2026-11-05 18:05:00', NULL);
 INSERT INTO `media` (`id`, `uuid`, `collection`, `filename`, `original_name`, `path`, `mime_type`, `extension`, `size`, `width`, `height`, `meta`, `owner_id`, `status`, `created_at`, `updated_at`, `deleted_at`) VALUES (1520, 'b156451e-0c5e-4d92-bb3b-61650dacd62a', '1300-07707gb', '1300-07707gb-hero.jpg', '1300-07707GB hero.jpg', '/images/products/1300-07707gb/1300-07707gb-hero.jpg', 'image/jpeg', 'jpeg', 113718, 1376, 768, '[]', 2, 'active', '2026-11-05 18:05:00', '2026-11-05 18:05:00', NULL);
 INSERT INTO `media` (`id`, `uuid`, `collection`, `filename`, `original_name`, `path`, `mime_type`, `extension`, `size`, `width`, `height`, `meta`, `owner_id`, `status`, `created_at`, `updated_at`, `deleted_at`) VALUES (1521, 'c3940870-be9c-4996-a746-9352f386190d', '1300-034', '1300-034-hero.jpg', '1300-034 hero.jpg', '/images/products/1300-034/1300-034-hero.jpg', 'image/jpeg', 'jpeg', 127408, 1376, 768, '[]', 2, 'active', '2026-11-05 18:05:00', '2026-11-05 18:05:00', NULL);
 INSERT INTO `media` (`id`, `uuid`, `collection`, `filename`, `original_name`, `path`, `mime_type`, `extension`, `size`, `width`, `height`, `meta`, `owner_id`, `status`, `created_at`, `updated_at`, `deleted_at`) VALUES (1522, 'ebf5db22-d992-43e1-98d1-212d65be0e98', '1300-07507gb', '1300-07507gb-hero.jpg', '1300-07507GB hero.jpg', '/images/products/1300-07507gb/1300-07507gb-hero.jpg', 'image/jpeg', 'jpeg', 113312, 848, 1264, '[]', 2, 'active', '2026-11-05 18:05:00', '2026-11-05 18:05:00', NULL);
@@ -45501,4 +45501,18 @@ DELETE FROM `product_media` WHERE `media_id` IN (1000, 1030, 908, 962, 1028, 100
 DELETE FROM `media` WHERE `id` IN (1000, 1030, 908, 962, 1028, 1004, 1024);
 
 -- End of the 2026-11-05 accessory photo patch (second pass)
+
+-- ---------------------------------------------------------------------------
+-- 1300-039RG  new studio hero (rose gold), 1300-039 the same shot in chrome,
+--             1300-022 re-shot without the extra square plate on the bracket.
+-- ---------------------------------------------------------------------------
+
+UPDATE `product_media` SET `is_primary` = 0, `sort_order` = 3, `updated_at` = '2026-11-06 13:20:00' WHERE `id` = 1003;
+UPDATE `product_media` SET `sort_order` = 2, `updated_at` = '2026-11-06 13:20:00' WHERE `id` = 1002;
+
+INSERT INTO `media` (`id`, `uuid`, `collection`, `filename`, `original_name`, `path`, `mime_type`, `extension`, `size`, `width`, `height`, `meta`, `owner_id`, `status`, `created_at`, `updated_at`, `deleted_at`) VALUES (1523, '7d1c4b4e-6e0a-4b6d-9f24-0c8f1a2b3c5d', '1300-039rg', '1300-039rg-hero.jpg', '1300-039RG hero.jpg', '/images/products/1300-039rg/1300-039rg-hero.jpg', 'image/jpeg', 'jpeg', 164830, 1280, 816, '[]', 2, 'active', '2026-11-06 13:20:00', '2026-11-06 13:20:00', NULL);
+
+INSERT INTO `product_media` (`id`, `product_id`, `variant_id`, `media_id`, `type`, `sort_order`, `is_primary`, `created_at`, `updated_at`) VALUES (1528, 473, NULL, 1523, 'main', 0, 1, '2026-11-06 13:20:00', '2026-11-06 13:20:00');
+
+-- End of the 2026-11-06 colour-pair photo patch
 -- End of lufly-database.sql
