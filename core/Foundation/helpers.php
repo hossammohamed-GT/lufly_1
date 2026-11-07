@@ -131,7 +131,12 @@ if (!function_exists('asset')) {
         }
 
         if (!array_key_exists($clean, $stamps)) {
-            $file = base_path($clean);
+            /* the web root is public/ (see .htaccess), so look there first and
+               fall back to the application folder for legacy paths */
+            $file = base_path('public/' . $clean);
+            if (!is_file($file)) {
+                $file = base_path($clean);
+            }
             $stamps[$clean] = is_file($file) ? (int) filemtime($file) : 0;
         }
 
