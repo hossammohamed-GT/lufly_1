@@ -46299,4 +46299,27 @@ DELETE FROM `product_media` WHERE `media_id` IN (1336, 1338, 1340, 1256, 485, 50
 DELETE FROM `media` WHERE `id` IN (1336, 1338, 1340, 1256, 485, 504, 429, 506, 1260);
 
 -- End of the 2026-11-11 bright-bathroom batch 7
+-- 2026-11-11  bright-bathroom batch 8 (b36): every hero of batch 7 re-rendered — logo moved to the
+-- front-facing lower body beneath the spout, 1755-0217C rebuilt to the real product, 1755-170 rebuilt
+-- as the slim square wall arm, 1755-193 hoses redone, and 1755-171 (ceiling arm) added.
+
+UPDATE `media` SET `size` = 64936, `width` = 1280, `height` = 816, `updated_at` = '2026-11-11 16:30:00' WHERE `id` = 1661;
+UPDATE `media` SET `size` = 72181, `width` = 1280, `height` = 816, `updated_at` = '2026-11-11 16:30:00' WHERE `id` = 1662;
+UPDATE `media` SET `size` = 64479, `width` = 1280, `height` = 816, `updated_at` = '2026-11-11 16:30:00' WHERE `id` = 1663;
+UPDATE `media` SET `size` = 48646, `width` = 1280, `height` = 816, `updated_at` = '2026-11-11 16:30:00' WHERE `id` = 1664;
+UPDATE `media` SET `size` = 79168, `width` = 1280, `height` = 816, `updated_at` = '2026-11-11 16:30:00' WHERE `id` = 1665;
+UPDATE `media` SET `size` = 51439, `width` = 1280, `height` = 816, `updated_at` = '2026-11-11 16:30:00' WHERE `id` = 1666;
+UPDATE `media` SET `size` = 81010, `width` = 1280, `height` = 816, `updated_at` = '2026-11-11 16:30:00' WHERE `id` = 1667;
+UPDATE `media` SET `size` = 59121, `width` = 1280, `height` = 816, `updated_at` = '2026-11-11 16:30:00' WHERE `id` = 1668;
+UPDATE `media` SET `size` = 64312, `width` = 880, `height` = 1280, `updated_at` = '2026-11-11 16:30:00' WHERE `id` = 1669;
+
+INSERT INTO `media` (`id`, `uuid`, `collection`, `filename`, `original_name`, `path`, `mime_type`, `extension`, `size`, `width`, `height`, `meta`, `owner_id`, `status`, `created_at`, `updated_at`, `deleted_at`) VALUES (1670, '5fd12276-d7a7-4ac5-9110-d86c880400d7', '', '1755-171-hero.jpg', '1755-171 hero.jpg', '/images/products/1755-171/1755-171-hero.jpg', 'image/jpeg', 'jpeg', 58862, 880, 1280, '[]', 2, 'active', '2026-11-11 16:30:00', '2026-11-11 16:30:00', NULL);
+
+UPDATE `product_media` SET `is_primary` = 0, `updated_at` = '2026-11-11 16:30:00' WHERE `product_id` = 600;
+INSERT INTO `product_media` (`id`, `product_id`, `variant_id`, `media_id`, `type`, `sort_order`, `is_primary`, `created_at`, `updated_at`) VALUES (1673, 600, NULL, 1670, 'main', 0, 1, '2026-11-11 16:30:00', '2026-11-11 16:30:00');
+
+DELETE FROM `product_media` WHERE `media_id` = 1258 AND `product_id` = 600;
+DELETE FROM `media` WHERE `id` = 1258;
+
+-- End of the 2026-11-11 bright-bathroom batch 8
 -- End of lufly-database.sql
