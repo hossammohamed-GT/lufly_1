@@ -46261,4 +46261,42 @@ DELETE FROM `product_media` WHERE `id` IN (410, 412, 413, 417, 420, 423, 425, 13
 DELETE FROM `media` WHERE `id` IN (410, 412, 413, 417, 420, 423, 425, 1319, 1320, 901, 502);
 
 -- End of the 2026-11-10 mixers batch 6
+-- 2026-11-11  bright-bathroom batch 7 (b35): new heroes for 1755-0217C / 1755-0217G / 1755-0217GG
+-- (one composition, three finishes), 1755-170, 1722-1212, 1654-0133C, HL-ST111, 1654-2125BN, 1755-193.
+-- Old catalogue photos of these products were removed; their CAD drawings stay.
+
+INSERT INTO `media` (`id`, `uuid`, `collection`, `filename`, `original_name`, `path`, `mime_type`, `extension`, `size`, `width`, `height`, `meta`, `owner_id`, `status`, `created_at`, `updated_at`, `deleted_at`) VALUES (1661, '13aa22d0-0ca0-4add-acb0-6ef916004b08', '', '1755-0217c-hero.jpg', '1755-0217c hero.jpg', '/images/products/1755-0217c/1755-0217c-hero.jpg', 'image/jpeg', 'jpeg', 69092, 1280, 816, '[]', 2, 'active', '2026-11-11 10:00:00', '2026-11-11 10:00:00', NULL);
+INSERT INTO `media` (`id`, `uuid`, `collection`, `filename`, `original_name`, `path`, `mime_type`, `extension`, `size`, `width`, `height`, `meta`, `owner_id`, `status`, `created_at`, `updated_at`, `deleted_at`) VALUES (1662, 'd189a2e5-e9e5-4c15-8fff-9ca260b51829', '', '1755-0217g-hero.jpg', '1755-0217g hero.jpg', '/images/products/1755-0217g/1755-0217g-hero.jpg', 'image/jpeg', 'jpeg', 74178, 1280, 816, '[]', 2, 'active', '2026-11-11 10:00:00', '2026-11-11 10:00:00', NULL);
+INSERT INTO `media` (`id`, `uuid`, `collection`, `filename`, `original_name`, `path`, `mime_type`, `extension`, `size`, `width`, `height`, `meta`, `owner_id`, `status`, `created_at`, `updated_at`, `deleted_at`) VALUES (1663, '075de4ea-1b98-4ed6-ad98-f797dda883a5', '', '1755-0217gg-hero.jpg', '1755-0217gg hero.jpg', '/images/products/1755-0217gg/1755-0217gg-hero.jpg', 'image/jpeg', 'jpeg', 67497, 1280, 816, '[]', 2, 'active', '2026-11-11 10:00:00', '2026-11-11 10:00:00', NULL);
+INSERT INTO `media` (`id`, `uuid`, `collection`, `filename`, `original_name`, `path`, `mime_type`, `extension`, `size`, `width`, `height`, `meta`, `owner_id`, `status`, `created_at`, `updated_at`, `deleted_at`) VALUES (1664, '2dfb0b21-a767-445b-bd21-5256eb7a8c1b', '', '1755-170-hero.jpg', '1755-170 hero.jpg', '/images/products/1755-170/1755-170-hero.jpg', 'image/jpeg', 'jpeg', 70644, 1280, 816, '[]', 2, 'active', '2026-11-11 10:00:00', '2026-11-11 10:00:00', NULL);
+INSERT INTO `media` (`id`, `uuid`, `collection`, `filename`, `original_name`, `path`, `mime_type`, `extension`, `size`, `width`, `height`, `meta`, `owner_id`, `status`, `created_at`, `updated_at`, `deleted_at`) VALUES (1665, '02167aa0-d8c2-40e1-a440-e32e39b2f743', '', '1722-1212-hero.jpg', '1722-1212 hero.jpg', '/images/products/1722-1212/1722-1212-hero.jpg', 'image/jpeg', 'jpeg', 73629, 1280, 816, '[]', 2, 'active', '2026-11-11 10:00:00', '2026-11-11 10:00:00', NULL);
+INSERT INTO `media` (`id`, `uuid`, `collection`, `filename`, `original_name`, `path`, `mime_type`, `extension`, `size`, `width`, `height`, `meta`, `owner_id`, `status`, `created_at`, `updated_at`, `deleted_at`) VALUES (1666, '1a2ac82e-7618-4768-a7d1-5aa3ae797da6', '', '1654-0133c-hero.jpg', '1654-0133c hero.jpg', '/images/products/1654-0133c/1654-0133c-hero.jpg', 'image/jpeg', 'jpeg', 40625, 1280, 816, '[]', 2, 'active', '2026-11-11 10:00:00', '2026-11-11 10:00:00', NULL);
+INSERT INTO `media` (`id`, `uuid`, `collection`, `filename`, `original_name`, `path`, `mime_type`, `extension`, `size`, `width`, `height`, `meta`, `owner_id`, `status`, `created_at`, `updated_at`, `deleted_at`) VALUES (1667, '1eddddc5-ec75-4f20-b85b-28d0dae3f78e', '', 'hl-st111-hero.jpg', 'hl-st111 hero.jpg', '/images/products/hl-st111/hl-st111-hero.jpg', 'image/jpeg', 'jpeg', 70284, 1280, 816, '[]', 2, 'active', '2026-11-11 10:00:00', '2026-11-11 10:00:00', NULL);
+INSERT INTO `media` (`id`, `uuid`, `collection`, `filename`, `original_name`, `path`, `mime_type`, `extension`, `size`, `width`, `height`, `meta`, `owner_id`, `status`, `created_at`, `updated_at`, `deleted_at`) VALUES (1668, '42c0eeb5-7b13-4cc1-9a32-1dc83c264a26', '', '1654-2125bn-hero.jpg', '1654-2125bn hero.jpg', '/images/products/1654-2125bn/1654-2125bn-hero.jpg', 'image/jpeg', 'jpeg', 58350, 1280, 816, '[]', 2, 'active', '2026-11-11 10:00:00', '2026-11-11 10:00:00', NULL);
+INSERT INTO `media` (`id`, `uuid`, `collection`, `filename`, `original_name`, `path`, `mime_type`, `extension`, `size`, `width`, `height`, `meta`, `owner_id`, `status`, `created_at`, `updated_at`, `deleted_at`) VALUES (1669, 'e1ce6bef-8949-42f5-8794-0d559a3c3517', '', '1755-193-hero.jpg', '1755-193 hero.jpg', '/images/products/1755-193/1755-193-hero.jpg', 'image/jpeg', 'jpeg', 49654, 1280, 816, '[]', 2, 'active', '2026-11-11 10:00:00', '2026-11-11 10:00:00', NULL);
+
+UPDATE `product_media` SET `is_primary` = 0, `updated_at` = '2026-11-11 10:00:00' WHERE `product_id` = 642;
+UPDATE `product_media` SET `is_primary` = 0, `updated_at` = '2026-11-11 10:00:00' WHERE `product_id` = 643;
+UPDATE `product_media` SET `is_primary` = 0, `updated_at` = '2026-11-11 10:00:00' WHERE `product_id` = 644;
+UPDATE `product_media` SET `is_primary` = 0, `updated_at` = '2026-11-11 10:00:00' WHERE `product_id` = 599;
+UPDATE `product_media` SET `is_primary` = 0, `updated_at` = '2026-11-11 10:00:00' WHERE `product_id` = 247;
+UPDATE `product_media` SET `is_primary` = 0, `updated_at` = '2026-11-11 10:00:00' WHERE `product_id` = 256;
+UPDATE `product_media` SET `is_primary` = 0, `updated_at` = '2026-11-11 10:00:00' WHERE `product_id` = 220;
+UPDATE `product_media` SET `is_primary` = 0, `updated_at` = '2026-11-11 10:00:00' WHERE `product_id` = 257;
+UPDATE `product_media` SET `is_primary` = 0, `updated_at` = '2026-11-11 10:00:00' WHERE `product_id` = 601;
+
+INSERT INTO `product_media` (`id`, `product_id`, `variant_id`, `media_id`, `type`, `sort_order`, `is_primary`, `created_at`, `updated_at`) VALUES (1664, 642, NULL, 1661, 'main', 0, 1, '2026-11-11 10:00:00', '2026-11-11 10:00:00');
+INSERT INTO `product_media` (`id`, `product_id`, `variant_id`, `media_id`, `type`, `sort_order`, `is_primary`, `created_at`, `updated_at`) VALUES (1665, 643, NULL, 1662, 'main', 0, 1, '2026-11-11 10:00:00', '2026-11-11 10:00:00');
+INSERT INTO `product_media` (`id`, `product_id`, `variant_id`, `media_id`, `type`, `sort_order`, `is_primary`, `created_at`, `updated_at`) VALUES (1666, 644, NULL, 1663, 'main', 0, 1, '2026-11-11 10:00:00', '2026-11-11 10:00:00');
+INSERT INTO `product_media` (`id`, `product_id`, `variant_id`, `media_id`, `type`, `sort_order`, `is_primary`, `created_at`, `updated_at`) VALUES (1667, 599, NULL, 1664, 'main', 0, 1, '2026-11-11 10:00:00', '2026-11-11 10:00:00');
+INSERT INTO `product_media` (`id`, `product_id`, `variant_id`, `media_id`, `type`, `sort_order`, `is_primary`, `created_at`, `updated_at`) VALUES (1668, 247, NULL, 1665, 'main', 0, 1, '2026-11-11 10:00:00', '2026-11-11 10:00:00');
+INSERT INTO `product_media` (`id`, `product_id`, `variant_id`, `media_id`, `type`, `sort_order`, `is_primary`, `created_at`, `updated_at`) VALUES (1669, 256, NULL, 1666, 'main', 0, 1, '2026-11-11 10:00:00', '2026-11-11 10:00:00');
+INSERT INTO `product_media` (`id`, `product_id`, `variant_id`, `media_id`, `type`, `sort_order`, `is_primary`, `created_at`, `updated_at`) VALUES (1670, 220, NULL, 1667, 'main', 0, 1, '2026-11-11 10:00:00', '2026-11-11 10:00:00');
+INSERT INTO `product_media` (`id`, `product_id`, `variant_id`, `media_id`, `type`, `sort_order`, `is_primary`, `created_at`, `updated_at`) VALUES (1671, 257, NULL, 1668, 'main', 0, 1, '2026-11-11 10:00:00', '2026-11-11 10:00:00');
+INSERT INTO `product_media` (`id`, `product_id`, `variant_id`, `media_id`, `type`, `sort_order`, `is_primary`, `created_at`, `updated_at`) VALUES (1672, 601, NULL, 1669, 'main', 0, 1, '2026-11-11 10:00:00', '2026-11-11 10:00:00');
+
+DELETE FROM `product_media` WHERE `media_id` IN (1336, 1338, 1340, 1256, 485, 504, 429, 506, 1260);
+DELETE FROM `media` WHERE `id` IN (1336, 1338, 1340, 1256, 485, 504, 429, 506, 1260);
+
+-- End of the 2026-11-11 bright-bathroom batch 7
 -- End of lufly-database.sql
