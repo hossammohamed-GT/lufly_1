@@ -28,7 +28,31 @@ if ($isExecutableScript && $uri !== '/index.php') {
 
 // Serve static files from public/ directly (excluding sensitive/script extensions)
 if ($uri !== '/' && file_exists(__DIR__ . '/public' . $uri) && !is_dir(__DIR__ . '/public' . $uri)) {
-    return false;
+    $filePath = __DIR__ . '/public' . $uri;
+    $ext = strtolower(pathinfo($filePath, PATHINFO_EXTENSION));
+    $mimes = [
+        'css' => 'text/css',
+        'js' => 'application/javascript',
+        'png' => 'image/png',
+        'jpg' => 'image/jpeg',
+        'jpeg' => 'image/jpeg',
+        'gif' => 'image/gif',
+        'svg' => 'image/svg+xml',
+        'webp' => 'image/webp',
+        'ico' => 'image/x-icon',
+        'woff' => 'font/woff',
+        'woff2' => 'font/woff2',
+        'ttf' => 'font/ttf',
+        'pdf' => 'application/pdf',
+        'txt' => 'text/plain',
+        'xml' => 'application/xml',
+        'json' => 'application/json',
+    ];
+    $mime = $mimes[$ext] ?? (mime_content_type($filePath) ?: 'application/octet-stream');
+    header('Content-Type: ' . $mime);
+    header('Content-Length: ' . (string) filesize($filePath));
+    readfile($filePath);
+    exit;
 }
 
 // Serve static frontend assets from root directly (css, js, fonts, images)

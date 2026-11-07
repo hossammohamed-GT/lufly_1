@@ -73,7 +73,6 @@ return [
     'see_all' => 'Tüm sonuçları katalogda gör',
     'support_call' => 'Ekiple görüşün',
     'support_mail' => 'Bize yazın',
-    'support_whatsapp' => 'WhatsApp ile gönder',
     'waiting_1' => 'Yazdıklarınızı okuyorum…',
     'waiting_2' => 'Kataloğa bakıyorum…',
     'waiting_3' => 'Ölçüleri ve yüzeyleri karşılaştırıyorum…',

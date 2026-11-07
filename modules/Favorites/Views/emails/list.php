@@ -151,7 +151,7 @@ $fallbackImg = asset('/images/favicon.png');
                             <?= e(trans('favorites.mail_contact')) ?>
                         </p>
                         <p style="margin:0; font-size:13px; line-height:1.7; color:<?= e($muted) ?>;">
-                            <a href="https://wa.me/908503040817" style="color:<?= e($tealDark) ?>; text-decoration:none;">WhatsApp +90 850 3040 817</a>
+                            <a href="tel:+908503040817" style="color:<?= e($tealDark) ?>; text-decoration:none;">Phone +90 850 3040 817</a>
                             &nbsp;·&nbsp;
                             <a href="mailto:<?= e((string) config('mail.admin_address', 'info@lufly.tr')) ?>" style="color:<?= e($tealDark) ?>; text-decoration:none;"><?= e((string) config('mail.admin_address', 'info@lufly.tr')) ?></a>
                         </p>

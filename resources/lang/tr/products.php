@@ -41,7 +41,7 @@ return [
     'name_pending' => 'Ürün adı belirtilmemiş',
     'description' => 'Açıklama',
     'specs_title' => 'Teknik Özellikler',
-    'inquire_whatsapp' => 'Teklif İsteyin',
+    'inquire_quote' => 'Teklif İsteyin',
     'width' => 'Genişlik',
     'height' => 'Yükseklik',
     'depth' => 'Derinlik',

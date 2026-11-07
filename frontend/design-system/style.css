@@ -719,8 +719,6 @@ hr { border: 0; border-top: var(--border-hairline) solid var(--ds-border); }
 .btn-glass:hover { background: var(--ds-primary); border-color: var(--ds-primary); color: var(--ds-primary-text); }
 .btn-success { background: var(--ds-success); color: var(--lu-neutral-0); }
 .btn-success:hover { background: var(--ds-success-hover); color: var(--lu-neutral-0); }
-.btn-whatsapp, .btn-whatsapp-lg { background: var(--ds-success); color: var(--lu-neutral-0); }
-.btn-whatsapp:hover, .btn-whatsapp-lg:hover { background: var(--ds-success-hover); color: var(--lu-neutral-0); }
 
 .btn-sm { min-height: 36px; padding: var(--space-1) var(--space-4); font-size: var(--text-sm); }
 .btn-lg { min-height: 52px; padding: var(--space-4) var(--space-8); font-size: var(--text-lg); }

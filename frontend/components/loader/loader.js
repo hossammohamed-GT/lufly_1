@@ -198,7 +198,7 @@
     if (!href) return;
 
     if (href.startsWith('#') || href.startsWith('javascript:') || href.startsWith('mailto:') ||
-        href.startsWith('tel:') || href.startsWith('https://wa.me') || link.target === '_blank' ||
+        href.startsWith('tel:') || link.target === '_blank' ||
         link.hasAttribute('download') || e.defaultPrevented || e.metaKey || e.ctrlKey || e.shiftKey) {
       return;
     }

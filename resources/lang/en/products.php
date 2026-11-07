@@ -41,7 +41,7 @@ return [
     'name_pending' => 'Name not provided',
     'description' => 'Description',
     'specs_title' => 'Technical Specifications',
-    'inquire_whatsapp' => 'Request a Quote',
+    'inquire_quote' => 'Request a Quote',
     'width' => 'Width',
     'height' => 'Height',
     'depth' => 'Depth',

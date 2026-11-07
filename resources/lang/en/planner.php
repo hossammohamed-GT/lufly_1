@@ -127,13 +127,10 @@ return [
     /* handoff */
     'handoff_title' => 'Source these for me',
     'handoff_text' => 'Send the whole plan to the LUFLY team and we come back with the closest matching pieces and their prices.',
-    'handoff_whatsapp' => 'Send on WhatsApp',
     'handoff_email' => 'Send by e-mail',
     'handoff_phone' => 'or call :phone',
     'handoff_subject' => 'Bathroom plan — sourcing request',
     'handoff_mail_body' => "Hello LUFLY,\n\nPlease source the pieces below for my bathroom.\n\nMy e-mail: :email\n\n:plan\n\nThank you.",
-    'handoff_wa_body' => "Hello LUFLY, my bathroom plan:\n\n:plan\n\nPlease send prices for the matching pieces.",
-    'handoff_copied' => 'Plan copied — paste it in the chat if the message looks short.',
     'handoff_sending' => 'Sending your plan to the LUFLY team…',
     'handoff_sent' => 'Your plan is with our team — we reply to :email, usually the same working day.',
     'email_label' => 'Your e-mail',
@@ -143,7 +140,7 @@ return [
     'err_size' => 'Please pick a room size first.',
     'err_custom' => 'Please type a width and a depth between 100 and 600 cm.',
     'err_email' => 'Please enter a valid e-mail address.',
-    'err_send' => 'The message could not be sent just now. Please use WhatsApp, or try again in a moment.',
+    'err_send' => 'The message could not be sent just now. Please write to info@lufly.tr, or try again in a moment.',
 
     /* the promise: the planner is not open yet */
     'soon_pill' => 'Coming soon',

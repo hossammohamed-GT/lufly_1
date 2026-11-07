@@ -23,6 +23,7 @@ class Kernel
         'admin:setup' => Commands\AdminSetupCommand::class,
         'backup:db' => Commands\BackupDbCommand::class,
         'ai:doctor' => Commands\AiDoctorCommand::class,
+        'products:doctor' => Commands\ProductsDoctorCommand::class,
         'assistant:find' => Commands\AssistantFindCommand::class,
         'list' => Commands\ListCommand::class,
     ];

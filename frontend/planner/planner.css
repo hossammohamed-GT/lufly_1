@@ -760,12 +760,6 @@
   color: var(--ds-primary-text);
 }
 
-.planp-btn.is-whatsapp {
-  border-color: transparent;
-  background: #1f9d55;
-  color: #fff;
-}
-
 .planp-btn.is-quiet {
   background: var(--ds-surface-alt);
 }
