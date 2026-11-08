@@ -1,0 +1,1 @@
+<?php declare(strict_types=1); namespace Core\Exceptions; class AuthorizationException extends AppException { protected int $httpStatus = 403; protected string $errorCode = 'forbidden'; protected static function defaultMessage(): string { return 'You are not authorized to perform this action.'; } } 

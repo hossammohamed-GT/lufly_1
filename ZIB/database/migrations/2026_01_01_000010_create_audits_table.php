@@ -1,0 +1,1 @@
+<?php declare(strict_types=1); namespace Database\Migrations; use Core\Database\Migration\Migration; use Database\Schema\AuditsSchema; class CreateAuditsTable extends Migration { public function up(): void { $this->schema->createFromDefinition(new AuditsSchema()); } public function down(): void { $this->schema->dropIfExists('audits'); } } 

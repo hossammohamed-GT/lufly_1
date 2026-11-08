@@ -1,0 +1,1 @@
+<?php $name = (string) ($props['name'] ?? 'spec'); echo \Modules\Products\Services\ProductFeatureIconCatalog::svg($name); 

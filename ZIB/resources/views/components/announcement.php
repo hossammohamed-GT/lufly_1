@@ -1,0 +1,62 @@
+<?php $translator = $translator ?? app('Core\Localization\Translator'); $locale = $translator->getLocale(); $fallback = (string) config('localization.fallback', 'en'); $items = []; try { $service = app(Modules\Announcements\Services\AnnouncementService::class); $items = $service->activeFor('topbar', 3); } catch (\Throwable) { $items = []; } $icon = static function (string $style): string { $svg = static fn (string $paths): string => '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" ' . 'stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">' . $paths . '</svg>'; return match ($style) { 'info' => $svg('<circle cx="12" cy="12" r="9"/><line x1="12" y1="11" x2="12" y2="16"/><line x1="12" y1="8" x2="12.01" y2="8"/>'), 'warning' => $svg('<path d="M18 8a6 6 0 0 0-12 0c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.7 21a2 2 0 0 1-3.4 0"/>'), default => $svg('<path d="M12.6 2.6 21.4 11.4a2 2 0 0 1 0 2.8l-7.2 7.2a2 2 0 0 1-2.8 0L2.6 12.6A2 2 0 0 1 2 11.2V4a2 2 0 0 1 2-2h7.2c.5 0 1 .2 1.4.6z"/><line x1="7" y1="7" x2="7.01" y2="7"/>'), }; }; $messages = []; foreach ($items as $announcement) { $payload = $announcement->translate($locale, $fallback); $message = trim((string) ($payload['message'] ?? '')); if ($message === '') { continue; } $style = (string) ($announcement->style ?? 'promo'); $link = $announcement->link_url; if (is_string($link) && str_contains($link, '{contact}')) { $link = route('contact'); } $messages[] = [ 'id' => (int) $announcement->id, 'stamp' => (string) ($announcement->updated_at ?? ''), 'message' => $message, 'cta' => $payload['cta_label'] ?? null, 'link' => $link, 'style' => $style, 'icon' => $icon($style), ]; } if ($messages === []) { return; } $view->pushStyle('frontend/components/announcement/announcement.css'); ?>
+<aside class="lufly-announcements" data-announcements aria-label="<?= e(trans('common.announcements')) ?>">
+    <?php foreach ($messages as $index => $item): ?>
+        <?php $dismissKey = 'ann-' . $item['id'] . '-' . substr(md5($item['stamp'] . '|' . $item['message']), 0, 8); ?>
+        <div class="luann-item luann-<?= e($item['style']) ?><?= $index > 0 ? ' is-hidden' : '' ?>"
+             data-luann-item data-luann-dismiss-key="<?= e($dismissKey) ?>"
+             <?= $index > 0 ? 'hidden' : '' ?>>
+            <span class="luann-shimmer" aria-hidden="true"></span>
+
+            <span class="luann-chip" aria-hidden="true"><?= $item['icon'] ?></span>
+
+            <div class="luann-track" aria-live="polite">
+                <div class="luann-marquee" data-luann-marquee>
+                    <span class="luann-text" data-luann-text>
+                        <?php if (!empty($item['link']) && empty($item['cta'])): ?>
+                            <a href="<?= e((string) $item['link']) ?>" class="luann-link"><?= e($item['message']) ?></a>
+                        <?php else: ?>
+                            <?= e($item['message']) ?>
+                        <?php endif; ?>
+                    </span><span class="luann-text" data-luann-clone aria-hidden="true">
+                        <?php if (!empty($item['link']) && empty($item['cta'])): ?>
+                            <a href="<?= e((string) $item['link']) ?>" tabindex="-1" class="luann-link"><?= e($item['message']) ?></a>
+                        <?php else: ?>
+                            <?= e($item['message']) ?>
+                        <?php endif; ?>
+                    </span>
+                </div>
+            </div>
+
+            <?php if (!empty($item['cta'])): ?>
+                <?php if (!empty($item['link'])): ?>
+                    <a class="luann-cta" href="<?= e((string) $item['link']) ?>">
+                        <span><?= e((string) $item['cta']) ?></span>
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14"/><path d="m13 6 6 6-6 6"/></svg>
+                    </a>
+                <?php else: ?>
+                    <span class="luann-cta">
+                        <span><?= e((string) $item['cta']) ?></span>
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14"/><path d="m13 6 6 6-6 6"/></svg>
+                    </span>
+                <?php endif; ?>
+            <?php endif; ?>
+
+            <button type="button" class="luann-close" data-luann-close aria-label="<?= e(trans('common.delete')) ?>">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" aria-hidden="true">
+                    <line x1="18" y1="6" x2="6" y2="18"></line>
+                    <line x1="6" y1="6" x2="18" y2="18"></line>
+                </svg>
+            </button>
+        </div>
+    <?php endforeach; ?>
+    <?php if (count($messages) > 1): ?>
+        <div class="luann-dots" data-luann-dots>
+            <?php foreach ($messages as $dotIndex => $dot): ?>
+                <button type="button" class="luann-dot<?= $dotIndex === 0 ? ' is-active' : '' ?>"
+                        data-luann-dot="<?= (int) $dotIndex ?>"
+                        aria-label="<?= e(trans('common.announcements')) . ' ' . ((int) $dotIndex + 1) ?>"></button>
+            <?php endforeach; ?>
+        </div>
+    <?php endif; ?>
+</aside>
+<script>(function(){"use strict";var root=document.querySelector("[data-announcements]");if(!root){return}function collect(){return Array.prototype.slice.call(root.querySelectorAll("[data-luann-item]"))}var items=collect();function store(key){try{sessionStorage.setItem(key,"1")}catch(error){}}function dismissed(key){try{return sessionStorage.getItem(key)==="1"}catch(error){return false}}function removeRootIfEmpty(){if(items.length===0&&root.parentNode){root.parentNode.removeChild(root)}document.documentElement.classList.toggle("luann-dismissed",items.length===0)}var active=0;var timer=null;function show(index){if(items.length===0){removeRootIfEmpty();return}active=(index%items.length+items.length)%items.length;items.forEach(function(item,i){item.classList.toggle("is-hidden",i!==active);if(i===active){item.removeAttribute("hidden")}else{item.setAttribute("hidden","")}});Array.prototype.forEach.call(root.querySelectorAll("[data-luann-dot]"),function(dot){dot.classList.toggle("is-active",Number(dot.getAttribute("data-luann-dot"))===active)})}function schedule(){if(timer||items.length<2){return}timer=window.setInterval(function(){show(active+1)},7e3)}function unschedule(){if(timer){window.clearInterval(timer);timer=null}}items.forEach(function(item){var key=item.getAttribute("data-luann-dismiss-key");if(key&&dismissed(key)&&item.parentNode){item.parentNode.removeChild(item)}});items=collect();items.forEach(function(item){var close=item.querySelector("[data-luann-close]");if(close){close.addEventListener("click",function(){store(item.getAttribute("data-luann-dismiss-key"));item.parentNode&&item.parentNode.removeChild(item);items=collect();show(active)})}});Array.prototype.forEach.call(root.querySelectorAll("[data-luann-dot]"),function(dot){dot.addEventListener("click",function(){show(Number(dot.getAttribute("data-luann-dot")))})});function fitMarquees(){items.forEach(function(item){var marquee=item.querySelector("[data-luann-marquee]");var track=item.querySelector(".luann-track");if(!marquee||!track){return}var half=marquee.scrollWidth/2;if(half<=track.clientWidth+4){item.classList.add("is-static")}else{item.classList.remove("is-static")}})}if(items.length>0){show(0);fitMarquees();window.addEventListener("resize",fitMarquees);schedule();root.addEventListener("mouseenter",unschedule);root.addEventListener("mouseleave",schedule)}else{removeRootIfEmpty()}})();</script>

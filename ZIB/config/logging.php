@@ -1,0 +1,1 @@
+<?php declare(strict_types=1); return [ 'default' => env('LOG_CHANNEL', 'app'), 'level' => env('LOG_LEVEL', 'debug'), 'path' => 'storage/logs', 'channels' => [ 'app' => 'app.log', 'error' => 'error.log', 'database' => 'database.log', 'api' => 'api.log', 'security' => 'security.log', 'mail' => 'mail.log', ], ]; 

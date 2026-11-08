@@ -1,0 +1,1 @@
+<?php echo $view->component('category-explorer', [ 'categories' => is_array($categories ?? null) ? $categories : [], 'categoryCounts' => is_array($categoryCounts ?? null) ? $categoryCounts : null, 'mode' => 'home', ]); 

@@ -1,0 +1,1 @@
+<?php declare(strict_types=1); namespace App\Models; use Core\Database\Model; class ApiLog extends Model { protected static string $table = 'api_logs'; protected static bool $timestamps = false; protected static bool $softDelete = false; protected static array $casts = [ 'status_code' => 'int', 'response_time_ms' => 'int', ]; } 

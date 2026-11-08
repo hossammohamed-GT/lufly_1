@@ -1,0 +1,1 @@
+<?php declare(strict_types=1); namespace App\Models; use Core\Database\Model; class BlogTranslation extends Model { protected static string $table = 'blog_translations'; protected static bool $timestamps = false; protected static bool $softDelete = false; } 

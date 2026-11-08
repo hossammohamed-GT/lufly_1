@@ -1,0 +1,1 @@
+<?php declare(strict_types=1); namespace Database\Migrations; use Core\Database\Migration\Migration; use Database\Schema\RolesSchema; class CreateRolesTable extends Migration { public function up(): void { $this->schema->createFromDefinition(new RolesSchema()); } public function down(): void { $this->schema->dropIfExists('roles'); } } 

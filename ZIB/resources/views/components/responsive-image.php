@@ -1,0 +1,2 @@
+<?php $loading = $loading ?? 'lazy'; $attributes = ''; $attributes .= ' src="' . e(asset($src)) . '"'; $attributes .= ' alt="' . e($alt) . '"'; $attributes .= isset($class) && $class !== '' ? ' class="' . e($class) . '"' : ''; $attributes .= isset($id) && $id !== '' ? ' id="' . e($id) . '"' : ''; $attributes .= isset($width) ? ' width="' . (int) $width . '"' : ''; $attributes .= isset($height) ? ' height="' . (int) $height . '"' : ''; $attributes .= ' loading="' . e($loading) . '"'; $attributes .= ' decoding="async"'; ?>
+<img<?= $attributes ?>>

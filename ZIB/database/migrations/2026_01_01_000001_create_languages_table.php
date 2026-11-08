@@ -1,0 +1,1 @@
+<?php declare(strict_types=1); namespace Database\Migrations; use Core\Database\Migration\Migration; use Database\Schema\LanguagesSchema; class CreateLanguagesTable extends Migration { public function up(): void { $this->schema->createFromDefinition(new LanguagesSchema()); } public function down(): void { $this->schema->dropIfExists('languages'); } } 

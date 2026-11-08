@@ -1,0 +1,125 @@
+<?php $view->pushDeferredStyle('frontend/home/finishes/finishes.css'); $view->pushScript('frontend/home/finishes/finishes.js'); $finishMeta = [ 'brushed-rose-gold' => ['phrase' => 'finishes_phrase_brushed_rose_gold', 'story' => 'finishes_story_brushed_rose_gold', 'title' => 'finish_rose_title', 'desc' => 'finish_rose_desc', 'rates' => ['high', 'low', 'high']], 'chrome' => ['phrase' => 'finishes_phrase_chrome', 'story' => 'finishes_story_chrome', 'title' => 'finish_chrome_title', 'desc' => 'finish_chrome_desc', 'rates' => ['medium', 'high', 'medium']], 'brushed-gold' => ['phrase' => 'finishes_phrase_brushed_gold', 'story' => 'finishes_story_brushed_gold', 'title' => 'finish_gold_title', 'desc' => 'finish_gold_desc', 'rates' => ['high', 'low', 'high']], 'mirror-gold' => ['phrase' => 'finishes_phrase_mirror_gold', 'story' => 'finishes_story_mirror_gold', 'title' => 'finish_mirror_gold_title', 'desc' => 'finish_mirror_gold_desc', 'rates' => ['medium', 'high', 'high']], 'matte-black' => ['phrase' => 'finishes_phrase_matte_black', 'story' => 'finishes_story_matte_black', 'title' => 'finish_black_title', 'desc' => 'finish_black_desc', 'rates' => ['high', 'medium', 'high']], 'brushed-nickel' => ['phrase' => 'finishes_phrase_brushed_nickel', 'story' => 'finishes_story_brushed_nickel', 'title' => 'finish_nickel_title', 'desc' => 'finish_nickel_desc', 'rates' => ['high', 'low', 'medium']], 'gunmetal' => ['phrase' => 'finishes_phrase_gunmetal', 'story' => 'finishes_story_gunmetal', 'title' => 'finish_gunmetal_title', 'desc' => 'finish_gunmetal_desc', 'rates' => ['high', 'medium', 'high']], 'brushed-gunmetal' => ['phrase' => 'finishes_phrase_brushed_gunmetal', 'story' => 'finishes_story_brushed_gunmetal', 'title' => 'finish_brushed_gunmetal_title', 'desc' => 'finish_brushed_gunmetal_desc', 'rates' => ['high', 'low', 'high']], 'gun-gray' => ['phrase' => 'finishes_phrase_gun_gray', 'story' => 'finishes_story_gun_gray', 'title' => 'finish_gun_gray_title', 'desc' => 'finish_gun_gray_desc', 'rates' => ['high', 'medium', 'medium']], ]; $finishes = [ ['key' => 'brushed-rose-gold', 'sphere' => 'images/finishes/sphere-brushed-rose-gold.jpg', 'scene' => 'images/finishes/scene-brushed-rose-gold.jpg', 'label' => trans('products.finish_rose_gold'), 'tech' => 'PVD'], ['key' => 'chrome', 'sphere' => 'images/finishes/sphere-chrome.jpg', 'scene' => 'images/finishes/scene-chrome.jpg', 'label' => trans('products.finish_polished_chrome'), 'tech' => trans('home.finish_tech_electroplated')], ['key' => 'brushed-gold', 'sphere' => 'images/finishes/sphere-brushed-gold.jpg', 'scene' => 'images/finishes/scene-brushed-gold.jpg', 'label' => trans('products.finish_brushed_gold'), 'tech' => 'PVD'], ['key' => 'mirror-gold', 'sphere' => 'images/finishes/sphere-mirror-gold.jpg', 'scene' => 'images/finishes/scene-mirror-gold.jpg', 'label' => trans('products.finish_gold'), 'tech' => 'PVD'], ['key' => 'matte-black', 'sphere' => 'images/finishes/sphere-matte-black.jpg', 'scene' => 'images/finishes/scene-matte-black.jpg', 'label' => trans('products.finish_matte_black'), 'tech' => trans('home.finish_tech_powder')], ['key' => 'brushed-nickel', 'sphere' => 'images/finishes/sphere-brushed-nickel.jpg', 'scene' => 'images/finishes/scene-brushed-nickel.jpg', 'label' => trans('products.finish_brushed_nickel'), 'tech' => 'PVD'], ['key' => 'gunmetal', 'sphere' => 'images/finishes/sphere-gunmetal.jpg', 'scene' => 'images/finishes/scene-gunmetal.jpg', 'label' => trans('products.finish_gunmetal'), 'tech' => 'PVD'], ['key' => 'brushed-gunmetal', 'sphere' => 'images/finishes/sphere-brushed-gunmetal.jpg', 'scene' => 'images/finishes/scene-brushed-gunmetal.jpg', 'label' => trans('home.finish_brushed_gunmetal_short'), 'tech' => 'PVD'], ['key' => 'gun-gray', 'sphere' => 'images/finishes/sphere-gun-gray.jpg', 'scene' => 'images/finishes/scene-gun-gray.jpg', 'label' => trans('home.finish_gun_gray_short'), 'tech' => 'PVD'], ]; $first = $finishes[0]['key']; $firstMeta = $finishMeta[$first]; $rateWord = static fn (string $r): string => trans('home.finishes_rating_' . $r); ?>
+<section class="band finishes-section scroll-section" id="finishes" data-finish="<?= e($first) ?>">
+
+    
+    <div class="fs-scene" aria-hidden="true">
+        <?= $view->component('responsive-image', [ 'src' => $finishes[0]['scene'], 'alt' => '', 'class' => 'fs-scene-img fs-scene-img-a is-on', 'width' => 1376, 'height' => 768, 'sizes' => '100vw', 'widths' => [480, 960, 1280], ]) ?>
+        <?= $view->component('responsive-image', [ 'src' => $finishes[0]['scene'], 'alt' => '', 'class' => 'fs-scene-img fs-scene-img-b', 'width' => 1376, 'height' => 768, 'sizes' => '100vw', 'widths' => [480, 960, 1280], ]) ?>
+        <div class="fs-scene-shade"></div>
+    </div>
+
+    <div class="fs-scene-ui">
+        <div class="fs-callout" data-x="81" data-y="35">
+            <div class="fs-callout-body">
+                <span class="fs-callout-rule" aria-hidden="true"></span>
+                <b id="fs-caption-title"><?= e(trans('home.finish_default_title')) ?></b>
+                <span id="fs-story"><?= e(trans('home.' . $firstMeta['story'])) ?></span>
+            </div>
+        </div>
+    </div>
+
+    <div class="container finishes-container">
+        <div class="fs-grid">
+
+            
+            <div class="fs-left">
+                <span class="section-tag fs-anim" style="--d: 0"><?= e(trans('home.finishes_kicker')) ?></span>
+
+                <h2 class="fs-headline fs-anim" style="--d: 1">
+                    <?= e(trans('home.finishes_headline_lead')) ?><br>
+                    <em class="fs-phrase" id="fs-phrase"><?= e(trans('home.' . $firstMeta['phrase'])) ?></em>
+                </h2>
+
+                <p class="fs-desc fs-anim" id="finish-desc" style="--d: 2"><?= e(trans('home.finish_default_desc')) ?></p>
+
+                
+                <div class="fs-carousel fs-anim" style="--d: 3">
+                    <button type="button" class="fs-nav" data-fs-prev aria-label="<?= e(trans('home.finishes_nav_prev')) ?>">
+                        <svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true"><path d="M15 5l-7 7 7 7" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                    </button>
+
+                    <div class="fs-cards" role="group" aria-label="<?= e(trans('home.finishes_kicker')) ?>">
+                        <?php foreach ($finishes as $i => $finish): $meta = $finishMeta[$finish['key']] ?? null; if ($meta === null) { continue; } ?>
+                            <button type="button"
+                                    class="fs-card<?= $i === 0 ? ' is-active' : '' ?>"
+                                    data-finish="<?= e($finish['key']) ?>"
+                                    data-phrase="<?= e(trans('home.' . $meta['phrase'])) ?>"
+                                    data-story="<?= e(trans('home.' . $meta['story'])) ?>"
+                                    data-title="<?= e(trans('home.' . $meta['title'])) ?>"
+                                    data-desc="<?= e(trans('home.' . $meta['desc'])) ?>"
+                                    aria-pressed="<?= $i === 0 ? 'true' : 'false' ?>"
+                                    style="--i: <?= (int) $i ?>">
+                                <span class="fs-card-chip">
+                                    <img src="<?= e(asset($finish['sphere'])) ?>" alt="" width="84" height="84" loading="lazy" decoding="async">
+                                </span>
+                                <span class="fs-card-text">
+                                    <b class="fs-card-name"><?= e($finish['label']) ?></b>
+                                    <small class="fs-card-tech"><?= e($finish['tech']) ?></small>
+                                </span>
+                            </button>
+                        <?php endforeach; ?>
+                    </div>
+
+                    <button type="button" class="fs-nav" data-fs-next aria-label="<?= e(trans('home.finishes_nav_next')) ?>">
+                        <svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true"><path d="M9 5l7 7-7 7" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                    </button>
+                </div>
+
+                <div class="fs-ctas fs-anim" style="--d: 4">
+                    <a href="<?= e(route('products.index')) ?>" class="fs-cta fs-cta-main">
+                        <span><?= e(trans('home.finishes_explore')) ?></span>
+                        <svg viewBox="0 0 24 24" width="16" height="16" aria-hidden="true"><path d="M4 12h15m0 0l-6-6m6 6l-6 6" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                    </a>
+                    <button type="button" class="fs-cta fs-cta-ghost" data-fs-compare>
+                        <span><?= e(trans('home.finishes_compare')) ?></span>
+                    </button>
+                </div>
+            </div>
+
+
+        </div>
+
+        
+        <div class="fs-strip fs-anim" style="--d: 5">
+            <span><?= e(trans('home.finishes_strip_finishes', ['count' => count($finishes)])) ?></span>
+            <span><?= e(trans('home.finishes_strip_durability')) ?></span>
+            <span><?= e(trans('home.finishes_strip_pvd')) ?></span>
+            <span><?= e(trans('home.finishes_strip_warranty')) ?></span>
+        </div>
+    </div>
+
+    
+    <div class="fs-drawer" data-fs-drawer hidden>
+        <div class="fs-drawer-panel" role="dialog" aria-modal="true" aria-label="<?= e(trans('home.finishes_compare')) ?>">
+            <div class="fs-drawer-head">
+                <b><?= e(trans('home.finishes_compare_title')) ?></b>
+                <button type="button" class="fs-drawer-close" data-fs-compare-close aria-label="<?= e(trans('home.finishes_compare_close')) ?>">×</button>
+            </div>
+            <div class="fs-drawer-table">
+                <table>
+                    <thead>
+                        <tr>
+                            <th><?= e(trans('home.finishes_col_finish')) ?></th>
+                            <th><?= e(trans('home.finishes_col_durability')) ?></th>
+                            <th><?= e(trans('home.finishes_col_fingerprints')) ?></th>
+                            <th><?= e(trans('home.finishes_col_luxury')) ?></th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <?php foreach ($finishes as $finish): $meta = $finishMeta[$finish['key']] ?? null; if ($meta === null) { continue; } ?>
+                            <tr data-finish-row="<?= e($finish['key']) ?>">
+                                <th>
+                                    <img src="<?= e(asset($finish['sphere'])) ?>" alt="" width="22" height="22" loading="lazy" decoding="async">
+                                    <?= e($finish['label']) ?>
+                                </th>
+                                <?php foreach ($meta['rates'] as $r): ?>
+                                    <td><span class="fs-rate fs-rate-<?= e($r) ?>"><?= e($rateWord($r)) ?></span></td>
+                                <?php endforeach; ?>
+                            </tr>
+                        <?php endforeach; ?>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</section>

@@ -1,0 +1,1 @@
+<?php declare(strict_types=1); namespace App\Models; use Core\Database\Model; class Audit extends Model { protected static string $table = 'audits'; protected static bool $timestamps = false; protected static bool $softDelete = false; protected static array $casts = [ 'before' => 'json', 'after' => 'json', ]; } 

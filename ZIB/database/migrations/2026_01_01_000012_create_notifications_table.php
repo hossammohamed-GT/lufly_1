@@ -1,0 +1,1 @@
+<?php declare(strict_types=1); namespace Database\Migrations; use Core\Database\Migration\Migration; use Database\Schema\NotificationsSchema; class CreateNotificationsTable extends Migration { public function up(): void { $this->schema->createFromDefinition(new NotificationsSchema()); } public function down(): void { $this->schema->dropIfExists('notifications'); } } 

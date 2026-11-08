@@ -1,0 +1,1 @@
+<?php declare(strict_types=1); namespace Database\Migrations; use Core\Database\Migration\Migration; use Database\Schema\ApiLogsSchema; class CreateApiLogsTable extends Migration { public function up(): void { $this->schema->createFromDefinition(new ApiLogsSchema()); } public function down(): void { $this->schema->dropIfExists('api_logs'); } } 

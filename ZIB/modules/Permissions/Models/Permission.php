@@ -1,0 +1,1 @@
+<?php declare(strict_types=1); namespace Modules\Permissions\Models; use Core\Database\Model; class Permission extends Model { protected static string $table = 'permissions'; protected static bool $softDelete = false; protected static array $fillable = ['key', 'name', 'description']; } 

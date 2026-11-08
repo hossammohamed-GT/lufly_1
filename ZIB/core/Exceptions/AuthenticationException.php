@@ -1,0 +1,1 @@
+<?php declare(strict_types=1); namespace Core\Exceptions; class AuthenticationException extends AppException { protected int $httpStatus = 401; protected string $errorCode = 'unauthenticated'; protected static function defaultMessage(): string { return 'Authentication is required to access this resource.'; } } 

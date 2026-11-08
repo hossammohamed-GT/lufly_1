@@ -1,0 +1,1 @@
+<?php declare(strict_types=1); namespace Core\Exceptions; class NotFoundException extends AppException { protected int $httpStatus = 404; protected string $errorCode = 'not_found'; protected static function defaultMessage(): string { return 'The requested resource was not found.'; } } 

@@ -1,0 +1,1 @@
+<?php declare(strict_types=1); namespace Core\Exceptions; class UploadException extends AppException { protected int $httpStatus = 422; protected string $errorCode = 'upload_failed'; protected static function defaultMessage(): string { return 'The file upload failed.'; } } 

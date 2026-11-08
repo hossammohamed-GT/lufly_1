@@ -1,0 +1,1 @@
+<?php declare(strict_types=1); namespace Core\Database\Migration; use Core\Database\Connection; use Core\Database\Schema\SchemaBuilder; abstract class Migration { public function __construct( protected readonly Connection $db, protected readonly SchemaBuilder $schema, ) { } abstract public function up(): void; abstract public function down(): void; } 

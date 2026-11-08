@@ -1,0 +1,1 @@
+<?php declare(strict_types=1); namespace Core\Exceptions; class MethodNotAllowedException extends AppException { protected int $httpStatus = 405; protected string $errorCode = 'method_not_allowed'; protected static function defaultMessage(): string { return 'The HTTP method is not allowed for this route.'; } } 

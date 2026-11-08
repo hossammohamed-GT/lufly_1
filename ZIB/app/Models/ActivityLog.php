@@ -1,0 +1,1 @@
+<?php declare(strict_types=1); namespace App\Models; use Core\Database\Model; class ActivityLog extends Model { protected static string $table = 'activity_logs'; protected static bool $timestamps = false; protected static bool $softDelete = false; protected static array $casts = [ 'data' => 'json', 'user_id' => 'int', ]; } 

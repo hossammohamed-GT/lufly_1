@@ -1,0 +1,1 @@
+<?php declare(strict_types=1); namespace Modules\Languages\Models; use Core\Database\Model; class Language extends Model { protected static string $table = 'languages'; protected static array $fillable = [ 'code', 'name', 'native_name', 'dir', 'active', 'sort_order', ]; protected static array $casts = [ 'active' => 'bool', 'sort_order' => 'int', ]; } 
